@@ -1040,6 +1040,170 @@
     footer ul li {
       color: rgba(255, 255, 255, 0.92);
     }
+    /* ------------------------------------------------------------------
+       Autoevaluación: preguntas de opción múltiple con retroalimentación
+       por opción. Componente nuevo del Capítulo 2, reutilizable en todos
+       los capítulos.
+       ------------------------------------------------------------------ */
+    .quiz {
+      background-color: #fffbeb;
+      border: 1px solid #fde68a;
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .quiz h4 {
+      color: #92400e;
+      margin-top: 0;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .quiz-pregunta {
+      background: white;
+      border: 1px solid #fde68a;
+      border-radius: 0.5rem;
+      padding: 1rem 1.15rem;
+      margin-top: 1rem;
+    }
+
+    .quiz-enunciado {
+      font-weight: 600;
+      color: #1e293b;
+      margin: 0 0 0.75rem 0;
+    }
+
+    .quiz-enunciado .quiz-numero {
+      color: #b45309;
+      margin-right: 0.4rem;
+    }
+
+    .quiz-opciones {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .quiz-opcion {
+      font-family: inherit;
+      font-size: 0.9rem;
+      text-align: left;
+      color: #374151;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      padding: 0.6rem 0.85rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      width: 100%;
+    }
+
+    .quiz-opcion:hover:not(:disabled) {
+      border-color: #FF6600;
+      background: #fff7ed;
+    }
+
+    .quiz-opcion:focus-visible {
+      outline: 2px solid #FF6600;
+      outline-offset: 2px;
+    }
+
+    .quiz-opcion .quiz-letra {
+      font-family: 'Fira Code', monospace;
+      font-weight: 600;
+      color: #64748b;
+      flex-shrink: 0;
+    }
+
+    .quiz-opcion.correcta {
+      background: #ecfdf5;
+      border-color: #6ee7b7;
+      color: #065f46;
+    }
+
+    .quiz-opcion.correcta .quiz-letra {
+      color: #059669;
+    }
+
+    .quiz-opcion.incorrecta {
+      background: #fef2f2;
+      border-color: #fca5a5;
+      color: #991b1b;
+    }
+
+    .quiz-opcion.incorrecta .quiz-letra {
+      color: #dc2626;
+    }
+
+    .quiz-opcion:disabled {
+      cursor: default;
+    }
+
+    .quiz-retro {
+      margin-top: 0.75rem;
+      padding: 0.7rem 0.9rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      background: #f1f5f9;
+      border-left: 3px solid #94a3b8;
+      color: #334155;
+    }
+
+    .quiz-retro.bien {
+      background: #ecfdf5;
+      border-left-color: #059669;
+      color: #065f46;
+    }
+
+    .quiz-retro.mal {
+      background: #fef2f2;
+      border-left-color: #dc2626;
+      color: #991b1b;
+    }
+
+    .quiz-retro[hidden] {
+      display: none;
+    }
+
+    .quiz-marcador {
+      margin-top: 1.15rem;
+      font-weight: 600;
+      color: #92400e;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .quiz-reiniciar {
+      font-family: inherit;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #92400e;
+      background: transparent;
+      border: 1px solid #fbbf24;
+      border-radius: 50px;
+      padding: 0.35rem 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .quiz-reiniciar:hover {
+      background: #fbbf24;
+      color: #012820;
+    }
   </style>
 </head>
 
@@ -1774,6 +1938,17 @@ res.plot()</code></pre>
         </ul>
       </div>
 
+      <div class="quiz" data-quiz="cap1">
+        <h4><i class="fas fa-circle-question" aria-hidden="true"></i> Autoevaluación</h4>
+        <p class="text-sm" style="margin-bottom:0;">Seis preguntas para comprobar lo esencial. Cada opción tiene su
+          explicación: si te equivocas, la retroalimentación te dice exactamente dónde estuvo el razonamiento.</p>
+        <div class="quiz-preguntas"></div>
+        <div class="quiz-marcador">
+          <span class="quiz-conteo"></span>
+          <button type="button" class="quiz-reiniciar">Reiniciar</button>
+        </div>
+      </div>
+
       <div class="exercise">
         <h4><i class="fas fa-pen-to-square mr-2" aria-hidden="true"></i>Para practicar</h4>
         <ol style="margin-bottom:0;">
@@ -1870,6 +2045,7 @@ res.plot()</code></pre>
         wrapCodeBlocks();
         initCodeTabs();
         iniciarSimuladores();
+        iniciarAutoevaluaciones();
         renderMathInElement(mainContent, {
           delimiters: [
             { left: "$$", right: "$$", display: true },
@@ -2449,6 +2625,261 @@ res.plot()</code></pre>
       ]);
       return [g];
     };
+    // ================================================================
+    // Autoevaluación
+    //
+    // Uso: AUTOEVALUACIONES['id'] = [{pregunta, opciones:[{texto, correcta,
+    // retro}]}]. El contenedor lleva data-quiz="id". Se corrige al hacer clic:
+    // se marca la opción elegida y la correcta, y se muestra la
+    // retroalimentación específica de la opción escogida.
+    // ================================================================
+    const AUTOEVALUACIONES = {};
+    const LETRAS = ['a', 'b', 'c', 'd', 'e'];
+
+    function iniciarAutoevaluaciones() {
+      mainContent.querySelectorAll('[data-quiz]').forEach(raiz => {
+        const preguntas = AUTOEVALUACIONES[raiz.dataset.quiz];
+        if (!preguntas) {
+          console.warn(`Autoevaluación no registrada: ${raiz.dataset.quiz}`);
+          return;
+        }
+        renderAutoevaluacion(raiz, preguntas);
+      });
+    }
+
+    function renderAutoevaluacion(raiz, preguntas) {
+      const contenedor = raiz.querySelector('.quiz-preguntas');
+      const marcador = raiz.querySelector('.quiz-conteo');
+      const respondidas = new Set();
+      let aciertos = 0;
+
+      function pintarMarcador() {
+        marcador.textContent =
+          `Respondidas ${respondidas.size} de ${preguntas.length} · aciertos: ${aciertos}`;
+      }
+
+      contenedor.innerHTML = '';
+      preguntas.forEach((p, i) => {
+        const bloque = document.createElement('div');
+        bloque.className = 'quiz-pregunta';
+
+        const enunciado = document.createElement('p');
+        enunciado.className = 'quiz-enunciado';
+        enunciado.innerHTML = `<span class="quiz-numero">${i + 1}.</span>${p.pregunta}`;
+
+        const lista = document.createElement('div');
+        lista.className = 'quiz-opciones';
+        lista.setAttribute('role', 'group');
+        lista.setAttribute('aria-label', `Opciones de la pregunta ${i + 1}`);
+
+        const retro = document.createElement('div');
+        retro.className = 'quiz-retro';
+        retro.setAttribute('role', 'status');
+        retro.hidden = true;
+
+        const botones = p.opciones.map((op, j) => {
+          const boton = document.createElement('button');
+          boton.type = 'button';
+          boton.className = 'quiz-opcion';
+          boton.innerHTML = `<span class="quiz-letra">${LETRAS[j]})</span><span>${op.texto}</span>`;
+          boton.addEventListener('click', () => {
+            if (respondidas.has(i)) return;
+            respondidas.add(i);
+            if (op.correcta) aciertos++;
+
+            botones.forEach((b, k) => {
+              b.disabled = true;
+              if (p.opciones[k].correcta) b.classList.add('correcta');
+            });
+            if (!op.correcta) boton.classList.add('incorrecta');
+
+            retro.className = `quiz-retro ${op.correcta ? 'bien' : 'mal'}`;
+            retro.innerHTML =
+              `<strong>${op.correcta ? 'Correcto.' : 'No es esa.'}</strong> ${op.retro}`;
+            retro.hidden = false;
+            if (typeof renderMathInElement === 'function') {
+              renderMathInElement(retro, {
+                delimiters: [
+                  { left: "$$", right: "$$", display: true },
+                  { left: "$", right: "$", display: false }
+                ]
+              });
+            }
+            pintarMarcador();
+          });
+          lista.appendChild(boton);
+          return boton;
+        });
+
+        bloque.appendChild(enunciado);
+        bloque.appendChild(lista);
+        bloque.appendChild(retro);
+        contenedor.appendChild(bloque);
+      });
+
+      pintarMarcador();
+      const reiniciar = raiz.querySelector('.quiz-reiniciar');
+      if (reiniciar) {
+        reiniciar.onclick = () => renderAutoevaluacion(raiz, preguntas);
+      }
+    }
+
+
+    // ================================================================
+    // Autoevaluación del capítulo
+    // ================================================================
+    AUTOEVALUACIONES['cap1'] = [
+      {
+        pregunta: '¿Qué distingue un <strong>ciclo</strong> de la <strong>estacionalidad</strong>?',
+        opciones: [
+          {
+            texto: 'La estacionalidad se repite con un periodo fijo y conocido; el ciclo, con duración variable e impredecible.',
+            correcta: true,
+            retro: 'Esa es la diferencia definitoria. La estacionalidad de <code>AirPassengers</code> es anual y siempre dura 12 meses; un ciclo económico puede durar 4 años o 9, y no se sabe de antemano.'
+          },
+          {
+            texto: 'El ciclo siempre dura más de un año y la estacionalidad, menos.',
+            correcta: false,
+            retro: 'Las duraciones típicas sí suelen ser esas, pero no es lo que los define. Lo determinante es que el periodo de la estacionalidad es <em>fijo y conocido</em>, y el del ciclo no.'
+          },
+          {
+            texto: 'La estacionalidad se aprecia en el gráfico de tiempo y el ciclo no.',
+            correcta: false,
+            retro: 'Los dos se aprecian. La diferencia está en la regularidad del periodo, no en la visibilidad.'
+          },
+          {
+            texto: 'Son sinónimos; en la práctica se usan indistintamente.',
+            correcta: false,
+            retro: 'Confundirlos tiene consecuencias: si tratas un ciclo como estacionalidad, impones un periodo fijo a algo que no lo tiene y el modelo pronostica repeticiones que nunca llegan.'
+          }
+        ]
+      },
+      {
+        pregunta: 'En <code>AirPassengers</code>, la amplitud de las oscilaciones anuales <strong>crece</strong> con el nivel de la serie. ¿Qué descomposición conviene?',
+        opciones: [
+          {
+            texto: 'Multiplicativa, o equivalentemente aditiva sobre el logaritmo.',
+            correcta: true,
+            retro: 'Cuando la amplitud es proporcional al nivel, el modelo natural es $y_t = T_t \\times S_t \\times R_t$. Y como $\\log(T \\times S \\times R) = \\log T + \\log S + \\log R$, tomar logaritmos convierte el problema en aditivo: por eso este capítulo aplica STL sobre $\\log(y_t)$.'
+          },
+          {
+            texto: 'Aditiva sobre la serie original.',
+            correcta: false,
+            retro: 'Dejaría un componente estacional de amplitud constante: subestimaría las oscilaciones de 1960 y las sobreestimaría las de 1949. El residuo delataría el problema con un patrón en forma de embudo.'
+          },
+          {
+            texto: 'Da igual: las dos ajustan prácticamente lo mismo.',
+            correcta: false,
+            retro: 'No dan lo mismo. Compara en el Módulo 6 el componente estacional constante de la aditiva con los índices multiplicativos, que escalan con el nivel.'
+          },
+          {
+            texto: 'Ninguna: primero hay que diferenciar la serie.',
+            correcta: false,
+            retro: 'Diferenciar (Capítulo 2) sirve para quitar la tendencia, no para estabilizar una amplitud que crece. Para eso está la transformación logarítmica o Box–Cox.'
+          }
+        ]
+      },
+      {
+        pregunta: 'Para una serie mensual se usa una media móvil <strong>2×12</strong> en vez de una simple de orden 12. ¿Por qué?',
+        opciones: [
+          {
+            texto: 'Porque con un orden par la ventana no queda centrada en una observación, y promediar dos ventanas consecutivas lo corrige.',
+            correcta: true,
+            retro: 'Con $m$ par el centro cae <em>entre</em> dos meses. La 2×12 promedia dos ventanas de 12 desplazadas un mes, lo que equivale a dar peso $1/24$ a los extremos y $1/12$ a los diez meses interiores. Así el resultado queda alineado con una observación real.'
+          },
+          {
+            texto: 'Porque 24 meses suavizan mejor que 12.',
+            correcta: false,
+            retro: 'La 2×12 no equivale a una ventana de 24 con peso pleno: los extremos entran a mitad de peso. Y el motivo no es suavizar más, sino centrar.'
+          },
+          {
+            texto: 'Porque hay que cubrir dos ciclos anuales completos para eliminar la estacionalidad.',
+            correcta: false,
+            retro: 'Basta un ciclo completo para promediar los 12 meses. Lo que se corrige con la doble media es el desfase de medio periodo.'
+          },
+          {
+            texto: 'Porque R no admite ventanas móviles de orden par.',
+            correcta: false,
+            retro: 'Sí las admite. El problema no es técnico sino de interpretación: el resultado quedaría desfasado medio mes respecto a la serie.'
+          }
+        ]
+      },
+      {
+        pregunta: '¿Cuál es la ventaja principal de <strong>STL</strong> frente a la descomposición clásica?',
+        opciones: [
+          {
+            texto: 'Permite que el patrón estacional cambie a lo largo del tiempo y es robusta frente a valores atípicos.',
+            correcta: true,
+            retro: 'La descomposición clásica obliga a que el índice de cada mes sea el mismo todos los años. STL deja que evolucione (con <code>s.window</code> se controla cuánto) y, al usar regresión local robusta, un atípico no contamina toda la estimación.'
+          },
+          {
+            texto: 'No necesita que se le declare el periodo estacional.',
+            correcta: false,
+            retro: 'Sí lo necesita: STL parte del periodo $m$ igual que la clásica. Lo que no exige es que el patrón sea idéntico cada año.'
+          },
+          {
+            texto: 'Evita tener que transformar la serie cuando la amplitud crece con el nivel.',
+            correcta: false,
+            retro: 'Al contrario: STL es <strong>aditiva</strong>. Justamente por eso este capítulo la aplica sobre $\\log(y_t)$ y no sobre la serie original.'
+          },
+          {
+            texto: 'Produce un residuo exactamente igual a cero.',
+            correcta: false,
+            retro: 'Ningún método de descomposición hace eso, ni debería: el residuo es precisamente la parte que no explican tendencia ni estacionalidad.'
+          }
+        ]
+      },
+      {
+        pregunta: 'Para <code>AirPassengers</code> obtuvimos una fuerza de tendencia $F_T = 0.994$ y una fuerza estacional $F_S = 0.937$. ¿Cómo se leen?',
+        opciones: [
+          {
+            texto: 'Las dos componentes dominan claramente sobre el residuo: un valor cercano a 1 indica componente fuerte.',
+            correcta: true,
+            retro: 'Cada fuerza compara la varianza del residuo con la de la componente más el residuo, así que va de 0 (componente despreciable) a 1 (componente dominante). Aquí las dos son altísimas, exactamente lo que se ve en el gráfico.'
+          },
+          {
+            texto: 'La tendencia explica el 99.4 % de la varianza total de la serie.',
+            correcta: false,
+            retro: 'No es una proporción de la varianza total. $F_T = 1 - \\operatorname{Var}(R)/\\operatorname{Var}(T+R)$: el denominador solo incluye tendencia y residuo, no la estacionalidad.'
+          },
+          {
+            texto: 'La estacionalidad es débil, porque $0.937$ está por debajo de $F_T$.',
+            correcta: false,
+            retro: '$0.937$ es un valor muy alto en una escala de 0 a 1. Además $F_T$ y $F_S$ tienen denominadores distintos, así que compararlas entre sí no dice cuál componente "gana".'
+          },
+          {
+            texto: 'Como $F_T > F_S$, conviene descartar el componente estacional al modelar.',
+            correcta: false,
+            retro: 'Sería un error grave: con $F_S = 0.937$ la estacionalidad es de las más marcadas que se ven en la práctica. Descartarla arruinaría cualquier pronóstico.'
+          }
+        ]
+      },
+      {
+        pregunta: '¿Para qué sirve una serie <strong>desestacionalizada</strong> (<em>seasonally adjusted</em>)?',
+        opciones: [
+          {
+            texto: 'Para comparar periodos consecutivos sin que el patrón anual enmascare el movimiento de fondo.',
+            correcta: true,
+            retro: 'Es justo el uso que le dan las cifras oficiales de empleo o PIB: sin ajustar, la caída de enero frente a diciembre diría poco, porque enero siempre cae. Ajustada, la comparación revela el cambio real.'
+          },
+          {
+            texto: 'Para pronosticar directamente, ya que no hay que modelar la estacionalidad.',
+            correcta: false,
+            retro: 'Se puede pronosticar la serie ajustada, pero para devolver el pronóstico a la escala original hay que <em>volver a añadir</em> el componente estacional. No desaparece del problema.'
+          },
+          {
+            texto: 'Para eliminar la tendencia de la serie.',
+            correcta: false,
+            retro: 'Desestacionalizar quita $S_t$, no $T_t$. De hecho, en la serie ajustada la tendencia se ve mucho mejor, precisamente porque ya no la tapa la oscilación anual.'
+          },
+          {
+            texto: 'Para eliminar los valores atípicos.',
+            correcta: false,
+            retro: 'No hace nada con los atípicos. Si acaso, en la serie ajustada resaltan más, porque se ha quitado una fuente de variación regular.'
+          }
+        ]
+      }
+    ];
   </script>
 
 </body>
