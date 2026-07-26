@@ -237,13 +237,76 @@ publicación en GitHub Pages.
     `period_range`: `seasonal_decompose().plot()` y `STL().plot()` fallan con `PeriodIndex`
     (un estudiante toparía el error) — [[leccion-...]] candidata si reaparece.
   - *Dependencias:* T1, T2. *Tamaño:* L (una sesión completa).
-- [ ] **T4 · Capítulo 2** (estacionariedad, ACF/PACF, diferenciación) — mismos criterios; simulador de φ con ACF en vivo.
+- [x] **T4 · Capítulo 2** (estacionariedad, ACF/PACF, diferenciación) — `Htmls_Series/capitulo-2-estacionariedad-acf-pacf.html`.
+  9 módulos: (1) estacionariedad estricta y débil, (2) ruido blanco, (3) ACF y correlograma,
+  (4) PACF con Durbin–Levinson, (5) caminata aleatoria y raíz unitaria, (6) ADF y KPSS,
+  (7) diferenciación, (8) logaritmo y Box–Cox, (9) pipeline + resumen + autoevaluación.
+  **4 simuladores interactivos** (explorador ACF/PACF de 8 series; deslizador de φ con ACF en
+  vivo y botón de diferenciar; contador de diferencias con lectura de varianza; deslizador de
+  λ con la curva del criterio de Guerrero) **+ 4 paneles estáticos**. Precálculo en
+  `precalculo/genera_cap2.R` → `cap2_estacionariedad.json` / `cap2_datos.js`.
+  - *Verificado:* consola sin errores; 9 módulos navegan; canvas creados = gráficos activos en
+    todos (se destruyen al cambiar de módulo); **0 errores KaTeX** en 211 fórmulas; los 8
+    bloques R parsean y **corren** (salvo las líneas `library(fpp3)`, que no está instalado
+    aquí); los 8 bloques Python corren encadenados. Verificación cruzada **R = Python = JS**:
+    ACF, PACF, ADF y KPSS sobre las 8 series coinciden con dif. máx. 1e-4 (el redondeo del
+    JSON); el λ de Guerrero en JS reproduce `BoxCox.lambda` con dif. 1e-14. El simulador de
+    diferenciación reproduce la tabla de varianzas de R (dif. relativa 3.5e-4) y su ACF(1) es
+    idéntica a 4 decimales. La TRM descargada en vivo el 2026-07-26 devuelve exactamente las
+    cifras del texto (ADF −1.9783, KPSS 2.2427, n = 138).
+  - *Hallazgos de la auditoría (todos incorporados al capítulo):*
+    1. **`adf.test(AirPassengers)` da p < 0.01**, es decir "estacionaria", en una serie con
+       tendencia y estacionalidad obvias. Causa: su `k` por defecto (5) es menor que m = 12.
+       Verificado con tres evidencias: con k = 12 el estadístico pasa a −1.53 (p = 0.771);
+       sobre la serie desestacionalizada, a −2.15 (p = 0.513); y un Monte Carlo de 500
+       réplicas muestra que el falso rechazo sube del 3.2 % al 17.6 % con la amplitud
+       estacional. **Es ahora el núcleo del módulo 6.**
+    2. **`ndiffs()` y `tseries::kpss.test()` discrepan** sobre ∇₁₂log(AP): d = 1 vs. d = 0.
+       No es un bug: `ndiffs` llama a `urca::ur.kpss` con truncamiento ⌊3√n/13⌋ = 2 y
+       `kpss.test` usa ⌊4(n/100)^¼⌋ = 4. Documentado como caja de advertencia en el módulo 7.
+    3. **El ADF de R y el de statsmodels dan el mismo estadístico y distinto p-valor**
+       (tablas de Banerjee et al. vs. superficie de MacKinnon). Documentado en el bloque
+       Python del módulo 6.
+    4. Corregido antes de publicar: `diff(x, differences = 0)` **lanza un error** en R (no es
+       la identidad), así que el bucle de sobrediferenciación no habría corrido; y los bloques
+       de R y Python del módulo 6 usaban `trm` sin definirlo nunca. Los dos arreglados.
+    5. Corregido antes de publicar: había justificado el uso del logaritmo diciendo que la
+       curva de Guerrero "es muy plana cerca del mínimo". **Es falso**: en λ = 0 el criterio
+       está 88 % por encima del mínimo y la franja dentro del 20 % es [−0.41, −0.17]. El texto
+       ahora da las cifras reales (0.530 sin transformar → 0.153 con log → 0.081 en el óptimo,
+       o sea el 84 % de la mejora posible) y justifica el logaritmo por interpretabilidad.
+  - *Desviaciones sobre el plan:* (a) se instalaron **`tseries` y `forecast`** (decisión de
+    Javier) para que las cifras salgan de las mismas funciones que usarán los estudiantes;
+    Fase 0 había evitado dependencias a propósito. (b) El precálculo va en un **script aparte**
+    (`genera_cap2.R`) para no re-descargar la TRM ni re-ajustar los 37 modelos del cap. 6 en
+    cada corrida. (c) El archivo pesa **191 KB** (50 KB comprimido), por encima del límite
+    práctico de ~160 KB de la tabla de riesgos: es contenido real (9 módulos densos), no
+    duplicación, y GitHub Pages sirve comprimido. (d) La diferenciación **estacional** se trata
+    en texto, código y correlogramas precalculados, pero el simulador interactivo cubre solo la
+    regular, para no duplicar el del capítulo 5.
   - *Dependencias:* T1, T2. *Tamaño:* L.
 
+- [x] **T4b · Componente de autoevaluación** (nuevo en la plantilla, decisión de Javier).
+  Cajas `.quiz` con preguntas de opción múltiple y **retroalimentación por opción** (también en
+  las incorrectas, explicando dónde falla el razonamiento). Registro `AUTOEVALUACIONES['id']`
+  sobre un contenedor `data-quiz="id"`, análogo a `SIMULADORES`; marcador, botón de reiniciar,
+  `role="group"` y `role="status"`, y KaTeX dentro de la retroalimentación.
+  6 preguntas en el capítulo 2 y **6 retropropagadas al capítulo 1**.
+  - *Verificado en ambos capítulos:* 6×4 opciones, exactamente una correcta por pregunta,
+    marcador correcto al acertar y al fallar, botones bloqueados tras responder, reinicio
+    limpio, 0 errores de KaTeX en la retroalimentación, consola sin errores y los simuladores
+    previos del capítulo 1 intactos.
+
 ### Checkpoint 1
-- [ ] Revisión de Javier del capítulo 1 completo (tono, profundidad, densidad de fórmulas y código) antes de continuar. Ajustes se propagan a la plantilla.
+- [x] Revisión de Javier del capítulo 1 (2026-07-26): **sin cambios**; se mantienen tono,
+      profundidad y densidad de fórmulas y código para los capítulos siguientes.
 
 ### Fase 2 — Capítulos 3 y 4
+
+**Siguiente tarea: T5.** Al retomar, arranca por aquí. Ya disponible para reutilizar: la
+fábrica `crearGraficoBarras` (correlogramas con banda ±1.96/√T), `calcularPACF`
+(Durbin–Levinson, verificado contra R), `crearSelector`, `crearInterruptores`, la lectura
+numérica `.simulador-lectura` y el componente `.quiz`. Copiar el capítulo 2 como base.
 
 - [ ] **T5 · Capítulo 3** (AR/MA/ARMA) — simulador con ACF/PACF teóricas y triángulo AR(2). *Dependencias:* T1, T2. *Tamaño:* L.
 - [ ] **T6 · Capítulo 4** (ARIMA) — explorador de modelos con rejilla precalculada. *Dependencias:* T2 (rejilla), T5 (continuidad narrativa). *Tamaño:* L.
