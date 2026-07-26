@@ -1491,6 +1491,62 @@
       font-size: 0.8125rem;
       margin: 0.75rem 0;
     }
+    /* ------------------------------------------------------------------
+       Aire alrededor de los gráficos.
+       Auditoría del 2026-07-26: el título del simulador quedaba pegado a su
+       párrafo (0 px) y las etiquetas que encabezan cada panel quedaban a 4 px
+       del lienzo, con lo que el bloque se leía amontonado. Los márgenes iban
+       en atributos `style` repartidos por el HTML; aquí se centralizan en dos
+       clases con un ritmo vertical propio.
+       ------------------------------------------------------------------ */
+    .simulador h4 {
+      margin-bottom: 0.7rem;
+    }
+
+    /* Párrafo que presenta el simulador, justo debajo del título */
+    .simulador-intro {
+      margin: 0 0 1rem 0;
+      font-size: 0.875rem;
+      line-height: 1.65;
+      text-align: left;
+      color: #475569;
+    }
+
+    /* Etiqueta que encabeza un panel concreto dentro de un simulador */
+    .grafico-etiqueta {
+      margin: 1.25rem 0 0.5rem 0;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      line-height: 1.5;
+      text-align: left;
+      color: #012820;
+    }
+
+    /* El espacio lo pone siempre el elemento de arriba: así no se acumulan
+       márgenes ni quedan huecos dobles entre paneles consecutivos. */
+    .simulador-intro + .grafico-wrapper,
+    .simulador-controles + .grafico-wrapper,
+    .grafico-etiqueta + .grafico-wrapper {
+      margin-top: 0;
+    }
+
+    .grafico-wrapper + .grafico-wrapper {
+      margin-top: 0.9rem;
+    }
+
+    /* La lectura numérica se separa del lienzo con una línea fina, para que
+       se lea como una banda de resultados y no como un pie pegado al gráfico. */
+    .simulador-lectura {
+      margin-top: 1rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid rgba(1, 40, 32, 0.12);
+      line-height: 1.55;
+    }
+
+    /* Enunciado de una pregunta con gráfico: mismo criterio de separación */
+    .quiz-pregunta .quiz-enunciado + .quiz-grafico {
+      margin-top: 0.9rem;
+    }
   </style>
 </head>
 
@@ -1633,7 +1689,7 @@
 
       <div class="simulador" data-simulador="serie-airpassengers">
         <h4><i class="fas fa-chart-line" aria-hidden="true"></i> La serie <code>AirPassengers</code></h4>
-        <p class="text-sm" style="margin-bottom:0.5rem;">Pasajeros mensuales de aerolíneas internacionales
+        <p class="simulador-intro">Pasajeros mensuales de aerolíneas internacionales
           (1949–1960). Es la serie clásica de este curso: se ve una <em>tendencia</em> creciente y un patrón que se
           repite cada 12 meses cuya amplitud aumenta con el nivel.</p>
         <div class="grafico-wrapper">
@@ -1789,7 +1845,7 @@ print(pasajeros.head())</code></pre>
 
       <div class="simulador" data-simulador="grafico-estacional">
         <h4><i class="fas fa-calendar-alt" aria-hidden="true"></i> Gráfico estacional de <code>AirPassengers</code></h4>
-        <p class="text-sm" style="margin-bottom:0.5rem;">Cada línea es un año; el eje horizontal son los meses de enero
+        <p class="simulador-intro">Cada línea es un año; el eje horizontal son los meses de enero
           a diciembre. El pico de mediados de año (vacaciones de verano en el hemisferio norte) se repite y crece año
           tras año: eso es <em>estacionalidad</em> de amplitud creciente.</p>
         <div class="grafico-wrapper">
@@ -1889,7 +1945,7 @@ plt.show()</code></pre>
 
       <div class="simulador" data-simulador="construye-tu-serie">
         <h4><i class="fas fa-sliders-h" aria-hidden="true"></i> Simulador: construye tu serie</h4>
-        <p class="text-sm" style="margin-bottom:0.5rem;">Serie aditiva $y_t = \beta\,t + A\sin(2\pi t/12) + \sigma\,
+        <p class="simulador-intro">Serie aditiva $y_t = \beta\,t + A\sin(2\pi t/12) + \sigma\,
           \varepsilon_t$. Mueve los deslizadores para aislar el efecto de cada componente; el ruido usa una semilla
           fija, así que al cambiar $\sigma$ varía su escala pero no su forma. Haz clic en la leyenda para ocultar
           componentes.</p>
@@ -1933,7 +1989,7 @@ plt.show()</code></pre>
 
       <div class="simulador" data-simulador="media-movil">
         <h4><i class="fas fa-wave-square" aria-hidden="true"></i> Simulador: media móvil sobre <code>AirPassengers</code></h4>
-        <p class="text-sm" style="margin-bottom:0.5rem;">Mueve el orden $m$ de la ventana. Con $m$ pequeño la curva
+        <p class="simulador-intro">Mueve el orden $m$ de la ventana. Con $m$ pequeño la curva
           sigue el ruido; al llegar a $m=12$ desaparece la estacionalidad y aparece limpia la tendencia. Órdenes muy
           grandes también recortan los extremos (no hay vecinos suficientes).</p>
         <div class="simulador-controles"></div>
@@ -2004,13 +2060,13 @@ plt.legend(); plt.show()</code></pre>
       <div class="simulador" data-simulador="descomp-clasica">
         <h4><i class="fas fa-layer-group" aria-hidden="true"></i> Descomposición multiplicativa de
           <code>AirPassengers</code></h4>
-        <p class="text-sm" style="margin-bottom:0.5rem;">De arriba abajo: serie observada, tendencia (media móvil
+        <p class="simulador-intro">De arriba abajo: serie observada, tendencia (media móvil
           centrada 2×12), factor estacional (repite cada 12 meses) y residuo. En el modelo multiplicativo, estacional
           y residuo oscilan alrededor de <strong>1</strong>, no de 0.</p>
         <div class="grafico-wrapper" style="height:120px;"><canvas aria-label="Componente observado" role="img"></canvas></div>
-        <div class="grafico-wrapper" style="height:120px; margin-top:0.5rem;"><canvas aria-label="Componente tendencia" role="img"></canvas></div>
-        <div class="grafico-wrapper" style="height:120px; margin-top:0.5rem;"><canvas aria-label="Componente estacional" role="img"></canvas></div>
-        <div class="grafico-wrapper" style="height:120px; margin-top:0.5rem;"><canvas aria-label="Componente residuo" role="img"></canvas></div>
+        <div class="grafico-wrapper" style="height:120px;"><canvas aria-label="Componente tendencia" role="img"></canvas></div>
+        <div class="grafico-wrapper" style="height:120px;"><canvas aria-label="Componente estacional" role="img"></canvas></div>
+        <div class="grafico-wrapper" style="height:120px;"><canvas aria-label="Componente residuo" role="img"></canvas></div>
       </div>
 
       <div class="code-tabs" role="group" aria-label="Descomposición clásica en R y Python">
@@ -2081,13 +2137,13 @@ dc.plot()</code></pre>
 
       <div class="simulador" data-simulador="descomp-stl">
         <h4><i class="fas fa-stream" aria-hidden="true"></i> STL de <code>log(AirPassengers)</code></h4>
-        <p class="text-sm" style="margin-bottom:0.5rem;">Componentes en <strong>escala logarítmica</strong> (por eso
+        <p class="simulador-intro">Componentes en <strong>escala logarítmica</strong> (por eso
           suman): de arriba abajo, $\log y_t$ observado, tendencia, estacional y residuo. Nota que la tendencia llega
           hasta los extremos y el residuo no tiene estructura visible.</p>
         <div class="grafico-wrapper" style="height:120px;"><canvas aria-label="log observado" role="img"></canvas></div>
-        <div class="grafico-wrapper" style="height:120px; margin-top:0.5rem;"><canvas aria-label="tendencia STL" role="img"></canvas></div>
-        <div class="grafico-wrapper" style="height:120px; margin-top:0.5rem;"><canvas aria-label="estacional STL" role="img"></canvas></div>
-        <div class="grafico-wrapper" style="height:120px; margin-top:0.5rem;"><canvas aria-label="residuo STL" role="img"></canvas></div>
+        <div class="grafico-wrapper" style="height:120px;"><canvas aria-label="tendencia STL" role="img"></canvas></div>
+        <div class="grafico-wrapper" style="height:120px;"><canvas aria-label="estacional STL" role="img"></canvas></div>
+        <div class="grafico-wrapper" style="height:120px;"><canvas aria-label="residuo STL" role="img"></canvas></div>
       </div>
 
       <div class="code-tabs" role="group" aria-label="STL en R y Python">
@@ -2157,7 +2213,7 @@ res.plot()</code></pre>
 
       <div class="simulador" data-simulador="desestacionalizada">
         <h4><i class="fas fa-adjust" aria-hidden="true"></i> Serie observada vs. desestacionalizada</h4>
-        <p class="text-sm" style="margin-bottom:0.5rem;">La línea desestacionalizada ($y_t/\hat{S}_t$) elimina el
+        <p class="simulador-intro">La línea desestacionalizada ($y_t/\hat{S}_t$) elimina el
           diente de sierra mensual y deja la tendencia-ciclo más un residuo suave.</p>
         <div class="grafico-wrapper">
           <canvas aria-label="Serie observada y serie desestacionalizada superpuestas" role="img"></canvas>
@@ -3343,7 +3399,13 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
             const exacto = marcadas.size === correctas.size &&
               [...marcadas].every(j => correctas.has(j));
             if (exacto) {
-              botones.forEach((b, j) => { b.disabled = true; if (correctas.has(j)) b.classList.add('correcta'); });
+              // Se quita 'marcada' antes de pintar el estado final: las dos clases
+              // empatan en especificidad y si no, ganaría la de "marcada".
+              botones.forEach((b, j) => {
+                b.disabled = true;
+                b.classList.remove('marcada');
+                if (correctas.has(j)) b.classList.add('correcta');
+              });
               boton.disabled = true;
               cerrar(i, bloque, true, p.retroAcierto);
             } else if (estado[i].intentos === 1) {
@@ -3357,6 +3419,7 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
             } else {
               botones.forEach((b, j) => {
                 b.disabled = true;
+                b.classList.remove('marcada');
                 if (correctas.has(j)) b.classList.add(marcadas.has(j) ? 'correcta' : 'faltaba');
                 else if (marcadas.has(j)) b.classList.add('incorrecta');
               });
