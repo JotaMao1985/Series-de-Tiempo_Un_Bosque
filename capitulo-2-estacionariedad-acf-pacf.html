@@ -1040,6 +1040,293 @@
     footer ul li {
       color: rgba(255, 255, 255, 0.92);
     }
+    /* Barra de progreso de la autoevaluación */
+    .quiz-progreso {
+      height: 6px;
+      background: #fde68a;
+      border-radius: 3px;
+      overflow: hidden;
+      margin: 0.85rem 0 0.25rem 0;
+    }
+
+    .quiz-progreso-barra {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, #b45309 0%, #FF6600 100%);
+      border-radius: 3px;
+      transition: width 0.35s ease;
+    }
+
+    /* Etiqueta del tipo de pregunta */
+    .quiz-tipo {
+      display: inline-block;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #92400e;
+      background: #fef3c7;
+      border-radius: 50px;
+      padding: 0.1rem 0.6rem;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+
+    /* Pista: aparece tras el primer fallo, antes de revelar la respuesta */
+    .quiz-pista {
+      margin-top: 0.75rem;
+      padding: 0.7rem 0.9rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      background: #fffbeb;
+      border-left: 3px solid #f59e0b;
+      color: #78350f;
+    }
+
+    .quiz-pista[hidden] {
+      display: none;
+    }
+
+    /* Opción marcada por el estudiante en selección múltiple, aún sin corregir */
+    .quiz-opcion.marcada {
+      background: #fff7ed;
+      border-color: #FF6600;
+      font-weight: 600;
+    }
+
+    .quiz-opcion .quiz-casilla {
+      flex-shrink: 0;
+      width: 1rem;
+      height: 1rem;
+      margin-top: 0.15rem;
+      border: 2px solid #94a3b8;
+      border-radius: 0.25rem;
+      display: inline-block;
+      position: relative;
+    }
+
+    .quiz-opcion.marcada .quiz-casilla {
+      border-color: #FF6600;
+      background: #FF6600;
+    }
+
+    .quiz-opcion.marcada .quiz-casilla::after {
+      content: '';
+      position: absolute;
+      left: 3px;
+      top: 0;
+      width: 4px;
+      height: 8px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+
+    /* Falta por marcar: se señala al corregir una selección múltiple */
+    .quiz-opcion.faltaba {
+      border-color: #6ee7b7;
+      border-style: dashed;
+      background: #f0fdf4;
+    }
+
+    /* Respuesta numérica */
+    .quiz-numerica {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.25rem;
+    }
+
+    .quiz-numerica input {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.95rem;
+      color: #012820;
+      background: white;
+      border: 1px solid rgba(1, 40, 32, 0.25);
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.7rem;
+      width: 11rem;
+    }
+
+    .quiz-numerica input:focus-visible {
+      outline: 2px solid #FF6600;
+      outline-offset: 1px;
+    }
+
+    .quiz-numerica input:disabled {
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    .quiz-numerica .quiz-unidad {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8125rem;
+      color: #475569;
+    }
+
+    .quiz-comprobar {
+      font-family: inherit;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: white;
+      background: #012820;
+      border: none;
+      border-radius: 50px;
+      padding: 0.5rem 1.1rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .quiz-comprobar:hover:not(:disabled) {
+      background: #FF6600;
+    }
+
+    .quiz-comprobar:disabled {
+      background: #94a3b8;
+      cursor: default;
+    }
+
+    /* Gráfico dentro de una pregunta */
+    .quiz-grafico {
+      position: relative;
+      height: 210px;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 0.6rem;
+      margin-bottom: 0.85rem;
+    }
+
+    /* Resumen final */
+    .quiz-resumen {
+      margin-top: 1.15rem;
+      padding: 1rem 1.15rem;
+      border-radius: 0.5rem;
+      background: white;
+      border: 1px solid #fde68a;
+      font-size: 0.9rem;
+      color: #334155;
+    }
+
+    .quiz-resumen[hidden] {
+      display: none;
+    }
+
+    .quiz-resumen h5 {
+      margin: 0 0 0.5rem 0;
+      color: #92400e;
+      font-weight: 700;
+    }
+
+    .quiz-resumen ul {
+      margin: 0.5rem 0 0 0;
+      padding-left: 1.1rem;
+    }
+
+    .quiz-resumen ul li {
+      color: #334155;
+    }
+
+    /* ------------------------------------------------------------------
+       Ejercicios guiados: pista y solución comentada desplegables.
+       ------------------------------------------------------------------ */
+    .ejercicio-guiado {
+      background: white;
+      border: 1px solid #dbeafe;
+      border-radius: 0.5rem;
+      padding: 1rem 1.15rem;
+      margin-top: 1rem;
+    }
+
+    .ejercicio-guiado > p:first-child {
+      margin-top: 0;
+    }
+
+    .ejercicio-enunciado {
+      font-weight: 500;
+      color: #1e293b;
+    }
+
+    .ejercicio-enunciado .ejercicio-numero {
+      font-weight: 700;
+      color: #1e40af;
+      margin-right: 0.4rem;
+    }
+
+    .ejercicio-acciones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .ejercicio-boton {
+      font-family: inherit;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #1e40af;
+      background: transparent;
+      border: 1px solid #93c5fd;
+      border-radius: 50px;
+      padding: 0.35rem 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .ejercicio-boton:hover {
+      background: #dbeafe;
+    }
+
+    .ejercicio-boton[aria-expanded="true"] {
+      background: #1e40af;
+      color: white;
+      border-color: #1e40af;
+    }
+
+    .ejercicio-boton .fa-chevron-down {
+      transition: transform 0.2s ease;
+      font-size: 0.7rem;
+    }
+
+    .ejercicio-boton[aria-expanded="true"] .fa-chevron-down {
+      transform: rotate(180deg);
+    }
+
+    .ejercicio-panel {
+      margin-top: 0.75rem;
+      padding: 0.85rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .ejercicio-panel[hidden] {
+      display: none;
+    }
+
+    .ejercicio-panel.pista {
+      background: #fffbeb;
+      border-left: 3px solid #f59e0b;
+      color: #78350f;
+    }
+
+    .ejercicio-panel.solucion {
+      background: #f8fafc;
+      border-left: 3px solid #1e40af;
+      color: #1e293b;
+    }
+
+    .ejercicio-panel.solucion .code-block-wrapper {
+      margin-bottom: 1rem;
+    }
+
+    .ejercicio-panel table {
+      font-size: 0.8125rem;
+      margin: 0.75rem 0;
+    }
   </style>
 </head>
 
@@ -2706,7 +2993,9 @@ print(res["d"], res["D"], round(res["var_final"], 5), round(res["kpss_p"], 3))
         <h4><i class="fas fa-circle-question" aria-hidden="true"></i> Autoevaluación</h4>
         <p class="text-sm" style="margin-bottom:0;">Seis preguntas para comprobar lo esencial. Cada opción tiene su
           explicación: si te equivocas, la retroalimentación te dice exactamente dónde estuvo el razonamiento.</p>
+        <div class="quiz-progreso" role="presentation"><div class="quiz-progreso-barra"></div></div>
         <div class="quiz-preguntas"></div>
+        <div class="quiz-resumen" role="status" hidden></div>
         <div class="quiz-marcador">
           <span class="quiz-conteo"></span>
           <button type="button" class="quiz-reiniciar">Reiniciar</button>
@@ -2715,23 +3004,259 @@ print(res["d"], res["D"], round(res["var_final"], 5), round(res["kpss_p"], 3))
 
       <div class="exercise">
         <h4><i class="fas fa-pen-to-square mr-2" aria-hidden="true"></i>Ejercicios propuestos</h4>
-        <ol style="margin-bottom:0;">
-          <li>Toma la serie <code>co2</code> de R (CO₂ en Mauna Loa, mensual). Grafícala, calcula ACF y PACF, y aplica
-            el pipeline del Módulo 9. ¿Cuántas diferencias regulares y estacionales hacen falta? Justifica con las tres
-            señales (correlograma, pruebas y varianza).</li>
-          <li>Simula 500 caminatas aleatorias de longitud 100 y aplica <code>adf.test</code> a cada una. ¿En qué
-            porcentaje rechazas $H_0$? Compara con el 5 % nominal y explica la diferencia con lo que viste en el
-            Módulo 6.</li>
-          <li>Sobre <code>USAccDeaths</code>, compara $\nabla y_t$, $\nabla_{12} y_t$ y $\nabla_{12}\nabla y_t$.
-            ¿Cuál de las tres deja los residuales más cerca del ruido blanco? Usa la varianza y el correlograma.</li>
-          <li>Descarga la TRM actualizada de <a href="https://www.datos.gov.co/resource/32sa-8pi3.json" target="_blank"
-              rel="noopener">datos.gov.co</a> y repite el análisis del Módulo 6 con los datos más recientes. ¿Cambia
-            la conclusión sobre la raíz unitaria?</li>
-          <li><strong>Con IA como tutor:</strong> pide a un asistente que te explique por qué el ADF puede rechazar la
-            raíz unitaria en una serie estacional. Contrasta su respuesta con las tres evidencias del Módulo 6 y señala
-            qué partes de su explicación pudiste <em>verificar</em> ejecutando código y cuáles se quedaron en
-            afirmaciones sin comprobar.</li>
-        </ol>
+        <p class="text-sm" style="margin-bottom:0.5rem;">Intenta cada uno <strong>antes</strong> de abrir nada. Si te
+          atascas, la pista te dice por dónde entrar sin darte la respuesta; la solución trae el código y las cifras
+          reales, para que puedas compararlas con las tuyas.</p>
+
+        <div class="ejercicio-guiado">
+          <p class="ejercicio-enunciado"><span class="ejercicio-numero">1.</span>Toma la serie <code>co2</code> de R
+            (CO₂ en Mauna Loa, mensual). Grafícala, calcula ACF y PACF, y aplica el pipeline del Módulo 9. ¿Cuántas
+            diferencias regulares y estacionales hacen falta? Justifica con las tres señales (correlograma, pruebas y
+            varianza).</p>
+          <div class="ejercicio-acciones">
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c2e1-pista">
+              <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c2e1-sol">
+              <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="ejercicio-panel pista" id="c2e1-pista" hidden>
+            <p style="margin:0;">Respeta el orden del pipeline: <strong>primero</strong> decide si hay que transformar,
+              <strong>después</strong> la diferencia estacional y <strong>solo al final</strong> la regular. Y cuidado
+              con dos cosas: el $\lambda$ de Guerrero aquí no te va a servir de mucho (piensa cuánto varía el
+              <em>nivel</em> del CO₂ en toda la muestra), y la varianza hay que compararla <em>después</em> de la
+              diferencia estacional, no sobre la serie cruda.</p>
+          </div>
+          <div class="ejercicio-panel solucion" id="c2e1-sol" hidden>
+            <p><strong>Respuesta: $d = 1$ y $D = 1$.</strong></p>
+            <pre><code class="language-r">library(forecast); library(tseries)
+
+# 1. Transformar? El nivel del CO2 solo varia un 15.9% en toda la muestra
+(max(co2) - min(co2)) / mean(co2)          # 0.159
+BoxCox.lambda(co2, method = "guerrero")    # -0.0343, pero poco informativo:
+# sobre un rango tan estrecho cualquier potencia es casi lineal y lambda queda
+# mal identificado. Se trabaja sin transformar.
+
+# 2. Diferencia estacional PRIMERO
+nsdiffs(co2)                                # 1
+co2_s <- diff(co2, lag = 12)
+
+# 3. Y ahora la regular
+ndiffs(co2_s)                               # 1
+co2_sd <- diff(co2_s)
+
+# Las tres senales, todas de acuerdo:
+acf(co2, lag.max = 24, plot = FALSE)$acf[c(2, 13)]   # r1 = 0.9909, r12 = 0.9284
+difn <- function(x, d) if (d == 0) x else diff(x, differences = d)
+sapply(0:3, function(d) var(difn(co2_s, d)))
+# 0.3882  0.1543  0.4023  1.3123   <- minimo en d = 1
+kpss.test(co2_sd)$p.value                   # > 0.10: ya no se rechaza</code></pre>
+            <table>
+              <caption class="sr-only">Las tres señales sobre co2</caption>
+              <thead>
+                <tr><th scope="col">Señal</th><th scope="col">Qué dice</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Correlograma</td><td>$r_1 = 0.991$ y $r_{12} = 0.928$ con banda $\pm 0.091$: tendencia
+                  <em>y</em> estacionalidad, las dos muy marcadas</td></tr>
+                <tr><td>Pruebas</td><td><code>nsdiffs</code> = 1; tras $\nabla_{12}$, <code>ndiffs</code> = 1</td></tr>
+                <tr><td>Varianza (tras $\nabla_{12}$)</td><td>0.388 → <strong>0.154</strong> → 0.402 → 1.312: mínimo
+                  en $d = 1$</td></tr>
+              </tbody>
+            </table>
+            <p><strong>La serie final</strong> $\nabla\nabla_{12}\,y_t$ tiene $n = 455$, varianza $0.154$,
+              $r_1 = -0.302$ y KPSS con $p &gt; 0.10$. Ojo con dos detalles honestos: quedan <strong>5 de 24</strong>
+              rezagos fuera de la banda, así que <em>no</em> es ruido blanco — sigue habiendo estructura ARMA que
+              modelar, y eso es justo el trabajo del Capítulo 3. Y ese $r_1 = -0.302$ no es sobrediferenciación sino la
+              huella del componente MA que aparecerá en el modelo.</p>
+          </div>
+        </div>
+
+        <div class="ejercicio-guiado">
+          <p class="ejercicio-enunciado"><span class="ejercicio-numero">2.</span>Simula 500 caminatas aleatorias de
+            longitud 100 y aplica <code>adf.test</code> a cada una. ¿En qué porcentaje rechazas $H_0$? Compara con el
+            5&nbsp;% nominal y explica la diferencia con lo que viste en el Módulo 6.</p>
+          <div class="ejercicio-acciones">
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c2e2-pista">
+              <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c2e2-sol">
+              <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="ejercicio-panel pista" id="c2e2-pista" hidden>
+            <p style="margin:0;">En estas 500 series $H_0$ (hay raíz unitaria) es <strong>cierta por
+              construcción</strong>, porque tú las fabricaste como caminatas. Así que todo rechazo es un error de tipo I.
+              Antes de correr nada, predice: ¿cuántos esperas, si la prueba está bien calibrada? Y luego pregúntate qué
+              tenían de distinto las series del Monte Carlo del Módulo 6.</p>
+          </div>
+          <div class="ejercicio-panel solucion" id="c2e2-sol" hidden>
+            <p><strong>Respuesta: 4.6&nbsp;% — la prueba está bien calibrada.</strong></p>
+            <pre><code class="language-r">library(tseries)
+set.seed(2026)
+p &lt;- replicate(500, suppressWarnings(adf.test(cumsum(rnorm(100)))$p.value))
+
+100 * mean(p &lt; 0.05)   # 4.6 %  (nominal: 5 %)
+100 * mean(p &lt; 0.10)   # 9.2 %  (nominal: 10 %)
+
+# Y no es que la prueba nunca rechace: sobre ruido blanco, donde H0 es FALSA,
+# rechaza el 93.8 % de las veces. Tiene potencia de sobra.
+set.seed(2026)
+p2 &lt;- replicate(500, suppressWarnings(adf.test(rnorm(100))$p.value))
+100 * mean(p2 &lt; 0.05)  # 93.8 %</code></pre>
+            <p><strong>La comparación con el Módulo 6 es el punto del ejercicio.</strong> Aquí el falso rechazo es
+              4.6&nbsp;%, prácticamente el 5&nbsp;% nominal; allá llegaba al <strong>17.6&nbsp;%</strong>. La única
+              diferencia entre los dos experimentos es que a aquellas caminatas se les sumó una componente estacional.
+              Conclusión: el ADF <strong>no está roto</strong> —sobre caminatas puras se comporta exactamente como
+              promete—; lo que lo rompe es aplicarlo a una serie estacional con menos rezagos que el periodo.</p>
+          </div>
+        </div>
+
+        <div class="ejercicio-guiado">
+          <p class="ejercicio-enunciado"><span class="ejercicio-numero">3.</span>Sobre <code>USAccDeaths</code>, compara
+            $\nabla y_t$, $\nabla_{12} y_t$ y $\nabla_{12}\nabla y_t$. ¿Cuál de las tres deja los residuales más cerca
+            del ruido blanco? Usa la varianza y el correlograma.</p>
+          <div class="ejercicio-acciones">
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c2e3-pista">
+              <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c2e3-sol">
+              <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="ejercicio-panel pista" id="c2e3-pista" hidden>
+            <p style="margin:0;">No te quedes en la varianza: mírala junto con <strong>cuántos rezagos se salen de la
+              banda</strong> y con $r_{12}$, que es donde vive la estacionalidad. Y si consultas
+              <code>ndiffs(USAccDeaths)</code> directamente, desconfía del número que salga y relee la caja de
+              advertencia del Módulo 7.</p>
+          </div>
+          <div class="ejercicio-panel solucion" id="c2e3-sol" hidden>
+            <p><strong>Respuesta: $\nabla_{12}\nabla y_t$.</strong></p>
+            <pre><code class="language-r">library(forecast)
+y &lt;- USAccDeaths
+
+# La trampa: ndiffs sobre la serie CRUDA dice 0, porque la estacionalidad
+# domina y confunde a la prueba. El orden correcto es estacional primero.
+ndiffs(y)                     # 0   <- enganoso
+nsdiffs(y)                    # 1
+ndiffs(diff(y, lag = 12))     # 1   <- este es el bueno
+
+banda &lt;- function(x) 1.96 / sqrt(length(x))
+resumen &lt;- function(x, nombre) {
+  r &lt;- acf(x, lag.max = 24, plot = FALSE)$acf[-1]
+  data.frame(serie = nombre, n = length(x), varianza = round(var(x)),
+             r1 = round(r[1], 4), r12 = round(r[12], 4),
+             fuera = sum(abs(r) &gt; banda(x)),
+             ljung_box_p = round(Box.test(x, lag = 24, type = "Ljung-Box")$p.value, 4))
+}
+rbind(resumen(y, "original"),
+      resumen(diff(y), "nabla"),
+      resumen(diff(y, lag = 12), "nabla12"),
+      resumen(diff(diff(y), lag = 12), "nabla12 nabla"))</code></pre>
+            <table>
+              <caption class="sr-only">Comparación de las tres diferenciaciones sobre USAccDeaths</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Serie</th><th scope="col">$n$</th><th scope="col">Varianza</th>
+                  <th scope="col">$r_1$</th><th scope="col">$r_{12}$</th>
+                  <th scope="col">Fuera de banda</th><th scope="col">Ljung–Box $p$</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Original</td><td>72</td><td>917 290</td><td>0.708</td><td>0.629</td><td>14 de 24</td><td>&lt; 0.0001</td></tr>
+                <tr><td>$\nabla$</td><td>71</td><td>540 735</td><td>0.023</td><td>0.709</td><td>6 de 24</td><td>&lt; 0.0001</td></tr>
+                <tr><td>$\nabla_{12}$</td><td>60</td><td>288 866</td><td>0.690</td><td>−0.077</td><td>6 de 24</td><td>&lt; 0.0001</td></tr>
+                <tr><td><strong>$\nabla_{12}\nabla$</strong></td><td>59</td><td><strong>154 530</strong></td><td>−0.353</td><td>−0.336</td><td><strong>2 de 24</strong></td><td>0.033</td></tr>
+              </tbody>
+            </table>
+            <p>Cada diferencia sola arregla la mitad del problema y deja la otra intacta: $\nabla$ limpia el rezago 1
+              ($r_1 = 0.023$) pero deja la estacionalidad viva ($r_{12} = 0.709$), y $\nabla_{12}$ hace exactamente lo
+              contrario. Solo aplicando las dos bajan a la vez la varianza (a 154 530, la más baja) y el número de
+              rezagos fuera de banda (2 de 24).</p>
+            <p style="margin-bottom:0;"><strong>Una advertencia sobre el $r_1 = -0.353$:</strong> es tentador leerlo
+              como sobrediferenciación, porque se parece al $-0.5$ del Módulo 7. Pero aquí no lo es. Las tres señales
+              apuntan a $\nabla_{12}\nabla$ (varianza mínima, menos rezagos fuera, Ljung–Box el único que no está
+              pegado a cero), y ese $r_1$ negativo es la huella del <strong>componente MA(1)</strong> del modelo
+              <em>airline</em> que ajustaremos en el Capítulo 5. La sobrediferenciación se reconoce porque la varianza
+              <em>sube</em>; aquí baja.</p>
+          </div>
+        </div>
+
+        <div class="ejercicio-guiado">
+          <p class="ejercicio-enunciado"><span class="ejercicio-numero">4.</span>Descarga la TRM actualizada de
+            <a href="https://www.datos.gov.co/resource/32sa-8pi3.json" target="_blank" rel="noopener">datos.gov.co</a>
+            y repite el análisis del Módulo 6 con los datos más recientes. ¿Cambia la conclusión sobre la raíz
+            unitaria?</p>
+          <div class="ejercicio-acciones">
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c2e4-pista">
+              <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c2e4-sol">
+              <i class="fas fa-key" aria-hidden="true"></i> Cómo comprobarlo <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="ejercicio-panel pista" id="c2e4-pista" hidden>
+            <p style="margin:0;">El código de descarga está en el bloque R del Módulo 6, listo para copiar. Antes de
+              correrlo, escribe tu predicción: los tipos de cambio son el ejemplo clásico de caminata aleatoria con
+              deriva, así que ¿esperas que unos meses más de datos cambien el veredicto?</p>
+          </div>
+          <div class="ejercicio-panel solucion" id="c2e4-sol" hidden>
+            <p>Este ejercicio <strong>no tiene una respuesta fija</strong>: depende de cuándo lo hagas. Lo que sí es
+              fijo es el punto de comparación. Al corte de este material (junio de 2026, $n = 138$ meses):</p>
+            <ul>
+              <li>TRM en niveles: ADF $p = 0.586$ (no rechaza) y KPSS $p &lt; 0.01$ (rechaza estacionariedad)
+                → <strong>raíz unitaria</strong>.</li>
+              <li>$\nabla$TRM: ADF $p = 0.017$ (rechaza) y KPSS $p &gt; 0.10$ (no rechaza)
+                → <strong>estacionaria</strong>. <code>ndiffs</code> = 1.</li>
+            </ul>
+            <p style="margin-bottom:0;">Lo esperable es que el veredicto <strong>no cambie</strong>, y ese es el
+              aprendizaje: la conclusión sobre una raíz unitaria es una propiedad estructural de la serie, no un
+              accidente de la ventana de datos. Si <em>sí</em> te cambia, no lo des por bueno de inmediato: comprueba
+              primero que la descarga trajo todos los meses, que descartaste el mes en curso (que está incompleto y
+              distorsiona el último dato) y que la frecuencia quedó declarada como mensual.</p>
+          </div>
+        </div>
+
+        <div class="ejercicio-guiado">
+          <p class="ejercicio-enunciado"><span class="ejercicio-numero">5.</span><strong>Con IA como tutor:</strong>
+            pide a un asistente que te explique por qué el ADF puede rechazar la raíz unitaria en una serie estacional.
+            Contrasta su respuesta con las tres evidencias del Módulo 6 y señala qué partes de su explicación pudiste
+            <em>verificar</em> ejecutando código y cuáles se quedaron en afirmaciones sin comprobar.</p>
+          <div class="ejercicio-acciones">
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c2e5-pista">
+              <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c2e5-sol">
+              <i class="fas fa-list-check" aria-hidden="true"></i> Criterios de una buena respuesta <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="ejercicio-panel pista" id="c2e5-pista" hidden>
+            <p style="margin:0;">No le preguntes solo "¿por qué?". Pídele además una <strong>predicción
+              falsable</strong>: "si tu explicación es correcta, ¿qué debería pasar con el estadístico si subo $k$ a
+              12?". Una explicación que no permite predecir nada no se puede verificar, y ahí está el ejercicio.</p>
+          </div>
+          <div class="ejercicio-panel solucion" id="c2e5-sol" hidden>
+            <p>Al ser un ejercicio abierto no hay respuesta única, pero sí criterios claros. Una buena entrega:</p>
+            <ol>
+              <li><strong>Identifica el mecanismo concreto</strong>, no una vaguedad. "La estacionalidad afecta a la
+                prueba" no sirve; "los $k=5$ rezagos por defecto no cubren el periodo $m=12$, así que la oscilación
+                anual queda en el residuo y se lee como reversión a la media" sí.</li>
+              <li><strong>Convierte la explicación en una predicción y la ejecuta.</strong> Si el mecanismo es el
+                número de rezagos, subir $k$ a 12 debe cambiar el resultado: y lo hace ($-6.42 \to -1.53$).</li>
+              <li><strong>Separa lo verificado de lo aceptado a ciegas.</strong> Ejemplo de lo primero: los
+                estadísticos con distintos $k$, el resultado sobre la serie desestacionalizada, la tasa de falso
+                rechazo del Monte Carlo. Ejemplo de lo segundo: cualquier afirmación sobre "la literatura dice" o
+                sobre la distribución asintótica del estadístico, que no comprobaste.</li>
+              <li><strong>Señala los errores del asistente si los hubo.</strong> Es frecuente que confunda la
+                estacionalidad con la tendencia, que atribuya el problema a la tabla de p-valores en vez de a la
+                especificación, o que invente un valor crítico. Detectarlo <em>es</em> el ejercicio.</li>
+            </ol>
+            <p style="margin-bottom:0;">La idea de fondo vale para todo el curso: un asistente es útil para generar
+              hipótesis y rapidísimo para producir texto plausible. La parte que no puede delegar es la verificación, y
+              en series de tiempo verificar casi siempre significa <strong>correr el código y mirar el número</strong>.</p>
+          </div>
+        </div>
       </div>
 
       <div class="references">
@@ -2825,6 +3350,7 @@ print(res["d"], res["D"], round(res["var_final"], 5), round(res["kpss_p"], 3))
         initCodeTabs();
         iniciarSimuladores();
         iniciarAutoevaluaciones();
+        iniciarEjerciciosGuiados();
         renderMathInElement(mainContent, {
           delimiters: [
             { left: "$$", right: "$$", display: true },
@@ -3396,15 +3922,28 @@ print(res["d"], res["D"], round(res["var_final"], 5), round(res["kpss_p"], 3))
     }
 
     // ================================================================
-    // Autoevaluación
+    // Autoevaluación (v2)
     //
-    // Uso: AUTOEVALUACIONES['id'] = [{pregunta, opciones:[{texto, correcta,
-    // retro}]}]. El contenedor lleva data-quiz="id". Se corrige al hacer clic:
-    // se marca la opción elegida y la correcta, y se muestra la
-    // retroalimentación específica de la opción escogida.
+    // AUTOEVALUACIONES['id'] = [pregunta, ...] sobre un contenedor
+    // data-quiz="id". Cada pregunta declara su `tipo`:
+    //
+    //   'opcion'   (por defecto) una sola respuesta correcta
+    //   'multiple' varias correctas; se corrige al pulsar "Comprobar"
+    //   'numerica' campo de entrada; se acepta |respuesta - dada| <= tolerancia
+    //   'grafico'  como 'opcion', pero dibuja un Chart.js sobre el enunciado
+    //
+    // Campos comunes: {pregunta, pista, modulo}. `pista` se muestra tras el
+    // PRIMER fallo y se deja reintentar; al segundo fallo se revela la
+    // respuesta. `modulo` alimenta el resumen final de "qué repasar".
     // ================================================================
     const AUTOEVALUACIONES = {};
     const LETRAS = ['a', 'b', 'c', 'd', 'e'];
+    const NOMBRE_TIPO = {
+      opcion: 'Opción múltiple',
+      multiple: 'Varias respuestas',
+      numerica: 'Respuesta numérica',
+      grafico: 'Lectura de gráfico'
+    };
 
     function iniciarAutoevaluaciones() {
       mainContent.querySelectorAll('[data-quiz]').forEach(raiz => {
@@ -3417,81 +3956,319 @@ print(res["d"], res["D"], round(res["var_final"], 5), round(res["kpss_p"], 3))
       });
     }
 
+    // Los gráficos de las preguntas viven en `graficosActivos` como los de los
+    // simuladores, para que se destruyan al cambiar de módulo. Además se
+    // guardan por quiz para poder limpiarlos al reiniciar sin tocar los demás.
+    function registrarGraficoQuiz(raiz, chart) {
+      (raiz._graficos = raiz._graficos || []).push(chart);
+      graficosActivos.push(chart);
+    }
+
+    function limpiarGraficosQuiz(raiz) {
+      (raiz._graficos || []).forEach(g => {
+        const i = graficosActivos.indexOf(g);
+        if (i >= 0) graficosActivos.splice(i, 1);
+        g.destroy();
+      });
+      raiz._graficos = [];
+    }
+
+    function katexEn(elemento) {
+      if (typeof renderMathInElement === 'function') {
+        renderMathInElement(elemento, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false }
+          ]
+        });
+      }
+    }
+
     function renderAutoevaluacion(raiz, preguntas) {
+      limpiarGraficosQuiz(raiz);
+
       const contenedor = raiz.querySelector('.quiz-preguntas');
       const marcador = raiz.querySelector('.quiz-conteo');
-      const respondidas = new Set();
-      let aciertos = 0;
+      const barra = raiz.querySelector('.quiz-progreso-barra');
+      const resumen = raiz.querySelector('.quiz-resumen');
 
-      function pintarMarcador() {
+      const estado = preguntas.map(() => ({ resuelta: false, intentos: 0, acierto: false }));
+
+      function actualizarMarcador() {
+        const resueltas = estado.filter(e => e.resuelta).length;
+        const alPrimero = estado.filter(e => e.acierto && e.intentos === 1).length;
+        const alSegundo = estado.filter(e => e.acierto && e.intentos > 1).length;
         marcador.textContent =
-          `Respondidas ${respondidas.size} de ${preguntas.length} · aciertos: ${aciertos}`;
+          `Respondidas ${resueltas} de ${preguntas.length} · ` +
+          `${alPrimero} al primer intento, ${alSegundo} al segundo`;
+        if (barra) barra.style.width = `${(resueltas / preguntas.length) * 100}%`;
+
+        if (resueltas === preguntas.length && resumen) {
+          const fallidas = preguntas.filter((_, i) => !estado[i].acierto);
+          const repasar = [...new Set(
+            preguntas.filter((_, i) => estado[i].intentos > 1 || !estado[i].acierto)
+              .map(p => p.modulo).filter(Boolean)
+          )].sort((a, b) => a - b);
+          resumen.innerHTML =
+            `<h5>Resultado: ${alPrimero + alSegundo} de ${preguntas.length}` +
+            `${fallidas.length ? '' : ' · impecable'}</h5>` +
+            (repasar.length
+              ? `<p style="margin:0;">Te costaron preguntas de estos módulos, así que vale la pena volver a ellos:</p>
+                 <ul>${repasar.map(m => `<li>Módulo ${m}: <strong>${(courseData.modules[m - 1] || {}).title || ''}</strong></li>`).join('')}</ul>`
+              : `<p style="margin:0;">Acertaste todo al primer intento. Puedes pasar al siguiente capítulo.</p>`);
+          resumen.hidden = false;
+          katexEn(resumen);
+        }
+      }
+
+      function cerrar(i, bloque, acierto, textoRetro) {
+        estado[i].resuelta = true;
+        estado[i].acierto = acierto;
+        const retro = bloque.querySelector('.quiz-retro');
+        retro.className = `quiz-retro ${acierto ? 'bien' : 'mal'}`;
+        const encabezado = acierto
+          ? (estado[i].intentos === 1 ? '<strong>Correcto.</strong> ' : '<strong>Correcto, en el segundo intento.</strong> ')
+          : '<strong>No es esa.</strong> ';
+        retro.innerHTML = encabezado + textoRetro;
+        retro.hidden = false;
+        katexEn(retro);
+        actualizarMarcador();
+      }
+
+      function mostrarPista(i, bloque) {
+        const pista = bloque.querySelector('.quiz-pista');
+        if (pista && preguntas[i].pista) {
+          pista.innerHTML = `<strong>Casi. Una pista:</strong> ${preguntas[i].pista}`;
+          pista.hidden = false;
+          katexEn(pista);
+        }
       }
 
       contenedor.innerHTML = '';
+      if (resumen) { resumen.hidden = true; resumen.innerHTML = ''; }
+
       preguntas.forEach((p, i) => {
+        const tipo = p.tipo || 'opcion';
         const bloque = document.createElement('div');
         bloque.className = 'quiz-pregunta';
 
         const enunciado = document.createElement('p');
         enunciado.className = 'quiz-enunciado';
-        enunciado.innerHTML = `<span class="quiz-numero">${i + 1}.</span>${p.pregunta}`;
+        enunciado.innerHTML = `<span class="quiz-numero">${i + 1}.</span>${p.pregunta}` +
+          `<span class="quiz-tipo">${NOMBRE_TIPO[tipo]}</span>`;
+        bloque.appendChild(enunciado);
 
-        const lista = document.createElement('div');
-        lista.className = 'quiz-opciones';
-        lista.setAttribute('role', 'group');
-        lista.setAttribute('aria-label', `Opciones de la pregunta ${i + 1}`);
+        // Gráfico del enunciado, si lo hay
+        if (tipo === 'grafico' && typeof p.dibujar === 'function') {
+          const caja = document.createElement('div');
+          caja.className = 'quiz-grafico';
+          if (p.alto) caja.style.height = `${p.alto}px`;
+          const canvas = document.createElement('canvas');
+          canvas.setAttribute('role', 'img');
+          canvas.setAttribute('aria-label', p.descripcionGrafico || 'Gráfico de la pregunta');
+          caja.appendChild(canvas);
+          bloque.appendChild(caja);
+          const chart = p.dibujar(canvas);
+          if (chart) registrarGraficoQuiz(raiz, chart);
+        }
+
+        const pista = document.createElement('div');
+        pista.className = 'quiz-pista';
+        pista.hidden = true;
 
         const retro = document.createElement('div');
         retro.className = 'quiz-retro';
         retro.setAttribute('role', 'status');
         retro.hidden = true;
 
-        const botones = p.opciones.map((op, j) => {
+        if (tipo === 'numerica') {
+          // ---- Respuesta numérica -----------------------------------
+          const fila = document.createElement('div');
+          fila.className = 'quiz-numerica';
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.inputMode = 'decimal';
+          input.placeholder = 'Tu respuesta';
+          input.setAttribute('aria-label', `Respuesta de la pregunta ${i + 1}`);
+          const unidad = document.createElement('span');
+          unidad.className = 'quiz-unidad';
+          unidad.textContent = p.unidad || '';
           const boton = document.createElement('button');
           boton.type = 'button';
-          boton.className = 'quiz-opcion';
-          boton.innerHTML = `<span class="quiz-letra">${LETRAS[j]})</span><span>${op.texto}</span>`;
-          boton.addEventListener('click', () => {
-            if (respondidas.has(i)) return;
-            respondidas.add(i);
-            if (op.correcta) aciertos++;
+          boton.className = 'quiz-comprobar';
+          boton.textContent = 'Comprobar';
 
-            botones.forEach((b, k) => {
-              b.disabled = true;
-              if (p.opciones[k].correcta) b.classList.add('correcta');
-            });
-            if (!op.correcta) boton.classList.add('incorrecta');
-
-            retro.className = `quiz-retro ${op.correcta ? 'bien' : 'mal'}`;
-            retro.innerHTML =
-              `<strong>${op.correcta ? 'Correcto.' : 'No es esa.'}</strong> ${op.retro}`;
-            retro.hidden = false;
-            if (typeof renderMathInElement === 'function') {
-              renderMathInElement(retro, {
-                delimiters: [
-                  { left: "$$", right: "$$", display: true },
-                  { left: "$", right: "$", display: false }
-                ]
-              });
+          function comprobarNumerica() {
+            if (estado[i].resuelta) return;
+            // Se acepta coma o punto como separador decimal
+            const dada = parseFloat(String(input.value).trim().replace(',', '.'));
+            if (!isFinite(dada)) {
+              pista.innerHTML = '<strong>Escribe un número</strong> antes de comprobar.';
+              pista.hidden = false;
+              return;
             }
-            pintarMarcador();
-          });
-          lista.appendChild(boton);
-          return boton;
-        });
+            estado[i].intentos++;
+            const acierto = Math.abs(dada - p.respuesta) <= p.tolerancia;
+            if (acierto) {
+              input.disabled = true; boton.disabled = true;
+              cerrar(i, bloque, true, p.retroAcierto);
+            } else if (estado[i].intentos === 1) {
+              mostrarPista(i, bloque);
+            } else {
+              input.disabled = true; boton.disabled = true;
+              cerrar(i, bloque, false,
+                `La respuesta es <strong>${p.respuesta}${p.unidad ? ' ' + p.unidad : ''}</strong>. ${p.retroFallo}`);
+            }
+          }
+          boton.addEventListener('click', comprobarNumerica);
+          input.addEventListener('keydown', e => { if (e.key === 'Enter') comprobarNumerica(); });
 
-        bloque.appendChild(enunciado);
-        bloque.appendChild(lista);
+          fila.appendChild(input);
+          if (p.unidad) fila.appendChild(unidad);
+          fila.appendChild(boton);
+          bloque.appendChild(fila);
+
+        } else if (tipo === 'multiple') {
+          // ---- Varias respuestas correctas --------------------------
+          const lista = document.createElement('div');
+          lista.className = 'quiz-opciones';
+          lista.setAttribute('role', 'group');
+          lista.setAttribute('aria-label', `Opciones de la pregunta ${i + 1}`);
+          const marcadas = new Set();
+
+          const botones = p.opciones.map((op, j) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'quiz-opcion';
+            b.setAttribute('aria-pressed', 'false');
+            b.innerHTML = `<span class="quiz-casilla" aria-hidden="true"></span><span>${op.texto}</span>`;
+            b.addEventListener('click', () => {
+              if (estado[i].resuelta) return;
+              const activa = marcadas.has(j);
+              if (activa) marcadas.delete(j); else marcadas.add(j);
+              b.classList.toggle('marcada', !activa);
+              b.setAttribute('aria-pressed', String(!activa));
+            });
+            lista.appendChild(b);
+            return b;
+          });
+
+          const boton = document.createElement('button');
+          boton.type = 'button';
+          boton.className = 'quiz-comprobar';
+          boton.style.marginTop = '0.6rem';
+          boton.textContent = 'Comprobar';
+          boton.addEventListener('click', () => {
+            if (estado[i].resuelta) return;
+            if (marcadas.size === 0) {
+              pista.innerHTML = '<strong>Marca al menos una opción</strong> antes de comprobar.';
+              pista.hidden = false;
+              return;
+            }
+            estado[i].intentos++;
+            const correctas = new Set(p.opciones.map((o, j) => o.correcta ? j : -1).filter(j => j >= 0));
+            const exacto = marcadas.size === correctas.size &&
+              [...marcadas].every(j => correctas.has(j));
+            if (exacto) {
+              botones.forEach((b, j) => { b.disabled = true; if (correctas.has(j)) b.classList.add('correcta'); });
+              boton.disabled = true;
+              cerrar(i, bloque, true, p.retroAcierto);
+            } else if (estado[i].intentos === 1) {
+              const bien = [...marcadas].filter(j => correctas.has(j)).length;
+              pista.innerHTML = `<strong>Casi.</strong> De las ${marcadas.size} que marcaste, ` +
+                `${bien} ${bien === 1 ? 'está' : 'están'} en la respuesta, y te ` +
+                `${correctas.size - bien === 1 ? 'falta' : 'faltan'} ${correctas.size - bien}. ` +
+                (p.pista || '');
+              pista.hidden = false;
+              katexEn(pista);
+            } else {
+              botones.forEach((b, j) => {
+                b.disabled = true;
+                if (correctas.has(j)) b.classList.add(marcadas.has(j) ? 'correcta' : 'faltaba');
+                else if (marcadas.has(j)) b.classList.add('incorrecta');
+              });
+              boton.disabled = true;
+              cerrar(i, bloque, false, p.retroFallo);
+            }
+          });
+
+          bloque.appendChild(lista);
+          bloque.appendChild(boton);
+
+        } else {
+          // ---- Una sola respuesta ('opcion' y 'grafico') ------------
+          const lista = document.createElement('div');
+          lista.className = 'quiz-opciones';
+          lista.setAttribute('role', 'group');
+          lista.setAttribute('aria-label', `Opciones de la pregunta ${i + 1}`);
+
+          const botones = p.opciones.map((op, j) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'quiz-opcion';
+            b.innerHTML = `<span class="quiz-letra">${LETRAS[j]})</span><span>${op.texto}</span>`;
+            b.addEventListener('click', () => {
+              if (estado[i].resuelta) return;
+              estado[i].intentos++;
+              if (op.correcta) {
+                botones.forEach((x, k) => { x.disabled = true; if (p.opciones[k].correcta) x.classList.add('correcta'); });
+                cerrar(i, bloque, true, op.retro);
+              } else if (estado[i].intentos === 1) {
+                // Primer fallo: se descarta esa opción, se da la pista y se reintenta
+                b.disabled = true;
+                b.classList.add('incorrecta');
+                mostrarPista(i, bloque);
+              } else {
+                botones.forEach((x, k) => { x.disabled = true; if (p.opciones[k].correcta) x.classList.add('correcta'); });
+                b.classList.add('incorrecta');
+                cerrar(i, bloque, false, op.retro);
+              }
+            });
+            lista.appendChild(b);
+            return b;
+          });
+          bloque.appendChild(lista);
+        }
+
+        bloque.appendChild(pista);
         bloque.appendChild(retro);
         contenedor.appendChild(bloque);
       });
 
-      pintarMarcador();
+      katexEn(contenedor);
+      actualizarMarcador();
+
       const reiniciar = raiz.querySelector('.quiz-reiniciar');
-      if (reiniciar) {
-        reiniciar.onclick = () => renderAutoevaluacion(raiz, preguntas);
-      }
+      if (reiniciar) reiniciar.onclick = () => renderAutoevaluacion(raiz, preguntas);
+    }
+
+    // ================================================================
+    // Ejercicios guiados: desplegables de pista y solución
+    // ================================================================
+    function iniciarEjerciciosGuiados() {
+      // wrapCodeBlocks() colapsa todos los <pre> del módulo. Dentro de una
+      // solución eso obligaría a un segundo clic para ver el código que el
+      // estudiante acaba de pedir, así que ahí se dejan desplegados.
+      mainContent.querySelectorAll('.ejercicio-panel pre.collapsed').forEach(pre => {
+        pre.classList.remove('collapsed');
+        pre.classList.add('expanded');
+        const boton = pre.closest('.code-block-wrapper')?.querySelector('.code-toggle-btn');
+        if (boton) boton.classList.add('expanded');
+      });
+
+      mainContent.querySelectorAll('.ejercicio-boton').forEach(boton => {
+        const panel = document.getElementById(boton.getAttribute('aria-controls'));
+        if (!panel) return;
+        boton.addEventListener('click', () => {
+          const abierto = boton.getAttribute('aria-expanded') === 'true';
+          boton.setAttribute('aria-expanded', String(!abierto));
+          panel.hidden = abierto;
+          if (!abierto) {
+            if (typeof Prism !== 'undefined') Prism.highlightAllUnder(panel);
+            katexEn(panel);
+          }
+        });
+      });
     }
 
     // ================================================================
@@ -3885,12 +4662,16 @@ print(res["d"], res["D"], round(res["var_final"], 5), round(res["kpss_p"], 3))
       return [gSerie, gCurva];
     };
 
+
     // ================================================================
     // Autoevaluación del capítulo
     // ================================================================
     AUTOEVALUACIONES['cap2'] = [
       {
+        tipo: 'opcion',
+        modulo: 1,
         pregunta: 'Una serie mensual de ventas repite todos los años el mismo patrón: sube en diciembre y baja en febrero. Su nivel promedio anual no cambia. ¿Es estacionaria?',
+        pista: 'Vuelve a la primera condición de la estacionariedad débil. No dice "la media anual es constante", dice $E[y_t] = \\mu$ <em>para todo</em> $t$. ¿Es la misma esperanza en diciembre que en febrero?',
         opciones: [
           {
             texto: 'No, porque la media depende del mes y, por tanto, de $t$.',
@@ -3915,32 +4696,66 @@ print(res["d"], res["D"], round(res["var_final"], 5), round(res["kpss_p"], 3))
         ]
       },
       {
-        pregunta: 'En un correlograma con $T = 100$ observaciones miras 24 rezagos y 2 barras se salen de la banda $\\pm 1.96/\\sqrt{T}$. ¿Qué concluyes?',
+        tipo: 'numerica',
+        modulo: 3,
+        pregunta: 'Vas a leer el correlograma de una serie con $T = 144$ observaciones. ¿Cuánto vale el semiancho de la banda $1.96/\\sqrt{T}$? Da cuatro decimales.',
+        pista: '$\\sqrt{144} = 12$. Solo tienes que dividir.',
+        respuesta: 0.1633,
+        tolerancia: 0.0006,
+        retroAcierto: '$1.96/12 = 0.1633$. Es la banda de <code>AirPassengers</code> y de todas las series de 144 observaciones del capítulo. Fíjate en que solo depende de $T$: <strong>no</strong> depende de la serie ni del rezago.',
+        retroFallo: 'Es $1.96/\\sqrt{144} = 1.96/12 = 0.1633$. Un error habitual es dividir entre $T$ en vez de entre $\\sqrt{T}$: eso daría $0.0136$, una banda diez veces más estrecha que llevaría a ver estructura donde solo hay azar.'
+      },
+      {
+        tipo: 'grafico',
+        modulo: 7,
+        alto: 210,
+        descripcionGrafico: 'Función de autocorrelación de la primera diferencia del logaritmo de AirPassengers, con un pico marcado en el rezago 12',
+        pregunta: 'Este es el correlograma de $\\nabla \\log(y_t)$ para <code>AirPassengers</code>, es decir, la serie <strong>ya diferenciada una vez</strong>. ¿Qué te dice?',
+        pista: 'Mira <em>dónde</em> está la barra grande. ¿En los primeros rezagos, o en alguno que signifique algo especial para una serie mensual?',
+        dibujar: canvas => correlogramaDe(canvas, 'd_log_airpassengers', 'acf'),
         opciones: [
           {
-            texto: 'Es compatible con ruido blanco: con 24 rezagos se espera que alguna se salga por azar.',
+            texto: 'Queda estacionalidad sin tratar: el pico del rezago 12 pide una diferencia estacional $\\nabla_{12}$.',
             correcta: true,
-            retro: 'Cada barra tiene un 5&nbsp;% de salirse por azar bajo $H_0$, así que en 24 rezagos se esperan $24 \\times 0.05 = 1.2$. Dos barras aisladas no son evidencia; lo que importa es el <em>patrón</em>.'
+            retro: 'Exacto: $r_{12} = 0.841$, altísimo, mientras que la banda es $\\pm 0.164$. La diferencia regular se llevó la tendencia, pero el ciclo anual sigue intacto. Aplicando además $\\nabla_{12}$ se llega a la serie del modelo <em>airline</em>.'
           },
           {
-            texto: 'La serie tiene estructura real en esos 2 rezagos.',
+            texto: 'Ya es ruido blanco: la diferenciación terminó el trabajo.',
             correcta: false,
-            retro: 'Ese es el error de las comparaciones múltiples. Con 24 contrastes al 5&nbsp;%, uno o dos falsos positivos son lo esperado, no la excepción.'
+            retro: 'Si fuera ruido blanco, todas las barras estarían dentro de la banda. Hay una que se sale muchísimo, y no en un rezago cualquiera: en el 12.'
           },
           {
-            texto: 'Hay que diferenciar la serie.',
+            texto: 'Falta otra diferencia regular, porque la ACF no decae.',
             correcta: false,
-            retro: 'Diferenciar se decide por un decaimiento lento y sostenido de la ACF, no por dos barras sueltas.'
+            retro: 'La ACF sí decae en los primeros rezagos ($r_1 = 0.200$, ya cerca de la banda). Lo que sobresale es un pico aislado en el 12, que es la firma de la estacionalidad, no de una raíz unitaria. Diferenciar otra vez de forma regular solo sobrediferenciaría.'
           },
           {
-            texto: 'La banda está mal calculada.',
+            texto: 'Hay una tendencia determinista que no se quitó.',
             correcta: false,
-            retro: 'Está bien: $1.96/\\sqrt{100} = 0.196$. El problema no es de cálculo sino de interpretación.'
+            retro: 'Una tendencia sin quitar produce una ACF que decae lenta y casi linealmente desde $r_1 \\approx 1$. Aquí $r_1 = 0.200$: la tendencia ya se fue con la diferencia regular.'
           }
         ]
       },
       {
+        tipo: 'multiple',
+        modulo: 7,
+        pregunta: 'Marca <strong>todas</strong> las señales que delatan que has diferenciado de más.',
+        pista: 'Son tres. Piensa en qué le pasa a la dispersión de la serie, qué autocorrelación aparece de la nada, y qué tipo de modelo queda inducido.',
+        opciones: [
+          { texto: 'La varianza deja de bajar y vuelve a subir.', correcta: true },
+          { texto: 'Aparece autocorrelación negativa fuerte en el rezago 1, cerca de $-0.5$.', correcta: true },
+          { texto: 'Queda inducido un MA(1) con $\\theta = -1$, que además no es invertible.', correcta: true },
+          { texto: 'La serie pierde observaciones en cada diferencia.', correcta: false },
+          { texto: 'Aparecen picos en los rezagos múltiplos del periodo estacional.', correcta: false }
+        ],
+        retroAcierto: 'Las tres van juntas y son la misma cosa vista de tres formas. Si $y_t$ ya era ruido blanco, $\\nabla y_t = \\varepsilon_t - \\varepsilon_{t-1}$ tiene varianza $2\\sigma^2$ (el doble) y $\\rho_1 = -0.5$ exactamente. En log(<code>AirPassengers</code>): la varianza va $0.0114 \\to 0.0182 \\to 0.0469$ y $r_1$ va $0.200 \\to -0.293 \\to -0.534$.',
+        retroFallo: 'Las correctas son las tres primeras: varianza que repunta, $r_1$ cerca de $-0.5$ y un MA(1) no invertible inducido. Las otras dos son distractores: <em>perder observaciones</em> pasa con cualquier diferencia, útil o no, así que no distingue nada; y los <em>picos en los múltiplos del periodo</em> son la firma de la estacionalidad, que es lo contrario del problema (ahí te falta diferenciar, no te has pasado).'
+      },
+      {
+        tipo: 'opcion',
+        modulo: 6,
         pregunta: 'Sobre una serie obtienes ADF con $p = 0.58$ y KPSS de nivel con $p &lt; 0.01$. ¿Qué concluyes?',
+        pista: 'Antes de mirar los p-valores, escribe la $H_0$ de cada prueba. Son contrarias, así que "no rechazar" en una y "rechazar" en la otra puede significar lo mismo.',
         opciones: [
           {
             texto: 'Que no es estacionaria: las dos pruebas coinciden.',
@@ -3965,57 +4780,51 @@ print(res["d"], res["D"], round(res["var_final"], 5), round(res["kpss_p"], 3))
         ]
       },
       {
-        pregunta: '<code>adf.test(AirPassengers)</code> devuelve $-7.32$ con $p &lt; 0.01$. ¿Por qué no debes concluir que la serie es estacionaria?',
+        tipo: 'grafico',
+        modulo: 5,
+        alto: 210,
+        descripcionGrafico: 'Función de autocorrelación de una caminata aleatoria: decae muy lentamente desde valores cercanos a uno',
+        pregunta: 'Y este otro correlograma, ¿qué recomienda hacer con la serie?',
+        pista: 'Fíjate en la <em>forma</em> del decaimiento: casi una recta que baja despacio desde un valor cercano a 1. ¿A qué proceso del Módulo 5 corresponde?',
+        dibujar: canvas => correlogramaDe(canvas, 'caminata', 'acf'),
         opciones: [
           {
-            texto: 'Porque los 5 rezagos que usa por defecto son menos que el periodo estacional $m = 12$, y la oscilación anual se lee como reversión a la media.',
+            texto: 'Diferenciarla: el decaimiento lento y casi lineal es la firma de una raíz unitaria.',
             correcta: true,
-            retro: 'Con $k = 12$ el estadístico pasa a $-1.53$ ($p = 0.771$) y sobre la serie desestacionalizada, a $-2.15$ ($p = 0.513$). La simulación del Módulo 6 lo confirma: la estacionalidad lleva el falso rechazo del 3.2&nbsp;% al 17.6&nbsp;%.'
+            retro: 'Es la ACF de una caminata aleatoria ($r_1 = 0.961$, $r_{12} = 0.488$). Como la dependencia se propaga en cadena, la ACF tarda muchísimo en bajar. Una sola diferencia la convierte en ruido blanco: pruébalo en el simulador del Módulo 5 poniendo $\\phi = 1$ y activando $\\nabla$.'
           },
           {
-            texto: 'Porque el ADF nunca funciona con datos mensuales.',
+            texto: 'Nada: ya es estacionaria, solo tiene memoria larga.',
             correcta: false,
-            retro: 'Demasiado fuerte. El ADF funciona bien con datos mensuales sin estacionalidad marcada; el problema es específico de la interacción entre el ciclo estacional y el número de rezagos.'
+            retro: 'Con $r_1 = 0.961$ y $r_{12}$ todavía en $0.488$ no hay reversión a la media. Un proceso estacionario AR(1) con $\\phi = 0.5$ tendría $r_{12} = 0.5^{12} \\approx 0.0002$.'
           },
           {
-            texto: 'Porque el p-valor cae fuera de la tabla y no es fiable.',
+            texto: 'Aplicarle logaritmo para estabilizar la varianza.',
             correcta: false,
-            retro: 'El aviso de tabla afecta a la precisión del p-valor, no al signo de la conclusión: $-7.32$ está lejísimos de cualquier valor crítico razonable. El problema es la especificación.'
+            retro: 'El logaritmo arregla una dispersión que crece con el nivel, que es un problema distinto y que la ACF no muestra. Además esta serie toma valores negativos, así que el logaritmo ni se podría aplicar.'
           },
           {
-            texto: 'Porque el ADF exige que la serie sea positiva.',
+            texto: 'Modelarla como un MA(1), porque la ACF se corta.',
             correcta: false,
-            retro: 'No existe tal requisito. La restricción de positividad es de la transformación de Box–Cox.'
+            retro: 'La ACF de un MA(1) se corta <em>de golpe</em> tras el rezago 1: una barra grande y el resto dentro de la banda. Esta no se corta, decae poquito a poco.'
           }
         ]
       },
       {
-        pregunta: 'Diferencias una serie dos veces y observas que la varianza subió respecto a $d = 1$ y que $r_1 \\approx -0.5$. ¿Qué ocurrió?',
-        opciones: [
-          {
-            texto: 'Sobrediferenciaste: aplicar $\\nabla$ a algo ya estacionario induce un MA(1) con $\\theta = -1$.',
-            correcta: true,
-            retro: 'Si $y_t$ ya era ruido blanco, $\\nabla y_t = \\varepsilon_t - \\varepsilon_{t-1}$ tiene autocorrelación teórica $-0.5$ en el rezago 1. Fabricaste estructura donde no la había, y encima no invertible.'
-          },
-          {
-            texto: 'Falta una diferencia más.',
-            correcta: false,
-            retro: 'Justo lo contrario. La varianza creciente indica que ya te pasaste; una tercera diferencia la empeoraría (en log(<code>AirPassengers</code>): 0.0114 → 0.0182 → 0.0469).'
-          },
-          {
-            texto: 'La serie tiene estacionalidad sin capturar.',
-            correcta: false,
-            retro: 'La estacionalidad deja picos en los rezagos $m, 2m, \\ldots$, no un $r_1$ marcadamente negativo acompañado de varianza en aumento.'
-          },
-          {
-            texto: 'Es normal al diferenciar y no tiene consecuencias.',
-            correcta: false,
-            retro: 'Sí las tiene: el MA inducido es no invertible y complica la estimación, además de añadir ruido y costar una observación más.'
-          }
-        ]
+        tipo: 'numerica',
+        modulo: 7,
+        pregunta: 'Partes de una serie mensual con 144 observaciones y le aplicas $\\nabla_{12}\\nabla$, es decir, una diferencia regular y una estacional. ¿Cuántas observaciones te quedan?',
+        pista: 'Cada diferencia cuesta tantas observaciones como su rezago: $\\nabla$ cuesta 1 y $\\nabla_{12}$ cuesta 12.',
+        respuesta: 131,
+        tolerancia: 0,
+        retroAcierto: '$144 - 1 - 12 = 131$. Es exactamente el $n$ de la serie del modelo <em>airline</em> del capítulo. Por eso diferenciar de más no es gratis: además de inflar la varianza, cada diferencia te quita datos para estimar.',
+        retroFallo: '$144 - 1 - 12 = 131$. Cada diferencia cuesta su rezago: la regular quita 1 observación y la estacional de periodo 12 quita 12. Si respondiste 143 o 132, aplicaste solo una de las dos; si respondiste 120, restaste dos veces el periodo.'
       },
       {
+        tipo: 'opcion',
+        modulo: 8,
         pregunta: 'El criterio de Guerrero devuelve $\\lambda = -0.295$ para <code>AirPassengers</code>, pero FPP3 y este capítulo recomiendan usar el logaritmo. ¿Por qué?',
+        pista: 'No es porque el logaritmo gane en el criterio: no gana. Piensa en quién tiene que <em>entender</em> el resultado y en qué pasa al deshacer la transformación.',
         opciones: [
           {
             texto: 'Porque $\\lambda = 0$ es interpretable, deshacer la transformación es trivial y el óptimo es a su vez una estimación con incertidumbre.',
@@ -4040,7 +4849,6 @@ print(res["d"], res["D"], round(res["var_final"], 5), round(res["kpss_p"], 3))
         ]
       }
     ];
-
   </script>
 
 </body>
