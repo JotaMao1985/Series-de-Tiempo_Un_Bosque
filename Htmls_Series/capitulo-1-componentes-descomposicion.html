@@ -1,0 +1,2456 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Material de estudio autónomo de Series de Tiempo — Capítulo 1: Componentes y descomposición (tendencia, estacionalidad, ciclo y ruido; medias móviles, descomposición clásica y STL).">
+  <meta name="author" content="Javier Mauricio Sierra">
+  <meta name="keywords" content="series de tiempo, tendencia, estacionalidad, descomposición, STL, medias móviles, tsibble, fpp3, R, Python">
+  <title>Series de Tiempo · Capítulo 1 — Componentes y descomposición</title>
+
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- External Resources -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- KaTeX for LaTeX rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+  <!-- Chart.js for interactive charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <!-- Prism.js for syntax highlighting (R + Python) -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-r.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+  <!-- Tailwind Configuration -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Montserrat', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+            mono: ['Fira Code', 'monospace'],
+          },
+          colors: {
+            primary: '#012820',
+            secondary: '#FF6600',
+            navy: '#012820',
+            gold: '#FFC24B',
+            bg: '#F8FAFC',
+            surface: '#FFFFFF',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Base fallback styles */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background-color: #F8FAFC;
+      color: #1E293B;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+
+    /* USTA Gradient Background */
+    .usta-gradient {
+      background: linear-gradient(140deg, #012820 0%, #FF6600 100%);
+    }
+
+    .usta-gradient-hover:hover {
+      background: linear-gradient(140deg, #02382D 0%, #FF7F24 100%);
+    }
+
+    /* USTA Navy Header */
+    .usta-header {
+      background: linear-gradient(180deg, #012820 0%, #001F18 100%);
+    }
+
+    /* USTA Card Style */
+    .usta-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      margin-bottom: 2rem;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    .usta-card:hover {
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+      transform: translateY(-4px);
+    }
+
+    .usta-button {
+      background: linear-gradient(140deg, #012820 0%, #FF6600 100%);
+      color: white;
+      border-radius: 50px;
+      padding: 12px 28px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .usta-button:hover {
+      background: linear-gradient(140deg, #02382D 0%, #FF7F24 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(1, 40, 32, 0.35);
+    }
+
+    /* Sidebar Container */
+    .sidebar-container {
+      display: none;
+      width: 280px;
+      flex-shrink: 0;
+      order: 2;
+    }
+
+    @media (min-width: 768px) {
+      .sidebar-container {
+        display: block;
+        order: 1;
+      }
+    }
+
+    .sidebar-inner {
+      position: sticky;
+      top: 9rem;
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      padding: 1.5rem;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      max-height: calc(100vh - 12rem);
+      overflow-y: auto;
+    }
+
+    #sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #sidebar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+
+    /* Sidebar Header */
+    .sidebar-title {
+      font-size: 0.875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #9ca3af;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #f3f4f6;
+    }
+
+    /* Nav Items */
+    .nav-item {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      text-align: left;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.25rem;
+      border-radius: 0.5rem;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      color: #4B5563;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .nav-item::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #d1d5db;
+      margin-right: 0.75rem;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .nav-item:hover {
+      background: #f3f4f6;
+      color: #012820;
+    }
+
+    .nav-item:hover::before {
+      background: #012820;
+      transform: scale(1.2);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, #012820 0%, #FF6600 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(1, 40, 32, 0.3);
+    }
+
+    .nav-item.active::before {
+      background: white;
+    }
+
+    /* Fallback para asegurar visibilidad del sidebar */
+    @media (min-width: 768px) {
+      #sidebar {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+    }
+
+    /* Scroll to top button */
+    .scroll-to-top {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 3.5rem;
+      height: 3.5rem;
+      background: linear-gradient(140deg, #012820 0%, #FF6600 100%);
+      color: white;
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(61, 0, 141, 0.4);
+      transition: all 0.3s ease;
+      z-index: 50;
+      border: none;
+    }
+
+    .scroll-to-top.visible {
+      display: flex;
+    }
+
+    .scroll-to-top:hover {
+      background: linear-gradient(140deg, #02382D 0%, #FF7F24 100%);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(61, 0, 141, 0.5);
+    }
+
+    /* Tip box USTA style */
+    .tip-box {
+      background: linear-gradient(135deg, rgba(1, 40, 32, 0.08) 0%, rgba(255, 102, 0, 0.08) 100%);
+      border: 1px solid rgba(1, 40, 32, 0.2);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+    }
+
+    /* Focus visible styles for keyboard navigation - subtle */
+    *:focus-visible {
+      outline: 2px solid rgba(1, 40, 32, 0.5);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+
+    button:focus-visible,
+    a:focus-visible {
+      outline: 2px solid #012820;
+      outline-offset: 3px;
+    }
+
+    /* Skip link for accessibility */
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: 1rem;
+      background: white;
+      color: #012820;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 100;
+      text-decoration: none;
+      font-weight: 500;
+      border: 2px solid #012820;
+      transition: top 0.2s;
+    }
+
+    .skip-link:focus {
+      top: 1rem;
+      outline: none;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Print styles */
+    @media print {
+
+      header,
+      footer,
+      #sidebar,
+      #sidebarToggle,
+      #scrollToTopBtn {
+        display: none !important;
+      }
+
+      body {
+        background: white;
+        color: black;
+      }
+
+      .usta-card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        break-inside: avoid;
+      }
+
+      pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        background: #f5f5f5;
+      }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* Sidebar Toggle classes */
+    .sidebar-collapsed {
+      width: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      opacity: 0;
+      overflow: hidden;
+    }
+
+    .sidebar-collapsed+main {
+      width: 100% !important;
+      flex-grow: 1;
+    }
+
+    #sidebarToggle {
+      transition: all 0.3s ease;
+    }
+
+    /* H2 section titles styling */
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #012820;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid rgba(255, 102, 0, 0.2);
+      margin-top: 2rem;
+    }
+
+    h2:first-child {
+      margin-top: 0;
+    }
+
+    /* H3 subtitles styling */
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #012820;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h3::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 24px;
+      background: #FF6600;
+      border-radius: 4px;
+    }
+
+    /* H4 subtitles styling */
+    h4 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #012820;
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      background: linear-gradient(135deg, rgba(1, 40, 32, 0.08) 0%, rgba(255, 102, 0, 0.08) 100%);
+      border-left: 3px solid #FF6600;
+      border-radius: 0.375rem;
+    }
+
+    /* Override h4 in definition, note, warning boxes */
+    .definition h4,
+    .note h4,
+    .warning h4,
+    .simulador h4 {
+      background: none;
+      border-left: none;
+      padding: 0;
+      margin-top: 0;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      line-height: 1.625;
+      color: #374151;
+      text-align: justify;
+    }
+
+    ul,
+    ol {
+      margin-left: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    ul li,
+    ol li {
+      margin-bottom: 0.5rem;
+      color: #374151;
+    }
+
+    ul {
+      list-style-type: disc;
+    }
+
+    ol {
+      list-style-type: decimal;
+    }
+
+    /* Custom Box Components - CSS Puro */
+    .definition {
+      background-color: #f0fdf4;
+      border-left: 4px solid #012820;
+      padding: 1.5rem;
+      border-top-right-radius: 0.75rem;
+      border-bottom-right-radius: 0.75rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .definition h4 {
+      color: #012820;
+      margin-top: 0;
+      font-weight: bold;
+    }
+
+    .note {
+      background-color: #fff7ed;
+      border-left: 4px solid #FF6600;
+      padding: 1.5rem;
+      border-top-right-radius: 0.75rem;
+      border-bottom-right-radius: 0.75rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .note strong {
+      color: #c2410c;
+    }
+
+    .warning {
+      background-color: #fff1f2;
+      border-left: 4px solid #FF4500;
+      padding: 1.5rem;
+      border-top-right-radius: 0.75rem;
+      border-bottom-right-radius: 0.75rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .warning strong {
+      color: #9f1239;
+    }
+
+    .formula {
+      background-color: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.75rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      padding: 1rem;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      font-family: 'Fira Code', monospace;
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    @media (min-width: 768px) {
+      .formula {
+        padding: 1.5rem;
+      }
+    }
+
+    .diagram {
+      background-color: #f8fafc;
+      border: 2px dashed #cbd5e1;
+      padding: 2rem;
+      border-radius: 0.75rem;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .diagram h4 {
+      text-align: center;
+      color: #475569;
+      margin-bottom: 1.5rem;
+    }
+
+    .diagram svg {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .exercise {
+      background-color: #eff6ff;
+      border: 1px solid #dbeafe;
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .exercise h4 {
+      color: #1e40af;
+      margin-top: 0;
+      font-weight: bold;
+    }
+
+    /* Code Blocks - CSS Puro */
+    .code-block-wrapper {
+      position: relative;
+      margin-bottom: 2.5rem;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .code-block-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #334155;
+      gap: 0.5rem;
+    }
+
+    .code-block-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .code-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .code-toggle-btn,
+    .code-copy-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: #cbd5e1;
+      padding: 0.4rem 0.75rem;
+      border-radius: 0.375rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .code-toggle-btn:hover,
+    .code-copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
+    .code-copy-btn.copied {
+      background: rgba(34, 197, 94, 0.3);
+      color: #4ade80;
+    }
+
+    .code-toggle-btn i,
+    .code-copy-btn i {
+      font-size: 0.625rem;
+      transition: transform 0.2s;
+    }
+
+    .code-toggle-btn.expanded i {
+      transform: rotate(180deg);
+    }
+
+    pre {
+      background-color: #1e293b !important;
+      color: #f3f4f6 !important;
+      padding: 1.5rem !important;
+      border-radius: 0;
+      overflow-x: auto;
+      margin: 0;
+      font-family: 'Fira Code', monospace !important;
+      font-size: 0.875rem;
+      line-height: 1.625;
+      max-height: 300px;
+      overflow-y: auto;
+      transition: max-height 0.3s ease;
+    }
+
+    pre.expanded {
+      max-height: 2000px;
+    }
+
+    pre.collapsed {
+      max-height: 150px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    pre.collapsed::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: linear-gradient(transparent, #1e293b);
+      pointer-events: none;
+    }
+
+    code {
+      font-family: 'Fira Code', monospace;
+    }
+
+    p code,
+    li code {
+      background-color: #f3f4f6;
+      color: #c2410c;
+      padding: 0.25rem 0.375rem;
+      border-radius: 0.25rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border: 1px solid #e5e7eb;
+    }
+
+    pre code {
+      background-color: transparent;
+      color: inherit;
+      padding: 0;
+      border: none;
+    }
+
+    /* Pestañas de código R / Python */
+    .code-tabs {
+      margin-bottom: 2.5rem;
+    }
+
+    .code-tabs .code-block-wrapper {
+      margin-bottom: 0;
+      border-top-left-radius: 0;
+    }
+
+    .code-tabs-nav {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .code-tab-btn {
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 0.5rem 1.25rem;
+      border-radius: 0.5rem 0.5rem 0 0;
+      background: #e2e8f0;
+      color: #64748b;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .code-tab-btn:hover {
+      background: #cbd5e1;
+      color: #012820;
+    }
+
+    .code-tab-btn.active {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: white;
+    }
+
+    .code-tab-panel[hidden] {
+      display: none;
+    }
+
+    /* Simulador interactivo */
+    .simulador {
+      background: linear-gradient(135deg, rgba(1, 40, 32, 0.04) 0%, rgba(255, 102, 0, 0.04) 100%);
+      border: 1px solid rgba(1, 40, 32, 0.15);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+
+    .simulador h4 {
+      color: #012820;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .simulador-controles {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem 1.5rem;
+      margin: 1.25rem 0;
+    }
+
+    @media (min-width: 768px) {
+      .simulador-controles {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .control-slider {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .control-slider label {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #374151;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .control-slider output {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: white;
+      background: #012820;
+      border-radius: 0.375rem;
+      padding: 0.1rem 0.5rem;
+      min-width: 3.25rem;
+      text-align: center;
+    }
+
+    .control-slider input[type="range"] {
+      width: 100%;
+      accent-color: #FF6600;
+      cursor: pointer;
+    }
+
+    .grafico-wrapper {
+      position: relative;
+      height: 320px;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .grafico-wrapper {
+        height: 260px;
+      }
+    }
+
+    /* Tables - CSS Puro */
+    table {
+      width: 100%;
+      margin-bottom: 2rem;
+      border-collapse: collapse;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    table th {
+      background-color: #012820;
+      color: white;
+      font-weight: 600;
+      padding: 1rem;
+      text-align: left;
+    }
+
+    table td {
+      padding: 1rem;
+      border-bottom: 1px solid #f3f4f6;
+      color: #374151;
+    }
+
+    table tr:nth-child(even) {
+      background-color: #f9fafb;
+    }
+
+    table tr:hover {
+      background-color: #fff7ed;
+    }
+
+    /* Session Header - CSS Puro */
+    .session-header {
+      background: linear-gradient(to right, #012820, #FF6600);
+      color: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2.5rem;
+      text-align: center;
+    }
+
+    .session-header h2 {
+      color: white;
+      border: none;
+      margin: 0;
+      font-size: 1.875rem;
+      text-shadow: none;
+      padding: 0;
+    }
+
+    .references {
+      background-color: #f3f4f6;
+      padding: 2rem;
+      border-radius: 0.75rem;
+      margin-top: 3rem;
+    }
+
+    .references h3::before {
+      display: none;
+    }
+
+    /* SVG Styles */
+    svg {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    svg text {
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    /* Mobile typography improvements */
+    @media (max-width: 640px) {
+      html {
+        font-size: 14px;
+      }
+
+      .session-header h2 {
+        font-size: 1.25rem !important;
+      }
+
+      section h2 {
+        font-size: 1.375rem;
+      }
+
+      section h3 {
+        font-size: 1.125rem;
+      }
+
+      pre {
+        font-size: 0.75rem;
+        padding: 1rem;
+        max-height: 250px;
+      }
+
+      pre.collapsed {
+        max-height: 120px;
+      }
+
+      .code-block-header {
+        padding: 0.5rem 0.75rem;
+      }
+
+      .code-toggle-btn {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.7rem;
+      }
+
+      .usta-card {
+        padding: 1.5rem;
+      }
+    }
+
+    /* High contrast mode support */
+    @media (prefers-contrast: high) {
+      .usta-card {
+        border: 1px solid #000;
+      }
+
+      .definition,
+      .note,
+      .warning {
+        border-left-width: 4px;
+      }
+    }
+
+    /* Blockquote styling */
+    blockquote {
+      background: linear-gradient(135deg, rgba(1, 40, 32, 0.05) 0%, rgba(255, 102, 0, 0.05) 100%);
+      border-left: 4px solid #012820;
+      padding: 1.5rem 2rem;
+      margin: 2rem 0;
+      border-radius: 0.5rem;
+      font-style: italic;
+    }
+
+    blockquote cite {
+      display: block;
+      margin-top: 1rem;
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    details {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: #012820;
+      padding: 0.5rem;
+    }
+
+    summary:hover {
+      color: #FF6600;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px dashed #cbd5e1;
+      margin: 2rem 0;
+    }
+
+    /* --- Mejoras de accesibilidad y responsive (auditoría) --- */
+    @media (max-width: 768px) {
+      table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+    }
+
+    .definition,
+    .note,
+    .warning,
+    .exercise {
+      overflow-x: auto;
+    }
+
+    .nav-item {
+      border: none;
+      background-color: transparent;
+      font-family: inherit;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    /* Pie de página: las referencias van sobre fondo verde oscuro, pero la
+       regla global `ul li { color:#374151 }` (pensada para listas dentro de
+       las tarjetas claras del contenido) las volvía ilegibles. Se restablece
+       el texto claro en el pie con mayor especificidad, sin !important. */
+    footer ul li {
+      color: rgba(255, 255, 255, 0.92);
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+  <!-- Skip to main content link for accessibility -->
+  <a href="#main-content" class="skip-link">
+    Saltar al contenido principal
+  </a>
+
+  <!-- Header -->
+  <header class="usta-header sticky top-0 z-50 shadow-lg" role="banner">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="flex items-center gap-4">
+          <div class="usta-gradient p-3 rounded-xl shadow-md">
+            <i class="fas fa-chart-line text-xl text-white" aria-hidden="true"></i>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-white leading-tight tracking-tight" style="margin:0;">Series de Tiempo
+            </h1>
+            <p class="text-xs text-white/70 font-medium tracking-wide" style="margin:0; text-align:left;">CAPÍTULO 1 •
+              COMPONENTES Y DESCOMPOSICIÓN • UNBOSQUE</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Floating Sidebar Toggle Button -->
+  <button id="sidebarToggle"
+    class="fixed left-4 top-1/2 -translate-y-1/2 z-50 bg-primary text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center hover:bg-secondary transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+    aria-label="Alternar barra lateral de navegación" aria-expanded="true" aria-controls="sidebar">
+    <i class="fas fa-chevron-left" aria-hidden="true"></i>
+  </button>
+
+  <div class="flex-grow flex flex-col md:flex-row max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 gap-8 relative">
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar-container" id="sidebar" role="complementary" aria-label="Navegación de módulos">
+      <div class="sidebar-inner">
+        <div class="sidebar-title">
+          <i class="fas fa-list-ul mr-2" aria-hidden="true"></i>Contenido
+        </div>
+        <nav id="module-nav" role="navigation" aria-label="Menú de módulos">
+          <!-- Nav items injected via JS -->
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main id="main-content"
+      class="flex-grow order-1 md:order-2 min-w-0 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-300"
+      role="main" tabindex="-1">
+      <div id="content-area" class="p-6 md:p-10 module-content">
+        <!-- Content injected via JS -->
+      </div>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="usta-header mt-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+        <i class="fas fa-book-open" aria-hidden="true"></i> Referencias Bibliográficas
+      </h3>
+      <ul class="space-y-3 text-white/90 text-sm">
+        <li class="flex items-start gap-2">
+          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
+          <span>Hyndman, R.J., &amp; Athanasopoulos, G. (2021). <em class="text-gold">Forecasting: Principles and
+              Practice</em> (3rd ed.). OTexts. Acceso abierto: <a href="https://otexts.com/fpp3/"
+              class="underline text-gold" target="_blank" rel="noopener">otexts.com/fpp3</a>.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
+          <span>Shumway, R.H., &amp; Stoffer, D.S. (2017). <em class="text-gold">Time Series Analysis and Its
+              Applications: With R Examples</em> (4th ed.). Springer.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
+          <span>Box, G.E.P., Jenkins, G.M., Reinsel, G.C., &amp; Ljung, G.M. (2015). <em class="text-gold">Time Series
+              Analysis: Forecasting and Control</em> (5th ed.). John Wiley &amp; Sons.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
+          <span>Brockwell, P.J., &amp; Davis, R.A. (2016). <em class="text-gold">Introduction to Time Series and
+              Forecasting</em> (3rd ed.). Springer.</span>
+        </li>
+      </ul>
+      <div class="mt-6 pt-6 border-t border-white/20 text-center">
+        <p class="text-white font-medium" style="text-align:center;">Diseñado por <span class="text-gold">Javier
+            Mauricio Sierra</span></p>
+        <p class="text-xs mt-1 text-white/60" style="text-align:center;">Series de Tiempo • Plantilla • UnBosque 2026
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scroll to Top Button -->
+  <button class="scroll-to-top" id="scrollToTopBtn" aria-label="Volver arriba">
+    <i class="fas fa-arrow-up" aria-hidden="true"></i>
+  </button>
+
+  <!-- ============================================================ -->
+  <!-- MÓDULO 1 · ¿Qué es una serie de tiempo?                       -->
+  <!-- ============================================================ -->
+  <template id="module-1">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 1</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">1.1 ¿Qué es una serie de
+          tiempo? <span class="text-gray-400 font-normal text-2xl">/ What is a time series?</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Reconocer una serie de tiempo, distinguir la dependencia
+              temporal de los datos de corte transversal, y ubicar el análisis de series en la ciencia de datos.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Muchos fenómenos se observan a lo largo del tiempo: el número de pasajeros de una aerolínea cada mes, la tasa
+        de cambio diaria, la concentración de CO₂ en la atmósfera, la demanda de energía cada hora. Cuando registramos
+        una variable en instantes sucesivos obtenemos una <strong>serie de tiempo</strong>.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: serie de tiempo (<em>time series</em>)</h4>
+        <p>Una <strong>serie de tiempo</strong> es una sucesión de observaciones $y_1, y_2, \ldots, y_T$ de una misma
+          variable, registradas en instantes de tiempo ordenados y, por lo general, equiespaciados (cada mes, cada
+          día, cada hora). El subíndice $t$ indica el orden temporal; $T$ es el número total de observaciones.</p>
+      </div>
+
+      <p>La diferencia esencial con los datos de <em>corte transversal</em> (una muestra de individuos observados una
+        sola vez) es que en una serie de tiempo <strong>el orden importa</strong> y las observaciones cercanas tienden
+        a parecerse: la temperatura de mañana se parece a la de hoy. A esa relación entre una observación y las que la
+        preceden la llamamos <strong>dependencia temporal</strong>, y es justamente lo que los métodos clásicos
+        —construidos sobre el supuesto de independencia— no capturan.</p>
+
+      <div class="simulador" data-simulador="serie-airpassengers">
+        <h4><i class="fas fa-chart-line" aria-hidden="true"></i> La serie <code>AirPassengers</code></h4>
+        <p class="text-sm" style="margin-bottom:0.5rem;">Pasajeros mensuales de aerolíneas internacionales
+          (1949–1960). Es la serie clásica de este curso: se ve una <em>tendencia</em> creciente y un patrón que se
+          repite cada 12 meses cuya amplitud aumenta con el nivel.</p>
+        <div class="grafico-wrapper">
+          <canvas aria-label="Serie mensual de pasajeros aéreos internacionales, 1949 a 1960" role="img"></canvas>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>Conexión con ciencia de datos:</strong> la previsión de demanda, la detección de anomalías, el
+          análisis de señales y buena parte de la economía trabajan sobre datos indexados por el tiempo. Comprender su
+          estructura es el primer paso antes de alimentar cualquier modelo de pronóstico o de aprendizaje automático.
+        </p>
+      </div>
+    </div>
+  </template>
+
+  <!-- ============================================================ -->
+  <!-- MÓDULO 2 · Series de tiempo en software                       -->
+  <!-- ============================================================ -->
+  <template id="module-2">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 2</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">1.2 Series de tiempo en
+          software <span class="text-gray-400 font-normal text-2xl">/ Time series objects</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Representar una serie como un objeto temporal en R
+              (<code>ts</code> y <code>tsibble</code>) y en Python (índice de fechas de <code>pandas</code>).</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Para trabajar una serie el software necesita conocer dos cosas: el <strong>índice temporal</strong> (a qué
+        instante corresponde cada valor) y la <strong>frecuencia</strong> (cuántas observaciones hay por período
+        estacional; 12 para datos mensuales con estacionalidad anual). En R el objeto tradicional es <code>ts</code>,
+        y el moderno del ecosistema <em>tidyverts</em> es <code>tsibble</code>; en Python se usa una
+        <code>Series</code> de <code>pandas</code> con un índice de tipo fecha o período.</p>
+
+      <div class="code-tabs" role="group" aria-label="Crear un objeto de serie de tiempo en R y Python">
+        <div class="code-tabs-nav" role="tablist" aria-label="Lenguaje del ejemplo">
+          <button type="button" class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">
+            <i class="fab fa-r-project" aria-hidden="true"></i> R
+          </button>
+          <button type="button" class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">
+            <i class="fab fa-python" aria-hidden="true"></i> Python
+          </button>
+        </div>
+        <div class="code-tab-panel" data-lang="r">
+          <pre><code class="language-r"># Objeto ts clasico (R base)
+data(AirPassengers)
+frequency(AirPassengers)   # 12 -> estacionalidad mensual
+start(AirPassengers)       # 1949 1
+
+# Objeto tsibble (tidyverts / fpp3)
+library(fpp3)
+pasajeros &lt;- as_tsibble(AirPassengers)
+pasajeros
+#> # A tsibble: 144 x 2 [1M]
+#>       index  value
+#>       &lt;mth&gt;  &lt;dbl&gt;
+#>  1 1949 ene    112
+#>  2 1949 feb    118
+#>  # ... 142 mas</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" hidden>
+          <pre><code class="language-python"># Serie de pandas con indice de fechas mensuales (inicio de mes)
+import pandas as pd
+import statsmodels.api as sm
+
+datos = sm.datasets.get_rdataset("AirPassengers").data
+pasajeros = pd.Series(
+    datos["value"].values,
+    index=pd.date_range("1949-01-01", periods=len(datos), freq="MS"),
+    name="pasajeros",
+)
+print(pasajeros.index.freqstr)  # 'MS' -> inicio de mes
+print(pasajeros.head())</code></pre>
+        </div>
+      </div>
+
+      <table>
+        <caption class="sr-only">Conceptos temporales y su representación en R y Python</caption>
+        <thead>
+          <tr>
+            <th scope="col">Concepto</th>
+            <th scope="col">R (<code>ts</code> / <code>tsibble</code>)</th>
+            <th scope="col">Python (<code>pandas</code>)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Índice temporal</td>
+            <td><code>time()</code> / columna <code>index</code></td>
+            <td><code>PeriodIndex</code> / <code>DatetimeIndex</code></td>
+          </tr>
+          <tr>
+            <td>Frecuencia estacional</td>
+            <td><code>frequency()</code> (= 12)</td>
+            <td><code>freq="MS"</code></td>
+          </tr>
+          <tr>
+            <td>Inicio de la serie</td>
+            <td><code>start()</code></td>
+            <td><code>index[0]</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <p><strong>Nota:</strong> definir bien la frecuencia es decisivo: casi todos los métodos de este curso
+          (estacionalidad, diferenciación estacional, SARIMA) la usan. Una frecuencia mal declarada produce
+          descomposiciones y pronósticos sin sentido.</p>
+      </div>
+    </div>
+  </template>
+
+  <!-- ============================================================ -->
+  <!-- MÓDULO 3 · Visualización de series                            -->
+  <!-- ============================================================ -->
+  <template id="module-3">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 3</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">1.3 Visualización de series
+          <span class="text-gray-400 font-normal text-2xl">/ Time plots &amp; seasonal plots</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Usar el gráfico de tiempo, el gráfico estacional, el de
+              subseries y el de rezagos para leer los patrones de una serie antes de modelarla.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Antes de cualquier modelo, <strong>hay que mirar la serie</strong>. Cuatro gráficos son el pan de cada día:</p>
+      <ul>
+        <li><strong>Gráfico de tiempo</strong> (<em>time plot</em>): $y_t$ contra $t$. Revela tendencia, saltos y la
+          forma general (Módulo 1).</li>
+        <li><strong>Gráfico estacional</strong> (<em>seasonal plot</em>): una línea por año, superponiendo los meses.
+          Deja ver el patrón que se repite y cómo cambia entre años.</li>
+        <li><strong>Gráfico de subseries</strong> (<em>subseries plot</em>): un mini-panel por mes, con su promedio.</li>
+        <li><strong>Gráfico de rezagos</strong> (<em>lag plot</em>): $y_t$ contra $y_{t-k}$, anticipo de la
+          autocorrelación del Capítulo 2.</li>
+      </ul>
+
+      <div class="simulador" data-simulador="grafico-estacional">
+        <h4><i class="fas fa-calendar-alt" aria-hidden="true"></i> Gráfico estacional de <code>AirPassengers</code></h4>
+        <p class="text-sm" style="margin-bottom:0.5rem;">Cada línea es un año; el eje horizontal son los meses de enero
+          a diciembre. El pico de mediados de año (vacaciones de verano en el hemisferio norte) se repite y crece año
+          tras año: eso es <em>estacionalidad</em> de amplitud creciente.</p>
+        <div class="grafico-wrapper">
+          <canvas aria-label="Gráfico estacional: una línea por año de 1949 a 1960, meses en el eje horizontal"
+            role="img"></canvas>
+        </div>
+      </div>
+
+      <div class="code-tabs" role="group" aria-label="Gráficos de una serie en R y Python">
+        <div class="code-tabs-nav" role="tablist" aria-label="Lenguaje del ejemplo">
+          <button type="button" class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">
+            <i class="fab fa-r-project" aria-hidden="true"></i> R
+          </button>
+          <button type="button" class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">
+            <i class="fab fa-python" aria-hidden="true"></i> Python
+          </button>
+        </div>
+        <div class="code-tab-panel" data-lang="r">
+          <pre><code class="language-r">library(fpp3)
+pasajeros &lt;- as_tsibble(AirPassengers)
+
+autoplot(pasajeros, value)          # grafico de tiempo
+gg_season(pasajeros, value)         # grafico estacional
+gg_subseries(pasajeros, value)      # grafico de subseries
+gg_lag(pasajeros, value, lags = 1:12)  # grafico de rezagos</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" hidden>
+          <pre><code class="language-python">import matplotlib.pyplot as plt
+import pandas as pd
+
+# Grafico de tiempo
+pasajeros.plot(xlabel="Mes", ylabel="Miles de pasajeros")
+
+# Grafico estacional: una linea por anio, meses en el eje x
+df = pasajeros.to_frame("v")
+df["anio"] = df.index.year
+df["mes"]  = df.index.month
+tabla = df.pivot(index="mes", columns="anio", values="v")
+tabla.plot(legend=False, xlabel="Mes", ylabel="Miles de pasajeros")
+plt.show()</code></pre>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>Nota:</strong> en el gráfico estacional, líneas casi paralelas indican estacionalidad estable; un
+          abanico que se abre (como aquí) indica que la estacionalidad crece con el nivel de la serie, señal de un
+          modelo <em>multiplicativo</em> (Módulo 6).</p>
+      </div>
+    </div>
+  </template>
+
+  <!-- ============================================================ -->
+  <!-- MÓDULO 4 · Los cuatro componentes                             -->
+  <!-- ============================================================ -->
+  <template id="module-4">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 4</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">1.4 Los cuatro componentes
+          <span class="text-gray-400 font-normal text-2xl">/ Trend, seasonality, cycle &amp; noise</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Separar conceptualmente tendencia, estacionalidad,
+              ciclo y ruido, y distinguir el modelo aditivo del multiplicativo.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Es útil pensar una serie como la superposición de componentes no observables:</p>
+      <ul>
+        <li><strong>Tendencia</strong> ($T_t$): movimiento de largo plazo, creciente o decreciente.</li>
+        <li><strong>Estacionalidad</strong> ($S_t$): patrón que se repite con período <em>fijo y conocido</em> (12
+          meses, 7 días…).</li>
+        <li><strong>Ciclo</strong> ($C_t$): oscilaciones de duración variable y no fija (p. ej. ciclos económicos de
+          varios años).</li>
+        <li><strong>Ruido</strong> ($R_t$): la parte irregular e impredecible que queda al final.</li>
+      </ul>
+
+      <div class="warning">
+        <p><strong>Error común — ciclo ≠ estacionalidad.</strong> La estacionalidad tiene período fijo y conocido (si
+          los datos son mensuales, se repite cada 12). El ciclo sube y baja con duración variable y desconocida. Muchos
+          textos agrupan tendencia y ciclo en un solo término <em>tendencia-ciclo</em> $T_t$.</p>
+      </div>
+
+      <p>Los componentes se combinan de forma <strong>aditiva</strong> o <strong>multiplicativa</strong>:</p>
+      <div class="formula">
+        $$\underbrace{y_t = T_t + S_t + R_t}_{\text{aditivo}} \qquad\qquad
+        \underbrace{y_t = T_t \times S_t \times R_t}_{\text{multiplicativo}}$$
+      </div>
+      <p>El modelo aditivo conviene cuando la amplitud estacional es <em>constante</em>; el multiplicativo, cuando la
+        amplitud <em>crece con el nivel</em> de la serie (el caso de <code>AirPassengers</code>). Un modelo
+        multiplicativo se vuelve aditivo tomando logaritmos: $\log y_t = \log T_t + \log S_t + \log R_t$.</p>
+
+      <div class="simulador" data-simulador="construye-tu-serie">
+        <h4><i class="fas fa-sliders-h" aria-hidden="true"></i> Simulador: construye tu serie</h4>
+        <p class="text-sm" style="margin-bottom:0.5rem;">Serie aditiva $y_t = \beta\,t + A\sin(2\pi t/12) + \sigma\,
+          \varepsilon_t$. Mueve los deslizadores para aislar el efecto de cada componente; el ruido usa una semilla
+          fija, así que al cambiar $\sigma$ varía su escala pero no su forma. Haz clic en la leyenda para ocultar
+          componentes.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper">
+          <canvas aria-label="Serie simulada con tendencia, estacionalidad y ruido" role="img"></canvas>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- ============================================================ -->
+  <!-- MÓDULO 5 · Medias móviles y suavizamiento                     -->
+  <!-- ============================================================ -->
+  <template id="module-5">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 5</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">1.5 Medias móviles y
+          suavizamiento <span class="text-gray-400 font-normal text-2xl">/ Moving averages</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Estimar la tendencia con una media móvil y entender el
+              compromiso entre suavidad y detalle según el orden de la ventana.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Una <strong>media móvil</strong> de orden $m$ promedia cada punto con sus vecinos, atenuando el ruido y la
+        estacionalidad para dejar ver la tendencia. Para $m$ impar:</p>
+      <div class="formula">
+        $$\hat{T}_t = \frac{1}{m} \sum_{j=-k}^{k} y_{t+j}, \qquad m = 2k+1$$
+      </div>
+      <p>Cuando $m$ es par (por ejemplo $m=12$ para datos mensuales) se usa una <strong>media móvil centrada</strong>
+        $2\times m$: se promedia dos medias móviles consecutivas para que el resultado quede alineado con un período.
+        Una media de orden $m$ igual al período estacional elimina la estacionalidad y estima la tendencia-ciclo.</p>
+
+      <div class="simulador" data-simulador="media-movil">
+        <h4><i class="fas fa-wave-square" aria-hidden="true"></i> Simulador: media móvil sobre <code>AirPassengers</code></h4>
+        <p class="text-sm" style="margin-bottom:0.5rem;">Mueve el orden $m$ de la ventana. Con $m$ pequeño la curva
+          sigue el ruido; al llegar a $m=12$ desaparece la estacionalidad y aparece limpia la tendencia. Órdenes muy
+          grandes también recortan los extremos (no hay vecinos suficientes).</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper">
+          <canvas aria-label="Serie de pasajeros con su media móvil superpuesta" role="img"></canvas>
+        </div>
+      </div>
+
+      <div class="code-tabs" role="group" aria-label="Media móvil en R y Python">
+        <div class="code-tabs-nav" role="tablist" aria-label="Lenguaje del ejemplo">
+          <button type="button" class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">
+            <i class="fab fa-r-project" aria-hidden="true"></i> R
+          </button>
+          <button type="button" class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">
+            <i class="fab fa-python" aria-hidden="true"></i> Python
+          </button>
+        </div>
+        <div class="code-tab-panel" data-lang="r">
+          <pre><code class="language-r"># Media movil centrada de orden 12 (2x12) con slider() de fpp3
+library(fpp3)
+pasajeros &lt;- as_tsibble(AirPassengers)
+pasajeros |&gt;
+  mutate(tendencia = slider::slide_dbl(value, mean,
+                       .before = 6, .after = 6, .complete = TRUE)) |&gt;
+  autoplot(value) +
+  geom_line(aes(y = tendencia), colour = "#FF6600", linewidth = 1)</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" hidden>
+          <pre><code class="language-python"># Media movil centrada de orden 12 con pandas
+tendencia = pasajeros.rolling(window=12, center=True).mean()
+
+import matplotlib.pyplot as plt
+pasajeros.plot(label="observado")
+tendencia.plot(label="media movil (m=12)")
+plt.legend(); plt.show()</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- ============================================================ -->
+  <!-- MÓDULO 6 · Descomposición clásica                             -->
+  <!-- ============================================================ -->
+  <template id="module-6">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 6</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">1.6 Descomposición clásica
+          <span class="text-gray-400 font-normal text-2xl">/ Classical decomposition</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Descomponer una serie en tendencia, estacionalidad y
+              residuo con el método clásico, y conocer sus limitaciones.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>La <strong>descomposición clásica</strong> estima los componentes en pasos: (1) la tendencia $\hat{T}_t$ con
+        una media móvil del orden del período; (2) se quita la tendencia (restando en el aditivo, dividiendo en el
+        multiplicativo); (3) la estacionalidad $\hat{S}_t$ como el promedio, por posición estacional, de la serie sin
+        tendencia; (4) el residuo $\hat{R}_t$ es lo que queda. Abajo, la descomposición <strong>multiplicativa</strong>
+        de <code>AirPassengers</code> (calculada en R con <code>decompose()</code>).</p>
+
+      <div class="simulador" data-simulador="descomp-clasica">
+        <h4><i class="fas fa-layer-group" aria-hidden="true"></i> Descomposición multiplicativa de
+          <code>AirPassengers</code></h4>
+        <p class="text-sm" style="margin-bottom:0.5rem;">De arriba abajo: serie observada, tendencia (media móvil
+          centrada 2×12), factor estacional (repite cada 12 meses) y residuo. En el modelo multiplicativo, estacional
+          y residuo oscilan alrededor de <strong>1</strong>, no de 0.</p>
+        <div class="grafico-wrapper" style="height:120px;"><canvas aria-label="Componente observado" role="img"></canvas></div>
+        <div class="grafico-wrapper" style="height:120px; margin-top:0.5rem;"><canvas aria-label="Componente tendencia" role="img"></canvas></div>
+        <div class="grafico-wrapper" style="height:120px; margin-top:0.5rem;"><canvas aria-label="Componente estacional" role="img"></canvas></div>
+        <div class="grafico-wrapper" style="height:120px; margin-top:0.5rem;"><canvas aria-label="Componente residuo" role="img"></canvas></div>
+      </div>
+
+      <div class="code-tabs" role="group" aria-label="Descomposición clásica en R y Python">
+        <div class="code-tabs-nav" role="tablist" aria-label="Lenguaje del ejemplo">
+          <button type="button" class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">
+            <i class="fab fa-r-project" aria-hidden="true"></i> R
+          </button>
+          <button type="button" class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">
+            <i class="fab fa-python" aria-hidden="true"></i> Python
+          </button>
+        </div>
+        <div class="code-tab-panel" data-lang="r">
+          <pre><code class="language-r"># Descomposicion clasica multiplicativa (R base)
+dc &lt;- decompose(AirPassengers, type = "multiplicative")
+plot(dc)
+
+# Version tidyverts (aditiva sobre log = multiplicativa)
+library(fpp3)
+as_tsibble(AirPassengers) |&gt;
+  model(clasica = classical_decomposition(value, type = "multiplicative")) |&gt;
+  components() |&gt;
+  autoplot()</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" hidden>
+          <pre><code class="language-python"># Descomposicion clasica multiplicativa
+from statsmodels.tsa.seasonal import seasonal_decompose
+
+dc = seasonal_decompose(pasajeros, model="multiplicative", period=12)
+dc.plot()</code></pre>
+        </div>
+      </div>
+
+      <div class="warning">
+        <p><strong>Limitaciones del método clásico:</strong> la tendencia por media móvil deja <em>sin estimar</em> los
+          primeros y últimos $m/2$ valores (los huecos en el panel de tendencia); supone que la estacionalidad es
+          <em>constante</em> en el tiempo; y es sensible a valores atípicos. La descomposición STL (Módulo 7) corrige
+          estas tres debilidades.</p>
+      </div>
+    </div>
+  </template>
+
+  <!-- ============================================================ -->
+  <!-- MÓDULO 7 · Descomposición STL                                 -->
+  <!-- ============================================================ -->
+  <template id="module-7">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 7</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">1.7 Descomposición STL
+          <span class="text-gray-400 font-normal text-2xl">/ STL decomposition</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Aplicar la descomposición STL y explicar por qué es más
+              flexible y robusta que la clásica.</p>
+          </div>
+        </div>
+      </div>
+
+      <p><strong>STL</strong> (<em>Seasonal-Trend decomposition using Loess</em>) descompone la serie ajustando curvas
+        locales (Loess). Frente a la clásica, STL: estima la tendencia en <em>toda</em> la serie (sin huecos en los
+        extremos), permite que la <strong>estacionalidad cambie</strong> suavemente con el tiempo, funciona con
+        cualquier frecuencia y es <strong>robusta</strong> a valores atípicos. Como STL es aditiva, para
+        <code>AirPassengers</code> (multiplicativa) se aplica sobre $\log y_t$: así los componentes se suman.</p>
+
+      <div class="simulador" data-simulador="descomp-stl">
+        <h4><i class="fas fa-stream" aria-hidden="true"></i> STL de <code>log(AirPassengers)</code></h4>
+        <p class="text-sm" style="margin-bottom:0.5rem;">Componentes en <strong>escala logarítmica</strong> (por eso
+          suman): de arriba abajo, $\log y_t$ observado, tendencia, estacional y residuo. Nota que la tendencia llega
+          hasta los extremos y el residuo no tiene estructura visible.</p>
+        <div class="grafico-wrapper" style="height:120px;"><canvas aria-label="log observado" role="img"></canvas></div>
+        <div class="grafico-wrapper" style="height:120px; margin-top:0.5rem;"><canvas aria-label="tendencia STL" role="img"></canvas></div>
+        <div class="grafico-wrapper" style="height:120px; margin-top:0.5rem;"><canvas aria-label="estacional STL" role="img"></canvas></div>
+        <div class="grafico-wrapper" style="height:120px; margin-top:0.5rem;"><canvas aria-label="residuo STL" role="img"></canvas></div>
+      </div>
+
+      <div class="code-tabs" role="group" aria-label="STL en R y Python">
+        <div class="code-tabs-nav" role="tablist" aria-label="Lenguaje del ejemplo">
+          <button type="button" class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">
+            <i class="fab fa-r-project" aria-hidden="true"></i> R
+          </button>
+          <button type="button" class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">
+            <i class="fab fa-python" aria-hidden="true"></i> Python
+          </button>
+        </div>
+        <div class="code-tab-panel" data-lang="r">
+          <pre><code class="language-r"># STL sobre log(AirPassengers): componentes aditivos en escala log
+library(fpp3)
+as_tsibble(log(AirPassengers)) |&gt;
+  model(stl = STL(value ~ trend(window = 21) + season(window = "periodic"))) |&gt;
+  components() |&gt;
+  autoplot()
+
+# R base tambien trae STL:
+plot(stl(log(AirPassengers), s.window = "periodic"))</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" hidden>
+          <pre><code class="language-python"># STL sobre log(AirPassengers)
+import numpy as np
+from statsmodels.tsa.seasonal import STL
+
+res = STL(np.log(pasajeros), period=12, robust=True).fit()
+res.plot()</code></pre>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>Nota:</strong> deshacer el logaritmo con $\exp(\cdot)$ devuelve los componentes a la escala original,
+          donde vuelven a <em>multiplicarse</em>. STL será además la base para pronosticar descomponiendo (STL +
+          modelo sobre la serie ajustada) más adelante en el curso.</p>
+      </div>
+    </div>
+  </template>
+
+  <!-- ============================================================ -->
+  <!-- MÓDULO 8 · Ajuste estacional y fuerza de los componentes      -->
+  <!-- ============================================================ -->
+  <template id="module-8">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 8</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">1.8 Ajuste estacional y
+          fuerza de los componentes <span class="text-gray-400 font-normal text-2xl">/ Seasonal adjustment &amp;
+            strength</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Construir la serie desestacionalizada y cuantificar la
+              fuerza de la tendencia y de la estacionalidad.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>La <strong>serie desestacionalizada</strong> (<em>seasonally adjusted</em>) quita el componente estacional
+        para dejar ver tendencia y residuo. En el modelo multiplicativo, $y_t^{\text{aj}} = y_t / \hat{S}_t$; en el
+        aditivo, $y_t^{\text{aj}} = y_t - \hat{S}_t$. Es lo que reportan muchas estadísticas oficiales (desempleo,
+        producción) para comparar meses sin el vaivén estacional.</p>
+
+      <div class="simulador" data-simulador="desestacionalizada">
+        <h4><i class="fas fa-adjust" aria-hidden="true"></i> Serie observada vs. desestacionalizada</h4>
+        <p class="text-sm" style="margin-bottom:0.5rem;">La línea desestacionalizada ($y_t/\hat{S}_t$) elimina el
+          diente de sierra mensual y deja la tendencia-ciclo más un residuo suave.</p>
+        <div class="grafico-wrapper">
+          <canvas aria-label="Serie observada y serie desestacionalizada superpuestas" role="img"></canvas>
+        </div>
+      </div>
+
+      <p>¿Qué tan marcada es cada componente? Hyndman &amp; Athanasopoulos (FPP3, §3.6) definen la <strong>fuerza de la
+        tendencia</strong> $F_T$ y de la <strong>estacionalidad</strong> $F_S$ a partir de las varianzas de los
+        componentes STL (aquí, sobre la escala log):</p>
+      <div class="formula">
+        $$F_T = \max\!\left(0,\; 1 - \frac{\operatorname{Var}(R_t)}{\operatorname{Var}(T_t + R_t)}\right),
+        \qquad
+        F_S = \max\!\left(0,\; 1 - \frac{\operatorname{Var}(R_t)}{\operatorname{Var}(S_t + R_t)}\right)$$
+      </div>
+      <p>Ambas van de 0 (ausente) a 1 (muy marcada). Para <code>AirPassengers</code> resultan
+        $F_T = 0{.}994$ y $F_S = 0{.}937$: una serie con tendencia y estacionalidad <strong>muy fuertes</strong>, justo
+        lo que veíamos a ojo.</p>
+
+      <div class="note">
+        <p><strong>Conexión con ciencia de datos:</strong> $F_T$ y $F_S$ son <em>features</em> que resumen una serie en
+          dos números. Sobre colecciones de miles de series (retail, sensores) permiten agrupar, filtrar y elegir el
+          modelo apropiado de forma automática.</p>
+      </div>
+    </div>
+  </template>
+
+  <!-- ============================================================ -->
+  <!-- MÓDULO 9 · Ciencia de datos, resumen y lecturas               -->
+  <!-- ============================================================ -->
+  <template id="module-9">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 9</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">1.9 Conexión, resumen y
+          lecturas <span class="text-gray-400 font-normal text-2xl">/ Wrap-up</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Cerrar el capítulo conectando la descomposición con el
+              flujo de la ciencia de datos y fijar los conceptos clave.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>La descomposición como preprocesamiento</h3>
+      <p>Descomponer, desestacionalizar o transformar (log, Box–Cox) son pasos de <strong>preparación de datos
+        temporales</strong> previos a cualquier modelo de pronóstico o de aprendizaje automático. Comprender los
+        componentes permite elegir el modelo (aditivo/multiplicativo), decidir si diferenciar (Capítulo 2) y explicar
+        los pronósticos. Estos conceptos son la base conceptual de métodos más recientes sobre secuencias.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-list-check mr-2" aria-hidden="true"></i>Resumen del capítulo</h4>
+        <ul style="margin-bottom:0;">
+          <li>Una serie de tiempo tiene <strong>dependencia temporal</strong>: el orden importa.</li>
+          <li>Cuatro componentes: <strong>tendencia, estacionalidad, ciclo y ruido</strong> (ciclo ≠ estacionalidad).</li>
+          <li>Modelo <strong>aditivo</strong> si la amplitud es constante; <strong>multiplicativo</strong> (o log) si
+            crece con el nivel.</li>
+          <li>La <strong>media móvil</strong> del orden del período estima la tendencia y elimina la estacionalidad.</li>
+          <li>Descomposición <strong>clásica</strong> (simple, con huecos y estacionalidad fija) vs. <strong>STL</strong>
+            (flexible y robusta).</li>
+          <li><strong>Desestacionalizar</strong> = quitar $S_t$; $F_T$ y $F_S$ miden la fuerza de cada componente.</li>
+        </ul>
+      </div>
+
+      <div class="exercise">
+        <h4><i class="fas fa-pen-to-square mr-2" aria-hidden="true"></i>Para practicar</h4>
+        <ol style="margin-bottom:0;">
+          <li>Con <code>fpp3</code>, grafica y descompone (clásica y STL) la serie <code>co2</code> o una serie de
+            demanda de energía. ¿Aditiva o multiplicativa? Justifica con el gráfico estacional.</li>
+          <li>Calcula $F_T$ y $F_S$ para dos series distintas y compáralas.</li>
+          <li>Con IA como tutor, pide un contraejemplo donde la descomposición clásica falle (un atípico) y verifica en
+            R que STL lo maneja mejor.</li>
+        </ol>
+      </div>
+
+      <div class="references">
+        <h3><i class="fas fa-book-open mr-2" aria-hidden="true"></i>Lecturas de este capítulo</h3>
+        <ul style="margin-bottom:0;">
+          <li>Hyndman &amp; Athanasopoulos, <em>Forecasting: Principles and Practice</em> (3.ª ed.), <strong>caps. 1–3</strong>
+            — patrones temporales y descomposición. Acceso abierto: <a href="https://otexts.com/fpp3/" target="_blank"
+              rel="noopener">otexts.com/fpp3</a>.</li>
+          <li>Shumway &amp; Stoffer, <em>Time Series Analysis and Its Applications</em> (4.ª ed.), cap. 1 — panorama y
+            ejemplos.</li>
+        </ul>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    // ================================================================
+    // Configuración del capítulo
+    // ================================================================
+    const courseData = {
+      title: "Series de Tiempo",
+      modules: [
+        { id: 1, title: "¿Qué es una serie de tiempo?", shortTitle: "Qué es", duration: "8 min" },
+        { id: 2, title: "Series de tiempo en software", shortTitle: "ts / pandas", duration: "8 min" },
+        { id: 3, title: "Visualización de series", shortTitle: "Gráficos", duration: "10 min" },
+        { id: 4, title: "Los cuatro componentes", shortTitle: "Componentes", duration: "12 min" },
+        { id: 5, title: "Medias móviles y suavizamiento", shortTitle: "Medias móviles", duration: "10 min" },
+        { id: 6, title: "Descomposición clásica", shortTitle: "Desc. clásica", duration: "12 min" },
+        { id: 7, title: "Descomposición STL", shortTitle: "STL", duration: "10 min" },
+        { id: 8, title: "Ajuste estacional y fuerza", shortTitle: "Ajuste estacional", duration: "10 min" },
+        { id: 9, title: "Conexión, resumen y lecturas", shortTitle: "Cierre", duration: "8 min" }
+      ]
+    };
+
+    // Generado por precalculo/genera_datos.R el 2026-07-24
+    // AirPassengers y su descomposicion (clasica multiplicativa + STL sobre log).
+    const DATOS_CAP1 = {"serie":"airpassengers","descripcion":"Descomposicion de AirPassengers. Clasica multiplicativa con stats::decompose (tendencia por media movil centrada de orden 12; NA en los extremos como null). STL con stats::stl sobre log(AirPassengers): componentes aditivos en escala log. Fuerza de tendencia/estacionalidad segun FPP3 seccion 3.6, calculada sobre STL.","n":144,"fechas":["1949-01","1949-02","1949-03","1949-04","1949-05","1949-06","1949-07","1949-08","1949-09","1949-10","1949-11","1949-12","1950-01","1950-02","1950-03","1950-04","1950-05","1950-06","1950-07","1950-08","1950-09","1950-10","1950-11","1950-12","1951-01","1951-02","1951-03","1951-04","1951-05","1951-06","1951-07","1951-08","1951-09","1951-10","1951-11","1951-12","1952-01","1952-02","1952-03","1952-04","1952-05","1952-06","1952-07","1952-08","1952-09","1952-10","1952-11","1952-12","1953-01","1953-02","1953-03","1953-04","1953-05","1953-06","1953-07","1953-08","1953-09","1953-10","1953-11","1953-12","1954-01","1954-02","1954-03","1954-04","1954-05","1954-06","1954-07","1954-08","1954-09","1954-10","1954-11","1954-12","1955-01","1955-02","1955-03","1955-04","1955-05","1955-06","1955-07","1955-08","1955-09","1955-10","1955-11","1955-12","1956-01","1956-02","1956-03","1956-04","1956-05","1956-06","1956-07","1956-08","1956-09","1956-10","1956-11","1956-12","1957-01","1957-02","1957-03","1957-04","1957-05","1957-06","1957-07","1957-08","1957-09","1957-10","1957-11","1957-12","1958-01","1958-02","1958-03","1958-04","1958-05","1958-06","1958-07","1958-08","1958-09","1958-10","1958-11","1958-12","1959-01","1959-02","1959-03","1959-04","1959-05","1959-06","1959-07","1959-08","1959-09","1959-10","1959-11","1959-12","1960-01","1960-02","1960-03","1960-04","1960-05","1960-06","1960-07","1960-08","1960-09","1960-10","1960-11","1960-12"],"observado":[112,118,132,129,121,135,148,148,136,119,104,118,115,126,141,135,125,149,170,170,158,133,114,140,145,150,178,163,172,178,199,199,184,162,146,166,171,180,193,181,183,218,230,242,209,191,172,194,196,196,236,235,229,243,264,272,237,211,180,201,204,188,235,227,234,264,302,293,259,229,203,229,242,233,267,269,270,315,364,347,312,274,237,278,284,277,317,313,318,374,413,405,355,306,271,306,315,301,356,348,355,422,465,467,404,347,305,336,340,318,362,348,363,435,491,505,404,359,310,337,360,342,406,396,420,472,548,559,463,407,362,405,417,391,419,461,472,535,622,606,508,461,390,432],"clasica_multiplicativa":{"tendencia":[null,null,null,null,null,null,126.7917,127.25,127.9583,128.5833,129,129.75,131.25,133.0833,134.9167,136.4167,137.4167,138.75,140.9167,143.1667,145.7083,148.4167,151.5417,154.7083,157.125,159.5417,161.8333,164.125,166.6667,169.0833,171.25,173.5833,175.4583,176.8333,178.0417,180.1667,183.125,186.2083,189.0417,191.2917,193.5833,195.8333,198.0417,199.75,202.2083,206.25,210.4167,213.375,215.8333,218.5,220.9167,222.9167,224.0833,224.7083,225.3333,225.3333,224.9583,224.5833,224.4583,225.5417,228,230.4583,232.25,233.9167,235.625,237.75,240.5,243.9583,247.1667,250.25,253.5,257.125,261.8333,266.6667,271.125,275.2083,278.5,281.9583,285.75,289.3333,293.25,297.1667,301,305.4583,309.9583,314.4167,318.625,321.75,324.5,327.0833,329.5417,331.8333,334.4583,337.5417,340.5417,344.0833,348.25,353,357.625,361.375,364.5,367.1667,369.4583,371.2083,372.1667,372.4167,372.75,373.625,375.25,377.9167,379.5,380,380.7083,380.9583,381.8333,383.6667,386.5,390.3333,394.7083,398.625,402.5417,407.1667,411.875,416.3333,420.5,425.5,430.7083,435.125,437.7083,440.9583,445.8333,450.625,456.3333,461.375,465.2083,469.3333,472.75,475.0417,null,null,null,null,null,null],"estacional":[0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988],"residuo":[null,null,null,null,null,null,0.9517,0.9534,1.0022,1.004,1.0063,1.0118,0.9626,1.0715,1.0374,1.014,0.9269,0.965,0.9836,0.9734,1.0225,0.9722,0.939,1.0068,1.0138,1.064,1.0919,1.0177,1.0516,0.946,0.9474,0.9398,0.9889,0.9939,1.0235,1.0251,1.0259,1.094,1.0135,0.9696,0.9633,1.0004,0.9469,0.9931,0.9746,1.0047,1.0203,1.0115,0.9977,1.0152,1.0605,1.0802,1.0413,0.9718,0.9552,0.9895,0.9934,1.0193,1.0009,0.9915,0.983,0.9232,1.0044,0.9944,1.0119,0.9979,1.0238,0.9845,0.9881,0.9928,0.9995,0.9909,1.0154,0.9888,0.9776,1.0016,0.9879,1.004,1.0386,0.9831,1.0033,1.0003,0.9828,1.0126,1.0066,0.997,0.9876,0.9968,0.9986,1.0276,1.0218,1.0005,1.0009,0.9835,0.9933,0.9894,0.9937,0.965,0.9882,0.9868,0.9924,1.0329,1.0261,1.0313,1.0236,1.0108,1.0213,1.0005,0.9954,0.9523,0.9469,0.9384,0.9716,1.0261,1.0484,1.079,0.9857,0.9978,0.9803,0.9406,0.9825,0.9506,0.9785,0.9746,1.0178,0.9969,1.0373,1.0531,0.9974,1.0013,1.0135,0.9999,1.0039,0.9591,0.8941,1.0065,1.0174,1.0121,null,null,null,null,null,null]},"indices_estacionales":[0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988],"stl_log":{"escala":"log","tendencia":[4.8294,4.8304,4.8313,4.8334,4.8354,4.8382,4.8409,4.8435,4.846,4.8509,4.8558,4.8646,4.8734,4.8833,4.8931,4.9032,4.9132,4.9254,4.9376,4.9544,4.9712,4.9917,5.0121,5.0311,5.0501,5.065,5.08,5.0939,5.1078,5.1211,5.1343,5.1461,5.158,5.1699,5.1817,5.1948,5.2079,5.2205,5.2331,5.2444,5.2557,5.2669,5.2781,5.2919,5.3057,5.323,5.3404,5.3558,5.3712,5.3817,5.3922,5.3985,5.4047,5.4068,5.4089,5.4078,5.4067,5.407,5.4073,5.4126,5.418,5.4258,5.4337,5.4427,5.4517,5.4636,5.4755,5.489,5.5024,5.5157,5.5289,5.5432,5.5574,5.5726,5.5878,5.6026,5.6173,5.6317,5.646,5.66,5.674,5.6874,5.7008,5.7137,5.7266,5.7387,5.7508,5.7613,5.7717,5.7806,5.7894,5.7974,5.8055,5.8137,5.822,5.8317,5.8413,5.8526,5.8639,5.875,5.8861,5.8947,5.9034,5.9078,5.9122,5.9129,5.9136,5.9146,5.9155,5.9185,5.9215,5.925,5.9285,5.9327,5.9369,5.9433,5.9497,5.9574,5.9651,5.9733,5.9816,5.992,6.0025,6.0156,6.0288,6.0422,6.0556,6.0659,6.0761,6.0841,6.0922,6.1005,6.1088,6.1179,6.127,6.1358,6.1446,6.153,6.1614,6.1701,6.1789,6.1876,6.1963,6.2048],"estacional":[-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006],"residuo":[-0.0192,0.0543,0.0356,0.0405,-0.0246,-0.0427,-0.0601,-0.0559,-0.0008,-0.0015,0.0022,0.0067,-0.0368,0.067,0.0397,0.0161,-0.0698,-0.0312,-0.0182,-0.0282,0.0239,-0.0311,-0.0624,0.0112,0.0183,0.0596,0.0859,0.0138,0.0547,-0.0491,-0.0574,-0.0624,-0.0105,-0.012,0.0154,0.0178,0.0254,0.0865,0.0137,-0.0319,-0.0312,0.0078,-0.0565,-0.0126,-0.0308,-0.0005,0.0206,0.0127,-0.0014,0.0104,0.0557,0.0751,0.044,-0.0235,-0.0493,-0.0116,-0.0062,0.0151,-0.0008,-0.0087,-0.0082,-0.0754,0.01,-0.0037,0.0187,0.0026,0.0185,-0.0184,-0.0131,-0.0117,-0.0022,-0.0088,0.0231,-0.0076,-0.0164,0.0062,-0.0039,0.0111,0.0347,-0.0203,0.0015,-0.004,-0.0192,0.0146,0.014,-0.0006,-0.0078,-0.001,0.0053,0.0339,0.0176,-0.0032,-0.0008,-0.0199,-0.0064,-0.0074,0.0029,-0.0315,-0.0049,-0.0088,0.0011,0.0405,0.0223,0.0289,0.0217,0.0067,0.0202,0.0032,0.005,-0.0424,-0.0457,-0.0587,-0.019,0.0329,0.0431,0.0716,-0.0158,-0.0038,-0.015,-0.0526,-0.0038,-0.0432,-0.012,-0.0202,0.0265,0.005,0.0342,0.0507,-0.0059,-0.0051,0.013,0.004,0.0159,-0.0352,-0.105,0.0116,0.0274,0.0195,0.0552,0.0272,-0.0159,0.0161,-0.0166,-0.0357]},"fuerza_tendencia":0.994,"fuerza_estacional":0.937,"metadatos":{"generado":"2026-07-24","generador":"precalculo/genera_datos.R"}};
+
+    // ================================================================
+    // Estado y elementos del DOM
+    // ================================================================
+    let currentModuleId = 1;
+    let completedModules = new Set();
+
+    const mainContent = document.getElementById('content-area');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const moduleNav = document.getElementById('module-nav');
+    const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderNavigation();
+      loadModule(1);
+      setupEventListeners();
+    });
+
+    // ================================================================
+    // Navegación de módulos
+    // ================================================================
+    function renderNavigation() {
+      moduleNav.innerHTML = courseData.modules.map(module => `
+                <button type="button" class="nav-item ${module.id === currentModuleId ? 'active' : ''}"
+                     onclick="loadModule(${module.id})"${module.id === currentModuleId ? ' aria-current="page"' : ''}>
+                    ${module.title}
+                    ${completedModules.has(module.id) ? '<i class="fas fa-check-circle ml-auto text-green-400" aria-hidden="true"></i>' : ''}
+                </button>
+            `).join('');
+    }
+
+    function loadModule(id) {
+      currentModuleId = id;
+
+      if (!completedModules.has(id)) {
+        completedModules.add(id);
+      }
+
+      renderNavigation();
+
+      const template = document.getElementById(`module-${id}`);
+      if (template) {
+        destruirSimuladores();
+        mainContent.innerHTML = '';
+        mainContent.appendChild(template.content.cloneNode(true));
+
+        wrapCodeBlocks();
+        initCodeTabs();
+        iniciarSimuladores();
+        renderMathInElement(mainContent, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false },
+            { left: "\\(", right: "\\)", display: false },
+            { left: "\\[", right: "\\]", display: true }
+          ]
+        });
+
+        addNavigationButtons();
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function addNavigationButtons() {
+      const navContainer = document.createElement('div');
+      navContainer.className = 'flex justify-between mt-8 pt-6 border-t border-gray-100';
+
+      const prevBtn = document.createElement('button');
+      if (currentModuleId > 1) {
+        prevBtn.className = 'usta-button bg-gray-500 hover:bg-gray-600';
+        prevBtn.innerHTML = '<i class="fas fa-arrow-left mr-2" aria-hidden="true"></i> Anterior';
+        prevBtn.onclick = () => loadModule(currentModuleId - 1);
+      } else {
+        prevBtn.style.visibility = 'hidden';
+      }
+
+      const nextBtn = document.createElement('button');
+      if (currentModuleId < courseData.modules.length) {
+        nextBtn.className = 'usta-button';
+        nextBtn.innerHTML = 'Siguiente <i class="fas fa-arrow-right ml-2" aria-hidden="true"></i>';
+        nextBtn.onclick = () => loadModule(currentModuleId + 1);
+      } else {
+        nextBtn.className = 'usta-button bg-green-600 hover:bg-green-700';
+        nextBtn.innerHTML = 'Finalizar <i class="fas fa-check mr-2" aria-hidden="true"></i>';
+        nextBtn.onclick = () => alert('¡Felicidades! Has completado el capítulo.');
+      }
+
+      navContainer.appendChild(prevBtn);
+      navContainer.appendChild(nextBtn);
+      mainContent.appendChild(navContainer);
+    }
+
+    function setupEventListeners() {
+      sidebarToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('sidebar-collapsed');
+        const icon = sidebarToggle.querySelector('i');
+        if (sidebar.classList.contains('sidebar-collapsed')) {
+          icon.classList.remove('fa-chevron-left');
+          icon.classList.add('fa-chevron-right');
+          sidebarToggle.setAttribute('aria-expanded', 'false');
+        } else {
+          icon.classList.remove('fa-chevron-right');
+          icon.classList.add('fa-chevron-left');
+          sidebarToggle.setAttribute('aria-expanded', 'true');
+        }
+      });
+
+      window.addEventListener('scroll', () => {
+        if (window.pageYOffset > 300) {
+          scrollToTopBtn.classList.add('visible');
+        } else {
+          scrollToTopBtn.classList.remove('visible');
+        }
+      });
+
+      scrollToTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // ================================================================
+    // Bloques de código: envoltorio con copiar / expandir
+    // ================================================================
+    const NOMBRES_LENGUAJE = { 'language-r': 'R', 'language-python': 'Python' };
+
+    function wrapCodeBlocks() {
+      const pres = mainContent.querySelectorAll('pre');
+      pres.forEach(pre => {
+        if (!pre.parentElement.classList.contains('code-block-wrapper')) {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'code-block-wrapper';
+
+          // El curso es en R: si el bloque no declara lenguaje, se asume R
+          const code = pre.querySelector('code');
+          let claseLenguaje = 'language-r';
+          if (code) {
+            const declarada = Array.from(code.classList).find(c => c.startsWith('language-'));
+            if (declarada) {
+              claseLenguaje = declarada;
+            } else {
+              code.classList.add(claseLenguaje);
+            }
+          }
+          const titulo = NOMBRES_LENGUAJE[claseLenguaje] || 'Código';
+
+          const header = document.createElement('div');
+          header.className = 'code-block-header';
+          header.innerHTML = `
+            <span class="code-block-title">${titulo}</span>
+            <div class="code-actions">
+              <button class="code-copy-btn" onclick="copyCode(this)" title="Copiar código">
+                <i class="fas fa-copy" aria-hidden="true"></i>
+                <span>Copiar</span>
+              </button>
+              <button class="code-toggle-btn" onclick="toggleCode(this)">
+                <span>Mostrar/Ocultar</span>
+                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+              </button>
+            </div>
+          `;
+
+          pre.parentNode.insertBefore(wrapper, pre);
+          wrapper.appendChild(header);
+          wrapper.appendChild(pre);
+          pre.classList.add('collapsed');
+        }
+      });
+      if (typeof Prism !== 'undefined') {
+        Prism.highlightAllUnder(mainContent);
+      }
+    }
+
+    function toggleCode(button) {
+      const pre = button.closest('.code-block-wrapper').querySelector('pre');
+
+      if (pre.classList.contains('collapsed')) {
+        pre.classList.remove('collapsed');
+        pre.classList.add('expanded');
+        button.classList.add('expanded');
+      } else {
+        pre.classList.add('collapsed');
+        pre.classList.remove('expanded');
+        button.classList.remove('expanded');
+      }
+    }
+
+    function copyCode(button) {
+      const pre = button.closest('.code-block-wrapper').querySelector('pre');
+      const code = pre.querySelector('code');
+      const codeText = code.textContent;
+
+      navigator.clipboard.writeText(codeText).then(() => {
+        const originalText = button.innerHTML;
+        button.classList.add('copied');
+        button.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i><span>Copiado</span>';
+
+        setTimeout(() => {
+          button.classList.remove('copied');
+          button.innerHTML = originalText;
+        }, 2000);
+      }).catch(err => {
+        console.error('Error al copiar: ', err);
+        const textarea = document.createElement('textarea');
+        textarea.value = codeText;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+
+        button.classList.add('copied');
+        button.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i><span>Copiado</span>';
+        setTimeout(() => {
+          button.classList.remove('copied');
+          button.innerHTML = '<i class="fas fa-copy" aria-hidden="true"></i><span>Copiar</span>';
+        }, 2000);
+      });
+    }
+
+    // ================================================================
+    // Pestañas de código R / Python
+    // ================================================================
+    function initCodeTabs() {
+      mainContent.querySelectorAll('.code-tabs').forEach(tabs => {
+        const botones = tabs.querySelectorAll('.code-tab-btn');
+        const paneles = tabs.querySelectorAll('.code-tab-panel');
+        botones.forEach(boton => {
+          boton.addEventListener('click', () => {
+            const lang = boton.dataset.lang;
+            botones.forEach(b => {
+              const activo = b === boton;
+              b.classList.toggle('active', activo);
+              b.setAttribute('aria-selected', activo ? 'true' : 'false');
+            });
+            paneles.forEach(p => {
+              p.hidden = p.dataset.lang !== lang;
+            });
+          });
+        });
+      });
+    }
+
+    // ================================================================
+    // Fábrica de simuladores
+    //
+    // Uso: SIMULADORES['mi-id'] = function (raiz) { ...; return [chart]; }
+    // El contenedor lleva data-simulador="mi-id", un .simulador-controles
+    // vacío y un <canvas>. La función devuelve los Chart creados para
+    // destruirlos al cambiar de módulo.
+    // ================================================================
+    const SIMULADORES = {};
+    let graficosActivos = [];
+
+    function iniciarSimuladores() {
+      mainContent.querySelectorAll('[data-simulador]').forEach(raiz => {
+        const init = SIMULADORES[raiz.dataset.simulador];
+        if (init) {
+          const graficos = init(raiz) || [];
+          graficosActivos.push(...graficos);
+        } else {
+          console.warn(`Simulador no registrado: ${raiz.dataset.simulador}`);
+        }
+      });
+    }
+
+    function destruirSimuladores() {
+      graficosActivos.forEach(g => g.destroy());
+      graficosActivos = [];
+    }
+
+    // Crea deslizadores dentro de un contenedor y devuelve los <input>.
+    // defs: [{clave, etiqueta, min, max, paso, decimales}]
+    // params: objeto mutable con el valor actual de cada clave.
+    // alCambiar: callback invocado en cada movimiento.
+    function crearControles(contenedor, defs, params, alCambiar) {
+      const inputs = {};
+      defs.forEach(def => {
+        const decimales = def.decimales !== undefined ? def.decimales
+          : (String(def.paso).includes('.') ? String(def.paso).split('.')[1].length : 0);
+        const idControl = `ctl-${def.clave}-${Math.floor(Math.random() * 1e9)}`;
+
+        const div = document.createElement('div');
+        div.className = 'control-slider';
+
+        const label = document.createElement('label');
+        label.setAttribute('for', idControl);
+        label.append(def.etiqueta);
+
+        const output = document.createElement('output');
+        output.textContent = Number(params[def.clave]).toFixed(decimales);
+        label.appendChild(output);
+
+        const input = document.createElement('input');
+        input.type = 'range';
+        input.id = idControl;
+        input.min = def.min;
+        input.max = def.max;
+        input.step = def.paso;
+        input.value = params[def.clave];
+
+        input.addEventListener('input', () => {
+          params[def.clave] = parseFloat(input.value);
+          output.textContent = params[def.clave].toFixed(decimales);
+          alCambiar();
+        });
+
+        div.appendChild(label);
+        div.appendChild(input);
+        contenedor.appendChild(div);
+        inputs[def.clave] = input;
+      });
+      return inputs;
+    }
+
+    // Paleta y defaults de la casa para gráficos de líneas.
+    const COLORES_GRAFICO = {
+      primario: '#012820',
+      secundario: '#FF6600',
+      terciario: '#0e7490',
+      gris: '#94a3b8'
+    };
+
+    function crearGraficoLinea(canvas, etiquetas, datasets, opciones = {}) {
+      return new Chart(canvas, {
+        type: 'line',
+        data: { labels: etiquetas, datasets: datasets },
+        options: Object.assign({
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: {
+              labels: { font: { family: 'Montserrat', size: 12 }, boxWidth: 24 }
+            },
+            tooltip: {
+              backgroundColor: '#012820',
+              titleFont: { family: 'Montserrat' },
+              bodyFont: { family: 'Fira Code' }
+            }
+          },
+          scales: {
+            x: {
+              ticks: {
+                font: { family: 'Montserrat', size: 11 },
+                maxTicksLimit: 12,
+                maxRotation: 0
+              },
+              grid: { display: false }
+            },
+            y: {
+              ticks: { font: { family: 'Fira Code', size: 11 } },
+              grid: { color: 'rgba(148, 163, 184, 0.2)' }
+            }
+          }
+        }, opciones)
+      });
+    }
+
+    // Generador congruencial mulberry32 + Box-Muller: ruido N(0,1)
+    // reproducible (misma semilla => mismo ruido en cada carga).
+    function generarRuidoNormal(n, semilla) {
+      let estado = semilla >>> 0;
+      function uniforme() {
+        estado |= 0;
+        estado = (estado + 0x6D2B79F5) | 0;
+        let t = Math.imul(estado ^ (estado >>> 15), 1 | estado);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      }
+      const ruido = [];
+      for (let i = 0; i < n; i++) {
+        const u1 = Math.max(uniforme(), 1e-12);
+        const u2 = uniforme();
+        ruido.push(Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2));
+      }
+      return ruido;
+    }
+
+    // ACF muestral hasta maxLag (rezago 0 excluido).
+    function calcularACF(x, maxLag) {
+      const n = x.length;
+      const media = x.reduce((a, b) => a + b, 0) / n;
+      const centrada = x.map(v => v - media);
+      const gamma0 = centrada.reduce((a, b) => a + b * b, 0) / n;
+      const acf = [];
+      for (let k = 1; k <= maxLag; k++) {
+        let s = 0;
+        for (let t = 0; t < n - k; t++) {
+          s += centrada[t] * centrada[t + k];
+        }
+        acf.push((s / n) / gamma0);
+      }
+      return acf;
+    }
+
+    // ================================================================
+    // Simulador de demostración: construye tu serie
+    // y_t = beta*t + A*sin(2*pi*t/12) + sigma*e_t
+    // ================================================================
+    SIMULADORES['construye-tu-serie'] = function (raiz) {
+      const n = 120;
+      const periodo = 12;
+      const params = { tendencia: 0.5, amplitud: 10, ruido: 5 };
+      const ruidoBase = generarRuidoNormal(n, 20260723);
+
+      const etiquetas = [];
+      for (let t = 0; t < n; t++) {
+        const anio = 2016 + Math.floor(t / 12);
+        const mes = (t % 12) + 1;
+        etiquetas.push(`${anio}-${String(mes).padStart(2, '0')}`);
+      }
+
+      function calcular() {
+        const tendencia = [], estacional = [], serie = [];
+        for (let t = 0; t < n; t++) {
+          const T = params.tendencia * t;
+          const S = params.amplitud * Math.sin(2 * Math.PI * t / periodo);
+          tendencia.push(T);
+          estacional.push(S);
+          serie.push(T + S + params.ruido * ruidoBase[t]);
+        }
+        return { tendencia, estacional, serie };
+      }
+
+      const inicial = calcular();
+      const grafico = crearGraficoLinea(raiz.querySelector('canvas'), etiquetas, [
+        {
+          label: 'Serie observada',
+          data: inicial.serie,
+          borderColor: COLORES_GRAFICO.primario,
+          backgroundColor: COLORES_GRAFICO.primario,
+          borderWidth: 2,
+          pointRadius: 0
+        },
+        {
+          label: 'Tendencia',
+          data: inicial.tendencia,
+          borderColor: COLORES_GRAFICO.secundario,
+          backgroundColor: COLORES_GRAFICO.secundario,
+          borderWidth: 2,
+          borderDash: [6, 4],
+          pointRadius: 0
+        },
+        {
+          label: 'Estacionalidad',
+          data: inicial.estacional,
+          borderColor: COLORES_GRAFICO.terciario,
+          backgroundColor: COLORES_GRAFICO.terciario,
+          borderWidth: 1.5,
+          borderDash: [2, 3],
+          pointRadius: 0,
+          hidden: true
+        }
+      ]);
+
+      crearControles(raiz.querySelector('.simulador-controles'), [
+        { clave: 'tendencia', etiqueta: 'Pendiente de la tendencia (β)', min: -1, max: 2, paso: 0.1 },
+        { clave: 'amplitud', etiqueta: 'Amplitud estacional (A)', min: 0, max: 30, paso: 1 },
+        { clave: 'ruido', etiqueta: 'Desviación del ruido (σ)', min: 0, max: 20, paso: 1 }
+      ], params, () => {
+        const d = calcular();
+        grafico.data.datasets[0].data = d.serie;
+        grafico.data.datasets[1].data = d.tendencia;
+        grafico.data.datasets[2].data = d.estacional;
+        grafico.update('none');
+      });
+
+      return [grafico];
+    };
+
+    // ================================================================
+    // Simuladores y gráficos del Capítulo 1 (usan DATOS_CAP1)
+    // ================================================================
+    const MESES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+    // M1 · Serie AirPassengers (gráfico de tiempo estático)
+    SIMULADORES['serie-airpassengers'] = function (raiz) {
+      const g = crearGraficoLinea(raiz.querySelector('canvas'), DATOS_CAP1.fechas, [{
+        label: 'Pasajeros (miles)',
+        data: DATOS_CAP1.observado,
+        borderColor: COLORES_GRAFICO.primario,
+        backgroundColor: COLORES_GRAFICO.primario,
+        borderWidth: 2,
+        pointRadius: 0
+      }]);
+      return [g];
+    };
+
+    // M3 · Gráfico estacional: una línea por año, meses en el eje x
+    SIMULADORES['grafico-estacional'] = function (raiz) {
+      const anios = {};
+      DATOS_CAP1.fechas.forEach((f, i) => {
+        const [anio, mes] = f.split('-');
+        (anios[anio] = anios[anio] || Array(12).fill(null))[parseInt(mes, 10) - 1] = DATOS_CAP1.observado[i];
+      });
+      const claves = Object.keys(anios).sort();
+      const datasets = claves.map((anio, k) => {
+        const t = k / (claves.length - 1);              // 0 -> naranja, 1 -> verde
+        const color = `rgb(${Math.round(255 - t * 254)}, ${Math.round(102 + t * (40 - 102))}, ${Math.round(t * 32)})`;
+        return {
+          label: anio,
+          data: anios[anio],
+          borderColor: color,
+          backgroundColor: color,
+          borderWidth: 1.5,
+          pointRadius: 0
+        };
+      });
+      const g = crearGraficoLinea(raiz.querySelector('canvas'), MESES, datasets,
+        { plugins: { legend: { display: false } } });
+      return [g];
+    };
+
+    // M5 · Media móvil centrada interactiva sobre AirPassengers
+    function mediaMovilCentrada(y, m) {
+      const n = y.length, out = Array(n).fill(null);
+      const k = Math.floor(m / 2);
+      if (m % 2 === 1) {
+        for (let t = k; t < n - k; t++) {
+          let s = 0;
+          for (let j = -k; j <= k; j++) s += y[t + j];
+          out[t] = s / m;
+        }
+      } else {
+        // media móvil centrada 2×m: medios pesos en los extremos
+        for (let t = k; t < n - k; t++) {
+          let s = 0.5 * y[t - k] + 0.5 * y[t + k];
+          for (let j = -k + 1; j <= k - 1; j++) s += y[t + j];
+          out[t] = s / m;
+        }
+      }
+      return out;
+    }
+
+    SIMULADORES['media-movil'] = function (raiz) {
+      const y = DATOS_CAP1.observado;
+      const params = { m: 12 };
+      const g = crearGraficoLinea(raiz.querySelector('canvas'), DATOS_CAP1.fechas, [
+        {
+          label: 'Observada',
+          data: y,
+          borderColor: COLORES_GRAFICO.gris,
+          backgroundColor: COLORES_GRAFICO.gris,
+          borderWidth: 1,
+          pointRadius: 0
+        },
+        {
+          label: 'Media móvil',
+          data: mediaMovilCentrada(y, params.m),
+          borderColor: COLORES_GRAFICO.secundario,
+          backgroundColor: COLORES_GRAFICO.secundario,
+          borderWidth: 2.5,
+          pointRadius: 0
+        }
+      ]);
+      crearControles(raiz.querySelector('.simulador-controles'), [
+        { clave: 'm', etiqueta: 'Orden de la ventana (m)', min: 2, max: 24, paso: 1 }
+      ], params, () => {
+        g.data.datasets[1].data = mediaMovilCentrada(y, params.m);
+        g.data.datasets[1].label = `Media móvil (m=${params.m})`;
+        g.update('none');
+      });
+      return [g];
+    };
+
+    // Ayudante: dibuja un panel de un componente en un canvas dado
+    function panelComponente(canvas, etiquetas, datos, etiqueta, color) {
+      return crearGraficoLinea(canvas, etiquetas, [{
+        label: etiqueta,
+        data: datos,
+        borderColor: color,
+        backgroundColor: color,
+        borderWidth: 1.8,
+        pointRadius: 0,
+        spanGaps: false
+      }]);
+    }
+
+    // M6 · Descomposición clásica multiplicativa (4 paneles)
+    SIMULADORES['descomp-clasica'] = function (raiz) {
+      const c = raiz.querySelectorAll('canvas');
+      const f = DATOS_CAP1.fechas, d = DATOS_CAP1.clasica_multiplicativa;
+      return [
+        panelComponente(c[0], f, DATOS_CAP1.observado, 'Observada', COLORES_GRAFICO.primario),
+        panelComponente(c[1], f, d.tendencia, 'Tendencia', COLORES_GRAFICO.secundario),
+        panelComponente(c[2], f, d.estacional, 'Estacional (×)', COLORES_GRAFICO.terciario),
+        panelComponente(c[3], f, d.residuo, 'Residuo (×)', COLORES_GRAFICO.gris)
+      ];
+    };
+
+    // M7 · Descomposición STL de log(AirPassengers) (4 paneles)
+    SIMULADORES['descomp-stl'] = function (raiz) {
+      const c = raiz.querySelectorAll('canvas');
+      const f = DATOS_CAP1.fechas, s = DATOS_CAP1.stl_log;
+      const logObs = DATOS_CAP1.observado.map(v => Math.log(v));
+      return [
+        panelComponente(c[0], f, logObs, 'log(Observada)', COLORES_GRAFICO.primario),
+        panelComponente(c[1], f, s.tendencia, 'Tendencia', COLORES_GRAFICO.secundario),
+        panelComponente(c[2], f, s.estacional, 'Estacional (+)', COLORES_GRAFICO.terciario),
+        panelComponente(c[3], f, s.residuo, 'Residuo (+)', COLORES_GRAFICO.gris)
+      ];
+    };
+
+    // M8 · Serie observada vs. desestacionalizada (multiplicativa: y / S)
+    SIMULADORES['desestacionalizada'] = function (raiz) {
+      const y = DATOS_CAP1.observado, S = DATOS_CAP1.clasica_multiplicativa.estacional;
+      const ajustada = y.map((v, i) => Math.round((v / S[i]) * 10) / 10);
+      const g = crearGraficoLinea(raiz.querySelector('canvas'), DATOS_CAP1.fechas, [
+        {
+          label: 'Observada',
+          data: y,
+          borderColor: COLORES_GRAFICO.gris,
+          backgroundColor: COLORES_GRAFICO.gris,
+          borderWidth: 1,
+          pointRadius: 0
+        },
+        {
+          label: 'Desestacionalizada',
+          data: ajustada,
+          borderColor: COLORES_GRAFICO.primario,
+          backgroundColor: COLORES_GRAFICO.primario,
+          borderWidth: 2,
+          pointRadius: 0
+        }
+      ]);
+      return [g];
+    };
+  </script>
+
+</body>
+
+</html>

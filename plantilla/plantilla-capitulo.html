@@ -1,0 +1,1851 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Material de estudio autónomo de Series de Tiempo: [PLANTILLA - reemplazar por descripción del capítulo].">
+  <meta name="author" content="Javier Mauricio Sierra">
+  <meta name="keywords" content="Series de tiempo, ARIMA, SARIMA, pronóstico, estadística, R, Python">
+  <title>Series de Tiempo - Plantilla de Capítulo</title>
+
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- External Resources -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- KaTeX for LaTeX rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+  <!-- Chart.js for interactive charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <!-- Prism.js for syntax highlighting (R + Python) -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-r.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+  <!-- Tailwind Configuration -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Montserrat', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+            mono: ['Fira Code', 'monospace'],
+          },
+          colors: {
+            primary: '#012820',
+            secondary: '#FF6600',
+            navy: '#012820',
+            gold: '#FFC24B',
+            bg: '#F8FAFC',
+            surface: '#FFFFFF',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Base fallback styles */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background-color: #F8FAFC;
+      color: #1E293B;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+
+    /* USTA Gradient Background */
+    .usta-gradient {
+      background: linear-gradient(140deg, #012820 0%, #FF6600 100%);
+    }
+
+    .usta-gradient-hover:hover {
+      background: linear-gradient(140deg, #02382D 0%, #FF7F24 100%);
+    }
+
+    /* USTA Navy Header */
+    .usta-header {
+      background: linear-gradient(180deg, #012820 0%, #001F18 100%);
+    }
+
+    /* USTA Card Style */
+    .usta-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      margin-bottom: 2rem;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    .usta-card:hover {
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+      transform: translateY(-4px);
+    }
+
+    .usta-button {
+      background: linear-gradient(140deg, #012820 0%, #FF6600 100%);
+      color: white;
+      border-radius: 50px;
+      padding: 12px 28px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .usta-button:hover {
+      background: linear-gradient(140deg, #02382D 0%, #FF7F24 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(1, 40, 32, 0.35);
+    }
+
+    /* Sidebar Container */
+    .sidebar-container {
+      display: none;
+      width: 280px;
+      flex-shrink: 0;
+      order: 2;
+    }
+
+    @media (min-width: 768px) {
+      .sidebar-container {
+        display: block;
+        order: 1;
+      }
+    }
+
+    .sidebar-inner {
+      position: sticky;
+      top: 9rem;
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      padding: 1.5rem;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      max-height: calc(100vh - 12rem);
+      overflow-y: auto;
+    }
+
+    #sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #sidebar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+
+    /* Sidebar Header */
+    .sidebar-title {
+      font-size: 0.875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #9ca3af;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #f3f4f6;
+    }
+
+    /* Nav Items */
+    .nav-item {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      text-align: left;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.25rem;
+      border-radius: 0.5rem;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      color: #4B5563;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .nav-item::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #d1d5db;
+      margin-right: 0.75rem;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .nav-item:hover {
+      background: #f3f4f6;
+      color: #012820;
+    }
+
+    .nav-item:hover::before {
+      background: #012820;
+      transform: scale(1.2);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, #012820 0%, #FF6600 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(1, 40, 32, 0.3);
+    }
+
+    .nav-item.active::before {
+      background: white;
+    }
+
+    /* Fallback para asegurar visibilidad del sidebar */
+    @media (min-width: 768px) {
+      #sidebar {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+    }
+
+    /* Scroll to top button */
+    .scroll-to-top {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 3.5rem;
+      height: 3.5rem;
+      background: linear-gradient(140deg, #012820 0%, #FF6600 100%);
+      color: white;
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(61, 0, 141, 0.4);
+      transition: all 0.3s ease;
+      z-index: 50;
+      border: none;
+    }
+
+    .scroll-to-top.visible {
+      display: flex;
+    }
+
+    .scroll-to-top:hover {
+      background: linear-gradient(140deg, #02382D 0%, #FF7F24 100%);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(61, 0, 141, 0.5);
+    }
+
+    /* Tip box USTA style */
+    .tip-box {
+      background: linear-gradient(135deg, rgba(1, 40, 32, 0.08) 0%, rgba(255, 102, 0, 0.08) 100%);
+      border: 1px solid rgba(1, 40, 32, 0.2);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+    }
+
+    /* Focus visible styles for keyboard navigation - subtle */
+    *:focus-visible {
+      outline: 2px solid rgba(1, 40, 32, 0.5);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+
+    button:focus-visible,
+    a:focus-visible {
+      outline: 2px solid #012820;
+      outline-offset: 3px;
+    }
+
+    /* Skip link for accessibility */
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: 1rem;
+      background: white;
+      color: #012820;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 100;
+      text-decoration: none;
+      font-weight: 500;
+      border: 2px solid #012820;
+      transition: top 0.2s;
+    }
+
+    .skip-link:focus {
+      top: 1rem;
+      outline: none;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Print styles */
+    @media print {
+
+      header,
+      footer,
+      #sidebar,
+      #sidebarToggle,
+      #scrollToTopBtn {
+        display: none !important;
+      }
+
+      body {
+        background: white;
+        color: black;
+      }
+
+      .usta-card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        break-inside: avoid;
+      }
+
+      pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        background: #f5f5f5;
+      }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* Sidebar Toggle classes */
+    .sidebar-collapsed {
+      width: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      opacity: 0;
+      overflow: hidden;
+    }
+
+    .sidebar-collapsed+main {
+      width: 100% !important;
+      flex-grow: 1;
+    }
+
+    #sidebarToggle {
+      transition: all 0.3s ease;
+    }
+
+    /* H2 section titles styling */
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #012820;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid rgba(255, 102, 0, 0.2);
+      margin-top: 2rem;
+    }
+
+    h2:first-child {
+      margin-top: 0;
+    }
+
+    /* H3 subtitles styling */
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #012820;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h3::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 24px;
+      background: #FF6600;
+      border-radius: 4px;
+    }
+
+    /* H4 subtitles styling */
+    h4 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #012820;
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      background: linear-gradient(135deg, rgba(1, 40, 32, 0.08) 0%, rgba(255, 102, 0, 0.08) 100%);
+      border-left: 3px solid #FF6600;
+      border-radius: 0.375rem;
+    }
+
+    /* Override h4 in definition, note, warning boxes */
+    .definition h4,
+    .note h4,
+    .warning h4,
+    .simulador h4 {
+      background: none;
+      border-left: none;
+      padding: 0;
+      margin-top: 0;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      line-height: 1.625;
+      color: #374151;
+      text-align: justify;
+    }
+
+    ul,
+    ol {
+      margin-left: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    ul li,
+    ol li {
+      margin-bottom: 0.5rem;
+      color: #374151;
+    }
+
+    ul {
+      list-style-type: disc;
+    }
+
+    ol {
+      list-style-type: decimal;
+    }
+
+    /* Custom Box Components - CSS Puro */
+    .definition {
+      background-color: #f0fdf4;
+      border-left: 4px solid #012820;
+      padding: 1.5rem;
+      border-top-right-radius: 0.75rem;
+      border-bottom-right-radius: 0.75rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .definition h4 {
+      color: #012820;
+      margin-top: 0;
+      font-weight: bold;
+    }
+
+    .note {
+      background-color: #fff7ed;
+      border-left: 4px solid #FF6600;
+      padding: 1.5rem;
+      border-top-right-radius: 0.75rem;
+      border-bottom-right-radius: 0.75rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .note strong {
+      color: #c2410c;
+    }
+
+    .warning {
+      background-color: #fff1f2;
+      border-left: 4px solid #FF4500;
+      padding: 1.5rem;
+      border-top-right-radius: 0.75rem;
+      border-bottom-right-radius: 0.75rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .warning strong {
+      color: #9f1239;
+    }
+
+    .formula {
+      background-color: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.75rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      padding: 1rem;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      font-family: 'Fira Code', monospace;
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    @media (min-width: 768px) {
+      .formula {
+        padding: 1.5rem;
+      }
+    }
+
+    .diagram {
+      background-color: #f8fafc;
+      border: 2px dashed #cbd5e1;
+      padding: 2rem;
+      border-radius: 0.75rem;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .diagram h4 {
+      text-align: center;
+      color: #475569;
+      margin-bottom: 1.5rem;
+    }
+
+    .diagram svg {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .exercise {
+      background-color: #eff6ff;
+      border: 1px solid #dbeafe;
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .exercise h4 {
+      color: #1e40af;
+      margin-top: 0;
+      font-weight: bold;
+    }
+
+    /* Code Blocks - CSS Puro */
+    .code-block-wrapper {
+      position: relative;
+      margin-bottom: 2.5rem;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .code-block-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #334155;
+      gap: 0.5rem;
+    }
+
+    .code-block-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .code-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .code-toggle-btn,
+    .code-copy-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: #cbd5e1;
+      padding: 0.4rem 0.75rem;
+      border-radius: 0.375rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .code-toggle-btn:hover,
+    .code-copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
+    .code-copy-btn.copied {
+      background: rgba(34, 197, 94, 0.3);
+      color: #4ade80;
+    }
+
+    .code-toggle-btn i,
+    .code-copy-btn i {
+      font-size: 0.625rem;
+      transition: transform 0.2s;
+    }
+
+    .code-toggle-btn.expanded i {
+      transform: rotate(180deg);
+    }
+
+    pre {
+      background-color: #1e293b !important;
+      color: #f3f4f6 !important;
+      padding: 1.5rem !important;
+      border-radius: 0;
+      overflow-x: auto;
+      margin: 0;
+      font-family: 'Fira Code', monospace !important;
+      font-size: 0.875rem;
+      line-height: 1.625;
+      max-height: 300px;
+      overflow-y: auto;
+      transition: max-height 0.3s ease;
+    }
+
+    pre.expanded {
+      max-height: 2000px;
+    }
+
+    pre.collapsed {
+      max-height: 150px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    pre.collapsed::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: linear-gradient(transparent, #1e293b);
+      pointer-events: none;
+    }
+
+    code {
+      font-family: 'Fira Code', monospace;
+    }
+
+    p code,
+    li code {
+      background-color: #f3f4f6;
+      color: #c2410c;
+      padding: 0.25rem 0.375rem;
+      border-radius: 0.25rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border: 1px solid #e5e7eb;
+    }
+
+    pre code {
+      background-color: transparent;
+      color: inherit;
+      padding: 0;
+      border: none;
+    }
+
+    /* Pestañas de código R / Python */
+    .code-tabs {
+      margin-bottom: 2.5rem;
+    }
+
+    .code-tabs .code-block-wrapper {
+      margin-bottom: 0;
+      border-top-left-radius: 0;
+    }
+
+    .code-tabs-nav {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .code-tab-btn {
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 0.5rem 1.25rem;
+      border-radius: 0.5rem 0.5rem 0 0;
+      background: #e2e8f0;
+      color: #64748b;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .code-tab-btn:hover {
+      background: #cbd5e1;
+      color: #012820;
+    }
+
+    .code-tab-btn.active {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: white;
+    }
+
+    .code-tab-panel[hidden] {
+      display: none;
+    }
+
+    /* Simulador interactivo */
+    .simulador {
+      background: linear-gradient(135deg, rgba(1, 40, 32, 0.04) 0%, rgba(255, 102, 0, 0.04) 100%);
+      border: 1px solid rgba(1, 40, 32, 0.15);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+
+    .simulador h4 {
+      color: #012820;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .simulador-controles {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem 1.5rem;
+      margin: 1.25rem 0;
+    }
+
+    @media (min-width: 768px) {
+      .simulador-controles {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .control-slider {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .control-slider label {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #374151;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .control-slider output {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: white;
+      background: #012820;
+      border-radius: 0.375rem;
+      padding: 0.1rem 0.5rem;
+      min-width: 3.25rem;
+      text-align: center;
+    }
+
+    .control-slider input[type="range"] {
+      width: 100%;
+      accent-color: #FF6600;
+      cursor: pointer;
+    }
+
+    .grafico-wrapper {
+      position: relative;
+      height: 320px;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .grafico-wrapper {
+        height: 260px;
+      }
+    }
+
+    /* Tables - CSS Puro */
+    table {
+      width: 100%;
+      margin-bottom: 2rem;
+      border-collapse: collapse;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    table th {
+      background-color: #012820;
+      color: white;
+      font-weight: 600;
+      padding: 1rem;
+      text-align: left;
+    }
+
+    table td {
+      padding: 1rem;
+      border-bottom: 1px solid #f3f4f6;
+      color: #374151;
+    }
+
+    table tr:nth-child(even) {
+      background-color: #f9fafb;
+    }
+
+    table tr:hover {
+      background-color: #fff7ed;
+    }
+
+    /* Session Header - CSS Puro */
+    .session-header {
+      background: linear-gradient(to right, #012820, #FF6600);
+      color: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2.5rem;
+      text-align: center;
+    }
+
+    .session-header h2 {
+      color: white;
+      border: none;
+      margin: 0;
+      font-size: 1.875rem;
+      text-shadow: none;
+      padding: 0;
+    }
+
+    .references {
+      background-color: #f3f4f6;
+      padding: 2rem;
+      border-radius: 0.75rem;
+      margin-top: 3rem;
+    }
+
+    .references h3::before {
+      display: none;
+    }
+
+    /* SVG Styles */
+    svg {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    svg text {
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    /* Mobile typography improvements */
+    @media (max-width: 640px) {
+      html {
+        font-size: 14px;
+      }
+
+      .session-header h2 {
+        font-size: 1.25rem !important;
+      }
+
+      section h2 {
+        font-size: 1.375rem;
+      }
+
+      section h3 {
+        font-size: 1.125rem;
+      }
+
+      pre {
+        font-size: 0.75rem;
+        padding: 1rem;
+        max-height: 250px;
+      }
+
+      pre.collapsed {
+        max-height: 120px;
+      }
+
+      .code-block-header {
+        padding: 0.5rem 0.75rem;
+      }
+
+      .code-toggle-btn {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.7rem;
+      }
+
+      .usta-card {
+        padding: 1.5rem;
+      }
+    }
+
+    /* High contrast mode support */
+    @media (prefers-contrast: high) {
+      .usta-card {
+        border: 1px solid #000;
+      }
+
+      .definition,
+      .note,
+      .warning {
+        border-left-width: 4px;
+      }
+    }
+
+    /* Blockquote styling */
+    blockquote {
+      background: linear-gradient(135deg, rgba(1, 40, 32, 0.05) 0%, rgba(255, 102, 0, 0.05) 100%);
+      border-left: 4px solid #012820;
+      padding: 1.5rem 2rem;
+      margin: 2rem 0;
+      border-radius: 0.5rem;
+      font-style: italic;
+    }
+
+    blockquote cite {
+      display: block;
+      margin-top: 1rem;
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    details {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: #012820;
+      padding: 0.5rem;
+    }
+
+    summary:hover {
+      color: #FF6600;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px dashed #cbd5e1;
+      margin: 2rem 0;
+    }
+
+    /* --- Mejoras de accesibilidad y responsive (auditoría) --- */
+    @media (max-width: 768px) {
+      table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+    }
+
+    .definition,
+    .note,
+    .warning,
+    .exercise {
+      overflow-x: auto;
+    }
+
+    .nav-item {
+      border: none;
+      background-color: transparent;
+      font-family: inherit;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    /* Pie de página: las referencias van sobre fondo verde oscuro, pero la
+       regla global `ul li { color:#374151 }` (pensada para listas dentro de
+       las tarjetas claras del contenido) las volvía ilegibles. Se restablece
+       el texto claro en el pie con mayor especificidad, sin !important. */
+    footer ul li {
+      color: rgba(255, 255, 255, 0.92);
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+  <!-- Skip to main content link for accessibility -->
+  <a href="#main-content" class="skip-link">
+    Saltar al contenido principal
+  </a>
+
+  <!-- Header -->
+  <header class="usta-header sticky top-0 z-50 shadow-lg" role="banner">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="flex items-center gap-4">
+          <div class="usta-gradient p-3 rounded-xl shadow-md">
+            <i class="fas fa-chart-line text-xl text-white" aria-hidden="true"></i>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-white leading-tight tracking-tight" style="margin:0;">Series de Tiempo
+            </h1>
+            <p class="text-xs text-white/70 font-medium tracking-wide" style="margin:0; text-align:left;">PLANTILLA •
+              SERIES DE TIEMPO • UNBOSQUE</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Floating Sidebar Toggle Button -->
+  <button id="sidebarToggle"
+    class="fixed left-4 top-1/2 -translate-y-1/2 z-50 bg-primary text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center hover:bg-secondary transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+    aria-label="Alternar barra lateral de navegación" aria-expanded="true" aria-controls="sidebar">
+    <i class="fas fa-chevron-left" aria-hidden="true"></i>
+  </button>
+
+  <div class="flex-grow flex flex-col md:flex-row max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 gap-8 relative">
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar-container" id="sidebar" role="complementary" aria-label="Navegación de módulos">
+      <div class="sidebar-inner">
+        <div class="sidebar-title">
+          <i class="fas fa-list-ul mr-2" aria-hidden="true"></i>Contenido
+        </div>
+        <nav id="module-nav" role="navigation" aria-label="Menú de módulos">
+          <!-- Nav items injected via JS -->
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main id="main-content"
+      class="flex-grow order-1 md:order-2 min-w-0 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-300"
+      role="main" tabindex="-1">
+      <div id="content-area" class="p-6 md:p-10 module-content">
+        <!-- Content injected via JS -->
+      </div>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="usta-header mt-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+        <i class="fas fa-book-open" aria-hidden="true"></i> Referencias Bibliográficas
+      </h3>
+      <ul class="space-y-3 text-white/90 text-sm">
+        <li class="flex items-start gap-2">
+          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
+          <span>Hyndman, R.J., &amp; Athanasopoulos, G. (2021). <em class="text-gold">Forecasting: Principles and
+              Practice</em> (3rd ed.). OTexts. Acceso abierto: <a href="https://otexts.com/fpp3/"
+              class="underline text-gold" target="_blank" rel="noopener">otexts.com/fpp3</a>.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
+          <span>Shumway, R.H., &amp; Stoffer, D.S. (2017). <em class="text-gold">Time Series Analysis and Its
+              Applications: With R Examples</em> (4th ed.). Springer.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
+          <span>Box, G.E.P., Jenkins, G.M., Reinsel, G.C., &amp; Ljung, G.M. (2015). <em class="text-gold">Time Series
+              Analysis: Forecasting and Control</em> (5th ed.). John Wiley &amp; Sons.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
+          <span>Brockwell, P.J., &amp; Davis, R.A. (2016). <em class="text-gold">Introduction to Time Series and
+              Forecasting</em> (3rd ed.). Springer.</span>
+        </li>
+      </ul>
+      <div class="mt-6 pt-6 border-t border-white/20 text-center">
+        <p class="text-white font-medium" style="text-align:center;">Diseñado por <span class="text-gold">Javier
+            Mauricio Sierra</span></p>
+        <p class="text-xs mt-1 text-white/60" style="text-align:center;">Series de Tiempo • Plantilla • UnBosque 2026
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scroll to Top Button -->
+  <button class="scroll-to-top" id="scrollToTopBtn" aria-label="Volver arriba">
+    <i class="fas fa-arrow-up" aria-hidden="true"></i>
+  </button>
+
+  <!-- ============================================================ -->
+  <!-- MÓDULO 1 · Demostración de la guía de estilo                  -->
+  <!-- ============================================================ -->
+  <template id="module-1">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 1</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">P.1 Guía de Estilo del
+          Capítulo</h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Mostrar todos los componentes visuales heredados del
+              material de Muestreo, aplicados al curso de Series de Tiempo.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Esta plantilla replica el formato del material de Muestreo Estadístico. Cada capítulo del curso de Series de
+        Tiempo se construye copiando este archivo, reemplazando los módulos de demostración por el contenido real y
+        registrando sus simuladores. Una <strong>serie de tiempo</strong> es una colección de observaciones indexadas
+        por el tiempo, como <code>AirPassengers</code> en R.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: Serie de tiempo</h4>
+        <p>Una <strong>serie de tiempo</strong> es una sucesión de observaciones $y_1, y_2, \ldots, y_T$ registradas en
+          instantes de tiempo ordenados y, usualmente, equiespaciados. A diferencia de los datos de corte transversal,
+          las observaciones cercanas en el tiempo tienden a ser <em>dependientes</em>.</p>
+      </div>
+
+      <div class="note">
+        <p><strong>Nota:</strong> este recuadro naranja se usa para observaciones importantes, convenciones de notación
+          o conexiones con ciencia de datos.</p>
+      </div>
+
+      <div class="warning">
+        <p><strong>Advertencia:</strong> este recuadro rojo se reserva para errores comunes, por ejemplo: aplicar
+          validación cruzada estándar a datos temporales mezcla pasado y futuro y sobrestima el desempeño.</p>
+      </div>
+
+      <h3>Fórmulas con KaTeX</h3>
+      <p>La descomposición aditiva de una serie separa tendencia, estacionalidad y residuo:</p>
+      <div class="formula">
+        $$y_t = T_t + S_t + R_t, \qquad t = 1, \ldots, T$$
+      </div>
+      <p>Las fórmulas también funcionan en línea: la autocorrelación de rezago $k$ se denota $\rho_k =
+        \gamma_k/\gamma_0$.</p>
+
+      <h3>Tablas</h3>
+      <table>
+        <caption class="sr-only">Componentes de una serie de tiempo y su descripción</caption>
+        <thead>
+          <tr>
+            <th scope="col">Componente</th>
+            <th scope="col">Símbolo</th>
+            <th scope="col">Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Tendencia</strong></td>
+            <td>$T_t$</td>
+            <td>Movimiento de largo plazo, creciente o decreciente.</td>
+          </tr>
+          <tr>
+            <td><strong>Estacionalidad</strong></td>
+            <td>$S_t$</td>
+            <td>Patrón que se repite con periodo fijo conocido (p. ej. 12 meses).</td>
+          </tr>
+          <tr>
+            <td><strong>Residuo</strong></td>
+            <td>$R_t$</td>
+            <td>Lo que queda tras remover tendencia y estacionalidad.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </template>
+
+  <!-- ============================================================ -->
+  <!-- MÓDULO 2 · Demostración de código R / Python                  -->
+  <!-- ============================================================ -->
+  <template id="module-2">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 2</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">P.2 Bloques de Código R y
+          Python</h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Demostrar el componente de pestañas R / Python: R es el
+              lenguaje principal del curso y Python el equivalente para ciencia de datos.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Cada tema incluye primero el código en <strong>R</strong> (lenguaje del curso, con <code>fpp3</code> /
+        <code>forecast</code>) y, en una pestaña alterna, el <strong>equivalente en Python</strong> con
+        <code>statsmodels</code>. Los botones permiten copiar y expandir cada bloque.</p>
+
+      <h3>Ejemplo: graficar una serie mensual</h3>
+
+      <div class="code-tabs" role="group" aria-label="Ejemplo de código en R y Python">
+        <div class="code-tabs-nav" role="tablist" aria-label="Lenguaje del ejemplo">
+          <button type="button" class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">
+            <i class="fab fa-r-project" aria-hidden="true"></i> R
+          </button>
+          <button type="button" class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">
+            <i class="fab fa-python" aria-hidden="true"></i> Python
+          </button>
+        </div>
+        <div class="code-tab-panel" data-lang="r">
+          <pre><code class="language-r"># Serie clásica: pasajeros aéreos internacionales (1949-1960)
+data(AirPassengers)
+
+# Gráfico base
+plot(AirPassengers,
+     main = "Pasajeros aéreos internacionales",
+     xlab = "Año", ylab = "Miles de pasajeros")
+
+# Con fpp3 (tidyverts): convertir a tsibble y graficar
+library(fpp3)
+pasajeros <- as_tsibble(AirPassengers)
+autoplot(pasajeros, value) +
+  labs(title = "Pasajeros aéreos internacionales",
+       x = "Mes", y = "Miles de pasajeros")</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" hidden>
+          <pre><code class="language-python"># Serie clásica: pasajeros aéreos internacionales (1949-1960)
+import pandas as pd
+import matplotlib.pyplot as plt
+import statsmodels.api as sm
+
+datos = sm.datasets.get_rdataset("AirPassengers").data
+serie = pd.Series(
+    datos["value"].values,
+    index=pd.period_range("1949-01", periods=len(datos), freq="M"),
+)
+
+serie.plot(title="Pasajeros aéreos internacionales",
+           xlabel="Mes", ylabel="Miles de pasajeros")
+plt.show()</code></pre>
+        </div>
+      </div>
+
+      <h3>Bloque simple (solo R)</h3>
+      <p>Cuando un fragmento no necesita equivalente en Python, se usa el bloque tradicional; el envoltorio detecta el
+        lenguaje por la clase <code>language-r</code> o <code>language-python</code>.</p>
+
+      <pre><code class="language-r"># ACF y PACF de la serie diferenciada
+serie_diff <- diff(log(AirPassengers))
+acf(serie_diff,  main = "ACF de la serie diferenciada")
+pacf(serie_diff, main = "PACF de la serie diferenciada")</code></pre>
+    </div>
+  </template>
+
+  <!-- ============================================================ -->
+  <!-- MÓDULO 3 · Demostración del simulador interactivo             -->
+  <!-- ============================================================ -->
+  <template id="module-3">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 3</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">P.3 Simulador Interactivo
+        </h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Demostrar la fábrica de simuladores: deslizadores que
+              actualizan un gráfico Chart.js en vivo.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Cada capítulo incluye al menos un simulador. El de esta demostración corresponde al planeado para el Capítulo
+        1: <em>construye tu serie</em>. La serie simulada es</p>
+
+      <div class="formula">
+        $$y_t = \underbrace{\beta \, t}_{T_t} \; + \; \underbrace{A \,
+        \sin\!\left(\tfrac{2\pi t}{12}\right)}_{S_t} \; + \; \underbrace{\sigma \, \varepsilon_t}_{R_t},
+        \qquad \varepsilon_t \sim \mathcal{N}(0, 1)$$
+      </div>
+
+      <p>donde $\beta$ controla la pendiente de la tendencia, $A$ la amplitud estacional y $\sigma$ el tamaño del
+        ruido. El ruido usa una semilla fija, de modo que al mover $\sigma$ cambia su escala pero no su forma: el
+        efecto de cada componente se aísla limpiamente.</p>
+
+      <div class="simulador" data-simulador="construye-tu-serie">
+        <h4><i class="fas fa-sliders-h" aria-hidden="true"></i> Simulador: construye tu serie</h4>
+        <p class="text-sm" style="margin-bottom:0.5rem;">Mueve los deslizadores y observa cómo cambia la serie
+          mensual simulada (10 años). Haz clic en la leyenda para ocultar o mostrar componentes.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper">
+          <canvas aria-label="Gráfico de la serie simulada con tendencia y estacionalidad" role="img"></canvas>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>Cómo registrar un simulador:</strong> en el HTML se declara un contenedor
+          <code>&lt;div class="simulador" data-simulador="mi-id"&gt;</code> con un
+          <code>.simulador-controles</code> vacío y un <code>&lt;canvas&gt;</code>; en el script del capítulo se
+          registra <code>SIMULADORES['mi-id'] = function (raiz) { ... }</code> usando los ayudantes
+          <code>crearControles()</code>, <code>crearGraficoLinea()</code>, <code>generarRuidoNormal()</code> y
+          <code>calcularACF()</code>. La función debe devolver la lista de gráficos creados para que se destruyan al
+          cambiar de módulo.</p>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    // ================================================================
+    // Configuración del capítulo
+    // ================================================================
+    const courseData = {
+      title: "Series de Tiempo",
+      modules: [
+        { id: 1, title: "Guía de Estilo del Capítulo", shortTitle: "Estilo", duration: "5 min" },
+        { id: 2, title: "Bloques de Código R y Python", shortTitle: "Código", duration: "5 min" },
+        { id: 3, title: "Simulador Interactivo", shortTitle: "Simulador", duration: "5 min" }
+      ]
+    };
+
+    // ================================================================
+    // Estado y elementos del DOM
+    // ================================================================
+    let currentModuleId = 1;
+    let completedModules = new Set();
+
+    const mainContent = document.getElementById('content-area');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const moduleNav = document.getElementById('module-nav');
+    const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderNavigation();
+      loadModule(1);
+      setupEventListeners();
+    });
+
+    // ================================================================
+    // Navegación de módulos
+    // ================================================================
+    function renderNavigation() {
+      moduleNav.innerHTML = courseData.modules.map(module => `
+                <button type="button" class="nav-item ${module.id === currentModuleId ? 'active' : ''}"
+                     onclick="loadModule(${module.id})"${module.id === currentModuleId ? ' aria-current="page"' : ''}>
+                    ${module.title}
+                    ${completedModules.has(module.id) ? '<i class="fas fa-check-circle ml-auto text-green-400" aria-hidden="true"></i>' : ''}
+                </button>
+            `).join('');
+    }
+
+    function loadModule(id) {
+      currentModuleId = id;
+
+      if (!completedModules.has(id)) {
+        completedModules.add(id);
+      }
+
+      renderNavigation();
+
+      const template = document.getElementById(`module-${id}`);
+      if (template) {
+        destruirSimuladores();
+        mainContent.innerHTML = '';
+        mainContent.appendChild(template.content.cloneNode(true));
+
+        wrapCodeBlocks();
+        initCodeTabs();
+        iniciarSimuladores();
+        renderMathInElement(mainContent, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false },
+            { left: "\\(", right: "\\)", display: false },
+            { left: "\\[", right: "\\]", display: true }
+          ]
+        });
+
+        addNavigationButtons();
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function addNavigationButtons() {
+      const navContainer = document.createElement('div');
+      navContainer.className = 'flex justify-between mt-8 pt-6 border-t border-gray-100';
+
+      const prevBtn = document.createElement('button');
+      if (currentModuleId > 1) {
+        prevBtn.className = 'usta-button bg-gray-500 hover:bg-gray-600';
+        prevBtn.innerHTML = '<i class="fas fa-arrow-left mr-2" aria-hidden="true"></i> Anterior';
+        prevBtn.onclick = () => loadModule(currentModuleId - 1);
+      } else {
+        prevBtn.style.visibility = 'hidden';
+      }
+
+      const nextBtn = document.createElement('button');
+      if (currentModuleId < courseData.modules.length) {
+        nextBtn.className = 'usta-button';
+        nextBtn.innerHTML = 'Siguiente <i class="fas fa-arrow-right ml-2" aria-hidden="true"></i>';
+        nextBtn.onclick = () => loadModule(currentModuleId + 1);
+      } else {
+        nextBtn.className = 'usta-button bg-green-600 hover:bg-green-700';
+        nextBtn.innerHTML = 'Finalizar <i class="fas fa-check mr-2" aria-hidden="true"></i>';
+        nextBtn.onclick = () => alert('¡Felicidades! Has completado el capítulo.');
+      }
+
+      navContainer.appendChild(prevBtn);
+      navContainer.appendChild(nextBtn);
+      mainContent.appendChild(navContainer);
+    }
+
+    function setupEventListeners() {
+      sidebarToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('sidebar-collapsed');
+        const icon = sidebarToggle.querySelector('i');
+        if (sidebar.classList.contains('sidebar-collapsed')) {
+          icon.classList.remove('fa-chevron-left');
+          icon.classList.add('fa-chevron-right');
+          sidebarToggle.setAttribute('aria-expanded', 'false');
+        } else {
+          icon.classList.remove('fa-chevron-right');
+          icon.classList.add('fa-chevron-left');
+          sidebarToggle.setAttribute('aria-expanded', 'true');
+        }
+      });
+
+      window.addEventListener('scroll', () => {
+        if (window.pageYOffset > 300) {
+          scrollToTopBtn.classList.add('visible');
+        } else {
+          scrollToTopBtn.classList.remove('visible');
+        }
+      });
+
+      scrollToTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // ================================================================
+    // Bloques de código: envoltorio con copiar / expandir
+    // ================================================================
+    const NOMBRES_LENGUAJE = { 'language-r': 'R', 'language-python': 'Python' };
+
+    function wrapCodeBlocks() {
+      const pres = mainContent.querySelectorAll('pre');
+      pres.forEach(pre => {
+        if (!pre.parentElement.classList.contains('code-block-wrapper')) {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'code-block-wrapper';
+
+          // El curso es en R: si el bloque no declara lenguaje, se asume R
+          const code = pre.querySelector('code');
+          let claseLenguaje = 'language-r';
+          if (code) {
+            const declarada = Array.from(code.classList).find(c => c.startsWith('language-'));
+            if (declarada) {
+              claseLenguaje = declarada;
+            } else {
+              code.classList.add(claseLenguaje);
+            }
+          }
+          const titulo = NOMBRES_LENGUAJE[claseLenguaje] || 'Código';
+
+          const header = document.createElement('div');
+          header.className = 'code-block-header';
+          header.innerHTML = `
+            <span class="code-block-title">${titulo}</span>
+            <div class="code-actions">
+              <button class="code-copy-btn" onclick="copyCode(this)" title="Copiar código">
+                <i class="fas fa-copy" aria-hidden="true"></i>
+                <span>Copiar</span>
+              </button>
+              <button class="code-toggle-btn" onclick="toggleCode(this)">
+                <span>Mostrar/Ocultar</span>
+                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+              </button>
+            </div>
+          `;
+
+          pre.parentNode.insertBefore(wrapper, pre);
+          wrapper.appendChild(header);
+          wrapper.appendChild(pre);
+          pre.classList.add('collapsed');
+        }
+      });
+      if (typeof Prism !== 'undefined') {
+        Prism.highlightAllUnder(mainContent);
+      }
+    }
+
+    function toggleCode(button) {
+      const pre = button.closest('.code-block-wrapper').querySelector('pre');
+
+      if (pre.classList.contains('collapsed')) {
+        pre.classList.remove('collapsed');
+        pre.classList.add('expanded');
+        button.classList.add('expanded');
+      } else {
+        pre.classList.add('collapsed');
+        pre.classList.remove('expanded');
+        button.classList.remove('expanded');
+      }
+    }
+
+    function copyCode(button) {
+      const pre = button.closest('.code-block-wrapper').querySelector('pre');
+      const code = pre.querySelector('code');
+      const codeText = code.textContent;
+
+      navigator.clipboard.writeText(codeText).then(() => {
+        const originalText = button.innerHTML;
+        button.classList.add('copied');
+        button.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i><span>Copiado</span>';
+
+        setTimeout(() => {
+          button.classList.remove('copied');
+          button.innerHTML = originalText;
+        }, 2000);
+      }).catch(err => {
+        console.error('Error al copiar: ', err);
+        const textarea = document.createElement('textarea');
+        textarea.value = codeText;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+
+        button.classList.add('copied');
+        button.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i><span>Copiado</span>';
+        setTimeout(() => {
+          button.classList.remove('copied');
+          button.innerHTML = '<i class="fas fa-copy" aria-hidden="true"></i><span>Copiar</span>';
+        }, 2000);
+      });
+    }
+
+    // ================================================================
+    // Pestañas de código R / Python
+    // ================================================================
+    function initCodeTabs() {
+      mainContent.querySelectorAll('.code-tabs').forEach(tabs => {
+        const botones = tabs.querySelectorAll('.code-tab-btn');
+        const paneles = tabs.querySelectorAll('.code-tab-panel');
+        botones.forEach(boton => {
+          boton.addEventListener('click', () => {
+            const lang = boton.dataset.lang;
+            botones.forEach(b => {
+              const activo = b === boton;
+              b.classList.toggle('active', activo);
+              b.setAttribute('aria-selected', activo ? 'true' : 'false');
+            });
+            paneles.forEach(p => {
+              p.hidden = p.dataset.lang !== lang;
+            });
+          });
+        });
+      });
+    }
+
+    // ================================================================
+    // Fábrica de simuladores
+    //
+    // Uso: SIMULADORES['mi-id'] = function (raiz) { ...; return [chart]; }
+    // El contenedor lleva data-simulador="mi-id", un .simulador-controles
+    // vacío y un <canvas>. La función devuelve los Chart creados para
+    // destruirlos al cambiar de módulo.
+    // ================================================================
+    const SIMULADORES = {};
+    let graficosActivos = [];
+
+    function iniciarSimuladores() {
+      mainContent.querySelectorAll('[data-simulador]').forEach(raiz => {
+        const init = SIMULADORES[raiz.dataset.simulador];
+        if (init) {
+          const graficos = init(raiz) || [];
+          graficosActivos.push(...graficos);
+        } else {
+          console.warn(`Simulador no registrado: ${raiz.dataset.simulador}`);
+        }
+      });
+    }
+
+    function destruirSimuladores() {
+      graficosActivos.forEach(g => g.destroy());
+      graficosActivos = [];
+    }
+
+    // Crea deslizadores dentro de un contenedor y devuelve los <input>.
+    // defs: [{clave, etiqueta, min, max, paso, decimales}]
+    // params: objeto mutable con el valor actual de cada clave.
+    // alCambiar: callback invocado en cada movimiento.
+    function crearControles(contenedor, defs, params, alCambiar) {
+      const inputs = {};
+      defs.forEach(def => {
+        const decimales = def.decimales !== undefined ? def.decimales
+          : (String(def.paso).includes('.') ? String(def.paso).split('.')[1].length : 0);
+        const idControl = `ctl-${def.clave}-${Math.floor(Math.random() * 1e9)}`;
+
+        const div = document.createElement('div');
+        div.className = 'control-slider';
+
+        const label = document.createElement('label');
+        label.setAttribute('for', idControl);
+        label.append(def.etiqueta);
+
+        const output = document.createElement('output');
+        output.textContent = Number(params[def.clave]).toFixed(decimales);
+        label.appendChild(output);
+
+        const input = document.createElement('input');
+        input.type = 'range';
+        input.id = idControl;
+        input.min = def.min;
+        input.max = def.max;
+        input.step = def.paso;
+        input.value = params[def.clave];
+
+        input.addEventListener('input', () => {
+          params[def.clave] = parseFloat(input.value);
+          output.textContent = params[def.clave].toFixed(decimales);
+          alCambiar();
+        });
+
+        div.appendChild(label);
+        div.appendChild(input);
+        contenedor.appendChild(div);
+        inputs[def.clave] = input;
+      });
+      return inputs;
+    }
+
+    // Paleta y defaults de la casa para gráficos de líneas.
+    const COLORES_GRAFICO = {
+      primario: '#012820',
+      secundario: '#FF6600',
+      terciario: '#0e7490',
+      gris: '#94a3b8'
+    };
+
+    function crearGraficoLinea(canvas, etiquetas, datasets, opciones = {}) {
+      return new Chart(canvas, {
+        type: 'line',
+        data: { labels: etiquetas, datasets: datasets },
+        options: Object.assign({
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: {
+              labels: { font: { family: 'Montserrat', size: 12 }, boxWidth: 24 }
+            },
+            tooltip: {
+              backgroundColor: '#012820',
+              titleFont: { family: 'Montserrat' },
+              bodyFont: { family: 'Fira Code' }
+            }
+          },
+          scales: {
+            x: {
+              ticks: {
+                font: { family: 'Montserrat', size: 11 },
+                maxTicksLimit: 12,
+                maxRotation: 0
+              },
+              grid: { display: false }
+            },
+            y: {
+              ticks: { font: { family: 'Fira Code', size: 11 } },
+              grid: { color: 'rgba(148, 163, 184, 0.2)' }
+            }
+          }
+        }, opciones)
+      });
+    }
+
+    // Generador congruencial mulberry32 + Box-Muller: ruido N(0,1)
+    // reproducible (misma semilla => mismo ruido en cada carga).
+    function generarRuidoNormal(n, semilla) {
+      let estado = semilla >>> 0;
+      function uniforme() {
+        estado |= 0;
+        estado = (estado + 0x6D2B79F5) | 0;
+        let t = Math.imul(estado ^ (estado >>> 15), 1 | estado);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      }
+      const ruido = [];
+      for (let i = 0; i < n; i++) {
+        const u1 = Math.max(uniforme(), 1e-12);
+        const u2 = uniforme();
+        ruido.push(Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2));
+      }
+      return ruido;
+    }
+
+    // ACF muestral hasta maxLag (rezago 0 excluido).
+    function calcularACF(x, maxLag) {
+      const n = x.length;
+      const media = x.reduce((a, b) => a + b, 0) / n;
+      const centrada = x.map(v => v - media);
+      const gamma0 = centrada.reduce((a, b) => a + b * b, 0) / n;
+      const acf = [];
+      for (let k = 1; k <= maxLag; k++) {
+        let s = 0;
+        for (let t = 0; t < n - k; t++) {
+          s += centrada[t] * centrada[t + k];
+        }
+        acf.push((s / n) / gamma0);
+      }
+      return acf;
+    }
+
+    // ================================================================
+    // Simulador de demostración: construye tu serie
+    // y_t = beta*t + A*sin(2*pi*t/12) + sigma*e_t
+    // ================================================================
+    SIMULADORES['construye-tu-serie'] = function (raiz) {
+      const n = 120;
+      const periodo = 12;
+      const params = { tendencia: 0.5, amplitud: 10, ruido: 5 };
+      const ruidoBase = generarRuidoNormal(n, 20260723);
+
+      const etiquetas = [];
+      for (let t = 0; t < n; t++) {
+        const anio = 2016 + Math.floor(t / 12);
+        const mes = (t % 12) + 1;
+        etiquetas.push(`${anio}-${String(mes).padStart(2, '0')}`);
+      }
+
+      function calcular() {
+        const tendencia = [], estacional = [], serie = [];
+        for (let t = 0; t < n; t++) {
+          const T = params.tendencia * t;
+          const S = params.amplitud * Math.sin(2 * Math.PI * t / periodo);
+          tendencia.push(T);
+          estacional.push(S);
+          serie.push(T + S + params.ruido * ruidoBase[t]);
+        }
+        return { tendencia, estacional, serie };
+      }
+
+      const inicial = calcular();
+      const grafico = crearGraficoLinea(raiz.querySelector('canvas'), etiquetas, [
+        {
+          label: 'Serie observada',
+          data: inicial.serie,
+          borderColor: COLORES_GRAFICO.primario,
+          backgroundColor: COLORES_GRAFICO.primario,
+          borderWidth: 2,
+          pointRadius: 0
+        },
+        {
+          label: 'Tendencia',
+          data: inicial.tendencia,
+          borderColor: COLORES_GRAFICO.secundario,
+          backgroundColor: COLORES_GRAFICO.secundario,
+          borderWidth: 2,
+          borderDash: [6, 4],
+          pointRadius: 0
+        },
+        {
+          label: 'Estacionalidad',
+          data: inicial.estacional,
+          borderColor: COLORES_GRAFICO.terciario,
+          backgroundColor: COLORES_GRAFICO.terciario,
+          borderWidth: 1.5,
+          borderDash: [2, 3],
+          pointRadius: 0,
+          hidden: true
+        }
+      ]);
+
+      crearControles(raiz.querySelector('.simulador-controles'), [
+        { clave: 'tendencia', etiqueta: 'Pendiente de la tendencia (β)', min: -1, max: 2, paso: 0.1 },
+        { clave: 'amplitud', etiqueta: 'Amplitud estacional (A)', min: 0, max: 30, paso: 1 },
+        { clave: 'ruido', etiqueta: 'Desviación del ruido (σ)', min: 0, max: 20, paso: 1 }
+      ], params, () => {
+        const d = calcular();
+        grafico.data.datasets[0].data = d.serie;
+        grafico.data.datasets[1].data = d.tendencia;
+        grafico.data.datasets[2].data = d.estacional;
+        grafico.update('none');
+      });
+
+      return [grafico];
+    };
+  </script>
+
+</body>
+
+</html>
