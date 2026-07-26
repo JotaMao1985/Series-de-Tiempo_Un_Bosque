@@ -341,6 +341,33 @@ publicación en GitHub Pages.
        **1**: la misma trampa del orden que ya documentaba el módulo 7. Está incorporada al
        enunciado y a la pista del ejercicio 3.
 
+- [x] **T4d · Espaciado alrededor de los gráficos** (2026-07-26, Javier reportó que el texto
+  bajo "El deslizador de φ" se veía amontonado). El síntoma destapó **dos bugs de fondo**:
+  1. **Al capítulo 2 le faltaba un bloque entero de CSS.** En el script de ensamblado leí
+     `cap2_css.txt` en una variable y **nunca la concatené**, así que el capítulo se publicó sin
+     `.simulador-lectura`, `.control-selector`, `.control-interruptor` y **las 22 reglas base
+     del componente `.quiz`**: la lectura numérica salía como texto corrido sin separación
+     (justo lo que Javier vio), el desplegable y los interruptores sin estilo, y toda la
+     autoevaluación en blanco y negro. Se insertó el bloque antes del CSS v2 y ahora los dos
+     capítulos tienen exactamente el mismo conjunto de reglas.
+  2. **Conflicto de cascada en la selección múltiple:** una opción marcada conservaba la clase
+     `marcada`, que empata en especificidad con `correcta`/`incorrecta` y ganaba por orden de
+     fuente, de modo que al corregir se veía naranja en vez de verde o roja. Se resuelve en el
+     JS quitando `marcada` al pintar el estado final, en vez de depender del orden del CSS.
+  - **Espaciado:** auditoría geométrica de los 84 pares de elementos consecutivos dentro de
+    simuladores y preguntas de los dos capítulos. Había 0 px entre el título del simulador y su
+    párrafo (7 casos) y 4 px entre una etiqueta y el lienzo que encabeza (6 casos). Los
+    márgenes vivían en atributos `style` repartidos por el HTML; se sustituyeron por dos clases
+    (`.simulador-intro`, `.grafico-etiqueta`) más reglas de hermano adyacente, y la lectura
+    numérica se separa ahora con una línea fina. Resultado: hueco mínimo de 0 → **7 px**
+    (cap. 2) y **8 px** (cap. 1), mediana 11 → 13 px, sin desbordes de canvas.
+  - *Lección de método:* la verificación anterior comprobó a fondo el **DOM y el comportamiento**
+    pero solo hizo comprobaciones puntuales de **estilo calculado**, y justo en el capítulo 2
+    revisé únicamente las reglas nuevas. De ahí que un bloque de CSS ausente pasara. A partir de
+    ahora: comparar el conjunto de selectores entre capítulos y medir la geometría real.
+    Además, `getComputedStyle` justo después de un `click()` devuelve el valor **inicial** de
+    una transición CSS: hay que desactivar las transiciones antes de medir colores de estado.
+
 ### Checkpoint 1
 - [x] Revisión de Javier del capítulo 1 (2026-07-26): **sin cambios**; se mantienen tono,
       profundidad y densidad de fórmulas y código para los capítulos siguientes.
