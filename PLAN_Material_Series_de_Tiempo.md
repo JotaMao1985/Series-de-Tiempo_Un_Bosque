@@ -259,9 +259,22 @@ publicación en GitHub Pages.
 ### Fase 4 — Portada, repo y publicación
 
 - [ ] **T9 · index.html + README + .nojekyll + .gitignore** — portada con las 6 tarjetas. *Dependencias:* T3–T8. *Tamaño:* S.
-- [ ] **T10 · Repo y despliegue** — `git init`, primer commit; Javier crea el repo remoto en GitHub y activa Pages (rama main, carpeta raíz); verificación del sitio publicado.
-  - *Criterios:* sitio accesible en la URL de Pages; KaTeX, simuladores y navegación funcionan en producción.
-  - *Dependencias:* T9. *Tamaño:* XS (+ acción manual de Javier).
+- [ ] **T10 · Despliegue** — push al repo remoto y activación de Pages.
+  - *Ya hecho (2026-07-24, adelantado desde T10):* `git init -b main` en `Series de tiempo/`
+    (todo el proyecto, no solo los HTML, para rastrear plan + plantilla + precálculos) y
+    commit inicial `54e45ef` con 12 archivos. `.gitignore` excluye `*.pdf` — hay dos libros
+    de texto (35 MB, uno de z-lib) en la carpeta que **no deben** publicarse ni entrar al
+    historial de un repo público.
+  - *Decisión pendiente — cómo sirve Pages:* el repositorio remoto ya existe
+    (`JotaMao1985/Series-de-Tiempo_Un_Bosque`), pero Pages solo publica desde la raíz o
+    desde `/docs`, y los capítulos viven en `Htmls_Series/`. Tres opciones: (a) renombrar
+    `Htmls_Series/` → `docs/` y usar "deploy from /docs" (una sola rama, todo versionado);
+    (b) `git subtree push --prefix Htmls_Series origin gh-pages` (mantiene el nombre, sitio
+    limpio sin plan ni precálculos); (c) repo separado solo para los HTML, como en Muestreo.
+    Recomendación: **(b)**, conserva la convención `Htmls_*` y publica únicamente el sitio.
+  - *Criterios:* sitio accesible en la URL de Pages; KaTeX, simuladores y navegación
+    funcionan en producción; el sitio publicado NO contiene los PDF ni los precálculos.
+  - *Dependencias:* T9. *Tamaño:* XS (+ acción manual de Javier: `git remote add` y activar Pages).
 
 ## Riesgos y mitigaciones
 
