@@ -1204,6 +1204,293 @@
       background: #fbbf24;
       color: #012820;
     }
+    /* Barra de progreso de la autoevaluación */
+    .quiz-progreso {
+      height: 6px;
+      background: #fde68a;
+      border-radius: 3px;
+      overflow: hidden;
+      margin: 0.85rem 0 0.25rem 0;
+    }
+
+    .quiz-progreso-barra {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, #b45309 0%, #FF6600 100%);
+      border-radius: 3px;
+      transition: width 0.35s ease;
+    }
+
+    /* Etiqueta del tipo de pregunta */
+    .quiz-tipo {
+      display: inline-block;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #92400e;
+      background: #fef3c7;
+      border-radius: 50px;
+      padding: 0.1rem 0.6rem;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+
+    /* Pista: aparece tras el primer fallo, antes de revelar la respuesta */
+    .quiz-pista {
+      margin-top: 0.75rem;
+      padding: 0.7rem 0.9rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      background: #fffbeb;
+      border-left: 3px solid #f59e0b;
+      color: #78350f;
+    }
+
+    .quiz-pista[hidden] {
+      display: none;
+    }
+
+    /* Opción marcada por el estudiante en selección múltiple, aún sin corregir */
+    .quiz-opcion.marcada {
+      background: #fff7ed;
+      border-color: #FF6600;
+      font-weight: 600;
+    }
+
+    .quiz-opcion .quiz-casilla {
+      flex-shrink: 0;
+      width: 1rem;
+      height: 1rem;
+      margin-top: 0.15rem;
+      border: 2px solid #94a3b8;
+      border-radius: 0.25rem;
+      display: inline-block;
+      position: relative;
+    }
+
+    .quiz-opcion.marcada .quiz-casilla {
+      border-color: #FF6600;
+      background: #FF6600;
+    }
+
+    .quiz-opcion.marcada .quiz-casilla::after {
+      content: '';
+      position: absolute;
+      left: 3px;
+      top: 0;
+      width: 4px;
+      height: 8px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+
+    /* Falta por marcar: se señala al corregir una selección múltiple */
+    .quiz-opcion.faltaba {
+      border-color: #6ee7b7;
+      border-style: dashed;
+      background: #f0fdf4;
+    }
+
+    /* Respuesta numérica */
+    .quiz-numerica {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.25rem;
+    }
+
+    .quiz-numerica input {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.95rem;
+      color: #012820;
+      background: white;
+      border: 1px solid rgba(1, 40, 32, 0.25);
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.7rem;
+      width: 11rem;
+    }
+
+    .quiz-numerica input:focus-visible {
+      outline: 2px solid #FF6600;
+      outline-offset: 1px;
+    }
+
+    .quiz-numerica input:disabled {
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    .quiz-numerica .quiz-unidad {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8125rem;
+      color: #475569;
+    }
+
+    .quiz-comprobar {
+      font-family: inherit;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: white;
+      background: #012820;
+      border: none;
+      border-radius: 50px;
+      padding: 0.5rem 1.1rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .quiz-comprobar:hover:not(:disabled) {
+      background: #FF6600;
+    }
+
+    .quiz-comprobar:disabled {
+      background: #94a3b8;
+      cursor: default;
+    }
+
+    /* Gráfico dentro de una pregunta */
+    .quiz-grafico {
+      position: relative;
+      height: 210px;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 0.6rem;
+      margin-bottom: 0.85rem;
+    }
+
+    /* Resumen final */
+    .quiz-resumen {
+      margin-top: 1.15rem;
+      padding: 1rem 1.15rem;
+      border-radius: 0.5rem;
+      background: white;
+      border: 1px solid #fde68a;
+      font-size: 0.9rem;
+      color: #334155;
+    }
+
+    .quiz-resumen[hidden] {
+      display: none;
+    }
+
+    .quiz-resumen h5 {
+      margin: 0 0 0.5rem 0;
+      color: #92400e;
+      font-weight: 700;
+    }
+
+    .quiz-resumen ul {
+      margin: 0.5rem 0 0 0;
+      padding-left: 1.1rem;
+    }
+
+    .quiz-resumen ul li {
+      color: #334155;
+    }
+
+    /* ------------------------------------------------------------------
+       Ejercicios guiados: pista y solución comentada desplegables.
+       ------------------------------------------------------------------ */
+    .ejercicio-guiado {
+      background: white;
+      border: 1px solid #dbeafe;
+      border-radius: 0.5rem;
+      padding: 1rem 1.15rem;
+      margin-top: 1rem;
+    }
+
+    .ejercicio-guiado > p:first-child {
+      margin-top: 0;
+    }
+
+    .ejercicio-enunciado {
+      font-weight: 500;
+      color: #1e293b;
+    }
+
+    .ejercicio-enunciado .ejercicio-numero {
+      font-weight: 700;
+      color: #1e40af;
+      margin-right: 0.4rem;
+    }
+
+    .ejercicio-acciones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .ejercicio-boton {
+      font-family: inherit;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #1e40af;
+      background: transparent;
+      border: 1px solid #93c5fd;
+      border-radius: 50px;
+      padding: 0.35rem 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .ejercicio-boton:hover {
+      background: #dbeafe;
+    }
+
+    .ejercicio-boton[aria-expanded="true"] {
+      background: #1e40af;
+      color: white;
+      border-color: #1e40af;
+    }
+
+    .ejercicio-boton .fa-chevron-down {
+      transition: transform 0.2s ease;
+      font-size: 0.7rem;
+    }
+
+    .ejercicio-boton[aria-expanded="true"] .fa-chevron-down {
+      transform: rotate(180deg);
+    }
+
+    .ejercicio-panel {
+      margin-top: 0.75rem;
+      padding: 0.85rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .ejercicio-panel[hidden] {
+      display: none;
+    }
+
+    .ejercicio-panel.pista {
+      background: #fffbeb;
+      border-left: 3px solid #f59e0b;
+      color: #78350f;
+    }
+
+    .ejercicio-panel.solucion {
+      background: #f8fafc;
+      border-left: 3px solid #1e40af;
+      color: #1e293b;
+    }
+
+    .ejercicio-panel.solucion .code-block-wrapper {
+      margin-bottom: 1rem;
+    }
+
+    .ejercicio-panel table {
+      font-size: 0.8125rem;
+      margin: 0.75rem 0;
+    }
   </style>
 </head>
 
@@ -1942,7 +2229,9 @@ res.plot()</code></pre>
         <h4><i class="fas fa-circle-question" aria-hidden="true"></i> Autoevaluación</h4>
         <p class="text-sm" style="margin-bottom:0;">Seis preguntas para comprobar lo esencial. Cada opción tiene su
           explicación: si te equivocas, la retroalimentación te dice exactamente dónde estuvo el razonamiento.</p>
+        <div class="quiz-progreso" role="presentation"><div class="quiz-progreso-barra"></div></div>
         <div class="quiz-preguntas"></div>
+        <div class="quiz-resumen" role="status" hidden></div>
         <div class="quiz-marcador">
           <span class="quiz-conteo"></span>
           <button type="button" class="quiz-reiniciar">Reiniciar</button>
@@ -1951,13 +2240,192 @@ res.plot()</code></pre>
 
       <div class="exercise">
         <h4><i class="fas fa-pen-to-square mr-2" aria-hidden="true"></i>Para practicar</h4>
-        <ol style="margin-bottom:0;">
-          <li>Con <code>fpp3</code>, grafica y descompone (clásica y STL) la serie <code>co2</code> o una serie de
-            demanda de energía. ¿Aditiva o multiplicativa? Justifica con el gráfico estacional.</li>
-          <li>Calcula $F_T$ y $F_S$ para dos series distintas y compáralas.</li>
-          <li>Con IA como tutor, pide un contraejemplo donde la descomposición clásica falle (un atípico) y verifica en
-            R que STL lo maneja mejor.</li>
-        </ol>
+        <p class="text-sm" style="margin-bottom:0.5rem;">Intenta cada uno <strong>antes</strong> de abrir nada. Si te
+          atascas, la pista te dice por dónde entrar sin darte la respuesta; la solución trae el código y las cifras
+          reales, para que puedas compararlas con las tuyas.</p>
+
+        <div class="ejercicio-guiado">
+          <p class="ejercicio-enunciado"><span class="ejercicio-numero">1.</span>Con <code>fpp3</code>, grafica y
+            descompone (clásica y STL) la serie <code>co2</code> o una serie de demanda de energía. ¿Aditiva o
+            multiplicativa? Justifica con el gráfico estacional.</p>
+          <div class="ejercicio-acciones">
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c1e1-pista">
+              <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c1e1-sol">
+              <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="ejercicio-panel pista" id="c1e1-pista" hidden>
+            <p style="margin:0;">"A ojo" no basta y aquí es fácil equivocarse. Convierte la pregunta en un número:
+              mide la <strong>amplitud estacional de cada año</strong> (máximo menos mínimo) y el <strong>nivel medio de
+              ese año</strong>, y mira si la amplitud crece cuando crece el nivel. Antes de calcular nada, fíjate en un
+              detalle que lo condiciona todo: ¿cuánto varía el nivel del CO₂ entre 1959 y 1997, en porcentaje?</p>
+          </div>
+          <div class="ejercicio-panel solucion" id="c1e1-sol" hidden>
+            <p><strong>Respuesta: con <code>co2</code> los datos no permiten decidir</strong> — y ese es justamente el
+              aprendizaje.</p>
+            <pre><code class="language-r"># Criterio cuantitativo: elasticidad amplitud-nivel.
+#   log(amplitud del anio) = a + b * log(nivel del anio)
+#   b ~ 0 => ADITIVA (la amplitud no depende del nivel)
+#   b ~ 1 => MULTIPLICATIVA (la amplitud es proporcional al nivel)
+elasticidad &lt;- function(x) {
+  anios &lt;- floor(time(x))
+  completos &lt;- names(which(table(anios) == frequency(x)))
+  v &lt;- as.numeric(x)
+  nivel    &lt;- tapply(v, anios, mean)[completos]
+  amplitud &lt;- tapply(v, anios, function(z) max(z) - min(z))[completos]
+  fit &lt;- lm(log(amplitud) ~ log(nivel))
+  c(b = coef(fit)[2], confint(fit)[2, ], R2 = summary(fit)$r.squared)
+}
+
+elasticidad(co2)             # b = 1.083, IC95 [0.575, 1.591], R2 = 0.335
+elasticidad(AirPassengers)   # b = 1.291, IC95 [1.149, 1.432], R2 = 0.976
+
+# La clave esta en cuanto varia el NIVEL en cada serie:
+(max(co2) - min(co2)) / mean(co2)                       # 0.159 -> 16 %
+(max(AirPassengers) - min(AirPassengers)) / mean(AirPassengers)   # 1.848 -> 185 %</code></pre>
+            <table>
+              <caption class="sr-only">Elasticidad amplitud-nivel en dos series</caption>
+              <thead>
+                <tr><th scope="col">Serie</th><th scope="col">$b$</th><th scope="col">IC 95&nbsp;%</th>
+                  <th scope="col">$R^2$</th><th scope="col">Veredicto</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>co2</code></td><td>1.083</td><td>[0.575, 1.591]</td><td>0.335</td>
+                  <td>Indistinguible</td></tr>
+                <tr><td><code>AirPassengers</code></td><td>1.291</td><td>[1.149, 1.432]</td><td>0.976</td>
+                  <td>Multiplicativa</td></tr>
+              </tbody>
+            </table>
+            <p>En <code>AirPassengers</code> el intervalo es estrecho y excluye el 0 con holgura, y el ajuste explica
+              el 97.6&nbsp;% de la variación: multiplicativa sin discusión. En <code>co2</code>, en cambio, el intervalo
+              va de 0.58 a 1.59 y el $R^2$ es 0.335: <strong>los datos no distinguen</strong> una descomposición de la
+              otra. La razón es que el nivel del CO₂ solo sube un 16&nbsp;% en 39 años, mientras que el de
+              <code>AirPassengers</code> se multiplica por casi cuatro. Sobre un rango tan estrecho, la aditiva y la
+              multiplicativa dan casi lo mismo, así que <strong>la elección importa poco</strong>.</p>
+            <p style="margin-bottom:0;">Hay un matiz interesante y verificable: la amplitud estacional del CO₂
+              <strong>sí</strong> crece, a razón de $+0.024$ ppm por año ($p = 0.0002$). No es proporcional al nivel;
+              es un fenómeno propio. Eso no lo captura bien <em>ninguna</em> descomposición de índices fijos, y sí lo
+              captura <strong>STL</strong>, que deja evolucionar el componente estacional. Es un buen argumento para
+              preferir STL aquí, más allá del debate aditiva/multiplicativa.</p>
+          </div>
+        </div>
+
+        <div class="ejercicio-guiado">
+          <p class="ejercicio-enunciado"><span class="ejercicio-numero">2.</span>Calcula $F_T$ y $F_S$ para dos series
+            distintas y compáralas.</p>
+          <div class="ejercicio-acciones">
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c1e2-pista">
+              <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c1e2-sol">
+              <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="ejercicio-panel pista" id="c1e2-pista" hidden>
+            <p style="margin:0;">Escoge dos series que se parezcan poco entre sí: te dirán mucho más que dos parecidas.
+              <code>co2</code> (tendencia arrolladora) y <code>USAccDeaths</code> (casi pura estacionalidad) son un buen
+              par. Y no olvides el $\max(0, \cdot)$ de la fórmula: sin él pueden salir valores negativos que no
+              significan nada.</p>
+          </div>
+          <div class="ejercicio-panel solucion" id="c1e2-sol" hidden>
+            <pre><code class="language-r">fuerzas &lt;- function(x, usar_log = FALSE) {
+  z  &lt;- if (usar_log) log(x) else x
+  st &lt;- stl(z, s.window = "periodic")$time.series
+  R &lt;- st[, "remainder"]; T_ &lt;- st[, "trend"]; S &lt;- st[, "seasonal"]
+  c(FT = max(0, 1 - var(R) / var(T_ + R)),
+    FS = max(0, 1 - var(R) / var(S  + R)))
+}
+
+round(fuerzas(co2), 4)                          # FT = 0.9997  FS = 0.9841
+round(fuerzas(USAccDeaths), 4)                  # FT = 0.7991  FS = 0.9426
+round(fuerzas(AirPassengers, usar_log = TRUE), 4)  # FT = 0.9940  FS = 0.9368</code></pre>
+            <table>
+              <caption class="sr-only">Fuerza de tendencia y estacionalidad en tres series</caption>
+              <thead>
+                <tr><th scope="col">Serie</th><th scope="col">$F_T$</th><th scope="col">$F_S$</th>
+                  <th scope="col">Lectura</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>co2</code></td><td>0.9997</td><td>0.9841</td>
+                  <td>Tendencia casi perfecta: el residuo es ínfimo frente a ella</td></tr>
+                <tr><td><code>USAccDeaths</code></td><td>0.7991</td><td>0.9426</td>
+                  <td>Estacionalidad fuerte, tendencia claramente más débil</td></tr>
+                <tr><td>log(<code>AirPassengers</code>)</td><td>0.9940</td><td>0.9368</td>
+                  <td>Las dos componentes muy marcadas</td></tr>
+              </tbody>
+            </table>
+            <p style="margin-bottom:0;">El contraste útil es $F_T$: 0.9997 en <code>co2</code> frente a 0.7991 en
+              <code>USAccDeaths</code>. El CO₂ sube de forma casi determinista, mientras que las muertes accidentales
+              suben y bajan sin una dirección clara — su estructura es sobre todo el ciclo anual. <strong>Dos
+              advertencias:</strong> primero, no compares $F_T$ con $F_S$ <em>dentro</em> de una misma serie, porque
+              sus denominadores son distintos; compara la misma medida <em>entre</em> series. Y segundo, un $F_T$ de
+              0.9997 no significa "explica el 99.97&nbsp;% de la varianza": el denominador es
+              $\operatorname{Var}(T+R)$, no la varianza total.</p>
+          </div>
+        </div>
+
+        <div class="ejercicio-guiado">
+          <p class="ejercicio-enunciado"><span class="ejercicio-numero">3.</span>Con IA como tutor, pide un
+            contraejemplo donde la descomposición clásica falle (un atípico) y verifica en R que STL lo maneja mejor.</p>
+          <div class="ejercicio-acciones">
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c1e3-pista">
+              <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c1e3-sol">
+              <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="ejercicio-panel pista" id="c1e3-pista" hidden>
+            <p style="margin:0;">Diseña el experimento para que sea concluyente: toma una serie <em>limpia</em>,
+              contamina <strong>un solo</strong> punto, y compara el componente estacional <em>antes y después</em> con
+              cada método. Así el único cambio es el atípico. Y ojo con un detalle que decide el resultado: STL tiene un
+              argumento que hay que activar para que sea resistente. Si no lo activas, el ejercicio "demuestra" lo
+              contrario de lo que esperabas.</p>
+          </div>
+          <div class="ejercicio-panel solucion" id="c1e3-sol" hidden>
+            <p><strong>Respuesta: STL resiste, pero solo con <code>robust = TRUE</code>.</strong></p>
+            <pre><code class="language-r"># Un unico atipico: julio de 1955 (obs. 79), inflado un 50 %
+pos &lt;- 79
+ap_out &lt;- AirPassengers
+ap_out[pos] &lt;- ap_out[pos] * 1.5      # 364 -> 546
+
+idx_clasica &lt;- function(x) as.numeric(decompose(x, type = "multiplicative")$figure)
+idx_stl &lt;- function(x, robusto) {
+  s &lt;- stl(log(x), s.window = "periodic", robust = robusto)$time.series[, "seasonal"]
+  as.numeric(exp(s[1:12]))
+}
+
+# Indice estacional de JULIO, el mes contaminado: limpio -> contaminado
+idx_clasica(AirPassengers)[7];      idx_clasica(ap_out)[7]        # 1.2266 -> 1.2758
+idx_stl(AirPassengers, TRUE)[7];    idx_stl(ap_out, TRUE)[7]      # 1.2562 -> 1.2458
+idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.2806</code></pre>
+            <table>
+              <caption class="sr-only">Distorsión del índice estacional de julio ante un atípico</caption>
+              <thead>
+                <tr><th scope="col">Método</th><th scope="col">Índice limpio</th>
+                  <th scope="col">Con el atípico</th><th scope="col">Distorsión</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Clásica multiplicativa</td><td>1.2266</td><td>1.2758</td><td>+4.02&nbsp;%</td></tr>
+                <tr><td>STL con <code>robust = TRUE</code></td><td>1.2562</td><td>1.2458</td>
+                  <td><strong>−0.82&nbsp;%</strong></td></tr>
+                <tr><td>STL con <code>robust = FALSE</code></td><td>1.2416</td><td>1.2806</td><td>+3.14&nbsp;%</td></tr>
+              </tbody>
+            </table>
+            <p>La descomposición clásica promedia todos los julios por igual, así que un solo dato inflado arrastra el
+              índice de <em>todos</em> los julios de la serie: +4.02&nbsp;%. STL robusto reduce la distorsión a
+              −0.82&nbsp;%, cinco veces menos, porque su regresión local reponderea las observaciones y le baja el peso
+              a la que se sale del patrón.</p>
+            <p style="margin-bottom:0;"><strong>El detalle que hace o deshace el ejercicio:</strong> con
+              <code>robust = FALSE</code> —que es el valor <em>por defecto</em> de <code>stl()</code>— la distorsión es
+              +3.14&nbsp;%, prácticamente igual de mala que la clásica. Es decir: STL no es intrínsecamente resistente,
+              lo es la opción. Si le pediste el contraejemplo a un asistente y te dio código sin
+              <code>robust = TRUE</code>, la conclusión que habrías sacado sería la contraria a la correcta, y no por
+              culpa del método sino de un argumento por defecto. Verificar ejecutando es lo que evita ese error.</p>
+          </div>
+        </div>
       </div>
 
       <div class="references">
@@ -2046,6 +2514,7 @@ res.plot()</code></pre>
         initCodeTabs();
         iniciarSimuladores();
         iniciarAutoevaluaciones();
+        iniciarEjerciciosGuiados();
         renderMathInElement(mainContent, {
           delimiters: [
             { left: "$$", right: "$$", display: true },
@@ -2626,15 +3095,28 @@ res.plot()</code></pre>
       return [g];
     };
     // ================================================================
-    // Autoevaluación
+    // Autoevaluación (v2)
     //
-    // Uso: AUTOEVALUACIONES['id'] = [{pregunta, opciones:[{texto, correcta,
-    // retro}]}]. El contenedor lleva data-quiz="id". Se corrige al hacer clic:
-    // se marca la opción elegida y la correcta, y se muestra la
-    // retroalimentación específica de la opción escogida.
+    // AUTOEVALUACIONES['id'] = [pregunta, ...] sobre un contenedor
+    // data-quiz="id". Cada pregunta declara su `tipo`:
+    //
+    //   'opcion'   (por defecto) una sola respuesta correcta
+    //   'multiple' varias correctas; se corrige al pulsar "Comprobar"
+    //   'numerica' campo de entrada; se acepta |respuesta - dada| <= tolerancia
+    //   'grafico'  como 'opcion', pero dibuja un Chart.js sobre el enunciado
+    //
+    // Campos comunes: {pregunta, pista, modulo}. `pista` se muestra tras el
+    // PRIMER fallo y se deja reintentar; al segundo fallo se revela la
+    // respuesta. `modulo` alimenta el resumen final de "qué repasar".
     // ================================================================
     const AUTOEVALUACIONES = {};
     const LETRAS = ['a', 'b', 'c', 'd', 'e'];
+    const NOMBRE_TIPO = {
+      opcion: 'Opción múltiple',
+      multiple: 'Varias respuestas',
+      numerica: 'Respuesta numérica',
+      grafico: 'Lectura de gráfico'
+    };
 
     function iniciarAutoevaluaciones() {
       mainContent.querySelectorAll('[data-quiz]').forEach(raiz => {
@@ -2647,81 +3129,319 @@ res.plot()</code></pre>
       });
     }
 
+    // Los gráficos de las preguntas viven en `graficosActivos` como los de los
+    // simuladores, para que se destruyan al cambiar de módulo. Además se
+    // guardan por quiz para poder limpiarlos al reiniciar sin tocar los demás.
+    function registrarGraficoQuiz(raiz, chart) {
+      (raiz._graficos = raiz._graficos || []).push(chart);
+      graficosActivos.push(chart);
+    }
+
+    function limpiarGraficosQuiz(raiz) {
+      (raiz._graficos || []).forEach(g => {
+        const i = graficosActivos.indexOf(g);
+        if (i >= 0) graficosActivos.splice(i, 1);
+        g.destroy();
+      });
+      raiz._graficos = [];
+    }
+
+    function katexEn(elemento) {
+      if (typeof renderMathInElement === 'function') {
+        renderMathInElement(elemento, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false }
+          ]
+        });
+      }
+    }
+
     function renderAutoevaluacion(raiz, preguntas) {
+      limpiarGraficosQuiz(raiz);
+
       const contenedor = raiz.querySelector('.quiz-preguntas');
       const marcador = raiz.querySelector('.quiz-conteo');
-      const respondidas = new Set();
-      let aciertos = 0;
+      const barra = raiz.querySelector('.quiz-progreso-barra');
+      const resumen = raiz.querySelector('.quiz-resumen');
 
-      function pintarMarcador() {
+      const estado = preguntas.map(() => ({ resuelta: false, intentos: 0, acierto: false }));
+
+      function actualizarMarcador() {
+        const resueltas = estado.filter(e => e.resuelta).length;
+        const alPrimero = estado.filter(e => e.acierto && e.intentos === 1).length;
+        const alSegundo = estado.filter(e => e.acierto && e.intentos > 1).length;
         marcador.textContent =
-          `Respondidas ${respondidas.size} de ${preguntas.length} · aciertos: ${aciertos}`;
+          `Respondidas ${resueltas} de ${preguntas.length} · ` +
+          `${alPrimero} al primer intento, ${alSegundo} al segundo`;
+        if (barra) barra.style.width = `${(resueltas / preguntas.length) * 100}%`;
+
+        if (resueltas === preguntas.length && resumen) {
+          const fallidas = preguntas.filter((_, i) => !estado[i].acierto);
+          const repasar = [...new Set(
+            preguntas.filter((_, i) => estado[i].intentos > 1 || !estado[i].acierto)
+              .map(p => p.modulo).filter(Boolean)
+          )].sort((a, b) => a - b);
+          resumen.innerHTML =
+            `<h5>Resultado: ${alPrimero + alSegundo} de ${preguntas.length}` +
+            `${fallidas.length ? '' : ' · impecable'}</h5>` +
+            (repasar.length
+              ? `<p style="margin:0;">Te costaron preguntas de estos módulos, así que vale la pena volver a ellos:</p>
+                 <ul>${repasar.map(m => `<li>Módulo ${m}: <strong>${(courseData.modules[m - 1] || {}).title || ''}</strong></li>`).join('')}</ul>`
+              : `<p style="margin:0;">Acertaste todo al primer intento. Puedes pasar al siguiente capítulo.</p>`);
+          resumen.hidden = false;
+          katexEn(resumen);
+        }
+      }
+
+      function cerrar(i, bloque, acierto, textoRetro) {
+        estado[i].resuelta = true;
+        estado[i].acierto = acierto;
+        const retro = bloque.querySelector('.quiz-retro');
+        retro.className = `quiz-retro ${acierto ? 'bien' : 'mal'}`;
+        const encabezado = acierto
+          ? (estado[i].intentos === 1 ? '<strong>Correcto.</strong> ' : '<strong>Correcto, en el segundo intento.</strong> ')
+          : '<strong>No es esa.</strong> ';
+        retro.innerHTML = encabezado + textoRetro;
+        retro.hidden = false;
+        katexEn(retro);
+        actualizarMarcador();
+      }
+
+      function mostrarPista(i, bloque) {
+        const pista = bloque.querySelector('.quiz-pista');
+        if (pista && preguntas[i].pista) {
+          pista.innerHTML = `<strong>Casi. Una pista:</strong> ${preguntas[i].pista}`;
+          pista.hidden = false;
+          katexEn(pista);
+        }
       }
 
       contenedor.innerHTML = '';
+      if (resumen) { resumen.hidden = true; resumen.innerHTML = ''; }
+
       preguntas.forEach((p, i) => {
+        const tipo = p.tipo || 'opcion';
         const bloque = document.createElement('div');
         bloque.className = 'quiz-pregunta';
 
         const enunciado = document.createElement('p');
         enunciado.className = 'quiz-enunciado';
-        enunciado.innerHTML = `<span class="quiz-numero">${i + 1}.</span>${p.pregunta}`;
+        enunciado.innerHTML = `<span class="quiz-numero">${i + 1}.</span>${p.pregunta}` +
+          `<span class="quiz-tipo">${NOMBRE_TIPO[tipo]}</span>`;
+        bloque.appendChild(enunciado);
 
-        const lista = document.createElement('div');
-        lista.className = 'quiz-opciones';
-        lista.setAttribute('role', 'group');
-        lista.setAttribute('aria-label', `Opciones de la pregunta ${i + 1}`);
+        // Gráfico del enunciado, si lo hay
+        if (tipo === 'grafico' && typeof p.dibujar === 'function') {
+          const caja = document.createElement('div');
+          caja.className = 'quiz-grafico';
+          if (p.alto) caja.style.height = `${p.alto}px`;
+          const canvas = document.createElement('canvas');
+          canvas.setAttribute('role', 'img');
+          canvas.setAttribute('aria-label', p.descripcionGrafico || 'Gráfico de la pregunta');
+          caja.appendChild(canvas);
+          bloque.appendChild(caja);
+          const chart = p.dibujar(canvas);
+          if (chart) registrarGraficoQuiz(raiz, chart);
+        }
+
+        const pista = document.createElement('div');
+        pista.className = 'quiz-pista';
+        pista.hidden = true;
 
         const retro = document.createElement('div');
         retro.className = 'quiz-retro';
         retro.setAttribute('role', 'status');
         retro.hidden = true;
 
-        const botones = p.opciones.map((op, j) => {
+        if (tipo === 'numerica') {
+          // ---- Respuesta numérica -----------------------------------
+          const fila = document.createElement('div');
+          fila.className = 'quiz-numerica';
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.inputMode = 'decimal';
+          input.placeholder = 'Tu respuesta';
+          input.setAttribute('aria-label', `Respuesta de la pregunta ${i + 1}`);
+          const unidad = document.createElement('span');
+          unidad.className = 'quiz-unidad';
+          unidad.textContent = p.unidad || '';
           const boton = document.createElement('button');
           boton.type = 'button';
-          boton.className = 'quiz-opcion';
-          boton.innerHTML = `<span class="quiz-letra">${LETRAS[j]})</span><span>${op.texto}</span>`;
-          boton.addEventListener('click', () => {
-            if (respondidas.has(i)) return;
-            respondidas.add(i);
-            if (op.correcta) aciertos++;
+          boton.className = 'quiz-comprobar';
+          boton.textContent = 'Comprobar';
 
-            botones.forEach((b, k) => {
-              b.disabled = true;
-              if (p.opciones[k].correcta) b.classList.add('correcta');
-            });
-            if (!op.correcta) boton.classList.add('incorrecta');
-
-            retro.className = `quiz-retro ${op.correcta ? 'bien' : 'mal'}`;
-            retro.innerHTML =
-              `<strong>${op.correcta ? 'Correcto.' : 'No es esa.'}</strong> ${op.retro}`;
-            retro.hidden = false;
-            if (typeof renderMathInElement === 'function') {
-              renderMathInElement(retro, {
-                delimiters: [
-                  { left: "$$", right: "$$", display: true },
-                  { left: "$", right: "$", display: false }
-                ]
-              });
+          function comprobarNumerica() {
+            if (estado[i].resuelta) return;
+            // Se acepta coma o punto como separador decimal
+            const dada = parseFloat(String(input.value).trim().replace(',', '.'));
+            if (!isFinite(dada)) {
+              pista.innerHTML = '<strong>Escribe un número</strong> antes de comprobar.';
+              pista.hidden = false;
+              return;
             }
-            pintarMarcador();
-          });
-          lista.appendChild(boton);
-          return boton;
-        });
+            estado[i].intentos++;
+            const acierto = Math.abs(dada - p.respuesta) <= p.tolerancia;
+            if (acierto) {
+              input.disabled = true; boton.disabled = true;
+              cerrar(i, bloque, true, p.retroAcierto);
+            } else if (estado[i].intentos === 1) {
+              mostrarPista(i, bloque);
+            } else {
+              input.disabled = true; boton.disabled = true;
+              cerrar(i, bloque, false,
+                `La respuesta es <strong>${p.respuesta}${p.unidad ? ' ' + p.unidad : ''}</strong>. ${p.retroFallo}`);
+            }
+          }
+          boton.addEventListener('click', comprobarNumerica);
+          input.addEventListener('keydown', e => { if (e.key === 'Enter') comprobarNumerica(); });
 
-        bloque.appendChild(enunciado);
-        bloque.appendChild(lista);
+          fila.appendChild(input);
+          if (p.unidad) fila.appendChild(unidad);
+          fila.appendChild(boton);
+          bloque.appendChild(fila);
+
+        } else if (tipo === 'multiple') {
+          // ---- Varias respuestas correctas --------------------------
+          const lista = document.createElement('div');
+          lista.className = 'quiz-opciones';
+          lista.setAttribute('role', 'group');
+          lista.setAttribute('aria-label', `Opciones de la pregunta ${i + 1}`);
+          const marcadas = new Set();
+
+          const botones = p.opciones.map((op, j) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'quiz-opcion';
+            b.setAttribute('aria-pressed', 'false');
+            b.innerHTML = `<span class="quiz-casilla" aria-hidden="true"></span><span>${op.texto}</span>`;
+            b.addEventListener('click', () => {
+              if (estado[i].resuelta) return;
+              const activa = marcadas.has(j);
+              if (activa) marcadas.delete(j); else marcadas.add(j);
+              b.classList.toggle('marcada', !activa);
+              b.setAttribute('aria-pressed', String(!activa));
+            });
+            lista.appendChild(b);
+            return b;
+          });
+
+          const boton = document.createElement('button');
+          boton.type = 'button';
+          boton.className = 'quiz-comprobar';
+          boton.style.marginTop = '0.6rem';
+          boton.textContent = 'Comprobar';
+          boton.addEventListener('click', () => {
+            if (estado[i].resuelta) return;
+            if (marcadas.size === 0) {
+              pista.innerHTML = '<strong>Marca al menos una opción</strong> antes de comprobar.';
+              pista.hidden = false;
+              return;
+            }
+            estado[i].intentos++;
+            const correctas = new Set(p.opciones.map((o, j) => o.correcta ? j : -1).filter(j => j >= 0));
+            const exacto = marcadas.size === correctas.size &&
+              [...marcadas].every(j => correctas.has(j));
+            if (exacto) {
+              botones.forEach((b, j) => { b.disabled = true; if (correctas.has(j)) b.classList.add('correcta'); });
+              boton.disabled = true;
+              cerrar(i, bloque, true, p.retroAcierto);
+            } else if (estado[i].intentos === 1) {
+              const bien = [...marcadas].filter(j => correctas.has(j)).length;
+              pista.innerHTML = `<strong>Casi.</strong> De las ${marcadas.size} que marcaste, ` +
+                `${bien} ${bien === 1 ? 'está' : 'están'} en la respuesta, y te ` +
+                `${correctas.size - bien === 1 ? 'falta' : 'faltan'} ${correctas.size - bien}. ` +
+                (p.pista || '');
+              pista.hidden = false;
+              katexEn(pista);
+            } else {
+              botones.forEach((b, j) => {
+                b.disabled = true;
+                if (correctas.has(j)) b.classList.add(marcadas.has(j) ? 'correcta' : 'faltaba');
+                else if (marcadas.has(j)) b.classList.add('incorrecta');
+              });
+              boton.disabled = true;
+              cerrar(i, bloque, false, p.retroFallo);
+            }
+          });
+
+          bloque.appendChild(lista);
+          bloque.appendChild(boton);
+
+        } else {
+          // ---- Una sola respuesta ('opcion' y 'grafico') ------------
+          const lista = document.createElement('div');
+          lista.className = 'quiz-opciones';
+          lista.setAttribute('role', 'group');
+          lista.setAttribute('aria-label', `Opciones de la pregunta ${i + 1}`);
+
+          const botones = p.opciones.map((op, j) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'quiz-opcion';
+            b.innerHTML = `<span class="quiz-letra">${LETRAS[j]})</span><span>${op.texto}</span>`;
+            b.addEventListener('click', () => {
+              if (estado[i].resuelta) return;
+              estado[i].intentos++;
+              if (op.correcta) {
+                botones.forEach((x, k) => { x.disabled = true; if (p.opciones[k].correcta) x.classList.add('correcta'); });
+                cerrar(i, bloque, true, op.retro);
+              } else if (estado[i].intentos === 1) {
+                // Primer fallo: se descarta esa opción, se da la pista y se reintenta
+                b.disabled = true;
+                b.classList.add('incorrecta');
+                mostrarPista(i, bloque);
+              } else {
+                botones.forEach((x, k) => { x.disabled = true; if (p.opciones[k].correcta) x.classList.add('correcta'); });
+                b.classList.add('incorrecta');
+                cerrar(i, bloque, false, op.retro);
+              }
+            });
+            lista.appendChild(b);
+            return b;
+          });
+          bloque.appendChild(lista);
+        }
+
+        bloque.appendChild(pista);
         bloque.appendChild(retro);
         contenedor.appendChild(bloque);
       });
 
-      pintarMarcador();
+      katexEn(contenedor);
+      actualizarMarcador();
+
       const reiniciar = raiz.querySelector('.quiz-reiniciar');
-      if (reiniciar) {
-        reiniciar.onclick = () => renderAutoevaluacion(raiz, preguntas);
-      }
+      if (reiniciar) reiniciar.onclick = () => renderAutoevaluacion(raiz, preguntas);
+    }
+
+    // ================================================================
+    // Ejercicios guiados: desplegables de pista y solución
+    // ================================================================
+    function iniciarEjerciciosGuiados() {
+      // wrapCodeBlocks() colapsa todos los <pre> del módulo. Dentro de una
+      // solución eso obligaría a un segundo clic para ver el código que el
+      // estudiante acaba de pedir, así que ahí se dejan desplegados.
+      mainContent.querySelectorAll('.ejercicio-panel pre.collapsed').forEach(pre => {
+        pre.classList.remove('collapsed');
+        pre.classList.add('expanded');
+        const boton = pre.closest('.code-block-wrapper')?.querySelector('.code-toggle-btn');
+        if (boton) boton.classList.add('expanded');
+      });
+
+      mainContent.querySelectorAll('.ejercicio-boton').forEach(boton => {
+        const panel = document.getElementById(boton.getAttribute('aria-controls'));
+        if (!panel) return;
+        boton.addEventListener('click', () => {
+          const abierto = boton.getAttribute('aria-expanded') === 'true';
+          boton.setAttribute('aria-expanded', String(!abierto));
+          panel.hidden = abierto;
+          if (!abierto) {
+            if (typeof Prism !== 'undefined') Prism.highlightAllUnder(panel);
+            katexEn(panel);
+          }
+        });
+      });
     }
 
 
@@ -2730,7 +3450,10 @@ res.plot()</code></pre>
     // ================================================================
     AUTOEVALUACIONES['cap1'] = [
       {
+        tipo: 'opcion',
+        modulo: 4,
         pregunta: '¿Qué distingue un <strong>ciclo</strong> de la <strong>estacionalidad</strong>?',
+        pista: 'Los dos son subidas y bajadas que se repiten. Piensa en si puedes decir <em>de antemano</em> cuánto va a durar la próxima repetición.',
         opciones: [
           {
             texto: 'La estacionalidad se repite con un periodo fijo y conocido; el ciclo, con duración variable e impredecible.',
@@ -2755,7 +3478,10 @@ res.plot()</code></pre>
         ]
       },
       {
+        tipo: 'opcion',
+        modulo: 6,
         pregunta: 'En <code>AirPassengers</code>, la amplitud de las oscilaciones anuales <strong>crece</strong> con el nivel de la serie. ¿Qué descomposición conviene?',
+        pista: 'Si la oscilación es un <em>porcentaje</em> del nivel en vez de una cantidad fija, ¿los componentes se suman o se multiplican? Y recuerda qué le hace el logaritmo a un producto.',
         opciones: [
           {
             texto: 'Multiplicativa, o equivalentemente aditiva sobre el logaritmo.',
@@ -2765,7 +3491,7 @@ res.plot()</code></pre>
           {
             texto: 'Aditiva sobre la serie original.',
             correcta: false,
-            retro: 'Dejaría un componente estacional de amplitud constante: subestimaría las oscilaciones de 1960 y las sobreestimaría las de 1949. El residuo delataría el problema con un patrón en forma de embudo.'
+            retro: 'Dejaría un componente estacional de amplitud constante: subestimaría las oscilaciones de 1960 y sobreestimaría las de 1949. El residuo delataría el problema con un patrón en forma de embudo.'
           },
           {
             texto: 'Da igual: las dos ajustan prácticamente lo mismo.',
@@ -2780,57 +3506,82 @@ res.plot()</code></pre>
         ]
       },
       {
-        pregunta: 'Para una serie mensual se usa una media móvil <strong>2×12</strong> en vez de una simple de orden 12. ¿Por qué?',
+        tipo: 'numerica',
+        modulo: 5,
+        pregunta: 'Aplicas una media móvil centrada <strong>2×12</strong> a <code>AirPassengers</code>, que tiene 144 observaciones. ¿Cuántos valores de tendencia obtienes (es decir, cuántos <em>no</em> son <code>NA</code>)?',
+        pista: 'Una ventana centrada de orden 12 necesita 6 meses a cada lado. En los primeros y en los últimos meses no los hay. ¿Cuántos se pierden en total?',
+        respuesta: 132,
+        tolerancia: 0,
+        retroAcierto: '$144 - 12 = 132$: se pierden 6 al principio y 6 al final. Puedes comprobarlo tú: en el Módulo 6, las curvas de tendencia arrancan en julio de 1949 y terminan en junio de 1960, no cubren los extremos. Esta pérdida es una de las limitaciones de la descomposición clásica que STL resuelve.',
+        retroFallo: 'Son $144 - 12 = 132$. Una ventana centrada de orden $m$ necesita $m/2$ observaciones a cada lado, así que se pierden $m$ en total: 6 al principio y 6 al final. Si respondiste 138, contaste solo un extremo; si respondiste 144, olvidaste que en los bordes no hay con qué promediar.'
+      },
+      {
+        tipo: 'grafico',
+        modulo: 6,
+        alto: 220,
+        descripcionGrafico: 'Serie AirPassengers junto a su componente de tendencia, que no cubre los primeros ni los últimos meses',
+        pregunta: 'Aquí está <code>AirPassengers</code> con la tendencia que estima la descomposición clásica. ¿Por qué la línea naranja <strong>no llega</strong> a los extremos?',
+        pista: 'No es un problema de los datos: la serie está completa, sin huecos. Piensa en cómo se calcula cada punto de esa línea naranja y qué necesita a su alrededor.',
+        dibujar: canvas => crearGraficoLinea(canvas, DATOS_CAP1.fechas, [
+          { label: 'Observada', data: DATOS_CAP1.observado, borderColor: COLORES_GRAFICO.gris,
+            backgroundColor: COLORES_GRAFICO.gris, borderWidth: 1, pointRadius: 0 },
+          { label: 'Tendencia (media móvil 2×12)', data: DATOS_CAP1.clasica_multiplicativa.tendencia,
+            borderColor: COLORES_GRAFICO.secundario, backgroundColor: COLORES_GRAFICO.secundario,
+            borderWidth: 2.5, pointRadius: 0, spanGaps: false }
+        ]),
         opciones: [
           {
-            texto: 'Porque con un orden par la ventana no queda centrada en una observación, y promediar dos ventanas consecutivas lo corrige.',
+            texto: 'Porque una media móvil centrada de orden 12 necesita 6 meses a cada lado, y en los extremos no existen.',
             correcta: true,
-            retro: 'Con $m$ par el centro cae <em>entre</em> dos meses. La 2×12 promedia dos ventanas de 12 desplazadas un mes, lo que equivale a dar peso $1/24$ a los extremos y $1/12$ a los diez meses interiores. Así el resultado queda alineado con una observación real.'
+            retro: 'Exacto: se pierden 6 valores al principio y 6 al final, quedando 132 de 144. Es una limitación estructural de la descomposición clásica, no un fallo del software. STL no la tiene: su tendencia por regresión local sí llega a los extremos, y por eso en el Módulo 7 la curva cubre toda la serie.'
           },
           {
-            texto: 'Porque 24 meses suavizan mejor que 12.',
+            texto: 'Porque a la serie le faltan datos en 1949 y en 1960.',
             correcta: false,
-            retro: 'La 2×12 no equivale a una ventana de 24 con peso pleno: los extremos entran a mitad de peso. Y el motivo no es suavizar más, sino centrar.'
+            retro: 'La serie está completa: 144 observaciones mensuales sin un solo hueco, de enero de 1949 a diciembre de 1960. Lo que falta es la <em>tendencia estimada</em>, no el dato.'
           },
           {
-            texto: 'Porque hay que cubrir dos ciclos anuales completos para eliminar la estacionalidad.',
+            texto: 'Porque la descomposición descarta el primer y el último año por convención.',
             correcta: false,
-            retro: 'Basta un ciclo completo para promediar los 12 meses. Lo que se corrige con la doble media es el desfase de medio periodo.'
+            retro: 'No hay tal convención, y además no es un año entero: son exactamente 6 meses a cada lado, la mitad del orden de la ventana. Con una media móvil 2×4 sobre datos trimestrales se perderían 2 a cada lado.'
           },
           {
-            texto: 'Porque R no admite ventanas móviles de orden par.',
+            texto: 'Porque el gráfico está recortado; los valores sí existen.',
             correcta: false,
-            retro: 'Sí las admite. El problema no es técnico sino de interpretación: el resultado quedaría desfasado medio mes respecto a la serie.'
+            retro: 'No existen: en esas posiciones <code>decompose()</code> devuelve <code>NA</code>. Puedes comprobarlo con <code>sum(is.na(decompose(AirPassengers)$trend))</code>, que da 12.'
           }
         ]
       },
       {
-        pregunta: '¿Cuál es la ventaja principal de <strong>STL</strong> frente a la descomposición clásica?',
+        tipo: 'multiple',
+        modulo: 7,
+        pregunta: 'Marca <strong>todas</strong> las ventajas reales de STL frente a la descomposición clásica.',
+        pista: 'Son tres. Piensa en qué le pasa al patrón estacional año tras año, qué ocurre en los extremos de la serie, y qué pasa si hay un dato disparatado.',
         opciones: [
-          {
-            texto: 'Permite que el patrón estacional cambie a lo largo del tiempo y es robusta frente a valores atípicos.',
-            correcta: true,
-            retro: 'La descomposición clásica obliga a que el índice de cada mes sea el mismo todos los años. STL deja que evolucione (con <code>s.window</code> se controla cuánto) y, al usar regresión local robusta, un atípico no contamina toda la estimación.'
-          },
-          {
-            texto: 'No necesita que se le declare el periodo estacional.',
-            correcta: false,
-            retro: 'Sí lo necesita: STL parte del periodo $m$ igual que la clásica. Lo que no exige es que el patrón sea idéntico cada año.'
-          },
-          {
-            texto: 'Evita tener que transformar la serie cuando la amplitud crece con el nivel.',
-            correcta: false,
-            retro: 'Al contrario: STL es <strong>aditiva</strong>. Justamente por eso este capítulo la aplica sobre $\\log(y_t)$ y no sobre la serie original.'
-          },
-          {
-            texto: 'Produce un residuo exactamente igual a cero.',
-            correcta: false,
-            retro: 'Ningún método de descomposición hace eso, ni debería: el residuo es precisamente la parte que no explican tendencia ni estacionalidad.'
-          }
-        ]
+          { texto: 'Permite que el patrón estacional cambie a lo largo del tiempo.', correcta: true },
+          { texto: 'Estima la tendencia también en los extremos, sin dejar <code>NA</code>.', correcta: true },
+          { texto: 'Con <code>robust = TRUE</code>, resiste los valores atípicos.', correcta: true },
+          { texto: 'No necesita que se le declare el periodo estacional.', correcta: false },
+          { texto: 'Evita tener que transformar la serie cuando la amplitud crece con el nivel.', correcta: false }
+        ],
+        retroAcierto: 'Las tres. Y las tres se ven en este mismo capítulo: la tendencia de STL del Módulo 7 tiene los 144 valores, mientras que la clásica del Módulo 6 solo tiene 132. La robustez la exploras en el ejercicio 3.',
+        retroFallo: 'Las correctas son las tres primeras. Las otras dos son falsas: STL <strong>sí</strong> necesita el periodo $m$ (parte de él igual que la clásica), y <strong>no</strong> evita transformar, porque STL es <em>aditiva</em> — precisamente por eso este capítulo la aplica sobre $\\log(y_t)$ y no sobre la serie original.'
       },
       {
-        pregunta: 'Para <code>AirPassengers</code> obtuvimos una fuerza de tendencia $F_T = 0.994$ y una fuerza estacional $F_S = 0.937$. ¿Cómo se leen?',
+        tipo: 'numerica',
+        modulo: 8,
+        pregunta: 'Una descomposición STL deja $\\operatorname{Var}(R_t) = 0.0012$ y $\\operatorname{Var}(T_t + R_t) = 0.20$. ¿Cuánto vale la fuerza de la tendencia $F_T = 1 - \\dfrac{\\operatorname{Var}(R_t)}{\\operatorname{Var}(T_t + R_t)}$? Da tres decimales.',
+        pista: 'Es una división y una resta. $0.0012 / 0.20 = 0.006$.',
+        respuesta: 0.994,
+        tolerancia: 0.0006,
+        retroAcierto: '$1 - 0.0012/0.20 = 1 - 0.006 = 0.994$. Es justo el valor de <code>AirPassengers</code> en este capítulo: una tendencia dominante. Fíjate en que el denominador es $\\operatorname{Var}(T+R)$ y no la varianza total: por eso $F_T$ <strong>no</strong> es "el porcentaje de varianza explicada por la tendencia".',
+        retroFallo: '$1 - 0.0012/0.20 = 1 - 0.006 = 0.994$. Si te dio 0.006 invertiste la resta, y si te dio algo cercano a 0.99 pero no exacto, revisa la división: $0.0012/0.20$ es $0.006$, no $0.0006$.'
+      },
+      {
+        tipo: 'opcion',
+        modulo: 8,
+        pregunta: 'Para <code>AirPassengers</code> obtuvimos $F_T = 0.994$ y $F_S = 0.937$. ¿Cómo se leen?',
+        pista: 'Las dos van de 0 a 1. Pregúntate qué significa el extremo 0 y qué significa el 1, y si tiene sentido comparar una con la otra cuando sus denominadores son distintos.',
         opciones: [
           {
             texto: 'Las dos componentes dominan claramente sobre el residuo: un valor cercano a 1 indica componente fuerte.',
@@ -2855,7 +3606,10 @@ res.plot()</code></pre>
         ]
       },
       {
+        tipo: 'opcion',
+        modulo: 8,
         pregunta: '¿Para qué sirve una serie <strong>desestacionalizada</strong> (<em>seasonally adjusted</em>)?',
+        pista: 'Piensa en las noticias: "el desempleo cayó respecto al mes pasado". ¿Qué habría que quitar para que esa comparación signifique algo, si enero siempre cae?',
         opciones: [
           {
             texto: 'Para comparar periodos consecutivos sin que el patrón anual enmascare el movimiento de fondo.',

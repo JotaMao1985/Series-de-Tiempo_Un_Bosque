@@ -1,0 +1,177 @@
+{
+  "cap2_ej1": {
+    "serie": "co2 (Mauna Loa, mensual 1959-1997)",
+    "n": 468,
+    "rango_relativo_pct": 15.9,
+    "lambda_guerrero": -0.0343,
+    "ndiffs_serie_cruda": 1,
+    "nsdiffs": 1,
+    "ndiffs_tras_diferencia_estacional": 1,
+    "acf_r1": 0.9909,
+    "acf_r12": 0.9284,
+    "banda": 0.0906,
+    "varianza_por_d_tras_estacional": [0.3882, 0.1543, 0.4023, 1.3123],
+    "d_de_varianza_minima": 1,
+    "final": {
+      "n": 455,
+      "varianza": 0.15433,
+      "acf_r1": -0.302,
+      "kpss_p": 0.1,
+      "rezagos_fuera_de_banda": 5,
+      "ndiffs": 0,
+      "nsdiffs": 0
+    }
+  },
+  "cap2_ej2": {
+    "n_simulaciones": 500,
+    "largo": 100,
+    "semilla": 2026,
+    "tasa_rechazo_5pct": 4.6,
+    "tasa_rechazo_10pct": 9.2,
+    "nivel_nominal": 5,
+    "rechazo_sobre_ruido_blanco_pct": 93.8,
+    "k_rezagos": 4
+  },
+  "cap2_ej3": {
+    "serie": "USAccDeaths (mensual 1973-1978)",
+    "n": 72,
+    "ndiffs_serie_cruda": 0,
+    "nsdiffs": 1,
+    "ndiffs_tras_diferencia_estacional": 1,
+    "comparacion": [
+      {
+        "transformacion": "original",
+        "n": 72,
+        "varianza": 917290.1,
+        "acf_r1": 0.7075,
+        "acf_r12": 0.6286,
+        "rezagos_fuera_de_banda": 14,
+        "ljung_box_p": 0,
+        "kpss_p": 0.1
+      },
+      {
+        "transformacion": "nabla",
+        "n": 71,
+        "varianza": 540735.1,
+        "acf_r1": 0.0233,
+        "acf_r12": 0.7087,
+        "rezagos_fuera_de_banda": 6,
+        "ljung_box_p": 0,
+        "kpss_p": 0.1
+      },
+      {
+        "transformacion": "nabla12",
+        "n": 60,
+        "varianza": 288865.8,
+        "acf_r1": 0.6899,
+        "acf_r12": -0.0768,
+        "rezagos_fuera_de_banda": 6,
+        "ljung_box_p": 0,
+        "kpss_p": 0.01
+      },
+      {
+        "transformacion": "nabla12_nabla",
+        "n": 59,
+        "varianza": 154529.9,
+        "acf_r1": -0.3534,
+        "acf_r12": -0.3357,
+        "rezagos_fuera_de_banda": 2,
+        "ljung_box_p": 0.0333,
+        "kpss_p": 0.1
+      }
+    ]
+  },
+  "cap2_ej4": {
+    "descripcion": "Tasa Representativa del Mercado (COP/USD), promedio mensual, 2015-01 a 2026-06",
+    "n": 138,
+    "adf_p": 0.5855,
+    "kpss_p": 0.01,
+    "adf_p_diferenciada": 0.0172,
+    "kpss_p_diferenciada": 0.1,
+    "ndiffs": 1
+  },
+  "cap1_ej1": {
+    "criterio": "Pendiente b de log(amplitud anual) ~ log(nivel anual). b ~ 0 => aditiva; b ~ 1 => multiplicativa. El IC95 y el R2 dicen si los datos permiten distinguir una cosa de la otra.",
+    "co2": {
+      "anios": 39,
+      "nivel_inicial": 315.8,
+      "nivel_final": 363.8,
+      "amplitud_inicial": 4.95,
+      "amplitud_final": 6.6,
+      "pendiente_b": 1.083,
+      "ic95": [0.575, 1.591],
+      "r2": 0.335,
+      "lambda_guerrero": -0.0343,
+      "rango_relativo_del_nivel_pct": 15.9,
+      "tendencia_de_la_amplitud": {
+        "pendiente_por_anio": 0.0239,
+        "p_valor": 0.00021,
+        "r2": 0.314
+      },
+      "veredicto": "INDISTINGUIBLE: b = 1.083 con IC95 [0.575, 1.591] y R2 = 0.335. El nivel solo varia un 15.9% en toda la muestra, asi que las dos descomposiciones se parecen mucho y los datos no permiten elegir. La amplitud SI crece (pendiente 0.0239 ppm/anio, p = 0.00021), lo que pide un componente estacional que evolucione, es decir, STL, y no una descomposicion con indices fijos."
+    },
+    "airpassengers": {
+      "anios": 12,
+      "nivel_inicial": 126.7,
+      "nivel_final": 476.2,
+      "amplitud_inicial": 44,
+      "amplitud_final": 232,
+      "pendiente_b": 1.291,
+      "ic95": [1.149, 1.432],
+      "r2": 0.976,
+      "veredicto": "MULTIPLICATIVA sin ambiguedad: b = 1.291 con IC95 [1.149, 1.432], que excluye el 0 con holgura, y R2 = 0.976. El nivel se multiplica por casi 4 a lo largo de la muestra."
+    }
+  },
+  "cap1_ej2": {
+    "descripcion": "F_T y F_S segun FPP3 3.6, calculadas sobre STL",
+    "resultados": [
+      {
+        "serie": "co2",
+        "FT": 0.9997,
+        "FS": 0.9841
+      },
+      {
+        "serie": "USAccDeaths",
+        "FT": 0.7991,
+        "FS": 0.9426
+      },
+      {
+        "serie": "log(AirPassengers)",
+        "FT": 0.994,
+        "FS": 0.9368
+      }
+    ]
+  },
+  "cap1_ej3": {
+    "atipico": {
+      "posicion": 79,
+      "fecha": "1955-07",
+      "factor": 1.5,
+      "valor_original": 364,
+      "valor_contaminado": 546
+    },
+    "indice_julio": {
+      "clasica_limpia": 1.2266,
+      "clasica_contaminada": 1.2758,
+      "clasica_cambio_pct": 4.02,
+      "stl_limpia": 1.2562,
+      "stl_contaminada": 1.2458,
+      "stl_cambio_pct": -0.82
+    },
+    "distorsion_maxima_todos_los_meses_pct": {
+      "clasica": 4.02,
+      "stl_robusto": 0.82,
+      "stl_sin_robust": 3.14
+    },
+    "nota": "La ventaja de STL depende de robust = TRUE. Sin esa opcion su distorsion es comparable a la de la descomposicion clasica."
+  },
+  "metadatos": {
+    "generado": "2026-07-26",
+    "generador": "precalculo/genera_soluciones.R",
+    "versiones": {
+      "R": "4.6.0",
+      "tseries": "0.10.62",
+      "forecast": "9.0.2"
+    }
+  }
+}

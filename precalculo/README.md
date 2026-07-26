@@ -6,8 +6,9 @@ que los capítulos HTML incrustan (los capítulos son autocontenidos, sin `fetch
 ## Uso
 
 ```bash
-Rscript genera_datos.R    # series base + capítulos 1, 4 y 6
-Rscript genera_cap2.R     # capítulo 2 (lee la salida del anterior)
+Rscript genera_datos.R      # series base + capítulos 1, 4 y 6
+Rscript genera_cap2.R       # capítulo 2 (lee la salida del anterior)
+Rscript genera_soluciones.R # soluciones de los ejercicios propuestos
 ```
 
 `genera_datos.R` requiere R base + `jsonlite` (sin `forecast` ni `fpp3`, a
@@ -29,6 +30,7 @@ y no hay razón para pagar eso cada vez que se toca un correlograma.
 | `datos_series.js` | `const SERIES_DATOS = {...}` con AirPassengers, co2, Nile, USAccDeaths y TRM mensual (promedio, SFC vía datos.gov.co) | Todos los capítulos (solo las series que cada uno use) |
 | `datos_series.json` | Lo mismo en JSON puro (validación / otros usos) | — |
 | `cap2_estacionariedad.json` / `cap2_datos.js` | 8 series de trabajo con su ACF y PACF (24 rezagos), ADF y KPSS (nivel y tendencia), `ndiffs`/`nsdiffs`, λ de Guerrero, tabla de sobrediferenciación y el Monte Carlo de la trampa del ADF estacional | Capítulo 2 |
+| `soluciones_ejercicios.json` | Soluciones **resueltas de verdad** de los ejercicios propuestos de los capítulos 1 y 2. El texto de las cajas "Solución" del HTML se contrasta contra este archivo; ninguna cifra se escribe de memoria | Capítulos 1 y 2 |
 | `cap4_rejilla_arima.json` | Rejilla ARIMA(p,d,q), p,d,q ∈ {0,1,2}, sobre el Nilo: AICc/BIC, Ljung–Box, ACF de residuales. **El AICc solo se compara dentro del mismo d** (`mejor_aicc_por_d`) | Capítulo 4 (explorador de modelos) |
 | `cap6_pronostico.json` | Modelo airline SARIMA(0,1,1)(0,1,1)[12] sobre log(AirPassengers): pronóstico con bandas 80/95, métricas vs. referencia (naive, snaive, media, deriva) y origen móvil (37 orígenes, h=12) | Capítulo 6 (simuladores de horizonte y backtesting) |
 

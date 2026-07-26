@@ -297,6 +297,50 @@ publicación en GitHub Pages.
     limpio, 0 errores de KaTeX en la retroalimentación, consola sin errores y los simuladores
     previos del capítulo 1 intactos.
 
+- [x] **T4c · Autoevaluación v2 y ejercicios guiados** (2026-07-26, a petición de Javier:
+  *"la autoevaluación podría ser más interactiva y los ejercicios podrían tener
+  retroalimentación"*).
+  - **Cuatro tipos de pregunta** en vez de uno: `opcion` (una correcta), `multiple` (varias,
+    con corrección parcial que dice cuántas acertaste y cuántas faltan), `numerica` (campo de
+    entrada con tolerancia, acepta coma o punto decimal) y `grafico` (la pregunta **dibuja** un
+    Chart.js y pide diagnosticarlo). Cada capítulo tiene 8 preguntas usando los cuatro tipos.
+  - **Segundo intento con pista.** Al primer fallo ya no se revela la respuesta: se muestra una
+    pista y se deja reintentar. Al segundo se revela y se explica. El marcador distingue
+    aciertos al primer intento de aciertos al segundo, hay barra de progreso, y al terminar
+    aparece un **resumen que nombra los módulos a repasar** (los de las preguntas que costaron).
+  - **Ejercicios guiados** (`.ejercicio-guiado`): cada ejercicio propuesto lleva dos
+    desplegables accesibles (`aria-expanded`/`aria-controls`) con una **pista** y una
+    **solución comentada**. El código dentro de una solución se muestra ya desplegado (no
+    obliga a un segundo clic) y se resalta con Prism al abrir.
+  - **Las soluciones se calculan, no se escriben de memoria:** `precalculo/genera_soluciones.R`
+    resuelve de verdad los ejercicios de los dos capítulos y deja el resultado en
+    `salidas/soluciones_ejercicios.json`. Las cifras del HTML se contrastan contra esa salida.
+  - *Verificado:* consola limpia y 0 errores KaTeX en los dos capítulos; los cuatro tipos
+    corrigen bien incluidos los casos límite (numérica justo dentro y justo fuera de la
+    tolerancia, coma decimal, entrada no numérica, múltiple parcial y múltiple sin marcar
+    nada); el reintento con pista no revela la respuesta; **los gráficos de las preguntas se
+    registran en `graficosActivos`** y no se acumulan tras reiniciar (2 antes, 2 después de
+    tres reinicios); resumen final correcto con 8/8 y con 7/8. **Los 6 bloques R nuevos de las
+    soluciones se ejecutan y devuelven exactamente las cifras citadas**; en total 18 de 19
+    bloques R corren (el 19.º es solo código `fpp3`, que parsea) y los 13 de Python corren.
+  - *Hallazgos de la auditoría:*
+    1. Iba a dar por buena la respuesta "co2 es aditiva". **Los datos la desmienten**: la
+       elasticidad amplitud–nivel da $b = 1.083$ con IC95 [0.575, 1.591] y $R^2 = 0.335$, es
+       decir, **indistinguible**, porque el nivel del CO₂ solo varía un 16 % en toda la
+       muestra. La solución ahora enseña eso, que es más útil, y añade el dato de que la
+       amplitud sí crece (+0.024 ppm/año, p = 0.0002), lo que argumenta a favor de STL.
+    2. La comparación "clásica vs. STL ante un atípico" era **injusta con STL**: la hacía sin
+       `robust = TRUE`, que es justo la opción que le da resistencia. Con ella la distorsión
+       cae de +3.14 % a −0.82 % frente al +4.02 % de la clásica. Que la ventaja **dependa del
+       argumento** es ahora el punto del ejercicio.
+    3. Tres cifras mal en el borrador, corregidas contra la salida real de R: el λ de Guerrero
+       del co2 lo describí como "cerca de 1" cuando es −0.034; la varianza por $d$ del co2 la
+       calculaba **sin** diferenciar estacionalmente (inservible para decidir $d$); y el rango
+       relativo de `AirPassengers` lo cité como 1.7 cuando es 1.848.
+    4. `ndiffs(USAccDeaths)` sobre la serie cruda devuelve **0**, y tras $\nabla_{12}$ devuelve
+       **1**: la misma trampa del orden que ya documentaba el módulo 7. Está incorporada al
+       enunciado y a la pista del ejercicio 3.
+
 ### Checkpoint 1
 - [x] Revisión de Javier del capítulo 1 (2026-07-26): **sin cambios**; se mantienen tono,
       profundidad y densidad de fórmulas y código para los capítulos siguientes.
