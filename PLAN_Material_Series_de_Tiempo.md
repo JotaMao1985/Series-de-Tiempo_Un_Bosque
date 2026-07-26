@@ -214,8 +214,22 @@ publicación en GitHub Pages.
   (mayor especificidad, sin `!important`). Ambos cambios se heredan a los 6 capítulos.
 
 ### Checkpoint 0
-- [ ] Plantilla aprobada visualmente por Javier antes de producir capítulos en serie.
-      Abrir `plantilla/plantilla-capitulo.html` y revisar los 3 módulos de demostración.
+- [x] Plantilla aprobada (2026-07-24, con los refinamientos del pie de página anotados arriba)
+      y **regenerada desde el capítulo 2 el 2026-07-26**, porque se había quedado sin ninguno
+      de los componentes añadidos después. Ahora lleva los 10 al día y 4 módulos de
+      demostración: cajas y tipografía, código en pestañas, los tres tipos de control con las
+      dos fábricas de gráficos, y autoevaluación con los cuatro tipos de pregunta más un
+      ejercicio guiado. No incrusta ningún dato: los simuladores de demostración generan sus
+      series en JS con semilla fija.
+      - *Verificado:* consola limpia, 0 errores de KaTeX, los 4 módulos navegan con sus
+        gráficos creados y destruidos, los tres simuladores responden en valores extremos, el
+        quiz cubre los cuatro tipos y el desplegable del ejercicio abre. Hueco mínimo entre
+        elementos: 8 px.
+      - **Regla que hay que respetar:** cuando se añada un componente a un capítulo, se añade
+        a la plantilla **en la misma sesión**. Se quedó atrás una vez precisamente por no
+        hacerlo, y el skill decía "copia la plantilla" cuando ya no servía.
+      - *Cuándo usar cuál:* la plantilla es para arrancar un **curso nuevo**; para un capítulo
+        más de un curso ya empezado, copia su **último capítulo**, que trae datos y contexto.
 
 ### Fase 1 — Capítulos 1 y 2
 

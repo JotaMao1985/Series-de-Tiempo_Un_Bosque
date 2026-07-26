@@ -5,10 +5,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="Material de estudio autónomo de Series de Tiempo: [PLANTILLA - reemplazar por descripción del capítulo].">
+    content="Plantilla base para capítulos de material de estudio interactivo (Universidad El Bosque): cajas, código R/Python en pestañas, simuladores con Chart.js, autoevaluación y ejercicios guiados.">
   <meta name="author" content="Javier Mauricio Sierra">
-  <meta name="keywords" content="Series de tiempo, ARIMA, SARIMA, pronóstico, estadística, R, Python">
-  <title>Series de Tiempo - Plantilla de Capítulo</title>
+  <meta name="keywords" content="plantilla, material de estudio, capítulo HTML, simulador, autoevaluación, ejercicios guiados, R, Python, UnBosque">
+  <title>Plantilla de capítulo — Material de estudio interactivo</title>
 
   <!-- Preconnect for performance -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1040,6 +1040,603 @@
     footer ul li {
       color: rgba(255, 255, 255, 0.92);
     }
+
+    /* ------------------------------------------------------------------
+       Controles de simulador añadidos en el Capítulo 2: menú desplegable
+       (elegir serie) e interruptores (aplicar transformaciones). Heredan
+       el aire de .control-slider para que la fila de controles sea
+       visualmente homogénea.
+       ------------------------------------------------------------------ */
+    .control-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .control-selector label {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .control-selector select {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: #012820;
+      background: white;
+      border: 1px solid rgba(1, 40, 32, 0.25);
+      border-radius: 0.375rem;
+      padding: 0.4rem 0.6rem;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .control-selector select:focus-visible {
+      outline: 2px solid #FF6600;
+      outline-offset: 1px;
+    }
+
+    .control-interruptores {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .control-interruptor {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #374151;
+      background: white;
+      border: 1px solid rgba(1, 40, 32, 0.25);
+      border-radius: 50px;
+      padding: 0.35rem 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .control-interruptor:hover {
+      border-color: #FF6600;
+    }
+
+    .control-interruptor input {
+      accent-color: #FF6600;
+      cursor: pointer;
+    }
+
+    .control-interruptor.activo {
+      background: #012820;
+      color: white;
+      border-color: #012820;
+    }
+
+    /* Lectura numérica que acompaña a un simulador (n, banda, estadísticos) */
+    .simulador-lectura {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.5rem;
+      margin-top: 0.85rem;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8125rem;
+      color: #1e293b;
+    }
+
+    .simulador-lectura b {
+      color: #012820;
+    }
+
+    /* ------------------------------------------------------------------
+       Autoevaluación: preguntas de opción múltiple con retroalimentación
+       por opción. Componente nuevo del Capítulo 2, reutilizable en todos
+       los capítulos.
+       ------------------------------------------------------------------ */
+    .quiz {
+      background-color: #fffbeb;
+      border: 1px solid #fde68a;
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .quiz h4 {
+      color: #92400e;
+      margin-top: 0;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .quiz-pregunta {
+      background: white;
+      border: 1px solid #fde68a;
+      border-radius: 0.5rem;
+      padding: 1rem 1.15rem;
+      margin-top: 1rem;
+    }
+
+    .quiz-enunciado {
+      font-weight: 600;
+      color: #1e293b;
+      margin: 0 0 0.75rem 0;
+    }
+
+    .quiz-enunciado .quiz-numero {
+      color: #b45309;
+      margin-right: 0.4rem;
+    }
+
+    .quiz-opciones {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .quiz-opcion {
+      font-family: inherit;
+      font-size: 0.9rem;
+      text-align: left;
+      color: #374151;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      padding: 0.6rem 0.85rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      width: 100%;
+    }
+
+    .quiz-opcion:hover:not(:disabled) {
+      border-color: #FF6600;
+      background: #fff7ed;
+    }
+
+    .quiz-opcion:focus-visible {
+      outline: 2px solid #FF6600;
+      outline-offset: 2px;
+    }
+
+    .quiz-opcion .quiz-letra {
+      font-family: 'Fira Code', monospace;
+      font-weight: 600;
+      color: #64748b;
+      flex-shrink: 0;
+    }
+
+    .quiz-opcion.correcta {
+      background: #ecfdf5;
+      border-color: #6ee7b7;
+      color: #065f46;
+    }
+
+    .quiz-opcion.correcta .quiz-letra {
+      color: #059669;
+    }
+
+    .quiz-opcion.incorrecta {
+      background: #fef2f2;
+      border-color: #fca5a5;
+      color: #991b1b;
+    }
+
+    .quiz-opcion.incorrecta .quiz-letra {
+      color: #dc2626;
+    }
+
+    .quiz-opcion:disabled {
+      cursor: default;
+    }
+
+    .quiz-retro {
+      margin-top: 0.75rem;
+      padding: 0.7rem 0.9rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      background: #f1f5f9;
+      border-left: 3px solid #94a3b8;
+      color: #334155;
+    }
+
+    .quiz-retro.bien {
+      background: #ecfdf5;
+      border-left-color: #059669;
+      color: #065f46;
+    }
+
+    .quiz-retro.mal {
+      background: #fef2f2;
+      border-left-color: #dc2626;
+      color: #991b1b;
+    }
+
+    .quiz-retro[hidden] {
+      display: none;
+    }
+
+    .quiz-marcador {
+      margin-top: 1.15rem;
+      font-weight: 600;
+      color: #92400e;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .quiz-reiniciar {
+      font-family: inherit;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #92400e;
+      background: transparent;
+      border: 1px solid #fbbf24;
+      border-radius: 50px;
+      padding: 0.35rem 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .quiz-reiniciar:hover {
+      background: #fbbf24;
+      color: #012820;
+    }
+
+    /* Barra de progreso de la autoevaluación */
+    .quiz-progreso {
+      height: 6px;
+      background: #fde68a;
+      border-radius: 3px;
+      overflow: hidden;
+      margin: 0.85rem 0 0.25rem 0;
+    }
+
+    .quiz-progreso-barra {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, #b45309 0%, #FF6600 100%);
+      border-radius: 3px;
+      transition: width 0.35s ease;
+    }
+
+    /* Etiqueta del tipo de pregunta */
+    .quiz-tipo {
+      display: inline-block;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #92400e;
+      background: #fef3c7;
+      border-radius: 50px;
+      padding: 0.1rem 0.6rem;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+
+    /* Pista: aparece tras el primer fallo, antes de revelar la respuesta */
+    .quiz-pista {
+      margin-top: 0.75rem;
+      padding: 0.7rem 0.9rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      background: #fffbeb;
+      border-left: 3px solid #f59e0b;
+      color: #78350f;
+    }
+
+    .quiz-pista[hidden] {
+      display: none;
+    }
+
+    /* Opción marcada por el estudiante en selección múltiple, aún sin corregir */
+    .quiz-opcion.marcada {
+      background: #fff7ed;
+      border-color: #FF6600;
+      font-weight: 600;
+    }
+
+    .quiz-opcion .quiz-casilla {
+      flex-shrink: 0;
+      width: 1rem;
+      height: 1rem;
+      margin-top: 0.15rem;
+      border: 2px solid #94a3b8;
+      border-radius: 0.25rem;
+      display: inline-block;
+      position: relative;
+    }
+
+    .quiz-opcion.marcada .quiz-casilla {
+      border-color: #FF6600;
+      background: #FF6600;
+    }
+
+    .quiz-opcion.marcada .quiz-casilla::after {
+      content: '';
+      position: absolute;
+      left: 3px;
+      top: 0;
+      width: 4px;
+      height: 8px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+
+    /* Falta por marcar: se señala al corregir una selección múltiple */
+    .quiz-opcion.faltaba {
+      border-color: #6ee7b7;
+      border-style: dashed;
+      background: #f0fdf4;
+    }
+
+    /* Respuesta numérica */
+    .quiz-numerica {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.25rem;
+    }
+
+    .quiz-numerica input {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.95rem;
+      color: #012820;
+      background: white;
+      border: 1px solid rgba(1, 40, 32, 0.25);
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.7rem;
+      width: 11rem;
+    }
+
+    .quiz-numerica input:focus-visible {
+      outline: 2px solid #FF6600;
+      outline-offset: 1px;
+    }
+
+    .quiz-numerica input:disabled {
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    .quiz-numerica .quiz-unidad {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8125rem;
+      color: #475569;
+    }
+
+    .quiz-comprobar {
+      font-family: inherit;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: white;
+      background: #012820;
+      border: none;
+      border-radius: 50px;
+      padding: 0.5rem 1.1rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .quiz-comprobar:hover:not(:disabled) {
+      background: #FF6600;
+    }
+
+    .quiz-comprobar:disabled {
+      background: #94a3b8;
+      cursor: default;
+    }
+
+    /* Gráfico dentro de una pregunta */
+    .quiz-grafico {
+      position: relative;
+      height: 210px;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 0.6rem;
+      margin-bottom: 0.85rem;
+    }
+
+    /* Resumen final */
+    .quiz-resumen {
+      margin-top: 1.15rem;
+      padding: 1rem 1.15rem;
+      border-radius: 0.5rem;
+      background: white;
+      border: 1px solid #fde68a;
+      font-size: 0.9rem;
+      color: #334155;
+    }
+
+    .quiz-resumen[hidden] {
+      display: none;
+    }
+
+    .quiz-resumen h5 {
+      margin: 0 0 0.5rem 0;
+      color: #92400e;
+      font-weight: 700;
+    }
+
+    .quiz-resumen ul {
+      margin: 0.5rem 0 0 0;
+      padding-left: 1.1rem;
+    }
+
+    .quiz-resumen ul li {
+      color: #334155;
+    }
+
+    /* ------------------------------------------------------------------
+       Ejercicios guiados: pista y solución comentada desplegables.
+       ------------------------------------------------------------------ */
+    .ejercicio-guiado {
+      background: white;
+      border: 1px solid #dbeafe;
+      border-radius: 0.5rem;
+      padding: 1rem 1.15rem;
+      margin-top: 1rem;
+    }
+
+    .ejercicio-guiado > p:first-child {
+      margin-top: 0;
+    }
+
+    .ejercicio-enunciado {
+      font-weight: 500;
+      color: #1e293b;
+    }
+
+    .ejercicio-enunciado .ejercicio-numero {
+      font-weight: 700;
+      color: #1e40af;
+      margin-right: 0.4rem;
+    }
+
+    .ejercicio-acciones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .ejercicio-boton {
+      font-family: inherit;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #1e40af;
+      background: transparent;
+      border: 1px solid #93c5fd;
+      border-radius: 50px;
+      padding: 0.35rem 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .ejercicio-boton:hover {
+      background: #dbeafe;
+    }
+
+    .ejercicio-boton[aria-expanded="true"] {
+      background: #1e40af;
+      color: white;
+      border-color: #1e40af;
+    }
+
+    .ejercicio-boton .fa-chevron-down {
+      transition: transform 0.2s ease;
+      font-size: 0.7rem;
+    }
+
+    .ejercicio-boton[aria-expanded="true"] .fa-chevron-down {
+      transform: rotate(180deg);
+    }
+
+    .ejercicio-panel {
+      margin-top: 0.75rem;
+      padding: 0.85rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .ejercicio-panel[hidden] {
+      display: none;
+    }
+
+    .ejercicio-panel.pista {
+      background: #fffbeb;
+      border-left: 3px solid #f59e0b;
+      color: #78350f;
+    }
+
+    .ejercicio-panel.solucion {
+      background: #f8fafc;
+      border-left: 3px solid #1e40af;
+      color: #1e293b;
+    }
+
+    .ejercicio-panel.solucion .code-block-wrapper {
+      margin-bottom: 1rem;
+    }
+
+    .ejercicio-panel table {
+      font-size: 0.8125rem;
+      margin: 0.75rem 0;
+    }
+    /* ------------------------------------------------------------------
+       Aire alrededor de los gráficos.
+       Auditoría del 2026-07-26: el título del simulador quedaba pegado a su
+       párrafo (0 px) y las etiquetas que encabezan cada panel quedaban a 4 px
+       del lienzo, con lo que el bloque se leía amontonado. Los márgenes iban
+       en atributos `style` repartidos por el HTML; aquí se centralizan en dos
+       clases con un ritmo vertical propio.
+       ------------------------------------------------------------------ */
+    .simulador h4 {
+      margin-bottom: 0.7rem;
+    }
+
+    /* Párrafo que presenta el simulador, justo debajo del título */
+    .simulador-intro {
+      margin: 0 0 1rem 0;
+      font-size: 0.875rem;
+      line-height: 1.65;
+      text-align: left;
+      color: #475569;
+    }
+
+    /* Etiqueta que encabeza un panel concreto dentro de un simulador */
+    .grafico-etiqueta {
+      margin: 1.25rem 0 0.5rem 0;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      line-height: 1.5;
+      text-align: left;
+      color: #012820;
+    }
+
+    /* El espacio lo pone siempre el elemento de arriba: así no se acumulan
+       márgenes ni quedan huecos dobles entre paneles consecutivos. */
+    .simulador-intro + .grafico-wrapper,
+    .simulador-controles + .grafico-wrapper,
+    .grafico-etiqueta + .grafico-wrapper {
+      margin-top: 0;
+    }
+
+    .grafico-wrapper + .grafico-wrapper {
+      margin-top: 0.9rem;
+    }
+
+    /* La lectura numérica se separa del lienzo con una línea fina, para que
+       se lea como una banda de resultados y no como un pie pegado al gráfico. */
+    .simulador-lectura {
+      margin-top: 1rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid rgba(1, 40, 32, 0.12);
+      line-height: 1.55;
+    }
+
+    /* Enunciado de una pregunta con gráfico: mismo criterio de separación */
+    .quiz-pregunta .quiz-enunciado + .quiz-grafico {
+      margin-top: 0.9rem;
+    }
   </style>
 </head>
 
@@ -1058,10 +1655,10 @@
             <i class="fas fa-chart-line text-xl text-white" aria-hidden="true"></i>
           </div>
           <div>
-            <h1 class="text-xl font-bold text-white leading-tight tracking-tight" style="margin:0;">Series de Tiempo
+            <h1 class="text-xl font-bold text-white leading-tight tracking-tight" style="margin:0;">Nombre del curso
             </h1>
-            <p class="text-xs text-white/70 font-medium tracking-wide" style="margin:0; text-align:left;">PLANTILLA •
-              SERIES DE TIEMPO • UNBOSQUE</p>
+            <p class="text-xs text-white/70 font-medium tracking-wide" style="margin:0; text-align:left;">PLANTILLA BASE •
+              4 MÓDULOS DE DEMOSTRACIÓN • UNBOSQUE</p>
           </div>
         </div>
       </div>
@@ -1131,7 +1728,7 @@
       <div class="mt-6 pt-6 border-t border-white/20 text-center">
         <p class="text-white font-medium" style="text-align:center;">Diseñado por <span class="text-gold">Javier
             Mauricio Sierra</span></p>
-        <p class="text-xs mt-1 text-white/60" style="text-align:center;">Series de Tiempo • Plantilla • UnBosque 2026
+        <p class="text-xs mt-1 text-white/60" style="text-align:center;">Plantilla de capítulo • UnBosque 2026
         </p>
       </div>
     </div>
@@ -1143,7 +1740,7 @@
   </button>
 
   <!-- ============================================================ -->
-  <!-- MÓDULO 1 · Demostración de la guía de estilo                  -->
+  <!-- MÓDULO 1 · Cajas y tipografía                                 -->
   <!-- ============================================================ -->
   <template id="module-1">
     <div class="animate-fade-in">
@@ -1151,81 +1748,70 @@
         <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
           <span>Módulo 1</span>
         </div>
-        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">P.1 Guía de Estilo del
-          Capítulo</h2>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">Cajas y tipografía <span
+            class="text-gray-400 font-normal text-2xl">/ Boxes &amp; type</span></h2>
         <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
           <span class="text-xl">🎯</span>
           <div>
             <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
-            <p class="text-gray-600 text-sm" style="margin:0;">Mostrar todos los componentes visuales heredados del
-              material de Muestreo, aplicados al curso de Series de Tiempo.</p>
+            <p class="text-gray-600 text-sm" style="margin:0;">Ver de un vistazo todos los bloques de contenido
+              disponibles. Copia el que necesites y sustituye el texto.</p>
           </div>
         </div>
       </div>
 
-      <p>Esta plantilla replica el formato del material de Muestreo Estadístico. Cada capítulo del curso de Series de
-        Tiempo se construye copiando este archivo, reemplazando los módulos de demostración por el contenido real y
-        registrando sus simuladores. Una <strong>serie de tiempo</strong> es una colección de observaciones indexadas
-        por el tiempo, como <code>AirPassengers</code> en R.</p>
+      <p>Este es un párrafo normal. El cuerpo del texto va justificado y con interlineado 1.625. Los términos técnicos
+        se marcan en <strong>negrita</strong> la primera vez, y su equivalente en inglés va en <em>cursiva entre
+        paréntesis</em> (<em>technical term</em>).</p>
 
       <div class="definition">
-        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: Serie de tiempo</h4>
-        <p>Una <strong>serie de tiempo</strong> es una sucesión de observaciones $y_1, y_2, \ldots, y_T$ registradas en
-          instantes de tiempo ordenados y, usualmente, equiespaciados. A diferencia de los datos de corte transversal,
-          las observaciones cercanas en el tiempo tienden a ser <em>dependientes</em>.</p>
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: cómo se usa esta caja</h4>
+        <p style="margin-bottom:0;">Verde. Para definiciones formales y enunciados que el estudiante debe poder citar.
+          Admite fórmulas en línea como $\rho_k = \gamma_k / \gamma_0$ y en bloque:</p>
+        $$\bar{y} = \frac{1}{T}\sum_{t=1}^{T} y_t$$
       </div>
 
       <div class="note">
-        <p><strong>Nota:</strong> este recuadro naranja se usa para observaciones importantes, convenciones de notación
-          o conexiones con ciencia de datos.</p>
+        <p><strong>Nota.</strong> Naranja. Para matices, conexiones con otros capítulos y observaciones que enriquecen
+          sin ser imprescindibles.</p>
       </div>
 
       <div class="warning">
-        <p><strong>Advertencia:</strong> este recuadro rojo se reserva para errores comunes, por ejemplo: aplicar
-          validación cruzada estándar a datos temporales mezcla pasado y futuro y sobrestima el desempeño.</p>
+        <p><strong>Advertencia.</strong> Roja. Para errores frecuentes y trampas. Si un resultado puede malinterpretarse,
+          va aquí, y conviene que diga <em>por qué</em> falla, no solo que falla.</p>
       </div>
 
-      <h3>Fórmulas con KaTeX</h3>
-      <p>La descomposición aditiva de una serie separa tendencia, estacionalidad y residuo:</p>
       <div class="formula">
-        $$y_t = T_t + S_t + R_t, \qquad t = 1, \ldots, T$$
+        <p>Azul claro. Para fórmulas centrales que se consultan de un vistazo:</p>
+        $$\nabla y_t = y_t - y_{t-1} = (1 - B)\, y_t$$
       </div>
-      <p>Las fórmulas también funcionan en línea: la autocorrelación de rezago $k$ se denota $\rho_k =
-        \gamma_k/\gamma_0$.</p>
 
-      <h3>Tablas</h3>
       <table>
-        <caption class="sr-only">Componentes de una serie de tiempo y su descripción</caption>
+        <caption class="sr-only">Ejemplo de tabla</caption>
         <thead>
           <tr>
-            <th scope="col">Componente</th>
+            <th scope="col">Concepto</th>
             <th scope="col">Símbolo</th>
-            <th scope="col">Descripción</th>
+            <th scope="col">En R</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td><strong>Tendencia</strong></td>
-            <td>$T_t$</td>
-            <td>Movimiento de largo plazo, creciente o decreciente.</td>
-          </tr>
-          <tr>
-            <td><strong>Estacionalidad</strong></td>
-            <td>$S_t$</td>
-            <td>Patrón que se repite con periodo fijo conocido (p. ej. 12 meses).</td>
-          </tr>
-          <tr>
-            <td><strong>Residuo</strong></td>
-            <td>$R_t$</td>
-            <td>Lo que queda tras remover tendencia y estacionalidad.</td>
-          </tr>
+          <tr><td>Media muestral</td><td>$\bar{y}$</td><td><code>mean()</code></td></tr>
+          <tr><td>Varianza muestral</td><td>$s^2$</td><td><code>var()</code></td></tr>
         </tbody>
       </table>
+
+      <div class="diagram">
+        <ol>
+          <li>La caja <code>.diagram</code> sirve para secuencias de pasos y esquemas.</li>
+          <li>Admite listas ordenadas, SVG en línea y texto centrado.</li>
+        </ol>
+      </div>
     </div>
   </template>
 
   <!-- ============================================================ -->
-  <!-- MÓDULO 2 · Demostración de código R / Python                  -->
+  <!-- MÓDULO 2 · Código en dos lenguajes                            -->
   <!-- ============================================================ -->
   <template id="module-2">
     <div class="animate-fade-in">
@@ -1233,80 +1819,57 @@
         <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
           <span>Módulo 2</span>
         </div>
-        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">P.2 Bloques de Código R y
-          Python</h2>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">Código en dos lenguajes <span
+            class="text-gray-400 font-normal text-2xl">/ Code tabs</span></h2>
         <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
           <span class="text-xl">🎯</span>
           <div>
             <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
-            <p class="text-gray-600 text-sm" style="margin:0;">Demostrar el componente de pestañas R / Python: R es el
-              lenguaje principal del curso y Python el equivalente para ciencia de datos.</p>
+            <p class="text-gray-600 text-sm" style="margin:0;">Mostrar el mismo cálculo en el lenguaje principal del
+              curso y en su equivalente, con pestañas.</p>
           </div>
         </div>
       </div>
 
-      <p>Cada tema incluye primero el código en <strong>R</strong> (lenguaje del curso, con <code>fpp3</code> /
-        <code>forecast</code>) y, en una pestaña alterna, el <strong>equivalente en Python</strong> con
-        <code>statsmodels</code>. Los botones permiten copiar y expandir cada bloque.</p>
+      <p>Un bloque suelto se escribe con <code>&lt;pre&gt;&lt;code class="language-r"&gt;</code>. El envoltorio con los
+        botones de copiar y ocultar se añade solo. <strong>Recuerda escapar</strong> <code>&amp;lt;</code> para el
+        operador de asignación de R.</p>
 
-      <h3>Ejemplo: graficar una serie mensual</h3>
+      <pre><code class="language-r"># Un bloque suelto, sin pestañas
+x &lt;- rnorm(100)
+mean(x)</code></pre>
 
-      <div class="code-tabs" role="group" aria-label="Ejemplo de código en R y Python">
-        <div class="code-tabs-nav" role="tablist" aria-label="Lenguaje del ejemplo">
-          <button type="button" class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">
-            <i class="fab fa-r-project" aria-hidden="true"></i> R
-          </button>
-          <button type="button" class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">
-            <i class="fab fa-python" aria-hidden="true"></i> Python
-          </button>
+      <p>Cuando hay equivalente en otro lenguaje, van en pestañas:</p>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Ejemplo de pestañas">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
         </div>
         <div class="code-tab-panel" data-lang="r">
-          <pre><code class="language-r"># Serie clásica: pasajeros aéreos internacionales (1949-1960)
-data(AirPassengers)
-
-# Gráfico base
-plot(AirPassengers,
-     main = "Pasajeros aéreos internacionales",
-     xlab = "Año", ylab = "Miles de pasajeros")
-
-# Con fpp3 (tidyverts): convertir a tsibble y graficar
-library(fpp3)
-pasajeros <- as_tsibble(AirPassengers)
-autoplot(pasajeros, value) +
-  labs(title = "Pasajeros aéreos internacionales",
-       x = "Mes", y = "Miles de pasajeros")</code></pre>
+          <pre><code class="language-r">set.seed(2026)
+x &lt;- rnorm(200)
+c(media = mean(x), desv = sd(x))</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
-          <pre><code class="language-python"># Serie clásica: pasajeros aéreos internacionales (1949-1960)
-import pandas as pd
-import matplotlib.pyplot as plt
-import statsmodels.api as sm
+          <pre><code class="language-python">import numpy as np
 
-datos = sm.datasets.get_rdataset("AirPassengers").data
-serie = pd.Series(
-    datos["value"].values,
-    index=pd.period_range("1949-01", periods=len(datos), freq="M"),
-)
-
-serie.plot(title="Pasajeros aéreos internacionales",
-           xlabel="Mes", ylabel="Miles de pasajeros")
-plt.show()</code></pre>
+rng = np.random.default_rng(2026)
+x = rng.standard_normal(200)
+print(x.mean(), x.std(ddof=1))</code></pre>
         </div>
       </div>
 
-      <h3>Bloque simple (solo R)</h3>
-      <p>Cuando un fragmento no necesita equivalente en Python, se usa el bloque tradicional; el envoltorio detecta el
-        lenguaje por la clase <code>language-r</code> o <code>language-python</code>.</p>
-
-      <pre><code class="language-r"># ACF y PACF de la serie diferenciada
-serie_diff <- diff(log(AirPassengers))
-acf(serie_diff,  main = "ACF de la serie diferenciada")
-pacf(serie_diff, main = "PACF de la serie diferenciada")</code></pre>
+      <div class="warning">
+        <p><strong>Regla del curso:</strong> todo bloque de código se <em>ejecuta</em> antes de publicarlo, y si un
+          comentario anuncia una salida (<code># 0.1386</code>), esa cifra sale de la ejecución real, nunca de memoria.
+          Y comprueba que el bloque sea autónomo: si usa un objeto que nunca se define, al estudiante le falla.</p>
+      </div>
     </div>
   </template>
 
   <!-- ============================================================ -->
-  <!-- MÓDULO 3 · Demostración del simulador interactivo             -->
+  <!-- MÓDULO 3 · Simuladores                                        -->
   <!-- ============================================================ -->
   <template id="module-3">
     <div class="animate-fade-in">
@@ -1314,49 +1877,143 @@ pacf(serie_diff, main = "PACF de la serie diferenciada")</code></pre>
         <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
           <span>Módulo 3</span>
         </div>
-        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">P.3 Simulador Interactivo
-        </h2>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">Simuladores <span
+            class="text-gray-400 font-normal text-2xl">/ Interactive widgets</span></h2>
         <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
           <span class="text-xl">🎯</span>
           <div>
             <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
-            <p class="text-gray-600 text-sm" style="margin:0;">Demostrar la fábrica de simuladores: deslizadores que
-              actualizan un gráfico Chart.js en vivo.</p>
+            <p class="text-gray-600 text-sm" style="margin:0;">Los tres tipos de control disponibles —deslizador, menú
+              e interruptor— y las dos fábricas de gráficos, línea y barras.</p>
           </div>
         </div>
       </div>
 
-      <p>Cada capítulo incluye al menos un simulador. El de esta demostración corresponde al planeado para el Capítulo
-        1: <em>construye tu serie</em>. La serie simulada es</p>
-
-      <div class="formula">
-        $$y_t = \underbrace{\beta \, t}_{T_t} \; + \; \underbrace{A \,
-        \sin\!\left(\tfrac{2\pi t}{12}\right)}_{S_t} \; + \; \underbrace{\sigma \, \varepsilon_t}_{R_t},
-        \qquad \varepsilon_t \sim \mathcal{N}(0, 1)$$
+      <div class="simulador" data-simulador="demo-deslizadores">
+        <h4><i class="fas fa-sliders-h" aria-hidden="true"></i> Deslizadores y gráfico de línea</h4>
+        <p class="simulador-intro">Dos deslizadores construidos con <code>crearControles</code> sobre un
+          <code>crearGraficoLinea</code>. El ruido viene de <code>generarRuidoNormal</code> con semilla fija, así que
+          la serie es la misma en cada carga y el deslizador aísla el efecto del parámetro.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper" style="height:220px;">
+          <canvas aria-label="Serie simulada con tendencia y ruido ajustables" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
       </div>
 
-      <p>donde $\beta$ controla la pendiente de la tendencia, $A$ la amplitud estacional y $\sigma$ el tamaño del
-        ruido. El ruido usa una semilla fija, de modo que al mover $\sigma$ cambia su escala pero no su forma: el
-        efecto de cada componente se aísla limpiamente.</p>
-
-      <div class="simulador" data-simulador="construye-tu-serie">
-        <h4><i class="fas fa-sliders-h" aria-hidden="true"></i> Simulador: construye tu serie</h4>
-        <p class="text-sm" style="margin-bottom:0.5rem;">Mueve los deslizadores y observa cómo cambia la serie
-          mensual simulada (10 años). Haz clic en la leyenda para ocultar o mostrar componentes.</p>
+      <div class="simulador" data-simulador="demo-correlograma">
+        <h4><i class="fas fa-signal" aria-hidden="true"></i> Menú desplegable y gráfico de barras</h4>
+        <p class="simulador-intro">Un <code>crearSelector</code> elige la serie y <code>crearGraficoBarras</code> dibuja
+          el correlograma con su banda de referencia. La ACF sale de <code>calcularACF</code> y la PACF de
+          <code>calcularPACF</code> (Durbin–Levinson), las dos verificadas contra R.</p>
         <div class="simulador-controles"></div>
-        <div class="grafico-wrapper">
-          <canvas aria-label="Gráfico de la serie simulada con tendencia y estacionalidad" role="img"></canvas>
+        <p class="grafico-etiqueta">ACF</p>
+        <div class="grafico-wrapper" style="height:200px;">
+          <canvas aria-label="Función de autocorrelación de la serie elegida" role="img"></canvas>
         </div>
+        <p class="grafico-etiqueta">PACF</p>
+        <div class="grafico-wrapper" style="height:200px;">
+          <canvas aria-label="Función de autocorrelación parcial de la serie elegida" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="simulador" data-simulador="demo-interruptores">
+        <h4><i class="fas fa-toggle-on" aria-hidden="true"></i> Interruptores</h4>
+        <p class="simulador-intro"><code>crearInterruptores</code> para activar transformaciones acumulables. La lectura
+          numérica de abajo se actualiza con <code>actualizarLectura</code>.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper" style="height:220px;">
+          <canvas aria-label="Serie con las transformaciones activadas" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
       </div>
 
       <div class="note">
-        <p><strong>Cómo registrar un simulador:</strong> en el HTML se declara un contenedor
-          <code>&lt;div class="simulador" data-simulador="mi-id"&gt;</code> con un
-          <code>.simulador-controles</code> vacío y un <code>&lt;canvas&gt;</code>; en el script del capítulo se
-          registra <code>SIMULADORES['mi-id'] = function (raiz) { ... }</code> usando los ayudantes
-          <code>crearControles()</code>, <code>crearGraficoLinea()</code>, <code>generarRuidoNormal()</code> y
-          <code>calcularACF()</code>. La función debe devolver la lista de gráficos creados para que se destruyan al
-          cambiar de módulo.</p>
+        <p><strong>Contrato:</strong> registra <code>SIMULADORES['id'] = function (raiz) { …; return [charts]; }</code>
+          y devuelve <strong>siempre</strong> los <code>Chart</code> creados: es lo que permite destruirlos al cambiar
+          de módulo. El cómputo pesado (ajustes ARIMA, rejillas, remuestreos) <strong>no</strong> va aquí: se
+          precalcula en R y se incrusta como JSON.</p>
+      </div>
+    </div>
+  </template>
+
+  <!-- ============================================================ -->
+  <!-- MÓDULO 4 · Autoevaluación y ejercicios                        -->
+  <!-- ============================================================ -->
+  <template id="module-4">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 4</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">Autoevaluación y ejercicios
+          <span class="text-gray-400 font-normal text-2xl">/ Self-assessment</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Los cuatro tipos de pregunta y el ejercicio con pista y
+              solución desplegables.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Cada capítulo cierra con una autoevaluación y una tanda de ejercicios guiados. Prueba las cuatro preguntas de
+        abajo: falla una a propósito para ver la <strong>pista</strong> y el segundo intento.</p>
+
+      <div class="quiz" data-quiz="demo">
+        <h4><i class="fas fa-circle-question" aria-hidden="true"></i> Autoevaluación</h4>
+        <p class="text-sm" style="margin-bottom:0;">Una pregunta de cada tipo. Cada opción lleva su propia
+          retroalimentación, también las incorrectas.</p>
+        <div class="quiz-progreso" role="presentation"><div class="quiz-progreso-barra"></div></div>
+        <div class="quiz-preguntas"></div>
+        <div class="quiz-resumen" role="status" hidden></div>
+        <div class="quiz-marcador">
+          <span class="quiz-conteo"></span>
+          <button type="button" class="quiz-reiniciar">Reiniciar</button>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <h4><i class="fas fa-pen-to-square mr-2" aria-hidden="true"></i>Ejercicios propuestos</h4>
+        <p class="text-sm" style="margin-bottom:0.5rem;">Intenta cada uno <strong>antes</strong> de abrir nada. La pista
+          dice por dónde entrar sin dar la respuesta; la solución trae el código y las cifras reales.</p>
+
+        <div class="ejercicio-guiado">
+          <p class="ejercicio-enunciado"><span class="ejercicio-numero">1.</span>Enunciado del ejercicio. Debe pedir algo
+            concreto y comprobable, no "explora la serie".</p>
+          <div class="ejercicio-acciones">
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="demo-e1-pista">
+              <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="demo-e1-sol">
+              <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="ejercicio-panel pista" id="demo-e1-pista" hidden>
+            <p style="margin:0;">La pista orienta sin resolver: señala el concepto que hay que aplicar, o advierte de la
+              trampa en la que se suele caer. Si la pista ya contiene la respuesta, no es una pista.</p>
+          </div>
+          <div class="ejercicio-panel solucion" id="demo-e1-sol" hidden>
+            <p><strong>Respuesta breve primero</strong>, y después el desarrollo.</p>
+            <pre><code class="language-r"># El codigo de la solucion se muestra ya desplegado.
+# Las cifras de los comentarios salen de precalculo/genera_soluciones.R,
+# que resuelve el ejercicio de verdad. Nunca se escriben de memoria.
+set.seed(2026)
+round(mean(rnorm(200)), 4)   # 0.0117</code></pre>
+            <p style="margin-bottom:0;">Cierra explicando <em>por qué</em> la respuesta es esa y qué pasaría si el
+              estudiante hubiera tomado el camino equivocado.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="references">
+        <h3><i class="fas fa-book-open mr-2" aria-hidden="true"></i>Lecturas de este capítulo</h3>
+        <ul style="margin-bottom:0;">
+          <li>Autor, <em>Título del texto guía</em> (ed.), <strong>capítulos o secciones exactas</strong> — qué aporta.
+            Marca el recurso de acceso abierto con su enlace.</li>
+        </ul>
       </div>
     </div>
   </template>
@@ -1364,15 +2021,27 @@ pacf(serie_diff, main = "PACF de la serie diferenciada")</code></pre>
   <script>
     // ================================================================
     // Configuración del capítulo
+    //
+    // PLANTILLA BASE. Punto de partida para un capítulo de un curso
+    // NUEVO. Para un capítulo más de un curso ya empezado, copia su
+    // último capítulo, que lleva los datos y el contexto ya montados.
+    //
+    // Al añadir un componente nuevo a un capítulo, añádelo también aquí
+    // en la misma sesión: esta plantilla ya se quedó atrás una vez.
     // ================================================================
     const courseData = {
-      title: "Series de Tiempo",
+      title: "Nombre del curso",
       modules: [
-        { id: 1, title: "Guía de Estilo del Capítulo", shortTitle: "Estilo", duration: "5 min" },
-        { id: 2, title: "Bloques de Código R y Python", shortTitle: "Código", duration: "5 min" },
-        { id: 3, title: "Simulador Interactivo", shortTitle: "Simulador", duration: "5 min" }
+        { id: 1, title: "Cajas y tipografía", shortTitle: "Cajas", duration: "5 min" },
+        { id: 2, title: "Código en dos lenguajes", shortTitle: "Código", duration: "5 min" },
+        { id: 3, title: "Simuladores", shortTitle: "Simuladores", duration: "8 min" },
+        { id: 4, title: "Autoevaluación y ejercicios", shortTitle: "Autoevaluación", duration: "8 min" }
       ]
     };
+
+    // Los datos del capítulo se incrustan aquí, generados por
+    // precalculo/genera_*.R:  const DATOS_CAPn = { ... };
+    // Los simuladores de demostración de abajo no usan datos externos.
 
     // ================================================================
     // Estado y elementos del DOM
@@ -1423,6 +2092,8 @@ pacf(serie_diff, main = "PACF de la serie diferenciada")</code></pre>
         wrapCodeBlocks();
         initCodeTabs();
         iniciarSimuladores();
+        iniciarAutoevaluaciones();
+        iniciarEjerciciosGuiados();
         renderMathInElement(mainContent, {
           delimiters: [
             { left: "$$", right: "$$", display: true },
@@ -1769,81 +2440,811 @@ pacf(serie_diff, main = "PACF de la serie diferenciada")</code></pre>
       }
       return acf;
     }
-
     // ================================================================
-    // Simulador de demostración: construye tu serie
-    // y_t = beta*t + A*sin(2*pi*t/12) + sigma*e_t
+    // Ayudantes añadidos en el Capítulo 2
     // ================================================================
-    SIMULADORES['construye-tu-serie'] = function (raiz) {
-      const n = 120;
-      const periodo = 12;
-      const params = { tendencia: 0.5, amplitud: 10, ruido: 5 };
-      const ruidoBase = generarRuidoNormal(n, 20260723);
 
-      const etiquetas = [];
-      for (let t = 0; t < n; t++) {
-        const anio = 2016 + Math.floor(t / 12);
-        const mes = (t % 12) + 1;
-        etiquetas.push(`${anio}-${String(mes).padStart(2, '0')}`);
-      }
+    // Menú desplegable para elegir una serie dentro de un simulador.
+    // def: {clave, etiqueta, opciones:[{valor, texto}]}
+    function crearSelector(contenedor, def, params, alCambiar) {
+      const idControl = `sel-${def.clave}-${Math.floor(Math.random() * 1e9)}`;
+      const div = document.createElement('div');
+      div.className = 'control-selector';
 
-      function calcular() {
-        const tendencia = [], estacional = [], serie = [];
-        for (let t = 0; t < n; t++) {
-          const T = params.tendencia * t;
-          const S = params.amplitud * Math.sin(2 * Math.PI * t / periodo);
-          tendencia.push(T);
-          estacional.push(S);
-          serie.push(T + S + params.ruido * ruidoBase[t]);
-        }
-        return { tendencia, estacional, serie };
-      }
+      const label = document.createElement('label');
+      label.setAttribute('for', idControl);
+      label.textContent = def.etiqueta;
 
-      const inicial = calcular();
-      const grafico = crearGraficoLinea(raiz.querySelector('canvas'), etiquetas, [
-        {
-          label: 'Serie observada',
-          data: inicial.serie,
-          borderColor: COLORES_GRAFICO.primario,
-          backgroundColor: COLORES_GRAFICO.primario,
-          borderWidth: 2,
-          pointRadius: 0
-        },
-        {
-          label: 'Tendencia',
-          data: inicial.tendencia,
-          borderColor: COLORES_GRAFICO.secundario,
-          backgroundColor: COLORES_GRAFICO.secundario,
-          borderWidth: 2,
-          borderDash: [6, 4],
-          pointRadius: 0
-        },
-        {
-          label: 'Estacionalidad',
-          data: inicial.estacional,
-          borderColor: COLORES_GRAFICO.terciario,
-          backgroundColor: COLORES_GRAFICO.terciario,
-          borderWidth: 1.5,
-          borderDash: [2, 3],
-          pointRadius: 0,
-          hidden: true
-        }
-      ]);
-
-      crearControles(raiz.querySelector('.simulador-controles'), [
-        { clave: 'tendencia', etiqueta: 'Pendiente de la tendencia (β)', min: -1, max: 2, paso: 0.1 },
-        { clave: 'amplitud', etiqueta: 'Amplitud estacional (A)', min: 0, max: 30, paso: 1 },
-        { clave: 'ruido', etiqueta: 'Desviación del ruido (σ)', min: 0, max: 20, paso: 1 }
-      ], params, () => {
-        const d = calcular();
-        grafico.data.datasets[0].data = d.serie;
-        grafico.data.datasets[1].data = d.tendencia;
-        grafico.data.datasets[2].data = d.estacional;
-        grafico.update('none');
+      const select = document.createElement('select');
+      select.id = idControl;
+      def.opciones.forEach(op => {
+        const o = document.createElement('option');
+        o.value = op.valor;
+        o.textContent = op.texto;
+        if (op.valor === params[def.clave]) o.selected = true;
+        select.appendChild(o);
+      });
+      select.addEventListener('change', () => {
+        params[def.clave] = select.value;
+        alCambiar();
       });
 
-      return [grafico];
+      div.appendChild(label);
+      div.appendChild(select);
+      contenedor.appendChild(div);
+      return select;
+    }
+
+    // Interruptores (casillas) para activar transformaciones.
+    // defs: [{clave, etiqueta}]
+    function crearInterruptores(contenedor, defs, params, alCambiar) {
+      const fila = document.createElement('div');
+      fila.className = 'control-interruptores';
+      defs.forEach(def => {
+        const etiqueta = document.createElement('label');
+        etiqueta.className = 'control-interruptor' + (params[def.clave] ? ' activo' : '');
+
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.checked = !!params[def.clave];
+        input.addEventListener('change', () => {
+          params[def.clave] = input.checked;
+          etiqueta.classList.toggle('activo', input.checked);
+          alCambiar();
+        });
+
+        etiqueta.appendChild(input);
+        etiqueta.append(def.etiqueta);
+        fila.appendChild(etiqueta);
+      });
+      contenedor.appendChild(fila);
+    }
+
+    // Gráfico de barras para correlogramas. `opciones.lineas` dibuja rectas de
+    // referencia horizontales (la banda ±1.96/√T, el nivel nominal de una
+    // prueba, etc.) como conjuntos de datos de línea sobre las barras.
+    function crearGraficoBarras(canvas, etiquetas, valores, opciones = {}) {
+      const n = etiquetas.length;
+      const datasets = [{
+        type: 'bar',
+        label: opciones.etiqueta || 'ACF',
+        data: valores,
+        backgroundColor: opciones.color || COLORES_GRAFICO.primario,
+        borderWidth: 0,
+        barPercentage: 0.4,
+        categoryPercentage: 0.9,
+        order: 2
+      }];
+      (opciones.lineas || []).forEach(linea => {
+        datasets.push({
+          type: 'line',
+          label: linea.etiqueta || '',
+          data: Array(n).fill(linea.valor),
+          borderColor: linea.color || COLORES_GRAFICO.secundario,
+          borderDash: [5, 4],
+          borderWidth: 1.5,
+          pointRadius: 0,
+          fill: false,
+          order: 1
+        });
+      });
+
+      return new Chart(canvas, {
+        type: 'bar',
+        data: { labels: etiquetas, datasets: datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: {
+              // Las rectas de referencia sin etiqueta no ensucian la leyenda
+              labels: {
+                font: { family: 'Montserrat', size: 12 },
+                boxWidth: 24,
+                filter: item => item.text !== ''
+              }
+            },
+            tooltip: {
+              backgroundColor: '#012820',
+              titleFont: { family: 'Montserrat' },
+              bodyFont: { family: 'Fira Code' },
+              filter: item => item.dataset.label !== ''
+            }
+          },
+          scales: {
+            x: {
+              title: {
+                display: !!opciones.tituloX,
+                text: opciones.tituloX,
+                font: { family: 'Montserrat', size: 11 }
+              },
+              ticks: { font: { family: 'Fira Code', size: 10 }, maxRotation: 0 },
+              grid: { display: false }
+            },
+            y: {
+              suggestedMin: opciones.min !== undefined ? opciones.min : -1,
+              suggestedMax: opciones.max !== undefined ? opciones.max : 1,
+              ticks: { font: { family: 'Fira Code', size: 11 } },
+              grid: { color: 'rgba(148, 163, 184, 0.2)' }
+            }
+          }
+        }
+      });
+    }
+
+    // PACF por la recursión de Durbin-Levinson sobre la ACF muestral. Es la
+    // misma definición que usa stats::pacf de R: verificado contra la salida
+    // del precálculo (diferencia máxima 6.2e-5, que es el redondeo del JSON).
+    function calcularPACF(acf, maxLag) {
+      const K = Math.min(maxLag, acf.length);
+      if (K < 1) return [];
+      const phi = Array.from({ length: K + 1 }, () => new Array(K + 1).fill(0));
+      const pacf = [];
+      phi[1][1] = acf[0];
+      pacf.push(acf[0]);
+      for (let k = 2; k <= K; k++) {
+        let num = acf[k - 1], den = 1;
+        for (let j = 1; j <= k - 1; j++) {
+          num -= phi[k - 1][j] * acf[k - 1 - j];
+          den -= phi[k - 1][j] * acf[j - 1];
+        }
+        phi[k][k] = num / den;
+        pacf.push(phi[k][k]);
+        for (let j = 1; j <= k - 1; j++) {
+          phi[k][j] = phi[k - 1][j] - phi[k][k] * phi[k - 1][k - j];
+        }
+      }
+      return pacf;
+    }
+
+    // --- A partir de aquí, ayudantes propios de SERIES DE TIEMPO -----
+    // Si esta plantilla arranca un curso de otra materia, bórralos: solo
+    // `varianzaMuestral` y `actualizarLectura` son de uso general.
+
+    // Diferencia regular aplicada `veces` veces
+    function diferenciar(y, veces) {
+      let z = y.slice();
+      for (let i = 0; i < veces; i++) {
+        const w = [];
+        for (let t = 1; t < z.length; t++) w.push(z[t] - z[t - 1]);
+        z = w;
+      }
+      return z;
+    }
+
+    // Diferencia estacional de orden m
+    function diferenciaEstacional(y, m) {
+      const w = [];
+      for (let t = m; t < y.length; t++) w.push(y[t] - y[t - m]);
+      return w;
+    }
+
+    function varianzaMuestral(y) {
+      const n = y.length;
+      if (n < 2) return NaN;
+      const media = y.reduce((a, b) => a + b, 0) / n;
+      return y.reduce((a, b) => a + (b - media) * (b - media), 0) / (n - 1);
+    }
+
+    // Transformación de Box-Cox
+    function boxCox(y, lambda) {
+      if (Math.abs(lambda) < 1e-8) return y.map(v => Math.log(v));
+      return y.map(v => (Math.pow(v, lambda) - 1) / lambda);
+    }
+
+    // Coeficiente de variación de Guerrero (1993): mide cuán homogénea queda
+    // la dispersión entre bloques de m observaciones. El lambda que lo
+    // minimiza es el que devuelve forecast::BoxCox.lambda(method="guerrero").
+    // Detalle que importa y que replicamos: cuando n no es múltiplo de m se
+    // descartan las observaciones INICIALES sobrantes, no las finales.
+    // Verificado contra R en el capítulo 2 de Series de Tiempo: coincide
+    // hasta 1e-14 en las dos series con las que se contrastó.
+    function cvGuerrero(y, lambda, m) {
+      const bloques = Math.floor(y.length / m);
+      if (bloques < 2) return NaN;
+      const z = y.slice(y.length - bloques * m);
+      const razones = [];
+      for (let i = 0; i < bloques; i++) {
+        const b = z.slice(i * m, (i + 1) * m);
+        const mu = b.reduce((a, v) => a + v, 0) / m;
+        const sd = Math.sqrt(b.reduce((a, v) => a + (v - mu) * (v - mu), 0) / (m - 1));
+        razones.push(sd / Math.pow(mu, 1 - lambda));
+      }
+      const media = razones.reduce((a, v) => a + v, 0) / bloques;
+      const sd = Math.sqrt(razones.reduce((a, v) => a + (v - media) * (v - media), 0) / (bloques - 1));
+      return sd / media;
+    }
+
+    // Etiquetas 1..K para el eje de un correlograma
+    function etiquetasRezago(k) {
+      return Array.from({ length: k }, (_, i) => String(i + 1));
+    }
+
+    // Escribe una lectura numérica bajo un simulador
+    function actualizarLectura(elemento, campos) {
+      elemento.innerHTML = campos
+        .map(c => `<span><b>${c.etiqueta}</b> ${c.valor}</span>`)
+        .join('');
+    }
+
+    // ================================================================
+    // Autoevaluación (v2)
+    //
+    // AUTOEVALUACIONES['id'] = [pregunta, ...] sobre un contenedor
+    // data-quiz="id". Cada pregunta declara su `tipo`:
+    //
+    //   'opcion'   (por defecto) una sola respuesta correcta
+    //   'multiple' varias correctas; se corrige al pulsar "Comprobar"
+    //   'numerica' campo de entrada; se acepta |respuesta - dada| <= tolerancia
+    //   'grafico'  como 'opcion', pero dibuja un Chart.js sobre el enunciado
+    //
+    // Campos comunes: {pregunta, pista, modulo}. `pista` se muestra tras el
+    // PRIMER fallo y se deja reintentar; al segundo fallo se revela la
+    // respuesta. `modulo` alimenta el resumen final de "qué repasar".
+    // ================================================================
+    const AUTOEVALUACIONES = {};
+    const LETRAS = ['a', 'b', 'c', 'd', 'e'];
+    const NOMBRE_TIPO = {
+      opcion: 'Opción múltiple',
+      multiple: 'Varias respuestas',
+      numerica: 'Respuesta numérica',
+      grafico: 'Lectura de gráfico'
     };
+
+    function iniciarAutoevaluaciones() {
+      mainContent.querySelectorAll('[data-quiz]').forEach(raiz => {
+        const preguntas = AUTOEVALUACIONES[raiz.dataset.quiz];
+        if (!preguntas) {
+          console.warn(`Autoevaluación no registrada: ${raiz.dataset.quiz}`);
+          return;
+        }
+        renderAutoevaluacion(raiz, preguntas);
+      });
+    }
+
+    // Los gráficos de las preguntas viven en `graficosActivos` como los de los
+    // simuladores, para que se destruyan al cambiar de módulo. Además se
+    // guardan por quiz para poder limpiarlos al reiniciar sin tocar los demás.
+    function registrarGraficoQuiz(raiz, chart) {
+      (raiz._graficos = raiz._graficos || []).push(chart);
+      graficosActivos.push(chart);
+    }
+
+    function limpiarGraficosQuiz(raiz) {
+      (raiz._graficos || []).forEach(g => {
+        const i = graficosActivos.indexOf(g);
+        if (i >= 0) graficosActivos.splice(i, 1);
+        g.destroy();
+      });
+      raiz._graficos = [];
+    }
+
+    function katexEn(elemento) {
+      if (typeof renderMathInElement === 'function') {
+        renderMathInElement(elemento, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false }
+          ]
+        });
+      }
+    }
+
+    function renderAutoevaluacion(raiz, preguntas) {
+      limpiarGraficosQuiz(raiz);
+
+      const contenedor = raiz.querySelector('.quiz-preguntas');
+      const marcador = raiz.querySelector('.quiz-conteo');
+      const barra = raiz.querySelector('.quiz-progreso-barra');
+      const resumen = raiz.querySelector('.quiz-resumen');
+
+      const estado = preguntas.map(() => ({ resuelta: false, intentos: 0, acierto: false }));
+
+      function actualizarMarcador() {
+        const resueltas = estado.filter(e => e.resuelta).length;
+        const alPrimero = estado.filter(e => e.acierto && e.intentos === 1).length;
+        const alSegundo = estado.filter(e => e.acierto && e.intentos > 1).length;
+        marcador.textContent =
+          `Respondidas ${resueltas} de ${preguntas.length} · ` +
+          `${alPrimero} al primer intento, ${alSegundo} al segundo`;
+        if (barra) barra.style.width = `${(resueltas / preguntas.length) * 100}%`;
+
+        if (resueltas === preguntas.length && resumen) {
+          const fallidas = preguntas.filter((_, i) => !estado[i].acierto);
+          const repasar = [...new Set(
+            preguntas.filter((_, i) => estado[i].intentos > 1 || !estado[i].acierto)
+              .map(p => p.modulo).filter(Boolean)
+          )].sort((a, b) => a - b);
+          resumen.innerHTML =
+            `<h5>Resultado: ${alPrimero + alSegundo} de ${preguntas.length}` +
+            `${fallidas.length ? '' : ' · impecable'}</h5>` +
+            (repasar.length
+              ? `<p style="margin:0;">Te costaron preguntas de estos módulos, así que vale la pena volver a ellos:</p>
+                 <ul>${repasar.map(m => `<li>Módulo ${m}: <strong>${(courseData.modules[m - 1] || {}).title || ''}</strong></li>`).join('')}</ul>`
+              : `<p style="margin:0;">Acertaste todo al primer intento. Puedes pasar al siguiente capítulo.</p>`);
+          resumen.hidden = false;
+          katexEn(resumen);
+        }
+      }
+
+      function cerrar(i, bloque, acierto, textoRetro) {
+        estado[i].resuelta = true;
+        estado[i].acierto = acierto;
+        const retro = bloque.querySelector('.quiz-retro');
+        retro.className = `quiz-retro ${acierto ? 'bien' : 'mal'}`;
+        const encabezado = acierto
+          ? (estado[i].intentos === 1 ? '<strong>Correcto.</strong> ' : '<strong>Correcto, en el segundo intento.</strong> ')
+          : '<strong>No es esa.</strong> ';
+        retro.innerHTML = encabezado + textoRetro;
+        retro.hidden = false;
+        katexEn(retro);
+        actualizarMarcador();
+      }
+
+      function mostrarPista(i, bloque) {
+        const pista = bloque.querySelector('.quiz-pista');
+        if (pista && preguntas[i].pista) {
+          pista.innerHTML = `<strong>Casi. Una pista:</strong> ${preguntas[i].pista}`;
+          pista.hidden = false;
+          katexEn(pista);
+        }
+      }
+
+      contenedor.innerHTML = '';
+      if (resumen) { resumen.hidden = true; resumen.innerHTML = ''; }
+
+      preguntas.forEach((p, i) => {
+        const tipo = p.tipo || 'opcion';
+        const bloque = document.createElement('div');
+        bloque.className = 'quiz-pregunta';
+
+        const enunciado = document.createElement('p');
+        enunciado.className = 'quiz-enunciado';
+        enunciado.innerHTML = `<span class="quiz-numero">${i + 1}.</span>${p.pregunta}` +
+          `<span class="quiz-tipo">${NOMBRE_TIPO[tipo]}</span>`;
+        bloque.appendChild(enunciado);
+
+        // Gráfico del enunciado, si lo hay
+        if (tipo === 'grafico' && typeof p.dibujar === 'function') {
+          const caja = document.createElement('div');
+          caja.className = 'quiz-grafico';
+          if (p.alto) caja.style.height = `${p.alto}px`;
+          const canvas = document.createElement('canvas');
+          canvas.setAttribute('role', 'img');
+          canvas.setAttribute('aria-label', p.descripcionGrafico || 'Gráfico de la pregunta');
+          caja.appendChild(canvas);
+          bloque.appendChild(caja);
+          const chart = p.dibujar(canvas);
+          if (chart) registrarGraficoQuiz(raiz, chart);
+        }
+
+        const pista = document.createElement('div');
+        pista.className = 'quiz-pista';
+        pista.hidden = true;
+
+        const retro = document.createElement('div');
+        retro.className = 'quiz-retro';
+        retro.setAttribute('role', 'status');
+        retro.hidden = true;
+
+        if (tipo === 'numerica') {
+          // ---- Respuesta numérica -----------------------------------
+          const fila = document.createElement('div');
+          fila.className = 'quiz-numerica';
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.inputMode = 'decimal';
+          input.placeholder = 'Tu respuesta';
+          input.setAttribute('aria-label', `Respuesta de la pregunta ${i + 1}`);
+          const unidad = document.createElement('span');
+          unidad.className = 'quiz-unidad';
+          unidad.textContent = p.unidad || '';
+          const boton = document.createElement('button');
+          boton.type = 'button';
+          boton.className = 'quiz-comprobar';
+          boton.textContent = 'Comprobar';
+
+          function comprobarNumerica() {
+            if (estado[i].resuelta) return;
+            // Se acepta coma o punto como separador decimal
+            const dada = parseFloat(String(input.value).trim().replace(',', '.'));
+            if (!isFinite(dada)) {
+              pista.innerHTML = '<strong>Escribe un número</strong> antes de comprobar.';
+              pista.hidden = false;
+              return;
+            }
+            estado[i].intentos++;
+            const acierto = Math.abs(dada - p.respuesta) <= p.tolerancia;
+            if (acierto) {
+              input.disabled = true; boton.disabled = true;
+              cerrar(i, bloque, true, p.retroAcierto);
+            } else if (estado[i].intentos === 1) {
+              mostrarPista(i, bloque);
+            } else {
+              input.disabled = true; boton.disabled = true;
+              cerrar(i, bloque, false,
+                `La respuesta es <strong>${p.respuesta}${p.unidad ? ' ' + p.unidad : ''}</strong>. ${p.retroFallo}`);
+            }
+          }
+          boton.addEventListener('click', comprobarNumerica);
+          input.addEventListener('keydown', e => { if (e.key === 'Enter') comprobarNumerica(); });
+
+          fila.appendChild(input);
+          if (p.unidad) fila.appendChild(unidad);
+          fila.appendChild(boton);
+          bloque.appendChild(fila);
+
+        } else if (tipo === 'multiple') {
+          // ---- Varias respuestas correctas --------------------------
+          const lista = document.createElement('div');
+          lista.className = 'quiz-opciones';
+          lista.setAttribute('role', 'group');
+          lista.setAttribute('aria-label', `Opciones de la pregunta ${i + 1}`);
+          const marcadas = new Set();
+
+          const botones = p.opciones.map((op, j) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'quiz-opcion';
+            b.setAttribute('aria-pressed', 'false');
+            b.innerHTML = `<span class="quiz-casilla" aria-hidden="true"></span><span>${op.texto}</span>`;
+            b.addEventListener('click', () => {
+              if (estado[i].resuelta) return;
+              const activa = marcadas.has(j);
+              if (activa) marcadas.delete(j); else marcadas.add(j);
+              b.classList.toggle('marcada', !activa);
+              b.setAttribute('aria-pressed', String(!activa));
+            });
+            lista.appendChild(b);
+            return b;
+          });
+
+          const boton = document.createElement('button');
+          boton.type = 'button';
+          boton.className = 'quiz-comprobar';
+          boton.style.marginTop = '0.6rem';
+          boton.textContent = 'Comprobar';
+          boton.addEventListener('click', () => {
+            if (estado[i].resuelta) return;
+            if (marcadas.size === 0) {
+              pista.innerHTML = '<strong>Marca al menos una opción</strong> antes de comprobar.';
+              pista.hidden = false;
+              return;
+            }
+            estado[i].intentos++;
+            const correctas = new Set(p.opciones.map((o, j) => o.correcta ? j : -1).filter(j => j >= 0));
+            const exacto = marcadas.size === correctas.size &&
+              [...marcadas].every(j => correctas.has(j));
+            if (exacto) {
+              // Se quita 'marcada' antes de pintar el estado final: las dos clases
+              // empatan en especificidad y si no, ganaría la de "marcada".
+              botones.forEach((b, j) => {
+                b.disabled = true;
+                b.classList.remove('marcada');
+                if (correctas.has(j)) b.classList.add('correcta');
+              });
+              boton.disabled = true;
+              cerrar(i, bloque, true, p.retroAcierto);
+            } else if (estado[i].intentos === 1) {
+              const bien = [...marcadas].filter(j => correctas.has(j)).length;
+              pista.innerHTML = `<strong>Casi.</strong> De las ${marcadas.size} que marcaste, ` +
+                `${bien} ${bien === 1 ? 'está' : 'están'} en la respuesta, y te ` +
+                `${correctas.size - bien === 1 ? 'falta' : 'faltan'} ${correctas.size - bien}. ` +
+                (p.pista || '');
+              pista.hidden = false;
+              katexEn(pista);
+            } else {
+              botones.forEach((b, j) => {
+                b.disabled = true;
+                b.classList.remove('marcada');
+                if (correctas.has(j)) b.classList.add(marcadas.has(j) ? 'correcta' : 'faltaba');
+                else if (marcadas.has(j)) b.classList.add('incorrecta');
+              });
+              boton.disabled = true;
+              cerrar(i, bloque, false, p.retroFallo);
+            }
+          });
+
+          bloque.appendChild(lista);
+          bloque.appendChild(boton);
+
+        } else {
+          // ---- Una sola respuesta ('opcion' y 'grafico') ------------
+          const lista = document.createElement('div');
+          lista.className = 'quiz-opciones';
+          lista.setAttribute('role', 'group');
+          lista.setAttribute('aria-label', `Opciones de la pregunta ${i + 1}`);
+
+          const botones = p.opciones.map((op, j) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'quiz-opcion';
+            b.innerHTML = `<span class="quiz-letra">${LETRAS[j]})</span><span>${op.texto}</span>`;
+            b.addEventListener('click', () => {
+              if (estado[i].resuelta) return;
+              estado[i].intentos++;
+              if (op.correcta) {
+                botones.forEach((x, k) => { x.disabled = true; if (p.opciones[k].correcta) x.classList.add('correcta'); });
+                cerrar(i, bloque, true, op.retro);
+              } else if (estado[i].intentos === 1) {
+                // Primer fallo: se descarta esa opción, se da la pista y se reintenta
+                b.disabled = true;
+                b.classList.add('incorrecta');
+                mostrarPista(i, bloque);
+              } else {
+                botones.forEach((x, k) => { x.disabled = true; if (p.opciones[k].correcta) x.classList.add('correcta'); });
+                b.classList.add('incorrecta');
+                cerrar(i, bloque, false, op.retro);
+              }
+            });
+            lista.appendChild(b);
+            return b;
+          });
+          bloque.appendChild(lista);
+        }
+
+        bloque.appendChild(pista);
+        bloque.appendChild(retro);
+        contenedor.appendChild(bloque);
+      });
+
+      katexEn(contenedor);
+      actualizarMarcador();
+
+      const reiniciar = raiz.querySelector('.quiz-reiniciar');
+      if (reiniciar) reiniciar.onclick = () => renderAutoevaluacion(raiz, preguntas);
+    }
+
+    // ================================================================
+    // Ejercicios guiados: desplegables de pista y solución
+    // ================================================================
+    function iniciarEjerciciosGuiados() {
+      // wrapCodeBlocks() colapsa todos los <pre> del módulo. Dentro de una
+      // solución eso obligaría a un segundo clic para ver el código que el
+      // estudiante acaba de pedir, así que ahí se dejan desplegados.
+      mainContent.querySelectorAll('.ejercicio-panel pre.collapsed').forEach(pre => {
+        pre.classList.remove('collapsed');
+        pre.classList.add('expanded');
+        const boton = pre.closest('.code-block-wrapper')?.querySelector('.code-toggle-btn');
+        if (boton) boton.classList.add('expanded');
+      });
+
+      mainContent.querySelectorAll('.ejercicio-boton').forEach(boton => {
+        const panel = document.getElementById(boton.getAttribute('aria-controls'));
+        if (!panel) return;
+        boton.addEventListener('click', () => {
+          const abierto = boton.getAttribute('aria-expanded') === 'true';
+          boton.setAttribute('aria-expanded', String(!abierto));
+          panel.hidden = abierto;
+          if (!abierto) {
+            if (typeof Prism !== 'undefined') Prism.highlightAllUnder(panel);
+            katexEn(panel);
+          }
+        });
+      });
+    }
+    // ================================================================
+    // Ayudantes genéricos que suelen hacer falta en cualquier capítulo
+    // ================================================================
+
+    // Semiancho de la banda de un correlograma bajo H0 de ruido blanco
+    function banda(n) { return 1.96 / Math.sqrt(n); }
+
+    // Las dos rectas de referencia de un correlograma, listas para
+    // `crearGraficoBarras`. La segunda va sin etiqueta para no duplicarla
+    // en la leyenda.
+    function lineasBanda(n) {
+      const b = banda(n);
+      return [{ valor: b, etiqueta: 'Banda ±1.96/√T' }, { valor: -b, etiqueta: '' }];
+    }
+
+    // ================================================================
+    // Simuladores de demostración
+    //
+    // Bórralos al empezar un capítulo real: están solo para que se vea
+    // cómo se combinan los controles y las dos fábricas de gráficos.
+    // ================================================================
+
+    // --- Deslizadores sobre un gráfico de línea ----------------------
+    SIMULADORES['demo-deslizadores'] = function (raiz) {
+      const n = 120;
+      const params = { pendiente: 0.4, ruido: 3 };
+      const ruidoBase = generarRuidoNormal(n, 20260726);
+      const etiquetas = Array.from({ length: n }, (_, i) => String(i + 1));
+
+      function serie() {
+        return ruidoBase.map((e, t) => params.pendiente * t + params.ruido * e);
+      }
+
+      const g = crearGraficoLinea(raiz.querySelector('canvas'), etiquetas, [{
+        label: 'Serie simulada',
+        data: serie(),
+        borderColor: COLORES_GRAFICO.primario,
+        backgroundColor: COLORES_GRAFICO.primario,
+        borderWidth: 1.8,
+        pointRadius: 0
+      }]);
+
+      function pintar() {
+        const y = serie();
+        g.data.datasets[0].data = y;
+        g.update('none');
+        actualizarLectura(raiz.querySelector('.simulador-lectura'), [
+          { etiqueta: 'T =', valor: n },
+          { etiqueta: 'último valor =', valor: y[n - 1].toFixed(2) },
+          { etiqueta: 'varianza =', valor: varianzaMuestral(y).toFixed(2) }
+        ]);
+      }
+
+      crearControles(raiz.querySelector('.simulador-controles'), [
+        { clave: 'pendiente', etiqueta: 'Pendiente de la tendencia', min: 0, max: 2, paso: 0.1 },
+        { clave: 'ruido', etiqueta: 'Desviación del ruido', min: 0, max: 10, paso: 0.5 }
+      ], params, pintar);
+
+      pintar();
+      return [g];
+    };
+
+    // --- Menú desplegable sobre correlogramas de barras ---------------
+    SIMULADORES['demo-correlograma'] = function (raiz) {
+      const n = 200, K = 24;
+      const ruido = generarRuidoNormal(n, 20260726);
+      const caminata = ruido.reduce((acc, e) => (acc.push((acc[acc.length - 1] || 0) + e), acc), []);
+      const SERIES = { ruido: ruido, caminata: caminata };
+      const params = { serie: 'ruido' };
+      const rezagos = etiquetasRezago(K);
+      const c = raiz.querySelectorAll('canvas');
+
+      const gAcf = crearGraficoBarras(c[0], rezagos, calcularACF(SERIES[params.serie], K),
+        { etiqueta: 'ACF', lineas: lineasBanda(n), tituloX: 'Rezago k' });
+      const gPacf = crearGraficoBarras(c[1], rezagos, calcularPACF(calcularACF(SERIES[params.serie], K), K),
+        { etiqueta: 'PACF', color: COLORES_GRAFICO.terciario, lineas: lineasBanda(n), tituloX: 'Rezago k' });
+
+      function pintar() {
+        const y = SERIES[params.serie];
+        const acf = calcularACF(y, K);
+        gAcf.data.datasets[0].data = acf;
+        gPacf.data.datasets[0].data = calcularPACF(acf, K);
+        gAcf.update('none');
+        gPacf.update('none');
+        const fuera = acf.filter(r => Math.abs(r) > banda(n)).length;
+        actualizarLectura(raiz.querySelector('.simulador-lectura'), [
+          { etiqueta: 'T =', valor: n },
+          { etiqueta: 'banda =', valor: `±${banda(n).toFixed(4)}` },
+          { etiqueta: 'r₁ =', valor: acf[0].toFixed(4) },
+          { etiqueta: 'rezagos fuera de la banda:', valor: `${fuera} de ${K}` }
+        ]);
+      }
+
+      crearSelector(raiz.querySelector('.simulador-controles'), {
+        clave: 'serie', etiqueta: 'Serie', opciones: [
+          { valor: 'ruido', texto: 'Ruido blanco' },
+          { valor: 'caminata', texto: 'Caminata aleatoria' }
+        ]
+      }, params, pintar);
+
+      pintar();
+      return [gAcf, gPacf];
+    };
+
+    // --- Interruptores que acumulan transformaciones ------------------
+    SIMULADORES['demo-interruptores'] = function (raiz) {
+      const n = 120;
+      const ruidoBase = generarRuidoNormal(n, 20260726);
+      // Serie estrictamente positiva y con crecimiento, para que el
+      // logaritmo tenga sentido
+      const base = ruidoBase.map((e, t) => 100 * Math.exp(0.015 * t) * (1 + 0.06 * e));
+      const params = { log: false, diferenciar: false };
+
+      const g = crearGraficoLinea(raiz.querySelector('canvas'), [], [{
+        label: 'Serie',
+        data: [],
+        borderColor: COLORES_GRAFICO.primario,
+        backgroundColor: COLORES_GRAFICO.primario,
+        borderWidth: 1.8,
+        pointRadius: 0
+      }]);
+
+      function pintar() {
+        let y = base.slice();
+        let nombre = 'Serie original';
+        if (params.log) { y = y.map(v => Math.log(v)); nombre = 'log(y)'; }
+        if (params.diferenciar) { y = diferenciar(y, 1); nombre = '∇ ' + nombre; }
+        g.data.labels = y.map((_, i) => String(i + 1));
+        g.data.datasets[0].data = y;
+        g.data.datasets[0].label = nombre;
+        g.update('none');
+        actualizarLectura(raiz.querySelector('.simulador-lectura'), [
+          { etiqueta: 'n =', valor: y.length },
+          { etiqueta: 'media =', valor: (y.reduce((a, v) => a + v, 0) / y.length).toFixed(4) },
+          { etiqueta: 'varianza =', valor: varianzaMuestral(y).toPrecision(4) }
+        ]);
+      }
+
+      crearInterruptores(raiz.querySelector('.simulador-controles'), [
+        { clave: 'log', etiqueta: 'Logaritmo' },
+        { clave: 'diferenciar', etiqueta: 'Primera diferencia ∇' }
+      ], params, pintar);
+
+      pintar();
+      return [g];
+    };
+
+    // ================================================================
+    // Autoevaluación de demostración: una pregunta de cada tipo
+    //
+    // Sustitúyela por las preguntas del capítulo. Campos comunes:
+    // {tipo, modulo, pregunta, pista}. `modulo` alimenta el resumen
+    // final de "qué repasar".
+    // ================================================================
+    AUTOEVALUACIONES['demo'] = [
+      {
+        tipo: 'opcion',
+        modulo: 1,
+        pregunta: 'Una sola respuesta correcta. ¿Qué caja se usa para un error frecuente?',
+        pista: 'Piensa en el color que usarías para avisar de un peligro.',
+        opciones: [
+          { texto: 'La caja <code>.warning</code> (roja).', correcta: true,
+            retro: 'Las cajas rojas se reservan para trampas y errores frecuentes, y deben explicar <em>por qué</em> se falla, no solo que se falla.' },
+          { texto: 'La caja <code>.definition</code> (verde).', correcta: false,
+            retro: 'La verde es para definiciones formales, lo que el estudiante debe poder citar.' },
+          { texto: 'La caja <code>.note</code> (naranja).', correcta: false,
+            retro: 'La naranja es para matices y conexiones que enriquecen sin ser imprescindibles.' },
+          { texto: 'La caja <code>.formula</code> (azul).', correcta: false,
+            retro: 'La azul destaca fórmulas centrales que se consultan de un vistazo.' }
+        ]
+      },
+      {
+        tipo: 'numerica',
+        modulo: 3,
+        pregunta: 'Respuesta numérica con tolerancia. Si $T = 100$, ¿cuánto vale $1.96/\\sqrt{T}$? Da tres decimales.',
+        pista: '$\\sqrt{100} = 10$.',
+        respuesta: 0.196,
+        tolerancia: 0.0006,
+        retroAcierto: '$1.96/10 = 0.196$. Acepta coma o punto como separador decimal, y la tolerancia se declara en la propia pregunta.',
+        retroFallo: 'Es $1.96/\\sqrt{100} = 0.196$. Un error habitual es dividir entre $T$ en vez de entre $\\sqrt{T}$.'
+      },
+      {
+        tipo: 'grafico',
+        modulo: 3,
+        alto: 200,
+        descripcionGrafico: 'Correlograma de una serie de ruido blanco, con todas las barras dentro de la banda',
+        pregunta: 'Lectura de gráfico: la pregunta dibuja su propio Chart.js. ¿Qué muestra este correlograma?',
+        pista: 'Fíjate en si alguna barra se sale de la banda punteada.',
+        dibujar: canvas => {
+          const y = generarRuidoNormal(200, 20260726);
+          return crearGraficoBarras(canvas, etiquetasRezago(24), calcularACF(y, 24),
+            { etiqueta: 'ACF', lineas: lineasBanda(200), tituloX: 'Rezago k' });
+        },
+        opciones: [
+          { texto: 'Ruido blanco: no queda estructura lineal.', correcta: true,
+            retro: 'Todas las barras caen dentro de la banda. Con 24 rezagos, que una o dos se asomen sería normal por azar.' },
+          { texto: 'Una serie con tendencia sin quitar.', correcta: false,
+            retro: 'Eso daría un decaimiento lento y casi lineal desde $r_1 \\approx 1$.' },
+          { texto: 'Una serie con estacionalidad de periodo 12.', correcta: false,
+            retro: 'La estacionalidad deja picos en los rezagos 12 y 24, y aquí no los hay.' },
+          { texto: 'Una serie sobrediferenciada.', correcta: false,
+            retro: 'La sobrediferenciación deja $r_1$ cerca de $-0.5$, muy por fuera de la banda.' }
+        ]
+      },
+      {
+        tipo: 'multiple',
+        modulo: 3,
+        pregunta: 'Varias respuestas correctas. Marca <strong>todo</strong> lo que un simulador debe hacer.',
+        pista: 'Son dos. Piensa en qué pasa al cambiar de módulo y de dónde deben salir los cálculos pesados.',
+        opciones: [
+          { texto: 'Devolver los <code>Chart</code> creados, para poder destruirlos.', correcta: true },
+          { texto: 'Dejar el cómputo pesado en R y traerlo precalculado como JSON.', correcta: true },
+          { texto: 'Ajustar modelos ARIMA en el navegador.', correcta: false },
+          { texto: 'Descargar los datos con <code>fetch</code> al abrir el capítulo.', correcta: false }
+        ],
+        retroAcierto: 'Las dos. Si no devuelves los gráficos se acumulan al navegar entre módulos, y el cómputo pesado en el navegador congela la página.',
+        retroFallo: 'Las correctas son las dos primeras. Ajustar un ARIMA en el navegador no es viable, y <code>fetch</code> rompe la regla del archivo autocontenido: los datos van incrustados.'
+      }
+    ];
+
   </script>
 
 </body>
