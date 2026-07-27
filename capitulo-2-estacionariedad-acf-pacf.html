@@ -1637,6 +1637,123 @@
     .quiz-pregunta .quiz-enunciado + .quiz-grafico {
       margin-top: 0.9rem;
     }
+
+    /* ------------------------------------------------------------------
+       Derivación plegable (añadida en el Capítulo 3, 2026-07-26).
+
+       Guarda el desarrollo algebraico completo de un resultado sin que el
+       texto principal cargue con él: quien acepta la fórmula sigue leyendo,
+       quien quiere el porqué lo abre. Mismo patrón accesible que los
+       ejercicios guiados (aria-expanded + aria-controls), pero en la familia
+       de color primaria —es teoría, no un ejercicio— para que se distinga de
+       las cajas azules de ejercicio y de las ámbar de pista.
+       ------------------------------------------------------------------ */
+    .derivacion {
+      margin: 1rem 0;
+    }
+
+    .derivacion-boton {
+      font-family: inherit;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #012820;
+      background: transparent;
+      border: 1px solid rgba(1, 40, 32, 0.3);
+      border-radius: 50px;
+      padding: 0.35rem 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .derivacion-boton:hover {
+      background: rgba(1, 40, 32, 0.06);
+    }
+
+    .derivacion-boton[aria-expanded="true"] {
+      background: #012820;
+      color: white;
+      border-color: #012820;
+    }
+
+    .derivacion-boton .fa-chevron-down {
+      transition: transform 0.2s ease;
+      font-size: 0.7rem;
+    }
+
+    .derivacion-boton[aria-expanded="true"] .fa-chevron-down {
+      transform: rotate(180deg);
+    }
+
+    .derivacion-panel {
+      margin-top: 0.75rem;
+      padding: 1rem 1.15rem;
+      background: #f8fafc;
+      border-left: 3px solid #012820;
+      border-radius: 0.5rem;
+      font-size: 0.9rem;
+      color: #1e293b;
+    }
+
+    .derivacion-panel[hidden] {
+      display: none;
+    }
+
+    /* Los pasos van numerados: en una derivación el orden es la explicación. */
+    .derivacion-pasos {
+      list-style: none;
+      counter-reset: paso;
+      margin: 0;
+      padding: 0;
+    }
+
+    .derivacion-pasos > li {
+      counter-increment: paso;
+      position: relative;
+      padding-left: 2.1rem;
+      margin: 0 0 1.1rem 0;
+      color: #1e293b;
+    }
+
+    .derivacion-pasos > li:last-child {
+      margin-bottom: 0;
+    }
+
+    .derivacion-pasos > li::before {
+      content: counter(paso);
+      position: absolute;
+      left: 0;
+      top: 0.05rem;
+      width: 1.5rem;
+      height: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: #012820;
+      color: white;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    .derivacion-pasos > li > p:first-child {
+      margin-top: 0;
+    }
+
+    .derivacion-pasos > li > p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Cierre de la derivación: el resultado al que se quería llegar. */
+    .derivacion-resultado {
+      margin-top: 1rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid rgba(1, 40, 32, 0.15);
+      font-weight: 500;
+    }
   </style>
 </head>
 
@@ -2172,6 +2289,47 @@ print(np.round(r[[0, 1, 11]], 4))   # [0.948  0.8756 0.7604]</code></pre>
 
       <p>En la práctica no se corren $k$ regresiones: se obtiene la PACF a partir de la ACF con la <strong>recursión de
           Durbin–Levinson</strong>, que es lo que hacen <code>pacf()</code> en R y el simulador de esta página.</p>
+
+      <div class="derivacion">
+        <button type="button" class="derivacion-boton" aria-expanded="false" aria-controls="der-durbin-levinson">
+          <i class="fas fa-square-root-variable" aria-hidden="true"></i>
+          <span class="derivacion-texto">Ver el desarrollo paso a paso</span>
+          <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="derivacion-panel" id="der-durbin-levinson" hidden>
+          <ol class="derivacion-pasos">
+            <li>
+              <p>Ajustar la regresión del rezago $k$ equivale a resolver el sistema de Yule–Walker de orden $k$, cuya
+                matriz está formada por las propias autocorrelaciones:</p>
+              $$\begin{pmatrix} 1 &amp; \rho_1 &amp; \cdots &amp; \rho_{k-1}\\ \rho_1 &amp; 1 &amp; \cdots &amp; \rho_{k-2}\\
+                \vdots &amp; &amp; \ddots &amp; \vdots\\ \rho_{k-1} &amp; \rho_{k-2} &amp; \cdots &amp; 1\end{pmatrix}
+                \begin{pmatrix}\phi_{k1}\\ \phi_{k2}\\ \vdots\\ \phi_{kk}\end{pmatrix}
+                = \begin{pmatrix}\rho_1\\ \rho_2\\ \vdots\\ \rho_k\end{pmatrix}$$
+              <p>Resolverlo por separado para cada $k$ costaría $O(k^3)$ operaciones… y hay que hacerlo para todos los
+                rezagos del correlograma.</p>
+            </li>
+            <li>
+              <p>La matriz no es una matriz cualquiera: es <strong>simétrica y de Toeplitz</strong> (constante a lo
+                largo de cada diagonal). Eso permite pasar de la solución de orden $k-1$ a la de orden $k$ sin volver a
+                empezar. El coeficiente nuevo es</p>
+              $$\phi_{kk} = \frac{\rho_k - \sum_{j=1}^{k-1}\phi_{k-1,j}\,\rho_{k-j}}
+                                  {1 - \sum_{j=1}^{k-1}\phi_{k-1,j}\,\rho_j}$$
+            </li>
+            <li>
+              <p>Léelo como lo que es: en el numerador está la autocorrelación del rezago $k$ <strong>menos lo que ya
+                  explican</strong> los rezagos anteriores. Justamente la parte "parcial" que buscábamos.</p>
+            </li>
+            <li>
+              <p>Y los demás coeficientes se actualizan con una sola pasada:</p>
+              $$\phi_{kj} = \phi_{k-1,j} - \phi_{kk}\,\phi_{k-1,k-j}, \qquad j = 1,\ldots,k-1$$
+              <p>Arrancando en $\phi_{11} = \rho_1$, cada rezago cuesta $O(k)$ en vez de $O(k^3)$.</p>
+            </li>
+          </ol>
+          <p class="derivacion-resultado">Esta es exactamente la recursión que implementan <code>pacf()</code> de R, el
+            método <code>ywm</code> de statsmodels y la función <code>calcularPACF()</code> de los simuladores de esta
+            página. Las tres coinciden hasta el redondeo con que se guardó el precálculo.</p>
+        </div>
+      </div>
 
       <div class="note">
         <p><strong>Verificación.</strong> El correlograma que ves abajo se calculó en R con <code>stats::pacf()</code> y
@@ -3661,6 +3819,7 @@ rbind(resumen(y, "original"),
         iniciarSimuladores();
         iniciarAutoevaluaciones();
         iniciarEjerciciosGuiados();
+        iniciarDerivaciones();
         renderMathInElement(mainContent, {
           delimiters: [
             { left: "$$", right: "$$", display: true },
@@ -4082,6 +4241,21 @@ rbind(resumen(y, "original"),
         categoryPercentage: 0.9,
         order: 2
       }];
+      // Barras adicionales sobre el mismo eje (p. ej. la ACF muestral junto a
+      // la teórica). Van antes que las rectas de referencia para que el orden
+      // de los datasets sea estable: 0 = principal, 1..k = extra, luego líneas.
+      (opciones.barrasExtra || []).forEach(extra => {
+        datasets.push({
+          type: 'bar',
+          label: extra.etiqueta || '',
+          data: extra.valores,
+          backgroundColor: extra.color || COLORES_GRAFICO.secundario,
+          borderWidth: 0,
+          barPercentage: 0.4,
+          categoryPercentage: 0.9,
+          order: 2
+        });
+      });
       (opciones.lineas || []).forEach(linea => {
         datasets.push({
           type: 'line',
@@ -4584,6 +4758,33 @@ rbind(resumen(y, "original"),
             if (typeof Prism !== 'undefined') Prism.highlightAllUnder(panel);
             katexEn(panel);
           }
+        });
+      });
+    }
+
+    // ================================================================
+    // Derivaciones plegables
+    //
+    // Uso: un <div class="derivacion"> con un .derivacion-boton
+    // (aria-controls apuntando al id del .derivacion-panel, que arranca
+    // con el atributo hidden). El desarrollo va en un <ol class="derivacion-pasos">.
+    //
+    // loadModule() ya pasa KaTeX por TODO el módulo, incluidos los paneles
+    // ocultos, así que las fórmulas están renderizadas antes del primer clic;
+    // katexEn(panel) aquí es la red de seguridad para contenido inyectado
+    // después (una derivación dentro de una solución, por ejemplo).
+    // ================================================================
+    function iniciarDerivaciones() {
+      mainContent.querySelectorAll('.derivacion-boton').forEach(boton => {
+        const panel = document.getElementById(boton.getAttribute('aria-controls'));
+        if (!panel) return;
+        boton.addEventListener('click', () => {
+          const abierto = boton.getAttribute('aria-expanded') === 'true';
+          boton.setAttribute('aria-expanded', String(!abierto));
+          panel.hidden = abierto;
+          const texto = boton.querySelector('.derivacion-texto');
+          if (texto) texto.textContent = abierto ? 'Ver el desarrollo paso a paso' : 'Ocultar el desarrollo';
+          if (!abierto) katexEn(panel);
         });
       });
     }
