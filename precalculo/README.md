@@ -8,6 +8,7 @@ que los capítulos HTML incrustan (los capítulos son autocontenidos, sin `fetch
 ```bash
 Rscript genera_datos.R      # series base + capítulos 1, 4 y 6
 Rscript genera_cap2.R       # capítulo 2 (lee la salida del anterior)
+Rscript genera_cap3.R       # capítulo 3 (lee la TRM de la salida del primero)
 Rscript genera_soluciones.R # soluciones de los ejercicios propuestos
 ```
 
@@ -30,6 +31,7 @@ y no hay razón para pagar eso cada vez que se toca un correlograma.
 | `datos_series.js` | `const SERIES_DATOS = {...}` con AirPassengers, co2, Nile, USAccDeaths y TRM mensual (promedio, SFC vía datos.gov.co) | Todos los capítulos (solo las series que cada uno use) |
 | `datos_series.json` | Lo mismo en JSON puro (validación / otros usos) | — |
 | `cap2_estacionariedad.json` / `cap2_datos.js` | 8 series de trabajo con su ACF y PACF (24 rezagos), ADF y KPSS (nivel y tendencia), `ndiffs`/`nsdiffs`, λ de Guerrero, tabla de sobrediferenciación y el Monte Carlo de la trampa del ADF estacional | Capítulo 2 |
+| `cap3_arma.json` / `cap3_datos.js` | ACF y PACF **teóricas** (`ARMAacf`) y pesos ψ/π de 8 procesos canónicos; manchas solares 1770–1869 con AR(2) por Yule-Walker, CSS y ML, raíces y pseudo-periodo, rejilla de 11 modelos, diagnóstico de 4 candidatos y el análisis sobre √; log-retornos mensuales de la TRM | Capítulo 3 |
 | `soluciones_ejercicios.json` | Soluciones **resueltas de verdad** de los ejercicios propuestos de los capítulos 1 y 2. El texto de las cajas "Solución" del HTML se contrasta contra este archivo; ninguna cifra se escribe de memoria | Capítulos 1 y 2 |
 | `cap4_rejilla_arima.json` | Rejilla ARIMA(p,d,q), p,d,q ∈ {0,1,2}, sobre el Nilo: AICc/BIC, Ljung–Box, ACF de residuales. **El AICc solo se compara dentro del mismo d** (`mejor_aicc_por_d`) | Capítulo 4 (explorador de modelos) |
 | `cap6_pronostico.json` | Modelo airline SARIMA(0,1,1)(0,1,1)[12] sobre log(AirPassengers): pronóstico con bandas 80/95, métricas vs. referencia (naive, snaive, media, deriva) y origen móvil (37 orígenes, h=12) | Capítulo 6 (simuladores de horizonte y backtesting) |
@@ -47,6 +49,23 @@ y no hay razón para pagar eso cada vez que se toca un correlograma.
   `maxlag=trunc((n-1)^(1/3))` y `autolag=None`.
 - **`diff(x, differences = 0)` es un error en R**, no la identidad. Cualquier
   bucle sobre d = 0, 1, 2… tiene que tratar el caso d = 0 aparte.
+- **Ljung–Box no da lo mismo en R y en statsmodels sobre el mismo ajuste.** Los
+  coeficientes, el AICc y el BIC coinciden hasta el último decimal, pero los
+  residuales difieren en las `max(p,q)` primeras posiciones porque cada
+  programa inicializa el filtro a su manera (sobre el AR(2) de las manchas, el
+  primer residual es 21.06 en R y 52.54 en statsmodels). Como Q pondera mucho
+  los primeros rezagos, el p-valor pasa de 0.0461 a 0.1085 y la conclusión se
+  invierte. Descartando los `max(p,q)` primeros residuales, los dos dan 0.0232.
+  Al comparar contrastes sobre residuales, compara primero los **residuales**.
+- **`ar()` de R y `yule_walker()` de statsmodels usan divisores distintos**:
+  R usa n y statsmodels `method="adjusted"` (n−k) por defecto. Para reproducir
+  R hay que pedir `method="mle"`, que no es máxima verosimilitud: solo indica
+  el divisor.
+- **`BoxCox.lambda` exige datos estrictamente positivos.** Las manchas solares
+  tienen un cero (1810), así que el λ se calcula sobre la serie desplazada una
+  unidad: 0.3062 en vez del 0.3333 que sale —con aviso— sin desplazar.
+- **`pacf(x)$acf` devuelve un array de tres dimensiones**, no un vector: si vas
+  a citar la salida en el material, envuélvelo en `as.numeric()`.
 - El λ de Guerrero descarta las observaciones **iniciales** sobrantes cuando n
   no es múltiplo de m (`x[(n - nyr*m + 1):n]`). Con la TRM (n = 138, m = 12) eso
   cambia el resultado de 0.2296 a 0.1288.

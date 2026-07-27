@@ -1637,6 +1637,123 @@
     .quiz-pregunta .quiz-enunciado + .quiz-grafico {
       margin-top: 0.9rem;
     }
+
+    /* ------------------------------------------------------------------
+       Derivación plegable (añadida en el Capítulo 3, 2026-07-26).
+
+       Guarda el desarrollo algebraico completo de un resultado sin que el
+       texto principal cargue con él: quien acepta la fórmula sigue leyendo,
+       quien quiere el porqué lo abre. Mismo patrón accesible que los
+       ejercicios guiados (aria-expanded + aria-controls), pero en la familia
+       de color primaria —es teoría, no un ejercicio— para que se distinga de
+       las cajas azules de ejercicio y de las ámbar de pista.
+       ------------------------------------------------------------------ */
+    .derivacion {
+      margin: 1rem 0;
+    }
+
+    .derivacion-boton {
+      font-family: inherit;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #012820;
+      background: transparent;
+      border: 1px solid rgba(1, 40, 32, 0.3);
+      border-radius: 50px;
+      padding: 0.35rem 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .derivacion-boton:hover {
+      background: rgba(1, 40, 32, 0.06);
+    }
+
+    .derivacion-boton[aria-expanded="true"] {
+      background: #012820;
+      color: white;
+      border-color: #012820;
+    }
+
+    .derivacion-boton .fa-chevron-down {
+      transition: transform 0.2s ease;
+      font-size: 0.7rem;
+    }
+
+    .derivacion-boton[aria-expanded="true"] .fa-chevron-down {
+      transform: rotate(180deg);
+    }
+
+    .derivacion-panel {
+      margin-top: 0.75rem;
+      padding: 1rem 1.15rem;
+      background: #f8fafc;
+      border-left: 3px solid #012820;
+      border-radius: 0.5rem;
+      font-size: 0.9rem;
+      color: #1e293b;
+    }
+
+    .derivacion-panel[hidden] {
+      display: none;
+    }
+
+    /* Los pasos van numerados: en una derivación el orden es la explicación. */
+    .derivacion-pasos {
+      list-style: none;
+      counter-reset: paso;
+      margin: 0;
+      padding: 0;
+    }
+
+    .derivacion-pasos > li {
+      counter-increment: paso;
+      position: relative;
+      padding-left: 2.1rem;
+      margin: 0 0 1.1rem 0;
+      color: #1e293b;
+    }
+
+    .derivacion-pasos > li:last-child {
+      margin-bottom: 0;
+    }
+
+    .derivacion-pasos > li::before {
+      content: counter(paso);
+      position: absolute;
+      left: 0;
+      top: 0.05rem;
+      width: 1.5rem;
+      height: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: #012820;
+      color: white;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    .derivacion-pasos > li > p:first-child {
+      margin-top: 0;
+    }
+
+    .derivacion-pasos > li > p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Cierre de la derivación: el resultado al que se quería llegar. */
+    .derivacion-resultado {
+      margin-top: 1rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid rgba(1, 40, 32, 0.15);
+      font-weight: 500;
+    }
   </style>
 </head>
 
@@ -1784,6 +1901,37 @@
       <div class="formula">
         <p>Azul claro. Para fórmulas centrales que se consultan de un vistazo:</p>
         $$\nabla y_t = y_t - y_{t-1} = (1 - B)\, y_t$$
+      </div>
+
+      <p>Cuando un resultado tiene un desarrollo algebraico que no todos los lectores necesitan, va en una
+        <strong>derivación plegable</strong>: quien acepta la fórmula sigue leyendo sin tropezar con media página de
+        álgebra, y quien quiere el porqué lo abre.</p>
+
+      <div class="derivacion">
+        <button type="button" class="derivacion-boton" aria-expanded="false" aria-controls="der-demo">
+          <i class="fas fa-square-root-variable" aria-hidden="true"></i>
+          <span class="derivacion-texto">Ver el desarrollo paso a paso</span>
+          <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="derivacion-panel" id="der-demo" hidden>
+          <ol class="derivacion-pasos">
+            <li>
+              <p>Cada paso va en un <code>&lt;li&gt;</code> y se numera solo. Empieza por lo que ya se sabe:</p>
+              $$\gamma_k = \operatorname{Cov}(y_t,\, y_{t-k})$$
+            </li>
+            <li>
+              <p>El texto de cada paso dice <strong>qué se hace y por qué</strong>, no solo qué queda. Aquí se divide
+                entre $\gamma_0$, que es la varianza del proceso:</p>
+              $$\rho_k = \frac{\gamma_k}{\gamma_0}$$
+            </li>
+            <li>
+              <p>Y se cierra con la propiedad que se quería justificar: $\rho_k$ no tiene unidades y $|\rho_k| \le 1$
+                por la desigualdad de Cauchy–Schwarz.</p>
+            </li>
+          </ol>
+          <p class="derivacion-resultado">La banda inferior recoge el resultado al que se quería llegar, para que
+            quien abra la caja y la recorra de un vistazo se lleve la conclusión.</p>
+        </div>
       </div>
 
       <table>
@@ -2094,6 +2242,7 @@ round(mean(rnorm(200)), 4)   # 0.0117</code></pre>
         iniciarSimuladores();
         iniciarAutoevaluaciones();
         iniciarEjerciciosGuiados();
+        iniciarDerivaciones();
         renderMathInElement(mainContent, {
           delimiters: [
             { left: "$$", right: "$$", display: true },
@@ -2515,6 +2664,21 @@ round(mean(rnorm(200)), 4)   # 0.0117</code></pre>
         categoryPercentage: 0.9,
         order: 2
       }];
+      // Barras adicionales sobre el mismo eje (p. ej. la ACF muestral junto a
+      // la teórica). Van antes que las rectas de referencia para que el orden
+      // de los datasets sea estable: 0 = principal, 1..k = extra, luego líneas.
+      (opciones.barrasExtra || []).forEach(extra => {
+        datasets.push({
+          type: 'bar',
+          label: extra.etiqueta || '',
+          data: extra.valores,
+          backgroundColor: extra.color || COLORES_GRAFICO.secundario,
+          borderWidth: 0,
+          barPercentage: 0.4,
+          categoryPercentage: 0.9,
+          order: 2
+        });
+      });
       (opciones.lineas || []).forEach(linea => {
         datasets.push({
           type: 'line',
@@ -3022,6 +3186,33 @@ round(mean(rnorm(200)), 4)   # 0.0117</code></pre>
             if (typeof Prism !== 'undefined') Prism.highlightAllUnder(panel);
             katexEn(panel);
           }
+        });
+      });
+    }
+
+    // ================================================================
+    // Derivaciones plegables
+    //
+    // Uso: un <div class="derivacion"> con un .derivacion-boton
+    // (aria-controls apuntando al id del .derivacion-panel, que arranca
+    // con el atributo hidden). El desarrollo va en un <ol class="derivacion-pasos">.
+    //
+    // loadModule() ya pasa KaTeX por TODO el módulo, incluidos los paneles
+    // ocultos, así que las fórmulas están renderizadas antes del primer clic;
+    // katexEn(panel) aquí es la red de seguridad para contenido inyectado
+    // después (una derivación dentro de una solución, por ejemplo).
+    // ================================================================
+    function iniciarDerivaciones() {
+      mainContent.querySelectorAll('.derivacion-boton').forEach(boton => {
+        const panel = document.getElementById(boton.getAttribute('aria-controls'));
+        if (!panel) return;
+        boton.addEventListener('click', () => {
+          const abierto = boton.getAttribute('aria-expanded') === 'true';
+          boton.setAttribute('aria-expanded', String(!abierto));
+          panel.hidden = abierto;
+          const texto = boton.querySelector('.derivacion-texto');
+          if (texto) texto.textContent = abierto ? 'Ver el desarrollo paso a paso' : 'Ocultar el desarrollo';
+          if (!abierto) katexEn(panel);
         });
       });
     }

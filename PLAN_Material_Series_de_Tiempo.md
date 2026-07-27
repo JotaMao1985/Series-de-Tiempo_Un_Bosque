@@ -388,12 +388,102 @@ publicación en GitHub Pages.
 
 ### Fase 2 — Capítulos 3 y 4
 
-**Siguiente tarea: T5.** Al retomar, arranca por aquí. Ya disponible para reutilizar: la
-fábrica `crearGraficoBarras` (correlogramas con banda ±1.96/√T), `calcularPACF`
-(Durbin–Levinson, verificado contra R), `crearSelector`, `crearInterruptores`, la lectura
-numérica `.simulador-lectura` y el componente `.quiz`. Copiar el capítulo 2 como base.
+**Siguiente tarea: T6.** Al retomar, arranca por aquí. Ya disponible para reutilizar, además
+de lo del capítulo 2: el álgebra ARMA en JS (`pesosPsi`, `pesosPi`, `acfTeorica`,
+`analizarAR`, `esInvertible`, `simularARMA`), la opción `barrasExtra` de
+`crearGraficoBarras` (dos juegos de barras: teórica y muestral) y el componente
+`.derivacion`. Copiar el capítulo 3 como base.
 
-- [ ] **T5 · Capítulo 3** (AR/MA/ARMA) — simulador con ACF/PACF teóricas y triángulo AR(2). *Dependencias:* T1, T2. *Tamaño:* L.
+- [x] **T5 · Capítulo 3** (AR/MA/ARMA) — `Htmls_Series/capitulo-3-modelos-ar-ma-arma.html`.
+  10 módulos: (1) operador de rezago y polinomios característicos, (2) AR(p) y triángulo de
+  estacionariedad, (3) MA(q) e invertibilidad, (4) dualidad AR↔MA con pesos ψ/π, (5) ARMA e
+  identificación, (6) simular y reconocer procesos, (7) estimación por Yule–Walker/CSS/ML,
+  (8) criterios de información y diagnóstico, (9) dos casos reales, (10) autorregresión y
+  redes neuronales + cierre. **4 simuladores interactivos** (triángulo AR(2) con pseudo-periodo
+  en vivo; pesos ψ/π con la divergencia al perder la invertibilidad; laboratorio ARMA con ACF/PACF
+  teóricas frente a muestrales y deslizador de T; diagnóstico de residuales de 4 candidatos)
+  **+ 6 paneles** con selector. 8 preguntas de autoevaluación con los 4 tipos, 3 ejercicios
+  guiados, 6 cajas de derivación. Precálculo en `precalculo/genera_cap3.R` →
+  `cap3_arma.json` / `cap3_datos.js`. Ensamblado por sustitución de regiones sobre el capítulo 2
+  (script con aserciones, `scratchpad/ensambla_cap3.py`), **no** por concatenación de fragmentos:
+  es la lección del bug de T4d.
+  - *Verificado:* consola sin errores en los 10 módulos; **0 errores KaTeX** en 553 fórmulas;
+    canvas creados = gráficos activos en todos los módulos (se destruyen al cambiar); los
+    **12 bloques R y los 9 de Python corren de principio a fin** (el bloque 9 descarga la TRM en
+    vivo y reproduce exactamente las cifras del texto: n = 137, banda 0.1675, ACF 0.105/−0.077/…,
+    Ljung–Box 0.0931/0.0601/0.0599); los 4 simuladores responden en valores extremos y reproducen
+    las cifras de R; autoevaluación con los 4 tipos y casos límite (numérica justo dentro y justo
+    fuera de la tolerancia, coma decimal, texto, vacío), reintento con pista que **no** revela, y
+    los gráficos de las preguntas no se acumulan (2 antes, 2 tras 4 reinicios); **conjunto de
+    selectores CSS idéntico al de la plantilla** (218) y superconjunto del capítulo 2 sin pérdidas;
+    geometría medida en 85 pares consecutivos, hueco mínimo **8 px**, sin desbordes de canvas ni
+    scroll horizontal.
+  - *Hallazgos de la auditoría (todos incorporados al capítulo):*
+    1. **El AR(2) "de libro" de Yule sobre las manchas solares crudas no pasa el diagnóstico:**
+       Ljung–Box(12) da $p = 0.0461$ y el mínimo de AICc **y** de BIC es un ARMA(2,1)
+       (834.73 / 847.12 frente a 838.30 / 848.30). La causa no era falta de dinámica sino de
+       **escala**: sobre $\sqrt{\text{manchas}}$ el AR(2) pasa a ser el mínimo de los dos criterios
+       (324.00 / 334.00), pasa Ljung–Box ($p = 0.1644$) y su pseudo-periodo sube de 10.74 a
+       **11.22 años**, que es el ciclo solar documentado. El término MA parcheaba la varianza.
+       Es ahora el núcleo de los módulos 8 y 9.
+    2. **R y statsmodels dan distinto $p$-valor de Ljung–Box y aquí la conclusión se invierte**
+       (0.0461 frente a 0.1085 sobre el mismo ajuste: AICc y BIC coinciden hasta el último
+       decimal). Comparando los residuales uno a uno, **del tercero en adelante son idénticos**;
+       difieren los dos primeros por la inicialización del filtro (21.06 frente a 52.54). Descartando
+       los $\max(p,q)$ primeros, los dos programas coinciden: 0.0232 y 0.0232. O sea, el rechazo
+       del AR(2) es real y se **refuerza**. Documentado en el módulo 8.
+    3. **El logaritmo es imposible en esta serie**: hay un año con cero manchas (1810; tres en la
+       serie completa). La elasticidad amplitud–nivel da $b$ entre 0.70 y 0.82 según el tamaño de
+       bloque, con IC95 que excluyen 0 —hay que transformar— pero **no separan** $\sqrt{\ }$ de
+       log. Lo que decide es el cero. Y `BoxCox.lambda` avisa con datos no estrictamente positivos:
+       desplazando una unidad da $\lambda = 0.3062$, con el que la conclusión no cambia
+       (periodo 11.39, Ljung–Box 0.4892).
+    4. **El AR(2) tiene 0 de 20 autocorrelaciones residuales fuera de la banda y aun así
+       Ljung–Box lo rechaza.** Mirando el correlograma barra por barra se habría dado por bueno.
+       Es el mejor argumento para la prueba conjunta y está incorporado como caja de nota.
+    5. **`auto.arima` devuelve el MA(1) de la TRM sin media**, no por capricho: la media mensual
+       0.2681 % tiene $t = 0.84$. Comparados en igualdad de condiciones (los dos sin media), el
+       MA(1) y el ruido blanco puro se separan **una centésima** de AICc (722.653 vs 722.663):
+       son indistinguibles. La conclusión honesta del caso 2 es que no hay nada que modelar.
+    6. **Cifras corregidas contra la salida real de R antes de publicar** (todas estaban mal en
+       el borrador): la ACF teórica del AR(2) en los rezagos 3–5; el $\hat\theta$ que devuelve
+       `arima` sobre un MA(1) simulado no invertible (0.4794, no 0.5311); los **pesos $\pi$
+       llevaban un signo de más** (`ARMAtoMA(ar=-θ, ma=-φ)` ya los da con su signo); la ACF del
+       ARMA(1,1) (0.8308, no 0.8306); la media del modelo final sobre $\sqrt{\ }$ (6.33, no 6.99);
+       el Ljung–Box sin `fitdf` (0.0996, no 0.1053); y `pacf()$acf` **se imprime como un array de
+       tres dimensiones**, no como el vector que anunciaba el comentario.
+    7. **Bug encontrado por la auditoría en el navegador:** el contenedor `.quiz` necesita su
+       andamiaje interno (`.quiz-preguntas`, `.quiz-progreso-barra`, `.quiz-resumen`,
+       `.quiz-conteo`, `.quiz-reiniciar`) o `renderAutoevaluacion()` lanza excepción. Se añadió
+       como comprobación al script de ensamblado para que no vuelva a pasar.
+  - *Desviaciones sobre el plan:* (a) el plan pedía **un** simulador; se hicieron 4 interactivos
+    + 6 paneles (decisión de Javier). (b) Caso real = **manchas solares 1770–1869** (AR(2) de
+    Yule con raíces complejas) + **log-retornos de la TRM** como contraste "casi ruido blanco",
+    en vez de dejarlo sin especificar. (c) Los módulos 7 y 8 del plan original ("estimación +
+    criterios" y "diagnóstico") se reorganizaron en "estimación" / "criterios + diagnóstico",
+    que reparte mejor la carga y deja el módulo 9 para los casos completos. (d) El archivo pesa
+    **298 KB**, por encima del límite práctico de la tabla de riesgos: mismo criterio que en el
+    capítulo 2 (contenido real, y Pages sirve comprimido). (e) **No se instaló ningún paquete
+    nuevo**: todo sale de R base + `tseries` + `forecast`, ya presentes.
+  - *Dependencias:* T1, T2. *Tamaño:* L.
+
+- [x] **T5b · Componente `.derivacion`** (nuevo en la plantilla, decisión de Javier).
+  Caja plegable "Ver el desarrollo paso a paso" con `aria-expanded`/`aria-controls`, pasos
+  numerados con marcador circular y banda de resultado. Guarda el álgebra completa sin cargar el
+  texto principal. 15 reglas CSS + `iniciarDerivaciones()`.
+  **6 cajas en el capítulo 3** (estacionariedad del AR(1), Yule–Walker, invertibilidad del MA(1),
+  pesos ψ/π, verosimilitud exacta frente a condicional, grados de libertad de Ljung–Box) y
+  **retropropagado**: la recursión de Durbin–Levinson al capítulo 2 y la construcción de
+  $F_T$/$F_S$ al capítulo 1. Añadido también a la plantilla en la misma sesión, junto con la
+  opción `barrasExtra` de `crearGraficoBarras`.
+  - *Verificado en los cuatro archivos:* las 15 reglas CSS presentes en todos; KaTeX renderizado
+    **antes** del primer clic (`loadModule` pasa por el módulo entero, incluidos los paneles
+    ocultos); apertura y cierre correctos con cambio de texto del botón; 0 errores KaTeX dentro
+    de los paneles; capítulos 1 y 2 sin errores de consola y con sus simuladores previos intactos
+    tras el injerto; `barrasExtra` probado en la plantilla (3 datasets en el orden bar/bar/line).
+    El capítulo 1 no recibe `barrasExtra` porque nunca tuvo `crearGraficoBarras`: no dibuja
+    correlogramas.
+
 - [ ] **T6 · Capítulo 4** (ARIMA) — explorador de modelos con rejilla precalculada. *Dependencias:* T2 (rejilla), T5 (continuidad narrativa). *Tamaño:* L.
 
 ### Fase 3 — Capítulos 5 y 6

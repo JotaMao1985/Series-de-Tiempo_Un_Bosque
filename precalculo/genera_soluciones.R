@@ -313,6 +313,108 @@ cat(sprintf("  distorsion maxima entre los 12 meses · clasica %.2f%% | STL robu
             max(abs(100*(sr_out/sr_lim-1)))))
 
 # ============================================================================
+# CAPITULO 3
+# ============================================================================
+
+aicc_de <- function(f, n) { k <- length(f$coef) + 1; f$aic + 2 * k * (k + 1) / (n - k - 1) }
+
+# ---- Ej. 1: identificar y elegir un modelo para lh -------------------------
+# El punto del ejercicio es que AICc y BIC NO coinciden, y que los dos
+# candidatos pasan el diagnostico: la eleccion se decide por parsimonia.
+cat("\n=== CAP3 · Ej.1 · lh: identificacion y seleccion ===\n")
+n_lh <- length(lh)
+cand_lh <- list(c(1,0), c(2,0), c(3,0), c(0,1), c(0,2), c(1,1))
+tabla_lh <- do.call(rbind, lapply(cand_lh, function(pq) {
+  f <- arima(lh, order = c(pq[1], 0, pq[2]), method = "ML")
+  data.frame(modelo = sprintf("ARMA(%d,%d)", pq[1], pq[2]),
+             AICc = round(aicc_de(f, n_lh), 3),
+             BIC  = round(as.numeric(BIC(f)), 3),
+             LB10 = round(Box.test(residuals(f), lag = 10, type = "Ljung-Box",
+                                   fitdf = sum(pq))$p.value, 4))
+}))
+ar1_lh <- arima(lh, order = c(1, 0, 0), method = "ML")
+sol$cap3_ej1 <- list(
+  n = n_lh, banda = round(banda(n_lh), 4),
+  acf  = round(as.numeric(acf(lh,  lag.max = 6, plot = FALSE)$acf)[-1], 4),
+  pacf = round(as.numeric(pacf(lh, lag.max = 6, plot = FALSE)$acf), 4),
+  tabla = tabla_lh,
+  mejor_aicc = tabla_lh$modelo[which.min(tabla_lh$AICc)],
+  mejor_bic  = tabla_lh$modelo[which.min(tabla_lh$BIC)],
+  ar1 = list(phi = round(coef(ar1_lh)[["ar1"]], 4),
+             ee = round(sqrt(ar1_lh$var.coef[1, 1]), 4),
+             media = round(coef(ar1_lh)[["intercept"]], 4),
+             shapiro_p = round(shapiro.test(residuals(ar1_lh))$p.value, 6)),
+  nota = paste("El AICc elige MA(2) y el BIC elige AR(1) por 0.17 puntos.",
+               "Los dos pasan Ljung-Box; se recomienda el AR(1) por parsimonia.")
+)
+print(tabla_lh, row.names = FALSE)
+cat(sprintf("  banda = %.4f | min AICc = %s | min BIC = %s (diferencia BIC = %.3f)\n",
+            banda(n_lh), sol$cap3_ej1$mejor_aicc, sol$cap3_ej1$mejor_bic,
+            diff(sort(tabla_lh$BIC))[1]))
+cat(sprintf("  AR(1): phi = %.4f (e.e. %.4f) · Shapiro p = %.6f\n",
+            sol$cap3_ej1$ar1$phi, sol$cap3_ej1$ar1$ee, sol$cap3_ej1$ar1$shapiro_p))
+
+# ---- Ej. 2: MA(2) con theta = (0.6, 0.4) ----------------------------------
+# Ademas de la invertibilidad, el ejercicio comprueba que la cota |rho_1|<=0.5
+# es propia del MA(1) y NO se extiende al MA(2).
+cat("\n=== CAP3 · Ej.2 · MA(2) theta = (0.6, 0.4) ===\n")
+th <- c(0.6, 0.4)
+raices_ma <- polyroot(c(1, th))
+den <- 1 + sum(th^2)
+sol$cap3_ej2 <- list(
+  theta = th,
+  raices_re = round(Re(raices_ma), 4), raices_im = round(Im(raices_ma), 4),
+  modulo = round(Mod(raices_ma), 4),
+  invertible = all(Mod(raices_ma) > 1),
+  rho1_a_mano = round((th[1] + th[1] * th[2]) / den, 4),
+  rho2_a_mano = round(th[2] / den, 4),
+  acf_armaacf = round(as.numeric(ARMAacf(ma = th, lag.max = 4))[-1], 4),
+  pesos_pi = round(as.numeric(ARMAtoMA(ar = -th, lag.max = 8)), 4),
+  supera_cota_ma1 = abs((th[1] + th[1] * th[2]) / den) > 0.5,
+  nota = paste("rho_1 = 0.5526 > 0.5: la cota del Modulo 3 se dedujo solo para",
+               "el MA(1) y no se aplica al MA(2).")
+)
+cat(sprintf("  raices %.4f +/- %.4fi · modulo %.4f -> invertible: %s\n",
+            Re(raices_ma)[1], abs(Im(raices_ma))[1], Mod(raices_ma)[1],
+            sol$cap3_ej2$invertible))
+cat(sprintf("  rho1 = %.4f (a mano) = %.4f (ARMAacf) · rho2 = %.4f\n",
+            sol$cap3_ej2$rho1_a_mano, sol$cap3_ej2$acf_armaacf[1], sol$cap3_ej2$rho2_a_mano))
+cat(sprintf("  |rho_1| > 0.5: %s  <- la cota del MA(1) NO vale para el MA(2)\n",
+            sol$cap3_ej2$supera_cota_ma1))
+
+# ---- Ej. 3: estabilidad del AR(2) sobre sqrt(manchas) ---------------------
+# Tres lecturas distintas: coeficientes estables, periodo sensible y
+# diagnostico que se derrumba al crecer n (la prueba gana potencia).
+cat("\n=== CAP3 · Ej.3 · estabilidad del AR(2) por ventanas ===\n")
+ventanas <- list(c(1770, 1869), c(1700, 1988), c(1870, 1988), c(1900, 1988))
+tabla_vent <- do.call(rbind, lapply(ventanas, function(v) {
+  x <- sqrt(window(sunspot.year, v[1], v[2]))
+  f <- arima(x, order = c(2, 0, 0), method = "ML")
+  r <- polyroot(c(1, -coef(f)[1:2]))
+  data.frame(ventana = sprintf("%d-%d", v[1], v[2]), n = length(x),
+             phi1 = round(coef(f)[["ar1"]], 4), phi2 = round(coef(f)[["ar2"]], 4),
+             ee1 = round(sqrt(f$var.coef[1, 1]), 4),
+             modulo = round(Mod(r)[1], 4),
+             periodo = round(2 * pi / Arg(r[1]), 3),
+             LB12 = round(Box.test(residuals(f), lag = 12, type = "Ljung-Box",
+                                   fitdf = 2)$p.value, 4))
+}))
+sol$cap3_ej3 <- list(
+  tabla = tabla_vent,
+  rango_phi1 = round(range(tabla_vent$phi1), 4),
+  rango_phi2 = round(range(tabla_vent$phi2), 4),
+  rango_periodo = round(range(tabla_vent$periodo), 3),
+  nota = paste("Los coeficientes apenas se mueven, el periodo cae de 11.22 a",
+               "10.13 anios y el diagnostico falla fuera de la ventana de Yule",
+               "porque la prueba gana potencia con n, no porque el modelo empeore.")
+)
+print(tabla_vent, row.names = FALSE)
+cat(sprintf("  phi1 en [%.4f, %.4f] · phi2 en [%.4f, %.4f] · periodo en [%.3f, %.3f]\n",
+            sol$cap3_ej3$rango_phi1[1], sol$cap3_ej3$rango_phi1[2],
+            sol$cap3_ej3$rango_phi2[1], sol$cap3_ej3$rango_phi2[2],
+            sol$cap3_ej3$rango_periodo[1], sol$cap3_ej3$rango_periodo[2]))
+
+# ============================================================================
 sol$metadatos <- list(generado = fecha_corte, generador = "precalculo/genera_soluciones.R",
                       versiones = list(R = paste(R.version$major, R.version$minor, sep = "."),
                                        tseries = as.character(packageVersion("tseries")),

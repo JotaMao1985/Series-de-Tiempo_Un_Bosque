@@ -165,6 +165,120 @@
     },
     "nota": "La ventaja de STL depende de robust = TRUE. Sin esa opcion su distorsion es comparable a la de la descomposicion clasica."
   },
+  "cap3_ej1": {
+    "n": 48,
+    "banda": 0.2829,
+    "acf": [0.5755, 0.1818, -0.1448, -0.1748, -0.1497, -0.021],
+    "pacf": [0.5755, -0.2234, -0.2269, 0.1028, -0.0759, 0.0676],
+    "tabla": [
+      {
+        "modelo": "ARMA(1,0)",
+        "AICc": 65.304,
+        "BIC": 70.372,
+        "LB10": 0.405
+      },
+      {
+        "modelo": "ARMA(2,0)",
+        "AICc": 65.434,
+        "BIC": 71.989,
+        "LB10": 0.4185
+      },
+      {
+        "modelo": "ARMA(3,0)",
+        "AICc": 65.613,
+        "BIC": 73.541,
+        "LB10": 0.7958
+      },
+      {
+        "modelo": "ARMA(0,1)",
+        "AICc": 68.649,
+        "BIC": 73.717,
+        "LB10": 0.1962
+      },
+      {
+        "modelo": "ARMA(0,2)",
+        "AICc": 63.991,
+        "BIC": 70.545,
+        "LB10": 0.8492
+      },
+      {
+        "modelo": "ARMA(1,1)",
+        "AICc": 66.454,
+        "BIC": 73.009,
+        "LB10": 0.3927
+      }
+    ],
+    "mejor_aicc": "ARMA(0,2)",
+    "mejor_bic": "ARMA(1,0)",
+    "ar1": {
+      "phi": 0.5739,
+      "ee": 0.1161,
+      "media": 2.4133,
+      "shapiro_p": 0.008349
+    },
+    "nota": "El AICc elige MA(2) y el BIC elige AR(1) por 0.17 puntos. Los dos pasan Ljung-Box; se recomienda el AR(1) por parsimonia."
+  },
+  "cap3_ej2": {
+    "theta": [0.6, 0.4],
+    "raices_re": [-0.75, -0.75],
+    "raices_im": [1.3919, -1.3919],
+    "modulo": [1.5811, 1.5811],
+    "invertible": true,
+    "rho1_a_mano": 0.5526,
+    "rho2_a_mano": 0.2632,
+    "acf_armaacf": [0.5526, 0.2632, 0, 0],
+    "pesos_pi": [-0.6, -0.04, 0.264, -0.1424, -0.0202, 0.0691, -0.0334, -0.0076],
+    "supera_cota_ma1": true,
+    "nota": "rho_1 = 0.5526 > 0.5: la cota del Modulo 3 se dedujo solo para el MA(1) y no se aplica al MA(2)."
+  },
+  "cap3_ej3": {
+    "tabla": [
+      {
+        "ventana": "1770-1869",
+        "n": 100,
+        "phi1": 1.4027,
+        "phi2": -0.6853,
+        "ee1": 0.0727,
+        "modulo": 1.208,
+        "periodo": 11.218,
+        "LB12": 0.1644
+      },
+      {
+        "ventana": "1700-1988",
+        "n": 289,
+        "phi1": 1.4086,
+        "phi2": -0.7006,
+        "ee1": 0.0427,
+        "modulo": 1.1947,
+        "periodo": 11.007,
+        "LB12": 0
+      },
+      {
+        "ventana": "1870-1988",
+        "n": 119,
+        "phi1": 1.4219,
+        "phi2": -0.7321,
+        "ee1": 0.0645,
+        "modulo": 1.1687,
+        "periodo": 10.648,
+        "LB12": 0.0007
+      },
+      {
+        "ventana": "1900-1988",
+        "n": 89,
+        "phi1": 1.4146,
+        "phi2": -0.7556,
+        "ee1": 0.0718,
+        "modulo": 1.1504,
+        "periodo": 10.129,
+        "LB12": 0.001
+      }
+    ],
+    "rango_phi1": [1.4027, 1.4219],
+    "rango_phi2": [-0.7556, -0.6853],
+    "rango_periodo": [10.129, 11.218],
+    "nota": "Los coeficientes apenas se mueven, el periodo cae de 11.22 a 10.13 anios y el diagnostico falla fuera de la ventana de Yule porque la prueba gana potencia con n, no porque el modelo empeore."
+  },
   "metadatos": {
     "generado": "2026-07-26",
     "generador": "precalculo/genera_soluciones.R",
