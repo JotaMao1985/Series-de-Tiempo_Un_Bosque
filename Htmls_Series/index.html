@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Curso interactivo de series de tiempo: 6 capítulos con teoría, fórmulas KaTeX, código en R y Python, 61 simuladores y autoevaluación. De la descomposición al backtesting. Universidad El Bosque, 2026.">
+  <meta name="author" content="Javier Mauricio Sierra">
+  <meta name="keywords"
+    content="series de tiempo, ARIMA, SARIMA, ACF, PACF, estacionariedad, Box-Jenkins, pronóstico, backtesting, origen móvil, R, Python, UnBosque">
+  <title>Series de Tiempo · UnBosque</title>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Series de Tiempo · Material de estudio interactivo">
+  <meta property="og:description"
+    content="Seis capítulos con teoría, fórmulas, código en R y Python, 61 simuladores interactivos y autoevaluación. De la descomposición al backtesting.">
+  <meta property="og:type" content="website">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Montserrat', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+          },
+          colors: {
+            primary: '#012820',
+            secondary: '#FF6600',
+            navy: '#012820',
+            /* Ámbar cálido, no verde-lima: es el token que usan los seis
+               capítulos desde el refinamiento del pie de página. */
+            gold: '#FFC24B',
+            bg: '#F8FAFC',
+            surface: '#FFFFFF',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background-color: #F8FAFC;
+      color: #1E293B;
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .usta-gradient { background: linear-gradient(140deg, #012820 0%, #FF6600 100%); }
+    .usta-header { background: linear-gradient(180deg, #012820 0%, #001F18 100%); }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(140deg, #012820 0%, #023a2e 55%, #FF6600 160%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 20% 30%, rgba(255, 102, 0, 0.18), transparent 40%),
+                        radial-gradient(circle at 85% 20%, rgba(255, 194, 75, 0.12), transparent 35%);
+      pointer-events: none;
+    }
+
+    /* Chapter cards */
+    .chapter-card {
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+    }
+    .chapter-card:hover {
+      box-shadow: 0 14px 38px rgba(1, 40, 32, 0.16);
+      transform: translateY(-6px);
+      border-color: rgba(255, 102, 0, 0.35);
+    }
+    .chapter-card__top {
+      background: linear-gradient(135deg, #012820 0%, #FF6600 100%);
+      color: white;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .chapter-card__num {
+      font-size: 2.75rem;
+      font-weight: 800;
+      line-height: 1;
+      opacity: 0.95;
+    }
+    .chapter-card__icon {
+      width: 3.25rem;
+      height: 3.25rem;
+      border-radius: 0.9rem;
+      background: rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+    }
+    .chapter-card__body { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
+    .chapter-card__kicker {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #FF6600;
+      margin-bottom: 0.4rem;
+    }
+    .chapter-card__title { font-size: 1.2rem; font-weight: 700; color: #012820; margin: 0 0 0.5rem; }
+    .chapter-card__desc { font-size: 0.9rem; color: #475569; flex-grow: 1; }
+    .chapter-card__meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1.1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #f1f5f9;
+    }
+    .chapter-card__modules { font-size: 0.78rem; color: #64748b; font-weight: 600; }
+    .chapter-card__go {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #FF6600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: gap 0.2s ease;
+    }
+    .chapter-card:hover .chapter-card__go { gap: 0.7rem; }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #fff;
+      padding: 0.4rem 0.9rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .feature-card {
+      background: white;
+      border-radius: 0.9rem;
+      padding: 1.5rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(0, 0, 0, 0.04);
+      text-align: center;
+    }
+    .feature-card i { color: #FF6600; font-size: 1.6rem; margin-bottom: 0.6rem; }
+
+    /* Recorrido: la secuencia de los seis capítulos como una línea */
+    .ruta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+      gap: 0.75rem;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .ruta li {
+      background: white;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-left: 4px solid #FF6600;
+      border-radius: 0.6rem;
+      padding: 0.85rem 1rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+    .ruta strong { display: block; color: #012820; font-size: 0.9rem; }
+    .ruta span { font-size: 0.76rem; color: #64748b; }
+
+    *:focus-visible { outline: 2px solid #012820; outline-offset: 3px; border-radius: 4px; }
+    .hero *:focus-visible { outline-color: #FFC24B; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Hero / Header -->
+  <header class="hero text-white" role="banner">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20 relative" style="z-index:1;">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="usta-gradient p-3 rounded-xl shadow-md">
+          <i class="fas fa-chart-line text-2xl text-white" aria-hidden="true"></i>
+        </div>
+        <span class="pill"><i class="fas fa-graduation-cap" aria-hidden="true"></i> Universidad El Bosque · 2026-II</span>
+      </div>
+      <h1 class="text-3xl md:text-5xl font-extrabold leading-tight tracking-tight mb-4">
+        Análisis de<br><span class="text-gold">Series de Tiempo</span>
+      </h1>
+      <p class="text-base md:text-lg text-white/80 max-w-2xl mb-8">
+        Material de estudio autónomo e interactivo. Seis capítulos que van de la descomposición de una serie
+        al <em>backtesting</em> de un pronóstico, con teoría, fórmulas, código en <strong>R</strong> y
+        <strong>Python</strong>, y 61 simuladores para mover los parámetros y ver qué pasa.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <a href="#capitulos"
+          class="inline-flex items-center gap-2 bg-white text-primary font-bold px-6 py-3 rounded-full shadow-lg hover:bg-gold hover:text-primary transition-all">
+          <i class="fas fa-book-open" aria-hidden="true"></i> Explorar capítulos
+        </a>
+        <a href="capitulo-1-componentes-descomposicion.html"
+          class="inline-flex items-center gap-2 border-2 border-white/40 text-white font-semibold px-6 py-3 rounded-full hover:bg-white/10 transition-all">
+          <i class="fas fa-play" aria-hidden="true"></i> Comenzar por el Capítulo 1
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Intro features -->
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 md:-mt-12 relative" style="z-index:2;"
+      aria-label="Resumen del material">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="feature-card">
+          <i class="fas fa-layer-group" aria-hidden="true"></i>
+          <h2 class="font-bold text-sm text-primary" style="margin:.3rem 0 0;">6 capítulos</h2>
+          <p class="text-xs text-gray-500" style="margin:0;">61 módulos en total</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-sliders" aria-hidden="true"></i>
+          <h2 class="font-bold text-sm text-primary" style="margin:.3rem 0 0;">61 simuladores</h2>
+          <p class="text-xs text-gray-500" style="margin:0;">Con datos reales precalculados</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-code" aria-hidden="true"></i>
+          <h2 class="font-bold text-sm text-primary" style="margin:.3rem 0 0;">R y Python</h2>
+          <p class="text-xs text-gray-500" style="margin:0;">Todo el código, ejecutado</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-circle-question" aria-hidden="true"></i>
+          <h2 class="font-bold text-sm text-primary" style="margin:.3rem 0 0;">49 preguntas</h2>
+          <p class="text-xs text-gray-500" style="margin:0;">Y 20 ejercicios resueltos</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cómo está pensado -->
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 md:pt-20" aria-labelledby="recorrido">
+      <div class="mb-8 text-center">
+        <p class="text-secondary font-bold uppercase tracking-widest text-sm mb-2">Cómo está pensado</p>
+        <h2 id="recorrido" class="text-2xl md:text-3xl font-bold text-primary">Un recorrido, no seis temas sueltos</h2>
+        <p class="text-gray-600 max-w-3xl mx-auto mt-3 text-sm md:text-base">
+          Cada capítulo usa lo que dejó el anterior y prepara lo que necesita el siguiente. Las mismas series
+          —<code>AirPassengers</code>, el caudal del Nilo, la TRM del peso colombiano— reaparecen capítulo tras
+          capítulo, así que se ve cómo cambia la conclusión a medida que mejoran las herramientas.
+        </p>
+      </div>
+      <ol class="ruta">
+        <li><strong>1 · Describir</strong><span>¿De qué está hecha la serie?</span></li>
+        <li><strong>2 · Estabilizar</strong><span>¿Es modelable así?</span></li>
+        <li><strong>3 · Modelar</strong><span>¿Qué forma tiene su dependencia?</span></li>
+        <li><strong>4 · Elegir</strong><span>¿Qué modelo completo?</span></li>
+        <li><strong>5 · Estacionalizar</strong><span>¿Y si se repite cada año?</span></li>
+        <li><strong>6 · Evaluar</strong><span>¿Funciona de verdad?</span></li>
+      </ol>
+    </section>
+
+    <!-- Chapters -->
+    <section id="capitulos" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20"
+      aria-labelledby="titulo-capitulos">
+      <div class="mb-10 text-center">
+        <p class="text-secondary font-bold uppercase tracking-widest text-sm mb-2">Contenido del curso</p>
+        <h2 id="titulo-capitulos" class="text-2xl md:text-3xl font-bold text-primary">Los seis capítulos</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <a class="chapter-card" href="capitulo-1-componentes-descomposicion.html">
+          <div class="chapter-card__top">
+            <span class="chapter-card__num">1</span>
+            <span class="chapter-card__icon"><i class="fas fa-wave-square" aria-hidden="true"></i></span>
+          </div>
+          <div class="chapter-card__body">
+            <p class="chapter-card__kicker">Módulo I · Semanas 1–2</p>
+            <h3 class="chapter-card__title">Componentes y descomposición</h3>
+            <p class="chapter-card__desc">Qué es una serie de tiempo y cómo se representa en software; gráficos
+              estacionales y de rezagos; los cuatro componentes —tendencia, estacionalidad, ciclo y ruido—; medias
+              móviles, descomposición clásica y STL, desestacionalización y fuerza de cada componente.</p>
+            <div class="chapter-card__meta">
+              <span class="chapter-card__modules"><i class="fas fa-list-ul" aria-hidden="true"></i> 9 módulos · 7 simuladores</span>
+              <span class="chapter-card__go">Comenzar <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+            </div>
+          </div>
+        </a>
+
+        <a class="chapter-card" href="capitulo-2-estacionariedad-acf-pacf.html">
+          <div class="chapter-card__top">
+            <span class="chapter-card__num">2</span>
+            <span class="chapter-card__icon"><i class="fas fa-chart-column" aria-hidden="true"></i></span>
+          </div>
+          <div class="chapter-card__body">
+            <p class="chapter-card__kicker">Módulo I · Semanas 3–4</p>
+            <h3 class="chapter-card__title">Estacionariedad, ACF y PACF</h3>
+            <p class="chapter-card__desc">Estacionariedad estricta y débil, ruido blanco, autocorrelación simple y
+              parcial, caminata aleatoria y raíz unitaria, las pruebas ADF y KPSS —y por qué pueden contradecirse—,
+              diferenciación y transformaciones de Box–Cox.</p>
+            <div class="chapter-card__meta">
+              <span class="chapter-card__modules"><i class="fas fa-list-ul" aria-hidden="true"></i> 9 módulos · 8 simuladores</span>
+              <span class="chapter-card__go">Comenzar <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+            </div>
+          </div>
+        </a>
+
+        <a class="chapter-card" href="capitulo-3-modelos-ar-ma-arma.html">
+          <div class="chapter-card__top">
+            <span class="chapter-card__num">3</span>
+            <span class="chapter-card__icon"><i class="fas fa-diagram-project" aria-hidden="true"></i></span>
+          </div>
+          <div class="chapter-card__body">
+            <p class="chapter-card__kicker">Módulo II · Semanas 5–7</p>
+            <h3 class="chapter-card__title">Modelos AR, MA y ARMA</h3>
+            <p class="chapter-card__desc">Operador de rezago y polinomios característicos, AR(p) y su triángulo de
+              estacionariedad, MA(q) e invertibilidad, dualidad AR↔MA, identificación con ACF y PACF, estimación por
+              máxima verosimilitud, criterios de información y diagnóstico de residuales.</p>
+            <div class="chapter-card__meta">
+              <span class="chapter-card__modules"><i class="fas fa-list-ul" aria-hidden="true"></i> 10 módulos · 10 simuladores</span>
+              <span class="chapter-card__go">Comenzar <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+            </div>
+          </div>
+        </a>
+
+        <a class="chapter-card" href="capitulo-4-modelos-arima.html">
+          <div class="chapter-card__top">
+            <span class="chapter-card__num">4</span>
+            <span class="chapter-card__icon"><i class="fas fa-rotate" aria-hidden="true"></i></span>
+          </div>
+          <div class="chapter-card__body">
+            <p class="chapter-card__kicker">Módulo III · Semanas 8–9</p>
+            <h3 class="chapter-card__title">Modelos ARIMA y Box–Jenkins</h3>
+            <p class="chapter-card__desc">De ARMA a ARIMA, el ciclo de Box–Jenkins recorrible, cómo elegir el orden de
+              integración, la constante y la deriva, el algoritmo de Hyndman–Khandakar por dentro, sobrediferenciación
+              y la construcción del intervalo de pronóstico desde los pesos ψ.</p>
+            <div class="chapter-card__meta">
+              <span class="chapter-card__modules"><i class="fas fa-list-ul" aria-hidden="true"></i> 10 módulos · 10 simuladores</span>
+              <span class="chapter-card__go">Comenzar <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+            </div>
+          </div>
+        </a>
+
+        <a class="chapter-card" href="capitulo-5-sarima.html">
+          <div class="chapter-card__top">
+            <span class="chapter-card__num">5</span>
+            <span class="chapter-card__icon"><i class="fas fa-calendar-days" aria-hidden="true"></i></span>
+          </div>
+          <div class="chapter-card__body">
+            <p class="chapter-card__kicker">Módulo III · Semanas 10–11</p>
+            <h3 class="chapter-card__title">Modelos SARIMA</h3>
+            <p class="chapter-card__desc">La firma de la estacionalidad en la ACF, notación
+              SARIMA(p,d,q)(P,D,Q)<sub>m</sub> y su polinomio multiplicativo, diferenciación estacional, el modelo
+              <em>airline</em>, regresores de calendario y SARIMAX, y qué hacer cuando el periodo es grande:
+              términos de Fourier y STL.</p>
+            <div class="chapter-card__meta">
+              <span class="chapter-card__modules"><i class="fas fa-list-ul" aria-hidden="true"></i> 11 módulos · 12 simuladores</span>
+              <span class="chapter-card__go">Comenzar <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+            </div>
+          </div>
+        </a>
+
+        <a class="chapter-card" href="capitulo-6-pronostico-evaluacion.html">
+          <div class="chapter-card__top">
+            <span class="chapter-card__num">6</span>
+            <span class="chapter-card__icon"><i class="fas fa-bullseye" aria-hidden="true"></i></span>
+          </div>
+          <div class="chapter-card__body">
+            <p class="chapter-card__kicker">Módulo IV · Semanas 12–16</p>
+            <h3 class="chapter-card__title">Pronóstico y evaluación</h3>
+            <p class="chapter-card__desc">Residual frente a error de pronóstico, métodos de referencia, RMSE, MAE,
+              MAPE y MASE con sus contraejemplos medidos, fuga de información, validación de origen móvil,
+              <em>backtesting</em> con Diebold–Mariano, cobertura de los intervalos y un taller para auditar un
+              análisis asistido por IA.</p>
+            <div class="chapter-card__meta">
+              <span class="chapter-card__modules"><i class="fas fa-list-ul" aria-hidden="true"></i> 12 módulos · 14 simuladores</span>
+              <span class="chapter-card__go">Comenzar <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+            </div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="usta-header" role="contentinfo">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+        <i class="fas fa-book-open" aria-hidden="true"></i> Referencias bibliográficas
+      </h2>
+      <ul class="space-y-3 text-white/90 text-sm list-none p-0 m-0">
+        <li class="flex items-start gap-2">
+          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
+          <span>Hyndman, R.J. &amp; Athanasopoulos, G. (2021). <em class="text-gold">Forecasting: Principles and
+            Practice</em> (3.ª ed.). OTexts. Acceso abierto:
+            <a class="underline hover:text-gold" href="https://otexts.com/fpp3/" target="_blank"
+              rel="noopener noreferrer">otexts.com/fpp3</a>.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
+          <span>Shumway, R.H. &amp; Stoffer, D.S. (2017). <em class="text-gold">Time Series Analysis and Its
+            Applications: With R Examples</em> (4.ª ed.). Springer.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
+          <span>Box, G.E.P., Jenkins, G.M., Reinsel, G.C. &amp; Ljung, G.M. (2015). <em class="text-gold">Time Series
+            Analysis: Forecasting and Control</em> (5.ª ed.). John Wiley &amp; Sons.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
+          <span>Brockwell, P.J. &amp; Davis, R.A. (2016). <em class="text-gold">Introduction to Time Series and
+            Forecasting</em> (3.ª ed.). Springer.</span>
+        </li>
+      </ul>
+
+      <p class="text-white/70 text-xs mt-6 leading-relaxed">
+        Series de ejemplo: <code>AirPassengers</code>, <code>Nile</code>, <code>co2</code> y
+        <code>USAccDeaths</code> de los conjuntos de datos de R, y la Tasa Representativa del Mercado (COP/USD)
+        de la Superintendencia Financiera de Colombia vía datos.gov.co. Todos los resultados numéricos del
+        material se calcularon ejecutando el código, no se transcribieron.
+      </p>
+
+      <div class="mt-8 pt-6 border-t border-white/20 text-center">
+        <p class="text-white font-medium">Diseñado por <span class="text-gold">Javier Mauricio Sierra</span></p>
+        <p class="text-xs mt-1 text-white/60">Análisis de Series de Tiempo · Universidad El Bosque · 2026-II</p>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>
