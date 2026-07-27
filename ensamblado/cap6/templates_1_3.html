@@ -1,0 +1,557 @@
+  <template id="module-1">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 1</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">6.1 Residual no es error de pronóstico
+          <span class="text-gray-400 font-normal text-2xl">/ Residuals are not forecast errors</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Separar las dos cantidades que todo el mundo llama
+              «error» y que miden cosas distintas, y entender por qué la primera nunca puede usarse para elegir un
+              modelo de pronóstico.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Los cinco capítulos anteriores construyeron modelos. El Capítulo 4 obtuvo el intervalo de pronóstico a partir
+        de los pesos $\psi$, $\sigma_h^2 = \sigma^2\sum_{j<h}\psi_j^2$, y el Capítulo 5 lo usó para dibujar el abanico
+        escalonado del modelo <em>airline</em>. Lo que ninguno de los dos hizo fue preguntar si ese pronóstico y ese
+        abanico son <strong>buenos</strong>. Este capítulo entero es esa pregunta, y empieza por deshacer una confusión
+        de vocabulario que arruina más evaluaciones que cualquier error de cálculo.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: residual y error de pronóstico</h4>
+        <p>Sea un modelo ajustado con las observaciones $y_1,\dots,y_T$.</p>
+        <p>El <strong>residual</strong> (<em>residual</em>) en el instante $t \le T$ es
+          $$ \hat\varepsilon_t = y_t - \hat y_{t\mid t-1}, $$
+          donde $\hat y_{t\mid t-1}$ es la predicción de un paso que produce el modelo <strong>cuyos coeficientes se
+          estimaron usando también $y_t$</strong>.</p>
+        <p style="margin-bottom:0;">El <strong>error de pronóstico</strong> (<em>forecast error</em>) a horizonte $h$ es
+          $$ e_{T+h} = y_{T+h} - \hat y_{T+h\mid T}, $$
+          donde $y_{T+h}$ <strong>no participó</strong> ni en la estimación de los coeficientes ni en la elección del
+          modelo.</p>
+      </div>
+
+      <p>La diferencia no está en la fórmula —las dos son «observado menos predicho»— sino en <strong>qué información
+        tenía el predictor</strong>. Los residuales miden lo bien que el modelo describe datos que ya vio; el error de
+        pronóstico mide lo bien que anticipa datos que no vio. Un modelo con suficientes parámetros puede llevar los
+        residuales tan cerca de cero como quiera y pronosticar pésimamente.</p>
+
+      <div class="warning">
+        <p><strong>La confusión tiene un nombre concreto en R.</strong> <code>accuracy(fit)</code>, con un objeto de
+          modelo y nada más, devuelve una única fila <code>Training set</code>: son <em>residuales</em>. Solo cuando se
+          le pasa además un conjunto de prueba, <code>accuracy(fc, prueba)</code>, aparece la fila
+          <code>Test set</code>, que es la que habla de pronóstico. Reportar la primera como si fuera la segunda es el
+          error más común de los informes de pronóstico, y no produce ningún mensaje de aviso.</p>
+      </div>
+
+      <h3>Cuánto se diferencian, medido</h3>
+
+      <p>Sobre $\log(\text{AirPassengers})$ con el modelo <em>airline</em> del Capítulo 5, el RMSE de los residuales
+        del modelo ajustado con la serie completa es $10.155$ pasajeros. El RMSE de sus pronósticos a doce meses,
+        evaluado como enseñará el Módulo 7, es $18.92$: <strong>$1.86$ veces mayor</strong>. Y esa razón no es una
+        constante que se pueda corregir con un factor; depende del tramo.</p>
+
+      <div class="simulador" data-simulador="residual-vs-error">
+        <h4><i class="fas fa-scissors" aria-hidden="true"></i> El mismo modelo, los dos errores</h4>
+        <p class="simulador-intro">Mueve el corte de entrenamiento. A la izquierda de la línea naranja el modelo está
+          describiendo datos que usó para estimarse; a la derecha está pronosticando. Fíjate en que el error de la
+          izquierda apenas se mueve —oscila entre $7.7$ y $9.0$ en todos los cortes— mientras que el de la derecha va
+          de $6.8$ a $32.0$. Esa estabilidad engañosa es justo lo que hace tan atractivo el número equivocado.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper" style="height:280px;">
+          <canvas aria-label="Serie con el corte de entrenamiento y el pronóstico" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="note">
+        <p><strong>Un corte en el que el pronóstico gana.</strong> Con el corte en 1955-12 la razón vale $0.845$: el
+          error fuera de muestra fue <em>menor</em> que el de dentro. No es un fallo del método ni una casualidad
+          imposible; el error de pronóstico es una variable aleatoria y con doce observaciones su varianza es enorme.
+          Que ocurra en $1$ de los $11$ cortes es exactamente el motivo por el que un capítulo entero se dedica a no
+          decidir nada con una sola partición.</p>
+      </div>
+
+      <h3>Los residuales sí sirven, pero para otra cosa</h3>
+
+      <p>Nada de esto los invalida. Los residuales son la materia prima del <strong>diagnóstico</strong>: si
+        $\hat\varepsilon_t$ está autocorrelacionado, el modelo dejó estructura sin capturar y hay algo que arreglar,
+        y eso se sabe sin esperar a que llegue el futuro. Es lo que hicieron los Capítulos 3, 4 y 5 con Ljung–Box y los
+        correlogramas. La regla es sencilla:</p>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Pregunta</th><th>Se responde con</th><th>Herramienta</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>¿El modelo capturó la estructura?</td><td>Residuales</td><td>Ljung–Box, ACF de residuales, Shapiro</td></tr>
+            <tr><td>¿Es el modelo más simple que la captura?</td><td>Verosimilitud penalizada</td><td>AICc, BIC (con el mismo $d$ y $D$)</td></tr>
+            <tr><td><strong>¿Va a pronosticar bien?</strong></td><td><strong>Errores de pronóstico</strong></td><td><strong>Origen móvil (Módulo 7)</strong></td></tr>
+            <tr><td>¿Es fiable su intervalo?</td><td>Errores de pronóstico y bandas</td><td>Cobertura y Winkler (Módulo 9)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Las tres primeras preguntas no implican la tercera. En el Capítulo 5 el <em>airline</em> pasaba Ljung–Box y era
+        el mínimo de AICc de su familia, y aun así quedaba <strong>cuarto</strong> en la comparación sobre los últimos
+        veinticuatro meses. Un modelo bien especificado puede pronosticar mal en un tramo, y un modelo mal especificado
+        puede acertar en otro. Solo midiendo el error de pronóstico muchas veces se separa una cosa de la otra.</p>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Residuales frente a errores de pronóstico">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r" role="tabpanel">
+          <pre><code class="language-r">library(forecast)
+
+# El modelo airline del Capitulo 5, ajustado con TODA la serie
+fit &lt;- Arima(AirPassengers, order = c(0, 1, 1),
+             seasonal = c(0, 1, 1), lambda = 0)
+
+# (1) accuracy() con un solo argumento: son RESIDUALES, no pronosticos
+round(accuracy(fit)[, c("RMSE", "MAE", "MAPE", "MASE")], 4)
+#&gt;    RMSE     MAE    MAPE    MASE
+#&gt; 10.1550  7.3576  2.6236  0.2297
+
+# (2) Lo mismo, pero honesto: se entrena hasta 1958 y se pronostica 1959-1960
+tr &lt;- window(AirPassengers, end = c(1958, 12))
+te &lt;- window(AirPassengers, start = c(1959, 1))
+fit_tr &lt;- Arima(tr, order = c(0, 1, 1), seasonal = c(0, 1, 1), lambda = 0)
+fc &lt;- forecast(fit_tr, h = 24)
+
+round(accuracy(fc, te)[, c("RMSE", "MAE", "MAPE", "MASE")], 4)
+#&gt;                  RMSE     MAE   MAPE   MASE
+#&gt; Training set   8.8353  6.5170 2.6380 0.2281
+#&gt; Test set      43.1837 39.4473 8.5163 1.3805
+
+# La fila "Training set" de un objeto de pronostico son OTRA VEZ residuales:
+# el 8.84 no dice nada sobre 1959-1960. El numero que importa es el 43.18.
+# La razon entre los dos es 43.1837 / 8.8353 = 4.888.</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" role="tabpanel">
+          <pre><code class="language-python">import numpy as np, pandas as pd
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.datasets import get_rdataset
+
+ap = get_rdataset("AirPassengers").data["value"].to_numpy(dtype=float)
+idx = pd.date_range("1949-01-01", periods=len(ap), freq="MS")
+y = pd.Series(ap, index=idx)
+
+def rmse(a, b):
+    return float(np.sqrt(np.mean((np.asarray(a) - np.asarray(b)) ** 2)))
+
+# (1) Residuales: el modelo vio todos estos datos al estimarse
+fit = SARIMAX(np.log(y), order=(0, 1, 1), seasonal_order=(0, 1, 1, 12)).fit(disp=False)
+print("coef:", np.round(fit.params[:2].to_numpy(), 4))
+#&gt; coef: [-0.4019 -0.5571]
+
+# R da -0.4018 y -0.5569 sobre los mismos datos: es el MISMO modelo
+print("dif. maxima en los coeficientes:",
+      np.round(np.abs(fit.params[:2].to_numpy() - np.array([-0.4018, -0.5569])), 4))
+#&gt; dif. maxima en los coeficientes: [0.0001 0.0002]
+
+ajuste = np.exp(fit.fittedvalues)
+# Los 13 primeros (d + D*m) son el arranque del filtro, no residuales
+print("RMSE residuales :", round(rmse(y[13:], ajuste[13:]), 4))
+#&gt; RMSE residuales : 10.7149
+
+# (2) Error de pronostico: 1959-1960 no participo en nada
+tr, te = y[:120], y[120:]
+fit_tr = SARIMAX(np.log(tr), order=(0, 1, 1), seasonal_order=(0, 1, 1, 12)).fit(disp=False)
+pred = np.exp(fit_tr.get_forecast(24).predicted_mean)
+print("RMSE pronostico :", round(rmse(te, pred), 4))
+#&gt; RMSE pronostico : 43.1888
+
+print("discrepancia con R (%):", round(100 * abs(rmse(te, pred) / 43.1837 - 1), 4))
+#&gt; discrepancia con R (%): 0.0118
+
+# El numero que importa coincide. El de los residuales NO (10.7149 frente al
+# 10.155 de R), y la causa no es el modelo sino QUE RESIDUALES SE CUENTAN:
+# accuracy() de R promedia los 144, incluidos los 13 del arranque del filtro;
+# con esos 13 fuera R da 10.6455 y Python 10.7149, un 0.65 % de diferencia.
+# Que el propio R pase de 10.155 a 10.6455 segun el convenio es el mejor
+# argumento para no tomarse en serio esta cifra.</code></pre>
+        </div>
+      </div>
+
+      <div class="derivacion">
+        <button type="button" class="derivacion-boton" aria-expanded="false" aria-controls="c6d1-panel">
+          <i class="fas fa-square-root-variable" aria-hidden="true"></i>
+          Por qué los residuales son sistemáticamente optimistas
+          <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="derivacion-panel" id="c6d1-panel" hidden>
+          <ol class="derivacion-pasos">
+            <li><span class="derivacion-marca">1</span>
+              <div><p>Sea un modelo con $k$ parámetros estimados por mínimos cuadrados sobre $n$ observaciones. El
+                estimador $\hat\beta$ se elige, por construcción, para minimizar $\sum_t (y_t - x_t'\beta)^2$. Es decir:
+                <strong>ningún otro valor del parámetro da residuales más pequeños en esa muestra</strong>.</p></div></li>
+            <li><span class="derivacion-marca">2</span>
+              <div><p>Llamemos $\sigma^2$ a la varianza verdadera del término de error. Un resultado clásico da
+                $$ \mathbb{E}\left[\tfrac{1}{n}\sum_t \hat\varepsilon_t^2\right] = \sigma^2\left(1 - \tfrac{k}{n}\right), $$
+                que es <em>menor</em> que $\sigma^2$. Por eso la estimación insesgada divide por $n-k$ y no por $n$.</p></div></li>
+            <li><span class="derivacion-marca">3</span>
+              <div><p>Para una observación nueva $y_{n+1}$, en cambio, el error esperado es
+                $$ \mathbb{E}\left[(y_{n+1} - x_{n+1}'\hat\beta)^2\right] = \sigma^2\left(1 + \tfrac{k}{n}\right) $$
+                bajo los supuestos habituales: a la varianza irreducible se le <strong>suma</strong> la incertidumbre de
+                haber estimado $\hat\beta$, en vez de restarse.</p></div></li>
+            <li><span class="derivacion-marca">4</span>
+              <div><p>La razón entre los dos es $\dfrac{1 + k/n}{1 - k/n}$, que crece con $k$ y decrece con $n$. Con
+                $k = 2$ y $n = 144$ vale $1.028$: apenas un $3\,\%$. Con $k = 20$ y $n = 60$ vale $1.5$.</p></div></li>
+            <li><span class="derivacion-marca">5</span>
+              <div><p>Ese cálculo es <em>optimista</em> porque supone que el modelo es correcto y que el futuro se
+                genera igual que el pasado. En AirPassengers la razón medida es $1.86$, muy por encima del $1.03$ que
+                predice la fórmula con $k = 2$. La diferencia es todo lo que la fórmula no contempla: extrapolar una
+                tendencia, un régimen que cambia, y el horizonte $h = 12$ en vez de $h = 1$.</p></div></li>
+          </ol>
+          <p class="derivacion-resultado">Los residuales subestiman el error incluso en el mejor de los casos, y la
+            fórmula que cuantifica cuánto solo vale si el modelo es correcto. Por eso la corrección no se calcula: se
+            mide, reservando datos.</p>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>El AICc hace exactamente esta corrección, y por eso tampoco basta.</strong> El término $2k$ del AIC
+          es una estimación del optimismo del paso 2 de la derivación, deducida bajo el supuesto de que el modelo es
+          correcto y para $h = 1$. Sirve para <em>ordenar modelos anidados de la misma familia</em>, que es para lo que
+          lo usaron los Capítulos 3, 4 y 5. No sirve para estimar cuánto error habrá a doce meses vista, ni para
+          comparar un ARIMA con un ETS o con una red neuronal.</p>
+      </div>
+    </div>
+  </template>
+
+  <template id="module-2">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 2</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">6.2 Los métodos de referencia
+          <span class="text-gray-400 font-normal text-2xl">/ Benchmark methods</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Conocer los cuatro métodos triviales contra los que se
+              mide cualquier modelo, y aceptar la regla incómoda: un modelo que no les gana no vale la pena.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Un RMSE aislado no significa nada. «Mi modelo tiene un RMSE de $18.9$» no es información hasta que se sabe qué
+        RMSE tiene lo más tonto que se podía haber hecho. Los <strong>métodos de referencia</strong>
+        (<em>benchmark methods</em>) son ese punto cero: no tienen parámetros que estimar, se calculan en una línea, y
+        proporcionan la escala en la que leer cualquier otro número.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: los cuatro métodos de referencia</h4>
+        <p>Con entrenamiento $y_1,\dots,y_T$ y horizonte $h$:</p>
+        <p><strong>Media</strong> (<em>mean method</em>). Todo el futuro es el promedio del pasado:
+          $$ \hat y_{T+h\mid T} = \bar y = \frac{1}{T}\sum_{t=1}^{T} y_t. $$</p>
+        <p><strong>Naïve</strong> (<em>naïve method</em>). Todo el futuro es el último valor:
+          $$ \hat y_{T+h\mid T} = y_T. $$</p>
+        <p><strong>Naïve estacional</strong> (<em>seasonal naïve</em>). Cada mes futuro es el mismo mes del último año
+          disponible:
+          $$ \hat y_{T+h\mid T} = y_{T+h-m\lceil h/m\rceil}. $$</p>
+        <p style="margin-bottom:0;"><strong>Deriva</strong> (<em>drift method</em>). El último valor más la pendiente
+          media de toda la serie:
+          $$ \hat y_{T+h\mid T} = y_T + h\left(\frac{y_T - y_1}{T-1}\right). $$</p>
+      </div>
+
+      <div class="note">
+        <p><strong>No son métodos «de juguete»: tres de ellos son casos particulares de un ARIMA.</strong> El naïve es
+          exactamente un ARIMA$(0,1,0)$; la deriva, un ARIMA$(0,1,0)$ con constante; el naïve estacional, un
+          SARIMA$(0,0,0)(0,1,0)_m$. Por eso sus intervalos de pronóstico salen de la misma fórmula del Capítulo 4:
+          para el naïve todos los $\psi_j$ valen $1$ y el abanico crece como $\sigma\sqrt{h}$. La media es el único que
+          no encaja: su intervalo no se ensancha con $h$, porque el método no admite que el nivel pueda cambiar.</p>
+      </div>
+
+      <div class="simulador" data-simulador="benchmarks">
+        <h4><i class="fas fa-ruler-horizontal" aria-hidden="true"></i> Los cuatro métodos sobre AirPassengers</h4>
+        <p class="simulador-intro">Entrenamiento hasta diciembre de 1958 ($n = 120$), prueba los veinticuatro meses
+          siguientes. Enciende y apaga métodos y cambia la métrica del ranking. La forma de cada pronóstico dice de
+          inmediato qué supone el método: la media es una recta horizontal a la altura equivocada, el naïve una recta
+          horizontal a la altura del último dato, la deriva una recta inclinada, y solo el naïve estacional tiene
+          forma de año.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper" style="height:290px;">
+          <canvas aria-label="Pronósticos de los cuatro métodos de referencia" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Método</th><th>RMSE</th><th>MAE</th><th>MAPE (%)</th><th>Qué supone del futuro</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Media</td><td>$219.44$</td><td>$206.34$</td><td>$44.23$</td><td>Que no hay tendencia ni estación</td></tr>
+            <tr><td>Naïve</td><td>$137.33$</td><td>$115.25$</td><td>$23.58$</td><td>Que no hay tendencia ni estación, pero el nivel es el actual</td></tr>
+            <tr><td><strong>Naïve estacional</strong></td><td>$\mathbf{76.99}$</td><td>$\mathbf{71.25}$</td><td>$\mathbf{15.52}$</td><td>Que el año que viene es igual al pasado</td></tr>
+            <tr><td>Deriva</td><td>$115.70$</td><td>$91.62$</td><td>$18.41$</td><td>Que la tendencia media continúa, sin estación</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>El orden dice algo sobre la serie antes de ajustar nada. Que el naïve estacional gane por márgenes grandes
+        confirma que la estacionalidad es la estructura dominante de AirPassengers —lo mismo que decían el mapa mes ×
+        año y la ACF en el Capítulo 5, ahora en unidades de pasajeros—. En la TRM, en cambio, el ganador de los cuatro
+        es el naïve simple, y eso también es un diagnóstico: el Módulo 10 lo desarrolla.</p>
+
+      <div class="warning">
+        <p><strong>Cuál es «el» método de referencia depende de la serie, y elegirlo mal maquilla el resultado.</strong>
+          Comparar un SARIMA contra la <em>media</em> en una serie estacional es hacer trampa: se gana por goleada sin
+          haber demostrado nada. La referencia honesta es la mejor de las triviales para esa serie —el naïve estacional
+          en datos con estación, el naïve en series que se parecen a una caminata—, y es justo la que el MASE del
+          Módulo 5 pone en el denominador.</p>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Métodos de referencia">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r" role="tabpanel">
+          <pre><code class="language-r">library(forecast)
+
+tr &lt;- window(AirPassengers, end = c(1958, 12))   # n = 120
+te &lt;- window(AirPassengers, start = c(1959, 1))  # 24 meses
+
+referencias &lt;- list(
+  "Media"            = meanf(tr, h = 24),
+  "Naive"            = naive(tr, h = 24),
+  "Naive estacional" = snaive(tr, h = 24),
+  "Deriva"           = rwf(tr, h = 24, drift = TRUE)
+)
+
+t(sapply(referencias, function(fc)
+  round(accuracy(fc, te)["Test set", c("RMSE", "MAE", "MAPE", "MASE")], 4)))
+#&gt;                      RMSE      MAE    MAPE   MASE
+#&gt; Media            219.4392 206.3417 44.2346 7.2213
+#&gt; Naive            137.3290 115.2500 23.5775 4.0334
+#&gt; Naive estacional  76.9946  71.2500 15.5234 2.4935
+#&gt; Deriva           115.7035  91.6155 18.4084 3.2062
+
+# El naive es un ARIMA(0,1,0) y la deriva, el mismo con constante:
+arimaorder(Arima(tr, order = c(0, 1, 0)))          #&gt; p d q : 0 1 0
+round(rwf(tr, h = 3, drift = TRUE)$mean, 4)        # la pendiente media
+#&gt;           Jan      Feb      Mar
+#&gt; 1959 338.8908 340.7815 342.6723
+round(as.numeric(tail(tr, 1)) +
+      (1:3) * (as.numeric(tail(tr, 1)) - tr[1]) / (length(tr) - 1), 4)
+#&gt; [1] 338.8908 340.7815 342.6723   # identico, hecho a mano</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" role="tabpanel">
+          <pre><code class="language-python">import numpy as np, pandas as pd
+from statsmodels.datasets import get_rdataset
+
+ap = get_rdataset("AirPassengers").data["value"].to_numpy(dtype=float)
+idx = pd.date_range("1949-01-01", periods=len(ap), freq="MS")
+y = pd.Series(ap, index=idx)
+tr, te = y[:120], y[120:]
+h, m = 24, 12
+
+# statsmodels no trae los metodos de referencia: son cuatro lineas
+ref = {
+    "Media":            np.repeat(tr.mean(), h),
+    "Naive":            np.repeat(tr.iloc[-1], h),
+    "Naive estacional": np.array([tr.iloc[-m + (i % m)] for i in range(h)]),
+    "Deriva":           tr.iloc[-1] + np.arange(1, h + 1) *
+                        (tr.iloc[-1] - tr.iloc[0]) / (len(tr) - 1),
+}
+
+# El MASE escala con el MAE del naive ESTACIONAL sobre el ENTRENAMIENTO
+q = np.mean(np.abs(tr.to_numpy()[m:] - tr.to_numpy()[:-m]))
+print(round(q, 4))   #&gt; 28.5741
+
+for nombre, p in ref.items():
+    e = te.to_numpy() - np.asarray(p, dtype=float)
+    print(f"{nombre:17s} RMSE {np.sqrt(np.mean(e**2)):8.4f}  "
+          f"MAE {np.mean(np.abs(e)):8.4f}  "
+          f"MAPE {100*np.mean(np.abs(e/te.to_numpy())):7.4f}  "
+          f"MASE {np.mean(np.abs(e))/q:6.4f}")
+#&gt; Media             RMSE 219.4392  MAE 206.3417  MAPE 44.2346  MASE 7.2213
+#&gt; Naive             RMSE 137.3290  MAE 115.2500  MAPE 23.5775  MASE 4.0334
+#&gt; Naive estacional  RMSE  76.9946  MAE  71.2500  MAPE 15.5234  MASE 2.4935
+#&gt; Deriva            RMSE 115.7035  MAE  91.6155  MAPE 18.4084  MASE 3.2062
+
+# Coinciden con R hasta el ultimo decimal impreso: estos cuatro metodos no
+# tienen nada que estimar, asi que no hay optimizador que pueda discrepar.</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="module-3">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 3</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">6.3 RMSE y MAE: qué optimiza cada uno
+          <span class="text-gray-400 font-normal text-2xl">/ Scale-dependent errors</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Entender que elegir entre RMSE y MAE no es una cuestión
+              de gusto: cada una premia un pronóstico distinto, y hay casos reales en los que dan ganadores opuestos.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: errores dependientes de la escala</h4>
+        <p>Con errores de pronóstico $e_1,\dots,e_n$ sobre un conjunto de prueba:</p>
+        <p>$$ \text{MAE} = \frac{1}{n}\sum_{i=1}^{n} |e_i|, \qquad
+             \text{RMSE} = \sqrt{\frac{1}{n}\sum_{i=1}^{n} e_i^2}. $$</p>
+        <p style="margin-bottom:0;">Se llaman <strong>dependientes de la escala</strong> (<em>scale-dependent</em>)
+          porque están en las mismas unidades que la serie. Eso las hace fáciles de interpretar —$18.9$ pasajeros— y
+          <strong>inservibles para comparar entre series distintas</strong>: no se puede promediar el RMSE de una serie
+          en pasajeros con el de otra en pesos.</p>
+      </div>
+
+      <h3>Cada una apunta a un resumen distinto de la distribución</h3>
+
+      <p>La diferencia de fondo no es que el RMSE «castigue más los errores grandes», aunque sea cierto. Es que las dos
+        métricas se minimizan con pronósticos <strong>distintos</strong>:</p>
+
+      <div class="formula">
+        $$ \arg\min_{f}\ \mathbb{E}\left[(Y - f)^2\right] = \mathbb{E}[Y], \qquad
+           \arg\min_{f}\ \mathbb{E}\left[\,|Y - f|\,\right] = \operatorname{mediana}(Y). $$
+      </div>
+
+      <p>Si se evalúa con RMSE, el mejor pronóstico posible es la <strong>media</strong> de la distribución predictiva;
+        si se evalúa con MAE, es la <strong>mediana</strong>. En una distribución simétrica coinciden y la discusión no
+        existe. En una asimétrica —y toda serie a la que se le aplica un logaritmo tiene predictiva asimétrica al
+        deshacer la transformación— son números diferentes, y elegir la métrica es elegir qué se le pide al modelo.</p>
+
+      <div class="note">
+        <p><strong>Esto explica el <code>biasadj</code> del Capítulo 5.</strong> Al deshacer un logaritmo,
+          $\exp(\hat\mu_h)$ es la <em>mediana</em> de la predictiva, no la media. <code>forecast()</code> devuelve la
+          mediana salvo que se pida <code>biasadj = TRUE</code>, que le suma $\sigma_h^2/2$ para dar la media. Si se va
+          a evaluar con MAE, la mediana es la respuesta correcta y activar <code>biasadj</code> <strong>empeora</strong>
+          el resultado; si se va a evaluar con RMSE, es al revés. Las dos opciones son correctas y la pregunta es cuál
+          es la métrica.</p>
+      </div>
+
+      <h3>Cuándo se contradicen, medido</h3>
+
+      <p>Sobre los $61$ orígenes de AirPassengers que construye el Módulo 7, se comparan el naïve estacional y la
+        deriva en cada origen por separado. En <strong>$10$ de los $61$</strong> las dos métricas nombran ganadores
+        distintos. No es un caso patológico fabricado: es el $16\,\%$ de las comparaciones sobre datos reales.</p>
+
+      <div class="simulador" data-simulador="rmse-vs-mae">
+        <h4><i class="fas fa-balance-scale-right" aria-hidden="true"></i> El origen donde las dos métricas discrepan</h4>
+        <p class="simulador-intro">Recorre los orígenes con el deslizador. Las barras son los doce errores de cada
+          método en ese origen. Marca la casilla para saltar solo a los $10$ orígenes en conflicto: verás siempre el
+          mismo patrón —la deriva acumula muchos errores pequeños y unos pocos grandes, el naïve estacional los reparte
+          parejos—. El MAE, que suma valores absolutos, premia a la deriva; el RMSE, que suma cuadrados, castiga sus
+          picos y premia al naïve estacional.</p>
+        <div class="simulador-controles"></div>
+        <p class="grafico-etiqueta">Los doce errores de pronóstico del origen seleccionado</p>
+        <div class="grafico-wrapper" style="height:250px;">
+          <canvas aria-label="Errores de pronóstico de dos métodos en el origen elegido" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Origen</th><th colspan="2">RMSE</th><th colspan="2">MAE</th><th>Contradicción</th></tr>
+            <tr><th></th><th>N. estacional</th><th>Deriva</th><th>N. estacional</th><th>Deriva</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1955-01</td><td>$\mathbf{46.21}$</td><td>$50.82$</td><td>$45.42$</td><td>$\mathbf{39.41}$</td><td>Sí</td></tr>
+            <tr><td>1955-10</td><td>$\mathbf{46.65}$</td><td>$59.05$</td><td>$46.00$</td><td>$\mathbf{43.42}$</td><td>Sí</td></tr>
+            <tr><td>1955-12</td><td>$\mathbf{45.18}$</td><td>$58.58$</td><td>$44.25$</td><td>$\mathbf{42.92}$</td><td>Sí</td></tr>
+            <tr><td>1956-01</td><td>$\mathbf{44.44}$</td><td>$56.00$</td><td>$43.33$</td><td>$\mathbf{40.70}$</td><td>Sí</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="warning">
+        <p><strong>La consecuencia práctica.</strong> La métrica hay que fijarla <em>antes</em> de mirar los
+          resultados, y hay que justificarla con el problema, no con el número que sale. Si un error del doble de
+          tamaño hace el doble de daño —costo lineal, como un inventario que se repone—, el MAE. Si hace más del doble
+          —una rotura de suministro, una penalización contractual—, el RMSE. Escoger a posteriori la métrica con la que
+          gana tu modelo tiene nombre propio y es el hermano pequeño de la fuga de información del Módulo 6.</p>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="RMSE frente a MAE">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r" role="tabpanel">
+          <pre><code class="language-r">library(forecast)
+
+# El origen 1955-01 (T = 73): las dos metricas dan ganadores distintos
+Tt &lt;- 73
+tr &lt;- subset(AirPassengers, start = 1, end = Tt)
+real &lt;- as.numeric(AirPassengers)[(Tt + 1):(Tt + 12)]
+
+e_sn &lt;- real - as.numeric(snaive(tr, h = 12)$mean)
+e_dr &lt;- real - as.numeric(rwf(tr, h = 12, drift = TRUE)$mean)
+
+c(rmse_snaive = sqrt(mean(e_sn^2)), rmse_deriva = sqrt(mean(e_dr^2)))
+#&gt; rmse_snaive rmse_deriva
+#&gt;    46.21057    50.82060      &lt;- gana el naive estacional
+c(mae_snaive = mean(abs(e_sn)), mae_deriva = mean(abs(e_dr)))
+#&gt;  mae_snaive  mae_deriva
+#&gt;    45.41667    39.40741      &lt;- gana la deriva
+
+# Por que: la deriva tiene mas errores pequenos y unos pocos muy grandes
+round(sort(abs(e_sn)), 2)
+#&gt;  [1] 32 34 36 42 42 45 45 49 51 53 54 62
+round(sort(abs(e_dr)), 2)
+#&gt;  [1]  10.81  15.75  16.14  20.33  20.78  21.39
+#&gt;  [7]  21.58  23.06  55.56  63.97  92.36 111.17
+
+# Ocho de los doce errores de la deriva son MENORES que el menor del naive
+# estacional; sus cuatro ultimos, mucho mayores. El MAE promedia y gana la
+# deriva; el RMSE eleva al cuadrado primero, y el 111.17 basta para invertirlo.</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" role="tabpanel">
+          <pre><code class="language-python">import numpy as np, pandas as pd
+from statsmodels.datasets import get_rdataset
+
+ap = get_rdataset("AirPassengers").data["value"].to_numpy(dtype=float)
+T, h, m = 73, 12, 12
+tr, real = ap[:T], ap[T:T + h]
+
+snaive = np.array([tr[-m + (i % m)] for i in range(h)])
+deriva = tr[-1] + np.arange(1, h + 1) * (tr[-1] - tr[0]) / (len(tr) - 1)
+
+for nombre, p in [("naive estacional", snaive), ("deriva", deriva)]:
+    e = real - p
+    print(f"{nombre:17s} RMSE {np.sqrt(np.mean(e**2)):8.5f}  MAE {np.mean(np.abs(e)):8.5f}")
+#&gt; naive estacional  RMSE 46.21057  MAE 45.41667
+#&gt; deriva            RMSE 50.82060  MAE 39.40741
+
+# La media minimiza el error cuadratico y la mediana el absoluto:
+# comprobado sobre una muestra asimetrica cualquiera
+rng = np.random.default_rng(2026)
+Y = rng.lognormal(0, 1, 200_000)
+rej = np.linspace(0.5, 3.0, 501)
+f_rmse = rej[np.argmin([np.mean((Y - f)**2) for f in rej])]
+f_mae  = rej[np.argmin([np.mean(np.abs(Y - f)) for f in rej])]
+print(f"minimo RMSE en {f_rmse:.3f} (media {Y.mean():.3f}) | "
+      f"minimo MAE en {f_mae:.3f} (mediana {np.median(Y):.3f})")
+#&gt; minimo RMSE en 1.645 (media 1.647) | minimo MAE en 1.000 (mediana 1.002)
+
+# En una lognormal la media y la mediana estan a un 65 % de distancia, asi
+# que la eleccion de metrica cambia el pronostico optimo, no solo su nota.</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>

@@ -1,0 +1,562 @@
+  <template id="module-4">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 4</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">6.4 MAPE y sMAPE: los dos fallos del porcentaje
+          <span class="text-gray-400 font-normal text-2xl">/ Percentage errors</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Ver los dos modos de fallo del MAPE —el sesgo a la baja
+              que induce y su explosión cerca del cero— con números, y por qué el sMAPE no los arregla.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>El RMSE y el MAE están en las unidades de la serie, y eso impide comparar entre series. La solución evidente
+        es dividir por el valor observado y hablar en porcentaje. Es la métrica más usada de la industria y la que más
+        decisiones equivocadas ha producido.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: errores porcentuales</h4>
+        <p>El <strong>error porcentual</strong> es $p_i = 100\,e_i / y_i$. De ahí:</p>
+        <p>$$ \text{MAPE} = \frac{100}{n}\sum_{i=1}^{n}\left|\frac{e_i}{y_i}\right|, \qquad
+             \text{MPE} = \frac{100}{n}\sum_{i=1}^{n}\frac{e_i}{y_i}. $$</p>
+        <p>El <strong>MAPE simétrico</strong> pone en el denominador el promedio de lo observado y lo predicho:</p>
+        <p style="margin-bottom:0;">$$ \text{sMAPE} = \frac{200}{n}\sum_{i=1}^{n}
+             \frac{|y_i - \hat y_i|}{|y_i| + |\hat y_i|}. $$</p>
+      </div>
+
+      <p>El MPE, sin valor absoluto, no es una métrica de exactitud sino de <strong>sesgo</strong>: dice si el modelo
+        se queda sistemáticamente corto o largo. Es útil junto a las demás, nunca en su lugar.</p>
+
+      <h3>Fallo 1: minimizar MAPE empuja el pronóstico hacia abajo</h3>
+
+      <p>La afirmación que se lee a menudo —«el MAPE es simétrico porque $|e|/y$ no distingue el signo»— es cierta
+        para un valor observado fijo y falsa en cuanto el futuro es incierto, que es siempre. El escenario más pequeño
+        que lo demuestra cabe en dos líneas: el valor futuro vale $100$ o $200$ con probabilidad $1/2$, y hay que
+        elegir un único pronóstico $f$.</p>
+
+      <div class="simulador" data-simulador="sesgo-mape">
+        <h4><i class="fas fa-arrow-trend-down" aria-hidden="true"></i> Qué pronóstico premia cada métrica</h4>
+        <p class="simulador-intro">Las tres curvas son el valor <em>esperado</em> de cada métrica en función del
+          pronóstico $f$. El RMSE se minimiza en $150$, la media de la distribución. El MAE es plano entre $100$ y
+          $200$: cualquier punto del intervalo es una mediana válida. Y el MAPE tiene su mínimo en $\mathbf{100}$, el
+          valor <strong>más bajo posible</strong>. Mueve el deslizador y compara el MAPE en $100$ ($25\,\%$) con el de
+          $200$ ($50\,\%$): predecir alto cuesta el doble que predecir bajo.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper" style="height:250px;">
+          <canvas aria-label="Métrica esperada en función del pronóstico" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <p>La asimetría viene del denominador: cuando el valor real resulta ser $100$, un error de $50$ pesa un
+        $50\,\%$; cuando resulta ser $200$, el mismo error de $50$ pesa un $25\,\%$. El MAPE le da más importancia a
+        los escenarios de valor bajo, así que el pronóstico óptimo se acerca a ellos. Un equipo evaluado por MAPE
+        aprende a subpronosticar, y lo hace sin saberlo.</p>
+
+      <h3>Fallo 2: cerca del cero, el MAPE deja de existir</h3>
+
+      <p>Si algún $y_i$ vale cero, el MAPE es infinito; si vale poco, es enorme. No es una rareza teórica: cualquier
+        serie de <em>retornos</em>, de variaciones o de saldos cruza el cero constantemente. Sobre los log-retornos
+        mensuales de la TRM, con veinticuatro meses de prueba y el método de la media:</p>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Métrica</th><th>Valor</th><th>Lectura</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>MAPE</td><td>$1093.29\,\%$</td><td>Sin sentido</td></tr>
+            <tr><td>Mediana de los $|p_i|$</td><td>$116.73\,\%$</td><td>Un solo dato arrastra la media</td></tr>
+            <tr><td>Mayor $|p_i|$ individual</td><td>$\mathbf{16\,091.65\,\%}$</td><td>El mes con retorno $-0.0029\,\%$</td></tr>
+            <tr><td>MAE</td><td>$2.1698$ puntos porcentuales</td><td>Interpretable</td></tr>
+            <tr><td>RMSE</td><td>$2.6375$ puntos porcentuales</td><td>Interpretable</td></tr>
+            <tr><td><strong>MASE</strong></td><td>$\mathbf{0.6062}$</td><td>Interpretable y comparable</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="simulador" data-simulador="mape-cero">
+        <h4><i class="fas fa-explosion" aria-hidden="true"></i> El MAPE sobre una serie que cruza el cero</h4>
+        <p class="simulador-intro">Cada barra es el error porcentual absoluto de un mes de prueba. Ajusta el umbral de
+          la escala para poder ver algo: con la escala completa, un único mes hace invisibles a los otros veintitrés.
+          Ese mes tuvo un retorno de $-0.0029\,\%$ —la TRM se movió casi nada— y basta para llevar el MAPE de la
+          serie a cuatro cifras.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper" style="height:250px;">
+          <canvas aria-label="Errores porcentuales absolutos mes a mes" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="warning">
+        <p><strong>El sMAPE tampoco lo arregla.</strong> Su nombre promete simetría y no la tiene: sigue penalizando
+          más la subpredicción que la sobrepredicción, su cota superior es $200\,\%$ —lo que comprime artificialmente
+          las diferencias entre métodos malos— y con valores que pueden ser negativos el denominador $|y|+|\hat y|$
+          puede acercarse a cero igual que el del MAPE. Se usa en algunas competiciones por costumbre; para decidir
+          algo, la respuesta es el MASE del módulo siguiente.</p>
+      </div>
+
+      <div class="note">
+        <p><strong>Cuándo sí usar el MAPE.</strong> Cuando la serie es estrictamente positiva, está lejos del cero, y
+          quien recibe el informe piensa en porcentajes. En AirPassengers —que no baja de $104$— el MAPE es informativo
+          y coincide en el orden con las demás métricas. La regla es sencilla: mira el mínimo de la serie de prueba
+          antes de calcularlo.</p>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="MAPE y sMAPE">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r" role="tabpanel">
+          <pre><code class="language-r"># Fallo 1: el MAPE esperado se minimiza en el valor BAJO, no en la media
+f &lt;- seq(80, 220, by = 2)
+mape &lt;- 100 * (0.5 * abs(100 - f) / 100 + 0.5 * abs(200 - f) / 200)
+rmse &lt;- sqrt(0.5 * (100 - f)^2 + 0.5 * (200 - f)^2)
+
+c(f_optimo_mape = f[which.min(mape)], f_optimo_rmse = f[which.min(rmse)])
+#&gt; f_optimo_mape f_optimo_rmse
+#&gt;           100           150
+round(c(mape_en_100 = mape[f == 100], mape_en_150 = mape[f == 150],
+        mape_en_200 = mape[f == 200]), 4)
+#&gt; mape_en_100 mape_en_150 mape_en_200
+#&gt;        25.0        37.5        50.0
+
+# Fallo 2: la misma metrica sobre una serie que cruza el cero
+library(forecast)
+serie &lt;- jsonlite::fromJSON("salidas/datos_series.json")$trm
+trm &lt;- ts(serie$valores, start = serie$inicio, frequency = 12)
+ret &lt;- diff(log(trm)) * 100          # log-retornos mensuales, en %
+
+n &lt;- length(ret)
+tr &lt;- subset(ret, start = 1, end = n - 24)
+te &lt;- as.numeric(ret)[(n - 23):n]
+p &lt;- as.numeric(meanf(tr, h = 24)$mean)
+
+ape &lt;- 100 * abs((te - p) / te)
+round(c(mape = mean(ape), mediana = median(ape), maximo = max(ape)), 4)
+#&gt;      mape  mediana   maximo
+#&gt;  1093.288  116.729 16091.648
+round(te[which.max(ape)], 4)         # el mes culpable
+#&gt; [1] -0.0029
+round(c(mae = mean(abs(te - p)), rmse = sqrt(mean((te - p)^2))), 4)
+#&gt;    mae   rmse
+#&gt; 2.1698 2.6375
+sum(abs(as.numeric(ret)) &lt; 0.1)      # meses con retorno casi nulo
+#&gt; [1] 6</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" role="tabpanel">
+          <pre><code class="language-python">import numpy as np, json
+
+# Fallo 1
+f = np.arange(80, 221, 2, dtype=float)
+mape = 100 * (0.5 * np.abs(100 - f) / 100 + 0.5 * np.abs(200 - f) / 200)
+rmse = np.sqrt(0.5 * (100 - f) ** 2 + 0.5 * (200 - f) ** 2)
+print("f optimo MAPE:", f[mape.argmin()], "| f optimo RMSE:", f[rmse.argmin()])
+#&gt; f optimo MAPE: 100.0 | f optimo RMSE: 150.0
+
+# Fallo 2
+serie = json.load(open("salidas/datos_series.json"))["trm"]["valores"]
+ret = np.diff(np.log(np.asarray(serie, dtype=float))) * 100
+tr, te = ret[:-24], ret[-24:]
+p = np.repeat(tr.mean(), 24)
+
+ape = 100 * np.abs((te - p) / te)
+print("MAPE   :", round(ape.mean(), 4))          #&gt; MAPE   : 1093.2882
+print("mediana:", round(float(np.median(ape)), 4))  #&gt; mediana: 116.729
+print("maximo :", round(ape.max(), 4))           #&gt; maximo : 16091.6483
+print("mes culpable:", round(te[ape.argmax()], 4))  #&gt; mes culpable: -0.0029
+
+# El sMAPE tampoco: mismo pronostico, valor comodo y sin sentido igual
+smape = 200 * np.mean(np.abs(te - p) / (np.abs(te) + np.abs(p)))
+print("sMAPE  :", round(smape, 4))               #&gt; sMAPE  : 121.7959
+
+# Y su asimetria, en el escenario del fallo 1: predecir 200 cuando el valor
+# real es 100 no cuesta lo mismo que predecir 100 cuando el real es 200
+alto = 200 * abs(100 - 200) / (100 + 200)
+bajo = 200 * abs(200 - 100) / (200 + 100)
+print("sMAPE arriba / abajo:", round(alto, 4), round(bajo, 4))
+#&gt; sMAPE arriba / abajo: 66.6667 66.6667
+# Aqui si empatan; la asimetria del sMAPE aparece al PROMEDIAR sobre una
+# distribucion, igual que la del MAPE, no en una sola observacion.</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="module-5">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 5</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">6.5 MASE: comparar entre series
+          <span class="text-gray-400 font-normal text-2xl">/ Scaled errors</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Manejar la métrica que resuelve a la vez los dos
+              problemas anteriores, y leer su valor sin dudar: $\text{MASE} < 1$ significa algo concreto.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Hyndman y Koehler (2006) propusieron dividir el error no por el valor observado —que puede ser cero— sino por
+        el error que habría cometido el método de referencia <strong>sobre el conjunto de entrenamiento</strong>. La
+        división sigue quitando las unidades, pero el denominador ya no puede acercarse a cero salvo que la serie sea
+        constante.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: MASE y RMSSE</h4>
+        <p>Con entrenamiento $y_1,\dots,y_T$ de periodo estacional $m$ (con $m = 1$ si no hay estación), sea</p>
+        <p>$$ Q = \frac{1}{T-m}\sum_{t=m+1}^{T} |y_t - y_{t-m}| $$</p>
+        <p>el MAE del naïve estacional <em>dentro del entrenamiento</em>. Entonces</p>
+        <p>$$ \text{MASE} = \frac{\text{MAE}}{Q}, \qquad
+             \text{RMSSE} = \frac{\text{RMSE}}{\sqrt{\dfrac{1}{T-m}\sum_{t=m+1}^{T}(y_t - y_{t-m})^2}}. $$</p>
+        <p style="margin-bottom:0;">$\text{MASE} < 1$ significa que el método comete, en promedio, menos error
+          pronosticando el futuro del que comete el naïve estacional prediciendo un paso dentro del pasado.</p>
+      </div>
+
+      <div class="note">
+        <p><strong>Por qué el denominador va sobre el entrenamiento y no sobre la prueba.</strong> Si $Q$ se calculara
+          sobre el conjunto de prueba, cambiaría con cada partición y el MASE dejaría de ser comparable entre orígenes:
+          justo lo que se necesita para promediarlo en el Módulo 7. Fijándolo en el entrenamiento, $Q$ es una constante
+          de la serie y el MASE de todos los métodos y de todos los orígenes vive en la misma escala.</p>
+      </div>
+
+      <h3>Qué sobrevive a un cambio de unidades</h3>
+
+      <p>La prueba definitiva de que una métrica es adimensional es multiplicar la serie por mil y ver qué pasa. Sobre
+        AirPassengers con el naïve estacional, entrenamiento hasta 1958:</p>
+
+      <div class="simulador" data-simulador="cambio-escala">
+        <h4><i class="fas fa-arrows-up-down-left-right" aria-hidden="true"></i> Multiplica las unidades y mira qué se mueve</h4>
+        <p class="simulador-intro">El deslizador cambia el factor de escala de la serie (de miles de pasajeros a
+          pasajeros, a decenas...). Las barras son cada métrica dividida por su valor original: las que se quedan en
+          $1$ son las que se pueden comparar entre series distintas. El RMSE y el MAE se van con el factor; el MAPE,
+          el sMAPE, el MASE y el RMSSE no se mueven.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper" style="height:240px;">
+          <canvas aria-label="Métricas relativas al cambiar la escala de la serie" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="warning">
+        <p><strong>Trampa real encontrada auditando este capítulo: <code>accuracy()</code> cambia la definición del
+          MASE según la clase del conjunto de prueba.</strong> Internamente decide la escala con
+          <code>frequency(x)</code>: si el conjunto de prueba es un <code>ts</code> mensual usa el naïve
+          <em>estacional</em> ($Q = 28.5741$) y devuelve $\text{MASE} = 2.4935$; si se le pasa el mismo vector con
+          <code>as.numeric()</code>, <code>frequency</code> vale $1$, usa el naïve simple ($Q = 22.1597$) y devuelve
+          $3.2153$. Un <strong>$28.9\,\%$</strong> de diferencia, sin ningún aviso, por un cambio de tipo que parece
+          cosmético. Comprueba siempre que tu conjunto de prueba conserva la frecuencia.</p>
+      </div>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Métrica</th><th>Unidades</th><th>Cero en el denominador</th><th>Comparable entre series</th><th>Cuándo usarla</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>MAE</td><td>De la serie</td><td>—</td><td>No</td><td>Costo lineal del error</td></tr>
+            <tr><td>RMSE</td><td>De la serie</td><td>—</td><td>No</td><td>Costo creciente del error</td></tr>
+            <tr><td>MAPE</td><td>%</td><td><strong>Sí</strong></td><td>Solo si $y \gg 0$</td><td>Informe a quien piensa en %</td></tr>
+            <tr><td>sMAPE</td><td>%</td><td>Sí</td><td>Con reservas</td><td>Compatibilidad con competiciones antiguas</td></tr>
+            <tr><td><strong>MASE</strong></td><td>Ninguna</td><td>No</td><td><strong>Sí</strong></td><td><strong>Por defecto</strong></td></tr>
+            <tr><td>RMSSE</td><td>Ninguna</td><td>No</td><td>Sí</td><td>Como MASE, si el costo es cuadrático</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="MASE y RMSSE">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r" role="tabpanel">
+          <pre><code class="language-r">library(forecast)
+
+tr &lt;- window(AirPassengers, end = c(1958, 12))
+te_ts &lt;- window(AirPassengers, start = c(1959, 1))   # sigue siendo ts mensual
+fc &lt;- snaive(tr, h = 24)
+
+# El MASE a mano, con la formula del recuadro
+Q &lt;- mean(abs(diff(as.numeric(tr), lag = 12)))
+e &lt;- as.numeric(te_ts) - as.numeric(fc$mean)
+round(c(Q = Q, MAE = mean(abs(e)), MASE = mean(abs(e)) / Q), 4)
+#&gt;       Q     MAE    MASE
+#&gt; 28.5741 71.2500  2.4935
+
+# LA TRAMPA: el mismo conjunto de prueba, con y sin frecuencia
+round(c(con_ts      = accuracy(fc, te_ts)["Test set", "MASE"],
+        con_numeric = accuracy(fc, as.numeric(te_ts))["Test set", "MASE"]), 4)
+#&gt;      con_ts con_numeric
+#&gt;      2.4935      3.2153
+round(mean(abs(diff(as.numeric(tr), lag = 1))), 4)   # el otro denominador
+#&gt; [1] 22.1597
+
+# Adimensionalidad: la misma serie x1000
+tr_k &lt;- tr * 1000; te_k &lt;- te_ts * 1000
+a &lt;- accuracy(snaive(tr, h = 24), te_ts)["Test set", c("RMSE", "MAE", "MAPE", "MASE")]
+b &lt;- accuracy(snaive(tr_k, h = 24), te_k)["Test set", c("RMSE", "MAE", "MAPE", "MASE")]
+round(b / a, 4)
+#&gt;  RMSE   MAE  MAPE  MASE
+#&gt;  1000  1000     1     1</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" role="tabpanel">
+          <pre><code class="language-python">import numpy as np
+from statsmodels.datasets import get_rdataset
+
+ap = get_rdataset("AirPassengers").data["value"].to_numpy(dtype=float)
+tr, te, m, h = ap[:120], ap[120:], 12, 24
+snaive = np.array([tr[-m + (i % m)] for i in range(h)])
+
+def metricas(real, pred, entrena, m=1):
+    e = real - pred
+    Q = np.mean(np.abs(entrena[m:] - entrena[:-m]))
+    Qr = np.sqrt(np.mean((entrena[m:] - entrena[:-m]) ** 2))
+    return {
+        "RMSE":  np.sqrt(np.mean(e ** 2)),
+        "MAE":   np.mean(np.abs(e)),
+        "MAPE":  100 * np.mean(np.abs(e / real)),
+        "sMAPE": 200 * np.mean(np.abs(e) / (np.abs(real) + np.abs(pred))),
+        "MASE":  np.mean(np.abs(e)) / Q,
+        "RMSSE": np.sqrt(np.mean(e ** 2)) / Qr,
+    }
+
+a = metricas(te, snaive, tr, m)
+print({k: round(float(v), 4) for k, v in a.items()})
+#&gt; {'RMSE': 76.9946, 'MAE': 71.25, 'MAPE': 15.5234, 'sMAPE': 17.0126,
+#&gt;  'MASE': 2.4935, 'RMSSE': 2.3686}
+
+# La misma serie en pasajeros en vez de miles de pasajeros
+b = metricas(te * 1000, snaive * 1000, tr * 1000, m)
+print({k: round(float(b[k] / a[k]), 4) for k in a})
+#&gt; {'RMSE': 1000.0, 'MAE': 1000.0, 'MAPE': 1.0, 'sMAPE': 1.0,
+#&gt;  'MASE': 1.0, 'RMSSE': 1.0}
+
+# La trampa de R no existe aqui porque el periodo es un argumento explicito,
+# pero el error equivalente si: pasar m=1 a una serie mensual
+print("MASE con m=12:", round(metricas(te, snaive, tr, 12)["MASE"], 4))
+#&gt; MASE con m=12: 2.4935
+print("MASE con m=1 :", round(metricas(te, snaive, tr, 1)["MASE"], 4))
+#&gt; MASE con m=1 : 3.2153</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="module-6">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 6</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">6.6 Partición temporal y fuga de información
+          <span class="text-gray-400 font-normal text-2xl">/ Temporal splits and leakage</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Saber exactamente <em>cuándo</em> la validación cruzada
+              estándar miente sobre una serie de tiempo —no siempre lo hace— y reconocer la otra fuga, la de elegir el
+              modelo mirando el conjunto de prueba.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>La partición mínima honesta es la <strong>temporal</strong>: entrenamiento $y_1,\dots,y_T$, prueba
+        $y_{T+1},\dots,y_{T+h}$, sin mezclar. Es lo que se ha usado en los módulos anteriores. La pregunta de este
+        módulo es qué pasa si en lugar de eso se aplica la receta de la ciencia de datos general —repartir las
+        observaciones al azar en $k$ pliegues— y por qué ese reparto es el que menciona el syllabus del curso como
+        conexión con la ciencia de datos.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: fuga de información</h4>
+        <p style="margin-bottom:0;">Hay <strong>fuga de información</strong> (<em>data leakage</em>) cuando el
+          procedimiento de evaluación deja que información no disponible en el momento del pronóstico influya en la
+          predicción. En series de tiempo la forma más habitual es la <strong>fuga temporal</strong>: usar, directa o
+          indirectamente, observaciones posteriores al origen del pronóstico.</p>
+      </div>
+
+      <h3>La versión medida, que es más fina que el eslogan</h3>
+
+      <p>La afirmación de manual es que la validación cruzada aleatoria «sobrestima el desempeño» en series de tiempo.
+        Antes de repetirla conviene medirla. Sobre $\log(\text{AirPassengers})$, con $131$ filas de rezagos $1$ a $13$,
+        se reservan las últimas $24$ como bloque final —que nadie toca— y sobre las $107$ restantes se estima el error
+        de dos maneras: $5$ pliegues aleatorios y origen móvil de un paso. Con cinco modelos distintos:</p>
+
+      <div class="simulador" data-simulador="fuga-cv">
+        <h4><i class="fas fa-shuffle" aria-hidden="true"></i> Cuándo miente el $k$-fold aleatorio</h4>
+        <p class="simulador-intro">Las tres barras de cada modelo son el RMSE que estima el $k$-fold aleatorio, el que
+          estima el origen móvil, y el real medido sobre el bloque final. Cuando la barra del $k$-fold es mucho más
+          baja que la del bloque final, el método está prometiendo un error que no va a ocurrir. Fíjate en que <em>con
+          la regresión sobre rezagos no pasa</em>: el $k$-fold da $0.0476$ frente a un error real de $0.0391$, es
+          decir, se queda corto en la dirección segura.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper" style="height:260px;">
+          <canvas aria-label="RMSE estimado por tres procedimientos, para cinco modelos" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Modelo</th><th>$k$-fold</th><th>Origen móvil</th><th>Bloque final (real)</th><th>Optimismo del $k$-fold</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Regresión sobre rezagos $1..13$</td><td>$0.0476$</td><td>$0.0337$</td><td>$0.0391$</td><td>$\mathbf{-21.8\,\%}$</td></tr>
+            <tr><td>$1$ vecino más cercano</td><td>$0.1092$</td><td>$0.1040$</td><td>$0.1821$</td><td>$+40.0\,\%$</td></tr>
+            <tr><td>$3$ vecinos más cercanos</td><td>$0.0805$</td><td>$0.0993$</td><td>$0.1917$</td><td>$+58.0\,\%$</td></tr>
+            <tr><td>Tendencia $+$ indicadoras de mes</td><td>$0.0587$</td><td>$0.0576$</td><td>$0.0931$</td><td>$+37.0\,\%$</td></tr>
+            <tr><td>Polinomio de grado $8$ en $t$</td><td>$0.1351$</td><td>$0.2511$</td><td>$\mathbf{12.8984}$</td><td>$\mathbf{+99.0\,\%}$</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>El patrón es nítido y no es el del eslogan. El $k$-fold aleatorio miente <strong>cuando el modelo interpola en
+        el tiempo</strong>: si la predicción de un punto se apoya en sus vecinos temporales —vecinos más cercanos, una
+        tendencia paramétrica, indicadoras de mes—, repartir al azar deja esos vecinos dentro del entrenamiento y el
+        modelo resuelve un problema mucho más fácil que el real. Con una regresión sobre rezagos no ocurre: los rezagos
+        <em>ya contienen</em> a los vecinos, así que el reparto aleatorio no regala nada nuevo.</p>
+
+      <div class="warning">
+        <p><strong>El caso del polinomio merece mirarse dos veces.</strong> Un polinomio de grado $8$ en el índice de
+          tiempo da un RMSE de $0.1351$ en validación cruzada —un ajuste aparentemente decente— y de
+          $\mathbf{12.8984}$ sobre los veinticuatro meses siguientes: casi <strong>cien veces peor</strong>. Interpolar
+          un polinomio es fácil y extrapolarlo es catastrófico, y el $k$-fold aleatorio solo mide lo primero. Es la
+          demostración más limpia de por qué «probé validación cruzada y salió bien» no es un argumento.</p>
+      </div>
+
+      <h3>La otra fuga: elegir el modelo mirando la prueba</h3>
+
+      <p>Es más sutil y mucho más común. Se prueban muchos modelos, se elige el que mejor sale en el conjunto de
+        prueba, y se reporta <em>ese</em> número como desempeño esperado. El conjunto de prueba ha participado en la
+        decisión, así que ya no es una prueba. Con los $36$ modelos SARIMA de la rejilla del Capítulo 5, todos con
+        $d = 1$ y $D = 1$:</p>
+
+      <div class="simulador" data-simulador="seleccion-prueba">
+        <h4><i class="fas fa-hand-pointer" aria-hidden="true"></i> El ganador de la validación no es el ganador</h4>
+        <p class="simulador-intro">Cada punto es uno de los $36$ modelos: en el eje horizontal, su RMSE sobre el
+          conjunto con el que se eligió; en el vertical, su RMSE sobre un bloque posterior que no vio nadie. Si
+          seleccionar por el primero sirviera, los puntos estarían sobre la diagonal. El modelo que gana en validación
+          —marcado en naranja— promete $16.20$ y de verdad da $\mathbf{75.21}$: un optimismo del $\mathbf{364\,\%}$.
+          Pulsa el interruptor para marcar el que gana por AICc, que promete menos y cumple mejor.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper" style="height:270px;">
+          <canvas aria-label="RMSE de validación frente a RMSE real de cada modelo" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <p>El ganador de la validación resulta ser el SARIMA$(0,1,0)(0,1,0)_{12}$ —el que no estima ningún parámetro—,
+        que acertó de casualidad en ese tramo de veinticuatro meses. El ganador por AICc es el
+        SARIMA$(0,1,1)(0,1,1)_{12}$, el <em>airline</em>, que da $43.18$ sobre el bloque nuevo, mejor que el promedio
+        de los $36$ modelos ($47.60$). Elegir con un criterio que no mira la prueba fue, además de honesto, más
+        acertado.</p>
+
+      <div class="note">
+        <p><strong>La solución estándar son tres conjuntos, no dos.</strong> Entrenamiento para estimar los
+          coeficientes, <strong>validación</strong> para elegir entre modelos, y <strong>prueba</strong> para reportar,
+          usada una sola vez y al final. En series de tiempo los tres van en orden cronológico, nunca al azar. El
+          Módulo 7 lleva esta idea a su forma útil: en lugar de una partición, muchas.</p>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Fuga de información">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r" role="tabpanel">
+          <pre><code class="language-r">set.seed(2026)
+y &lt;- as.numeric(log(AirPassengers)); n &lt;- length(y); P &lt;- 13
+
+X &lt;- as.data.frame(embed(y, P + 1))
+colnames(X) &lt;- c("y", paste0("l", 1:P))
+X$t &lt;- (P + 1):n
+dev &lt;- X[1:(nrow(X) - 24), ]      # 107 filas
+fin &lt;- X[(nrow(X) - 23):nrow(X), ]   # bloque final intacto
+pliegue &lt;- sample(rep(1:5, length.out = nrow(dev)))
+
+evalua &lt;- function(predice) {
+  e_k &lt;- unlist(lapply(1:5, function(k)
+    dev$y[pliegue == k] - predice(dev[pliegue != k, ], dev[pliegue == k, ])))
+  e_f &lt;- fin$y - predice(dev, fin)
+  c(kfold = sqrt(mean(e_k^2)), bloque_final = sqrt(mean(e_f^2)))
+}
+
+rezagos   &lt;- function(tr, te) predict(lm(y ~ . - t, data = tr), te)
+polinomio &lt;- function(tr, te) predict(lm(y ~ poly(t, 8), data = tr), te)
+
+round(evalua(rezagos), 4)
+#&gt;        kfold bloque_final
+#&gt;       0.0476       0.0391      &lt;- el k-fold NO miente aqui
+round(evalua(polinomio), 4)
+#&gt;        kfold bloque_final
+#&gt;       0.1351      12.8984      &lt;- aqui miente, y no por poco
+round(unname(evalua(polinomio)[2] / evalua(polinomio)[1]), 2)
+#&gt; [1] 95.46                      &lt;- el error real es 95 veces el prometido</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" role="tabpanel">
+          <pre><code class="language-python">import numpy as np
+from sklearn.model_selection import KFold, TimeSeriesSplit   # solo ilustrativo
+from statsmodels.datasets import get_rdataset
+
+# ADVERTENCIA sobre sklearn: KFold(shuffle=True) es lo que NO hay que usar.
+# TimeSeriesSplit si respeta el orden, pero su ventana de prueba crece de
+# tamano y no fija el horizonte h: para evaluar a h meses vista hay que
+# construir el origen movil a mano, como en el Modulo 7.
+
+ap = get_rdataset("AirPassengers").data["value"].to_numpy(dtype=float)
+y, P = np.log(ap), 13
+X = np.column_stack([y[P - k:len(y) - k] for k in range(P + 1)])  # y, l1..lP
+t = np.arange(P, len(y)).reshape(-1, 1)
+dev_X, dev_y, dev_t = X[:-24, 1:], X[:-24, 0], t[:-24]
+fin_X, fin_y, fin_t = X[-24:, 1:], X[-24:, 0], t[-24:]
+
+def ols(A, b):
+    A1 = np.column_stack([np.ones(len(A)), A])
+    return np.linalg.lstsq(A1, b, rcond=None)[0]
+
+def predice(beta, A):
+    return np.column_stack([np.ones(len(A)), A]) @ beta
+
+def evalua(hazX_dev, hazX_fin):
+    kf = KFold(n_splits=5, shuffle=True, random_state=2026)
+    e_k = []
+    for tr_i, te_i in kf.split(hazX_dev):
+        beta = ols(hazX_dev[tr_i], dev_y[tr_i])
+        e_k.append(dev_y[te_i] - predice(beta, hazX_dev[te_i]))
+    e_k = np.concatenate(e_k)
+    beta = ols(hazX_dev, dev_y)
+    e_f = fin_y - predice(beta, hazX_fin)
+    return np.sqrt(np.mean(e_k ** 2)), np.sqrt(np.mean(e_f ** 2))
+
+k, f = evalua(dev_X, fin_X)
+print("rezagos   -> kfold", round(k, 4), "| bloque final", round(f, 4))
+#&gt; rezagos   -> kfold 0.047 | bloque final 0.0391
+
+# Polinomio de grado 8 en t, centrado y escalado como hace poly() de R
+c0, s0 = dev_t.mean(), dev_t.std()
+pol = lambda tt: np.column_stack([((tt - c0) / s0) ** g for g in range(1, 9)])
+k, f = evalua(pol(dev_t), pol(fin_t))
+print("polinomio -> kfold", round(k, 4), "| bloque final", round(f, 4))
+#&gt; polinomio -> kfold 0.2186 | bloque final 12.8984
+
+# El bloque final coincide con R hasta el ultimo decimal (12.8984): no
+# depende de ningun sorteo. El k-fold NO coincide (0.2186 frente a 0.1351)
+# porque el reparto de pliegues es otro, y esa es una lectura en si misma:
+# el numero que promete el k-fold aleatorio depende de la semilla, y el
+# error real no.</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>

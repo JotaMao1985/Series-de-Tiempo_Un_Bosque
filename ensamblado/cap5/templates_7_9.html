@@ -1,0 +1,585 @@
+  <template id="module-7">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 7</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">5.7 Caso completo: $\log(\text{AirPassengers})$
+          <span class="text-gray-400 font-normal text-2xl">/ A full case study</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Recorrer el ciclo entero sobre una serie, de la
+              transformación al pronóstico, y cerrar el problema que dejó abierto el Capítulo 4.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>Paso 0 · La transformación</h3>
+
+      <p>El Capítulo 2 dejó zanjado que $\text{AirPassengers}$ pide logaritmo: la amplitud estacional crece con el
+        nivel, y el rango relativo de la serie es $1.848$. En el mapa del Módulo 1 se ve directamente —las bandas de
+        la serie cruda se ensanchan hacia abajo y las de $\log(y_t)$ no—. El logaritmo convierte una estacionalidad
+        multiplicativa en una aditiva, que es la que un SARIMA sabe modelar.</p>
+
+      <h3>Paso 1 · $D$ y luego $d$</h3>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Decisión</th><th>Evidencia</th><th>Resultado</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>$D$</td><td><code>nsdiffs()</code>$= 1$; ACF con $\hat\rho_{12}=0.762$, $\hat\rho_{24}=0.521$, $\hat\rho_{36}=0.319$ decayendo despacio</td><td>$D = 1$</td></tr>
+            <tr><td>$d$</td><td>Tras $\nabla_{12}$: $\hat\rho_1 = 0.714$ y <code>ndiffs()</code>$= 1$</td><td>$d = 1$</td></tr>
+            <tr><td>Comprobación</td><td>Varianza mínima en $(1,1)$: $0.002102$, frente a $0.003800$ y $0.011354$</td><td>Coherente</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Paso 2 · $p, q, P, Q$</h3>
+
+      <p>Sobre $\nabla\nabla_{12}\log(y_t)$, la ACF tiene $\hat\rho_1 = -0.341$ y $\hat\rho_{12} = -0.387$, las dos
+        negativas y fuera de la banda $\pm 0.171$ —que aquí se calcula con las $131$ observaciones que quedan
+        <em>después</em> de diferenciar, no con las $144$ originales—, y prácticamente nada más. Un pico negativo aislado en el rezago $1$
+        pide $q=1$; un pico negativo aislado en el $12$ pide $Q=1$. La tabla del Módulo 4, leída dos veces.</p>
+
+      <h3>Paso 3 · Estimación y diagnóstico</h3>
+
+      <div class="formula">
+        $$(1-B)(1-B^{12})\log y_t = (1 - 0.4018\,B)(1 - 0.5569\,B^{12})\,\varepsilon_t,
+          \qquad \hat\sigma^2 = 0.001371$$
+      </div>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Comprobación</th><th>Valor</th><th>Lectura</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>$\hat\theta$</td><td>$-0.4018$ (e.e. $0.0896$, $t = -4.48$)</td><td>Significativo</td></tr>
+            <tr><td>$\hat\Theta$</td><td>$-0.5569$ (e.e. $0.0731$, $t = -7.62$)</td><td>Significativo</td></tr>
+            <tr><td>Ljung–Box($24$)</td><td>$p = 0.2330$</td><td>No rechaza</td></tr>
+            <tr><td>Ljung–Box($36$)</td><td>$p = 0.2969$</td><td>No rechaza</td></tr>
+            <tr><td>Shapiro–Wilk</td><td>$p = 0.1674$</td><td>Normalidad razonable</td></tr>
+            <tr><td>$\hat\rho_{12}$, $\hat\rho_{24}$ residuales</td><td>$-0.0515$, $0.0124$</td><td>Dentro de $\pm 0.163$</td></tr>
+            <tr><td>Raíces MA</td><td>Módulo inverso máximo $0.9524$</td><td>Invertible, aunque justo</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note">
+        <p><strong>El problema del Capítulo 4, cerrado.</strong> Allí el mejor ARIMA no estacional sobre esta misma
+          serie era un ARIMA($0,1,1$) con AICc $=-238.64$, Ljung–Box($24$) con $p &lt; 10^{-6}$ y
+          $\hat\rho_{12} = 0.8106$ en los residuales. Con <strong>un parámetro más</strong> —$\Theta$— el AICc pasa a
+          $-483.21$, el $p$-valor a $0.2330$ y $\hat\rho_{12}$ a $-0.0515$. Rara vez un solo parámetro compra tanto; la
+          razón es que la estructura que faltaba estaba entera en un solo sitio.</p>
+      </div>
+
+      <h3>Paso 4 · Pronóstico</h3>
+
+      <div class="simulador" data-simulador="pronostico-estacional">
+        <h4><i class="fas fa-chart-line" aria-hidden="true"></i> Pronóstico a $h$ meses con bandas</h4>
+        <p class="simulador-intro">El deslizador mueve el horizonte y el interruptor pasa de la escala logarítmica a
+          la original. Dos cosas que ver: en logaritmos el abanico se abre <strong>a escalones</strong> —se ensancha
+          de golpe al cruzar cada rezago estacional— y al volver a la escala original deja de ser simétrico, porque
+          $\exp$ no lo es.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper" style="height:280px;">
+          <canvas aria-label="Pronóstico del modelo airline con bandas de 80 y 95 por ciento" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="warning">
+        <p><strong>$\exp$ del pronóstico en logaritmos es la MEDIANA, no la media.</strong> Si $\log y \sim
+          N(\mu, \sigma^2)$, entonces $E[y] = e^{\mu + \sigma^2/2} &gt; e^{\mu}$. Los límites del intervalo sí se
+          transforman sin más —la transformación es monótona, así que respeta los cuantiles—, pero el punto central no.
+          A $24$ meses vista el intervalo del $95\,\%$ va de $399.66$ a $690.85$ pasajeros alrededor de un pronóstico
+          de $525.46$: $126$ por debajo y $165$ por arriba. Esa asimetría es correcta y es del logaritmo, no un error
+          del modelo.</p>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Caso completo AirPassengers">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r">
+          <pre><code class="language-r">library(forecast)
+ap &lt;- log(AirPassengers)
+
+# --- Pasos 1 y 2: D primero, d despues, y la ACF de la serie ya estacionaria -
+c(nsdiffs = nsdiffs(ap), ndiffs_tras_D = ndiffs(diff(ap, lag = 12)))
+#&gt; nsdiffs ndiffs_tras_D
+#&gt;       1             1
+w &lt;- diff(diff(ap, lag = 12))
+a &lt;- Acf(w, lag.max = 36, plot = FALSE)$acf
+# La banda se calcula con la longitud de la serie a la que se le mide la ACF,
+# que tras las dos diferencias son 131 observaciones y no las 144 de partida.
+round(c(n = length(w), r1 = a[2], r12 = a[13], banda = 1.96/sqrt(length(w))), 4)
+#&gt;        n      r1     r12   banda
+#&gt; 131.0000 -0.3411 -0.3866  0.1712
+
+# --- Paso 3: estimacion y diagnostico --------------------------------------
+fit &lt;- Arima(ap, order = c(0,1,1), seasonal = list(order = c(0,1,1), period = 12))
+round(c(coef(fit), sigma2 = fit$sigma2, aicc = fit$aicc), 6)
+#&gt;       ma1      sma1    sigma2      aicc
+#&gt; -0.401800 -0.556900  0.001371 -483.2101
+checkresiduals(fit, lag = 24)     # grafico + Ljung-Box en una sola llamada
+#&gt; Ljung-Box test
+#&gt; Q* = 26.446, df = 22, p-value = 0.233
+
+# --- Paso 4: pronostico -----------------------------------------------------
+p &lt;- forecast(fit, h = 24, level = c(80, 95))
+round(exp(c(media = p$mean[24], lo95 = p$lower[24,2], hi95 = p$upper[24,2])), 2)
+#&gt;  media   lo95   hi95
+#&gt; 525.46 399.66 690.85
+# El intervalo NO es simetrico alrededor de 525.46 en la escala original.
+round(c(abajo = 525.46 - 399.66, arriba = 690.85 - 525.46), 2)
+#&gt;  abajo arriba
+#&gt; 125.80 165.39
+
+# La anchura sale de los pesos psi (Capitulo 4, Modulo 9): aqui solo se usa.
+# (1-B)(1-B^12) = 1 - B - B^12 + B^13  ->  ar = c(1, 0...0, 1, -1)
+psi &lt;- c(1, ARMAtoMA(ar = c(1, rep(0, 10), 1, -1),
+                     ma = c(-0.4018, rep(0, 10), -0.5569, 0.2238), lag.max = 23))
+round(psi[c(1, 2, 12, 13, 14)], 4)
+#&gt; [1] 1.0000 0.5982 0.5982 1.0413 0.8633     escalon justo en el rezago 12
+round(sqrt(cumsum(psi^2) * fit$sigma2)[c(1, 12, 24)], 6)
+#&gt; [1] 0.037031 0.082273 0.139634</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python">
+          <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm, warnings
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+warnings.filterwarnings("ignore")
+
+ap = np.log(sm.datasets.get_rdataset("AirPassengers").data["value"].values)
+s = pd.Series(ap, index=pd.date_range("1949-01", periods=len(ap), freq="MS"))
+
+# CUIDADO: simple_differencing=True reproduce la ESTIMACION de R, pero el
+# modelo pasa a operar sobre la serie ya diferenciada y get_forecast() devuelve
+# entonces el pronostico de nabla nabla_12 y_t, no el de y_t:
+mal = SARIMAX(s, order=(0,1,1), seasonal_order=(0,1,1,12), trend="n",
+              simple_differencing=True).fit(disp=False)
+print(round(float(mal.get_forecast(steps=24).predicted_mean.iloc[-1]), 4))
+#&gt; 0.0     el pronostico de la serie diferenciada, no el nivel
+
+# Para PRONOSTICAR se deja la opcion por defecto.
+fit = SARIMAX(s, order=(0,1,1), seasonal_order=(0,1,1,12), trend="n").fit(disp=False)
+f = fit.get_forecast(steps=24)
+ci = f.conf_int(alpha=0.05)
+print(np.round(np.exp([f.predicted_mean.iloc[-1], ci.iloc[-1,0], ci.iloc[-1,1]]), 2))
+#&gt; [525.46 400.62 689.21]
+# R da 525.46, 399.66 y 690.85: el pronostico puntual coincide y el intervalo
+# es un 1 % mas estrecho, porque sigma^2 sale 0.001348 en vez de 0.001371.
+
+# exp() del pronostico es la MEDIANA. Si se quiere la MEDIA:
+sigma_h = (ci.iloc[-1,1] - f.predicted_mean.iloc[-1]) / 1.959964
+print(round(float(np.exp(f.predicted_mean.iloc[-1] + sigma_h**2 / 2)), 2))
+#&gt; 530.52     un 1 % por encima de la mediana</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="module-8">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 8</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">5.8 Segundo caso y contraejemplo
+          <span class="text-gray-400 font-normal text-2xl">/ A second case, and a counterexample</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Repetir el recorrido en una serie donde las pruebas
+              engañan, y aprender a <strong>descartar</strong> la estacionalidad cuando no la hay.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>USAccDeaths: cuando <code>ndiffs()</code> miente</h3>
+
+      <p>Muertes accidentales mensuales en Estados Unidos, 1973–1978 ($n = 72$). No necesita logaritmo: la amplitud
+        estacional no crece con el nivel. Pero tiene una trampa en la primera decisión.</p>
+
+      <div class="warning">
+        <p><strong>El resultado que hay que explicar.</strong> <code>ndiffs(USAccDeaths)</code> devuelve
+          <strong>$0$</strong>. <code>ndiffs(diff(USAccDeaths, lag = 12))</code> devuelve <strong>$1$</strong>. La
+          misma función, la misma serie, respuestas contrarias. No es un fallo: la varianza estacional es tan grande
+          que las pruebas de raíz unitaria no ven la tendencia por debajo. Y con Python pasa lo mismo: el estadístico
+          KPSS sobre $\nabla_{12}y_t$ vale $0.8672$ —rechaza, valor crítico $0.463$— y sobre $\nabla\nabla_{12}y_t$
+          baja a $0.0713$. <strong>Primero $D$, después $d$</strong>, siempre.</p>
+      </div>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Serie</th><th><code>ndiffs</code> crudo</th><th><code>ndiffs</code> tras $\nabla_{12}$</th><th><code>nsdiffs</code> (<code>seas</code>)</th><th><code>nsdiffs</code> (<code>ocsb</code>)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>$\log$(AirPassengers)</td><td>$1$</td><td>$1$</td><td>$1$</td><td>$\mathbf{0}$</td></tr>
+            <tr><td>USAccDeaths</td><td>$\mathbf{0}$</td><td>$\mathbf{1}$</td><td>$1$</td><td>$\mathbf{0}$</td></tr>
+            <tr><td>co2</td><td>$1$</td><td>$1$</td><td>$1$</td><td>$1$</td></tr>
+            <tr><td>TRM</td><td>$1$</td><td>$1$</td><td>$\mathbf{0}$</td><td>$\mathbf{0}$</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Tomada la decisión correcta ($d=1$, $D=1$), <code>auto.arima</code> con búsqueda exhaustiva devuelve otra vez
+        el <em>airline</em>: $\hat\theta = -0.4303$ (e.e. $0.1228$), $\hat\Theta = -0.5528$ (e.e. $0.1784$),
+        AICc $= 857.32$, Ljung–Box($24$) con $p = 0.2477$. Con la mitad de observaciones que
+        $\text{AirPassengers}$, los errores estándar son el doble y los coeficientes casi los mismos.</p>
+
+      <h3>La TRM: una serie mensual sin estacionalidad</h3>
+
+      <p>Este apartado existe porque es el error más caro del capítulo. Un modelo estacional impuesto a una serie que
+        no lo es gasta parámetros, ensancha los intervalos y no mejora nada. La tasa representativa del mercado
+        colombiana ($n = 138$ meses, 2015–2026) es el ejemplo: es una serie mensual, la usa todo el mundo, y no tiene
+        estacionalidad.</p>
+
+      <div class="simulador" data-simulador="contraejemplo-trm">
+        <h4><i class="fas fa-ban" aria-hidden="true"></i> Con estacionalidad y sin ella, lado a lado</h4>
+        <p class="simulador-intro">El selector cambia entre $\log(\text{AirPassengers})$ y la TRM, las dos ya
+          diferenciadas de forma regular. Es la comparación honesta: sobre la serie <em>sin tendencia</em>, una tiene
+          barras enormes en $12, 24, 36$ y la otra no tiene ninguna. En niveles las dos parecían estacionales, y por
+          eso el diagnóstico nunca se hace en niveles.</p>
+        <div class="simulador-controles"></div>
+        <p class="grafico-etiqueta">ACF de la serie diferenciada, hasta el rezago 36</p>
+        <div class="grafico-wrapper" style="height:230px;">
+          <canvas aria-label="Comparación de correlogramas de dos series diferenciadas" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Evidencia</th><th>Qué se mide</th><th>Resultado</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1. Prueba automática</td><td><code>nsdiffs(trm)</code>, con las dos pruebas disponibles</td><td>$0$ y $0$</td></tr>
+            <tr><td>2. Correlograma</td><td>$\hat\rho_{12}, \hat\rho_{24}, \hat\rho_{36}$ de $\nabla\text{TRM}$ frente a la banda $0.1675$</td><td>$-0.0025$, $-0.0672$, $0.0714$: <strong>ninguno fuera</strong></td></tr>
+            <tr><td>3. Ajuste forzado</td><td>Imponer un SAR($1$)$_{12}$ y mirar su $t$</td><td>$\hat\Phi = 0.0013$ (e.e. $0.0899$), $t = 0.01$</td></tr>
+            <tr><td>4. Criterio</td><td>AICc del modelo forzado frente al simple</td><td>$1708.00$ frente a $1705.94$: <strong>peor</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Cuatro evidencias independientes y todas en la misma dirección. <code>auto.arima</code> lo confirma
+        devolviendo un ARIMA($0,1,0$) —una caminata aleatoria pura, sin ninguna parte estacional—, que es también la
+        conclusión a la que llegó el Capítulo 4 por otro camino. Aquí las dos comparaciones de AICc <em>sí</em> son
+        legítimas: los dos modelos tienen $d=1$ y $D=0$, así que el $n$ efectivo es el mismo.</p>
+
+      <div class="note">
+        <p><strong>Por qué una serie financiera diaria agregada a mensual no tiene estación.</strong> La TRM es un
+          precio de mercado. Si tuviera un patrón mensual predecible, sería aprovechable —comprar en el mes barato y
+          vender en el caro— y el propio arbitraje lo eliminaría. La ausencia de estacionalidad no es una
+          casualidad de estos $138$ meses: es lo que se espera de un precio en un mercado razonablemente eficiente.
+          En cambio, el <em>volumen</em> negociado o la volatilidad sí suelen tener patrón de calendario.</p>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Segundo caso y contraejemplo">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r">
+          <pre><code class="language-r">library(forecast)
+
+# --- USAccDeaths: la trampa del orden --------------------------------------
+uad &lt;- USAccDeaths
+c(crudo = ndiffs(uad), tras_D = ndiffs(diff(uad, lag = 12)), nsdiffs = nsdiffs(uad))
+#&gt;  crudo tras_D nsdiffs
+#&gt;      0      1       1
+f &lt;- auto.arima(uad, stepwise = FALSE, approximation = FALSE)
+f
+#&gt; Series: uad
+#&gt; ARIMA(0,1,1)(0,1,1)[12]
+#&gt; Coefficients:
+#&gt;           ma1     sma1
+#&gt;       -0.4303  -0.5528
+#&gt; s.e.   0.1228   0.1784
+round(Box.test(residuals(f), lag = 24, type = "Ljung-Box", fitdf = 2)$p.value, 4)
+#&gt; [1] 0.2477
+
+# --- TRM: cuatro evidencias de que NO hay estacionalidad --------------------
+# TRM mensual (promedio del mes, SFC via datos.gov.co). Se reconstruye en cada
+# bloque que la use para que sea autonomo; necesita internet.
+url &lt;- paste0("https://www.datos.gov.co/resource/32sa-8pi3.json",
+              "?$select=vigenciadesde,valor&amp;$limit=50000")
+crudo &lt;- jsonlite::fromJSON(url)
+diario &lt;- data.frame(fecha = as.Date(substr(crudo$vigenciadesde, 1, 10)),
+                     valor = as.numeric(crudo$valor))
+diario &lt;- diario[order(diario$fecha) &amp; diario$fecha &gt;= as.Date("2015-01-01"), ]
+prom &lt;- tapply(diario$valor, format(diario$fecha, "%Y-%m"), mean)
+prom &lt;- prom[names(prom) &lt;= "2026-06"]     # se descarta el mes en curso
+trm &lt;- ts(as.numeric(prom), start = c(2015, 1), frequency = 12)
+
+# 1. las dos pruebas automaticas
+c(seas = nsdiffs(trm), ocsb = nsdiffs(trm, test = "ocsb"))
+#&gt; seas ocsb
+#&gt;    0    0
+
+# 2. el correlograma de la serie SIN tendencia
+a &lt;- Acf(diff(trm), lag.max = 36, plot = FALSE)$acf
+round(c(r12 = a[13], r24 = a[25], r36 = a[37], banda = 1.96/sqrt(length(diff(trm)))), 4)
+#&gt;     r12     r24     r36   banda
+#&gt; -0.0024 -0.0672  0.0714  0.1675
+
+# 3. forzar la parte estacional y mirar el estadistico t
+g &lt;- Arima(trm, order = c(0,1,0), seasonal = list(order = c(1,0,0), period = 12))
+round(c(Phi = coef(g)[1], ee = sqrt(diag(g$var.coef))[1],
+        t = coef(g)[1]/sqrt(diag(g$var.coef))[1]), 4)
+#&gt; Phi.sar1  ee.sar1   t.sar1
+#&gt;   0.0013   0.0899   0.0147
+
+# 4. AICc: aqui SI se comparan, porque los dos tienen d = 1 y D = 0
+h &lt;- Arima(trm, order = c(0,1,0))
+round(c(forzado = g$aicc, simple = h$aicc), 3)
+#&gt;  forzado   simple
+#&gt; 1708.001 1705.941
+as.character(auto.arima(trm, stepwise = FALSE, approximation = FALSE))
+#&gt; [1] "ARIMA(0,1,0)"</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python">
+          <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm, warnings
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+warnings.filterwarnings("ignore")
+
+# --- USAccDeaths -----------------------------------------------------------
+uad = sm.datasets.get_rdataset("USAccDeaths").data["value"].values
+su = pd.Series(uad, index=pd.date_range("1973-01", periods=len(uad), freq="MS"))
+f = SARIMAX(su, order=(0,1,1), seasonal_order=(0,1,1,12), trend="n",
+            simple_differencing=True).fit(disp=False)
+print(f.params[["ma.L1", "ma.S.L12"]].round(4))
+#&gt; ma.L1      -0.4303
+#&gt; ma.S.L12   -0.5527
+# Con simple_differencing=True coincide con R. SIN esa opcion da -0.3924 y
+# -0.5475: con n = 72 el prior difuso mueve theta casi cuatro centesimas.
+
+# --- TRM: el contraejemplo -------------------------------------------------
+# TRM mensual (promedio del mes, SFC via datos.gov.co); necesita internet.
+url = ("https://www.datos.gov.co/resource/32sa-8pi3.json"
+       "?$select=vigenciadesde,valor&amp;$limit=50000")
+crudo = pd.read_json(url)
+crudo["fecha"] = pd.to_datetime(crudo["vigenciadesde"]).dt.tz_localize(None)
+crudo = crudo[crudo["fecha"] &gt;= "2015-01-01"].sort_values("fecha")
+st = crudo.set_index("fecha")["valor"].resample("MS").mean().loc[:"2026-06-01"]
+trm = st.values
+
+acf = sm.tsa.acf(np.diff(trm), nlags=36, fft=False)
+print(np.round(acf[[12, 24, 36]], 4), round(1.96/np.sqrt(len(trm)-1), 4))
+#&gt; [-0.0024 -0.0672  0.0714] 0.1675
+
+g = SARIMAX(st, order=(0,1,0), seasonal_order=(1,0,0,12), trend="n",
+            simple_differencing=True).fit(disp=False)
+print(round(g.params["ar.S.L12"], 4), round(g.tvalues["ar.S.L12"], 3))
+#&gt; 0.0013 0.015
+# t practicamente cero: el parametro estacional no aporta nada.</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="module-9">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 9</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">5.9 Regresores de calendario y SARIMAX
+          <span class="text-gray-400 font-normal text-2xl">/ Calendar regressors and SARIMAX</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Separar lo que la estacionalidad estadística no puede
+              capturar —efectos del calendario que se mueven de año en año— y meterlo como regresor.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>El SARIMA supone que el patrón se repite <strong>en la misma posición</strong> cada $m$ observaciones. Hay dos
+        clases de efectos de calendario que rompen ese supuesto y que, por tanto, ningún $\Phi$ ni ningún $\Theta$
+        pueden absorber:</p>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Efecto</th><th>Por qué el SARIMA no lo ve</th><th>Regresor</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Longitud del mes</strong></td><td>Febrero tiene $28$ o $29$ días y julio $31$: la "misma" posición del ciclo no dura lo mismo</td><td>$\log(\text{días del mes})$</td></tr>
+            <tr><td><strong>Fiestas móviles</strong></td><td>La Semana Santa cae en marzo o en abril según el año</td><td>Indicadora del mes que contiene el Domingo de Pascua</td></tr>
+            <tr><td><strong>Días hábiles</strong></td><td>Dos meses de $31$ días pueden tener $22$ o $23$ días laborables</td><td>Número de días hábiles</td></tr>
+            <tr><td><strong>Fiestas fijas</strong></td><td>Ninguno: caen siempre en el mismo mes</td><td>No hace falta; ya está en el término estacional</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: SARIMAX / regresión con errores SARIMA</h4>
+        $$y_t = \beta' x_t + n_t, \qquad \text{donde } n_t \text{ sigue un SARIMA}(p,d,q)(P,D,Q)_m$$
+        <p style="margin-bottom:0;">Es una regresión ordinaria cuyo <strong>error</strong> tiene estructura temporal, no
+          un SARIMA con términos añadidos. La distinción importa al interpretar: $\beta$ mide el efecto del regresor
+          <em>una vez descontada</em> la dinámica, y por eso su error estándar es mayor que el de un MCO ingenuo.
+          Cuidado con el nombre: en <code>statsmodels</code>, <code>SARIMAX</code> con <code>exog</code> ajusta esto
+          mismo, pero cuando $d &gt; 0$ diferencia también los regresores.</p>
+      </div>
+
+      <h3>El caso: pasajeros por mes frente a pasajeros por día</h3>
+
+      <p>$\text{AirPassengers}$ cuenta pasajeros <strong>por mes</strong>. Entre febrero ($28$ días) y los meses de
+        $31$ hay un $10.7\,\%$ de diferencia de duración, que no tiene nada que ver con volar más o menos: es
+        aritmética del calendario. Si los pasajeros fueran proporcionales a los días, en logaritmos el coeficiente de
+        $\log(\text{días})$ debería valer <strong>exactamente $1$</strong>. Es una hipótesis contrastable.</p>
+
+      <div class="simulador" data-simulador="calendario-regresores">
+        <h4><i class="fas fa-calendar-days" aria-hidden="true"></i> Añadir regresores de calendario</h4>
+        <p class="simulador-intro">Los interruptores activan cada regresor sobre el modelo <em>airline</em>; los tres
+          ajustes están hechos en R. La lectura muestra el coeficiente con su $t$ y el AICc —comparable aquí, porque
+          los tres modelos comparten $d=1$ y $D=1$—. El gráfico dibuja el regresor activo junto a la serie, para ver
+          de dónde sale la señal.</p>
+        <div class="simulador-controles"></div>
+        <div class="simulador-lectura"></div>
+        <div class="grafico-wrapper" style="height:240px;">
+          <canvas aria-label="Regresores de calendario sobre la serie" role="img"></canvas>
+        </div>
+      </div>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Modelo</th><th>AICc</th><th>BIC</th><th>$\hat\beta_{\log(\text{días})}$</th><th>$\hat\beta_{\text{Pascua}}$</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><em>airline</em> sin regresores</td><td>$-483.21$</td><td>$-474.77$</td><td>—</td><td>—</td></tr>
+            <tr><td>$+\log(\text{días del mes})$</td><td>$-486.54$</td><td>$-475.35$</td><td>$1.1157$ ($t = 2.39$)</td><td>—</td></tr>
+            <tr><td>$+\log(\text{días}) +$ Semana Santa</td><td>$\mathbf{-490.72}$</td><td>$\mathbf{-476.83}$</td><td>$1.0840$ ($t = 2.43$)</td><td>$0.0290$ ($t = 2.60$)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note">
+        <p><strong>Los dos regresores son significativos, y el primero dice algo bonito.</strong>
+          $\hat\beta_{\log(\text{días})} = 1.084$ con e.e. $0.446$: la hipótesis "los pasajeros son proporcionales a
+          los días del mes" ($\beta = 1$) da $t = (1.084 - 1)/0.446 = 0.19$, así que <strong>no se rechaza</strong>.
+          El coeficiente estimado no solo es significativo: es el que predice la aritmética. Y el de Semana Santa vale
+          $0.0290$, es decir un <strong>$2.9\,\%$ más de pasajeros</strong> en el mes que contiene el Domingo de
+          Pascua —que en estos $12$ años cayó en marzo solo $2$ veces y en abril las otras $10$, que es exactamente la
+          irregularidad que el término estacional no puede modelar—.</p>
+      </div>
+
+      <div class="warning">
+        <p><strong>Mejorar el AICc no es mejorar el pronóstico.</strong> El modelo con calendario gana $7.5$ puntos de
+          AICc, y sin embargo en la comparación fuera de muestra del Módulo 11 sale <em>peor</em> que el
+          <em>airline</em> desnudo (RMSE $45.48$ frente a $43.18$). No es contradictorio: el AICc mide ajuste
+          penalizado dentro de la muestra, y para pronosticar hay que conocer los regresores en el futuro. Los del
+          calendario se conocen —es su gran ventaja—, pero dos parámetros más estimados sobre $131$ observaciones
+          también añaden varianza. Es un recordatorio de que el criterio de información y el error de pronóstico
+          responden preguntas distintas.</p>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Regresores de calendario">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r">
+          <pre><code class="language-r">library(forecast)
+ap &lt;- log(AirPassengers)
+
+# --- Regresor 1: dias del mes ----------------------------------------------
+fechas &lt;- seq(as.Date("1949-01-01"), by = "month", length.out = length(ap))
+dias &lt;- as.numeric(diff(c(fechas, seq(tail(fechas,1), by = "month", length.out = 2)[2])))
+range(dias)
+#&gt; [1] 28 31
+
+# --- Regresor 2: Semana Santa (algoritmo de Meeus/Butcher, calendario gregoriano)
+pascua &lt;- function(anio) {
+  a &lt;- anio %% 19; b &lt;- anio %/% 100; cc &lt;- anio %% 100
+  d &lt;- b %/% 4; e &lt;- b %% 4; f &lt;- (b + 8) %/% 25; g &lt;- (b - f + 1) %/% 3
+  h &lt;- (19*a + b - d - g + 15) %% 30; i &lt;- cc %/% 4; k &lt;- cc %% 4
+  l &lt;- (32 + 2*e + 2*i - h - k) %% 7; m &lt;- (a + 11*h + 22*l) %/% 451
+  mes &lt;- (h + l - 7*m + 114) %/% 31; dia &lt;- ((h + l - 7*m + 114) %% 31) + 1
+  as.Date(sprintf("%04d-%02d-%02d", anio, mes, dia))
+}
+sapply(1949:1952, function(a) format(pascua(a), "%Y-%m-%d"))
+#&gt; [1] "1949-04-17" "1950-04-09" "1951-03-25" "1952-04-13"
+es_pascua &lt;- as.numeric(format(fechas, "%m") ==
+                        sapply(as.numeric(format(fechas, "%Y")),
+                               function(a) format(pascua(a), "%m")))
+sum(es_pascua)     # un mes marcado por anio
+#&gt; [1] 12
+
+# --- Los tres ajustes -------------------------------------------------------
+xreg &lt;- cbind(log_dias = log(dias), pascua = es_pascua)
+f0 &lt;- Arima(ap, order=c(0,1,1), seasonal=list(order=c(0,1,1), period=12))
+f1 &lt;- Arima(ap, order=c(0,1,1), seasonal=list(order=c(0,1,1), period=12), xreg = xreg[, 1, drop = FALSE])
+f2 &lt;- Arima(ap, order=c(0,1,1), seasonal=list(order=c(0,1,1), period=12), xreg = xreg)
+round(c(sin = f0$aicc, dias = f1$aicc, dias_pascua = f2$aicc), 4)
+#&gt;         sin        dias dias_pascua
+#&gt;   -483.2101   -486.5380   -490.7221
+
+round(cbind(coef = coef(f2), ee = sqrt(diag(f2$var.coef)),
+            t = coef(f2)/sqrt(diag(f2$var.coef)))[3:4, ], 4)
+#&gt;           coef     ee      t
+#&gt; log_dias 1.084 0.4462 2.4291
+#&gt; pascua   0.029 0.0111 2.6026
+
+# Contraste de que el efecto es EXACTAMENTE proporcional (beta = 1)
+round((coef(f2)["log_dias"] - 1) / sqrt(diag(f2$var.coef))["log_dias"], 4)
+#&gt; log_dias
+#&gt;   0.1882      no se rechaza beta = 1</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python">
+          <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm, warnings
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+warnings.filterwarnings("ignore")
+
+ap = np.log(sm.datasets.get_rdataset("AirPassengers").data["value"].values)
+idx = pd.date_range("1949-01", periods=len(ap), freq="MS")
+s = pd.Series(ap, index=idx)
+
+dias = idx.days_in_month.values.astype(float)
+print(dias.min(), dias.max())
+#&gt; 28.0 31.0
+
+def pascua(anio):
+    a, b, c = anio % 19, anio // 100, anio % 100
+    d, e = b // 4, b % 4
+    f, g = (b + 8) // 25, (b - ((b + 8) // 25) + 1) // 3
+    h = (19*a + b - d - g + 15) % 30
+    i, k = c // 4, c % 4
+    l = (32 + 2*e + 2*i - h - k) % 7
+    m = (a + 11*h + 22*l) // 451
+    return ((h + l - 7*m + 114) // 31, ((h + l - 7*m + 114) % 31) + 1)
+
+print([pascua(a) for a in range(1949, 1953)])
+#&gt; [(4, 17), (4, 9), (3, 25), (4, 13)]
+es_pascua = np.array([1.0 if pascua(t.year)[0] == t.month else 0.0 for t in idx])
+print(int(es_pascua.sum()))
+#&gt; 12
+
+X = np.column_stack([np.log(dias), es_pascua])
+f2 = SARIMAX(s, exog=X, order=(0,1,1), seasonal_order=(0,1,1,12), trend="n",
+             simple_differencing=True).fit(disp=False)
+print(f2.params[["x1", "x2"]].round(4).values,
+      f2.bse[["x1", "x2"]].round(4).values,
+      f2.tvalues[["x1", "x2"]].round(4).values)
+#&gt; [1.0764 0.029 ] [0.4069 0.009 ] [2.6457 3.2195]
+# R da coef [1.0840 0.0290], ee [0.4462 0.0111], t [2.4291 2.6026]. Los
+# COEFICIENTES coinciden en el segundo decimal; los ERRORES ESTANDAR no (los
+# de Python son un 9 % y un 19 % menores), porque las dos implementaciones no
+# tratan igual la diferenciacion de los regresores. La conclusion no cambia:
+print(round(float((f2.params["x1"] - 1) / f2.bse["x1"]), 4))
+#&gt; 0.1879     R da 0.1882: tampoco aqui se rechaza beta = 1</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>

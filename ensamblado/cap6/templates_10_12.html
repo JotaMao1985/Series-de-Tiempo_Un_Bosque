@@ -1,0 +1,657 @@
+  <template id="module-10">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 10</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">6.10 Tres casos, tres desenlaces
+          <span class="text-gray-400 font-normal text-2xl">/ Three cases, three verdicts</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Aplicar el procedimiento completo a tres series que
+              terminan de tres maneras distintas, incluida una en la que la partición única y el origen móvil dan
+              ganadores opuestos.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Un capítulo de evaluación que solo enseñara casos donde el modelo elaborado gana estaría enseñando lo
+        contrario de lo que pretende. Estos tres se eligieron porque terminan distinto.</p>
+
+      <div class="simulador" data-simulador="tres-casos">
+        <h4><i class="fas fa-diagram-project" aria-hidden="true"></i> El mismo procedimiento sobre las tres series</h4>
+        <p class="simulador-intro">Elige la serie y la métrica. Las barras son el resultado de la evaluación por
+          origen móvil de cada método. Cambiar de serie cambia el ganador y cambia la lección, con el mismo código
+          y el mismo procedimiento en los tres casos.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper" style="height:260px;">
+          <canvas aria-label="Comparación de métodos por origen móvil en la serie elegida" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <h3>Caso 1 · AirPassengers: gana el modelo, con matices</h3>
+
+      <p>Es el caso desarrollado en los Módulos 7 a 9. El SARIMA <em>airline</em> gana en las cinco métricas puntuales
+        con un MASE de $0.621$ —comete un $38\,\%$ menos de error que el naïve estacional dentro de la muestra— y le
+        gana al naïve estacional en el $88.5\,\%$ de los orígenes. Los matices ya están dichos: a $h = 12$ la ventaja
+        deja de ser significativa, sus intervalos son los peor calibrados, y <code>auto.arima</code> llega
+        estadísticamente al mismo sitio tardando $270$ veces más.</p>
+
+      <h3>Caso 2 · TRM: nadie vence al naïve</h3>
+
+      <p>El Capítulo 5 concluyó que la TRM no tiene estacionalidad y el Capítulo 4 que en niveles se comporta como una
+        caminata aleatoria. Si eso es cierto, el pronóstico óptimo <em>es</em> el último valor y ningún método debería
+        mejorarlo. Con $37$ orígenes y $h = 12$:</p>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Método</th><th>RMSE</th><th>MAE</th><th>MASE</th><th>Cobertura al $95\,\%$</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Naïve</strong></td><td>$\mathbf{379.30}$</td><td>$\mathbf{303.19}$</td><td>$\mathbf{1.173}$</td><td>$89.6\,\%$</td></tr>
+            <tr><td>ETS</td><td>$382.86$</td><td>$307.10$</td><td>$1.188$</td><td>$97.1\,\%$</td></tr>
+            <tr><td><code>auto.arima</code></td><td>$444.53$</td><td>$340.21$</td><td>$1.316$</td><td>$82.4\,\%$</td></tr>
+            <tr><td>Deriva</td><td>$456.81$</td><td>$354.25$</td><td>$1.371$</td><td>$82.7\,\%$</td></tr>
+            <tr><td>Naïve estacional</td><td>$534.66$</td><td>$449.44$</td><td>$1.739$</td><td>$79.1\,\%$</td></tr>
+            <tr><td>Media</td><td>$792.46$</td><td>$718.74$</td><td>$2.781$</td><td>$84.5\,\%$</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>El naïve gana, y el ETS —que estima parámetros— se queda a un $0.9\,\%$ de él. <code>auto.arima</code>, que
+        busca entre decenas de modelos, queda un $17\,\%$ por detrás del método que no estima nada. La lectura no es
+        que los modelos sean inútiles: es que <strong>sobre esta serie no hay estructura que explotar</strong>, y todo
+        lo que se estime es varianza añadida sin sesgo que reducir.</p>
+
+      <div class="note">
+        <p><strong>Los MASE de esta tabla son todos mayores que $1$, y no es una contradicción.</strong> El MASE
+          compara el error a $h$ pasos contra el error a <em>un</em> paso del naïve dentro del entrenamiento. Con
+          $h$ hasta $12$ y una caminata aleatoria, cuya incertidumbre crece como $\sigma\sqrt{h}$, es normal que la
+          razón supere $1$: no significa «peor que el naïve», significa «peor que pronosticar a un mes vista», que es
+          otra cosa. Comparar MASE entre sí sigue siendo válido; leer el $1$ como frontera solo lo es a $h = 1$.</p>
+      </div>
+
+      <h3>Caso 3 · Nilo: la partición única corona al método que resulta ser el peor</h3>
+
+      <p>El Capítulo 4 comparó modelos sobre el Nilo con una partición: entrenamiento hasta 1950 ($n = 80$), prueba
+        los $20$ años siguientes. Con esa partición el naïve ($123.06$) le gana al ARIMA$(1,1,1)$ ($125.05$), y la
+        deriva le gana a los dos ($122.28$). Repitiendo la evaluación sobre $36$ orígenes con $h = 5$, el orden se
+        deshace. Pulsa las cabeceras de la tabla para verlo:</p>
+
+      <!--RANKING:nilo|El Nilo: una partición frente a treinta y seis orígenes|-->
+
+      <p>La <strong>deriva pasa del primer puesto al último</strong>. El ARIMA$(1,1,1)$ pasa del tercero al primero.
+        Y el orden por origen móvil coincide con lo que el Capítulo 4 había concluido por otras vías: el modelo con
+        el escalón de 1899 describe mejor la serie que una tendencia lineal, porque la caída del caudal fue un cambio
+        de nivel y no una pendiente. La partición de veinte años empezaba justo después del escalón, en un tramo en el
+        que una recta descendente parecía razonable.</p>
+
+      <div class="warning">
+        <p><strong>Qué habría pasado si el Capítulo 4 hubiera decidido con su partición.</strong> Habría concluido que
+          para el Nilo lo mejor es extrapolar una tendencia lineal —que es exactamente el diagnóstico contrario al que
+          soporta la serie— y lo habría hecho con un número real, bien calculado y honestamente reportado. No hay
+          ningún error de cálculo que detectar: el error es haber decidido con $20$ observaciones de un solo tramo.</p>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Los tres casos">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r" role="tabpanel">
+          <pre><code class="language-r">library(forecast)
+
+# Caso 3: el Nilo con una particion (la del Capitulo 4) y con 36 origenes
+tr &lt;- subset(Nile, start = 1, end = 80)
+te &lt;- as.numeric(Nile)[81:100]
+una &lt;- sapply(list(arima111 = function(x, h) forecast(Arima(x, order = c(1,1,1)), h = h),
+                   naive    = function(x, h) naive(x, h = h),
+                   deriva   = function(x, h) rwf(x, h = h, drift = TRUE),
+                   media    = function(x, h) meanf(x, h = h)),
+              function(f) sqrt(mean((te - as.numeric(f(tr, 20)$mean))^2)))
+round(sort(una), 4)
+#&gt;   deriva    naive arima111    media
+#&gt; 122.2814 123.0624 125.0452 133.3132
+
+# El mismo codigo, 36 origenes con h = 5
+completos &lt;- function(e) e[which(rowSums(!is.na(e)) == ncol(e)), ]
+movil &lt;- sapply(list(arima111 = function(x, h) forecast(Arima(x, order = c(1,1,1)), h = h),
+                     naive    = function(x, h) naive(x, h = h),
+                     deriva   = function(x, h) rwf(x, h = h, drift = TRUE),
+                     media    = function(x, h) meanf(x, h = h)),
+                function(f) sqrt(mean(completos(tsCV(Nile, f, h = 5, initial = 59))^2)))
+round(sort(movil), 4)
+#&gt; arima111    media    naive   deriva
+#&gt; 121.3709 132.5134 157.6873 161.2700
+
+# La deriva pasa del PRIMER puesto al ULTIMO
+c(puesto_particion = which(names(sort(una)) == "deriva"),
+  puesto_movil     = which(names(sort(movil)) == "deriva"))
+#&gt; puesto_particion     puesto_movil
+#&gt;                1                4</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" role="tabpanel">
+          <pre><code class="language-python">import numpy as np, json
+from statsmodels.tsa.arima.model import ARIMA
+
+nilo = np.asarray(json.load(open("salidas/datos_series.json"))["nilo"]["valores"],
+                  dtype=float)
+
+def arima111(tr, h):
+    return ARIMA(tr, order=(1, 1, 1)).fit().forecast(h)
+
+def naive(tr, h):   return np.repeat(tr[-1], h)
+def media(tr, h):   return np.repeat(tr.mean(), h)
+def deriva(tr, h):
+    return tr[-1] + np.arange(1, h + 1) * (tr[-1] - tr[0]) / (len(tr) - 1)
+
+metodos = {"arima111": arima111, "naive": naive, "media": media, "deriva": deriva}
+
+# (a) una particion: entrenamiento hasta 1950, prueba 20 anos
+tr, te = nilo[:80], nilo[80:]
+una = {k: float(np.sqrt(np.mean((te - np.asarray(f(tr, 20), dtype=float)) ** 2)))
+       for k, f in metodos.items()}
+print({k: round(v, 4) for k, v in sorted(una.items(), key=lambda z: z[1])})
+#&gt; {'deriva': 122.2814, 'naive': 123.0624, 'arima111': 125.062, 'media': 133.3132}
+
+# (b) 36 origenes con h = 5
+def movil_rmse(f, T0=60, h=5):
+    e = [nilo[T:T + h] - np.asarray(f(nilo[:T], h), dtype=float)
+         for T in range(T0, len(nilo) - h + 1)]
+    return float(np.sqrt(np.mean(np.array(e) ** 2)))
+
+movil = {k: movil_rmse(f) for k, f in metodos.items()}
+print({k: round(v, 4) for k, v in sorted(movil.items(), key=lambda z: z[1])})
+#&gt; {'arima111': 121.3307, 'media': 132.5134, 'naive': 157.6873, 'deriva': 161.27}
+
+# El veredicto se invierte con el mismo codigo y los mismos datos.
+print("deriva: puesto", 1, "->", 4)
+#&gt; deriva: puesto 1 -> 4</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="module-11">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 11</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">6.11 Taller: auditar un análisis asistido por IA
+          <span class="text-gray-400 font-normal text-2xl">/ Auditing an AI-assisted analysis</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Convertir todo lo anterior en una lista de verificación
+              que se aplica a un análisis ajeno —lo escriba una persona o un asistente— y practicarla sobre un caso
+              con seis errores reales.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>La semana 15 del curso es un taller de pronóstico asistido por IA, y su enunciado dice «cada paso verificado
+        formalmente por el estudiante». Este módulo es ese verificador. No trata sobre si conviene usar asistentes
+        —conviene, y escriben código de series de tiempo razonable— sino sobre <strong>qué hay que comprobar antes de
+        firmar el resultado</strong>.</p>
+
+      <div class="note">
+        <p><strong>Por qué estos seis errores y no otros.</strong> Los seis que siguen no son inventados para el
+          ejercicio: son los seis que la construcción de <em>este material</em> encontró auditando su propio código, y
+          están documentados en los Capítulos 2, 4, 5 y en los módulos anteriores de este. Todos comparten la misma
+          propiedad incómoda: <strong>el código corre, no emite ningún aviso, y produce un número que parece
+          razonable</strong>. Ninguno se detecta leyendo el código; todos se detectan comprobando el número.</p>
+      </div>
+
+      <div class="quiz" data-quiz="auditoria">
+        <h4><i class="fas fa-magnifying-glass mr-2" aria-hidden="true"></i>Encuentra los seis fallos</h4>
+        <p>Abajo hay un flujo de trabajo completo, del tipo que produce un asistente cuando se le pide «modela y
+          pronostica esta serie en R». Los diez pasos se ejecutan sin ningún error ni aviso. Marca los que producen
+          un número engañoso: hay <strong>seis</strong>. Cada opción explica, al corregir, con qué cifra se detecta
+          y en qué módulo se trató.</p>
+        <div class="quiz-progreso" role="presentation"><div class="quiz-progreso-barra"></div></div>
+        <div class="quiz-preguntas"></div>
+        <div class="quiz-resumen" role="status" hidden></div>
+        <div class="quiz-marcador">
+          <span class="quiz-conteo"></span>
+          <button type="button" class="quiz-reiniciar">Reiniciar</button>
+        </div>
+      </div>
+
+      <h3>La lista de verificación</h3>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Qué comprobar</th><th>Cómo</th><th>La cifra que lo delató aquí</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Que el error reportado sea de pronóstico y no residual</td><td>Buscar si hay un conjunto de prueba que el modelo no vio</td><td>$10.16$ dentro frente a $18.92$ fuera</td></tr>
+            <tr><td>Que el AICc solo compare modelos con el mismo $d$ y $D$</td><td>Mirar el <code>nobs</code> de cada modelo de la tabla</td><td>$n = 100, 99, 98$ en la rejilla del Nilo</td></tr>
+            <tr><td>Que las pruebas de raíz unitaria no se apliquen a una serie estacional cruda</td><td>Comparar el $k$ por defecto con el periodo $m$</td><td>$p < 0.01$ con $k=5$; $p = 0.7711$ con $k=12$</td></tr>
+            <tr><td>Que el MAPE no se calcule sobre una serie que cruza el cero</td><td>Mirar el mínimo absoluto del conjunto de prueba</td><td>MAPE $= 1093\,\%$ con un $\text{APE}$ de $16\,092\,\%$</td></tr>
+            <tr><td>Que la validación respete el orden temporal</td><td>Buscar <code>shuffle</code>, <code>sample</code> o <code>KFold</code></td><td>$0.1351$ prometido frente a $12.8984$ real</td></tr>
+            <tr><td>Que el conjunto de prueba conserve su frecuencia</td><td>Buscar <code>as.numeric()</code> antes de <code>accuracy()</code></td><td>MASE $2.4935$ frente a $3.2153$</td></tr>
+            <tr><td>Que las cifras de los comentarios sean salida real</td><td>Ejecutar el bloque y comparar</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="warning">
+        <p><strong>La última fila es la más importante y la más barata.</strong> Un asistente que escribe
+          <code>#&gt; AICc = 1264.60</code> junto a una llamada está prediciendo la salida, no leyéndola, salvo que
+          alguien haya ejecutado el código. Al construir este capítulo se escribieron a mano $22$ cifras en los
+          comentarios de los bloques; al ejecutarlos, <strong>$11$ estaban mal</strong>, algunas por un factor de dos.
+          El material se publica con las $260$ cifras contrastadas contra la salida real por un script
+          (<code>precalculo/verifica_bloques_cap6.py</code>), porque la comprobación a ojo no funciona.</p>
+      </div>
+
+      <h3>Lo que sí conviene delegar</h3>
+
+      <p>La conclusión del taller no es desconfiar de todo. Un asistente es rápido y fiable escribiendo el andamiaje
+        —recorrer orígenes, montar tablas, dibujar—, traduciendo entre R y Python, y explicando qué hace una función.
+        Donde falla es exactamente donde falla un estudiante con prisa: en las decisiones que no dan error y que
+        dependen del contexto de los datos. Esas son las que hay que tomar uno mismo, y las que el curso entero ha
+        estado enseñando a tomar.</p>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Verificación automática">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r" role="tabpanel">
+          <pre><code class="language-r">library(forecast)
+
+# Los seis fallos, cada uno con la comprobacion que lo destapa.
+
+# 1. Residual presentado como error de pronostico
+fit &lt;- Arima(AirPassengers, order = c(0,1,1), seasonal = c(0,1,1), lambda = 0)
+round(accuracy(fit)[1, "RMSE"], 4)                        #&gt; [1] 10.155
+# ...frente al 18.9154 del origen movil del Modulo 7. Factor 1.86.
+
+# 2. AICc comparado entre distintos d: mirar SIEMPRE el n efectivo
+sapply(0:2, function(d) Arima(Nile, order = c(1, d, 1))$nobs)
+#&gt; [1] 100  99  98
+round(sapply(0:2, function(d) Arima(Nile, order = c(1, d, 1))$aicc), 4)
+#&gt; [1] 1282.499 1267.507 1276.951
+# El "mejor" global de la rejilla completa es un (1,2,2) con AICc 1264.6024,
+# calculado sobre 98 observaciones: no es comparable con los otros dos.
+
+# 3. ADF sobre una serie estacional cruda
+round(c(defecto = suppressWarnings(adf.test(log(AirPassengers)))$p.value,
+        k12     = suppressWarnings(adf.test(log(AirPassengers), k = 12))$p.value), 4)
+#&gt; defecto     k12
+#&gt;  0.0100  0.7711
+# Con k = 5 (el defecto, menor que m = 12) "rechaza" la raiz unitaria en una
+# serie con tendencia y estacionalidad evidentes.
+
+# 4. El MAPE sobre una serie que cruza el cero -> Modulo 4 (1093.2882 %)
+# 5. Validacion cruzada aleatoria -> Modulo 6 (0.1351 frente a 12.8984)
+
+# 6. El conjunto de prueba sin frecuencia cambia la definicion del MASE
+tr &lt;- window(AirPassengers, end = c(1958,12))
+te &lt;- window(AirPassengers, start = c(1959,1))
+fc &lt;- snaive(tr, h = 24)
+round(c(ts = accuracy(fc, te)["Test set","MASE"],
+        numeric = accuracy(fc, as.numeric(te))["Test set","MASE"]), 4)
+#&gt;      ts numeric
+#&gt;  2.4935  3.2153</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" role="tabpanel">
+          <pre><code class="language-python">import numpy as np
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.datasets import get_rdataset
+
+nilo = get_rdataset("Nile").data["value"].to_numpy(dtype=float)
+
+# El equivalente del fallo 2 en Python es PEOR, porque el n efectivo no baja:
+# statsmodels informa el mismo nobs para todo d, asi que la tabla de AIC
+# parece comparable cuando no lo es.
+for d in (0, 1, 2):
+    f = SARIMAX(nilo, order=(1, d, 1)).fit(disp=False)
+    print(f"d={d}  nobs={f.nobs}  AIC={f.aic:10.4f}")
+#&gt; d=0  nobs=100  AIC= 1287.6382
+#&gt; d=1  nobs=100  AIC= 1267.2187
+#&gt; d=2  nobs=100  AIC= 1276.8122
+
+# En R el nobs baja a 100, 99 y 98 y el problema salta a la vista; aqui hay
+# que saberlo. Con simple_differencing=True si lo descuenta:
+for d in (0, 1, 2):
+    f = SARIMAX(nilo, order=(1, d, 1), simple_differencing=True).fit(disp=False)
+    print(f"d={d}  nobs={f.nobs}")
+#&gt; d=0  nobs=100
+#&gt; d=1  nobs=99
+#&gt; d=2  nobs=98
+
+# Regla practica, valida en los dos lenguajes: antes de leer una tabla de
+# AIC/AICc/BIC, comprobar que la columna del numero de observaciones es
+# constante. Si no lo es, la tabla no se puede ordenar.</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="module-12">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 12</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">6.12 El proyecto y cierre del curso
+          <span class="text-gray-400 font-normal text-2xl">/ The forecasting project and wrap-up</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Reunir el procedimiento completo del curso en una guía
+              aplicable al proyecto final, y cerrar con la autoevaluación y los ejercicios.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>El recorrido de los seis capítulos</h3>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Capítulo</th><th>Pregunta que contesta</th><th>Lo que deja listo</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1 · Componentes</td><td>¿De qué está hecha la serie?</td><td>Tendencia, estación, ciclo y residuo; STL</td></tr>
+            <tr><td>2 · Estacionariedad</td><td>¿Es modelable tal como está?</td><td>ACF/PACF, raíz unitaria, diferencias, Box–Cox</td></tr>
+            <tr><td>3 · AR, MA y ARMA</td><td>¿Qué forma tiene su dependencia?</td><td>Identificación, estimación, diagnóstico</td></tr>
+            <tr><td>4 · ARIMA</td><td>¿Cómo se elige el modelo completo?</td><td>Box–Jenkins, $d$, AICc, el intervalo de pronóstico</td></tr>
+            <tr><td>5 · SARIMA</td><td>¿Y si hay estacionalidad?</td><td>$(P,D,Q)_m$, <em>airline</em>, calendario, Fourier</td></tr>
+            <tr><td><strong>6 · Evaluación</strong></td><td><strong>¿Funciona de verdad?</strong></td><td><strong>Métricas, origen móvil, cobertura</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Guía del proyecto de pronóstico</h3>
+
+      <p>El proyecto pide elegir una serie real, modelarla y pronosticarla. Los seis puntos siguientes son los que
+        distinguen un trabajo defendible de uno que solo tiene números.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-clipboard-check mr-2" aria-hidden="true"></i>Seis exigencias del informe</h4>
+        <ol style="margin-bottom:0;">
+          <li><strong>Fuente y fecha de corte.</strong> De dónde salen los datos, cuándo se descargaron, qué se hizo
+            con los huecos. Sin esto el trabajo no es reproducible.</li>
+          <li><strong>Al menos un método de referencia.</strong> Naïve estacional si hay estación, naïve si no. Si el
+            modelo no le gana, hay que decirlo: es un resultado, no un fracaso.</li>
+          <li><strong>La métrica elegida y por qué</strong>, decidida <em>antes</em> de ver los resultados. El MASE
+            por defecto; RMSE o MAE si el costo del error lo justifica; MAPE solo si la serie está lejos del cero.</li>
+          <li><strong>Evaluación por origen móvil</strong>, con el número de orígenes, el horizonte y la ventana
+            declarados. Una sola partición no basta, y el Módulo 10 muestra qué pasa cuando se usa.</li>
+          <li><strong>Cobertura del intervalo</strong> al $80\,\%$ <em>y</em> al $95\,\%$. Comprobar solo uno de los
+            dos esconde el fallo del naïve estacional del Módulo 9.</li>
+          <li><strong>Diagnóstico del modelo final</strong>: Ljung–Box, normalidad, raíces. Y la lista del Módulo 11
+            aplicada al propio trabajo.</li>
+        </ol>
+      </div>
+
+      <div class="note">
+        <p><strong>Sobre el uso de asistentes de IA en el proyecto.</strong> Está permitido y es razonable: sirven para
+          el andamiaje, la traducción entre lenguajes y la explicación de funciones. Lo que no se delega es la
+          verificación. Un informe que incluya una salida numérica que su autor no haya ejecutado es exactamente el
+          caso del Módulo 11, y se corrige igual: ejecutando.</p>
+      </div>
+
+      <h3>Autoevaluación</h3>
+
+      <div class="quiz" data-quiz="cap6">
+        <h4><i class="fas fa-circle-question mr-2" aria-hidden="true"></i>Comprueba lo que te llevas</h4>
+        <p>Ocho preguntas sobre los doce módulos. Al primer fallo verás una pista y podrás reintentar; al segundo,
+          la explicación completa. Al terminar, un resumen de qué módulos conviene repasar.</p>
+        <div class="quiz-progreso" role="presentation"><div class="quiz-progreso-barra"></div></div>
+        <div class="quiz-preguntas"></div>
+        <div class="quiz-resumen" role="status" hidden></div>
+        <div class="quiz-marcador">
+          <span class="quiz-conteo"></span>
+          <button type="button" class="quiz-reiniciar">Reiniciar</button>
+        </div>
+      </div>
+
+      <h3>Ejercicios</h3>
+
+      <div class="ejercicio-guiado">
+        <p class="ejercicio-enunciado"><span class="ejercicio-numero">1.</span>Sobre <code>USAccDeaths</code>
+          ($n = 72$), evalúa por origen móvil con $T_0 = 36$ y $h = 12$ cuatro métodos: naïve estacional, el
+          SARIMA <em>airline</em>, <code>auto.arima</code> y la media. Compara el orden que obtienes con el que da
+          <strong>una sola partición</strong> (los últimos $12$ meses como prueba). ¿Coinciden? Contrasta después el
+          <em>airline</em> contra el naïve estacional con Diebold–Mariano y explica qué añade el contraste.</p>
+        <div class="ejercicio-acciones">
+          <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c6e1-pista">
+            <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c6e1-sol">
+            <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="ejercicio-panel pista" id="c6e1-pista" hidden>
+          <p style="margin:0;">Con $n = 72$, $T_0 = 36$ y $h = 12$ salen $25$ orígenes. Usa <code>tsCV</code> con
+            <code>initial = 35</code> y quédate solo con las filas completas, o escribe el bucle a mano. Antes de
+            interpretar el resultado, fíjate en que la serie tiene solo seis años: el <em>airline</em> gasta
+            $d + D\,m = 13$ observaciones en las diferencias, así que en los primeros orígenes está estimando dos
+            parámetros con poco más de veinte datos efectivos.</p>
+        </div>
+        <div class="ejercicio-panel solucion" id="c6e1-sol" hidden>
+          <p><strong>Respuesta: no coinciden, y se invierte el podio. La partición única corona al <em>airline</em>
+            (RMSE $288.83$) y el origen móvil corona al naïve estacional ($331.33$ frente a $434.92$). Diebold–Mariano
+            añade lo que ninguno de los dos órdenes dice: la diferencia no es significativa a ningún horizonte, así
+            que lo honesto es quedarse con el método más simple.</strong></p>
+          <pre><code class="language-r">library(forecast)
+completos &lt;- function(e) e[which(rowSums(!is.na(e)) == ncol(e)), ]
+
+metodos &lt;- list(
+  snaive  = function(x, h) snaive(x, h = h),
+  airline = function(x, h) forecast(Arima(x, order = c(0,1,1), seasonal = c(0,1,1)), h = h),
+  auto    = function(x, h) forecast(auto.arima(x), h = h),
+  media   = function(x, h) meanf(x, h = h))
+
+# (a) origen movil: 25 origenes, h = 12
+E &lt;- lapply(metodos, function(f) completos(tsCV(USAccDeaths, f, h = 12, initial = 35)))
+round(sort(sapply(E, function(e) sqrt(mean(e^2)))), 4)
+#&gt;   snaive     auto  airline    media
+#&gt; 331.3329 417.3851 434.9200 942.4677
+
+# (b) una sola particion: los ultimos 12 meses
+tr &lt;- subset(USAccDeaths, start = 1, end = 60)
+te &lt;- as.numeric(USAccDeaths)[61:72]
+round(sort(sapply(metodos, function(f)
+  sqrt(mean((te - as.numeric(f(tr, 12)$mean))^2)))), 4)
+#&gt;  airline     auto   snaive    media
+#&gt; 288.8282 288.8282 341.1639 946.1645
+
+# (c) Diebold-Mariano: airline contra el naive estacional
+for (h in c(1, 6, 12)) {
+  p &lt;- dm.test(E$airline[, h], E$snaive[, h], alternative = "two.sided", h = h, power = 2)
+  cat(sprintf("h = %2d  DM = %7.4f  p = %.4f\n", h, p$statistic, p$p.value))
+}
+#&gt; h =  1  DM =  0.0638  p = 0.9497
+#&gt; h =  6  DM =  0.9115  p = 0.3711
+#&gt; h = 12  DM =  1.2659  p = 0.2177
+
+# El MASE de los cuatro, para leerlos en escala comparable
+Q &lt;- mean(abs(diff(as.numeric(subset(USAccDeaths, start = 1, end = 36)), lag = 12)))
+round(sort(sapply(E, function(e) mean(abs(e)) / Q)), 4)
+#&gt; snaive   auto airline  media
+#&gt; 0.4004 0.5012  0.5210 1.1517</code></pre>
+          <p><strong>Discusión.</strong> Los tres resultados cuentan la misma historia desde tres ángulos. La partición
+            única elige el modelo más complejo con $12$ observaciones; el origen móvil, con $300$, lo pone tercero; y
+            el contraste dice que ni siquiera esa segunda ordenación es concluyente ($p$ entre $0.22$ y $0.95$). Con
+            una serie de seis años el <em>airline</em> no tiene datos suficientes para que sus dos parámetros paguen
+            su costo, y el naïve estacional —que no estima nada— hace el mismo trabajo. Los cuatro MASE por debajo de
+            $1$ salvo la media confirman que la estacionalidad es fuerte y que capturarla es casi todo el problema.</p>
+        </div>
+      </div>
+
+      <div class="ejercicio-guiado">
+        <p class="ejercicio-enunciado"><span class="ejercicio-numero">2.</span>Toma <code>co2</code> ($n = 468$),
+          reserva los últimos $24$ meses y calcula RMSE, MAE, MAPE y MASE para cinco métodos: media, naïve, naïve
+          estacional, deriva y el <em>airline</em>. El MAPE del método de la media sale $7.60\,\%$. ¿Es un buen
+          resultado? Justifica con las otras métricas y explica <strong>qué propiedad de esta serie</strong> hace que
+          el MAPE dé esa impresión.</p>
+        <div class="ejercicio-acciones">
+          <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c6e2-pista">
+            <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c6e2-sol">
+            <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="ejercicio-panel pista" id="c6e2-pista" hidden>
+          <p style="margin:0;">Calcula el rango de la serie y divídelo por su mínimo. Después pregúntate cuánto vale
+            el MAPE de un método que predijera <em>siempre</em> el valor medio de una serie que solo varía ese
+            porcentaje, y compáralo con el MAPE del naïve estacional sobre AirPassengers ($15.52\,\%$), que es un
+            método mucho mejor sobre una serie mucho más difícil.</p>
+        </div>
+        <div class="ejercicio-panel solucion" id="c6e2-sol" hidden>
+          <p><strong>Respuesta: no, es un resultado pésimo. Su MASE es $21.99$, es decir, comete veintidós veces más
+            error que el naïve estacional dentro de la muestra. El $7.60\,\%$ parece bueno porque el co2 solo varía un
+            $17.13\,\%$ en toda la serie: en una serie casi plana, cualquier error es un porcentaje pequeño del
+            nivel.</strong></p>
+          <pre><code class="language-r">library(forecast)
+n &lt;- length(co2); h &lt;- 24
+tr &lt;- subset(co2, start = 1, end = n - h)
+te &lt;- as.numeric(co2)[(n - h + 1):n]
+
+round(c(minimo = min(co2), maximo = max(co2),
+        variacion_pct = 100 * (max(co2) / min(co2) - 1)), 2)
+#&gt;        minimo        maximo variacion_pct
+#&gt;        313.18        366.84         17.13
+
+Q &lt;- mean(abs(diff(as.numeric(tr), lag = 12)))     # escala del MASE
+round(Q, 4)                                        #&gt; [1] 1.2559
+
+cands &lt;- list(media = meanf(tr, h), naive = naive(tr, h), snaive = snaive(tr, h),
+              deriva = rwf(tr, h, drift = TRUE),
+              airline = forecast(Arima(tr, order = c(0,1,1), seasonal = c(0,1,1)), h = h))
+t(sapply(cands, function(fc) {
+  e &lt;- te - as.numeric(fc$mean)
+  round(c(RMSE = sqrt(mean(e^2)), MAE = mean(abs(e)),
+          MAPE = 100 * mean(abs(e / te)), MASE = mean(abs(e)) / Q), 4)
+}))
+#&gt;            RMSE     MAE   MAPE    MASE
+#&gt; media   27.6893 27.6147 7.5992 21.9883
+#&gt; naive    3.2306  2.7471 0.7538  2.1874
+#&gt; snaive   2.4333  2.3379 0.6433  1.8616
+#&gt; deriva   2.4794  2.1479 0.5902  1.7103
+#&gt; airline  0.3541  0.2767 0.0761  0.2203</code></pre>
+          <p><strong>Discusión.</strong> El MAPE de la media, $7.60\,\%$, es <em>menor</em> que el $15.52\,\%$ que
+            saca el naïve estacional sobre AirPassengers en el Módulo 2, y sin embargo aquel es un método sensato
+            sobre una serie difícil y este es el peor método posible sobre una serie fácil. La comparación entre
+            series con MAPE no significa nada: depende de cuánto varíe cada una respecto de su nivel. El MASE lo
+            resuelve porque su denominador es la dificultad <em>de esa serie</em>: $21.99$ frente a $2.4935$ dice sin
+            ambigüedad cuál de los dos trabajos está peor hecho. Nótese además que dentro de esta serie el orden es el
+            mismo con las cuatro métricas y las razones peor/mejor casi coinciden ($99.86$ con MAPE, $99.81$ con
+            MASE): el problema del MAPE aquí no es ordenar, es que su <em>valor absoluto</em> no se puede leer.</p>
+        </div>
+      </div>
+
+      <div class="ejercicio-guiado">
+        <p class="ejercicio-enunciado"><span class="ejercicio-numero">3.</span>Sobre el <code>Nile</code>, evalúa por
+          origen móvil ($T_0 = 60$, $h = 5$, $36$ orígenes) la <strong>cobertura empírica</strong> de los intervalos
+          del ARIMA$(1,1,1)$ y del naïve a los niveles nominales $50$, $80$, $90$, $95$ y $99\,\%$. ¿Cumplen lo que
+          prometen? Comprueba antes si el supuesto de normalidad de los residuales se sostiene, y explica el
+          resultado a la luz de esa comprobación.</p>
+        <div class="ejercicio-acciones">
+          <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c6e3-pista">
+            <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c6e3-sol">
+            <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="ejercicio-panel pista" id="c6e3-pista" hidden>
+          <p style="margin:0;">Empieza por el Shapiro–Wilk de los residuales, para saber si el problema —si lo hay—
+            está en el supuesto o en otro sitio. Después calcula la cobertura nivel por nivel y resta el nominal: si
+            todos los excesos tienen el mismo signo, la explicación es una sola y no cinco. Y compara los anchos medios
+            de los dos métodos antes de sacar conclusiones sobre cuál está mejor.</p>
+        </div>
+        <div class="ejercicio-panel solucion" id="c6e3-sol" hidden>
+          <p><strong>Respuesta: no cumplen, y se pasan por arriba en los cinco niveles. La normalidad no es el
+            problema (Shapiro $p = 0.7312$): los intervalos son sencillamente demasiado anchos, sobre todo los del
+            naïve, cuyo $50\,\%$ nominal cubre en realidad el $79.4\,\%$.</strong></p>
+          <pre><code class="language-r">library(forecast)
+
+# 1. El supuesto, antes que nada
+round(shapiro.test(residuals(Arima(Nile, order = c(1,1,1))))$p.value, 4)
+#&gt; [1] 0.7312     &lt;- la normalidad NO se rechaza
+
+# 2. Cobertura empirica nivel por nivel
+cobertura &lt;- function(ajusta, niveles, T0 = 60, h = 5) {
+  sapply(niveles, function(nv) {
+    dentro &lt;- c()
+    for (T in T0:(length(Nile) - h)) {
+      fc &lt;- ajusta(subset(Nile, start = 1, end = T), h, nv)
+      real &lt;- as.numeric(Nile)[(T + 1):(T + h)]
+      dentro &lt;- c(dentro, real &gt;= fc$lower[, 1] &amp; real &lt;= fc$upper[, 1])
+    }
+    round(100 * mean(dentro), 4)
+  })
+}
+niv &lt;- c(50, 80, 90, 95, 99)
+ca &lt;- cobertura(function(tr, h, nv) forecast(Arima(tr, order = c(1,1,1)), h = h, level = nv), niv)
+cn &lt;- cobertura(function(tr, h, nv) naive(tr, h = h, level = nv), niv)
+rbind(nominal = niv, arima = ca, naive = cn, exceso_arima = ca - niv, exceso_naive = cn - niv)
+#&gt;                  [,1]    [,2]    [,3] [,4] [,5]
+#&gt; nominal      50.0000 80.0000 90.0000   95   99
+#&gt; arima        63.8889 87.7778 97.2222  100  100
+#&gt; naive        79.4444 96.1111 99.4444  100  100
+#&gt; exceso_arima 13.8889  7.7778  7.2222    5    1
+#&gt; exceso_naive 29.4444 16.1111  9.4444    5    1
+
+# 3. El ancho medio del intervalo del 95 %, que es lo que explica el exceso
+anchos &lt;- function(ajusta, T0 = 60, h = 5) {
+  a &lt;- c()
+  for (T in T0:(length(Nile) - h)) {
+    fc &lt;- ajusta(subset(Nile, start = 1, end = T), h, 95)
+    a &lt;- c(a, fc$upper[, 1] - fc$lower[, 1])
+  }
+  round(mean(a), 4)
+}
+c(arima = anchos(function(tr,h,nv) forecast(Arima(tr, order=c(1,1,1)), h=h, level=nv)),
+  naive = anchos(function(tr,h,nv) naive(tr, h=h, level=nv)))
+#&gt;     arima     naive
+#&gt;  631.1552 1138.3547</code></pre>
+          <p><strong>Discusión.</strong> Los excesos son positivos en los cinco niveles y en los dos métodos, así que
+            no hay que buscar cinco explicaciones: hay una sola, el ancho. El naïve la sufre más porque su varianza
+            crece como $\sigma^2 h$ suponiendo que cada año trae un choque nuevo y permanente, y el Nilo no se comporta
+            así: su ARIMA$(1,1,1)$ tiene $\hat\theta = -0.874$, que cancela buena parte de la integración —el hallazgo
+            del Módulo 1 del Capítulo 4—, y por eso su abanico es la mitad de ancho ($631.2$ frente a $1138.4$) y su
+            cobertura, aunque también excesiva, está mucho más cerca de lo prometido. Al $95\,\%$ los dos cubren el
+            $100\,\%$, así que ahí no se distinguen: <strong>es el nivel del $50\,\%$ el que separa a un intervalo
+            razonable de uno inservible</strong>, que es exactamente el argumento del Módulo 9 para no comprobar un
+            solo nivel. Como los dos cubren el $100\,\%$ al $95\,\%$, su puntaje de Winkler coincide con el ancho
+            medio: nunca pagan penalización.</p>
+        </div>
+      </div>
+
+      <h3>Lecturas</h3>
+
+      <div class="note">
+        <p style="margin-bottom:0.4rem;"><strong>Para este capítulo:</strong></p>
+        <ul style="margin-bottom:0.6rem;">
+          <li>Hyndman &amp; Athanasopoulos, <em>Forecasting: Principles and Practice</em> (3.ª ed.), secciones
+            <strong>5.8</strong> (métodos de referencia y errores de pronóstico), <strong>5.9</strong> (evaluación de
+            intervalos y puntaje de Winkler) y <strong>5.10</strong> (validación cruzada de series de tiempo). Acceso
+            abierto en <code>otexts.com/fpp3</code>.</li>
+          <li>Hyndman &amp; Koehler (2006), «Another look at measures of forecast accuracy», <em>International Journal
+            of Forecasting</em> 22(4). Es el artículo que introduce el MASE y el que argumenta contra el MAPE.</li>
+          <li>Diebold &amp; Mariano (1995), «Comparing predictive accuracy», <em>Journal of Business &amp; Economic
+            Statistics</em> 13(3); y Harvey, Leybourne &amp; Newbold (1997) para la corrección de muestra pequeña que
+            aplica <code>dm.test</code>.</li>
+          <li>Shumway &amp; Stoffer, <em>Time Series Analysis and Its Applications</em> (4.ª ed.), sección 3.5 sobre
+            pronóstico con ARIMA.</li>
+        </ul>
+        <p style="margin-bottom:0;">Con esto termina el material. El siguiente paso es el proyecto: una serie propia,
+          el recorrido de los seis capítulos, y un informe que resista la lista de verificación del Módulo 11.</p>
+      </div>
+    </div>
+  </template>

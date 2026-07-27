@@ -1,0 +1,627 @@
+  <template id="module-7">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 7</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">6.7 Validación de origen móvil
+          <span class="text-gray-400 font-normal text-2xl">/ Rolling-origin validation</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Construir la evaluación que sí decide: muchas
+              particiones en vez de una, ventana expansiva o deslizante, y el error leído por horizonte.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Una partición única produce un número con una varianza enorme. La solución es no quedarse con una: se recorre
+        la serie fijando un origen tras otro, se pronostica $h$ pasos desde cada uno con un modelo
+        <strong>reajustado con solo el pasado de ese origen</strong>, y se acumulan todos los errores. Es la
+        <strong>validación de origen móvil</strong> (<em>rolling-origin validation</em>, también <em>time series
+        cross-validation</em>), y es lo que el syllabus del curso contrapone a la validación cruzada estándar.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: origen móvil</h4>
+        <p>Sea una serie $y_1,\dots,y_n$, un horizonte $h$ y un primer origen $T_0$. Para cada
+          $T = T_0, T_0+1, \dots, n-h$:</p>
+        <ol style="margin-bottom:0.6rem;">
+          <li>se ajusta el modelo con $y_{a},\dots,y_{T}$;</li>
+          <li>se pronostica $\hat y_{T+1\mid T},\dots,\hat y_{T+h\mid T}$;</li>
+          <li>se guardan los $h$ errores $e_{T,j} = y_{T+j} - \hat y_{T+j\mid T}$.</li>
+        </ol>
+        <p style="margin-bottom:0;">Con $a = 1$ la ventana es <strong>expansiva</strong> (<em>expanding</em>): cada
+          origen usa todo el pasado. Con $a = T - w + 1$ es <strong>deslizante</strong> (<em>sliding</em>, o
+          <em>rolling</em>) de tamaño fijo $w$: los datos más viejos se descartan.</p>
+      </div>
+
+      <div class="warning">
+        <p><strong>El paso 1 dice «se ajusta», no «se reutiliza».</strong> Estimar los coeficientes una vez con toda la
+          serie y luego producir pronósticos desde cada origen es fuga de información del Módulo 6, con otro
+          disfraz: el modelo de 1954 estaría usando lo que pasó en 1960. Es la parte cara del procedimiento —hay que
+          reajustar tantas veces como orígenes— y la que no se puede saltar.</p>
+      </div>
+
+      <h3>El recorrido, paso a paso</h3>
+
+      <p>Sobre AirPassengers con $h = 12$ y primer origen en diciembre de 1954 ($T_0 = 72$) salen
+        <strong>$61$ orígenes</strong> y $61 \times 12 = 732$ errores de pronóstico, frente a los $24$ de una partición
+        única.</p>
+
+      <div class="simulador" data-simulador="origen-movil">
+        <h4><i class="fas fa-forward-step" aria-hidden="true"></i> Recorre los 61 orígenes</h4>
+        <p class="simulador-intro">Mueve el deslizador para avanzar el origen. La zona sombreada es el entrenamiento
+          de ese origen; las líneas de la derecha, los doce meses pronosticados por cada método frente a lo que de
+          verdad ocurrió. El interruptor cambia entre ventana expansiva y deslizante de $72$ meses: fíjate en cómo se
+          encoge la zona sombreada y en qué le pasa al error.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper" style="height:290px;">
+          <canvas aria-label="Serie con la ventana de entrenamiento y los pronósticos del origen elegido" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <h3>Expansiva o deslizante</h3>
+
+      <p>La ventana deslizante olvida el pasado lejano. Eso es una ventaja si la serie cambió de régimen y un
+        desperdicio si no. Sobre AirPassengers, que no cambia de régimen, la expansiva gana:</p>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Ventana</th><th>RMSE global</th><th>MAE</th><th>MASE</th><th>RMSE en $h=1$</th><th>RMSE en $h=12$</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Expansiva</strong></td><td>$\mathbf{18.92}$</td><td>$\mathbf{14.29}$</td><td>$\mathbf{0.621}$</td><td>$10.35$</td><td>$\mathbf{22.61}$</td></tr>
+            <tr><td>Deslizante ($w = 72$)</td><td>$20.10$</td><td>$15.26$</td><td>$0.663$</td><td>$\mathbf{10.31}$</td><td>$24.89$</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>El detalle interesante está en las dos últimas columnas: a un mes vista las dos ventanas empatan —incluso gana
+        la deslizante por $0.04$—, y la diferencia se abre con el horizonte hasta un $10\,\%$ en $h = 12$. Tiene
+        sentido: para acertar el mes que viene basta con el pasado reciente; para acertar a doce meses hace falta haber
+        visto varios ciclos anuales completos, y la ventana de $72$ meses solo contiene seis.</p>
+
+      <div class="simulador" data-simulador="error-por-horizonte">
+        <h4><i class="fas fa-chart-line" aria-hidden="true"></i> El error crece con el horizonte</h4>
+        <p class="simulador-intro">RMSE por horizonte, de $h=1$ a $h=12$, para los métodos que elijas. Es la lectura
+          que un promedio único esconde: el SARIMA pasa de $10.35$ a $22.61$, mientras que el naïve estacional se
+          queda casi plano —de $41.74$ a $42.65$— porque su error no depende de lo lejos que mire. Por eso a horizontes
+          largos la ventaja del modelo se estrecha, y por eso <strong>hay que decir siempre a qué horizonte</strong>
+          se ha medido.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper" style="height:250px;">
+          <canvas aria-label="RMSE por horizonte de pronóstico" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <h3>El protocolo completo</h3>
+
+      <!--CICLO:evaluacion-honesta-->
+
+      <div class="warning">
+        <p><strong>Dos trampas de <code>tsCV()</code>, medidas.</strong> (1) Su matriz de errores es
+          <strong>desbalanceada</strong>: la columna $h=1$ tiene $71$ errores y la $h=12$ solo $60$, porque los últimos
+          orígenes no llegan a completar el horizonte. Calcular <code>sqrt(colMeans(e^2, na.rm = TRUE))</code> compara
+          horizontes sobre <em>muestras distintas</em>. (2) <code>initial</code> y <code>window</code> no cuentan
+          igual: <code>initial = 72</code> hace que el primer origen sea el $73$, mientras que
+          <code>window = 72</code> hace que sea el $72$. Con <code>initial = 71</code> y quedándose solo con las filas
+          completas, <code>tsCV</code> reproduce exactamente el $18.9154$ de la tabla; con
+          <code>initial = 72</code> da $18.9422$ y sin filtrar filas, $18.7674$.</p>
+      </div>
+
+      <div class="note">
+        <p><strong>Dos maneras de promediar que no dan lo mismo.</strong> Se pueden juntar los $732$ errores y sacar un
+          RMSE ($18.92$), o calcular el RMSE de cada origen y promediar los $61$ ($16.81$). El segundo es menor por la
+          desigualdad de Jensen —la raíz es cóncava— y es el que citó el Módulo 11 del Capítulo 5. Ninguno está mal;
+          hay que decir cuál se usa. Este capítulo usa el primero, salvo cuando enlaza con aquella tabla.</p>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Origen móvil">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r" role="tabpanel">
+          <pre><code class="language-r">library(forecast)
+
+# La funcion recibe la serie hasta el origen y devuelve un pronostico a h
+f_sarima &lt;- function(y, h) forecast(
+  Arima(y, order = c(0, 1, 1), seasonal = c(0, 1, 1), lambda = 0), h = h)
+
+e &lt;- tsCV(AirPassengers, f_sarima, h = 12, initial = 71)
+
+# TRAMPA 1: la matriz es desbalanceada
+dim(e)                                   #&gt; [1] 144  12
+colSums(!is.na(e))                       # errores por horizonte
+#&gt;  [1] 72 71 70 69 68 67 66 65 64 63 62 61
+round(sqrt(mean(e^2, na.rm = TRUE)), 4)  # mezcla origenes distintos por columna
+#&gt; [1] 18.7452
+
+# La version balanceada: solo los origenes con los 12 horizontes completos
+completas &lt;- which(rowSums(!is.na(e)) == 12)
+range(completas)                         #&gt; [1]  72 132
+length(completas)                        #&gt; [1] 61
+eb &lt;- e[completas, ]
+
+round(sqrt(mean(eb^2)), 4)                        # RMSE de los 732 errores
+#&gt; [1] 18.9154
+round(mean(sqrt(rowMeans(eb^2))), 4)              # RMSE medio de los 61 origenes
+#&gt; [1] 16.8123
+round(sqrt(colMeans(eb^2)), 4)                    # RMSE por horizonte
+#&gt;  [1] 10.3506 12.8143 16.3744 17.9966 18.3120 19.2849 20.2057 20.5660
+#&gt;  [9] 20.7259 21.8897 21.7161 22.6138
+
+# TRAMPA 2: initial y window no empiezan en el mismo sitio
+e72 &lt;- tsCV(AirPassengers, f_sarima, h = 12, initial = 72)
+min(which(rowSums(!is.na(e72)) &gt; 0))     #&gt; [1] 73    &lt;- initial = 72 empieza en 73
+ew &lt;- tsCV(AirPassengers, f_sarima, h = 12, window = 72)
+min(which(rowSums(!is.na(ew)) &gt; 0))      #&gt; [1] 72    &lt;- window = 72 empieza en 72
+
+# Ventana deslizante, sobre los mismos 61 origenes
+ewb &lt;- ew[which(rowSums(!is.na(ew)) == 12), ]
+round(sqrt(mean(ewb^2)), 4)              #&gt; [1] 20.0956</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" role="tabpanel">
+          <pre><code class="language-python">import numpy as np, pandas as pd
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.datasets import get_rdataset
+
+ap = get_rdataset("AirPassengers").data["value"].to_numpy(dtype=float)
+n, h, T0 = len(ap), 12, 72
+
+# No hay equivalente de tsCV: el bucle se escribe a mano, y eso es bueno
+# porque obliga a decidir explicitamente el primer origen y la ventana.
+def origen_movil(y, h, T0, ventana=None):
+    origenes = range(T0, len(y) - h + 1)
+    E = np.full((len(list(origenes)), h), np.nan)
+    for i, T in enumerate(range(T0, len(y) - h + 1)):
+        desde = 0 if ventana is None else max(0, T - ventana)
+        tr = y[desde:T]
+        fit = SARIMAX(np.log(tr), order=(0, 1, 1),
+                      seasonal_order=(0, 1, 1, 12)).fit(disp=False)
+        E[i] = y[T:T + h] - np.exp(fit.get_forecast(h).predicted_mean)
+    return E
+
+E = origen_movil(ap, h, T0)
+print("origenes:", E.shape[0], "| errores:", E.size)
+#&gt; origenes: 61 | errores: 732
+print("RMSE global:", round(float(np.sqrt(np.mean(E ** 2))), 4))
+#&gt; RMSE global: 18.9165
+print("RMSE medio de los origenes:",
+      round(float(np.mean(np.sqrt(np.mean(E ** 2, axis=1)))), 4))
+#&gt; RMSE medio de los origenes: 16.8133
+print("RMSE por h:", np.round(np.sqrt(np.mean(E ** 2, axis=0)), 4))
+#&gt; RMSE por h: [10.344  12.8043 16.3777 17.9986 18.3149 19.2904 20.209  20.5708
+#&gt;  20.7252 21.8935 21.7144 22.6142]
+
+# R da 18.9154 y 16.8123: una diferencia del 0.006 %, pese a la
+# inicializacion difusa del filtro de statsmodels que el Capitulo 5
+# documento. Sobre 61 reajustes el efecto se diluye por completo.</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="module-8">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 8</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">6.8 Backtesting y la prueba de Diebold–Mariano
+          <span class="text-gray-400 font-normal text-2xl">/ Backtesting and forecast comparison</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Comparar varios métodos con el mismo procedimiento, ver
+              cómo el orden cambia según la columna que se mire, y contrastar si la diferencia entre dos de ellos es
+              real o es ruido.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Con el motor del módulo anterior, comparar métodos es aplicárselo a todos sobre <strong>los mismos
+        orígenes</strong>. A eso se le llama <strong>backtesting</strong>. La tabla siguiente lo hace con ocho métodos
+        sobre los $61$ orígenes de AirPassengers, $h = 12$.</p>
+
+      <!--RANKING:backtest|Backtesting sobre 61 orígenes (h = 12)|-->
+
+      <p>Las cinco métricas de error puntual coinciden en el orden sobre estos datos: RMSE, MAE, MAPE, sMAPE y MASE
+        nombran al SARIMA primero, a <code>auto.arima</code> segundo y a la media última, con los mismos puestos
+        intermedios. Eso <em>no</em> está garantizado —el Módulo 3 mostró $10$ orígenes individuales donde RMSE y MAE
+        se contradicen—, pero al promediar sobre $61$ orígenes las discrepancias se compensan.</p>
+
+      <div class="warning">
+        <p><strong>Lo que sí reordena la tabla es dejar de preguntar por el error puntual.</strong> Ordena por
+          <em>cobertura del 95 %</em> y el SARIMA se desploma al quinto puesto: sus intervalos cubren el $98.4\,\%$
+          cuando prometen el $95\,\%$, mientras que el ETS, peor pronosticando, está mejor calibrado ($94.3\,\%$).
+          Ordena por <em>segundos</em> y <code>auto.arima</code> queda último con $118.61$ s frente a los $0.44$ s del
+          <em>airline</em> —<strong>270 veces más lento</strong>— para llegar a un RMSE peor. La pregunta «¿cuál es el
+          mejor método?» no tiene respuesta hasta que se dice mejor <em>en qué</em>.</p>
+      </div>
+
+      <h3>¿La diferencia es real?</h3>
+
+      <p>El SARIMA tiene un RMSE de $18.92$ y <code>auto.arima</code>, que le sigue, de $20.63$. Con $61$ orígenes que
+        además se solapan entre sí, ¿es esa diferencia distinguible del azar? La prueba de
+        <strong>Diebold–Mariano</strong> responde exactamente a eso.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: prueba de Diebold–Mariano</h4>
+        <p>Sean $e^{(1)}_i$ y $e^{(2)}_i$ los errores de dos métodos sobre los mismos $n$ orígenes al mismo horizonte
+          $h$, y una función de pérdida $L$ (aquí $L(e) = e^2$). Sea la diferencia de pérdidas
+          $d_i = L(e^{(1)}_i) - L(e^{(2)}_i)$. La hipótesis nula es $H_0: \mathbb{E}[d_i] = 0$ —los dos métodos
+          pronostican igual de bien— y el estadístico es</p>
+        <p>$$ \text{DM} = \frac{\bar d}{\sqrt{\widehat{\operatorname{Var}}(\bar d)}}, $$</p>
+        <p style="margin-bottom:0;">donde la varianza se estima teniendo en cuenta que a horizonte $h$ los $d_i$ están
+          autocorrelacionados hasta el orden $h-1$. Un DM negativo favorece al primer método.</p>
+      </div>
+
+      <div class="simulador" data-simulador="diebold-mariano">
+        <h4><i class="fas fa-scale-balanced" aria-hidden="true"></i> SARIMA contra cada rival, horizonte a horizonte</h4>
+        <p class="simulador-intro">Elige el rival y el horizonte. Las barras son las diferencias de pérdida $d_i$ en
+          cada uno de los $61$ orígenes: si estuvieran repartidas alrededor de cero, los dos métodos serían
+          indistinguibles. El resultado más instructivo es <code>auto.arima</code>: el SARIMA le gana en la tabla
+          agregada, pero solo en el $45.9\,\%$ de los orígenes, y el contraste no rechaza a ningún horizonte
+          ($p = 0.9662$, $0.4245$ y $0.2744$). Son el mismo modelo con distinto nombre.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper" style="height:250px;">
+          <canvas aria-label="Diferencias de pérdida entre el SARIMA y el rival elegido" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>SARIMA contra</th><th>$h=1$</th><th>$h=6$</th><th>$h=12$</th><th>% de orígenes que gana</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Naïve estacional</td><td>$p<0.0001$ ✓</td><td>$p=0.0038$ ✓</td><td>$p=0.0600$</td><td>$88.5\,\%$</td></tr>
+            <tr><td>Deriva</td><td>$p<0.0001$ ✓</td><td>$p<0.0001$ ✓</td><td>$p=0.7241$</td><td>$100\,\%$</td></tr>
+            <tr><td>ETS sobre log</td><td>$p=0.0012$ ✓</td><td>$p<0.0001$ ✓</td><td>$p=0.0007$ ✗</td><td>$91.8\,\%$</td></tr>
+            <tr><td>STL + ARIMA</td><td>$p=0.0013$ ✓</td><td>$p<0.0001$ ✓</td><td>$p=0.1039$</td><td>$91.8\,\%$</td></tr>
+            <tr><td><code>auto.arima</code></td><td>$p=0.9662$</td><td>$p=0.4245$</td><td>$p=0.2744$</td><td>$\mathbf{45.9\,\%}$</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>La lectura completa es bastante más matizada que la de la tabla agregada, y hay tres cosas que solo se ven
+        aquí.</p>
+
+      <p><strong>El SARIMA gana a corto plazo y deja de ganar a doce meses.</strong> A $h = 1$ y $h = 6$ vence con
+        holgura a las cuatro referencias. A $h = 12$ ya no se distingue del naïve estacional ($p = 0.0600$), ni del
+        STL ($p = 0.1039$), ni de la deriva ($p = 0.7241$) —cuyo RMSE a ese horizonte, $20.34$, es incluso menor que
+        el suyo, $22.61$—. Que el SARIMA encabece la columna RMSE es cierto, y a un año vista es poco.</p>
+
+      <p><strong>Contra el ETS, a $h = 12$, el SARIMA pierde y la pérdida es significativa</strong> ($\text{DM} =
+        3.5558$, $p = 0.0007$; el signo positivo va en contra del primer método). El agregado dice $18.92$ frente a
+        $23.17$ y el detalle dice que esa ventaja está toda en los horizontes cortos.</p>
+
+      <p><strong>Y <code>auto.arima</code> es el mismo modelo con otro nombre.</strong> No hay diferencia significativa
+        a ningún horizonte, el SARIMA solo le gana en el $45.9\,\%$ de los orígenes —menos de la mitad— y tarda
+        $118.61$ segundos frente a $0.44$. Toda su distancia en la tabla agregada cabe dentro del ruido.</p>
+
+      <div class="note">
+        <p><strong>Un aviso técnico que sale en la práctica.</strong> Con $h > 1$ los $d_i$ están autocorrelacionados y
+          <code>dm.test</code> lo corrige, pero su estimador de varianza por defecto (<code>"acf"</code>) puede salir
+          <strong>negativo</strong>; entonces emite un aviso y <em>continúa con $h = 1$</em>, que no es lo que se le
+          pidió y cambia el $p$-valor sin que nadie se entere. El estimador
+          <code>varestimator = "bartlett"</code> está garantizado no negativo: conviene comprobar si hubo aviso antes
+          de leer el resultado.</p>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Backtesting y Diebold-Mariano">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r" role="tabpanel">
+          <pre><code class="language-r">library(forecast)
+
+completos &lt;- function(e) e[which(rowSums(!is.na(e)) == ncol(e)), ]
+
+f_sarima &lt;- function(y, h) forecast(
+  Arima(y, order = c(0, 1, 1), seasonal = c(0, 1, 1), lambda = 0), h = h)
+f_snaive &lt;- function(y, h) snaive(y, h = h)
+f_ets    &lt;- function(y, h) {
+  fc &lt;- forecast(ets(log(y)), h = h); fc$mean &lt;- exp(fc$mean); fc
+}
+
+e_sar &lt;- completos(tsCV(AirPassengers, f_sarima, h = 12, initial = 71))
+e_sna &lt;- completos(tsCV(AirPassengers, f_snaive, h = 12, initial = 71))
+e_ets &lt;- completos(tsCV(AirPassengers, f_ets,    h = 12, initial = 71))
+
+round(c(sarima = sqrt(mean(e_sar^2)), snaive = sqrt(mean(e_sna^2)),
+        ets = sqrt(mean(e_ets^2))), 4)
+#&gt;  sarima  snaive     ets
+#&gt; 18.9154 42.5500 23.1706
+
+# La diferencia con el naive estacional deja de ser significativa en h = 12
+for (h in c(1, 6, 12)) {
+  p &lt;- dm.test(e_sar[, h], e_sna[, h], alternative = "two.sided", h = h, power = 2)
+  cat(sprintf("h = %2d  DM = %8.4f  p = %.4f\n", h, p$statistic, p$p.value))
+}
+#&gt; h =  1  DM = -10.7738  p = 0.0000
+#&gt; h =  6  DM =  -3.0093  p = 0.0038
+#&gt; h = 12  DM =  -1.9172  p = 0.0600
+
+# Y contra el ETS el SARIMA PIERDE en h = 12 (DM positivo, p &lt; 0.05)
+p &lt;- dm.test(e_sar[, 12], e_ets[, 12], alternative = "two.sided", h = 12, power = 2)
+cat(sprintf("DM = %.4f  p = %.4f\n", p$statistic, p$p.value))
+#&gt; DM = 3.5558  p = 0.0007
+
+# ...aunque en el agregado de los 12 horizontes el SARIMA gane con claridad
+round(c(sarima = sqrt(mean(e_sar^2)), ets = sqrt(mean(e_ets^2))), 4)
+#&gt;  sarima     ets
+#&gt; 18.9154 23.1706</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" role="tabpanel">
+          <pre><code class="language-python">import numpy as np
+from scipy import stats
+
+# statsmodels no trae Diebold-Mariano: son ocho lineas, y escribirlas
+# obliga a entender la correccion de Harvey-Leybourne-Newbold.
+def dm_test(e1, e2, h=1, power=2):
+    d = np.abs(e1) ** power - np.abs(e2) ** power
+    n = len(d)
+    dbar = d.mean()
+    # varianza de long-run: autocovarianzas hasta el orden h-1
+    gam = [np.sum((d[:n - k] - dbar) * (d[k:] - dbar)) / n for k in range(h)]
+    V = (gam[0] + 2 * np.sum(gam[1:])) / n
+    dm = dbar / np.sqrt(V)
+    # correccion de muestra finita de Harvey, Leybourne y Newbold (1997)
+    k = np.sqrt((n + 1 - 2 * h + h * (h - 1) / n) / n)
+    dm *= k
+    return dm, 2 * stats.t.sf(abs(dm), df=n - 1)
+
+# Con errores simulados con la MISMA estructura que los reales:
+rng = np.random.default_rng(2026)
+n = 61
+comun = rng.normal(0, 20, n)              # el tramo, que afecta a los dos
+e1 = comun + rng.normal(0, 6, n)          # metodo 1
+e2 = comun + rng.normal(0, 6, n) + 3      # metodo 2, algo peor
+dm, p = dm_test(e1, e2, h=12)
+print(f"DM = {dm:.4f}  p = {p:.4f}")
+#&gt; DM = -2.3888  p = 0.0201
+
+# La leccion del montaje: el termino `comun` es enorme comparado con la
+# diferencia entre metodos, y aun asi DM la detecta cuando existe, porque
+# trabaja con la DIFERENCIA de perdidas y el termino comun se cancela.
+# Comparar dos RMSE por separado no aprovecha ese emparejamiento.
+print("RMSE 1:", round(float(np.sqrt(np.mean(e1**2))), 4),
+      "| RMSE 2:", round(float(np.sqrt(np.mean(e2**2))), 4))
+#&gt; RMSE 1: 20.3007 | RMSE 2: 22.278</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="module-9">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 9</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">6.9 Evaluar el intervalo: cobertura y Winkler
+          <span class="text-gray-400 font-normal text-2xl">/ Evaluating prediction intervals</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Comprobar si el abanico que construyó el Capítulo 4
+              cumple lo que promete, y medir a la vez las dos cosas que puede hacer mal: no cubrir y ser demasiado
+              ancho.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>El Capítulo 4 construyó el intervalo de pronóstico y el Capítulo 5 lo dibujó. Ninguno preguntó si un intervalo
+        del $95\,\%$ contiene de verdad el valor observado el $95\,\%$ de las veces. Con $61$ orígenes y $732$
+        pronósticos, esa pregunta ya se puede contestar contando.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: cobertura empírica y puntaje de Winkler</h4>
+        <p>La <strong>cobertura empírica</strong> (<em>empirical coverage</em>) de un intervalo de nivel nominal
+          $100(1-\alpha)\,\%$ es la proporción de veces que el valor observado cayó dentro:
+          $$ \widehat{C} = \frac{1}{n}\sum_{i=1}^{n} \mathbb{1}\{\ell_i \le y_i \le u_i\}. $$</p>
+        <p>El <strong>puntaje de Winkler</strong> (<em>Winkler score</em>, FPP3 secc. 5.9) penaliza a la vez el ancho
+          y el fallo:</p>
+        <p style="margin-bottom:0;">$$ W_i = (u_i - \ell_i) + \begin{cases}
+            \dfrac{2}{\alpha}(\ell_i - y_i) & \text{si } y_i < \ell_i,\\[4pt]
+            0 & \text{si } \ell_i \le y_i \le u_i,\\[4pt]
+            \dfrac{2}{\alpha}(y_i - u_i) & \text{si } y_i > u_i.
+          \end{cases} $$</p>
+      </div>
+
+      <div class="note">
+        <p><strong>Por qué hace falta el segundo.</strong> La cobertura sola premia el intervalo $(-\infty, +\infty)$,
+          que cubre el $100\,\%$ y no dice nada. El ancho solo premia el intervalo vacío. Winkler los junta: el término
+          $2/\alpha$ hace que quedarse fuera cueste $40$ veces la distancia al borde con $\alpha = 0.05$, así que
+          estrechar el intervalo solo compensa mientras el valor siga cayendo dentro.</p>
+      </div>
+
+      <div class="simulador" data-simulador="winkler">
+        <h4><i class="fas fa-arrows-left-right-to-line" aria-hidden="true"></i> Mueve el intervalo y mira el puntaje</h4>
+        <p class="simulador-intro">El valor observado está fijo en $100$. Mueve el centro y el ancho del intervalo del
+          $95\,\%$. Mientras el observado quede dentro, el puntaje es simplemente el ancho —así que conviene apretar—;
+          en cuanto se sale, el puntaje se dispara con pendiente $2/\alpha = 40$. El mínimo está justo en el borde, y
+          esa es toda la intuición: <strong>el intervalo óptimo es el más estrecho que todavía acierta</strong>.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper" style="height:250px;">
+          <canvas aria-label="Puntaje de Winkler en función del ancho del intervalo" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <h3>Qué hacen de verdad los ocho métodos</h3>
+
+      <div class="simulador" data-simulador="cobertura">
+        <h4><i class="fas fa-percent" aria-hidden="true"></i> Cobertura empírica frente a la nominal</h4>
+        <p class="simulador-intro">La línea de puntos es el nivel prometido. Cambia el nivel y los métodos
+          mostrados. Ningún método está sobre la línea en todos los horizontes, y las desviaciones tienen dos formas
+          distintas: los métodos <em>sesgados</em> se quedan cortos a todos los horizontes, y los que sobrestiman su
+          propia incertidumbre se pasan por arriba.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper" style="height:260px;">
+          <canvas aria-label="Cobertura empírica por horizonte" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Método</th><th>Sesgo relativo $\overline{e}/\text{RMSE}$</th><th>Cobertura al $80\,\%$</th><th>Cobertura al $95\,\%$</th><th>Ancho medio</th><th>Winkler $95\,\%$</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Media</td><td>$+0.92$</td><td>$\mathbf{16.1\,\%}$</td><td>$59.4\,\%$</td><td>$308.8$</td><td>$1278.1$</td></tr>
+            <tr><td>Naïve estacional</td><td>$+0.91$</td><td>$\mathbf{46.0\,\%}$</td><td>$93.4\,\%$</td><td>$124.8$</td><td>$135.0$</td></tr>
+            <tr><td>Naïve</td><td>$+0.26$</td><td>$61.9\,\%$</td><td>$78.6\,\%$</td><td>$234.4$</td><td>$509.2$</td></tr>
+            <tr><td><strong>ETS sobre log</strong></td><td>$-0.11$</td><td>$82.5\,\%$</td><td>$\mathbf{94.3\,\%}$</td><td>$98.8$</td><td>$120.0$</td></tr>
+            <tr><td>STL + ARIMA</td><td>$-0.11$</td><td>$81.1\,\%$</td><td>$93.6\,\%$</td><td>$\mathbf{96.7}$</td><td>$117.4$</td></tr>
+            <tr><td>SARIMA <em>airline</em></td><td>$-0.09$</td><td>$91.7\,\%$</td><td>$98.4\,\%$</td><td>$101.5$</td><td>$\mathbf{104.1}$</td></tr>
+            <tr><td><code>auto.arima</code></td><td>$-0.23$</td><td>$82.7\,\%$</td><td>$92.1\,\%$</td><td>$84.4$</td><td>$110.9$</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Tres hallazgos que la tabla del Módulo 8 no enseñaba</h3>
+
+      <p><strong>Primero: el sesgo destruye el intervalo estrecho antes que el ancho.</strong> Los cuatro métodos con
+        $|\overline{e}|/\text{RMSE}$ por debajo de $0.25$ cubren entre el $81\,\%$ y el $92\,\%$ al nivel nominal del
+        $80\,\%$. Los dos con sesgo relativo por encima de $0.9$ se hunden: la media cubre el $16.1\,\%$. El caso del
+        naïve estacional es el más elocuente: cubre solo el $46.0\,\%$ al $80\,\%$ y sin embargo un correcto
+        $93.4\,\%$ al $95\,\%$. Con un centro desplazado casi una desviación típica, la banda de $\pm 1.28\sigma$ se
+        queda del lado equivocado y la de $\pm 1.96\sigma$ todavía alcanza. <strong>Comprobar solo el nivel del
+        $95\,\%$ habría dado por bueno un intervalo que falla estrepitosamente al $80\,\%$.</strong> Y no es un
+        problema de un horizonte concreto: la cobertura al $80\,\%$ del naïve estacional se queda entre el $44\,\%$ y
+        el $48\,\%$ en los doce.</p>
+
+      <p><strong>Segundo: el mejor pronosticando es el peor calibrado.</strong> El SARIMA gana en las cinco métricas
+        puntuales y sus intervalos son los <em>más desajustados</em> de los métodos serios: cubren el $98.4\,\%$
+        cuando prometen el $95\,\%$ y el $91.7\,\%$ cuando prometen el $80\,\%$. Sobrestima su propia incertidumbre.
+        El mejor calibrado es el ETS ($94.3\,\%$), que pronostica claramente peor.</p>
+
+      <p><strong>Tercero, y es el que obliga a pensar: la cobertura y el Winkler no dan el mismo ganador.</strong> Por
+        cobertura el SARIMA es quinto; por Winkler es <strong>primero</strong> ($104.1$ frente a $110.9$ de
+        <code>auto.arima</code> y $120.0$ del ETS). No hay contradicción: Winkler paga el ancho una vez y el fallo
+        cuarenta veces, así que un intervalo algo ancho pero bien centrado sale barato, y uno estrecho que se sale
+        —el <code>auto.arima</code>, con el ancho más pequeño, $84.4$— sale caro. Si lo que importa es que el
+        $95\,\%$ signifique $95\,\%$, gana el ETS; si lo que importa es el costo total de equivocarse, gana el
+        SARIMA. Las dos preguntas son legítimas y hay que elegir cuál se está haciendo.</p>
+
+      <div class="warning">
+        <p><strong>Y el supuesto del que cuelga todo esto.</strong> El intervalo del Capítulo 4 supone errores normales.
+          Sobre los residuales del <em>airline</em> el supuesto aguanta (Shapiro $p = 0.1674$) y sobre el Nilo también
+          ($p = 0.7312$), pero sobre la TRM se rechaza con holgura: <strong>Shapiro $p = 0.0006$</strong>, con una
+          curtosis de $5.05$ frente al $3$ de una normal y una asimetría de $0.756$. Con colas gruesas, el $95\,\%$
+          nominal calculado con $1.96$ es optimista justo sobre los sucesos extremos, que son los que importan. La
+          salida no es abandonar el intervalo sino <em>medir</em> su cobertura, que es lo que hace este módulo.</p>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Cobertura y Winkler">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r" role="tabpanel">
+          <pre><code class="language-r">library(forecast)
+
+winkler &lt;- function(y, li, ls, nivel) {
+  a &lt;- 1 - nivel / 100
+  (ls - li) + (2 / a) * ((li - y) * (y &lt; li) + (y - ls) * (y &gt; ls))
+}
+
+# tsCV solo devuelve errores puntuales: para el intervalo hay que recorrer
+# los origenes a mano y guardar tambien las bandas.
+evalua_intervalo &lt;- function(y, ajusta, T0 = 72, h = 12) {
+  dentro80 &lt;- dentro95 &lt;- w95 &lt;- c()
+  for (T in T0:(length(y) - h)) {
+    tr &lt;- subset(y, start = 1, end = T)
+    fc &lt;- ajusta(tr, h)
+    real &lt;- as.numeric(y)[(T + 1):(T + h)]
+    dentro80 &lt;- c(dentro80, real &gt;= fc$lower[, 1] &amp; real &lt;= fc$upper[, 1])
+    dentro95 &lt;- c(dentro95, real &gt;= fc$lower[, 2] &amp; real &lt;= fc$upper[, 2])
+    w95 &lt;- c(w95, winkler(real, fc$lower[, 2], fc$upper[, 2], 95))
+  }
+  round(c(cob80 = 100 * mean(dentro80), cob95 = 100 * mean(dentro95),
+          winkler95 = mean(w95)), 4)
+}
+
+evalua_intervalo(AirPassengers, function(tr, h) forecast(
+  Arima(tr, order = c(0, 1, 1), seasonal = c(0, 1, 1), lambda = 0),
+  h = h, level = c(80, 95)))
+#&gt;     cob80     cob95 winkler95
+#&gt;   91.6667   98.3607  104.1382
+
+evalua_intervalo(AirPassengers, function(tr, h) snaive(tr, h = h, level = c(80, 95)))
+#&gt;     cob80     cob95 winkler95
+#&gt;   46.0383   93.4426  134.9568
+
+# El naive estacional: catastrofico al 80 %, correcto al 95 %. La causa es
+# el sesgo, no el ancho.
+e &lt;- tsCV(AirPassengers, function(y, h) snaive(y, h = h), h = 12, initial = 71)
+eb &lt;- e[which(rowSums(!is.na(e)) == 12), ]
+round(c(sesgo_medio = mean(eb), rmse = sqrt(mean(eb^2)),
+        relativo = mean(eb) / sqrt(mean(eb^2))), 4)
+#&gt; sesgo_medio        rmse    relativo
+#&gt;     38.6831     42.5500      0.9091
+
+# El supuesto de normalidad, serie por serie
+serie &lt;- jsonlite::fromJSON("salidas/datos_series.json")$trm
+trm &lt;- ts(serie$valores, start = serie$inicio, frequency = 12)
+round(c(airline = shapiro.test(residuals(Arima(AirPassengers, order = c(0,1,1),
+          seasonal = c(0,1,1), lambda = 0)))$p.value,
+        nilo = shapiro.test(residuals(Arima(Nile, order = c(1,1,1))))$p.value,
+        trm  = shapiro.test(residuals(Arima(trm, order = c(0,1,0))))$p.value), 4)
+#&gt; airline    nilo     trm
+#&gt;  0.1674  0.7312  0.0006</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" role="tabpanel">
+          <pre><code class="language-python">import numpy as np, json
+from scipy import stats
+
+def winkler(y, li, ls, nivel):
+    a = 1 - nivel / 100
+    return (ls - li) + (2 / a) * ((li - y) * (y < li) + (y - ls) * (y > ls))
+
+# El comportamiento del puntaje, sobre un caso de juguete que se puede
+# comprobar a mano: observado 100, intervalos del 95 % de distintos anchos
+for ancho in (10, 40, 80):
+    li, ls = 100 - ancho / 2, 100 + ancho / 2
+    print(f"ancho {ancho:3d} y dentro -> W = {winkler(100.0, li, ls, 95):8.2f}")
+#&gt; ancho  10 y dentro -> W =    10.00
+#&gt; ancho  40 y dentro -> W =    40.00
+#&gt; ancho  80 y dentro -> W =    80.00
+
+# Y el mismo ancho con el observado justo fuera: la penalizacion es 2/alfa
+print("ancho 10, observado 106 ->", round(float(winkler(106.0, 95.0, 105.0, 95)), 2))
+#&gt; ancho 10, observado 106 -> 50.0
+# 10 de ancho + 40 * 1 de penalizacion: quedarse un punto fuera cuesta 40.
+
+# Colas gruesas: por que el 95 % nominal es optimista
+serie = json.load(open("salidas/datos_series.json"))["trm"]["valores"]
+r = np.diff(np.asarray(serie, dtype=float))       # residuales del ARIMA(0,1,0)
+z = (r - r.mean()) / r.std(ddof=1)
+print("curtosis:", round(float(np.mean(z ** 4)), 4),
+      "| Shapiro p:", round(float(stats.shapiro(r).pvalue), 6))
+#&gt; curtosis: 5.0152 | Shapiro p: 0.000738
+print("fuera de +-1.96 (%):", round(float(100 * np.mean(np.abs(z) > 1.96)), 4))
+#&gt; fuera de +-1.96 (%): 3.6496
+# Menos del 5 % se sale, pero los que se salen se salen MUCHO:
+print("|z| maximo:", round(float(np.abs(z).max()), 4))
+#&gt; |z| maximo: 3.7991
+
+# R da curtosis 5.0532 y Shapiro 0.0006 sobre los mismos datos: residuals()
+# de un ARIMA(0,1,0) devuelve n = 138 valores y np.diff devuelve 137, porque
+# el primero de R es el arranque del filtro. La conclusion es la misma.</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>

@@ -1641,6 +1641,14 @@
       line-height: 1.55;
     }
 
+    /* La lectura numérica se diseñó para ir al final del simulador, así que no
+       lleva margen inferior. Cuando va ANTES de un gráfico (Módulos 9 y 11 del
+       Capítulo 5) el hueco medido era de 0 px. */
+    .simulador-lectura + .grafico-etiqueta,
+    .simulador-lectura + .grafico-wrapper {
+      margin-top: 0.85rem;
+    }
+
     /* Enunciado de una pregunta con gráfico: mismo criterio de separación */
     .quiz-pregunta .quiz-enunciado + .quiz-grafico {
       margin-top: 0.9rem;
@@ -4830,7 +4838,10 @@ rbind(resumen(y, "original"),
         const encabezado = acierto
           ? (estado[i].intentos === 1 ? '<strong>Correcto.</strong> ' : '<strong>Correcto, en el segundo intento.</strong> ')
           : '<strong>No es esa.</strong> ';
-        retro.innerHTML = encabezado + textoRetro;
+        // Defensivo: las preguntas de seleccion multiple no declaran
+        // `retroAcierto`, y sin esta guarda el estudiante veia la palabra
+        // "undefined" detras de "Correcto". (Bug encontrado auditando el cap. 6.)
+        retro.innerHTML = encabezado + (textoRetro || '');
         retro.hidden = false;
         katexEn(retro);
         actualizarMarcador();
@@ -4979,7 +4990,11 @@ rbind(resumen(y, "original"),
                 if (correctas.has(j)) b.classList.add('correcta');
               });
               boton.disabled = true;
-              cerrar(i, bloque, true, p.retroAcierto);
+              // Respaldo para las preguntas de seleccion multiple, que no
+              // declaran `retroAcierto`: se junta la retroalimentacion de las
+              // opciones correctas, que ya estaba escrita y no se mostraba.
+              cerrar(i, bloque, true, p.retroAcierto || p.opciones
+                .filter(o => o.correcta).map(o => o.retro).filter(Boolean).join(' '));
             } else if (estado[i].intentos === 1) {
               const bien = [...marcadas].filter(j => correctas.has(j)).length;
               pista.innerHTML = `<strong>Casi.</strong> De las ${marcadas.size} que marcaste, ` +

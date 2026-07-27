@@ -1551,6 +1551,14 @@
       line-height: 1.55;
     }
 
+    /* La lectura numérica se diseñó para ir al final del simulador, así que no
+       lleva margen inferior. Cuando va ANTES de un gráfico (Módulos 9 y 11 del
+       Capítulo 5) el hueco medido era de 0 px. */
+    .simulador-lectura + .grafico-etiqueta,
+    .simulador-lectura + .grafico-wrapper {
+      margin-top: 0.85rem;
+    }
+
     /* Enunciado de una pregunta con gráfico: mismo criterio de separación */
     .quiz-pregunta .quiz-enunciado + .quiz-grafico {
       margin-top: 0.9rem;
@@ -1862,6 +1870,130 @@
         margin: 0.15rem 0;
       }
     }
+
+    /* ------------------------------------------------------------------
+       Componente .mapa-estacional — mapa de calor mes x año
+       ------------------------------------------------------------------
+       Un gráfico de línea enseña el nivel; un correlograma, la estructura.
+       Ninguno de los dos deja VER la estacionalidad como lo que es: un
+       patrón que se repite por columnas. Aquí cada fila es un año y cada
+       columna un mes, así que un mes sistemáticamente alto pinta una banda
+       vertical y la diferencia estacional la borra ante los ojos.
+
+       Sin dependencias: rejilla CSS y colores calculados en JS. El valor va
+       escrito dentro de la celda y repetido en su nombre accesible, así que
+       el color nunca es el único canal de información.
+       ------------------------------------------------------------------ */
+    .mapa-estacional {
+      margin: 1.1rem 0;
+    }
+
+    .mapa-estacional-titulo {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.66rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #012820;
+      font-weight: 600;
+      margin: 0 0 0.5rem 0;
+    }
+
+    /* En pantallas estrechas la rejilla se desplaza dentro de su caja en vez
+       de desbordar la página. */
+    .mapa-estacional-marco {
+      overflow-x: auto;
+      padding-bottom: 0.2rem;
+    }
+
+    .mapa-estacional-rejilla {
+      display: grid;
+      grid-template-columns: 3.1rem repeat(12, minmax(2.4rem, 1fr));
+      gap: 2px;
+      min-width: 34rem;
+    }
+
+    .mapa-estacional-cabecera,
+    .mapa-estacional-anio {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.66rem;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.15rem 0;
+    }
+
+    .mapa-estacional-anio {
+      justify-content: flex-end;
+      padding-right: 0.4rem;
+      color: #012820;
+      font-weight: 600;
+    }
+
+    .mapa-estacional-celda {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 1.65rem;
+      border-radius: 0.2rem;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.63rem;
+      line-height: 1;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .mapa-estacional-celda:hover {
+      transform: scale(1.12);
+      box-shadow: 0 2px 8px rgba(1, 40, 32, 0.28);
+      z-index: 2;
+    }
+
+    /* Los huecos que deja la diferenciación son parte del mensaje: se marcan
+       con trama, no con un blanco que se confunda con un valor bajo. */
+    .mapa-estacional-vacia {
+      background: repeating-linear-gradient(45deg,
+        #f1f5f9, #f1f5f9 3px, #e2e8f0 3px, #e2e8f0 6px);
+      color: transparent;
+    }
+
+    .mapa-estacional-leyenda {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.55rem;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.64rem;
+      color: #64748b;
+      flex-wrap: wrap;
+    }
+
+    .mapa-estacional-barra {
+      flex: 1 1 8rem;
+      height: 0.55rem;
+      min-width: 6rem;
+      border-radius: 0.3rem;
+      border: 1px solid rgba(1, 40, 32, 0.15);
+    }
+
+    .mapa-estacional-nota {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.78rem;
+      color: #64748b;
+      margin: 0.5rem 0 0 0;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 640px) {
+      .mapa-estacional-rejilla {
+        grid-template-columns: 2.6rem repeat(12, minmax(2rem, 1fr));
+      }
+
+      .mapa-estacional-celda {
+        font-size: 0.55rem;
+        min-height: 1.4rem;
+      }
+    }
   </style>
 </head>
 
@@ -2157,6 +2289,15 @@ print(pasajeros.head())</code></pre>
         <li><strong>Gráfico de rezagos</strong> (<em>lag plot</em>): $y_t$ contra $y_{t-k}$, anticipo de la
           autocorrelación del Capítulo 2.</li>
       </ul>
+
+      <div class="mapa-estacional" data-mapa="cap1-airpassengers">
+        <p class="mapa-estacional-titulo">AirPassengers, mes × año</p>
+        <div class="mapa-estacional-marco">
+          <div class="mapa-estacional-rejilla" role="table" aria-label="AirPassengers, mes × año"></div>
+        </div>
+        <div class="mapa-estacional-leyenda"></div>
+        <p class="mapa-estacional-nota"></p>
+      </div>
 
       <div class="simulador" data-simulador="grafico-estacional">
         <h4><i class="fas fa-calendar-alt" aria-hidden="true"></i> Gráfico estacional de <code>AirPassengers</code></h4>
@@ -3020,6 +3161,7 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         iniciarEjerciciosGuiados();
         iniciarDerivaciones();
         iniciarCiclos();
+        iniciarMapasEstacionales();
         renderMathInElement(mainContent, {
           delimiters: [
             { left: "$$", right: "$$", display: true },
@@ -3707,7 +3849,10 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         const encabezado = acierto
           ? (estado[i].intentos === 1 ? '<strong>Correcto.</strong> ' : '<strong>Correcto, en el segundo intento.</strong> ')
           : '<strong>No es esa.</strong> ';
-        retro.innerHTML = encabezado + textoRetro;
+        // Defensivo: las preguntas de seleccion multiple no declaran
+        // `retroAcierto`, y sin esta guarda el estudiante veia la palabra
+        // "undefined" detras de "Correcto". (Bug encontrado auditando el cap. 6.)
+        retro.innerHTML = encabezado + (textoRetro || '');
         retro.hidden = false;
         katexEn(retro);
         actualizarMarcador();
@@ -3856,7 +4001,11 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
                 if (correctas.has(j)) b.classList.add('correcta');
               });
               boton.disabled = true;
-              cerrar(i, bloque, true, p.retroAcierto);
+              // Respaldo para las preguntas de seleccion multiple, que no
+              // declaran `retroAcierto`: se junta la retroalimentacion de las
+              // opciones correctas, que ya estaba escrita y no se mostraba.
+              cerrar(i, bloque, true, p.retroAcierto || p.opciones
+                .filter(o => o.correcta).map(o => o.retro).filter(Boolean).join(' '));
             } else if (estado[i].intentos === 1) {
               const bien = [...marcadas].filter(j => correctas.has(j)).length;
               pista.innerHTML = `<strong>Casi.</strong> De las ${marcadas.size} que marcaste, ` +
@@ -4008,6 +4157,159 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         seleccionar(inicial >= 0 ? inicial : 0, false);
       });
     }
+
+    // ================================================================
+    // Componente .mapa-estacional — mapa de calor mes x año
+    // ================================================================
+    // Registro `MAPAS_ESTACIONALES['id']` sobre un contenedor
+    // `<div class="mapa-estacional" data-mapa="id">`, igual que SIMULADORES
+    // y AUTOEVALUACIONES. El valor de cada registro es un objeto
+    //   { anios, filas, minimo, maximo, escala, decimales, unidad, nota }
+    // o una FUNCIÓN que devuelve uno, para los mapas que dependen de un
+    // control. Un simulador puede repintar el suyo llamando directamente a
+    // pintarMapaEstacional(raiz, datos).
+    const MAPAS_ESTACIONALES = {};
+
+    const MESES_CORTOS = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+                          'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+    // Interpolación lineal entre dos colores dados como [r, g, b].
+    function mezclarColor(a, b, t) {
+      const c = t < 0 ? 0 : t > 1 ? 1 : t;
+      return 'rgb(' + [0, 1, 2].map(i => Math.round(a[i] + (b[i] - a[i]) * c)).join(',') + ')';
+    }
+
+    // Secuencial: verde de la paleta, de muy claro a muy oscuro. Para niveles.
+    const VERDE_CLARO = [238, 245, 242];
+    const VERDE_OSCURO = [1, 40, 32];
+    // Divergente: naranja (negativo) - gris muy claro (cero) - verde (positivo).
+    // Para series ya diferenciadas, donde el cero es el valor con significado.
+    const NARANJA = [255, 102, 0];
+    const NEUTRO = [248, 250, 252];
+
+    function colorMapa(valor, datos) {
+      if (valor === null || valor === undefined || !isFinite(valor)) return null;
+      if (datos.escala === 'divergente') {
+        const tope = Math.max(Math.abs(datos.minimo), Math.abs(datos.maximo)) || 1;
+        const t = Math.abs(valor) / tope;
+        return valor < 0 ? mezclarColor(NEUTRO, NARANJA, t) : mezclarColor(NEUTRO, VERDE_OSCURO, t);
+      }
+      const rango = (datos.maximo - datos.minimo) || 1;
+      return mezclarColor(VERDE_CLARO, VERDE_OSCURO, (valor - datos.minimo) / rango);
+    }
+
+    // Sobre fondo oscuro el número tiene que ir en blanco o no se lee. El
+    // umbral se decide con la luminancia relativa, no a ojo.
+    function textoSobre(color) {
+      const m = /rgb\((\d+),(\d+),(\d+)\)/.exec(color);
+      if (!m) return '#1e293b';
+      const [r, g, b] = [1, 2, 3].map(i => Number(m[i]) / 255)
+        .map(v => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)));
+      return (0.2126 * r + 0.7152 * g + 0.0722 * b) > 0.42 ? '#1e293b' : '#ffffff';
+    }
+
+    function pintarMapaEstacional(raiz, datos) {
+      const rejilla = raiz.querySelector('.mapa-estacional-rejilla');
+      const leyenda = raiz.querySelector('.mapa-estacional-leyenda');
+      if (!rejilla || !datos) return;
+
+      const dec = datos.decimales === undefined ? 0 : datos.decimales;
+      const unidad = datos.unidad || '';
+      // Con muchos años la cifra no cabe: se deja solo el color, y el valor
+      // sigue disponible en el nombre accesible y en el tooltip.
+      const conNumero = datos.filas.length <= 20;
+
+      const partes = ['<div class="mapa-estacional-cabecera" aria-hidden="true"></div>'];
+      MESES_CORTOS.forEach(mes => {
+        partes.push('<div class="mapa-estacional-cabecera" role="columnheader">' + mes + '</div>');
+      });
+
+      datos.filas.forEach((fila, i) => {
+        partes.push('<div class="mapa-estacional-anio" role="rowheader">' + datos.anios[i] + '</div>');
+        fila.forEach((valor, j) => {
+          const vacia = valor === null || valor === undefined || !isFinite(valor);
+          const etiqueta = MESES_CORTOS[j] + ' ' + datos.anios[i];
+          if (vacia) {
+            partes.push('<div class="mapa-estacional-celda mapa-estacional-vacia" role="cell"'
+              + ' aria-label="' + etiqueta + ': sin dato" title="' + etiqueta + ': sin dato">·</div>');
+            return;
+          }
+          const color = colorMapa(valor, datos);
+          const texto = valor.toFixed(dec);
+          const titulo = etiqueta + ': ' + texto + (unidad ? ' ' + unidad : '');
+          partes.push('<div class="mapa-estacional-celda" role="cell" style="background:' + color
+            + ';color:' + textoSobre(color) + '" aria-label="' + titulo + '" title="' + titulo + '">'
+            + (conNumero ? texto : '') + '</div>');
+        });
+      });
+
+      rejilla.innerHTML = partes.join('');
+
+      if (leyenda) {
+        const izq = datos.escala === 'divergente'
+          ? 'rgb(255,102,0)' : 'rgb(238,245,242)';
+        const der = 'rgb(1,40,32)';
+        const centro = datos.escala === 'divergente'
+          ? ', rgb(248,250,252) 50%' : '';
+        const tope = Math.max(Math.abs(datos.minimo), Math.abs(datos.maximo));
+        const extremos = datos.escala === 'divergente'
+          ? [(-tope).toFixed(dec), tope.toFixed(dec)]
+          : [datos.minimo.toFixed(dec), datos.maximo.toFixed(dec)];
+        leyenda.innerHTML = '<span>' + extremos[0] + '</span>'
+          + '<span class="mapa-estacional-barra" aria-hidden="true" style="background:linear-gradient(90deg,'
+          + izq + centro + ',' + der + ')"></span>'
+          + '<span>' + extremos[1] + (unidad ? ' ' + unidad : '') + '</span>';
+      }
+
+      const nota = raiz.querySelector('.mapa-estacional-nota');
+      if (nota && datos.nota !== undefined) nota.innerHTML = datos.nota;
+    }
+
+    // Construye la matriz año x mes que espera pintarMapaEstacional a partir de
+    // una serie y del mes en que empieza. Vive aquí, y no en el JavaScript de
+    // un capítulo, para que todas las instancias del proyecto la compartan.
+    function matrizMesAnio(valores, anioInicio, mesInicio) {
+      const filas = [], anios = [];
+      let a = anioInicio, m = mesInicio;
+      let fila = new Array(12).fill(null);
+      anios.push(a);
+      for (let i = 0; i < valores.length; i++) {
+        fila[m - 1] = valores[i];
+        m += 1;
+        if (m > 12 && i < valores.length - 1) {
+          filas.push(fila); fila = new Array(12).fill(null);
+          m = 1; a += 1; anios.push(a);
+        }
+      }
+      filas.push(fila);
+      const planos = valores.filter(v => v !== null && v !== undefined && isFinite(v));
+      return {
+        anios: anios, filas: filas,
+        minimo: Math.min.apply(null, planos), maximo: Math.max.apply(null, planos)
+      };
+    }
+
+    function iniciarMapasEstacionales() {
+      mainContent.querySelectorAll('.mapa-estacional[data-mapa]').forEach(raiz => {
+        const registro = MAPAS_ESTACIONALES[raiz.dataset.mapa];
+        if (!registro) return;
+        pintarMapaEstacional(raiz, typeof registro === 'function' ? registro() : registro);
+      });
+    }
+
+    // Instancia del capítulo 1: la serie del capítulo, vista como mes x año.
+    MAPAS_ESTACIONALES['cap1-airpassengers'] = function () {
+      const datos = matrizMesAnio(DATOS_CAP1.observado, 1949, 1);
+      return Object.assign(datos, {
+        escala: 'secuencial',
+        decimales: 0,
+        unidad: 'pasajeros',
+        nota: 'Cada fila es un año y cada columna un mes. Las bandas verticales de julio y ' +
+          'agosto son la estacionalidad; que se oscurezcan hacia abajo a la vez que toda la ' +
+          'fila es la tendencia. Y que la <em>diferencia</em> entre el mes alto y el bajo ' +
+          'crezca con los años es lo que hace multiplicativa a esta serie.'
+      });
+    };
 
     function iniciarDerivaciones() {
       mainContent.querySelectorAll('.derivacion-boton').forEach(boton => {

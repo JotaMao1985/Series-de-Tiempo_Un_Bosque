@@ -1,0 +1,569 @@
+  <template id="module-1">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 1</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">5.1 La firma de la estacionalidad
+          <span class="text-gray-400 font-normal text-2xl">/ The seasonal signature</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Reconocer la estacionalidad en la ACF y la PACF por
+              donde de verdad se ve —los rezagos múltiplos de $m$— y aprender a <em>no</em> verla cuando no está.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>El Capítulo 4 terminó con un fracaso deliberado. El mejor modelo ARIMA no estacional sobre
+        $\log(\text{AirPassengers})$ era un ARIMA($0,1,1$) con AICc $=-238.64$, y sus residuales conservaban
+        $\hat\rho_{12} = 0.8106$: la octava parte de la ACF quedaba sin explicar, y toda ella concentrada en un solo
+        sitio. Este capítulo se ocupa de ese sitio. Al final del Módulo 5 el mismo modelo, con
+        <strong>un parámetro más</strong>, deja $\hat\rho_{12} = -0.0515$ y AICc $=-483.21$.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: estacionalidad</h4>
+        <p style="margin-bottom:0;">Una serie tiene <strong>estacionalidad</strong> (<em>seasonality</em>) de periodo
+          $m$ cuando el patrón se repite cada $m$ observaciones y $m$ está <strong>fijado por el calendario</strong>:
+          $m = 12$ para datos mensuales, $4$ para trimestrales, $7$ para diarios con patrón semanal, $52$ para
+          semanales. Esa segunda condición es la que la separa del <strong>ciclo</strong> (<em>cycle</em>), cuya
+          duración es variable y desconocida —como los $11.22$ años de las manchas solares del Capítulo 3—.</p>
+      </div>
+
+      <div class="note">
+        <p><strong>Por qué la distinción no es un tecnicismo.</strong> Si $m$ es conocido, se puede <em>imponer</em>:
+          diferenciar cada 12, poner un parámetro en el rezago 12. Si no lo es, hay que <em>estimarlo</em>, y ahí
+          empieza otro problema. Todo lo que hace este capítulo depende de que $m$ venga dado.</p>
+      </div>
+
+      <h3>Verla antes de medirla</h3>
+
+      <p>El gráfico de tiempo es malo para la estacionalidad: superpone el patrón anual a la tendencia y hay que
+        adivinarlo. El mapa de abajo reorganiza exactamente los mismos datos con los <strong>años en las filas y los
+        meses en las columnas</strong>. Si un mes es sistemáticamente alto, aparece una banda vertical; si el patrón
+        cambia de forma con el nivel, las bandas se ensanchan hacia abajo.</p>
+
+      <div class="simulador" data-simulador="mapa-firma">
+        <h4><i class="fas fa-table-cells" aria-hidden="true"></i> Mapa estacional y correlograma, en paralelo</h4>
+        <p class="simulador-intro">Elige la serie, si se toma logaritmo y qué diferencias se aplican. El mapa y la
+          ACF cambian a la vez, así que se ve qué le hace cada operación al patrón <em>y</em> a la autocorrelación.
+          Prueba <code>AirPassengers</code> con logaritmo y las dos diferencias: las bandas verticales desaparecen y
+          la ACF se queda con dos barras, en los rezagos $1$ y $12$. Y prueba la TRM en cualquier combinación: nunca
+          hay bandas. Con la TRM sin logaritmo y una diferencia regular, la lectura reproduce exactamente la última
+          fila de la tabla de más abajo.</p>
+        <div class="simulador-controles"></div>
+        <!--MAPA:firma|Mapa mes × año|-->
+        <p class="grafico-etiqueta">Autocorrelación muestral hasta el rezago 36</p>
+        <div class="grafico-wrapper" style="height:230px;">
+          <canvas aria-label="Correlograma de la serie transformada" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <h3>Dónde mirar la ACF</h3>
+
+      <p>Con datos mensuales, la información estacional no está en los primeros rezagos sino en
+        $12, 24, 36, \dots$ Por eso el primer cambio de hábito del capítulo es <strong>pedir siempre al menos
+        $3m$ rezagos</strong>: con los $20$ o $24$ por defecto se ve un pico y no se sabe si decae.</p>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Serie</th><th>$\hat\rho_1$</th><th>$\hat\rho_{12}$</th><th>$\hat\rho_{24}$</th><th>$\hat\rho_{36}$</th><th>Banda</th><th>Lectura</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>$\log$(AirPassengers)</td><td>$0.954$</td><td>$0.762$</td><td>$0.521$</td><td>$0.319$</td><td>$0.163$</td><td>Tendencia <em>y</em> estacionalidad</td></tr>
+            <tr><td>USAccDeaths</td><td>$0.708$</td><td>$0.629$</td><td>$0.450$</td><td>$0.302$</td><td>$0.231$</td><td>Estacionalidad dominante</td></tr>
+            <tr><td>co2 (Mauna Loa)</td><td>$0.991$</td><td>$0.928$</td><td>$0.856$</td><td>$0.783$</td><td>$0.091$</td><td>Tendencia que aplasta todo</td></tr>
+            <tr><td>TRM (niveles)</td><td>$0.964$</td><td>$0.637$</td><td>$0.490$</td><td>$0.225$</td><td>$0.167$</td><td>Solo tendencia</td></tr>
+            <tr><td><strong>$\nabla$TRM</strong></td><td>$0.088$</td><td>$\mathbf{-0.003}$</td><td>$-0.067$</td><td>$0.071$</td><td>$0.168$</td><td><strong>Nada: ni tendencia ni estación</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="warning">
+        <p><strong>La trampa de la tabla.</strong> Las cuatro primeras filas se parecen mucho, y sin embargo solo tres
+          de esas series son estacionales. En niveles, una serie con tendencia da $\hat\rho_k$ grande <em>en todos</em>
+          los rezagos, incluidos los múltiplos de $12$: la TRM tiene $\hat\rho_{12} = 0.637$ y no tiene ninguna
+          estacionalidad. El diagnóstico solo se puede hacer <strong>después</strong> de quitar la tendencia, y por eso
+          la quinta fila es la única de esa tabla que dice algo. El Módulo 8 vuelve sobre este caso.</p>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Ver la estacionalidad">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r">
+          <pre><code class="language-r">library(forecast)
+
+ap &lt;- log(AirPassengers)          # m = 12, n = 144
+
+# 1. La estacionalidad, VISTA: un trazo por año, los meses en el eje x
+ggseasonplot(ap, year.labels = TRUE)
+monthplot(ap)                     # un panel por mes, con su media
+
+# 2. La estacionalidad, MEDIDA: al menos 3m rezagos o no se ve el decaimiento
+a &lt;- Acf(ap, lag.max = 36, plot = FALSE)
+round(a$acf[c(2, 13, 25, 37)], 4)          # rezagos 1, 12, 24, 36
+#&gt; [1] 0.9537 0.7619 0.5205 0.3193
+round(1.96 / sqrt(length(ap)), 4)          # banda
+#&gt; [1] 0.1633
+
+# 3. El contraejemplo: la TRM, sobre la serie YA sin tendencia
+# TRM mensual (promedio del mes, SFC via datos.gov.co). Se reconstruye en cada
+# bloque que la use para que sea autonomo; necesita internet.
+url &lt;- paste0("https://www.datos.gov.co/resource/32sa-8pi3.json",
+              "?$select=vigenciadesde,valor&amp;$limit=50000")
+crudo &lt;- jsonlite::fromJSON(url)
+diario &lt;- data.frame(fecha = as.Date(substr(crudo$vigenciadesde, 1, 10)),
+                     valor = as.numeric(crudo$valor))
+diario &lt;- diario[order(diario$fecha) &amp; diario$fecha &gt;= as.Date("2015-01-01"), ]
+prom &lt;- tapply(diario$valor, format(diario$fecha, "%Y-%m"), mean)
+prom &lt;- prom[names(prom) &lt;= "2026-06"]     # se descarta el mes en curso
+trm &lt;- ts(as.numeric(prom), start = c(2015, 1), frequency = 12)
+b &lt;- Acf(diff(trm), lag.max = 36, plot = FALSE)
+round(b$acf[c(13, 25, 37)], 4)
+#&gt; [1] -0.0024 -0.0672  0.0714
+# El cuarto decimal baila (-0.0024 aqui, -0.0025 en las tablas del capitulo):
+# la copia congelada de la TRM esta redondeada a dos decimales y el valor cae
+# justo en el empate del redondeo. Ninguna conclusion depende de eso.
+round(1.96 / sqrt(length(diff(trm))), 4)
+#&gt; [1] 0.1675
+# Ninguno se acerca a la banda: no hay nada estacional que modelar.</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python">
+          <pre><code class="language-python">import numpy as np, pandas as pd
+import statsmodels.api as sm
+
+ap = np.log(sm.datasets.get_rdataset("AirPassengers").data["value"].values)
+idx = pd.date_range("1949-01", periods=len(ap), freq="MS")
+s = pd.Series(ap, index=idx)
+
+# 1. Vista: la tabla mes x anio ES el mapa de calor del simulador
+tabla = s.groupby([s.index.year, s.index.month]).first().unstack()
+print(tabla.round(2).iloc[:3, :4])
+#&gt;         1     2     3     4
+#&gt; 1949 4.72  4.77  4.88  4.86
+#&gt; 1950 4.74  4.84  4.95  4.91
+#&gt; 1951 4.98  5.01  5.18  5.09
+
+# 2. Medida: acf con nlags = 36
+acf = sm.tsa.acf(ap, nlags=36, fft=False)
+print(np.round(acf[[1, 12, 24, 36]], 4))
+#&gt; [0.9537 0.7619 0.5205 0.3193]
+print(round(1.96 / np.sqrt(len(ap)), 4))
+#&gt; 0.1633
+
+# statsmodels usa el mismo divisor n que R, asi que los numeros coinciden
+# hasta el ultimo decimal. Ojo: plot_acf() dibuja por defecto lags=None,
+# que se queda muy corto para una serie mensual.</code></pre>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>Lo que este módulo deja montado.</strong> Un criterio de mirada: $3m$ rezagos, y siempre sobre la
+          serie sin tendencia. Con eso ya se puede distinguir "hay estacionalidad" de "hay tendencia", que es el error
+          que más modelos estacionales espurios produce. Lo que falta es el lenguaje para escribirla, y de eso va el
+          módulo siguiente.</p>
+      </div>
+    </div>
+  </template>
+
+  <template id="module-2">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 2</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">5.2 Notación SARIMA y el polinomio multiplicativo
+          <span class="text-gray-400 font-normal text-2xl">/ SARIMA notation and the multiplicative polynomial</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Leer y escribir un SARIMA($p,d,q$)($P,D,Q$)$_m$, y
+              entender que la parte estacional <strong>multiplica</strong> a la regular en vez de sumarse.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>La idea es de una economía notable: si la estacionalidad hace que $y_t$ se parezca a $y_{t-12}$ igual que la
+        dinámica ordinaria hace que se parezca a $y_{t-1}$, entonces basta con <strong>escribir el mismo modelo dos
+        veces</strong>, una en $B$ y otra en $B^m$, y multiplicarlos.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: proceso SARIMA($p,d,q$)($P,D,Q$)$_m$</h4>
+        <p>Con $B$ el operador de rezago ($B y_t = y_{t-1}$):</p>
+        $$\underbrace{\Phi_P(B^m)}_{\text{AR estacional}}\ \underbrace{\phi_p(B)}_{\text{AR regular}}\
+          \underbrace{(1-B^m)^D}_{\substack{\text{integración}\\ \text{estacional}}}\ \underbrace{(1-B)^d}_{\substack{\text{integración}\\ \text{regular}}}\ y_t
+          = c + \underbrace{\Theta_Q(B^m)}_{\text{MA estacional}}\ \underbrace{\theta_q(B)}_{\text{MA regular}}\ \varepsilon_t$$
+        <p style="margin-bottom:0;">donde
+          $\phi_p(B) = 1 - \phi_1 B - \cdots - \phi_p B^p$,
+          $\Phi_P(B^m) = 1 - \Phi_1 B^m - \cdots - \Phi_P B^{Pm}$,
+          $\theta_q(B) = 1 + \theta_1 B + \cdots + \theta_q B^q$ y
+          $\Theta_Q(B^m) = 1 + \Theta_1 B^m + \cdots + \Theta_Q B^{Qm}$. Las mayúsculas son estacionales; las
+          minúsculas, regulares. Todo lo demás —estacionariedad, invertibilidad, criterios de información,
+          diagnóstico— es exactamente lo de los Capítulos 3 y 4, aplicado al polinomio ya multiplicado.</p>
+      </div>
+
+      <h3>Multiplicar no es sumar: los rezagos satélite</h3>
+
+      <p>Aquí está lo único genuinamente nuevo. Si en vez de multiplicar los polinomios se sumaran los términos, un
+        modelo con $p = 1$ y $P = 1$ tocaría los rezagos $1$ y $12$, y nada más. Al multiplicarlos aparece un término
+        cruzado en el rezago $13$ que <strong>nadie ha puesto ahí</strong>: sale solo, y con un coeficiente que no es
+        libre, sino el producto de los otros dos.</p>
+
+      <div class="derivacion">
+        <button type="button" class="derivacion-boton" aria-expanded="false" aria-controls="der-multiplicativo">
+          <i class="fas fa-square-root-variable" aria-hidden="true"></i>
+          <span class="derivacion-texto">Ver el desarrollo paso a paso</span>
+          <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="derivacion-panel" id="der-multiplicativo" hidden>
+          <ol class="derivacion-pasos">
+            <li>
+              <p>Tomamos el caso más pequeño en que se ve el efecto, un AR($1$)$\times$SAR($1$)$_{12}$ sin
+                diferencias:</p>
+              $$(1 - \Phi B^{12})(1 - \phi B)\, y_t = \varepsilon_t$$
+            </li>
+            <li>
+              <p>Multiplicamos los dos factores:</p>
+              $$(1 - \Phi B^{12})(1 - \phi B) = 1 - \phi B - \Phi B^{12} + \phi\Phi B^{13}$$
+            </li>
+            <li>
+              <p>Escrito como ecuación en diferencias, el modelo es</p>
+              $$y_t = \phi\, y_{t-1} + \Phi\, y_{t-12} - \phi\Phi\, y_{t-13} + \varepsilon_t$$
+              <p>Un AR($13$) con <strong>dos</strong> parámetros libres. Los rezagos $2$ a $11$ tienen coeficiente
+                cero y el rezago $13$ tiene coeficiente $-\phi\Phi$, atado a los otros dos.</p>
+            </li>
+            <li>
+              <p>Con $\phi = 0.6$ y $\Phi = 0.7$, la ACF teórica vale $\rho_1 = 0.6016$, $\rho_{12} = 0.7011$ y —esto
+                es lo que hay que reconocer en un correlograma real— $\rho_{11} = 0.4230$ y $\rho_{13} = 0.4218$,
+                aproximadamente $\rho_1 \cdot \rho_{12}$.</p>
+            </li>
+          </ol>
+          <p class="derivacion-resultado">La multiplicación genera <strong>satélites</strong> alrededor de cada rezago
+            estacional, en $m \pm 1, m \pm 2, \dots$ Su tamaño es el producto de la parte regular por la estacional. Un
+            correlograma con picos en $11$, $12$ y $13$ no pide tres parámetros: pide dos, uno regular y uno
+            estacional. El Módulo 4 usa esto para identificar los órdenes.</p>
+        </div>
+      </div>
+
+      <div class="simulador" data-simulador="constructor-polinomio">
+        <h4><i class="fas fa-cubes" aria-hidden="true"></i> Constructor de polinomios SARIMA</h4>
+        <p class="simulador-intro">Elige los seis órdenes y mira el polinomio completo ya multiplicado. Fíjate en dos
+          columnas de la lectura: los <strong>parámetros libres</strong> ($p+q+P+Q$) casi nunca coinciden con el
+          <strong>rezago más lejano</strong> que toca el modelo, y esa distancia es justamente lo que hace útil a la
+          notación multiplicativa. Sube $D$ a $1$ y verás también cuántas observaciones cuesta.</p>
+        <div class="simulador-controles"></div>
+        <div class="simulador-lectura"></div>
+        <p class="grafico-etiqueta">Coeficientes del polinomio autorregresivo completo, rezago a rezago</p>
+        <div class="grafico-wrapper" style="height:210px;">
+          <canvas aria-label="Coeficientes del polinomio AR completo por rezago" role="img"></canvas>
+        </div>
+      </div>
+
+      <h3>Cómo se escribe en la práctica</h3>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Escribir un SARIMA">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r">
+          <pre><code class="language-r">library(forecast)
+ap &lt;- log(AirPassengers)
+
+# SARIMA(0,1,1)(0,1,1)[12]: el periodo va en `seasonal`, no se deduce solo
+# de la serie salvo que sea un objeto ts con frequency correcta.
+fit &lt;- Arima(ap, order = c(0, 1, 1), seasonal = list(order = c(0, 1, 1), period = 12))
+fit
+#&gt; Series: ap
+#&gt; ARIMA(0,1,1)(0,1,1)[12]
+#&gt; Coefficients:
+#&gt;           ma1     sma1
+#&gt;       -0.4018  -0.5569
+#&gt; s.e.   0.0896   0.0731
+
+# Que la parte estacional MULTIPLICA se comprueba expandiendo el polinomio:
+# (1 + theta B)(1 + Theta B^12) = 1 + theta B + Theta B^12 + theta*Theta B^13
+th &lt;- coef(fit)["ma1"]; Th &lt;- coef(fit)["sma1"]
+round(c(B1 = th, B12 = Th, B13 = th * Th), 4)
+#&gt;      B1     B12     B13
+#&gt; -0.4018 -0.5569  0.2238
+# El coeficiente del rezago 13 NO se estima: sale del producto.
+
+# La forma no multiplicativa se pediria con fixed=, y necesita 13 parametros
+# para tocar los mismos rezagos. Casi nunca compensa.</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python">
+          <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+
+ap = np.log(sm.datasets.get_rdataset("AirPassengers").data["value"].values)
+s = pd.Series(ap, index=pd.date_range("1949-01", periods=len(ap), freq="MS"))
+
+# seasonal_order = (P, D, Q, m). trend="n" para que no anada constante.
+fit = SARIMAX(s, order=(0, 1, 1), seasonal_order=(0, 1, 1, 12),
+              trend="n", simple_differencing=True).fit(disp=False)
+print(fit.params.round(4))
+#&gt; ma.L1      -0.4018
+#&gt; ma.S.L12   -0.5569
+#&gt; sigma2      0.0013
+
+th, Th = fit.params["ma.L1"], fit.params["ma.S.L12"]
+print(np.round([th, Th, th * Th], 4))
+#&gt; [-0.4018 -0.5569  0.2238]
+
+# simple_differencing=True hace que statsmodels DIFERENCIE la serie antes de
+# ajustar, como R. Sin esa opcion mete d y D en el espacio de estados con un
+# prior difuso: los coeficientes salen casi iguales aqui, pero `nobs` pasa a
+# ser 144 en vez de 131. El Modulo 6 vuelve sobre esto, porque afecta al AIC.</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="module-3">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 3</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">5.3 Diferenciación estacional: cuántas y en qué orden
+          <span class="text-gray-400 font-normal text-2xl">/ Seasonal differencing: how many and in what order</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Decidir $D$ y $d$ con criterio, y descubrir que aunque
+              los operadores <strong>conmutan</strong>, las pruebas que los eligen <strong>no</strong>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: diferencia estacional</h4>
+        <p>$$\nabla_m y_t = (1 - B^m)\, y_t = y_t - y_{t-m}$$</p>
+        <p style="margin-bottom:0;">Compara cada observación con la del <strong>mismo periodo del ciclo anterior</strong>:
+          enero contra enero, no enero contra diciembre. Cuesta $m$ observaciones, no una. Y no tiene nada que ver con
+          aplicar $\nabla$ doce veces: $\nabla^{12} \neq \nabla_{12}$. La primera es un polinomio con una raíz de
+          multiplicidad $12$ en $B=1$; la segunda tiene $12$ raíces <em>distintas</em>, repartidas por todo el círculo
+          unitario.</p>
+      </div>
+
+      <div class="derivacion">
+        <button type="button" class="derivacion-boton" aria-expanded="false" aria-controls="der-raices-nabla12">
+          <i class="fas fa-square-root-variable" aria-hidden="true"></i>
+          <span class="derivacion-texto">Ver el desarrollo paso a paso</span>
+          <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="derivacion-panel" id="der-raices-nabla12" hidden>
+          <ol class="derivacion-pasos">
+            <li>
+              <p>Las raíces de $1 - B^{12} = 0$ son las doce raíces duodécimas de la unidad:</p>
+              $$B_k = e^{\,2\pi i k/12}, \qquad k = 0, 1, \dots, 11$$
+              <p>Todas tienen módulo $1$, pero solo una ($k=0$) vale $B=1$.</p>
+            </li>
+            <li>
+              <p>Se puede factorizar separando esa raíz:</p>
+              $$1 - B^{12} = (1-B)\,(1 + B + B^2 + \cdots + B^{11})$$
+            </li>
+            <li>
+              <p>Es decir, <strong>$\nabla_{12}$ contiene a $\nabla$</strong>. Aplicar la diferencia estacional ya
+                elimina una tendencia lineal, y por eso muchas series necesitan $D=1$ y $d=0$: la estacional hizo las
+                dos cosas.</p>
+            </li>
+            <li>
+              <p>Las once raíces restantes están en las frecuencias estacionales $2\pi k/12$, con $k \neq 0$: son las
+                que anulan el patrón que se repite cada doce meses. Por eso $\nabla_{12}$ elimina una estacionalidad
+                <em>determinista</em> y no solo una estocástica.</p>
+            </li>
+          </ol>
+          <p class="derivacion-resultado">$\nabla_{12}$ mata la tendencia lineal <strong>y</strong> el patrón
+            estacional de un golpe. Aplicar además $\nabla$ vuelve a imponer la raíz $B=1$, que ya estaba: se hace
+            cuando la tendencia es más fuerte que lineal o cambia de pendiente, no por rutina.</p>
+        </div>
+      </div>
+
+      <h3>Las cuatro combinaciones</h3>
+
+      <div class="simulador" data-simulador="cuatro-combinaciones">
+        <h4><i class="fas fa-grip" aria-hidden="true"></i> $\nabla^d \nabla_{12}^D \log(\text{AirPassengers})$</h4>
+        <p class="simulador-intro">Los dos interruptores dan las cuatro combinaciones. Mira sobre todo la
+          <strong>ACF en el rezago 12</strong>: con solo la diferencia regular baja de $0.762$ a… $0.841$, es decir
+          <em>sube</em>. Diferenciar de forma regular no toca la estacionalidad; concentrarla es incluso más fácil de
+          ver después.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper" style="height:220px;">
+          <canvas aria-label="Serie transformada según las diferencias elegidas" role="img"></canvas>
+        </div>
+        <p class="grafico-etiqueta">Autocorrelación muestral hasta el rezago 36</p>
+        <div class="grafico-wrapper" style="height:210px;">
+          <canvas aria-label="Correlograma de la serie transformada" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>$d$</th><th>$D$</th><th>$n$</th><th>Varianza</th><th>$\hat\rho_1$</th><th>$\hat\rho_{12}$</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>$0$</td><td>$0$</td><td>$144$</td><td>$0.194884$</td><td>$0.9537$</td><td>$0.7619$</td></tr>
+            <tr><td>$1$</td><td>$0$</td><td>$143$</td><td>$0.011354$</td><td>$0.1998$</td><td>$\mathbf{0.8414}$</td></tr>
+            <tr><td>$0$</td><td>$1$</td><td>$132$</td><td>$0.003800$</td><td>$0.7137$</td><td>$-0.2430$</td></tr>
+            <tr><td>$1$</td><td>$1$</td><td>$131$</td><td>$\mathbf{0.002102}$</td><td>$-0.3411$</td><td>$-0.3866$</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>La regla de la varianza mínima —del Capítulo 4— señala $d=1, D=1$, y aquí acierta. Pero conviene ver
+        <em>por qué</em> cada fila hace lo que hace: $\nabla$ solo reduce la varianza a la vigésima parte y deja la
+        estacionalidad intacta; $\nabla_{12}$ sola la reduce cincuenta veces y deja $\hat\rho_1 = 0.714$, que es
+        tendencia sin resolver. Cada operador hace su trabajo y solo el suyo.</p>
+
+      <h3>El orden en que se decide</h3>
+
+      <div class="warning">
+        <p><strong>Los operadores conmutan; las pruebas no.</strong> $\nabla\nabla_{12}y_t$ y $\nabla_{12}\nabla y_t$
+          son <strong>la misma serie</strong> —diferencia máxima medida: $0$ en las dos series del capítulo—, así que
+          el orden de aplicación es irrelevante. Lo que no es irrelevante es el orden en que se <em>decide</em>. Sobre
+          <code>USAccDeaths</code>, <code>ndiffs()</code> aplicado a la serie cruda devuelve <strong>0</strong>; sobre
+          la misma serie ya diferenciada estacionalmente devuelve <strong>1</strong>. La estacionalidad domina la
+          varianza y esconde la tendencia. <strong>Primero $D$, después $d$.</strong></p>
+      </div>
+
+      <div class="simulador" data-simulador="sobrediferenciacion-estacional">
+        <h4><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> ¿Y si diferencio de más?</h4>
+        <p class="simulador-intro">El deslizador recorre $D = 0, 1, 2$ con $d = 1$ fijo, y en cada posición ajusta un
+          SARIMA($0,1,1$)($0,D,1$)$_{12}$ de verdad. Busca la firma algebraica del Capítulo 4, ahora en la parte
+          estacional: cuando sobra una diferencia, $\hat\Theta$ se pega a $-1$ y la raíz del polinomio MA cae
+          <strong>sobre</strong> el círculo unitario.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper" style="height:220px;">
+          <canvas aria-label="Serie con el número de diferencias estacionales elegido" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>$D$</th><th>$n$</th><th>Varianza</th><th>$\hat\Theta$</th><th>e.e.</th><th>$|\text{raíz MA}|^{-1}$</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>$0$</td><td>$143$</td><td>$0.011354$</td><td>$+0.7397$</td><td>$0.0610$</td><td>$0.9752$</td></tr>
+            <tr><td>$1$</td><td>$131$</td><td>$\mathbf{0.002102}$</td><td>$-0.5569$</td><td>$0.0731$</td><td>$0.9524$</td></tr>
+            <tr><td>$2$</td><td>$119$</td><td>$0.005960$</td><td>$\mathbf{-0.9973}$</td><td>$0.0830$</td><td>$\mathbf{0.9998}$</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Con $D=2$ la varianza vuelve a subir (de $0.0021$ a $0.0060$) <em>y</em> $\hat\Theta = -0.9973$ con la raíz
+        en $0.9998$. Las dos alarmas suenan a la vez, que es lo habitual; pero la segunda es la fiable, porque la regla
+        de la varianza falla en casos reales —en $\log(\text{lynx})$ del Capítulo 4 diferenciar de más
+        <em>reducía</em> la varianza un $58\,\%$—.</p>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Elegir D y d">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r">
+          <pre><code class="language-r">library(forecast)
+ap  &lt;- log(AirPassengers)
+uad &lt;- USAccDeaths
+
+# --- El orden importa: primero D, despues d --------------------------------
+c(ndiffs_crudo = ndiffs(uad), nsdiffs = nsdiffs(uad))
+#&gt; ndiffs_crudo      nsdiffs
+#&gt;            0            1
+ndiffs(diff(uad, lag = 12))       # d se decide DESPUES de quitar la estacion
+#&gt; [1] 1
+
+# ...pero los operadores si conmutan
+max(abs(diff(diff(uad, lag = 12)) - diff(diff(uad), lag = 12)))
+#&gt; [1] 0
+
+# --- Las cuatro combinaciones ----------------------------------------------
+comb &lt;- expand.grid(d = 0:1, D = 0:1)
+for (i in seq_len(nrow(comb))) {
+  w &lt;- ap
+  if (comb$D[i] &gt; 0) w &lt;- diff(w, lag = 12, differences = comb$D[i])
+  if (comb$d[i] &gt; 0) w &lt;- diff(w, differences = comb$d[i])   # d=0 aparte: diff(x, differences=0) es ERROR
+  a &lt;- Acf(w, lag.max = 12, plot = FALSE)$acf
+  cat(sprintf("d=%d D=%d  n=%3d  var=%.6f  r1=%+.4f  r12=%+.4f\n",
+              comb$d[i], comb$D[i], length(w), var(w), a[2], a[13]))
+}
+#&gt; d=0 D=0  n=144  var=0.194884  r1=+0.9537  r12=+0.7619
+#&gt; d=1 D=0  n=143  var=0.011354  r1=+0.1998  r12=+0.8414
+#&gt; d=0 D=1  n=132  var=0.003800  r1=+0.7137  r12=-0.2430
+#&gt; d=1 D=1  n=131  var=0.002102  r1=-0.3411  r12=-0.3866
+
+# --- Sobrediferenciacion estacional: la firma es la raiz MA -----------------
+for (D in 0:2) {
+  f &lt;- Arima(ap, order = c(0,1,1), seasonal = list(order = c(0,D,1), period = 12))
+  cat(sprintf("D=%d  Theta=%+.4f (e.e. %.4f)  |raiz MA|^-1=%.4f\n", D,
+      coef(f)["sma1"], sqrt(diag(f$var.coef))["sma1"],
+      max(Mod(1/polyroot(c(1, f$model$theta))))))
+}
+#&gt; D=0  Theta=+0.7397 (e.e. 0.0610)  |raiz MA|^-1=0.9752
+#&gt; D=1  Theta=-0.5569 (e.e. 0.0731)  |raiz MA|^-1=0.9524
+#&gt; D=2  Theta=-0.9973 (e.e. 0.0830)  |raiz MA|^-1=0.9998</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python">
+          <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm
+
+ap = np.log(sm.datasets.get_rdataset("AirPassengers").data["value"].values)
+uad = sm.datasets.get_rdataset("USAccDeaths").data["value"].values
+
+def diferenciar(x, d=0, D=0, m=12):
+    """Diferencia estacional D veces y luego regular d veces."""
+    for _ in range(D):
+        x = x[m:] - x[:-m]          # nabla_m: NO es np.diff(x, n=m)
+    if d:
+        x = np.diff(x, n=d)
+    return x
+
+for d in (0, 1):
+    for D in (0, 1):
+        w = diferenciar(ap, d, D)
+        a = sm.tsa.acf(w, nlags=12, fft=False)
+        print(f"d={d} D={D}  n={len(w):3d}  var={w.var(ddof=1):.6f}  "
+              f"r1={a[1]:+.4f}  r12={a[12]:+.4f}")
+#&gt; d=0 D=0  n=144  var=0.194884  r1=+0.9537  r12=+0.7619
+#&gt; d=0 D=1  n=132  var=0.003800  r1=+0.7137  r12=-0.2430
+#&gt; d=1 D=0  n=143  var=0.011354  r1=+0.1998  r12=+0.8414
+#&gt; d=1 D=1  n=131  var=0.002102  r1=-0.3411  r12=-0.3866
+
+# Los operadores conmutan tambien aqui
+print(np.max(np.abs(diferenciar(uad, 1, 1) - np.diff(uad[12:] - uad[:-12]))))
+#&gt; 0
+
+# statsmodels NO trae equivalentes de ndiffs()/nsdiffs(): la decision se toma
+# a mano, y las pruebas de raiz unitaria del Capitulo 2 se aplican SIEMPRE a la
+# serie ya sin estacionalidad. Sobre USAccDeaths eso reproduce el orden
+# "primero D, despues d":
+from statsmodels.tsa.stattools import kpss
+print(round(kpss(diferenciar(uad, 0, 1), regression="c", nlags=4)[0], 4))
+#&gt; 0.8672     valor critico al 5 % = 0.463 -&gt; RECHAZA: falta la diferencia regular
+print(round(kpss(diferenciar(uad, 1, 1), regression="c", nlags=4)[0], 4))
+#&gt; 0.0713     ya no rechaza: con d = 1 y D = 1 se llega a la estacionariedad</code></pre>
+        </div>
+      </div>
+
+      <div class="warning">
+        <p><strong>Trampa de versión.</strong> <code>nsdiffs()</code> usa por defecto <code>test = "seas"</code>
+          (fuerza estacional de la descomposición STL) desde <code>forecast</code> 8.x. Las versiones anteriores usaban
+          OCSB, y todavía se puede pedir con <code>test = "ocsb"</code>. <strong>No dan lo mismo:</strong> sobre
+          $\log(\text{AirPassengers})$ y sobre <code>USAccDeaths</code>, <code>"seas"</code> devuelve $1$ y
+          <code>"ocsb"</code> devuelve $0$. Es la misma clase de trampa que la de <code>ndiffs()</code> y
+          <code>kpss.test()</code> del Capítulo 2: <strong>al comparar dos salidas, mira primero qué prueba usa
+          cada una</strong>. Aquí manda la evidencia del correlograma, no el número que devuelve la función.</p>
+      </div>
+    </div>
+  </template>

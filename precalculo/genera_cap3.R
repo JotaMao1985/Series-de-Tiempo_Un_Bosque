@@ -27,6 +27,18 @@ suppressMessages({
   library(forecast)
 })
 
+# R arranca aqui con LC_CTYPE = "C", y entonces jsonlite trata los bytes UTF-8
+# de las tildes como caracteres sueltos y los escribe en el JSON como <c3><ad>.
+# En el navegador eso se lee como marcado desconocido y la palabra pierde la
+# tilde ("dias" en vez de "dias" con tilde). Hay que forzar la configuracion
+# regional ANTES de generar nada.
+locale_ok <- suppressWarnings(Sys.setlocale("LC_CTYPE", "en_US.UTF-8"))
+if (!isTRUE(l10n_info()$"UTF-8")) {
+  warning("No se pudo activar una configuracion regional UTF-8: las tildes de ",
+          "las cadenas del JSON saldran mal. Prueba a ejecutar con ",
+          "LC_ALL=en_US.UTF-8 Rscript ...")
+}
+
 args_dir <- dirname(sub("--file=", "", grep("--file=", commandArgs(FALSE), value = TRUE)[1]))
 if (is.na(args_dir) || args_dir == "") args_dir <- "."
 dir_salidas <- file.path(args_dir, "salidas")

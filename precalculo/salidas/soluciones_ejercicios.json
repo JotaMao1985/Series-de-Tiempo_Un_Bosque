@@ -463,8 +463,333 @@
       "ancho95_h12_sin": 35.742
     }
   },
+  "cap5_ej1": {
+    "n": 468,
+    "varianzas": [223.9877, 1.4555, 0.3882, 0.1543],
+    "varianza_minima": "d1D1",
+    "ndiffs": 1,
+    "ndiffs_tras_D": 1,
+    "nsdiffs": 1,
+    "n_modelos": 47,
+    "mejor_aicc": "(0,1,3)(0,1,1)[12]",
+    "mejor_bic": "(0,1,1)(0,1,1)[12]",
+    "aicc_mejor": 176.998,
+    "bic_mejor": 197.466,
+    "lb_mejor": 0.631,
+    "auto_arima": "ARIMA(0,1,3)(0,1,1)[12]",
+    "auto_aicc": 176.998,
+    "airline_aicc": 178.209,
+    "airline_lb": 0.4081,
+    "diferencia_aicc": 1.211,
+    "trampa": {
+      "modelo_sinD": "(0,1,1)(0,0,1)[12]",
+      "aicc_sinD": 988.1,
+      "nobs_sinD": 467,
+      "aicc_conD": 178.209,
+      "nobs_conD": 455,
+      "lb_sinD": 0,
+      "leccion": "Aqui el AICc sin diferencia estacional sale MUCHO peor y ademas el modelo no pasa Ljung-Box, asi que la lectura ingenua acierta por casualidad. Sigue siendo invalida: se calcula sobre 12 observaciones mas. En el ejercicio 3 los dos numeros quedan a dos puntos de distancia y ahi la lectura ingenua si enganya."
+    }
+  },
+  "cap5_ej2": {
+    "n": 72,
+    "orden_mal": {
+      "ndiffs_primero": 0,
+      "nsdiffs_despues": 1
+    },
+    "orden_bien": {
+      "nsdiffs_primero": 1,
+      "ndiffs_despues": 1
+    },
+    "conmutan": 0,
+    "modelo_orden_mal": {
+      "d": 0,
+      "D": 1,
+      "etiqueta": "(0,0,1)(0,1,1)[12]",
+      "aicc": 905.963,
+      "nobs": 60,
+      "lb": 0
+    },
+    "modelo_orden_bien": {
+      "d": 1,
+      "D": 1,
+      "etiqueta": "(0,1,1)(0,1,1)[12]",
+      "aicc": 857.316,
+      "nobs": 59,
+      "lb": 0.2477,
+      "theta": -0.4303,
+      "Theta": -0.5528
+    },
+    "auto_arima": "ARIMA(0,1,1)(0,1,1)[12]",
+    "auto_aicc": 857.316,
+    "nsdiffs_ocsb": 0,
+    "aicc_no_comparables": "Los dos modelos tienen d distinto (0 y 1), asi que sus AICc TAMPOCO se comparan: 60 observaciones frente a 59. Lo que decide es el diagnostico, que si es valido en ambos.",
+    "leccion": "Los operadores conmutan (la serie resultante es identica), pero las PRUEBAS no: ndiffs sobre la serie cruda ve 0 diferencias regulares porque la estacionalidad domina la varianza. Se decide D primero."
+  },
+  "cap5_ej3": {
+    "trm": {
+      "n": 138,
+      "evidencia1_nsdiffs": 0,
+      "evidencia2_acf": {
+        "r12": -0.0025,
+        "r24": -0.0672,
+        "r36": 0.0714,
+        "banda": 0.1675,
+        "fuera": 0
+      },
+      "evidencia3_ajuste": {
+        "Phi": 0.0013,
+        "ee": 0.0899,
+        "t": 0.015,
+        "aicc_forzado": 1708.001,
+        "aicc_simple": 1705.941
+      },
+      "auto": "ARIMA(0,1,0)"
+    },
+    "co2_armonicos": {
+      "resultados": [
+        {
+          "K": 1,
+          "terminos": 2,
+          "aicc": 435.509,
+          "nobs": 467,
+          "modelo": "Regression with ARIMA(5,1,0) errors",
+          "lb": 0
+        },
+        {
+          "K": 2,
+          "terminos": 4,
+          "aicc": 268.475,
+          "nobs": 467,
+          "modelo": "Regression with ARIMA(0,1,5) errors",
+          "lb": 0
+        },
+        {
+          "K": 3,
+          "terminos": 6,
+          "aicc": 223.402,
+          "nobs": 467,
+          "modelo": "Regression with ARIMA(0,1,4) errors",
+          "lb": 0
+        },
+        {
+          "K": 4,
+          "terminos": 8,
+          "aicc": 180.2,
+          "nobs": 467,
+          "modelo": "Regression with ARIMA(3,1,1) errors",
+          "lb": 0.0439
+        },
+        {
+          "K": 5,
+          "terminos": 10,
+          "aicc": 181.494,
+          "nobs": 467,
+          "modelo": "Regression with ARIMA(3,1,1) errors",
+          "lb": 0.0516
+        },
+        {
+          "K": 6,
+          "terminos": 11,
+          "aicc": 183.624,
+          "nobs": 467,
+          "modelo": "Regression with ARIMA(3,1,1) errors",
+          "lb": 0.0515
+        }
+      ],
+      "mejor_K": 4,
+      "aicc_mejor_K": 180.2,
+      "nobs_armonico": 467,
+      "aicc_airline": 178.209,
+      "nobs_airline": 455,
+      "comparable": false,
+      "leccion": "El AICc del armonico parece mucho mejor que el del SARIMA, pero el armonico usa D = 0 y el SARIMA D = 1: se evaluan sobre series de distinta longitud. La comparacion entre familias solo vale fuera de muestra. Es la misma trampa del capitulo 4 con d, ahora con D."
+    }
+  },
+  "cap6_ej1": {
+    "serie": "USAccDeaths",
+    "n": 72,
+    "T0": 36,
+    "h": 12,
+    "n_origenes": 25,
+    "origen_movil": [
+      {
+        "metodo": "snaive",
+        "n_origenes": 25,
+        "n_errores": 300,
+        "rmse": 331.3329,
+        "mae": 264.26,
+        "mape": 3.0627,
+        "mase": 0.4004,
+        "cob95": 100,
+        "winkler95": 2641.6158
+      },
+      {
+        "metodo": "airline",
+        "n_origenes": 25,
+        "n_errores": 300,
+        "rmse": 434.92,
+        "mae": 343.8207,
+        "mape": 3.9995,
+        "mase": 0.521,
+        "cob95": 99,
+        "winkler95": 2529.3561
+      },
+      {
+        "metodo": "auto",
+        "n_origenes": 25,
+        "n_errores": 300,
+        "rmse": 417.3851,
+        "mae": 330.7447,
+        "mape": 3.8422,
+        "mase": 0.5012,
+        "cob95": 99,
+        "winkler95": 2686.2447
+      },
+      {
+        "metodo": "media",
+        "n_origenes": 25,
+        "n_errores": 300,
+        "rmse": 942.4677,
+        "mae": 760.0326,
+        "mape": 9.2317,
+        "mase": 1.1517,
+        "cob95": 100,
+        "winkler95": 4022.9345
+      }
+    ],
+    "dm_airline_vs_snaive": [
+      {
+        "h": 1,
+        "estadistico": 0.0638,
+        "p": 0.9497
+      },
+      {
+        "h": 6,
+        "estadistico": 0.9115,
+        "p": 0.3711
+      },
+      {
+        "h": 12,
+        "estadistico": 1.2659,
+        "p": 0.2177
+      }
+    ],
+    "particion_unica": [
+      {
+        "metodo": "snaive",
+        "rmse": 341.1639,
+        "mae": 259.5,
+        "mase": 0.5387
+      },
+      {
+        "metodo": "airline",
+        "rmse": 288.8282,
+        "mae": 231.6095,
+        "mase": 0.4808
+      },
+      {
+        "metodo": "auto",
+        "rmse": 288.8282,
+        "mae": 231.6095,
+        "mase": 0.4808
+      },
+      {
+        "metodo": "media",
+        "rmse": 946.1645,
+        "mae": 780.3083,
+        "mase": 1.6199
+      }
+    ],
+    "orden_om": ["snaive", "auto", "airline", "media"],
+    "orden_particion": ["airline", "auto", "snaive", "media"]
+  },
+  "cap6_ej2": {
+    "serie": "co2 (Mauna Loa)",
+    "n": 468,
+    "h": 24,
+    "rango": [313.18, 366.84],
+    "variacion_relativa_pct": 17.13,
+    "q_mase": 1.2559,
+    "tabla": [
+      {
+        "metodo": "media",
+        "rmse": 27.6893,
+        "mae": 27.6147,
+        "mape": 7.5992,
+        "mase": 21.9883
+      },
+      {
+        "metodo": "naive",
+        "rmse": 3.2306,
+        "mae": 2.7471,
+        "mape": 0.7538,
+        "mase": 2.1874
+      },
+      {
+        "metodo": "snaive",
+        "rmse": 2.4333,
+        "mae": 2.3379,
+        "mape": 0.6433,
+        "mase": 1.8616
+      },
+      {
+        "metodo": "deriva",
+        "rmse": 2.4794,
+        "mae": 2.1479,
+        "mape": 0.5902,
+        "mase": 1.7103
+      },
+      {
+        "metodo": "airline",
+        "rmse": 0.3541,
+        "mae": 0.2767,
+        "mape": 0.0761,
+        "mase": 0.2203
+      }
+    ],
+    "mape_maximo": 7.5992,
+    "mase_maximo": 21.9883,
+    "razon_mape": 99.86,
+    "razon_mase": 99.81
+  },
+  "cap6_ej3": {
+    "serie": "Nile",
+    "n": 100,
+    "T0": 60,
+    "h": 5,
+    "n_origenes": 36,
+    "niveles": [50, 80, 90, 95, 99],
+    "cobertura_arima": [63.8889, 87.7778, 97.2222, 100, 100],
+    "cobertura_naive": [79.4444, 96.1111, 99.4444, 100, 100],
+    "exceso_arima": [13.8889, 7.7778, 7.2222, 5, 1],
+    "exceso_naive": [29.4444, 16.1111, 9.4444, 5, 1],
+    "arima": {
+      "n_origenes": 36,
+      "n_errores": 180,
+      "rmse": 121.3709,
+      "mae": 95.7709,
+      "mape": 11.137,
+      "mase": 0.6454,
+      "cob95": 100,
+      "winkler95": 631.1552
+    },
+    "naive": {
+      "n_origenes": 36,
+      "n_errores": 180,
+      "rmse": 157.6873,
+      "mae": 127.1333,
+      "mape": 14.9369,
+      "mase": 0.8568,
+      "cob95": 100,
+      "winkler95": 1138.3547
+    },
+    "ancho95_arima": 631.1552,
+    "ancho95_naive": 1138.3547,
+    "shapiro_p": 0.7312
+  },
   "metadatos": {
-    "generado": "2026-07-26",
+    "generado": "2026-07-27",
     "generador": "precalculo/genera_soluciones.R",
     "versiones": {
       "R": "4.6.0",

@@ -1,0 +1,124 @@
+
+    /* ------------------------------------------------------------------
+       Componente .mapa-estacional — mapa de calor mes x año
+       ------------------------------------------------------------------
+       Un gráfico de línea enseña el nivel; un correlograma, la estructura.
+       Ninguno de los dos deja VER la estacionalidad como lo que es: un
+       patrón que se repite por columnas. Aquí cada fila es un año y cada
+       columna un mes, así que un mes sistemáticamente alto pinta una banda
+       vertical y la diferencia estacional la borra ante los ojos.
+
+       Sin dependencias: rejilla CSS y colores calculados en JS. El valor va
+       escrito dentro de la celda y repetido en su nombre accesible, así que
+       el color nunca es el único canal de información.
+       ------------------------------------------------------------------ */
+    .mapa-estacional {
+      margin: 1.1rem 0;
+    }
+
+    .mapa-estacional-titulo {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.66rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #012820;
+      font-weight: 600;
+      margin: 0 0 0.5rem 0;
+    }
+
+    /* En pantallas estrechas la rejilla se desplaza dentro de su caja en vez
+       de desbordar la página. */
+    .mapa-estacional-marco {
+      overflow-x: auto;
+      padding-bottom: 0.2rem;
+    }
+
+    .mapa-estacional-rejilla {
+      display: grid;
+      grid-template-columns: 3.1rem repeat(12, minmax(2.4rem, 1fr));
+      gap: 2px;
+      min-width: 34rem;
+    }
+
+    .mapa-estacional-cabecera,
+    .mapa-estacional-anio {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.66rem;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.15rem 0;
+    }
+
+    .mapa-estacional-anio {
+      justify-content: flex-end;
+      padding-right: 0.4rem;
+      color: #012820;
+      font-weight: 600;
+    }
+
+    .mapa-estacional-celda {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 1.65rem;
+      border-radius: 0.2rem;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.63rem;
+      line-height: 1;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .mapa-estacional-celda:hover {
+      transform: scale(1.12);
+      box-shadow: 0 2px 8px rgba(1, 40, 32, 0.28);
+      z-index: 2;
+    }
+
+    /* Los huecos que deja la diferenciación son parte del mensaje: se marcan
+       con trama, no con un blanco que se confunda con un valor bajo. */
+    .mapa-estacional-vacia {
+      background: repeating-linear-gradient(45deg,
+        #f1f5f9, #f1f5f9 3px, #e2e8f0 3px, #e2e8f0 6px);
+      color: transparent;
+    }
+
+    .mapa-estacional-leyenda {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.55rem;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.64rem;
+      color: #64748b;
+      flex-wrap: wrap;
+    }
+
+    .mapa-estacional-barra {
+      flex: 1 1 8rem;
+      height: 0.55rem;
+      min-width: 6rem;
+      border-radius: 0.3rem;
+      border: 1px solid rgba(1, 40, 32, 0.15);
+    }
+
+    .mapa-estacional-nota {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.78rem;
+      color: #64748b;
+      margin: 0.5rem 0 0 0;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 640px) {
+      .mapa-estacional-rejilla {
+        grid-template-columns: 2.6rem repeat(12, minmax(2rem, 1fr));
+      }
+
+      .mapa-estacional-celda {
+        font-size: 0.55rem;
+        min-height: 1.4rem;
+      }
+    }

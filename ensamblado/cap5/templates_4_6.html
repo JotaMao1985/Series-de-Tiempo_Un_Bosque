@@ -1,0 +1,450 @@
+  <template id="module-4">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 4</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">5.4 Identificar los órdenes estacionales
+          <span class="text-gray-400 font-normal text-2xl">/ Identifying the seasonal orders</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Leer $P$ y $Q$ en los rezagos $m, 2m, 3m$ con la misma
+              tabla del Capítulo 3, y no confundir un satélite con un parámetro que falta.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>La buena noticia de la notación multiplicativa es que <strong>no hay teoría nueva que aprender</strong>. Los
+        rezagos estacionales se leen con exactamente la misma tabla del Capítulo 3, aplicada a
+        $\{m, 2m, 3m, \dots\}$ en vez de a $\{1, 2, 3, \dots\}$.</p>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th></th><th>ACF en $m, 2m, 3m$</th><th>PACF en $m, 2m, 3m$</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>SAR($P$)</strong> ($\Phi \neq 0$)</td><td>Decae</td><td>Se corta tras el rezago $Pm$</td></tr>
+            <tr><td><strong>SMA($Q$)</strong> ($\Theta \neq 0$)</td><td>Se corta tras el rezago $Qm$</td><td>Decae</td></tr>
+            <tr><td><strong>SARMA($P,Q$)</strong></td><td>Decae</td><td>Decae</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Con $\Phi = 0.7$, la ACF teórica de un SAR($1$)$_{12}$ vale $0.700$ en el rezago $12$, $0.490$ en el $24$ y
+        $0.343$ en el $36$: la misma geométrica de un AR($1$), estirada doce veces. Con $\Theta = -0.6$, la de un
+        SMA($1$)$_{12}$ vale $-0.4412$ en el $12$ y <strong>exactamente $0$</strong> a partir del $24$.</p>
+
+      <div class="note">
+        <p><strong>Los rezagos intermedios son cero, y eso es información.</strong> En los dos procesos puramente
+          estacionales de arriba, $\rho_1 = \rho_2 = \cdots = \rho_{11} = 0$. Si en una serie real hay barras grandes
+          en los rezagos bajos <em>y</em> en los múltiplos de $12$, es que hacen falta las dos partes; ese es el caso
+          normal, no la excepción.</p>
+      </div>
+
+      <h3>Los satélites: cómo no equivocarse contándolos</h3>
+
+      <p>El Módulo 2 demostró que multiplicar los polinomios genera términos cruzados. En el correlograma eso se ve
+        como barras en $m \pm 1$, $m \pm 2$… que <strong>no piden parámetros propios</strong>. Es el error de conteo
+        más frecuente al identificar un SARIMA.</p>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Proceso teórico</th><th>$\rho_1$</th><th>$\rho_{11}$</th><th>$\rho_{12}$</th><th>$\rho_{13}$</th><th>$\rho_{24}$</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>SAR($1$), $\Phi = 0.7$</td><td>$0$</td><td>$0$</td><td>$0.700$</td><td>$0$</td><td>$0.490$</td></tr>
+            <tr><td>SMA($1$), $\Theta = -0.6$</td><td>$0$</td><td>$0$</td><td>$-0.441$</td><td>$0$</td><td>$0$</td></tr>
+            <tr><td>AR($1$)$\times$SAR($1$), $\phi=0.6$, $\Phi=0.7$</td><td>$0.602$</td><td>$\mathbf{0.423}$</td><td>$0.701$</td><td>$\mathbf{0.422}$</td><td>$0.491$</td></tr>
+            <tr><td><em>Airline</em>, $\theta=-0.4018$, $\Theta=-0.5569$</td><td>$-0.346$</td><td>$\mathbf{0.147}$</td><td>$-0.425$</td><td>$\mathbf{0.147}$</td><td>$0$</td></tr>
+            <tr><td>AR($1$)$\times$SMA($1$), $\phi=0.5$, $\Theta=-0.7$</td><td>$0.500$</td><td>$\mathbf{-0.235}$</td><td>$-0.470$</td><td>$\mathbf{-0.235}$</td><td>$\approx 0$</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>En las tres últimas filas, $\rho_{11}$ y $\rho_{13}$ son <strong>casi idénticos entre sí</strong> y
+        aproximadamente iguales a $\rho_1 \cdot \rho_{12}$: en la del <em>airline</em>,
+        $(-0.346)\times(-0.425) = 0.147$, que es exactamente lo que aparece. Esa simetría alrededor del pico estacional
+        es la marca del modelo multiplicativo, y verla ahorra dos parámetros.</p>
+
+      <div class="simulador" data-simulador="firma-teorica">
+        <h4><i class="fas fa-wave-square" aria-hidden="true"></i> Laboratorio de firmas estacionales</h4>
+        <p class="simulador-intro">Cuatro deslizadores, uno por cada parte del modelo, y las ACF/PACF teóricas exactas
+          (calculadas expandiendo el polinomio, no aproximadas). Empieza con todo en cero y sube <strong>solo</strong>
+          $\Phi$: verás picos limpios en $12, 24, 36$ y nada más. Añade después $\phi$ y observa cómo brotan los
+          satélites en $11$ y $13$ sin que hayas tocado ningún parámetro nuevo.</p>
+        <div class="simulador-controles"></div>
+        <p class="grafico-etiqueta">ACF teórica</p>
+        <div class="grafico-wrapper" style="height:190px;">
+          <canvas aria-label="ACF teórica del proceso estacional elegido" role="img"></canvas>
+        </div>
+        <p class="grafico-etiqueta">PACF teórica</p>
+        <div class="grafico-wrapper" style="height:190px;">
+          <canvas aria-label="PACF teórica del proceso estacional elegido" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <h3>El protocolo, paso a paso</h3>
+
+      <p>Identificar un SARIMA es el ciclo de Box–Jenkins del Capítulo 4 con dos etapas insertadas. El orden importa,
+        y el diagrama recoge también <strong>qué hallazgo te devuelve a una etapa anterior</strong>, que es la parte
+        que ninguna lista numerada sabe dibujar.</p>
+
+      <!--CICLO:identificacion-estacional-->
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Identificar los órdenes estacionales">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r">
+          <pre><code class="language-r">library(forecast)
+
+# ACF teorica de un proceso estacional: se EXPANDE el polinomio y se usa
+# ARMAacf, que no sabe nada de estacionalidad. m = 12.
+acf_sarima &lt;- function(phi = numeric(0), Phi = 0, theta = numeric(0), Theta = 0,
+                       m = 12, lag.max = 36) {
+  poli_est &lt;- function(c0) { v &lt;- numeric(m + 1); v[1] &lt;- 1; v[m + 1] &lt;- c0; v }
+  mult &lt;- function(a, b) {
+    r &lt;- numeric(length(a) + length(b) - 1)
+    for (i in seq_along(a)) for (j in seq_along(b)) r[i+j-1] &lt;- r[i+j-1] + a[i]*b[j]
+    r
+  }
+  recorta &lt;- function(v) { nz &lt;- which(abs(v) &gt; 1e-12); if (!length(nz)) numeric(0) else v[seq_len(max(nz))] }
+  ar &lt;- recorta(-mult(c(1, -phi),   poli_est(-Phi))[-1])
+  ma &lt;- recorta( mult(c(1,  theta), poli_est( Theta))[-1])
+  ARMAacf(ar = ar, ma = ma, lag.max = lag.max)[-1]
+}
+
+# SAR(1): picos limpios, nada entre medias
+round(acf_sarima(Phi = 0.7)[c(1, 11, 12, 13, 24)], 4)
+#&gt; [1] 0.0000 0.0000 0.7000 0.0000 0.4900
+
+# AR(1) x SAR(1): aparecen los satelites en 11 y 13
+round(acf_sarima(phi = 0.6, Phi = 0.7)[c(1, 11, 12, 13, 24)], 4)
+#&gt; [1] 0.6016 0.4230 0.7011 0.4218 0.4908
+# y en efecto 0.6016 * 0.7011 = 0.4218
+
+# El airline estimado sobre log(AirPassengers)
+round(acf_sarima(theta = -0.4018, Theta = -0.5569)[c(1, 11, 12, 13, 24)], 4)
+#&gt; [1] -0.3459  0.1471 -0.4251  0.1471  0.0000</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python">
+          <pre><code class="language-python">import numpy as np
+from statsmodels.tsa.arima_process import ArmaProcess
+
+def acf_sarima(phi=(), Phi=0.0, theta=(), Theta=0.0, m=12, lag_max=36):
+    """ACF teorica de un SARIMA sin diferencias, expandiendo el polinomio."""
+    def poli_est(c0):
+        v = np.zeros(m + 1); v[0] = 1.0; v[m] = c0
+        return v
+    ar_pol = np.polymul(np.r_[1.0, -np.asarray(phi, float)],   poli_est(-Phi))
+    ma_pol = np.polymul(np.r_[1.0,  np.asarray(theta, float)], poli_est(Theta))
+    # ArmaProcess espera el polinomio AR con los signos ya cambiados
+    proc = ArmaProcess(ar_pol, ma_pol)
+    return proc.acf(lag_max + 1)[1:]
+
+print(np.round(acf_sarima(Phi=0.7)[[0, 10, 11, 12, 23]], 4))
+#&gt; [0.  0.  0.7 0.  0.49]
+
+print(np.round(acf_sarima(phi=[0.6], Phi=0.7)[[0, 10, 11, 12, 23]], 4))
+#&gt; [0.6016 0.423  0.7011 0.4218 0.4908]
+
+print(np.round(acf_sarima(theta=[-0.4018], Theta=-0.5569)[[0, 10, 11, 12, 23]], 4))
+#&gt; [-0.3459  0.1471 -0.4251  0.1471  0.    ]
+
+# np.polymul hace exactamente lo mismo que la funcion `mult` del bloque de R:
+# la "estacionalidad" no es mas que un polinomio con ceros en medio.</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="module-5">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 5</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">5.5 El modelo <em>airline</em>
+          <span class="text-gray-400 font-normal text-2xl">/ The airline model</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Entender por qué el SARIMA($0,1,1$)($0,1,1$)$_{12}$
+              aparece una y otra vez, y qué le hace la parte estacional a la incertidumbre del pronóstico.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="definition">
+        <h4><i class="fas fa-plane-departure mr-2" aria-hidden="true"></i>El modelo <em>airline</em></h4>
+        $$(1-B)(1-B^{12})\, y_t = (1 + \theta B)(1 + \Theta B^{12})\, \varepsilon_t$$
+        <p style="margin-bottom:0;">Box y Jenkins lo llamaron así porque lo ajustaron precisamente a
+          $\log(\text{AirPassengers})$. Dos parámetros para una serie con tendencia creciente y estacionalidad anual
+          que se ensancha con el nivel. Es, con diferencia, el SARIMA más usado del mundo.</p>
+      </div>
+
+      <h3>Por qué aparece en todas partes</h3>
+
+      <p>No es tradición: es que la combinación describe una situación muy común. La diferencia doble
+        $\nabla\nabla_{12}$ deja estacionaria a casi cualquier serie mensual con tendencia y estación, y los dos
+        términos MA absorben lo que queda con el mínimo de parámetros. En este capítulo aparece <strong>dos veces, en
+        series que no tienen nada que ver</strong>:</p>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Serie</th><th>$n$</th><th>Qué mide</th><th><code>auto.arima</code> exhaustivo</th><th>$\hat\theta$</th><th>$\hat\Theta$</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>$\log$(AirPassengers)</td><td>$144$</td><td>Pasajeros aéreos, 1949–1960</td><td>ARIMA($0,1,1$)($0,1,1$)$_{12}$</td><td>$-0.4018$</td><td>$-0.5569$</td></tr>
+            <tr><td>USAccDeaths</td><td>$72$</td><td>Muertes accidentales en EE. UU., 1973–1978</td><td>ARIMA($0,1,1$)($0,1,1$)$_{12}$</td><td>$-0.4303$</td><td>$-0.5528$</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Dos series con distinta escala, distinta longitud y distinto fenómeno detrás, y no solo el mismo modelo: casi
+        los mismos coeficientes. La segunda ni siquiera necesita logaritmo. Ese es el argumento para conocerlo de
+        memoria: es el punto de partida razonable de casi cualquier serie mensual.</p>
+
+      <div class="derivacion">
+        <button type="button" class="derivacion-boton" aria-expanded="false" aria-controls="der-airline-ma">
+          <i class="fas fa-square-root-variable" aria-hidden="true"></i>
+          <span class="derivacion-texto">Ver el desarrollo paso a paso</span>
+          <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="derivacion-panel" id="der-airline-ma" hidden>
+          <ol class="derivacion-pasos">
+            <li>
+              <p>Escribimos el lado derecho expandido:</p>
+              $$(1 + \theta B)(1 + \Theta B^{12}) = 1 + \theta B + \Theta B^{12} + \theta\Theta B^{13}$$
+              <p>Con $\hat\theta = -0.4018$ y $\hat\Theta = -0.5569$, el coeficiente del rezago $13$ vale
+                $\theta\Theta = +0.2238$ y <strong>no se estima</strong>.</p>
+            </li>
+            <li>
+              <p>Para pronosticar hace falta la forma $\psi$: escribir $y_t$ como suma infinita de choques,
+                $y_t = \sum_{j\ge 0}\psi_j\,\varepsilon_{t-j}$. Como
+                $\psi(B) = \dfrac{(1+\theta B)(1+\Theta B^{12})}{(1-B)(1-B^{12})}$, los pesos salen de dividir
+                polinomios.</p>
+            </li>
+            <li>
+              <p>El resultado tiene una forma muy reconocible:</p>
+              $$\psi_0 = 1, \qquad \psi_j = 1+\theta = 0.5982 \ \ (j = 1, \dots, 11)$$
+              $$\psi_{12} = 1.0412, \qquad \psi_j = 0.8632 \ \ (j = 13, \dots, 23)$$
+              <p>Es decir: <strong>escalones</strong>. Dentro de un año la incertidumbre crece a ritmo constante; al
+                cruzar el rezago estacional pega un salto y se instala en un nivel más alto.</p>
+            </li>
+            <li>
+              <p>Con $\sigma_h^2 = \sigma^2\sum_{j&lt;h}\psi_j^2$ (Capítulo 4, Módulo 9) eso da
+                $\sigma_1 = 0.0370$, $\sigma_{12} = 0.0823$ y $\sigma_{24} = 0.1396$ en la escala logarítmica.</p>
+            </li>
+          </ol>
+          <p class="derivacion-resultado">$\sigma_{12}/\sigma_1 = 2.22$, frente al $\sqrt{12} = 3.46$ que daría una
+            caminata aleatoria. Pese a llevar <strong>dos</strong> raíces unitarias, el <em>airline</em> acumula
+            incertidumbre más despacio que una sola caminata: los dos términos MA, ambos negativos, amortiguan la
+            integración. Es el mismo mecanismo que el $\psi_\infty = 0.169$ del Nilo en el Capítulo 4.</p>
+        </div>
+      </div>
+
+      <div class="simulador" data-simulador="airline-pesos">
+        <h4><i class="fas fa-stairs" aria-hidden="true"></i> Los pesos $\psi$ del <em>airline</em>, escalón a escalón</h4>
+        <p class="simulador-intro">Mueve $\theta$ y $\Theta$ y mira las dos curvas: los pesos $\psi_j$ (arriba) y la
+          desviación del pronóstico $\sigma_h$ (abajo). Lleva $\Theta$ hacia $0$ y el escalón del rezago $12$
+          desaparece —sin término estacional, el modelo no distingue el mes—. Llévalo hacia $-1$ y los pesos se
+          aplanan: el modelo casi cancela la diferencia estacional que le acabamos de imponer.</p>
+        <div class="simulador-controles"></div>
+        <p class="grafico-etiqueta">Pesos $\psi_j$ de la representación MA($\infty$)</p>
+        <div class="grafico-wrapper" style="height:200px;">
+          <canvas aria-label="Pesos psi del modelo airline" role="img"></canvas>
+        </div>
+        <p class="grafico-etiqueta">Desviación típica del error de pronóstico $\sigma_h$ (escala logarítmica)</p>
+        <div class="grafico-wrapper" style="height:200px;">
+          <canvas aria-label="Desviación del error de pronóstico por horizonte" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="note">
+        <p><strong>Frontera con el Capítulo 4.</strong> La construcción del intervalo a partir de los pesos $\psi$ ya
+          está hecha allí, y no se repite: aquí solo se usa. Lo nuevo es la <em>forma</em> que le da la parte
+          estacional —escalones en vez de una curva suave— y su lectura: el error de pronosticar el próximo julio se
+          parece más al de pronosticar el julio siguiente que al de pronosticar el mes que viene.</p>
+      </div>
+    </div>
+  </template>
+
+  <template id="module-6">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 6</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">5.6 Estimar, comparar y diagnosticar
+          <span class="text-gray-400 font-normal text-2xl">/ Estimation, comparison and diagnostics</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Recorrer una rejilla SARIMA sin caer en la comparación
+              inválida, y diagnosticar mirando donde hay que mirar: al menos $2m$ rezagos.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>La estimación no cambia: máxima verosimilitud sobre el polinomio ya multiplicado, exactamente como en el
+        Capítulo 3. Lo que cambia son dos hábitos.</p>
+
+      <div class="warning">
+        <p><strong>Hábito 1: el AICc tampoco es comparable entre distintos $D$.</strong> El Capítulo 4 lo estableció
+          para $d$; con la diferencia estacional el problema es mayor, porque cada $D$ cuesta $m$ observaciones y no
+          una. Sobre $\log(\text{AirPassengers})$: con $D=0$ la verosimilitud se evalúa sobre $143$ observaciones y con
+          $D=1$ sobre $131$. <strong>Doce observaciones de diferencia</strong> mueven el AICc mucho más que cualquier
+          parámetro. La rejilla de abajo fija $d=1$ y $D=1$ en los $36$ modelos: solo así la columna del AICc
+          significa algo.</p>
+      </div>
+
+      <div class="warning">
+        <p><strong>Hábito 2: Ljung–Box con al menos $2m$ rezagos.</strong> Con $10$ o $20$ rezagos, una
+          autocorrelación residual grande en el $12$ y otra en el $24$ apenas pesan en el estadístico. La convención
+          para series estacionales es $h = 2m$ ($24$ para datos mensuales), y conviene mirar además el correlograma
+          barra por barra en $m$ y $2m$ —el Capítulo 3 dejó el caso contrario, un modelo con $0$ de $20$ barras fuera
+          de banda que Ljung–Box rechazaba igual—.</p>
+      </div>
+
+      <h3>La rejilla</h3>
+
+      <div class="simulador" data-simulador="explorador-sarima">
+        <h4><i class="fas fa-sliders" aria-hidden="true"></i> Explorador de modelos SARIMA</h4>
+        <p class="simulador-intro">Los cuatro selectores recorren los $36$ modelos SARIMA($p,1,q$)($P,1,Q$)$_{12}$
+          ajustados de verdad en R sobre $\log(\text{AirPassengers})$. El gráfico muestra la ACF de los residuales del
+          modelo elegido con la banda al $95\,\%$. Pon $P=Q=0$ para ver qué pasa sin parte estacional, y fíjate en que
+          el mínimo de AICc y el de BIC coinciden aquí —cosa que no siempre ocurre—.</p>
+        <div class="simulador-controles"></div>
+        <div class="simulador-lectura"></div>
+        <p class="grafico-etiqueta">ACF de los residuales del modelo seleccionado (hasta el rezago 24)</p>
+        <div class="grafico-wrapper" style="height:220px;">
+          <canvas aria-label="Correlograma de los residuales del modelo SARIMA elegido" role="img"></canvas>
+        </div>
+      </div>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Modelo</th><th>$k$</th><th>AICc</th><th>BIC</th><th>Ljung–Box($24$) $p$</th><th>$\hat\rho_{12}$ resid.</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>($0,1,1$)($0,1,1$)$_{12}$</strong></td><td>$2$</td><td>$\mathbf{-483.21}$</td><td>$\mathbf{-474.77}$</td><td>$0.2330$</td><td>$-0.0515$</td></tr>
+            <tr><td>($2,1,1$)($0,1,1$)$_{12}$</td><td>$4$</td><td>$-481.79$</td><td>$-467.90$</td><td>$0.1371$</td><td>$-0.0307$</td></tr>
+            <tr><td>($0,1,1$)($1,1,1$)$_{12}$</td><td>$3$</td><td>$-481.60$</td><td>$-470.41$</td><td>$0.2271$</td><td>$-0.0163$</td></tr>
+            <tr><td>($1,1,1$)($0,1,1$)$_{12}$</td><td>$3$</td><td>$-481.58$</td><td>$-470.40$</td><td>$0.2453$</td><td>$-0.0459$</td></tr>
+            <tr><td>($0,1,0$)($0,1,0$)$_{12}$</td><td>$0$</td><td>$-434.80$</td><td>—</td><td>$&lt; 10^{-4}$</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>El <em>airline</em> gana por AICc <strong>y</strong> por BIC, que no siempre pasa: en el Capítulo 3 los dos
+        criterios discrepaban sobre las manchas solares. Los cuatro primeros están dentro de $1.7$ puntos de AICc, así
+        que la evidencia no separa mucho; lo que decide en favor del más simple es que los tres competidores gastan uno
+        o dos parámetros más para no mejorar el diagnóstico. La última fila es el modelo sin ningún término ARMA —solo
+        las dos diferencias—: sirve de referencia de cuánto aportan realmente esos dos parámetros.</p>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Rejilla SARIMA y diagnóstico">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r">
+          <pre><code class="language-r">library(forecast)
+ap &lt;- log(AirPassengers)
+
+# Rejilla con d = 1 y D = 1 FIJOS: es la condicion para que el AICc compare.
+res &lt;- data.frame()
+for (p in 0:2) for (q in 0:2) for (P in 0:1) for (Q in 0:1) {
+  f &lt;- tryCatch(Arima(ap, order = c(p,1,q),
+                      seasonal = list(order = c(P,1,Q), period = 12), method = "ML"),
+                error = function(e) NULL)
+  if (is.null(f)) next
+  res &lt;- rbind(res, data.frame(
+    modelo = sprintf("(%d,1,%d)(%d,1,%d)[12]", p, q, P, Q),
+    k = p+q+P+Q, nobs = f$nobs, aicc = f$aicc, bic = f$bic,
+    lb = Box.test(residuals(f), lag = 24, type = "Ljung-Box",
+                  fitdf = p+q+P+Q)$p.value))
+}
+salida &lt;- head(res[order(res$aicc), ], 4)
+salida[, c("aicc", "bic", "lb")] &lt;- round(salida[, c("aicc", "bic", "lb")], 4)
+salida
+#&gt;                modelo k nobs      aicc       bic     lb
+#&gt; 6  (0,1,1)(0,1,1)[12] 2  131 -483.2101 -474.7735 0.2330
+#&gt; 30 (2,1,1)(0,1,1)[12] 4  131 -481.7923 -467.8963 0.1371
+#&gt; 8  (0,1,1)(1,1,1)[12] 3  131 -481.5957 -470.4123 0.2271
+#&gt; 18 (1,1,1)(0,1,1)[12] 3  131 -481.5820 -470.3987 0.2453
+unique(res$nobs)      # todos iguales: la comparacion es legitima
+#&gt; [1] 131
+
+# Diagnostico del ganador, con 2m rezagos
+fit &lt;- Arima(ap, order = c(0,1,1), seasonal = list(order = c(0,1,1), period = 12))
+round(Box.test(residuals(fit), lag = 24, type = "Ljung-Box", fitdf = 2)$p.value, 4)
+#&gt; [1] 0.233
+round(Box.test(residuals(fit), lag = 36, type = "Ljung-Box", fitdf = 2)$p.value, 4)
+#&gt; [1] 0.2969
+round(shapiro.test(residuals(fit))$p.value, 4)
+#&gt; [1] 0.1674
+
+# Barra por barra en los rezagos que importan
+r &lt;- Acf(residuals(fit), lag.max = 36, plot = FALSE)$acf
+round(c(r12 = r[13], r24 = r[25], banda = 1.96/sqrt(length(ap))), 4)
+#&gt;     r12     r24   banda
+#&gt; -0.0515  0.0124  0.1633</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python">
+          <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm, warnings
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.stats.diagnostic import acorr_ljungbox
+warnings.filterwarnings("ignore")
+
+ap = np.log(sm.datasets.get_rdataset("AirPassengers").data["value"].values)
+s = pd.Series(ap, index=pd.date_range("1949-01", periods=len(ap), freq="MS"))
+
+# OJO: por defecto statsmodels NO diferencia la serie; mete d y D en el espacio
+# de estados con un prior difuso, y entonces `nobs` sigue siendo 144 para todos
+# los modelos. Sus AIC/BIC PARECEN comparables entre distintos (d, D) cuando no
+# lo son. Con simple_differencing=True se comporta como R.
+for sd in (False, True):
+    f = SARIMAX(s, order=(0,1,1), seasonal_order=(0,1,1,12), trend="n",
+                simple_differencing=sd).fit(disp=False)
+    print(f"simple_differencing={sd!s:5s}  nobs={int(f.nobs):3d}  "
+          f"ma1={f.params['ma.L1']:+.4f}  sma1={f.params['ma.S.L12']:+.4f}  llf={f.llf:.4f}")
+#&gt; simple_differencing=False  nobs=144  ma1=-0.4019  sma1=-0.5571  llf=244.6965
+#&gt; simple_differencing=True   nobs=131  ma1=-0.4018  sma1=-0.5569  llf=244.6965
+# La segunda linea reproduce a R hasta el cuarto decimal.
+
+fit = SARIMAX(s, order=(0,1,1), seasonal_order=(0,1,1,12), trend="n").fit(disp=False)
+print(acorr_ljungbox(fit.resid, lags=[24], model_df=2)["lb_pvalue"].round(4).iloc[0])
+#&gt; 0.2261
+print(acorr_ljungbox(fit.resid[13:], lags=[24], model_df=2)["lb_pvalue"].round(4).iloc[0])
+#&gt; 0.3675
+# R da 0.2330. La diferencia son los primeros residuales, que statsmodels
+# produce con el filtro aun inicializandose: es la misma trampa del Capitulo 3.
+# Descartando los d + D*m = 13 primeros, la conclusion no cambia en ningun caso.</code></pre>
+        </div>
+      </div>
+
+      <div class="warning">
+        <p><strong>R y Python: la diferencia es real y tiene arreglo.</strong> <code>statsmodels</code> no diferencia
+          la serie: mete $d$ y $D$ dentro del espacio de estados con un prior difuso. Consecuencias medidas:
+          (1) informa <code>nobs = 144</code> para todos los modelos, así que sus AIC/BIC parecen comparables entre
+          distintos $(d,D)$ cuando no lo son —el Capítulo 4 encontró lo mismo con $d$—; (2) sobre
+          $\log(\text{AirPassengers})$ ($n = 144$) los coeficientes casi coinciden con los de R (diferencia
+          $6\times 10^{-5}$), pero sobre <code>USAccDeaths</code> ($n = 72$) $\hat\theta$ se mueve de $-0.4303$ a
+          $-0.3924$. No es falta de convergencia: Python alcanza ese mismo óptimo desde varios puntos de partida, con
+          varios optimizadores. Es <em>otra</em> verosimilitud. Con
+          <code>simple_differencing=True</code> las dos salidas vuelven a coincidir hasta el cuarto decimal.</p>
+      </div>
+    </div>
+  </template>

@@ -1641,6 +1641,14 @@
       line-height: 1.55;
     }
 
+    /* La lectura numérica se diseñó para ir al final del simulador, así que no
+       lleva margen inferior. Cuando va ANTES de un gráfico (Módulos 9 y 11 del
+       Capítulo 5) el hueco medido era de 0 px. */
+    .simulador-lectura + .grafico-etiqueta,
+    .simulador-lectura + .grafico-wrapper {
+      margin-top: 0.85rem;
+    }
+
     /* Enunciado de una pregunta con gráfico: mismo criterio de separación */
     .quiz-pregunta .quiz-enunciado + .quiz-grafico {
       margin-top: 0.9rem;
@@ -1950,6 +1958,341 @@
         content: "\2193";
         align-self: center;
         margin: 0.15rem 0;
+      }
+    }
+
+    /* ------------------------------------------------------------------
+       Componente .mapa-estacional — mapa de calor mes x año
+       ------------------------------------------------------------------
+       Un gráfico de línea enseña el nivel; un correlograma, la estructura.
+       Ninguno de los dos deja VER la estacionalidad como lo que es: un
+       patrón que se repite por columnas. Aquí cada fila es un año y cada
+       columna un mes, así que un mes sistemáticamente alto pinta una banda
+       vertical y la diferencia estacional la borra ante los ojos.
+
+       Sin dependencias: rejilla CSS y colores calculados en JS. El valor va
+       escrito dentro de la celda y repetido en su nombre accesible, así que
+       el color nunca es el único canal de información.
+       ------------------------------------------------------------------ */
+    .mapa-estacional {
+      margin: 1.1rem 0;
+    }
+
+    .mapa-estacional-titulo {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.66rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #012820;
+      font-weight: 600;
+      margin: 0 0 0.5rem 0;
+    }
+
+    /* En pantallas estrechas la rejilla se desplaza dentro de su caja en vez
+       de desbordar la página. */
+    .mapa-estacional-marco {
+      overflow-x: auto;
+      padding-bottom: 0.2rem;
+    }
+
+    .mapa-estacional-rejilla {
+      display: grid;
+      grid-template-columns: 3.1rem repeat(12, minmax(2.4rem, 1fr));
+      gap: 2px;
+      min-width: 34rem;
+    }
+
+    .mapa-estacional-cabecera,
+    .mapa-estacional-anio {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.66rem;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.15rem 0;
+    }
+
+    .mapa-estacional-anio {
+      justify-content: flex-end;
+      padding-right: 0.4rem;
+      color: #012820;
+      font-weight: 600;
+    }
+
+    .mapa-estacional-celda {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 1.65rem;
+      border-radius: 0.2rem;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.63rem;
+      line-height: 1;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .mapa-estacional-celda:hover {
+      transform: scale(1.12);
+      box-shadow: 0 2px 8px rgba(1, 40, 32, 0.28);
+      z-index: 2;
+    }
+
+    /* Los huecos que deja la diferenciación son parte del mensaje: se marcan
+       con trama, no con un blanco que se confunda con un valor bajo. */
+    .mapa-estacional-vacia {
+      background: repeating-linear-gradient(45deg,
+        #f1f5f9, #f1f5f9 3px, #e2e8f0 3px, #e2e8f0 6px);
+      color: transparent;
+    }
+
+    .mapa-estacional-leyenda {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.55rem;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.64rem;
+      color: #64748b;
+      flex-wrap: wrap;
+    }
+
+    .mapa-estacional-barra {
+      flex: 1 1 8rem;
+      height: 0.55rem;
+      min-width: 6rem;
+      border-radius: 0.3rem;
+      border: 1px solid rgba(1, 40, 32, 0.15);
+    }
+
+    .mapa-estacional-nota {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.78rem;
+      color: #64748b;
+      margin: 0.5rem 0 0 0;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 640px) {
+      .mapa-estacional-rejilla {
+        grid-template-columns: 2.6rem repeat(12, minmax(2rem, 1fr));
+      }
+
+      .mapa-estacional-celda {
+        font-size: 0.55rem;
+        min-height: 1.4rem;
+      }
+    }
+
+    /* ------------------------------------------------------------------
+       Componente .tabla-ranking — tabla comparativa ordenable
+       ------------------------------------------------------------------
+       Una tabla estática obliga a decir con palabras que el orden depende
+       de la columna por la que se mire. Aquí se pulsa la cabecera y el
+       orden cambia ante los ojos: el puesto de cada fila se renumera, la
+       fila ganadora se ilumina y el mejor valor de la columna activa se
+       marca. Es el argumento del capítulo convertido en componente.
+
+       Sin dependencias: una <table> de verdad, con cabeceras que son
+       botones. El estado va en `aria-sort` sobre el <th>, y cada
+       reordenación se anuncia en una región `role="status"`, así que el
+       componente funciona igual leído con un lector de pantalla.
+       ------------------------------------------------------------------ */
+    .tabla-ranking {
+      margin: 1.1rem 0;
+    }
+
+    .tabla-ranking-titulo {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.66rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #012820;
+      font-weight: 600;
+      margin: 0 0 0.5rem 0;
+    }
+
+    /* En pantallas estrechas la tabla se desplaza dentro de su caja en vez
+       de desbordar la página. */
+    .tabla-ranking-marco {
+      overflow-x: auto;
+      padding-bottom: 0.2rem;
+      border-radius: 0.4rem;
+      border: 1px solid #e2e8f0;
+    }
+
+    .tabla-ranking table {
+      width: 100%;
+      min-width: 34rem;
+      border-collapse: collapse;
+      margin: 0;
+      font-size: 0.8rem;
+    }
+
+    .tabla-ranking caption {
+      caption-side: top;
+      text-align: left;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.78rem;
+      color: #64748b;
+      line-height: 1.4;
+      padding: 0 0 0.5rem 0;
+    }
+
+    .tabla-ranking th,
+    .tabla-ranking td {
+      padding: 0.4rem 0.55rem;
+      border-bottom: 1px solid #e2e8f0;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .tabla-ranking th:first-child,
+    .tabla-ranking td:first-child,
+    .tabla-ranking th:nth-child(2),
+    .tabla-ranking td:nth-child(2) {
+      text-align: left;
+    }
+
+    .tabla-ranking thead th {
+      background: #012820;
+      color: #ffffff;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      font-size: 0.72rem;
+      padding: 0;
+      position: sticky;
+      top: 0;
+    }
+
+    /* La cabecera entera es el botón: así el objetivo táctil es la celda y
+       no un texto de dos palabras dentro de ella. */
+    .tabla-ranking-boton {
+      width: 100%;
+      background: none;
+      border: none;
+      color: inherit;
+      font: inherit;
+      cursor: pointer;
+      padding: 0.5rem 0.55rem;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.3rem;
+      text-align: right;
+    }
+
+    .tabla-ranking th:nth-child(2) .tabla-ranking-boton {
+      justify-content: flex-start;
+      text-align: left;
+    }
+
+    .tabla-ranking-boton:hover,
+    .tabla-ranking-boton:focus-visible {
+      background: rgba(255, 102, 0, 0.22);
+      outline: none;
+    }
+
+    .tabla-ranking-boton:focus-visible {
+      box-shadow: inset 0 0 0 2px #FF6600;
+    }
+
+    /* La flecha marca la columna activa; las inactivas llevan un signo
+       tenue que anuncia que se puede pulsar. */
+    .tabla-ranking-flecha {
+      font-size: 0.62rem;
+      opacity: 0.35;
+    }
+
+    .tabla-ranking th[aria-sort="ascending"] .tabla-ranking-flecha,
+    .tabla-ranking th[aria-sort="descending"] .tabla-ranking-flecha {
+      opacity: 1;
+      color: #FFC24B;
+    }
+
+    .tabla-ranking tbody tr {
+      background: #ffffff;
+      transition: background 0.15s ease;
+    }
+
+    .tabla-ranking tbody tr:nth-child(even) {
+      background: #f8fafc;
+    }
+
+    /* El primer puesto de la ordenación vigente. */
+    .tabla-ranking tbody tr.ganadora {
+      background: rgba(1, 40, 32, 0.09);
+      font-weight: 600;
+    }
+
+    /* Fila señalada por quien escribe el capítulo ("el método del que
+       veníamos hablando"), independiente de qué columna ordene. */
+    .tabla-ranking tbody tr.destacada td:first-child {
+      box-shadow: inset 3px 0 0 #FF6600;
+    }
+
+    .tabla-ranking-puesto {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.72rem;
+      color: #64748b;
+      width: 2.2rem;
+    }
+
+    .tabla-ranking tbody tr.ganadora .tabla-ranking-puesto {
+      color: #012820;
+    }
+
+    .tabla-ranking td.numero {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.75rem;
+    }
+
+    /* El mejor valor de la columna por la que se está ordenando. */
+    .tabla-ranking td.mejor {
+      color: #0f766e;
+      font-weight: 700;
+    }
+
+    .tabla-ranking td.columna-activa {
+      background: rgba(255, 102, 0, 0.08);
+    }
+
+    .tabla-ranking-referencia {
+      font-size: 0.66rem;
+      color: #64748b;
+      font-family: 'Fira Code', monospace;
+      margin-left: 0.35rem;
+    }
+
+    .tabla-ranking-pie {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.78rem;
+      color: #64748b;
+      margin: 0.5rem 0 0 0;
+      line-height: 1.4;
+    }
+
+    .tabla-ranking-estado {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.74rem;
+      color: #012820;
+      margin: 0.6rem 0 0 0;
+      min-height: 1.1em;
+    }
+
+    @media (max-width: 640px) {
+      .tabla-ranking table {
+        font-size: 0.72rem;
+      }
+
+      .tabla-ranking th,
+      .tabla-ranking td {
+        padding: 0.32rem 0.4rem;
+      }
+
+      .tabla-ranking-boton {
+        padding: 0.42rem 0.4rem;
       }
     }
   </style>
@@ -2336,6 +2679,22 @@ print(x.mean(), x.std(ddof=1))</code></pre>
         <div class="simulador-lectura"></div>
       </div>
 
+      <div class="mapa-estacional" data-mapa="demo-mapa">
+        <p class="mapa-estacional-titulo">Mapa estacional (demostración)</p>
+        <div class="mapa-estacional-marco">
+          <div class="mapa-estacional-rejilla" role="table" aria-label="Mapa estacional (demostración)"></div>
+        </div>
+        <div class="mapa-estacional-leyenda"></div>
+        <p class="mapa-estacional-nota"></p>
+      </div>
+
+      <div class="tabla-ranking" data-ranking="demo">
+        <p class="tabla-ranking-titulo">Tabla comparativa ordenable (demostración)</p>
+        <div class="tabla-ranking-marco" aria-label="Tabla comparativa ordenable (demostración)"></div>
+        <p class="tabla-ranking-estado" role="status" aria-live="polite"></p>
+        <p class="tabla-ranking-pie"></p>
+      </div>
+
       <div class="simulador" data-simulador="demo-interruptores">
         <h4><i class="fas fa-toggle-on" aria-hidden="true"></i> Interruptores</h4>
         <p class="simulador-intro"><code>crearInterruptores</code> para activar transformaciones acumulables. La lectura
@@ -2514,6 +2873,8 @@ round(mean(rnorm(200)), 4)   # 0.0117</code></pre>
         iniciarEjerciciosGuiados();
         iniciarDerivaciones();
         iniciarCiclos();
+        iniciarTablasRanking();
+        iniciarMapasEstacionales();
         renderMathInElement(mainContent, {
           delimiters: [
             { left: "$$", right: "$$", display: true },
@@ -3212,7 +3573,10 @@ round(mean(rnorm(200)), 4)   # 0.0117</code></pre>
         const encabezado = acierto
           ? (estado[i].intentos === 1 ? '<strong>Correcto.</strong> ' : '<strong>Correcto, en el segundo intento.</strong> ')
           : '<strong>No es esa.</strong> ';
-        retro.innerHTML = encabezado + textoRetro;
+        // Defensivo: las preguntas de seleccion multiple no declaran
+        // `retroAcierto`, y sin esta guarda el estudiante veia la palabra
+        // "undefined" detras de "Correcto". (Bug encontrado auditando el cap. 6.)
+        retro.innerHTML = encabezado + (textoRetro || '');
         retro.hidden = false;
         katexEn(retro);
         actualizarMarcador();
@@ -3361,7 +3725,11 @@ round(mean(rnorm(200)), 4)   # 0.0117</code></pre>
                 if (correctas.has(j)) b.classList.add('correcta');
               });
               boton.disabled = true;
-              cerrar(i, bloque, true, p.retroAcierto);
+              // Respaldo para las preguntas de seleccion multiple, que no
+              // declaran `retroAcierto`: se junta la retroalimentacion de las
+              // opciones correctas, que ya estaba escrita y no se mostraba.
+              cerrar(i, bloque, true, p.retroAcierto || p.opciones
+                .filter(o => o.correcta).map(o => o.retro).filter(Boolean).join(' '));
             } else if (estado[i].intentos === 1) {
               const bien = [...marcadas].filter(j => correctas.has(j)).length;
               pista.innerHTML = `<strong>Casi.</strong> De las ${marcadas.size} que marcaste, ` +
@@ -3511,6 +3879,343 @@ round(mean(rnorm(200)), 4)   # 0.0117</code></pre>
 
         const inicial = botones.findIndex(b => b.getAttribute('aria-selected') === 'true');
         seleccionar(inicial >= 0 ? inicial : 0, false);
+      });
+    }
+
+    // ================================================================
+    // Componente .mapa-estacional — mapa de calor mes x año
+    // ================================================================
+    // Registro `MAPAS_ESTACIONALES['id']` sobre un contenedor
+    // `<div class="mapa-estacional" data-mapa="id">`, igual que SIMULADORES
+    // y AUTOEVALUACIONES. El valor de cada registro es un objeto
+    //   { anios, filas, minimo, maximo, escala, decimales, unidad, nota }
+    // o una FUNCIÓN que devuelve uno, para los mapas que dependen de un
+    // control. Un simulador puede repintar el suyo llamando directamente a
+    // pintarMapaEstacional(raiz, datos).
+    const MAPAS_ESTACIONALES = {};
+
+    const MESES_CORTOS = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+                          'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+    // Interpolación lineal entre dos colores dados como [r, g, b].
+    function mezclarColor(a, b, t) {
+      const c = t < 0 ? 0 : t > 1 ? 1 : t;
+      return 'rgb(' + [0, 1, 2].map(i => Math.round(a[i] + (b[i] - a[i]) * c)).join(',') + ')';
+    }
+
+    // Secuencial: verde de la paleta, de muy claro a muy oscuro. Para niveles.
+    const VERDE_CLARO = [238, 245, 242];
+    const VERDE_OSCURO = [1, 40, 32];
+    // Divergente: naranja (negativo) - gris muy claro (cero) - verde (positivo).
+    // Para series ya diferenciadas, donde el cero es el valor con significado.
+    const NARANJA = [255, 102, 0];
+    const NEUTRO = [248, 250, 252];
+
+    function colorMapa(valor, datos) {
+      if (valor === null || valor === undefined || !isFinite(valor)) return null;
+      if (datos.escala === 'divergente') {
+        const tope = Math.max(Math.abs(datos.minimo), Math.abs(datos.maximo)) || 1;
+        const t = Math.abs(valor) / tope;
+        return valor < 0 ? mezclarColor(NEUTRO, NARANJA, t) : mezclarColor(NEUTRO, VERDE_OSCURO, t);
+      }
+      const rango = (datos.maximo - datos.minimo) || 1;
+      return mezclarColor(VERDE_CLARO, VERDE_OSCURO, (valor - datos.minimo) / rango);
+    }
+
+    // Sobre fondo oscuro el número tiene que ir en blanco o no se lee. El
+    // umbral se decide con la luminancia relativa, no a ojo.
+    function textoSobre(color) {
+      const m = /rgb\((\d+),(\d+),(\d+)\)/.exec(color);
+      if (!m) return '#1e293b';
+      const [r, g, b] = [1, 2, 3].map(i => Number(m[i]) / 255)
+        .map(v => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)));
+      return (0.2126 * r + 0.7152 * g + 0.0722 * b) > 0.42 ? '#1e293b' : '#ffffff';
+    }
+
+    function pintarMapaEstacional(raiz, datos) {
+      const rejilla = raiz.querySelector('.mapa-estacional-rejilla');
+      const leyenda = raiz.querySelector('.mapa-estacional-leyenda');
+      if (!rejilla || !datos) return;
+
+      const dec = datos.decimales === undefined ? 0 : datos.decimales;
+      const unidad = datos.unidad || '';
+      // Con muchos años la cifra no cabe: se deja solo el color, y el valor
+      // sigue disponible en el nombre accesible y en el tooltip.
+      const conNumero = datos.filas.length <= 20;
+
+      const partes = ['<div class="mapa-estacional-cabecera" aria-hidden="true"></div>'];
+      MESES_CORTOS.forEach(mes => {
+        partes.push('<div class="mapa-estacional-cabecera" role="columnheader">' + mes + '</div>');
+      });
+
+      datos.filas.forEach((fila, i) => {
+        partes.push('<div class="mapa-estacional-anio" role="rowheader">' + datos.anios[i] + '</div>');
+        fila.forEach((valor, j) => {
+          const vacia = valor === null || valor === undefined || !isFinite(valor);
+          const etiqueta = MESES_CORTOS[j] + ' ' + datos.anios[i];
+          if (vacia) {
+            partes.push('<div class="mapa-estacional-celda mapa-estacional-vacia" role="cell"'
+              + ' aria-label="' + etiqueta + ': sin dato" title="' + etiqueta + ': sin dato">·</div>');
+            return;
+          }
+          const color = colorMapa(valor, datos);
+          const texto = valor.toFixed(dec);
+          const titulo = etiqueta + ': ' + texto + (unidad ? ' ' + unidad : '');
+          partes.push('<div class="mapa-estacional-celda" role="cell" style="background:' + color
+            + ';color:' + textoSobre(color) + '" aria-label="' + titulo + '" title="' + titulo + '">'
+            + (conNumero ? texto : '') + '</div>');
+        });
+      });
+
+      rejilla.innerHTML = partes.join('');
+
+      if (leyenda) {
+        const izq = datos.escala === 'divergente'
+          ? 'rgb(255,102,0)' : 'rgb(238,245,242)';
+        const der = 'rgb(1,40,32)';
+        const centro = datos.escala === 'divergente'
+          ? ', rgb(248,250,252) 50%' : '';
+        const tope = Math.max(Math.abs(datos.minimo), Math.abs(datos.maximo));
+        const extremos = datos.escala === 'divergente'
+          ? [(-tope).toFixed(dec), tope.toFixed(dec)]
+          : [datos.minimo.toFixed(dec), datos.maximo.toFixed(dec)];
+        leyenda.innerHTML = '<span>' + extremos[0] + '</span>'
+          + '<span class="mapa-estacional-barra" aria-hidden="true" style="background:linear-gradient(90deg,'
+          + izq + centro + ',' + der + ')"></span>'
+          + '<span>' + extremos[1] + (unidad ? ' ' + unidad : '') + '</span>';
+      }
+
+      const nota = raiz.querySelector('.mapa-estacional-nota');
+      if (nota && datos.nota !== undefined) nota.innerHTML = datos.nota;
+    }
+
+    // Construye la matriz año x mes que espera pintarMapaEstacional a partir de
+    // una serie y del mes en que empieza. Vive aquí, y no en el JavaScript de
+    // un capítulo, para que todas las instancias del proyecto la compartan.
+    function matrizMesAnio(valores, anioInicio, mesInicio) {
+      const filas = [], anios = [];
+      let a = anioInicio, m = mesInicio;
+      let fila = new Array(12).fill(null);
+      anios.push(a);
+      for (let i = 0; i < valores.length; i++) {
+        fila[m - 1] = valores[i];
+        m += 1;
+        if (m > 12 && i < valores.length - 1) {
+          filas.push(fila); fila = new Array(12).fill(null);
+          m = 1; a += 1; anios.push(a);
+        }
+      }
+      filas.push(fila);
+      const planos = valores.filter(v => v !== null && v !== undefined && isFinite(v));
+      return {
+        anios: anios, filas: filas,
+        minimo: Math.min.apply(null, planos), maximo: Math.max.apply(null, planos)
+      };
+    }
+
+    function iniciarMapasEstacionales() {
+      mainContent.querySelectorAll('.mapa-estacional[data-mapa]').forEach(raiz => {
+        const registro = MAPAS_ESTACIONALES[raiz.dataset.mapa];
+        if (!registro) return;
+        pintarMapaEstacional(raiz, typeof registro === 'function' ? registro() : registro);
+      });
+    }
+
+    // Demostración del componente .mapa-estacional. Como el resto de la
+    // plantilla, no incrusta datos: genera la serie con semilla fija.
+    MAPAS_ESTACIONALES['demo-mapa'] = function () {
+      const ruido = generarRuidoNormal(96, 20260727);
+      const estacional = [-8, -10, 2, 0, 1, 9, 18, 17, 5, -6, -17, -9];
+      const valores = [];
+      for (let t = 0; t < 96; t++) {
+        valores.push(100 + 0.45 * t + estacional[t % 12] + 3 * ruido[t]);
+      }
+      return Object.assign(matrizMesAnio(valores, 2018, 1), {
+        escala: 'secuencial',
+        decimales: 1,
+        unidad: '',
+        nota: 'Serie simulada con tendencia y estacionalidad aditiva (semilla fija). ' +
+          'Las columnas de julio y agosto forman una banda vertical clara: eso es la ' +
+          'estacionalidad. Para una serie ya diferenciada se pasa <code>escala: ' +
+          '\'divergente\'</code> y la paleta se centra en cero.'
+      });
+    };
+
+
+    // ================================================================
+    // Componente .tabla-ranking — tabla comparativa ordenable
+    //
+    // TABLAS_RANKING['id'] = {
+    //   columnas: [
+    //     { clave: 'metodo',  titulo: 'Método',  tipo: 'texto' },
+    //     { clave: 'rmse',    titulo: 'RMSE',    decimales: 2, mejor: 'menor' },
+    //     { clave: 'cob95',   titulo: 'Cob. 95%', decimales: 1,
+    //       mejor: 'cerca', objetivo: 95, sufijo: ' %' }
+    //   ],
+    //   filas: [ { metodo: 'SARIMA', rmse: 18.92, cob95: 98.4 }, ... ],
+    //   inicial: 'rmse',            // columna por la que se ordena al abrir
+    //   destacada: 'SARIMA',        // valor de la 1ª columna que va marcado
+    //   pie: 'texto bajo la tabla'
+    // }
+    //
+    // El registro admite una FUNCIÓN además de un objeto, igual que
+    // MAPAS_ESTACIONALES, para que una tabla pueda leer datos definidos más
+    // abajo en el archivo o depender de un control.
+    //
+    // `mejor` decide qué celda se marca y en qué sentido ordena:
+    //   'menor'  — gana el más pequeño (RMSE, MAE, segundos)
+    //   'mayor'  — gana el más grande
+    //   'cerca'  — gana el más cercano a `objetivo` (la cobertura nominal:
+    //              quedarse corto y pasarse son igual de malos, y ninguna
+    //              ordenación por menor o mayor sabe expresar eso)
+    // ================================================================
+    const TABLAS_RANKING = {};
+
+    function distanciaRanking(columna, valor) {
+      if (valor === null || valor === undefined || !Number.isFinite(Number(valor))) {
+        return Number.POSITIVE_INFINITY;
+      }
+      const v = Number(valor);
+      if (columna.mejor === 'mayor') return -v;
+      if (columna.mejor === 'cerca') return Math.abs(v - Number(columna.objetivo));
+      return v;
+    }
+
+    function pintarTablaRanking(raiz, spec) {
+      const marco = raiz.querySelector('.tabla-ranking-marco');
+      const pie = raiz.querySelector('.tabla-ranking-pie');
+      const estado = raiz.querySelector('.tabla-ranking-estado');
+      if (!marco) return;
+
+      const columnas = spec.columnas || [];
+      const ordenables = columnas.filter(c => c.tipo !== 'texto');
+      if (!columnas.length || !ordenables.length) return;
+      let claveOrden = spec.inicial || ordenables[0].clave;
+
+      function columnaDe(clave) {
+        return columnas.find(c => c.clave === clave) || ordenables[0];
+      }
+
+      function formatea(columna, valor) {
+        if (columna.tipo === 'texto') return valor === undefined ? '' : String(valor);
+        if (valor === null || valor === undefined || !Number.isFinite(Number(valor))) return '—';
+        const d = columna.decimales === undefined ? 2 : columna.decimales;
+        return Number(valor).toLocaleString('es-CO', {
+          minimumFractionDigits: d, maximumFractionDigits: d
+        }) + (columna.sufijo || '');
+      }
+
+      function dibuja() {
+        const columna = columnaDe(claveOrden);
+        const filas = spec.filas.slice().sort(
+          (a, b) => distanciaRanking(columna, a[claveOrden]) -
+                    distanciaRanking(columna, b[claveOrden]));
+        const mejorValor = Math.min.apply(null,
+          spec.filas.map(f => distanciaRanking(columna, f[claveOrden])));
+
+        const tabla = document.createElement('table');
+
+        if (spec.descripcion) {
+          const caption = document.createElement('caption');
+          caption.innerHTML = spec.descripcion;
+          tabla.appendChild(caption);
+        }
+
+        const thead = document.createElement('thead');
+        const trh = document.createElement('tr');
+        const thPuesto = document.createElement('th');
+        thPuesto.scope = 'col';
+        thPuesto.className = 'tabla-ranking-puesto';
+        thPuesto.textContent = '#';
+        trh.appendChild(thPuesto);
+
+        columnas.forEach(c => {
+          const th = document.createElement('th');
+          th.scope = 'col';
+          if (c.tipo === 'texto') {
+            th.innerHTML = `<span class="tabla-ranking-boton">${c.titulo}</span>`;
+            th.setAttribute('aria-sort', 'none');
+          } else {
+            const activa = c.clave === claveOrden;
+            // Toda columna ordenable ordena de "mejor" a "peor", así que el
+            // sentido depende de `mejor` y no del signo del número.
+            th.setAttribute('aria-sort', activa
+              ? (c.mejor === 'mayor' ? 'descending' : 'ascending')
+              : 'none');
+            const boton = document.createElement('button');
+            boton.type = 'button';
+            boton.className = 'tabla-ranking-boton';
+            boton.innerHTML = `${c.titulo}<span class="tabla-ranking-flecha" ` +
+              `aria-hidden="true">${activa ? '▲' : '⇅'}</span>`;
+            boton.setAttribute('aria-label',
+              `Ordenar por ${c.tituloLargo || c.titulo}` +
+              (c.mejor === 'cerca' ? `, mejor cuanto más cerca de ${c.objetivo}`
+                : c.mejor === 'mayor' ? ', mejor cuanto mayor' : ', mejor cuanto menor'));
+            boton.addEventListener('click', () => {
+              claveOrden = c.clave;
+              dibuja();
+              const nuevo = marco.querySelector(
+                `th[data-clave="${c.clave}"] .tabla-ranking-boton`);
+              if (nuevo) nuevo.focus();
+              if (estado) {
+                const primera = spec.filas.slice().sort(
+                  (a, b) => distanciaRanking(c, a[c.clave]) -
+                            distanciaRanking(c, b[c.clave]))[0];
+                estado.textContent = `Ordenado por ${c.tituloLargo || c.titulo}: ` +
+                  `primero ${primera[columnas[0].clave]} ` +
+                  `(${formatea(c, primera[c.clave])}).`;
+              }
+            });
+            th.appendChild(boton);
+          }
+          th.setAttribute('data-clave', c.clave);
+          trh.appendChild(th);
+        });
+        thead.appendChild(trh);
+        tabla.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+        filas.forEach((fila, i) => {
+          const tr = document.createElement('tr');
+          if (i === 0) tr.className = 'ganadora';
+          if (spec.destacada && fila[columnas[0].clave] === spec.destacada) {
+            tr.className = (tr.className + ' destacada').trim();
+          }
+          const tdPuesto = document.createElement('td');
+          tdPuesto.className = 'tabla-ranking-puesto';
+          tdPuesto.textContent = String(i + 1);
+          tr.appendChild(tdPuesto);
+
+          columnas.forEach((c, j) => {
+            const celda = document.createElement(j === 0 ? 'th' : 'td');
+            if (j === 0) celda.scope = 'row';
+            celda.innerHTML = formatea(c, fila[c.clave]);
+            if (c.tipo !== 'texto') celda.classList.add('numero');
+            if (c.clave === claveOrden) {
+              celda.classList.add('columna-activa');
+              if (distanciaRanking(c, fila[c.clave]) === mejorValor) {
+                celda.classList.add('mejor');
+              }
+            }
+            tr.appendChild(celda);
+          });
+          tbody.appendChild(tr);
+        });
+        tabla.appendChild(tbody);
+
+        marco.innerHTML = '';
+        marco.appendChild(tabla);
+      }
+
+      dibuja();
+      if (pie && spec.pie) pie.innerHTML = spec.pie;
+    }
+
+    function iniciarTablasRanking() {
+      mainContent.querySelectorAll('.tabla-ranking[data-ranking]').forEach(raiz => {
+        const registro = TABLAS_RANKING[raiz.dataset.ranking];
+        if (!registro) return;
+        pintarTablaRanking(raiz, typeof registro === 'function' ? registro() : registro);
       });
     }
 
@@ -3682,6 +4387,34 @@ round(mean(rnorm(200)), 4)   # 0.0117</code></pre>
     // {tipo, modulo, pregunta, pista}. `modulo` alimenta el resumen
     // final de "qué repasar".
     // ================================================================
+    // Demostración del componente .tabla-ranking. Datos fijos: la plantilla no
+    // incrusta ningún precálculo, igual que sus simuladores generan sus series.
+    TABLAS_RANKING['demo'] = function () {
+      return {
+        descripcion: 'Cuatro métodos ficticios. Pulsa la cabecera de cualquier columna: ' +
+          'la tabla se reordena, se renumeran los puestos y se marca el mejor valor. ' +
+          'La columna de cobertura no ordena por «menor» sino por <em>cercanía</em> al ' +
+          '95 %, que es lo que de verdad se quiere de un intervalo.',
+        columnas: [
+          { clave: 'metodo', titulo: 'Método', tipo: 'texto' },
+          { clave: 'rmse', titulo: 'RMSE', decimales: 2, mejor: 'menor' },
+          { clave: 'mase', titulo: 'MASE', decimales: 3, mejor: 'menor' },
+          { clave: 'cob', titulo: 'Cob. 95 %', tituloLargo: 'cobertura del 95 %', decimales: 1, sufijo: ' %', mejor: 'cerca', objetivo: 95 },
+          { clave: 'seg', titulo: 'Segundos', decimales: 2, mejor: 'menor' }
+        ],
+        filas: [
+          { metodo: 'Referencia simple', rmse: 42.55, mase: 1.681, cob: 93.4, seg: 0.02 },
+          { metodo: 'Modelo A', rmse: 18.92, mase: 0.621, cob: 98.4, seg: 0.44 },
+          { metodo: 'Modelo B', rmse: 20.63, mase: 0.678, cob: 92.1, seg: 118.61 },
+          { metodo: 'Modelo C', rmse: 23.17, mase: 0.759, cob: 94.3, seg: 13.09 }
+        ],
+        inicial: 'rmse',
+        destacada: 'Modelo A',
+        pie: 'El Modelo A gana por RMSE y por MASE, y sin embargo es el peor calibrado; ' +
+          'el Modelo B es el mejor calibrado y el más lento. El orden depende de la pregunta.'
+      };
+    };
+
     AUTOEVALUACIONES['demo'] = [
       {
         tipo: 'opcion',

@@ -17,6 +17,18 @@ suppressMessages({
   library(forecast)
 })
 
+# R arranca aqui con LC_CTYPE = "C", y entonces jsonlite trata los bytes UTF-8
+# de las tildes como caracteres sueltos y los escribe en el JSON como <c3><ad>.
+# En el navegador eso se lee como marcado desconocido y la palabra pierde la
+# tilde ("dias" en vez de "dias" con tilde). Hay que forzar la configuracion
+# regional ANTES de generar nada.
+locale_ok <- suppressWarnings(Sys.setlocale("LC_CTYPE", "en_US.UTF-8"))
+if (!isTRUE(l10n_info()$"UTF-8")) {
+  warning("No se pudo activar una configuracion regional UTF-8: las tildes de ",
+          "las cadenas del JSON saldran mal. Prueba a ejecutar con ",
+          "LC_ALL=en_US.UTF-8 Rscript ...")
+}
+
 args_dir <- dirname(sub("--file=", "", grep("--file=", commandArgs(FALSE), value = TRUE)[1]))
 if (is.na(args_dir) || args_dir == "") args_dir <- "."
 dir_salidas <- file.path(args_dir, "salidas")
@@ -636,6 +648,385 @@ cat(sprintf("  pronostico a h=12: %.2f con deriva vs. %.2f sin\n",
             sol$cap4_ej3$con_deriva$pronostico_h12, sol$cap4_ej3$con_deriva$pronostico_h12_sin))
 
 # ============================================================================
+# CAPITULO 5
+# ============================================================================
+
+difrs <- function(x, d = 0, D = 0, m = 12) {
+  if (D > 0) x <- diff(x, lag = m, differences = D)
+  if (d > 0) x <- diff(x, differences = d)
+  x
+}
+gl_arma <- function(f) sum(f$arma[1:4])
+lb_p <- function(f, k = 24) Box.test(residuals(f), lag = k, type = "Ljung-Box",
+                                     fitdf = gl_arma(f))$p.value
+raiz_ma_max <- function(f) {
+  th <- f$model$theta
+  if (!length(th) || all(th == 0)) return(NA_real_)
+  round(max(Mod(1 / polyroot(c(1, th)))), 4)
+}
+
+# ---- Ej. 1: co2 de Mauna Loa, recorrido SARIMA completo --------------------
+# El punto NO es acertar el modelo, sino que la tabla de la rejilla solo se
+# puede leer dentro de un mismo (d, D). El estudiante que ordene los 4 valores
+# de varianza y elija el minimo llega a (1,1); el que ademas compare AICc entre
+# distintos D se equivoca, y aqui se le muestra por que.
+cat("\n=== CAP5 · Ej.1 · co2 de Mauna Loa, recorrido SARIMA ===\n")
+co2v <- co2
+varianzas_co2 <- c(
+  d0D0 = var(co2v), d1D0 = var(diff(co2v)),
+  d0D1 = var(diff(co2v, lag = 12)), d1D1 = var(difrs(co2v, 1, 1))
+)
+rej_co2 <- list()
+for (p in 0:2) for (q in 0:3) for (P in 0:1) for (Q in 0:1) {
+  f <- tryCatch(Arima(co2v, order = c(p, 1, q),
+                      seasonal = list(order = c(P, 1, Q), period = 12), method = "ML"),
+                error = function(e) NULL, warning = function(w) NULL)
+  if (is.null(f)) next
+  rej_co2[[sprintf("(%d,1,%d)(%d,1,%d)[12]", p, q, P, Q)]] <-
+    list(aicc = round(f$aicc, 3), bic = round(f$bic, 3), lb = round(lb_p(f), 4),
+         k = p + q + P + Q, nobs = f$nobs)
+}
+mejor_co2 <- names(rej_co2)[which.min(vapply(rej_co2, function(r) r$aicc, numeric(1)))]
+mejor_co2_bic <- names(rej_co2)[which.min(vapply(rej_co2, function(r) r$bic, numeric(1)))]
+airline_co2 <- Arima(co2v, order = c(0, 1, 1), seasonal = list(order = c(0, 1, 1), period = 12))
+auto_co2 <- auto.arima(co2v, stepwise = FALSE, approximation = FALSE)
+# La comparacion INVALIDA que el ejercicio quiere que el estudiante detecte:
+# el mismo (p,q) con D = 0 tiene mas observaciones y su AICc parece mejor.
+sinD_co2 <- Arima(co2v, order = c(0, 1, 1), seasonal = list(order = c(0, 0, 1), period = 12))
+
+sol$cap5_ej1 <- list(
+  n = length(co2v),
+  varianzas = round(varianzas_co2, 4),
+  varianza_minima = names(which.min(varianzas_co2)),
+  ndiffs = ndiffs(co2v), ndiffs_tras_D = ndiffs(diff(co2v, lag = 12)),
+  nsdiffs = nsdiffs(co2v),
+  n_modelos = length(rej_co2),
+  mejor_aicc = mejor_co2, mejor_bic = mejor_co2_bic,
+  aicc_mejor = rej_co2[[mejor_co2]]$aicc, bic_mejor = rej_co2[[mejor_co2]]$bic,
+  lb_mejor = rej_co2[[mejor_co2]]$lb,
+  auto_arima = as.character(auto_co2), auto_aicc = round(auto_co2$aicc, 3),
+  airline_aicc = round(airline_co2$aicc, 3), airline_lb = round(lb_p(airline_co2), 4),
+  diferencia_aicc = round(airline_co2$aicc - auto_co2$aicc, 3),
+  trampa = list(
+    modelo_sinD = "(0,1,1)(0,0,1)[12]",
+    aicc_sinD = round(sinD_co2$aicc, 3), nobs_sinD = sinD_co2$nobs,
+    aicc_conD = round(airline_co2$aicc, 3), nobs_conD = airline_co2$nobs,
+    lb_sinD = round(lb_p(sinD_co2), 4),
+    leccion = paste("Aqui el AICc sin diferencia estacional sale MUCHO peor y ademas el",
+                    "modelo no pasa Ljung-Box, asi que la lectura ingenua acierta por",
+                    "casualidad. Sigue siendo invalida: se calcula sobre 12 observaciones",
+                    "mas. En el ejercicio 3 los dos numeros quedan a dos puntos de",
+                    "distancia y ahi la lectura ingenua si enganya.")
+  )
+)
+s1 <- sol$cap5_ej1
+cat(sprintf("  n = %d | ndiffs = %d (tras la estacional: %d) | nsdiffs = %d\n",
+            s1$n, s1$ndiffs, s1$ndiffs_tras_D, s1$nsdiffs))
+cat(sprintf("  Varianzas: cruda %.4f | d=1 %.4f | D=1 %.4f | ambas %.4f -> minimo en %s\n",
+            s1$varianzas[["d0D0"]], s1$varianzas[["d1D0"]], s1$varianzas[["d0D1"]],
+            s1$varianzas[["d1D1"]], s1$varianza_minima))
+cat(sprintf("  Rejilla de %d modelos (todos d=1, D=1): mejor por AICc %s (%.3f), por BIC %s\n",
+            s1$n_modelos, s1$mejor_aicc, s1$aicc_mejor, s1$mejor_bic))
+cat(sprintf("  auto.arima: %s (AICc %.3f) | airline: AICc %.3f (%.3f peor) | LB p = %.4f\n",
+            s1$auto_arima, s1$auto_aicc, s1$airline_aicc, s1$diferencia_aicc, s1$airline_lb))
+cat(sprintf("  TRAMPA: %s da AICc %.3f con %d obs. frente a %.3f con %d obs. del airline\n",
+            s1$trampa$modelo_sinD, s1$trampa$aicc_sinD, s1$trampa$nobs_sinD,
+            s1$trampa$aicc_conD, s1$trampa$nobs_conD))
+cat(sprintf("          y su Ljung-Box(24) da p = %.4f: el modelo 'ganador' no pasa el diagnostico.\n",
+            s1$trampa$lb_sinD))
+
+# ---- Ej. 2: USAccDeaths, decidir d y D en el orden correcto ----------------
+# ndiffs sobre la serie cruda dice 0. Tras la diferencia estacional dice 1.
+# La estacionalidad enmascara la tendencia: hay que quitarla primero.
+cat("\n=== CAP5 · Ej.2 · USAccDeaths: el orden en que se decide d y D ===\n")
+ua <- USAccDeaths
+orden_mal <- list(ndiffs_primero = ndiffs(ua), nsdiffs_despues = NA)
+ua_d <- if (ndiffs(ua) > 0) diff(ua, differences = ndiffs(ua)) else ua
+orden_mal$nsdiffs_despues <- nsdiffs(ua_d)
+orden_bien <- list(nsdiffs_primero = nsdiffs(ua),
+                   ndiffs_despues = ndiffs(diff(ua, lag = 12)))
+mod_orden_mal <- Arima(ua, order = c(0, orden_mal$ndiffs_primero, 1),
+                       seasonal = list(order = c(0, orden_mal$nsdiffs_despues, 1), period = 12))
+mod_orden_bien <- Arima(ua, order = c(0, orden_bien$ndiffs_despues, 1),
+                        seasonal = list(order = c(0, orden_bien$nsdiffs_primero, 1), period = 12))
+auto_ua <- auto.arima(ua, stepwise = FALSE, approximation = FALSE)
+
+sol$cap5_ej2 <- list(
+  n = length(ua),
+  orden_mal = orden_mal, orden_bien = orden_bien,
+  conmutan = max(abs(as.numeric(diff(diff(ua, lag = 12))) - as.numeric(diff(diff(ua), lag = 12)))),
+  modelo_orden_mal = list(
+    d = orden_mal$ndiffs_primero, D = orden_mal$nsdiffs_despues,
+    etiqueta = sprintf("(0,%d,1)(0,%d,1)[12]", orden_mal$ndiffs_primero, orden_mal$nsdiffs_despues),
+    aicc = round(mod_orden_mal$aicc, 3), nobs = mod_orden_mal$nobs,
+    lb = round(lb_p(mod_orden_mal), 4)),
+  modelo_orden_bien = list(
+    d = orden_bien$ndiffs_despues, D = orden_bien$nsdiffs_primero,
+    etiqueta = sprintf("(0,%d,1)(0,%d,1)[12]", orden_bien$ndiffs_despues, orden_bien$nsdiffs_primero),
+    aicc = round(mod_orden_bien$aicc, 3), nobs = mod_orden_bien$nobs,
+    lb = round(lb_p(mod_orden_bien), 4),
+    theta = round(as.numeric(mod_orden_bien$coef["ma1"]), 4),
+    Theta = round(as.numeric(mod_orden_bien$coef["sma1"]), 4)),
+  auto_arima = as.character(auto_ua), auto_aicc = round(auto_ua$aicc, 3),
+  nsdiffs_ocsb = nsdiffs(ua, test = "ocsb"),
+  aicc_no_comparables = paste("Los dos modelos tienen d distinto (0 y 1), asi que sus",
+                              "AICc TAMPOCO se comparan: 60 observaciones frente a 59.",
+                              "Lo que decide es el diagnostico, que si es valido en ambos."),
+  leccion = paste("Los operadores conmutan (la serie resultante es identica), pero las",
+                  "PRUEBAS no: ndiffs sobre la serie cruda ve 0 diferencias regulares",
+                  "porque la estacionalidad domina la varianza. Se decide D primero.")
+)
+s2 <- sol$cap5_ej2
+cat(sprintf("  Orden equivocado: ndiffs(crudo) = %d -> nsdiffs despues = %d -> %s\n",
+            s2$orden_mal$ndiffs_primero, s2$orden_mal$nsdiffs_despues, s2$modelo_orden_mal$etiqueta))
+cat(sprintf("  Orden correcto : nsdiffs(crudo) = %d -> ndiffs despues = %d -> %s\n",
+            s2$orden_bien$nsdiffs_primero, s2$orden_bien$ndiffs_despues, s2$modelo_orden_bien$etiqueta))
+cat(sprintf("  Los operadores conmutan: diferencia maxima %.3g\n", s2$conmutan))
+cat(sprintf("  Lo que decide es el DIAGNOSTICO: Ljung-Box(24) p = %.4f (orden equivocado) y %.4f (correcto)\n",
+            s2$modelo_orden_mal$lb, s2$modelo_orden_bien$lb))
+cat(sprintf("  (sus AICc, %.3f con n=%d y %.3f con n=%d, NO son comparables: distinto d)\n",
+            s2$modelo_orden_mal$aicc, s2$modelo_orden_mal$nobs,
+            s2$modelo_orden_bien$aicc, s2$modelo_orden_bien$nobs))
+cat(sprintf("  auto.arima confirma: %s (AICc %.3f) | theta = %.4f, Theta = %.4f\n",
+            s2$auto_arima, s2$auto_aicc, s2$modelo_orden_bien$theta, s2$modelo_orden_bien$Theta))
+cat(sprintf("  Aviso: nsdiffs(test='ocsb') devuelve %d, no %d. La prueba por defecto cambio de version.\n",
+            s2$nsdiffs_ocsb, s2$orden_bien$nsdiffs_primero))
+
+# ---- Ej. 3: la TRM no es estacional; y armonicos frente a SARIMA -----------
+# Dos preguntas de una: (a) tres evidencias independientes de que la TRM no
+# tiene estacionalidad; (b) sobre co2, comparar regresion armonica y SARIMA
+# -- y descubrir que el AICc NO sirve para esa comparacion.
+cat("\n=== CAP5 · Ej.3 · La TRM sin estacionalidad, y armonicos vs. SARIMA ===\n")
+series_json <- fromJSON(file.path(dir_salidas, "datos_series.json"), simplifyVector = TRUE)
+trm5 <- ts(series_json$trm$valores, start = series_json$trm$inicio, frequency = 12)
+trm5_d <- diff(trm5)
+acf_trm <- as.numeric(acf(trm5_d, lag.max = 36, plot = FALSE)$acf)[-1]
+b_trm <- banda(length(trm5_d))
+forzado <- Arima(trm5, order = c(0, 1, 0), seasonal = list(order = c(1, 0, 0), period = 12))
+simple <- Arima(trm5, order = c(0, 1, 0))
+
+# (b) armonicos sobre co2, dentro de su familia y contra el SARIMA
+arm_co2 <- lapply(1:6, function(K) {
+  xr <- fourier(co2v, K = K)
+  f <- auto.arima(co2v, xreg = xr, seasonal = FALSE, stepwise = FALSE, approximation = FALSE)
+  list(K = K, terminos = ncol(xr), aicc = round(f$aicc, 3), nobs = f$nobs,
+       modelo = as.character(f), lb = round(lb_p(f), 4))
+})
+mejorK_co2 <- arm_co2[[which.min(vapply(arm_co2, function(a) a$aicc, numeric(1)))]]
+
+sol$cap5_ej3 <- list(
+  trm = list(
+    n = length(trm5),
+    evidencia1_nsdiffs = nsdiffs(trm5),
+    evidencia2_acf = list(r12 = round(acf_trm[12], 4), r24 = round(acf_trm[24], 4),
+                          r36 = round(acf_trm[36], 4), banda = round(b_trm, 4),
+                          fuera = sum(abs(acf_trm[c(12, 24, 36)]) > b_trm)),
+    evidencia3_ajuste = list(
+      Phi = round(as.numeric(forzado$coef["sar1"]), 4),
+      ee = round(as.numeric(sqrt(diag(forzado$var.coef))["sar1"]), 4),
+      t = round(as.numeric(forzado$coef["sar1"] / sqrt(diag(forzado$var.coef))["sar1"]), 3),
+      aicc_forzado = round(forzado$aicc, 3), aicc_simple = round(simple$aicc, 3)),
+    auto = as.character(auto.arima(trm5, stepwise = FALSE, approximation = FALSE))
+  ),
+  co2_armonicos = list(
+    resultados = arm_co2,
+    mejor_K = mejorK_co2$K, aicc_mejor_K = mejorK_co2$aicc, nobs_armonico = mejorK_co2$nobs,
+    aicc_airline = round(airline_co2$aicc, 3), nobs_airline = airline_co2$nobs,
+    comparable = FALSE,
+    leccion = paste("El AICc del armonico parece mucho mejor que el del SARIMA, pero el",
+                    "armonico usa D = 0 y el SARIMA D = 1: se evaluan sobre series de",
+                    "distinta longitud. La comparacion entre familias solo vale fuera de",
+                    "muestra. Es la misma trampa del capitulo 4 con d, ahora con D.")
+  )
+)
+s3 <- sol$cap5_ej3
+cat(sprintf("  (a) TRM, n = %d\n", s3$trm$n))
+cat(sprintf("      1. nsdiffs = %d\n", s3$trm$evidencia1_nsdiffs))
+cat(sprintf("      2. ACF de la diferencia en 12/24/36 = %.4f / %.4f / %.4f (banda %.4f): %d fuera\n",
+            s3$trm$evidencia2_acf$r12, s3$trm$evidencia2_acf$r24, s3$trm$evidencia2_acf$r36,
+            s3$trm$evidencia2_acf$banda, s3$trm$evidencia2_acf$fuera))
+cat(sprintf("      3. Al forzar un SAR(1): Phi = %.4f (e.e. %.4f, t = %.2f), AICc %.3f vs %.3f del simple\n",
+            s3$trm$evidencia3_ajuste$Phi, s3$trm$evidencia3_ajuste$ee, s3$trm$evidencia3_ajuste$t,
+            s3$trm$evidencia3_ajuste$aicc_forzado, s3$trm$evidencia3_ajuste$aicc_simple))
+cat(sprintf("      auto.arima: %s\n", s3$trm$auto))
+cat("  (b) co2, armonicos frente al SARIMA:\n")
+for (a in s3$co2_armonicos$resultados)
+  cat(sprintf("      K=%d (%2d terminos) AICc %9.3f  n=%d  %s  LB p=%.4f\n",
+              a$K, a$terminos, a$aicc, a$nobs, a$modelo, a$lb))
+cat(sprintf("      Mejor armonico K=%d con AICc %.3f (n=%d) frente al airline %.3f (n=%d)\n",
+            s3$co2_armonicos$mejor_K, s3$co2_armonicos$aicc_mejor_K, s3$co2_armonicos$nobs_armonico,
+            s3$co2_armonicos$aicc_airline, s3$co2_armonicos$nobs_airline))
+cat("      -> NO son comparables: distinto D, distinto n efectivo.\n")
+
+# ============================================================================
+
+# ============================================================================
+# CAPÍTULO 6 — Pronóstico, métricas y backtesting
+#
+# Los tres ejercicios evalúan, que es lo que le toca a este capítulo: ninguno
+# vuelve a construir un intervalo (Capítulo 4) ni a comparar métodos sobre una
+# sola partición (Capítulo 5).
+# ============================================================================
+
+escala_mase_ <- function(entrena, m = 1) {
+  x <- as.numeric(entrena)
+  if (m > 1 && length(x) > m) mean(abs(diff(x, lag = m))) else mean(abs(diff(x)))
+}
+winkler_ <- function(y, li, ls, nivel) {
+  a <- 1 - nivel / 100
+  (ls - li) + (2 / a) * ((li - y) * (y < li) + (y - ls) * (y > ls))
+}
+om_ <- function(y, ajusta, T0, h, niveles = c(80, 95)) {
+  origenes <- T0:(length(y) - h)
+  P <- LI <- LS <- R <- matrix(NA_real_, length(origenes), h)
+  for (i in seq_along(origenes)) {
+    Tt <- origenes[i]
+    fc <- try(ajusta(subset(y, start = 1, end = Tt), h), silent = TRUE)
+    if (inherits(fc, "try-error")) next
+    P[i, ] <- as.numeric(fc$mean)
+    LI[i, ] <- as.numeric(fc$lower[, 2]); LS[i, ] <- as.numeric(fc$upper[, 2])
+    R[i, ] <- as.numeric(y)[(Tt + 1):(Tt + h)]
+  }
+  list(origenes = origenes, pron = P, reales = R, li = LI, ls = LS, error = R - P)
+}
+resumen_ <- function(om, entrena, m) {
+  e <- as.numeric(om$error); r <- as.numeric(om$reales); ok <- !is.na(e)
+  list(n_origenes = length(om$origenes), n_errores = sum(ok),
+       rmse = round(sqrt(mean(e[ok]^2)), 4), mae = round(mean(abs(e[ok])), 4),
+       mape = round(100 * mean(abs(e[ok] / r[ok])), 4),
+       mase = round(mean(abs(e[ok])) / escala_mase_(entrena, m), 4),
+       cob95 = round(100 * mean(r[ok] >= om$li[ok] & r[ok] <= om$ls[ok]), 4),
+       winkler95 = round(mean(winkler_(r[ok], om$li[ok], om$ls[ok], 95)), 4))
+}
+
+# --- Ejercicio 1: ¿le gana el modelo al naive estacional en USAccDeaths? ----
+uad <- ts(sd_json$usaccdeaths$valores, start = sd_json$usaccdeaths$inicio, frequency = 12)
+T0_U <- 36; H_U <- 12
+metodos_u <- list(
+  snaive  = function(tr, h) snaive(tr, h = h, level = c(80, 95)),
+  airline = function(tr, h) forecast(Arima(tr, order = c(0, 1, 1),
+                                           seasonal = c(0, 1, 1)), h = h, level = c(80, 95)),
+  auto    = function(tr, h) forecast(auto.arima(tr), h = h, level = c(80, 95)),
+  media   = function(tr, h) meanf(tr, h = h, level = c(80, 95))
+)
+oms_u <- lapply(metodos_u, function(f) om_(uad, f, T0_U, H_U))
+tabla_u <- lapply(names(oms_u), function(nm)
+  c(list(metodo = nm), resumen_(oms_u[[nm]], subset(uad, start = 1, end = T0_U), 12)))
+dm_u <- lapply(c(1, 6, 12), function(h) {
+  a <- oms_u$airline$error[, h]; b <- oms_u$snaive$error[, h]
+  ok <- !is.na(a) & !is.na(b)
+  p <- try(dm.test(a[ok], b[ok], alternative = "two.sided", h = h, power = 2), silent = TRUE)
+  if (inherits(p, "try-error")) return(NULL)
+  list(h = h, estadistico = round(as.numeric(p$statistic), 4), p = round(p$p.value, 4))
+})
+# Y la partición única, para contrastar con el origen móvil
+tr_u <- subset(uad, start = 1, end = length(uad) - 12)
+te_u <- as.numeric(uad)[(length(uad) - 11):length(uad)]
+part_u <- lapply(names(metodos_u), function(nm) {
+  fc <- metodos_u[[nm]](tr_u, 12)
+  e <- te_u - as.numeric(fc$mean)
+  list(metodo = nm, rmse = round(sqrt(mean(e^2)), 4), mae = round(mean(abs(e)), 4),
+       mase = round(mean(abs(e)) / escala_mase_(tr_u, 12), 4))
+})
+sol$cap6_ej1 <- list(
+  serie = "USAccDeaths", n = length(uad), T0 = T0_U, h = H_U,
+  n_origenes = length(oms_u$snaive$origenes),
+  origen_movil = tabla_u, dm_airline_vs_snaive = Filter(Negate(is.null), dm_u),
+  particion_unica = part_u,
+  orden_om = sapply(tabla_u, function(z) z$metodo)[order(sapply(tabla_u, function(z) z$rmse))],
+  orden_particion = sapply(part_u, function(z) z$metodo)[order(sapply(part_u, function(z) z$rmse))]
+)
+
+# --- Ejercicio 2: el MAPE engañosamente bueno de co2 -----------------------
+co2s <- ts(sd_json$co2$valores, start = sd_json$co2$inicio, frequency = 12)
+n_c <- length(co2s); h_c <- 24
+tr_c <- subset(co2s, start = 1, end = n_c - h_c)
+te_c <- as.numeric(co2s)[(n_c - h_c + 1):n_c]
+met_c <- function(real, pron, entrena, m) {
+  e <- real - pron
+  list(rmse = round(sqrt(mean(e^2)), 4), mae = round(mean(abs(e)), 4),
+       mape = round(100 * mean(abs(e / real)), 4),
+       mase = round(mean(abs(e)) / escala_mase_(entrena, m), 4))
+}
+cands_c <- list(
+  media   = as.numeric(meanf(tr_c, h = h_c)$mean),
+  naive   = as.numeric(naive(tr_c, h = h_c)$mean),
+  snaive  = as.numeric(snaive(tr_c, h = h_c)$mean),
+  deriva  = as.numeric(rwf(tr_c, h = h_c, drift = TRUE)$mean),
+  airline = as.numeric(forecast(Arima(tr_c, order = c(0, 1, 1),
+                                      seasonal = c(0, 1, 1)), h = h_c)$mean)
+)
+tabla_c <- lapply(names(cands_c), function(nm)
+  c(list(metodo = nm), met_c(te_c, cands_c[[nm]], tr_c, 12)))
+sol$cap6_ej2 <- list(
+  serie = "co2 (Mauna Loa)", n = n_c, h = h_c,
+  rango = round(range(as.numeric(co2s)), 2),
+  variacion_relativa_pct = round(100 * (max(as.numeric(co2s)) / min(as.numeric(co2s)) - 1), 2),
+  q_mase = round(escala_mase_(tr_c, 12), 4),
+  tabla = tabla_c,
+  mape_maximo = round(max(sapply(tabla_c, function(z) z$mape)), 4),
+  mase_maximo = round(max(sapply(tabla_c, function(z) z$mase)), 4),
+  razon_mape = round(max(sapply(tabla_c, function(z) z$mape)) /
+                     min(sapply(tabla_c, function(z) z$mape)), 2),
+  razon_mase = round(max(sapply(tabla_c, function(z) z$mase)) /
+                     min(sapply(tabla_c, function(z) z$mase)), 2)
+)
+
+# --- Ejercicio 3: ¿cubre el intervalo del Nilo lo que promete? -------------
+nilo <- ts(sd_json$nilo$valores, start = sd_json$nilo$inicio, frequency = 1)
+T0_N <- 60; H_N <- 5
+cob_niveles <- function(y, ajusta, T0, h, niveles) {
+  origenes <- T0:(length(y) - h)
+  sapply(niveles, function(nv) {
+    dentro <- c()
+    for (Tt in origenes) {
+      fc <- ajusta(subset(y, start = 1, end = Tt), h, nv)
+      real <- as.numeric(y)[(Tt + 1):(Tt + h)]
+      dentro <- c(dentro, real >= fc$lower[, 1] & real <= fc$upper[, 1])
+    }
+    round(100 * mean(dentro), 4)
+  })
+}
+NIV <- c(50, 80, 90, 95, 99)
+cob_arima <- cob_niveles(nilo, function(tr, h, nv)
+  forecast(Arima(tr, order = c(1, 1, 1)), h = h, level = nv), T0_N, H_N, NIV)
+cob_naive <- cob_niveles(nilo, function(tr, h, nv)
+  naive(tr, h = h, level = nv), T0_N, H_N, NIV)
+om_a <- om_(nilo, function(tr, h) forecast(Arima(tr, order = c(1, 1, 1)), h = h,
+                                           level = c(80, 95)), T0_N, H_N)
+om_n <- om_(nilo, function(tr, h) naive(tr, h = h, level = c(80, 95)), T0_N, H_N)
+sol$cap6_ej3 <- list(
+  serie = "Nile", n = length(nilo), T0 = T0_N, h = H_N,
+  n_origenes = length(om_a$origenes),
+  niveles = NIV, cobertura_arima = cob_arima, cobertura_naive = cob_naive,
+  exceso_arima = round(cob_arima - NIV, 4), exceso_naive = round(cob_naive - NIV, 4),
+  arima = resumen_(om_a, subset(nilo, start = 1, end = T0_N), 1),
+  naive = resumen_(om_n, subset(nilo, start = 1, end = T0_N), 1),
+  ancho95_arima = round(mean(om_a$ls - om_a$li, na.rm = TRUE), 4),
+  ancho95_naive = round(mean(om_n$ls - om_n$li, na.rm = TRUE), 4),
+  shapiro_p = round(shapiro.test(residuals(Arima(nilo, order = c(1, 1, 1))))$p.value, 4)
+)
+
+cat("\n=== CAPÍTULO 6 ===\n")
+cat("  Ej. 1 USAccDeaths, origen móvil (", sol$cap6_ej1$n_origenes, "orígenes, h = 12):\n")
+for (z in tabla_u) cat(sprintf("      %-8s RMSE %8.2f  MASE %6.3f  cob95 %6.2f  W95 %9.2f\n",
+                               z$metodo, z$rmse, z$mase, z$cob95, z$winkler95))
+cat("      partición única:", paste(sol$cap6_ej1$orden_particion, collapse = " > "), "\n")
+cat("      origen móvil   :", paste(sol$cap6_ej1$orden_om, collapse = " > "), "\n")
+for (z in sol$cap6_ej1$dm_airline_vs_snaive)
+  cat(sprintf("      DM airline vs snaive h=%2d: %8.4f  p = %.4f\n", z$h, z$estadistico, z$p))
+cat("  Ej. 2 co2 (variación relativa", sol$cap6_ej2$variacion_relativa_pct, "%):\n")
+for (z in tabla_c) cat(sprintf("      %-8s RMSE %7.4f  MAE %7.4f  MAPE %7.4f  MASE %7.4f\n",
+                               z$metodo, z$rmse, z$mae, z$mape, z$mase))
+cat(sprintf("      razón peor/mejor: MAPE %.2f  frente a MASE %.2f\n",
+            sol$cap6_ej2$razon_mape, sol$cap6_ej2$razon_mase))
+cat("  Ej. 3 Nilo, cobertura empírica por nivel nominal:\n")
+cat("      nivel   :", paste(sprintf("%6d", NIV), collapse = ""), "\n")
+cat("      ARIMA   :", paste(sprintf("%6.1f", cob_arima), collapse = ""), "\n")
+cat("      naive   :", paste(sprintf("%6.1f", cob_naive), collapse = ""), "\n")
+cat(sprintf("      ancho medio 95%%: ARIMA %.1f  naive %.1f | Shapiro p = %.4f\n",
+            sol$cap6_ej3$ancho95_arima, sol$cap6_ej3$ancho95_naive, sol$cap6_ej3$shapiro_p))
+
 sol$metadatos <- list(generado = fecha_corte, generador = "precalculo/genera_soluciones.R",
                       versiones = list(R = paste(R.version$major, R.version$minor, sep = "."),
                                        tseries = as.character(packageVersion("tseries")),

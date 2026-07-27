@@ -608,24 +608,287 @@ de lo del capítulo 2: el álgebra ARMA en JS (`pesosPsi`, `pesosPi`, `acfTeoric
 
 ### Fase 3 — Capítulos 5 y 6
 
-**Siguiente tarea: T7.** Al retomar, arranca por aquí y **copia el capítulo 4** como base (trae el
-componente `.ciclo`, el ayudante `manejador()` y los datos de `AirPassengers`). El capítulo 4 dejó
-montado en JS: `diferenciarVeces`, `aniosDesde`, `mesesDesde`, `varianzaDe`, `fmt` (defensiva ante
-`null`), `lineaSimple` y `manejador`. El puente ya está tendido: el módulo 10 del capítulo 4 muestra
-que el mejor ARIMA no estacional sobre `log(AirPassengers)` deja $\hat\rho_{12} = 0.72$ y Ljung–Box(24)
-con $p < 10^{-6}$, y adelanta que el modelo *airline* lo arregla con dos parámetros
-($\hat\rho_{12} = -0.0515$, $p = 0.233$).
+### Fase 3 — ✅ COMPLETADA (2026-07-27)
 
-- [ ] **T7 · Capítulo 5** (SARIMA) — simulador de diferencias sobre AirPassengers. *Dependencias:* T6. *Tamaño:* L.
-- [ ] **T8 · Capítulo 6** (pronóstico y evaluación) — simuladores de horizonte y rolling-origin.
-  **Frontera con el capítulo 4 (acordada en T6):** el capítulo 4 ya **construye** el intervalo de
-  pronóstico desde los pesos $\psi$ ($\sigma_h^2 = \sigma^2\sum_{j<h}\psi_j^2$) y explica la forma del
-  pronóstico según $d$ y la constante. El capítulo 6 **no debe repetir esa construcción**: le toca
-  **evaluarlo** — cobertura empírica frente a la nominal, qué pasa cuando los residuales no son normales
-  (la TRM da Shapiro $p = 0.0006$), métricas de error y validación de origen móvil. El capítulo 4 deja
-  además servida la referencia: sobre el Nilo, el método *naïve* (RMSE 123.06) le gana al ARIMA(1,1,1)
-  (125.05) fuera de muestra, con un abanico pequeño frente a $\hat\sigma = 139.67$.
-  *Dependencias:* T2, T6. *Tamaño:* L.
+**Siguiente tarea: Checkpoint 2 y luego T9.** Los seis capítulos están terminados y verificados. Al
+retomar, lo que queda es la revisión de contenido de Javier (Checkpoint 2), la portada `index.html`
+(T9) y la publicación (T10). Disponible para reutilizar, además de todo lo anterior: el componente
+**`.tabla-ranking`**, el verificador de bloques de código `precalculo/verifica_bloques_cap6.py`
+—que sirve para cualquier capítulo pasándole `--html`— y, en el precálculo, el motor de origen móvil
+(`origen_movil` / `resume_om`), las métricas implementadas a mano y el puntaje de Winkler.
+
+- [x] **T7 · Capítulo 5** (SARIMA) — `Htmls_Series/capitulo-5-sarima.html`.
+  11 módulos: (1) la firma de la estacionalidad, (2) notación SARIMA y polinomio multiplicativo,
+  (3) diferenciación estacional y el orden en que se decide, (4) identificar $(P,Q)$ y los rezagos
+  satélite, (5) el modelo *airline*, (6) estimar, comparar y diagnosticar, (7) caso completo
+  `log(AirPassengers)`, (8) segundo caso `USAccDeaths` y contraejemplo TRM, (9) regresores de calendario
+  y SARIMAX, (10) cuando $m$ es grande: Fourier y STL, (11) panorama comparativo y cierre.
+  **12 simuladores interactivos**, 8 preguntas de autoevaluación con los 4 tipos, 3 ejercicios guiados,
+  3 cajas de derivación, una instancia del `.ciclo` de 5 etapas y el componente nuevo
+  `.mapa-estacional`. Precálculo en `precalculo/genera_cap5.R` → `cap5_sarima.json` / `cap5_datos.js`;
+  verificación cruzada en `precalculo/verifica_cap5_python.py`. Ensamblado por sustitución de regiones
+  sobre el capítulo 4 (`ensamblado/ensambla_cap5.py`), que además **instala el componente nuevo** en la
+  región compartida (CSS, JS y la llamada de `loadModule`).
+  - *Verificado:* consola sin errores ni avisos en los 11 módulos; **0 errores KaTeX en 960 fórmulas**;
+    canvas = `graficosActivos` en todos (16 gráficos, creados y destruidos al cambiar de módulo); los
+    **12 bloques de R y los 9 de Python se ejecutan de principio a fin** y **454 de 456 cifras anunciadas
+    en los comentarios `#>` de R y 155 de 160 de Python aparecen en la salida real** (las 7 restantes son
+    prosa: porcentajes, un valor crítico comprobado aparte y una cifra de R citada dentro de un comentario
+    de Python); los 12 simuladores responden en valores extremos y reproducen las cifras de R (ACF teórica
+    del AR(1)×SAR(1) 0.6016/0.4230/0.7011/0.4218 idéntica a `ARMAacf`; varianzas de la sobrediferenciación
+    0.011354 / 0.002102 / 0.005960; $\hat\rho_{12}$ de ∇TRM = −0.0025); autoevaluación con los 4 tipos y
+    casos límite (numérica justo dentro y justo fuera de la tolerancia, coma decimal, texto, vacío;
+    múltiple parcial —"te falta 1"— y sin marcar nada; el reintento muestra la pista y **no** revela la
+    respuesta) y **sin acumulación de gráficos** tras 4 reinicios; el `.ciclo` navega con las flechas y da
+    la vuelta; **conjunto de selectores CSS idéntico al de la plantilla (259 = 259, cero diferencias)** y
+    superconjunto exacto de los capítulos 2–4 (+12, los del componente nuevo); geometría medida en 71
+    pares consecutivos con hueco mínimo **8 px**, mediana 16 px, sin desbordes de canvas ni scroll
+    horizontal. `ensambla_cap5.py` es reejecutable y reproduce el archivo **byte a byte**.
+  - *Hallazgos de la auditoría (todos incorporados al capítulo):*
+    1. **La comparativa sobre una sola partición corona al método equivocado, y medirlo se volvió el cierre
+       del capítulo.** Sobre los últimos 24 meses el SARIMA *airline* queda **cuarto** (RMSE 43.18) detrás
+       del ETS sobre logaritmos (19.43) y de la regresión armónica $K=6$ (19.51). Repitiendo la misma
+       comparación sobre **61 orígenes** con $h = 12$, el orden **se invierte**: el SARIMA es primero
+       (RMSE medio 16.81) frente a 21.42 (ETS), 21.85 (STL), 22.39 (armónica) y 41.24 (naïve), y le gana a
+       cada rival en más del 85 % de los orígenes. Es el mejor puente posible hacia el capítulo 6, y está
+       en el módulo 11 como advertencia, sin desarrollar el método (que es contenido del 6).
+    2. **El AICc tampoco compara entre distintos $D$, y con la estacional el error es mayor**: cada $D$
+       cuesta $m$ observaciones, no una. Los modelos armónicos ($D=0$) se evalúan sobre 143 observaciones
+       y el *airline* ($D=1$) sobre 131, así que poner sus AICc en la misma tabla (−521.22 frente a
+       −483.21) es exactamente el error del capítulo 4 con otra letra. La rejilla del módulo 6 fija
+       $d=1$ y $D=1$ en los 36 modelos, y el aviso viaja en el propio JSON para que el texto no lo olvide.
+    3. **Escribí una comparativa con el ETS ajustado sobre logaritmos y ganaba por goleada (RMSE 19.43
+       frente a 72.55 sobre la serie cruda).** Ajustado sobre los logaritmos, `ets()` elige ETS(M,A,M);
+       sobre la serie cruda elige ETS(M,A<sub>d</sub>,M), con tendencia **amortiguada**, y a 24 meses eso
+       cuesta un factor de 3.7 en RMSE. La comparativa final ajusta cada método como se usaría de verdad y
+       reporta **las dos variantes del ETS**, porque la elección de escala es el hallazgo.
+    4. **`nsdiffs()` cambió de prueba por defecto.** Desde `forecast` 8.x usa `test = "seas"` (fuerza
+       estacional de STL); antes usaba OCSB, que todavía se puede pedir. Sobre `log(AirPassengers)` y
+       `USAccDeaths` dan **1 y 0** respectivamente. Documentado como caja de advertencia en el módulo 3 y
+       en la solución del ejercicio 2.
+    5. **`statsmodels` no diferencia la serie: mete $d$ y $D$ en el espacio de estados con un prior
+       difuso.** Consecuencias medidas: informa `nobs = 144` para todos los modelos (el mismo problema que
+       el capítulo 4 documentó con $d$, ahora sin arreglo aparente) y, en series cortas, mueve los
+       coeficientes — sobre `USAccDeaths` ($n = 72$) $\hat\theta$ pasa de −0.4303 a −0.3924, y **no es
+       falta de convergencia**: Python alcanza ese óptimo desde varios inicios y con varios optimizadores.
+       **`simple_differencing=True` lo arregla** y las dos salidas coinciden al cuarto decimal. Pero
+       entonces `get_forecast()` devuelve el pronóstico de la serie **diferenciada** (0.0 en vez de 6.2643):
+       la opción sirve para estimar como R, no para pronosticar. Las dos mitades están documentadas.
+    6. **Los operadores conmutan; las pruebas no.** $\nabla\nabla_{12}y$ es idéntica en cualquier orden
+       (diferencia máxima medida: 0), pero `ndiffs(USAccDeaths)` da **0** en la serie cruda y **1** tras
+       $\nabla_{12}$. En Python lo mismo: KPSS sobre $\nabla_{12}y$ da 0.8672 (rechaza) y sobre
+       $\nabla\nabla_{12}y$ baja a 0.0713. Es el núcleo del módulo 3 y del ejercicio 2.
+    7. **Los regresores de calendario funcionan y el coeficiente dice algo bonito.** Añadir
+       $\log(\text{días del mes})$ y la Semana Santa (algoritmo de Meeus) al *airline* baja el AICc de
+       −483.21 a −490.72, con $\hat\beta_{\log(\text{días})} = 1.084$ (e.e. 0.446): el contraste de
+       $\beta = 1$ da $t = 0.188$, **no se rechaza**, que es justo lo que predice la aritmética del
+       calendario. Y aun así el modelo con calendario **empeora** fuera de muestra (RMSE 45.48 frente a
+       43.18): mejorar el AICc no es mejorar el pronóstico, y está como caja de advertencia.
+    8. **Bug de codificación en toda la cadena de precálculos, encontrado en el navegador.** R arranca con
+       `LC_CTYPE = "C"`, así que `jsonlite` escribe las tildes como `<c3><ad>`; el navegador las lee como
+       marcado desconocido y **se come la letra** ("log(das del mes)"). Los capítulos 3 y 4 arrastran el
+       mismo defecto en 2 y 9 campos, pero **ninguno de ellos se renderiza** (son `descripcion`, `fuente`,
+       `nota`); en el 5 sí, porque muestra nombres de modelo. Se añadió `Sys.setlocale("LC_CTYPE",
+       "en_US.UTF-8")` con aviso a los **seis** scripts generadores y se regeneraron `cap5_sarima.json` y
+       `soluciones_ejercicios.json`. Quedan 4 apariciones en el capítulo 5, todas heredadas de
+       `datos_series.json` y en campos que no se muestran: se limpiarán cuando T8 regenere ese archivo.
+    9. **Hueco de 0 px entre la lectura numérica y el gráfico** en los simuladores de los módulos 9 y 11,
+       porque `.simulador-lectura` se diseñó para ir al final y no lleva margen inferior. Misma clase de
+       fallo que encontró la auditoría de T4d. Se añadió la regla `.simulador-lectura + .grafico-wrapper`
+       (y su variante con `.grafico-etiqueta`) a los **seis archivos**, y el hueco mínimo pasó de 0 a 8 px.
+    10. **Cifras corregidas contra la salida real antes de publicar:** el polinomio AR de los pesos $\psi$
+       lo escribí con el signo cambiado (daba $\sigma_{24} = 2.34$ en vez de 0.1396); la banda del módulo 7
+       la calculaba sobre $n = 144$ cuando la ACF es de la serie diferenciada ($n = 131$, banda 0.1712 y no
+       0.1633); el Ljung–Box del mejor modelo de co2 es 0.631 y yo había puesto el 0.4081 del *airline*;
+       los índices de fila del `data.frame` ordenado; la tabla mes × año del bloque de Python del módulo 1;
+       los seis AIC de la regresión armónica en Python y el del STL, que estaban **inventados** (los reales
+       son −306.95 … −501.62 y −643.05); y el $t$ de los regresores de calendario en Python.
+    11. **`fourier()` de R y `Fourier` de `statsmodels` no dan lo mismo con $K = m/2$:** R emite 11
+       columnas y Python 12, y la de más es el seno de frecuencia $m/2$, **idénticamente cero**. La matriz
+       de diseño de Python queda con rango 11 y una columna sobra; hay que quitarla a mano. Documentado en
+       el bloque de Python del módulo 10.
+    12. **El simulador del módulo 1 aplicaba el logaritmo siempre**, así que la TRM diferenciada daba
+       $\hat\rho_{12} = 0.0100$ y no el −0.0025 de la tabla del texto. Se separó el logaritmo en su propio
+       interruptor; ahora la lectura del simulador reproduce **exactamente** la última fila de la tabla.
+  - *Desviaciones sobre el plan:* (a) el plan pedía 8 módulos y un simulador; se hicieron **11 módulos y
+    12 simuladores**, con el alcance ampliado que eligió Javier: regresión armónica y STL para $m$ grande,
+    SARIMAX con regresores de calendario, y comparación con ETS/Holt–Winters. (b) **La TRM pasó de caso de
+    estudio a contraejemplo**, porque los datos lo exigen: `nsdiffs(trm) = 0` con las dos pruebas y la ACF
+    de $\nabla$TRM en 12/24/36 vale −0.0025 / −0.0672 / 0.0714 frente a una banda de 0.1675. El plan la
+    proponía como caso SARIMA; enseñar a **descartar** la estacionalidad resultó más útil. (c) Casos de
+    estudio: `log(AirPassengers)` (recorrido completo) + `USAccDeaths` (segundo caso con la trampa del
+    orden) + `co2` (ejercicios) + TRM (contraejemplo); ninguna descarga nueva. (d) El módulo comparativo
+    trae cifras reales **solo de lo instalado** (snaive, ETS, armónica, STL, SARIMA); Prophet, RNN/LSTM y
+    Transformers van con criterios de elección y sin números inventados, y el capítulo lo dice
+    explícitamente. (e) El archivo pesa **378 KB**, por encima del límite de la tabla de riesgos: mismo
+    criterio que en los capítulos 2, 3 y 4. (f) **No se instaló ningún paquete nuevo** (`uroot` no está, así
+    que `nsdiffs(test="ch")` no se usa; `pmdarima` tampoco).
+  - **Frontera con el capítulo 6 (acordada al empezar T7):** el capítulo 5 **pronostica** con SARIMA y
+    enseña la forma escalonada del abanico, y compara métodos sobre **una sola partición fija** para
+    mostrar que eso no basta. El capítulo 6 **no debe repetir** la construcción del intervalo (capítulo 4)
+    ni la comparación de métodos de una partición: le toca el **método** —origen móvil, cobertura empírica
+    frente a la nominal, métricas y su interpretación—. Las cifras de los 61 orígenes ya calculadas están
+    en `cap5_sarima.json` (`airpassengers.comparativa.origen_movil`) y se citan en el módulo 11 como
+    advertencia, no como contenido.
+  - *Dependencias:* T2, T6. *Tamaño:* L.
+
+- [x] **T7b · Componente `.mapa-estacional`** (nuevo en la plantilla, decisión de Javier).
+  Mapa de calor mes × año en rejilla CSS, **sin dependencias nuevas**: los años en las filas y los meses en
+  las columnas, de modo que un mes sistemáticamente alto dibuja una banda vertical y la diferencia
+  estacional la borra ante los ojos. Escala secuencial (verde) para niveles y divergente (naranja ↔ verde)
+  centrada en cero para series ya diferenciadas; los huecos que dejan las diferencias van con trama, no en
+  blanco. El valor va **escrito dentro de la celda** y repetido en su nombre accesible, así que el color
+  nunca es el único canal; con más de 20 filas se omite el número y queda solo en el `aria-label`.
+  Semántica de tabla (`role="table"/"rowheader"/"columnheader"/"cell"`). 13 reglas CSS +
+  `pintarMapaEstacional()` + `matrizMesAnio()` + `iniciarMapasEstacionales()`, con fuentes compartidas en
+  `ensamblado/componentes/` (`mapa_estacional.css`, `.js`, `_html.py`) para que las tres instancias tengan
+  marcado idéntico. El registro `MAPAS_ESTACIONALES['id']` admite **una función**, de modo que un simulador
+  puede repintarlo y una instancia estática puede leer datos definidos más abajo en el archivo.
+  - **Instancias:** simulador "mapa y correlograma en paralelo" del capítulo 5 (4 series × 4
+    diferenciaciones × logaritmo sí/no); y **retropropagado** (`ensamblado/retropropaga_mapa.py`):
+    `AirPassengers` mes × año en el módulo 3 del capítulo 1 —el de visualización estacional— y una
+    demostración con serie sintética de semilla fija en la plantilla, en la misma sesión, como exige la
+    regla del Checkpoint 0. Los capítulos 2, 3 y 4 **no** lo reciben: ninguno trata la estacionalidad.
+  - *Verificado en los tres archivos:* las 13 reglas CSS presentes; consola y KaTeX sin errores; los
+    simuladores y autoevaluaciones previos intactos; 144 celdas en el capítulo 1, 96 en la plantilla y
+    132 con 1 hueco en la vista diferenciada del capítulo 5; hueco mínimo 8 px (7 px en el capítulo 1 y en
+    la plantilla, que usan `font-size` raíz de 14 px en vez de 16: es el mismo `0.5rem`); y el conjunto de
+    selectores del capítulo 5 **idéntico** al de la plantilla.
+
+- [x] **T8 · Capítulo 6** (pronóstico y evaluación) — `Htmls_Series/capitulo-6-pronostico-evaluacion.html`.
+  12 módulos: (1) residual frente a error de pronóstico, (2) los métodos de referencia, (3) RMSE y MAE,
+  (4) MAPE y sMAPE, (5) MASE y RMSSE, (6) partición temporal y fuga de información, (7) validación de
+  origen móvil, (8) backtesting y Diebold–Mariano, (9) cobertura y puntaje de Winkler, (10) tres casos
+  con tres desenlaces, (11) taller de auditoría de un análisis asistido por IA, (12) el proyecto y cierre
+  del curso. **14 simuladores interactivos**, 8 preguntas de autoevaluación con los 4 tipos, un segundo
+  `.quiz` para el taller, 3 ejercicios guiados, 1 caja de derivación, una instancia del `.ciclo` de 5
+  etapas y el componente nuevo `.tabla-ranking` (dos instancias). Precálculo en `precalculo/genera_cap6.R`
+  → `cap6_evaluacion.json` / `cap6_datos.js`; soluciones en `genera_soluciones.R`; verificación de bloques
+  en `precalculo/verifica_bloques_cap6.py`. Ensamblado por sustitución de regiones sobre el capítulo 5
+  (`ensamblado/ensambla_cap6.py`), que además **instala el componente nuevo** en la región compartida.
+  - **Fronteras respetadas:** el capítulo 4 construye el intervalo desde los pesos $\psi$ y el capítulo 5
+    compara métodos sobre una sola partición. El 6 no repite ninguna de las dos cosas: la partición única
+    solo define los métodos de referencia (contenido nuevo), y el intervalo se **evalúa**, no se construye.
+  - *Verificado:* consola sin errores ni avisos en los 12 módulos; **0 errores KaTeX en 629 fórmulas**;
+    canvas = `graficosActivos` en todos (17 gráficos, creados y destruidos al cambiar de módulo); los
+    **14 bloques de R y los 11 de Python se ejecutan ENCADENADOS y las 390 cifras anunciadas en sus
+    comentarios `#>` aparecen en la salida real** (390 de 390, comprobado por script); las métricas
+    implementadas a mano coinciden con `forecast::accuracy` con **diferencia 0**; el RMSE medio de los
+    orígenes reconcilia **exactamente** con las cuatro cifras que publicó el capítulo 5 (snaive 41.238,
+    sarima 16.812, ets 21.416, stl 21.848; diferencia máxima 0.0003, que es su redondeo); los 14
+    simuladores responden en valores extremos y reproducen las cifras de R; las dos tablas de ranking
+    reordenan con `aria-sort`, anuncian en `role="status"` y marcan el mejor valor; autoevaluación con los
+    4 tipos y casos límite (numérica justo dentro y justo fuera de la tolerancia, coma decimal, texto,
+    vacío; múltiple parcial —"de las 3 que marcaste, 3 están en la respuesta y te faltan 3"—; el reintento
+    **no** revela) y **sin acumulación de gráficos** tras 8 reinicios; el `.ciclo` navega con las flechas y
+    da la vuelta en los dos sentidos; **conjunto de selectores CSS idéntico al de la plantilla (224 = 224,
+    cero diferencias)**; geometría medida en 74 pares consecutivos con hueco mínimo **8 px**, mediana 16 px,
+    sin desbordes ni scroll horizontal. `ensambla_cap6.py` es reejecutable y reproduce el archivo
+    **byte a byte**.
+  - *Hallazgos de la auditoría (todos incorporados al capítulo):*
+    1. **`accuracy()` cambia la definición del MASE según la CLASE del conjunto de prueba.** Decide la
+       escala con `frequency(x)`: con un `ts` mensual usa el naïve estacional ($Q = 28.5741$) y devuelve
+       $2.4935$; con el **mismo vector** pasado por `as.numeric()`, `frequency` vale 1, usa el naïve simple
+       ($Q = 22.1597$) y devuelve $3.2153$. Un **28.9 %** de diferencia sin ningún aviso. Es ahora caja de
+       advertencia del módulo 5 y uno de los seis fallos del taller del módulo 11.
+    2. **La afirmación de manual sobre la validación cruzada aleatoria es falsa tal cual se enuncia.** Medida
+       sobre cinco montajes, el $k$-fold aleatorio **no** sobrestima el desempeño con una regresión sobre
+       rezagos (optimismo **−21.8 %**); sí lo hace, y mucho, cuando el modelo **interpola en el tiempo**:
+       $+40.0$ % con 1 vecino, $+58.0$ % con 3, $+37.0$ % con tendencia e indicadoras de mes y $+99.0$ %
+       con un polinomio de grado 8 ($0.1351$ prometido frente a $12.8984$ real, un factor de 95). El módulo 6
+       enseña la versión medida, que es más útil que el eslogan.
+    3. **`tsCV` tiene dos trampas y ninguna avisa.** (a) Su matriz de errores es **desbalanceada**: la columna
+       $h=1$ tiene 72 errores y la $h=12$ solo 61, así que `sqrt(colMeans(e^2, na.rm=TRUE))` compara
+       horizontes sobre muestras distintas. (b) `initial` y `window` **no empiezan en el mismo sitio**:
+       `initial = 72` hace que el primer origen sea el 73 y `window = 72` que sea el 72. Con `initial = 71` y
+       filtrando las filas completas, `tsCV` reproduce exactamente el 18.9154 del capítulo; sin filtrar da
+       18.7452 y con `initial = 72`, 18.9422.
+    4. **El sesgo destruye el intervalo estrecho antes que el ancho, y se puede medir.** El naïve estacional
+       cubre solo el **46.0 %** al nivel nominal del 80 % y un correcto **93.4 %** al 95 %: su sesgo relativo
+       $\bar e/\text{RMSE}$ es $0.909$, así que la banda de $\pm1.28\sigma$ se queda del lado equivocado y la
+       de $\pm1.96\sigma$ todavía alcanza. **Comprobar solo el 95 % habría dado por bueno ese intervalo.**
+    5. **El mejor pronosticando es el peor calibrado, y aun así gana en Winkler.** El SARIMA es primero en
+       las cinco métricas puntuales y sus intervalos cubren el 98.4 % cuando prometen el 95 % (quinto puesto
+       por cobertura); por Winkler vuelve a ser primero (104.1), porque el puntaje paga el ancho una vez y el
+       fallo cuarenta veces. Cobertura y Winkler dan ganadores distintos y las dos preguntas son legítimas.
+    6. **`auto.arima` es el mismo modelo con otro nombre, y cuesta 270 veces más.** No hay diferencia
+       significativa con el *airline* a ningún horizonte ($p = 0.9662$, $0.4245$, $0.2744$), el SARIMA solo le
+       gana en el **45.9 %** de los orígenes —menos de la mitad—, y tarda 118.61 s frente a 0.44 s.
+    7. **A $h = 12$ el SARIMA deja de ganar.** No se distingue del naïve estacional ($p = 0.0600$), ni del STL
+       ($p = 0.1039$), ni de la deriva ($p = 0.7241$, cuyo RMSE a ese horizonte es incluso menor), y
+       **pierde** contra el ETS ($\text{DM} = 3.5558$, $p = 0.0007$). El agregado dice otra cosa.
+    8. **El Nilo invierte el veredicto y eso corrige la lectura del capítulo 4.** Con la partición de aquel
+       capítulo la **deriva** es primera (122.28), por delante del naïve (123.06) y del ARIMA(1,1,1) (125.05);
+       sobre 36 orígenes la deriva pasa a ser **última** (161.27) y gana el ARIMA (121.37). El capítulo 4 no
+       tiene ningún error de cálculo: el error habría sido decidir con 20 observaciones de un solo tramo.
+    9. **`USAccDeaths` da la misma lección en el ejercicio 1, y más fuerte.** La partición única corona al
+       *airline* (288.83) y el origen móvil corona al naïve estacional (331.33 frente a 434.92); Diebold–Mariano
+       dice además que la diferencia no es significativa a ningún horizonte ($p$ entre 0.22 y 0.95). Con seis
+       años de datos, dos parámetros no pagan su costo.
+    10. **El MAPE no se puede leer en términos absolutos entre series (ejercicio 2).** Sobre `co2`, el método
+       de la media saca un MAPE de $7.60\,\%$ —mejor que el $15.52\,\%$ del naïve estacional sobre
+       AirPassengers— y su MASE es $21.99$: veintidós veces peor que la referencia. La causa es que el co2
+       solo varía un $17.13\,\%$ en toda la serie.
+    11. **Los intervalos del Nilo se pasan en los cinco niveles y no es culpa de la normalidad (ejercicio 3).**
+       Shapiro da $p = 0.7312$ y aun así el 50 % nominal cubre el 63.9 % (ARIMA) y el 79.4 % (naïve). El
+       problema es el ancho, y **solo se ve mirando el nivel del 50 %**: al 95 % los dos cubren el 100 % y son
+       indistinguibles.
+    12. **Bug propio, del tipo que ya costó una sesión: inventé la clase `.quiz-pie`**, que no existe en
+       ninguna hoja de estilos. El andamiaje funcionaba —el JavaScript encontraba sus elementos— pero el pie
+       de las dos autoevaluaciones se veía **sin estilo**, con 0 px entre las preguntas y el marcador. Se
+       sustituyó por el marcado de la casa (`.quiz-resumen` + `.quiz-marcador`) y se añadió la aserción
+       correspondiente al script de ensamblado. Es exactamente el fallo de T4d con otro nombre.
+    13. **11 de las 22 cifras que escribí a mano en los comentarios `#>` estaban mal**, algunas por un factor
+       de dos. Se escribió `precalculo/verifica_bloques_cap6.py`, que extrae los bloques, los ejecuta
+       encadenados y contrasta cada número; el capítulo se publica con **390 de 390** verificadas. El dato es
+       ahora contenido del módulo 11.
+    14. **Trampa de método propia: trabajé un rato con un volcado de datos obsoleto.** Al alinear el ETS y el
+       STL con las definiciones del capítulo 5, sus cifras cambiaron (ETS de 23.82 a 23.17, STL de 19.78 a
+       23.63) y con ellas el orden de la tabla y dos párrafos del módulo 8. Lo detectó el verificador de
+       bloques, no la relectura. **Tras regenerar un JSON hay que volver a leerlo, no fiarse del volcado.**
+  - *Desviaciones sobre el plan:* (a) el plan pedía 9 módulos y un simulador; se hicieron **12 módulos y 14
+    simuladores**, con el alcance ampliado que eligió Javier: MASE y RMSSE completos, evaluación del intervalo
+    (cobertura y Winkler), Diebold–Mariano, y el taller de auditoría de IA de la semana 15. (b) El taller
+    **no estrena componente**: es una pregunta de selección múltiple del `.quiz` en su propio contenedor
+    `data-quiz="auditoria"`, porque ese componente ya corrige parcialmente y da retroalimentación por opción.
+    (c) Casos de estudio: AirPassengers (recorrido completo), TRM (nadie vence al naïve) y **Nilo** (la
+    partición única y el origen móvil dan ganadores opuestos), más `USAccDeaths` y `co2` en los ejercicios.
+    (d) El archivo pesa **445 KB**, por encima del límite de la tabla de riesgos: mismo criterio que en los
+    capítulos 2 a 5. (e) **No se instaló ningún paquete nuevo.**
+  - *Dependencias:* T2, T7. *Tamaño:* L.
+
+- [x] **T8b · Componente `.tabla-ranking`** (nuevo en la plantilla, decisión de Javier).
+  Tabla comparativa **ordenable**: al pulsar la cabecera de una métrica la tabla se reordena, se renumeran los
+  puestos, se ilumina la fila ganadora y se marca el mejor valor de la columna activa. Es el argumento del
+  capítulo —«el orden depende de la pregunta»— convertido en componente. Sin dependencias nuevas: una `<table>`
+  de verdad con cabeceras que son botones, `aria-sort` en el `<th>`, `scope` en filas y columnas, `<caption>`, y
+  cada reordenación anunciada en una región `role="status"`. Admite tres criterios por columna —`menor`, `mayor`
+  y **`cerca` de un objetivo**, que es el único que sabe expresar lo que se le pide a una cobertura nominal—.
+  Fuentes compartidas en `ensamblado/componentes/` (`tabla_ranking.css`, `.js`, `_html.py`).
+  - **Instancias:** backtesting de 8 métodos y comparación del Nilo en el capítulo 6; y **retropropagado**
+    (`ensamblado/retropropaga_ranking.py`): los 11 candidatos ARMA de las manchas solares en el capítulo 3, la
+    **rejilla de 27 modelos del Nilo con su $n$ efectivo a la vista** en el capítulo 4 —ordenar por AICc corona
+    a un modelo con $d=2$ evaluado sobre 98 observaciones, que es justo el error que ese capítulo enseña a no
+    cometer—, la comparativa de 6 métodos del capítulo 5, y una demostración en la plantilla, en la misma
+    sesión, como exige la regla del Checkpoint 0. Los capítulos 1 y 2 **no** lo reciben: ninguno tiene una tabla
+    comparativa de modelos que ordenar (mismo criterio que con `.mapa-estacional`).
+  - *Verificado en los cinco archivos:* consola sin errores; las tablas reordenan y renumeran; `aria-sort` queda
+    en exactamente una columna; los anuncios de `role="status"` nombran la columna y el nuevo primero; el
+    conjunto de selectores del capítulo 6 y del 5 es **idéntico al de la plantilla** (224) y ningún archivo tiene
+    selectores que la plantilla no tenga; hueco mínimo 8 px tras subir el margen de `.tabla-ranking-estado` de
+    0.4rem a 0.6rem, que medía 6.4 px.
+
+- [x] **T8c · Bug del `.quiz` corregido en los seis capítulos y en la plantilla** (encontrado auditando T8).
+  Al **acertar** una pregunta de selección múltiple, `renderAutoevaluacion()` escribía `p.retroAcierto`, que en
+  ese tipo de pregunta **nunca se define**, y el estudiante veía literalmente la palabra «undefined» detrás de
+  «Correcto». Son **9 preguntas en 7 archivos** y estaba ahí desde T4c. Corregido por partida doble: `cerrar()`
+  ya no imprime un valor indefinido, y la rama de selección múltiple pasa como respaldo la retroalimentación de
+  **las opciones correctas, que ya estaba escrita y no se mostraba nunca**. Los dos cambios van en
+  `retropropaga_ranking.py` y se aplicaron a los seis capítulos y a la plantilla; los capítulos 1 y 2 no
+  recibieron nada más, y su diff frente al respaldo son exactamente esas dos sustituciones.
+  - *Verificado:* el `undefined` desaparece en las dos preguntas múltiples del capítulo 6 y en la del 3; la
+    corrección parcial sigue funcionando («de las 5 que marcaste, 3 están en la respuesta»); el JavaScript de
+    los siete archivos pasa `node --check`.
 
 ### Checkpoint 2
 - [ ] Los 6 capítulos abren sin errores; navegación cruzada entre capítulos consistente; revisión de contenido de Javier.

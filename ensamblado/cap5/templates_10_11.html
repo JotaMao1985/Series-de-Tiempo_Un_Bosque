@@ -1,0 +1,668 @@
+  <template id="module-10">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 10</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">5.10 Cuando $m$ es grande: Fourier y STL
+          <span class="text-gray-400 font-normal text-2xl">/ When $m$ is large: Fourier terms and STL</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Saber dónde deja de servir el SARIMA y qué se usa
+              entonces: regresión armónica y STL + ARIMA, con su coste y su trampa de comparación.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Todo lo anterior descansa en que $m = 12$ sea pequeño. Con datos semanales ($m = 52$), diarios con patrón
+        anual ($m = 365.25$) o media horarios ($m = 48$ y $m = 336$ a la vez), el SARIMA se rompe por tres sitios
+        distintos.</p>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Problema</th><th>Con $m = 12$</th><th>Con $m = 52$</th><th>Con $m = 365$</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Observaciones que cuesta $\nabla_m$</td><td>$12$</td><td>$52$</td><td>$365$</td></tr>
+            <tr><td>Rezago que alcanza un solo $\Theta$</td><td>$12$</td><td>$52$</td><td>$365$</td></tr>
+            <tr><td>Términos de Fourier con $K=3$</td><td>$6$</td><td>$6$</td><td>$6$</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Las dos primeras filas crecen con $m$; la tercera no. Con tres años de datos semanales ($n = 156$),
+        $\nabla_{52}$ deja $104$ observaciones para estimar un modelo cuyo polinomio llega al rezago $52$. Y el patrón
+        anual con datos diarios ni siquiera es entero: $365.25$ no es un número de rezagos. En la práctica,
+        <code>auto.arima</code> con una serie de frecuencia $365$ devuelve un modelo <strong>sin ninguna parte
+        estacional</strong>, y lo hace en silencio.</p>
+
+      <h3>Regresión armónica: la estacionalidad como suma de senos</h3>
+
+      <div class="definition">
+        <h4><i class="fas fa-wave-square mr-2" aria-hidden="true"></i>Definición: términos de Fourier</h4>
+        $$y_t = \beta_0 + \sum_{k=1}^{K}\left[\alpha_k \sin\!\left(\frac{2\pi k t}{m}\right)
+          + \gamma_k \cos\!\left(\frac{2\pi k t}{m}\right)\right] + n_t$$
+        <p style="margin-bottom:0;">con $n_t$ un ARIMA <strong>no estacional</strong>. Cuesta $2K$ parámetros
+          <em>independientemente de $m$</em>, y $K$ controla la suavidad: $K=1$ da una sinusoide pura, y $K$ mayor
+          admite formas más quebradas. El máximo útil es $K = m/2$; ahí los términos son tantos como meses y
+          <strong>equivalen exactamente a $m-1$ indicadoras mensuales</strong> —con $m=12$, once—. Pasado ese punto no
+          hay nada nuevo que añadir.</p>
+      </div>
+
+      <div class="simulador" data-simulador="armonicos-K">
+        <h4><i class="fas fa-sliders" aria-hidden="true"></i> ¿Cuántos armónicos hacen falta?</h4>
+        <p class="simulador-intro">El deslizador mueve $K$ sobre $\log(\text{AirPassengers})$: arriba, la componente
+          estacional que dibujan los $2K$ términos; abajo, el AICc <strong>dentro de la familia armónica</strong> y el
+          $p$-valor de Ljung–Box. Fíjate en dónde deja de rechazar el diagnóstico: hasta $K=4$ los residuales
+          conservan estructura estacional, y hace falta llegar a $K=5$ para que la sinusoide represente bien el pico de
+          verano.</p>
+        <div class="simulador-controles"></div>
+        <p class="grafico-etiqueta">Componente estacional ajustada por los $2K$ términos</p>
+        <div class="grafico-wrapper" style="height:220px;">
+          <canvas aria-label="Componente estacional con K términos de Fourier" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>$K$</th><th>Términos</th><th>Parámetros totales</th><th>$n$ efectivo</th><th>Errores</th><th>AICc</th><th>Ljung–Box($24$)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>$1$</td><td>$2$</td><td>$8$</td><td>$143$</td><td>ARIMA($5,1,0$)</td><td>$-359.18$</td><td>$&lt; 10^{-4}$</td></tr>
+            <tr><td>$2$</td><td>$4$</td><td>$9$</td><td>$143$</td><td>ARIMA($0,1,4$)</td><td>$-409.18$</td><td>$&lt; 10^{-4}$</td></tr>
+            <tr><td>$3$</td><td>$6$</td><td>$11$</td><td>$143$</td><td>ARIMA($2,1,2$)</td><td>$-460.96$</td><td>$&lt; 10^{-4}$</td></tr>
+            <tr><td>$4$</td><td>$8$</td><td>$14$</td><td>$143$</td><td>ARIMA($1,1,4$)</td><td>$-495.24$</td><td>$0.0001$</td></tr>
+            <tr><td>$5$</td><td>$10$</td><td>$15$</td><td>$143$</td><td>ARIMA($0,1,4$)</td><td>$-521.22$</td><td>$0.1341$</td></tr>
+            <tr><td>$6$</td><td>$11$</td><td>$16$</td><td>$143$</td><td>ARIMA($0,1,4$)</td><td>$\mathbf{-521.45}$</td><td>$0.1100$</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="warning">
+        <p><strong>La trampa de esta tabla, y es la lección central del módulo.</strong> Es muy tentador poner el AICc
+          del <em>airline</em> ($-483.21$) en esa última columna y concluir que la regresión armónica con $K=5$ lo
+          supera por $38$ puntos. <strong>Es exactamente el error que el Capítulo 4 documentó con $d$, ahora con
+          $D$.</strong> Los modelos armónicos usan $D=0$ y su verosimilitud se evalúa sobre $143$ observaciones; el
+          <em>airline</em> usa $D=1$ y la evalúa sobre $131$. Son <em>doce puntos de datos distintos</em>: los números
+          no viven en la misma escala. Dentro de la familia armónica —todas con $D=0$, mismo $n$— la columna sí
+          compara, y por eso se puede elegir $K$. Entre familias, <strong>solo fuera de muestra</strong>, que es el
+          Módulo 11.</p>
+      </div>
+
+      <h3>STL + ARIMA: quitar la estación primero</h3>
+
+      <p>La tercera vía usa la descomposición del Capítulo 1: se separa la componente estacional con STL, se modela con
+        un ARIMA <strong>la serie desestacionalizada</strong>, y al pronosticar se vuelve a sumar el patrón estacional
+        (repitiendo el último ciclo estimado). Sobre $\log(\text{AirPassengers})$ da errores ARIMA($1,1,1$) con deriva.
+        Sus ventajas: admite cualquier $m$, tolera que el patrón cambie despacio y es rápido. Su límite: supone que la
+        estacionalidad <strong>no interactúa</strong> con la dinámica, y su incertidumbre no incluye la del propio
+        patrón estacional.</p>
+
+      <div class="note">
+        <p><strong>Cuándo elegir cuál.</strong> $m$ pequeño y patrón que evoluciona → <strong>SARIMA</strong>.
+          $m$ grande, o varias estacionalidades a la vez (día de la semana <em>y</em> día del año) →
+          <strong>Fourier</strong>, que admite un bloque de términos por cada periodo. Series muy largas donde el
+          patrón cambia de forma con los años → <strong>STL</strong>. Y con $m = 12$ y una serie de doce años, como
+          esta, la respuesta del Módulo 11 es que el SARIMA sigue ganando: el argumento de Fourier es para cuando
+          el SARIMA no cabe, no para cuando cabe.</p>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Fourier y STL">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r">
+          <pre><code class="language-r">library(forecast)
+ap &lt;- log(AirPassengers)
+
+# --- Regresion armonica: 2K parametros, INDEPENDIENTES de m -----------------
+for (K in 1:6) {
+  xr &lt;- fourier(ap, K = K)
+  f  &lt;- auto.arima(ap, xreg = xr, seasonal = FALSE, stepwise = FALSE, approximation = FALSE)
+  cat(sprintf("K=%d  terminos=%2d  n_ef=%d  %-36s AICc=%9.2f  LB=%.4f\n",
+      K, ncol(xr), f$nobs, as.character(f), f$aicc,
+      Box.test(residuals(f), lag = 24, type = "Ljung-Box", fitdf = sum(f$arma[1:4]))$p.value))
+}
+#&gt; K=1  terminos= 2  n_ef=143  Regression with ARIMA(5,1,0) errors   AICc =  -359.18  LB=0.0000
+#&gt; K=2  terminos= 4  n_ef=143  Regression with ARIMA(0,1,4) errors   AICc =  -409.18  LB=0.0000
+#&gt; K=3  terminos= 6  n_ef=143  Regression with ARIMA(2,1,2) errors   AICc =  -460.96  LB=0.0000
+#&gt; K=4  terminos= 8  n_ef=143  Regression with ARIMA(1,1,4) errors   AICc =  -495.24  LB=0.0001
+#&gt; K=5  terminos=10  n_ef=143  Regression with ARIMA(0,1,4) errors   AICc =  -521.22  LB=0.1341
+#&gt; K=6  terminos=11  n_ef=143  Regression with ARIMA(0,1,4) errors   AICc =  -521.45  LB=0.1100
+
+# NO comparar con el airline por AICc: su n efectivo es 131, no 143.
+Arima(ap, order=c(0,1,1), seasonal=list(order=c(0,1,1), period=12))$nobs
+#&gt; [1] 131
+
+# --- Por que con m grande no hay alternativa --------------------------------
+set.seed(1); n &lt;- 156
+y &lt;- ts(10 + 0.02*(1:n) + 2*sin(2*pi*(1:n)/52) + rnorm(n, 0, 0.5), frequency = 52)
+n - 52                                 # lo que deja nabla_52
+#&gt; [1] 104
+ncol(fourier(y, K = 3))                # los armonicos no dependen de m
+#&gt; [1] 6
+z &lt;- ts(rnorm(800), frequency = 365)
+as.character(auto.arima(z))            # con m = 365 renuncia a la estacionalidad
+#&gt; [1] "ARIMA(0,0,0) with zero mean"
+
+# --- STL + ARIMA ------------------------------------------------------------
+s &lt;- stlm(ap, s.window = "periodic", method = "arima")
+as.character(s$model)
+#&gt; [1] "ARIMA(1,1,1) with drift"</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python">
+          <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm, warnings
+from statsmodels.tsa.deterministic import Fourier, DeterministicProcess
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.tsa.seasonal import STL
+warnings.filterwarnings("ignore")
+
+ap = np.log(sm.datasets.get_rdataset("AirPassengers").data["value"].values)
+s = pd.Series(ap, index=pd.date_range("1949-01", periods=len(ap), freq="MS"))
+
+# Fourier: statsmodels los genera con DeterministicProcess. Fijamos los errores
+# en ARIMA(0,1,4) para que la comparacion entre K sea limpia (statsmodels no
+# trae auto.arima).
+for K in range(1, 7):
+    dp = DeterministicProcess(s.index, constant=False,
+                              additional_terms=[Fourier(12, order=K)])
+    X = dp.in_sample()
+    f = SARIMAX(s, exog=X, order=(0, 1, 4), trend="n").fit(disp=False)
+    print(f"K={K}  terminos={X.shape[1]:2d}  aic={f.aic:9.2f}")
+#&gt; K=1  terminos= 2  aic=  -306.95
+#&gt; K=2  terminos= 4  aic=  -389.88
+#&gt; K=3  terminos= 6  aic=  -414.34
+#&gt; K=4  terminos= 8  aic=  -470.58
+#&gt; K=5  terminos=10  aic=  -502.38
+#&gt; K=6  terminos=12  aic=  -501.62
+
+# TRAMPA: con K = m/2, statsmodels emite 12 columnas y R solo 11. La de mas es
+# el seno de frecuencia m/2, que es IDENTICAMENTE CERO: la matriz de diseno
+# queda con rango 11 y una columna sobra.
+X = DeterministicProcess(s.index, constant=False,
+                         additional_terms=[Fourier(12, order=6)]).in_sample()
+print(X.shape[1], np.linalg.matrix_rank(X.values),
+      [c for c in X.columns if X[c].abs().max() &lt; 1e-12])
+#&gt; 12 11 ['sin(6,12)']
+# Hay que quitarla a mano: X = X.drop(columns="sin(6,12)")
+
+# STL: aqui se descompone y se modela el resto a mano
+res = STL(s, period=12, robust=False).fit()
+desestacionalizada = s - res.seasonal
+f = SARIMAX(desestacionalizada, order=(1, 1, 1), trend="t").fit(disp=False)
+print(round(f.aic, 2))
+#&gt; -643.05
+# Cuidado: este AIC no se compara con NINGUNO de los anteriores. Ni siquiera
+# modela la misma serie: modela la desestacionalizada. Y R da -542.95 porque
+# su stlm() estima la componente estacional de otra forma.</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="module-11">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 11</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">5.11 Panorama comparativo y cierre
+          <span class="text-gray-400 font-normal text-2xl">/ Comparative overview and wrap-up</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Situar el SARIMA entre las alternativas modernas, y ver
+              con un ejemplo por qué una sola partición no permite decidir entre ellas.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>La comparación, hecha mal a propósito</h3>
+
+      <p>Todo el capítulo ha usado criterios <em>dentro</em> de la muestra, y el Módulo 10 acaba de mostrar que entre
+        familias distintas eso no vale. La alternativa evidente es partir la serie: entrenar con los primeros $120$
+        meses y medir el error en los últimos $24$. Cada método se ajusta como se usaría de verdad —ETS sobre la serie
+        cruda, donde su estacionalidad multiplicativa es la natural; la familia ARIMA sobre el logaritmo— y todas las
+        métricas se calculan en la escala original, que es la única en la que son comparables.</p>
+
+      <div class="simulador" data-simulador="comparativa-particion">
+        <h4><i class="fas fa-ranking-star" aria-hidden="true"></i> Ocho métodos sobre los últimos 24 meses</h4>
+        <p class="simulador-intro">El selector cambia la métrica y los interruptores encienden y apagan métodos en el
+          gráfico. Los ocho pronósticos están calculados en R sobre el mismo conjunto de entrenamiento (hasta
+          1958-12). Antes de leer el párrafo siguiente, apunta cuál dirías que es el mejor método.</p>
+        <div class="simulador-controles"></div>
+        <div class="simulador-lectura"></div>
+        <div class="grafico-wrapper" style="height:280px;">
+          <canvas aria-label="Pronósticos de los ocho métodos frente a lo observado" role="img"></canvas>
+        </div>
+      </div>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Método</th><th>Escala</th><th>$k$</th><th>RMSE</th><th>MAE</th><th>MAPE %</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>ETS($M,A,M$) sobre el logaritmo</td><td>log</td><td>$16$</td><td>$\mathbf{19.43}$</td><td>$16.13$</td><td>$3.55$</td></tr>
+            <tr><td>Regresión armónica $K=6$ + ARIMA</td><td>log</td><td>$16$</td><td>$19.51$</td><td>$\mathbf{14.69}$</td><td>$\mathbf{3.15}$</td></tr>
+            <tr><td>STL + ARIMA</td><td>log</td><td>$2$</td><td>$35.48$</td><td>$30.29$</td><td>$6.33$</td></tr>
+            <tr><td><strong>SARIMA <em>airline</em></strong></td><td>log</td><td>$2$</td><td>$43.18$</td><td>$39.45$</td><td>$8.52$</td></tr>
+            <tr><td><code>auto.arima</code> (elige el <em>airline</em>)</td><td>log</td><td>$2$</td><td>$43.18$</td><td>$39.45$</td><td>$8.52$</td></tr>
+            <tr><td>SARIMA <em>airline</em> + calendario</td><td>log</td><td>$4$</td><td>$45.48$</td><td>$41.45$</td><td>$8.95$</td></tr>
+            <tr><td>ETS($M,A_d,M$) sobre la serie cruda</td><td>original</td><td>$17$</td><td>$72.55$</td><td>$63.21$</td><td>$13.30$</td></tr>
+            <tr><td>Naïve estacional</td><td>original</td><td>$0$</td><td>$76.99$</td><td>$71.25$</td><td>$15.52$</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>La tabla es demoledora: el modelo que ha ocupado once módulos queda <strong>cuarto</strong>, con más del doble
+        de RMSE que el ganador, y ni siquiera le gana al ETS aplicado sobre la misma escala. Un lector razonable
+        cerraría el capítulo concluyendo que el SARIMA no vale para esta serie.</p>
+
+      <div class="warning">
+        <p><strong>Esa conclusión es falsa, y demostrarlo es la razón de ser del Capítulo 6.</strong> Repitiendo
+          exactamente la misma comparación sobre <strong>$61$ orígenes</strong> en vez de uno —avanzando el corte mes a
+          mes y midiendo siempre a $12$ meses vista— el orden <strong>se invierte por completo</strong>:</p>
+      </div>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Método</th><th>RMSE medio sobre $61$ orígenes</th><th>% de orígenes en que le gana al SARIMA</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>SARIMA <em>airline</em></strong></td><td>$\mathbf{16.81}$</td><td>—</td></tr>
+            <tr><td>ETS sobre el logaritmo</td><td>$21.42$</td><td>$8.2\,\%$</td></tr>
+            <tr><td>STL + ARIMA</td><td>$21.85$</td><td>$8.2\,\%$</td></tr>
+            <tr><td>Regresión armónica $K=6$</td><td>$22.39$</td><td>$9.8\,\%$</td></tr>
+            <tr><td>ETS sobre la serie cruda</td><td>$26.38$</td><td>$14.8\,\%$</td></tr>
+            <tr><td>Naïve estacional</td><td>$41.24$</td><td>$11.5\,\%$</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>El SARIMA no solo gana de media: le gana a cada rival en <strong>más del $85\,\%$ de los orígenes</strong>. Lo
+        que ocurría en la tabla anterior es que los años 1959–1960 tienen un crecimiento especialmente regular, y ahí
+        una estacionalidad determinista extrapola mejor que una estocástica. Con $24$ puntos de prueba, el azar de
+        <em>qué</em> $24$ pesa más que la diferencia entre los métodos.</p>
+
+      <div class="note">
+        <p><strong>Puente con el Capítulo 6.</strong> Lo que acaba de pasar —una conclusión que se invierte al cambiar
+          la partición— es exactamente el problema que el capítulo siguiente resuelve: validación de <em>origen
+          móvil</em>, cobertura empírica de los intervalos frente a la nominal, y métricas que se puedan comparar entre
+          series. Aquí se han citado sus resultados como advertencia; allí se construye el método.</p>
+      </div>
+
+      <h3>SARIMA frente a lo que se usa hoy</h3>
+
+      <p>La pregunta legítima al terminar es por qué estudiar un modelo de 1970. La respuesta corta: porque sigue
+        ganando en el régimen para el que fue diseñado —series de decenas o cientos de observaciones, con una
+        estacionalidad y sin variables externas—, y porque las alternativas se entienden mucho mejor sabiendo qué
+        hace él. La respuesta larga es esta tabla, escrita en términos de <em>cuándo</em>, no de <em>cuál es
+        mejor</em>.</p>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Método</th><th>Qué supone</th><th>Dónde brilla</th><th>Dónde falla</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>SARIMA</strong></td>
+              <td>Estacionariedad tras diferenciar; una estacionalidad de periodo $m$ pequeño y conocido</td>
+              <td>$n$ de decenas a cientos; intervalos con base teórica; diagnóstico contrastable</td>
+              <td>$m$ grande o múltiple; quiebres estructurales; muchas series a la vez</td>
+            </tr>
+            <tr>
+              <td><strong>ETS</strong> (Holt–Winters y familia)</td>
+              <td>Nivel, tendencia y estación que evolucionan con suavizamiento exponencial</td>
+              <td>Muy robusto y automático; estacionalidad multiplicativa nativa</td>
+              <td>No admite regresores; no modela autocorrelación residual</td>
+            </tr>
+            <tr>
+              <td><strong>Regresión armónica</strong></td>
+              <td>Estacionalidad determinista, suma de sinusoides</td>
+              <td>$m$ grande o varias estacionalidades; admite regresores</td>
+              <td>El patrón no puede cambiar con los años</td>
+            </tr>
+            <tr>
+              <td><strong>Prophet</strong></td>
+              <td>Tendencia lineal a trozos + Fourier + festivos, ajustado en un marco bayesiano</td>
+              <td>Series de negocio largas con quiebres y calendarios complejos; poco tuneo</td>
+              <td>Menos preciso que ETS/ARIMA en competencias estándar; los intervalos suelen quedar mal calibrados</td>
+            </tr>
+            <tr>
+              <td><strong>RNN / LSTM</strong></td>
+              <td>La relación entre pasado y futuro se aprende de los datos, sin forma funcional</td>
+              <td>Miles de series relacionadas entrenadas juntas; relaciones no lineales</td>
+              <td>Con una serie de $144$ puntos no hay con qué entrenar; sin intervalos salvo que se construyan aparte</td>
+            </tr>
+            <tr>
+              <td><strong>Transformers temporales</strong></td>
+              <td>Atención sobre ventanas largas; a menudo modelos base preentrenados</td>
+              <td>Horizontes largos, muchas covariables, catálogos de miles de series</td>
+              <td>Coste de cómputo; difícil de auditar; en series cortas suele perder frente a lo clásico</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note">
+        <p><strong>Una advertencia sobre las cifras que no están aquí.</strong> Esta tabla no trae RMSE de Prophet ni
+          de una LSTM, y es deliberado: no están instalados en el entorno del curso, y poner números de memoria o
+          copiados de otro estudio sería justo lo que este material lleva cinco capítulos enseñando a no hacer. Las
+          columnas "dónde brilla" y "dónde falla" resumen resultados de las competencias M4 y M5 y de la literatura de
+          <em>forecasting</em>; las cifras de la comparación de arriba, en cambio, están todas calculadas sobre esta
+          serie y se pueden reproducir con el código del capítulo.</p>
+      </div>
+
+      <h3>Resumen del capítulo</h3>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Idea</th><th>Dónde queda</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>La estacionalidad se ve en $m, 2m, 3m$, y solo sobre la serie sin tendencia</td><td>Módulos 1 y 8</td></tr>
+            <tr><td>La parte estacional <strong>multiplica</strong>: genera satélites en $m \pm 1$ que no cuestan parámetros</td><td>Módulos 2 y 4</td></tr>
+            <tr><td>Primero $D$, después $d$: los operadores conmutan, las pruebas no</td><td>Módulo 3</td></tr>
+            <tr><td>Sobrediferenciar deja firma algebraica: $\hat\Theta \to -1$ y raíz sobre el círculo</td><td>Módulo 3</td></tr>
+            <tr><td>El <em>airline</em> ($0,1,1$)($0,1,1$)$_m$ es el punto de partida por defecto</td><td>Módulos 5, 7 y 8</td></tr>
+            <tr><td>El AICc no compara entre distintos $D$; Ljung–Box con $2m$ rezagos</td><td>Módulos 6 y 10</td></tr>
+            <tr><td>Calendario y fiestas móviles van como regresores, no como estacionalidad</td><td>Módulo 9</td></tr>
+            <tr><td>Con $m$ grande, Fourier o STL; con $m$ pequeño, SARIMA</td><td>Módulo 10</td></tr>
+            <tr><td>Una sola partición no decide nada</td><td>Módulo 11 → Capítulo 6</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="quiz" data-quiz="cap5">
+        <h4><i class="fas fa-circle-question" aria-hidden="true"></i> Autoevaluación</h4>
+        <p class="text-sm" style="margin-bottom:0;">Ocho preguntas de los cuatro tipos: opción única, selección
+          múltiple, respuesta numérica y diagnóstico de un gráfico. Cada opción trae su explicación, también las
+          incorrectas. Al primer fallo se muestra una pista y puedes reintentar.</p>
+        <div class="quiz-progreso" role="presentation"><div class="quiz-progreso-barra"></div></div>
+        <div class="quiz-preguntas"></div>
+        <div class="quiz-resumen" role="status" hidden></div>
+        <div class="quiz-marcador">
+          <span class="quiz-conteo"></span>
+          <button type="button" class="quiz-reiniciar">Reiniciar</button>
+        </div>
+      </div>
+
+      <h3>Ejercicios propuestos</h3>
+
+      <div class="ejercicio-guiado">
+        <p class="ejercicio-enunciado"><span class="ejercicio-numero">1.</span>Toma <code>co2</code>, la serie de
+          Mauna Loa ($n = 468$ meses). Recorre el ciclo completo: decide $D$ y $d$, identifica los cuatro órdenes,
+          ajusta la rejilla con $p \in \{0,1,2\}$, $q \in \{0,1,2,3\}$, $P, Q \in \{0,1\}$ y diagnostica. Compara
+          después tu ganador con el <em>airline</em>. Y antes de terminar, ajusta un SARIMA($0,1,1$)($0,0,1$)$_{12}$
+          —sin diferencia estacional— y <strong>explica qué pasa con su AICc</strong>.</p>
+        <div class="ejercicio-acciones">
+          <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c5e1-pista">
+            <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c5e1-sol">
+            <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="ejercicio-panel pista" id="c5e1-pista" hidden>
+          <p style="margin:0;">Para $D$ y $d$, calcula las cuatro varianzas antes de mirar ninguna prueba: caen de
+            $223.99$ a $1.4555$ (solo $\nabla$), a $0.3882$ (solo $\nabla_{12}$) y a $0.1543$ (ambas). Para la última
+            parte, no compares el AICc del modelo sin $D$ con el del <em>airline</em> hasta haber apuntado el
+            <code>$nobs</code> de cada uno; y mira además su Ljung–Box antes de sacar conclusiones.</p>
+        </div>
+        <div class="ejercicio-panel solucion" id="c5e1-sol" hidden>
+          <p><strong>Respuesta: $d=1$, $D=1$; gana ARIMA($0,1,3$)($0,1,1$)$_{12}$ por AICc y el <em>airline</em> por
+            BIC. El modelo sin diferencia estacional tiene un AICc de otro planeta —y no porque sea peor o mejor, sino
+            porque no es comparable— y además no pasa el diagnóstico.</strong></p>
+          <pre><code class="language-r">library(forecast)
+n &lt;- length(co2)   # 468
+
+# --- Etapa 1: D y d ---------------------------------------------------------
+round(c(cruda = var(co2), d1 = var(diff(co2)),
+        D1 = var(diff(co2, lag = 12)), ambas = var(diff(diff(co2, lag = 12)))), 4)
+#&gt;    cruda       d1       D1    ambas
+#&gt; 223.9877   1.4555   0.3882   0.1543      minimo en (d=1, D=1)
+c(nsdiffs = nsdiffs(co2), ndiffs_tras_D = ndiffs(diff(co2, lag = 12)))
+#&gt;       nsdiffs ndiffs_tras_D
+#&gt;             1             1
+
+# --- Etapa 2: la rejilla, con d = 1 y D = 1 FIJOS ---------------------------
+res &lt;- data.frame()
+for (p in 0:2) for (q in 0:3) for (P in 0:1) for (Q in 0:1) {
+  f &lt;- tryCatch(Arima(co2, order = c(p,1,q),
+                      seasonal = list(order = c(P,1,Q), period = 12), method = "ML"),
+                error = function(e) NULL, warning = function(w) NULL)
+  if (is.null(f)) next
+  res &lt;- rbind(res, data.frame(m = sprintf("(%d,1,%d)(%d,1,%d)[12]", p,q,P,Q),
+    aicc = f$aicc, bic = f$bic, nobs = f$nobs,
+    lb = Box.test(residuals(f), lag=24, type="Ljung-Box", fitdf=p+q+P+Q)$p.value))
+}
+nrow(res)                                  # 47 de los 48 convergen
+#&gt; [1] 47
+c(mejor_aicc = as.character(res$m[which.min(res$aicc)]),
+  mejor_bic  = as.character(res$m[which.min(res$bic)]))
+#&gt;         mejor_aicc          mejor_bic
+#&gt; "(0,1,3)(0,1,1)[12]" "(0,1,1)(0,1,1)[12]"
+# AICc y BIC discrepan: el BIC penaliza mas y se queda con el airline.
+round(res[which.min(res$aicc), c("aicc","nobs","lb")], 4)
+#&gt;        aicc nobs    lb
+#&gt; 14 176.9982  455 0.631
+round(178.2089 - 176.9982, 3)              # el airline pierde por poco
+#&gt; [1] 1.211
+
+# --- Etapa 3: la comparacion INVALIDA que pide el enunciado -----------------
+sinD &lt;- Arima(co2, order = c(0,1,1), seasonal = list(order = c(0,0,1), period = 12))
+conD &lt;- Arima(co2, order = c(0,1,1), seasonal = list(order = c(0,1,1), period = 12))
+round(c(aicc_sinD = sinD$aicc, nobs_sinD = sinD$nobs,
+        aicc_conD = conD$aicc, nobs_conD = conD$nobs), 3)
+#&gt; aicc_sinD nobs_sinD aicc_conD nobs_conD
+#&gt;   988.100   467.000   178.209   455.000
+round(Box.test(residuals(sinD), lag=24, type="Ljung-Box", fitdf=2)$p.value, 4)
+#&gt; [1] 0        no pasa el diagnostico</code></pre>
+          <p><strong>Lo que hay que entender.</strong> Aquí el AICc sin diferencia estacional sale
+            <em>muchísimo peor</em> ($988.10$ frente a $178.21$), así que la lectura ingenua acierta por casualidad.
+            Sigue siendo inválida: se calcula sobre $467$ observaciones en vez de $455$. Y el argumento que sí es
+            válido no depende de ningún criterio de información: ese modelo <strong>no pasa Ljung–Box</strong>
+            ($p &lt; 10^{-4}$). En el Ejercicio 3 los dos AICc quedan a dos puntos y ahí la lectura ingenua sí engaña.</p>
+        </div>
+      </div>
+
+      <div class="ejercicio-guiado">
+        <p class="ejercicio-enunciado"><span class="ejercicio-numero">2.</span>Sobre <code>USAccDeaths</code>, decide
+          $d$ y $D$ de <strong>dos formas</strong>: (a) llamando primero a <code>ndiffs()</code> y luego a
+          <code>nsdiffs()</code> sobre el resultado; (b) al revés. Ajusta el modelo al que lleva cada camino, con
+          $q = Q = 1$ en ambos. ¿Producen la misma serie diferenciada? ¿Y el mismo modelo? Justifica cuál es el bueno
+          <strong>sin usar el AICc</strong>.</p>
+        <div class="ejercicio-acciones">
+          <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c5e2-pista">
+            <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c5e2-sol">
+            <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="ejercicio-panel pista" id="c5e2-pista" hidden>
+          <p style="margin:0;">La primera pregunta tiene truco: los <em>operadores</em> conmutan, así que $\nabla$ y
+            $\nabla_{12}$ aplicados en cualquier orden dan la misma serie. Lo que no conmuta es la <em>decisión</em>.
+            Y sobre por qué el AICc no sirve para elegir entre los dos modelos resultantes: mira su $d$.</p>
+        </div>
+        <div class="ejercicio-panel solucion" id="c5e2-sol" hidden>
+          <p><strong>Respuesta: los dos caminos dan modelos distintos —($0,0,1$)($0,1,1$)$_{12}$ y
+            ($0,1,1$)($0,1,1$)$_{12}$— y solo el segundo pasa el diagnóstico. Sus AICc no se pueden comparar porque
+            tienen distinto $d$.</strong></p>
+          <pre><code class="language-r">library(forecast)
+ua &lt;- USAccDeaths
+
+# (a) Camino equivocado: ndiffs primero
+d_a &lt;- ndiffs(ua); d_a
+#&gt; [1] 0
+D_a &lt;- nsdiffs(ua); D_a          # sobre la serie sin diferenciar, porque d = 0
+#&gt; [1] 1
+
+# (b) Camino correcto: nsdiffs primero
+D_b &lt;- nsdiffs(ua); D_b
+#&gt; [1] 1
+d_b &lt;- ndiffs(diff(ua, lag = 12)); d_b
+#&gt; [1] 1
+
+# ¿La serie diferenciada es la misma? Los OPERADORES conmutan:
+max(abs(diff(diff(ua, lag = 12)) - diff(diff(ua), lag = 12)))
+#&gt; [1] 0
+# pero (a) llega a d = 0 y (b) a d = 1, asi que ni siquiera diferencian lo mismo.
+
+fa &lt;- Arima(ua, order = c(0, d_a, 1), seasonal = list(order = c(0, D_a, 1), period = 12))
+fb &lt;- Arima(ua, order = c(0, d_b, 1), seasonal = list(order = c(0, D_b, 1), period = 12))
+
+# El criterio VALIDO: el diagnostico
+round(c(a = Box.test(residuals(fa), lag=24, type="Ljung-Box", fitdf=2)$p.value,
+        b = Box.test(residuals(fb), lag=24, type="Ljung-Box", fitdf=2)$p.value), 4)
+#&gt;      a      b
+#&gt; 0.0000 0.2477
+
+# El criterio INVALIDO, para verlo: distinto d, distinto n efectivo
+round(c(aicc_a = fa$aicc, nobs_a = fa$nobs, aicc_b = fb$aicc, nobs_b = fb$nobs), 3)
+#&gt;  aicc_a  nobs_a  aicc_b  nobs_b
+#&gt; 905.963  60.000 857.316  59.000
+
+as.character(auto.arima(ua, stepwise = FALSE, approximation = FALSE))
+#&gt; [1] "ARIMA(0,1,1)(0,1,1)[12]"
+round(coef(fb), 4)
+#&gt;     ma1    sma1
+#&gt; -0.4303 -0.5528
+
+# Y la trampa de version que hay que conocer:
+c(seas = nsdiffs(ua), ocsb = nsdiffs(ua, test = "ocsb"))
+#&gt; seas ocsb
+#&gt;    1    0</code></pre>
+          <p><strong>Lo que hay que entender.</strong> $\nabla$ y $\nabla_{12}$ conmutan como operadores, pero el
+            camino (a) nunca llega a aplicar $\nabla$: <code>ndiffs()</code> sobre la serie cruda ve $0$ porque la
+            varianza estacional tapa la tendencia. El modelo resultante deja estructura en los residuales
+            ($p &lt; 10^{-4}$). Y ojo con el último bloque: la prueba por defecto de <code>nsdiffs()</code> cambió de
+            versión, y con <code>ocsb</code> —la antigua— habrías respondido $D = 0$ y te habrías equivocado más.</p>
+        </div>
+      </div>
+
+      <div class="ejercicio-guiado">
+        <p class="ejercicio-enunciado"><span class="ejercicio-numero">3.</span>Dos partes. <strong>(a)</strong> Da
+          <strong>tres evidencias independientes</strong> de que la TRM mensual no tiene estacionalidad; una de ellas
+          tiene que ser un ajuste, no una prueba automática. <strong>(b)</strong> Sobre <code>co2</code>, ajusta la
+          regresión armónica con $K = 1, \dots, 6$ y compárala con el <em>airline</em> del Ejercicio 1. El mejor
+          armónico y el <em>airline</em> quedan a menos de dos puntos de AICc: ¿cuál eliges y por qué?</p>
+        <div class="ejercicio-acciones">
+          <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c5e3-pista">
+            <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c5e3-sol">
+            <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="ejercicio-panel pista" id="c5e3-pista" hidden>
+          <p style="margin:0;">Para (a), el correlograma tiene que ser el de $\nabla\text{TRM}$, no el de la serie en
+            niveles —en niveles cualquier serie con tendencia tiene $\hat\rho_{12}$ grande—. Para (b), la pregunta no
+            es cuál tiene el AICc menor: es si esa comparación se puede hacer. Apunta el $n$ efectivo de los dos antes
+            de responder.</p>
+        </div>
+        <div class="ejercicio-panel solucion" id="c5e3-sol" hidden>
+          <p><strong>Respuesta: (a) las tres evidencias coinciden en que no hay estacionalidad. (b) La pregunta está
+            mal planteada a propósito: esos dos AICc no son comparables, y responder "el armónico, por dos puntos" es
+            el error.</strong></p>
+          <pre><code class="language-r">library(forecast)
+# TRM mensual (promedio del mes, SFC via datos.gov.co). Se reconstruye en cada
+# bloque que la use para que sea autonomo; necesita internet.
+url &lt;- paste0("https://www.datos.gov.co/resource/32sa-8pi3.json",
+              "?$select=vigenciadesde,valor&amp;$limit=50000")
+crudo &lt;- jsonlite::fromJSON(url)
+diario &lt;- data.frame(fecha = as.Date(substr(crudo$vigenciadesde, 1, 10)),
+                     valor = as.numeric(crudo$valor))
+diario &lt;- diario[order(diario$fecha) &amp; diario$fecha &gt;= as.Date("2015-01-01"), ]
+prom &lt;- tapply(diario$valor, format(diario$fecha, "%Y-%m"), mean)
+prom &lt;- prom[names(prom) &lt;= "2026-06"]     # se descarta el mes en curso
+trm &lt;- ts(as.numeric(prom), start = c(2015, 1), frequency = 12)
+
+# --- (a) Tres evidencias ----------------------------------------------------
+# 1. prueba automatica (con las dos versiones disponibles)
+c(seas = nsdiffs(trm), ocsb = nsdiffs(trm, test = "ocsb"))
+#&gt; seas ocsb
+#&gt;    0    0
+
+# 2. correlograma de la serie SIN tendencia
+a &lt;- Acf(diff(trm), lag.max = 36, plot = FALSE)$acf
+round(c(r12 = a[13], r24 = a[25], r36 = a[37], banda = 1.96/sqrt(length(trm)-1)), 4)
+#&gt;     r12     r24     r36   banda
+#&gt; -0.0024 -0.0672  0.0714  0.1675      ninguno fuera de banda
+
+# 3. AJUSTE forzado: el estadistico t del parametro estacional
+g &lt;- Arima(trm, order = c(0,1,0), seasonal = list(order = c(1,0,0), period = 12))
+round(c(Phi = coef(g)[1], ee = sqrt(diag(g$var.coef))[1],
+        t = coef(g)[1]/sqrt(diag(g$var.coef))[1]), 4)
+#&gt; Phi.sar1  ee.sar1   t.sar1
+#&gt;   0.0013   0.0899   0.0147
+round(c(forzado = g$aicc, simple = Arima(trm, order=c(0,1,0))$aicc), 3)
+#&gt;  forzado   simple
+#&gt; 1708.001 1705.941      aqui SI se comparan: los dos tienen d=1, D=0
+
+# --- (b) Armonicos sobre co2 ------------------------------------------------
+for (K in 1:6) {
+  xr &lt;- fourier(co2, K = K)
+  f &lt;- auto.arima(co2, xreg = xr, seasonal = FALSE, stepwise = FALSE, approximation = FALSE)
+  cat(sprintf("K=%d  terminos=%2d  n_ef=%d  AICc=%8.3f  LB=%.4f\n", K, ncol(xr), f$nobs,
+      f$aicc, Box.test(residuals(f), lag=24, type="Ljung-Box", fitdf=sum(f$arma[1:4]))$p.value))
+}
+#&gt; K=1  terminos= 2  n_ef=467  AICc= 435.509  LB=0.0000
+#&gt; K=2  terminos= 4  n_ef=467  AICc= 268.475  LB=0.0000
+#&gt; K=3  terminos= 6  n_ef=467  AICc= 223.402  LB=0.0000
+#&gt; K=4  terminos= 8  n_ef=467  AICc= 180.200  LB=0.0439
+#&gt; K=5  terminos=10  n_ef=467  AICc= 181.494  LB=0.0516
+#&gt; K=6  terminos=11  n_ef=467  AICc= 183.624  LB=0.0515
+
+airline &lt;- Arima(co2, order=c(0,1,1), seasonal=list(order=c(0,1,1), period=12))
+round(c(armonico_K4 = 180.200, n_armonico = 467,
+        airline = airline$aicc, n_airline = airline$nobs), 3)
+#&gt; armonico_K4  n_armonico     airline   n_airline
+#&gt;     180.200     467.000     178.209     455.000</code></pre>
+          <p><strong>Lo que hay que entender.</strong> En (a), tres caminos distintos —una prueba, un correlograma y
+            un ajuste— dan la misma respuesta, y esa concordancia es lo que hace sólida la conclusión;
+            <code>auto.arima</code> lo remata devolviendo un ARIMA($0,1,0$). En (b), la respuesta correcta es
+            <strong>rechazar la comparación</strong>: $180.200$ y $178.209$ están a dos puntos, pero uno se calcula
+            sobre $467$ observaciones y el otro sobre $455$. Si además te fijas, el mejor armónico por AICc ($K=4$)
+            <em>no</em> es el que mejor pasa el diagnóstico, y ninguno de los seis llega al $p = 0.4081$ del
+            <em>airline</em>: esa sí es una comparación legítima, porque Ljung–Box no depende del $n$ efectivo de la
+            verosimilitud. Para decidir de verdad entre las dos familias hace falta el Capítulo 6.</p>
+        </div>
+      </div>
+
+      <h3>Lecturas</h3>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Fuente</th><th>Secciones</th><th>Qué añade</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Hyndman &amp; Athanasopoulos, <em>Forecasting: Principles and Practice</em> (3.ª ed.)</td><td>§ 9.9</td><td>SARIMA con la notación de <code>fable</code>; el caso de los medicamentos antidiabéticos</td></tr>
+            <tr><td>Hyndman &amp; Athanasopoulos, <em>FPP3</em></td><td>§ 12.1</td><td>Estacionalidad compleja: términos de Fourier con varios periodos, TBATS</td></tr>
+            <tr><td>Hyndman &amp; Athanasopoulos, <em>FPP3</em></td><td>§ 7.4, § 10.5</td><td>Regresores de calendario y regresión dinámica con errores ARIMA</td></tr>
+            <tr><td>Shumway &amp; Stoffer, <em>Time Series Analysis and Its Applications</em></td><td>Cap. 3.9</td><td>Desarrollo formal del SARIMA multiplicativo y el caso <code>birth</code></td></tr>
+            <tr><td>Box, Jenkins, Reinsel &amp; Ljung, <em>Time Series Analysis: Forecasting and Control</em></td><td>Cap. 9</td><td>El modelo <em>airline</em> original, con la serie que le da nombre</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note">
+        <p><strong>Lo que viene.</strong> El Capítulo 6 se ocupa de lo que este dejó abierto en el Módulo 11: cómo se
+          evalúa de verdad un pronóstico. Métricas de error y sus límites, partición temporal frente a validación
+          cruzada estándar, validación de origen móvil, y si los intervalos que hemos construido cubren lo que dicen
+          cubrir.</p>
+      </div>
+    </div>
+  </template>
