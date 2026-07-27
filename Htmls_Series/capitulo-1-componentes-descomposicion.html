@@ -1064,6 +1064,14 @@
       gap: 0.5rem;
     }
 
+    /* El titulo del quiz y su parrafo introductorio quedaban pegados (hueco de
+       0 px): el h4 no tiene margen inferior y Tailwind pone los <p> a cero.
+       Mismo fallo que la auditoria de T4d encontro en los simuladores, aqui en
+       el componente de autoevaluacion. */
+    .quiz > h4 + p {
+      margin-top: 0.6rem;
+    }
+
     .quiz-pregunta {
       background: white;
       border: 1px solid #fde68a;
@@ -1664,6 +1672,196 @@
       border-top: 1px solid rgba(1, 40, 32, 0.15);
       font-weight: 500;
     }
+
+    /* ------------------------------------------------------------------
+       Componente .ciclo — diagrama de etapas recorrible
+       ------------------------------------------------------------------
+       Para procedimientos que se recorren y en los que se VUELVE ATRÁS
+       (Box-Jenkins, un pipeline de preprocesamiento, un flujo de
+       descomposición). Una imagen fija enseña el orden; esto enseña
+       además qué hace cada etapa, con qué función, y qué hallazgo te
+       devuelve a la anterior — que es donde está el aprendizaje.
+
+       Semántica de pestañas (role="tablist"/"tab"/"tabpanel") en vez de
+       la de acordeón de .derivacion: las etapas son alternativas de una
+       misma cosa, no bloques independientes, y así el teclado recorre el
+       ciclo con las flechas. La familia de color es la naranja de acento,
+       para no confundirlo con las cajas verdes de derivación.
+       ------------------------------------------------------------------ */
+    .ciclo {
+      margin: 1.25rem 0;
+    }
+
+    .ciclo-etapas {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: stretch;
+      gap: 0.4rem;
+      list-style: none;
+      margin: 0 0 0.6rem 0;
+      padding: 0;
+    }
+
+    .ciclo-etapa {
+      display: flex;
+      align-items: stretch;
+    }
+
+    /* La flecha vive en el separador, no en el botón: así el orden se lee
+       aunque las etapas salten de línea. */
+    .ciclo-etapa:not(:last-child)::after {
+      content: "\2192";
+      align-self: center;
+      margin: 0 0.15rem;
+      color: rgba(1, 40, 32, 0.35);
+      font-weight: 700;
+    }
+
+    .ciclo-boton {
+      font-family: inherit;
+      text-align: left;
+      cursor: pointer;
+      background: #ffffff;
+      border: 1px solid rgba(1, 40, 32, 0.2);
+      border-radius: 0.6rem;
+      padding: 0.55rem 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+      min-width: 8.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .ciclo-boton:hover {
+      border-color: #012820;
+      background: rgba(1, 40, 32, 0.04);
+    }
+
+    .ciclo-boton[aria-selected="true"] {
+      background: #012820;
+      border-color: #012820;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(1, 40, 32, 0.25);
+    }
+
+    .ciclo-numero {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #FF6600;
+      font-weight: 600;
+    }
+
+    .ciclo-boton[aria-selected="true"] .ciclo-numero {
+      color: #FFC24B;
+    }
+
+    .ciclo-titulo {
+      font-weight: 600;
+      font-size: 0.9rem;
+      line-height: 1.25;
+    }
+
+    .ciclo-resumen {
+      font-size: 0.74rem;
+      color: #64748b;
+      line-height: 1.3;
+    }
+
+    .ciclo-boton[aria-selected="true"] .ciclo-resumen {
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    /* La vuelta atrás es lo que distingue un ciclo de una lista de pasos. */
+    .ciclo-retorno {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.76rem;
+      color: #64748b;
+      font-style: italic;
+      margin: 0 0 0.7rem 0;
+    }
+
+    .ciclo-retorno::before {
+      content: "\21BA";
+      font-style: normal;
+      font-size: 1rem;
+      color: #FF6600;
+    }
+
+    .ciclo-panel {
+      padding: 1rem 1.15rem;
+      background: #f8fafc;
+      border-left: 3px solid #FF6600;
+      border-radius: 0.5rem;
+      font-size: 0.9rem;
+      color: #1e293b;
+    }
+
+    .ciclo-panel[hidden] {
+      display: none;
+    }
+
+    .ciclo-campo {
+      margin: 0 0 0.7rem 0;
+    }
+
+    .ciclo-campo:last-child {
+      margin-bottom: 0;
+    }
+
+    .ciclo-etiqueta {
+      display: block;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #012820;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+
+    .ciclo-vuelta {
+      margin-top: 0.85rem;
+      padding-top: 0.7rem;
+      border-top: 1px solid rgba(255, 102, 0, 0.25);
+    }
+
+    .ciclo-vuelta .ciclo-etiqueta {
+      color: #FF6600;
+    }
+
+    .ciclo-panel code {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.82rem;
+      background: rgba(1, 40, 32, 0.07);
+      padding: 0.1rem 0.3rem;
+      border-radius: 0.25rem;
+    }
+
+    /* En móvil el ciclo se lee en vertical y las flechas giran con él. */
+    @media (max-width: 640px) {
+      .ciclo-etapas {
+        flex-direction: column;
+      }
+
+      .ciclo-etapa {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .ciclo-boton {
+        width: 100%;
+      }
+
+      .ciclo-etapa:not(:last-child)::after {
+        content: "\2193";
+        align-self: center;
+        margin: 0.15rem 0;
+      }
+    }
   </style>
 </head>
 
@@ -2173,6 +2371,100 @@ plt.legend(); plt.show()</code></pre>
         multiplicativo); (3) la estacionalidad $\hat{S}_t$ como el promedio, por posición estacional, de la serie sin
         tendencia; (4) el residuo $\hat{R}_t$ es lo que queda. Abajo, la descomposición <strong>multiplicativa</strong>
         de <code>AirPassengers</code> (calculada en R con <code>decompose()</code>).</p>
+
+      <div class="ciclo" data-ciclo="descomposicion">
+        <ol class="ciclo-etapas" role="tablist" aria-label="Etapas del ciclo">
+          <li class="ciclo-etapa" role="presentation">
+            <button type="button" class="ciclo-boton" role="tab"
+              aria-selected="true" aria-controls="ciclo-descomposicion-escala" tabindex="0">
+              <span class="ciclo-numero">Paso 1</span>
+              <span class="ciclo-titulo">Elegir la escala</span>
+              <span class="ciclo-resumen">¿Aditiva o multiplicativa?</span>
+            </button>
+          </li>
+          <li class="ciclo-etapa" role="presentation">
+            <button type="button" class="ciclo-boton" role="tab"
+              aria-selected="false" aria-controls="ciclo-descomposicion-tendencia" tabindex="-1">
+              <span class="ciclo-numero">Paso 2</span>
+              <span class="ciclo-titulo">Estimar la tendencia</span>
+              <span class="ciclo-resumen">Media móvil de orden $m$</span>
+            </button>
+          </li>
+          <li class="ciclo-etapa" role="presentation">
+            <button type="button" class="ciclo-boton" role="tab"
+              aria-selected="false" aria-controls="ciclo-descomposicion-estacionalidad" tabindex="-1">
+              <span class="ciclo-numero">Paso 3</span>
+              <span class="ciclo-titulo">Estimar la estacionalidad</span>
+              <span class="ciclo-resumen">Promedio por posición</span>
+            </button>
+          </li>
+          <li class="ciclo-etapa" role="presentation">
+            <button type="button" class="ciclo-boton" role="tab"
+              aria-selected="false" aria-controls="ciclo-descomposicion-residuo" tabindex="-1">
+              <span class="ciclo-numero">Paso 4</span>
+              <span class="ciclo-titulo">Analizar el residuo</span>
+              <span class="ciclo-resumen">¿Queda estructura?</span>
+            </button>
+          </li>
+        </ol>
+        <p class="ciclo-retorno">Descomponer no es una fórmula sino un ciclo: el residuo es quien dice si hay que volver.</p>
+        <div class="ciclo-panel" id="ciclo-descomposicion-escala" role="tabpanel">
+          <div class="ciclo-campo">
+            <span class="ciclo-etiqueta">Qué haces</span>
+            <p>Mirar si la amplitud estacional <strong>crece con el nivel</strong> de la serie. Si crece, el modelo es multiplicativo $y_t = T_t \times S_t \times R_t$; si se mantiene, aditivo $y_t = T_t + S_t + R_t$. Trabajar en logaritmos convierte el segundo caso en el primero.</p>
+          </div>
+          <div class="ciclo-campo">
+            <span class="ciclo-etiqueta">Con qué</span>
+            <p><code>autoplot(y)</code> y el gráfico estacional <code>gg_season(y)</code>; en Python, <code>y.plot()</code>. La decisión es visual, no hay prueba automática.</p>
+          </div>
+          <div class="ciclo-campo ciclo-vuelta">
+            <span class="ciclo-etiqueta">Qué te devuelve atrás</span>
+            <p>Si al final el residuo $\hat{R}_t$ conserva la forma estacional abombada, la escala estaba mal elegida.</p>
+          </div>
+        </div>
+        <div class="ciclo-panel" id="ciclo-descomposicion-tendencia" role="tabpanel" hidden>
+          <div class="ciclo-campo">
+            <span class="ciclo-etiqueta">Qué haces</span>
+            <p>Suavizar con una media móvil centrada del orden del período. Con $m$ par hace falta la media móvil $2\times m$ para que quede centrada, y eso cuesta $m/2$ observaciones en cada extremo.</p>
+          </div>
+          <div class="ciclo-campo">
+            <span class="ciclo-etiqueta">Con qué</span>
+            <p><code>stats::filter(y, rep(1/m, m))</code> o directamente <code>decompose()</code>; en Python, <code>seasonal_decompose()</code>.</p>
+          </div>
+          <div class="ciclo-campo ciclo-vuelta">
+            <span class="ciclo-etiqueta">Qué te devuelve atrás</span>
+            <p>Si la tendencia estimada ondula al ritmo de la estacionalidad, el orden $m$ no coincide con el período real.</p>
+          </div>
+        </div>
+        <div class="ciclo-panel" id="ciclo-descomposicion-estacionalidad" role="tabpanel" hidden>
+          <div class="ciclo-campo">
+            <span class="ciclo-etiqueta">Qué haces</span>
+            <p>Quitar la tendencia (restando o dividiendo, según la escala) y promediar por posición estacional. Los índices resultantes son <strong>fijos</strong> para toda la serie: esa es la limitación central del método clásico.</p>
+          </div>
+          <div class="ciclo-campo">
+            <span class="ciclo-etiqueta">Con qué</span>
+            <p>El componente <code>$seasonal</code> de <code>decompose()</code>; STL lo hace variar en el tiempo.</p>
+          </div>
+          <div class="ciclo-campo ciclo-vuelta">
+            <span class="ciclo-etiqueta">Qué te devuelve atrás</span>
+            <p>Si los índices no sirven igual al principio y al final de la muestra, la estacionalidad cambia: hay que pasar a STL.</p>
+          </div>
+        </div>
+        <div class="ciclo-panel" id="ciclo-descomposicion-residuo" role="tabpanel" hidden>
+          <div class="ciclo-campo">
+            <span class="ciclo-etiqueta">Qué haces</span>
+            <p>Mirar $\hat{R}_t$: debe parecer ruido, sin ciclos ni abombamientos ni atípicos concentrados. Es la comprobación de que la descomposición hizo su trabajo.</p>
+          </div>
+          <div class="ciclo-campo">
+            <span class="ciclo-etiqueta">Con qué</span>
+            <p>El panel de residuo de <code>decompose()</code> o de <code>STL()</code>, y las fuerzas $F_T$ y $F_S$ del Módulo 8.</p>
+          </div>
+          <div class="ciclo-campo ciclo-vuelta">
+            <span class="ciclo-etiqueta">Qué te devuelve atrás</span>
+            <p>Estructura en el residuo manda de vuelta al paso 1 (escala) o al 2 (orden de la media móvil). Este es el bucle del método.</p>
+          </div>
+        </div>
+      </div>
 
       <div class="simulador" data-simulador="descomp-clasica">
         <h4><i class="fas fa-layer-group" aria-hidden="true"></i> Descomposición multiplicativa de
@@ -2727,6 +3019,7 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         iniciarAutoevaluaciones();
         iniciarEjerciciosGuiados();
         iniciarDerivaciones();
+        iniciarCiclos();
         renderMathInElement(mainContent, {
           delimiters: [
             { left: "$$", right: "$$", display: true },
@@ -3675,6 +3968,47 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
     // katexEn(panel) aquí es la red de seguridad para contenido inyectado
     // después (una derivación dentro de una solución, por ejemplo).
     // ================================================================
+    // ================================================================
+    // Componente .ciclo — diagrama de etapas recorrible
+    // ================================================================
+    // Cada `<div class="ciclo">` lleva una lista `role="tablist"` de
+    // botones `.ciclo-boton` con aria-controls apuntando a su panel. Se
+    // muestra una etapa a la vez; las flechas del teclado recorren el
+    // ciclo (y dan la vuelta al llegar al final, que es justo lo que hace
+    // el procedimiento que representa).
+    function iniciarCiclos() {
+      mainContent.querySelectorAll('.ciclo').forEach(raiz => {
+        const botones = Array.from(raiz.querySelectorAll('.ciclo-boton'));
+        const paneles = botones.map(b => document.getElementById(b.getAttribute('aria-controls')));
+        if (!botones.length || paneles.some(p => !p)) return;
+
+        function seleccionar(i, moverFoco) {
+          botones.forEach((boton, j) => {
+            const activo = j === i;
+            boton.setAttribute('aria-selected', String(activo));
+            boton.tabIndex = activo ? 0 : -1;
+            paneles[j].hidden = !activo;
+          });
+          katexEn(paneles[i]);
+          if (moverFoco) botones[i].focus();
+        }
+
+        botones.forEach((boton, i) => {
+          boton.addEventListener('click', () => seleccionar(i, false));
+          boton.addEventListener('keydown', evento => {
+            const paso = (evento.key === 'ArrowRight' || evento.key === 'ArrowDown') ? 1
+              : (evento.key === 'ArrowLeft' || evento.key === 'ArrowUp') ? -1 : 0;
+            if (paso === 0) return;
+            evento.preventDefault();
+            seleccionar((i + paso + botones.length) % botones.length, true);
+          });
+        });
+
+        const inicial = botones.findIndex(b => b.getAttribute('aria-selected') === 'true');
+        seleccionar(inicial >= 0 ? inicial : 0, false);
+      });
+    }
+
     function iniciarDerivaciones() {
       mainContent.querySelectorAll('.derivacion-boton').forEach(boton => {
         const panel = document.getElementById(boton.getAttribute('aria-controls'));

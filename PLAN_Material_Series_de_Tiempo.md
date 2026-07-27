@@ -386,7 +386,7 @@ publicación en GitHub Pages.
 - [x] Revisión de Javier del capítulo 1 (2026-07-26): **sin cambios**; se mantienen tono,
       profundidad y densidad de fórmulas y código para los capítulos siguientes.
 
-### Fase 2 — Capítulos 3 y 4
+### Fase 2 — Capítulos 3 y 4 — ✅ COMPLETADA (2026-07-26)
 
 **Siguiente tarea: T6.** Al retomar, arranca por aquí. Ya disponible para reutilizar, además
 de lo del capítulo 2: el álgebra ARMA en JS (`pesosPsi`, `pesosPi`, `acfTeorica`,
@@ -484,12 +484,148 @@ de lo del capítulo 2: el álgebra ARMA en JS (`pesosPsi`, `pesosPi`, `acfTeoric
     El capítulo 1 no recibe `barrasExtra` porque nunca tuvo `crearGraficoBarras`: no dibuja
     correlogramas.
 
-- [ ] **T6 · Capítulo 4** (ARIMA) — explorador de modelos con rejilla precalculada. *Dependencias:* T2 (rejilla), T5 (continuidad narrativa). *Tamaño:* L.
+- [x] **T6 · Capítulo 4** (ARIMA y Box–Jenkins) — `Htmls_Series/capitulo-4-modelos-arima.html`.
+  10 módulos: (1) de ARMA a ARIMA, (2) la metodología Box–Jenkins, (3) elegir $d$, (4) identificar
+  $p$ y $q$, (5) la constante: media y deriva, (6) estimar y comparar (el explorador), (7) dentro de
+  `auto.arima`, (8) diagnóstico y errores comunes, (9) pronóstico: forma e intervalos, (10) caso TRM,
+  puente al cap. 5 y cierre. **10 simuladores interactivos**, 8 preguntas de autoevaluación con los
+  4 tipos, 3 ejercicios guiados, 3 cajas de derivación y el nuevo componente `.ciclo`. Precálculo en
+  `precalculo/genera_cap4.R` → `cap4_arima.json` / `cap4_datos.js`. Ensamblado por sustitución de
+  regiones sobre el capítulo 3 (`ensamblado/ensambla_cap4.py`, con aserciones).
+  - *Verificado:* consola sin errores ni avisos en los 10 módulos; **0 errores KaTeX** en 656 fórmulas;
+    canvas = `graficosActivos` en todos (19 gráficos, creados y destruidos al cambiar de módulo);
+    los **12 bloques R parsean y corren**, y **177 de 179 cifras anunciadas en sus comentarios `#>`
+    aparecen en la salida real** (las 2 restantes son umbrales en prosa, 0.05 y 0.01); los **9 bloques
+    de Python corren** y **52 de 53 cifras propias verificadas** (la restante es un coeficiente citado
+    en prosa); los simuladores reproducen las cifras de R en valores extremos (varianzas
+    28 637.95 / 28 268.34 / 80 055.01, ACF(1) 0.4984 / −0.4020 / −0.6264, $\sigma_1 = \sigma = 142.045$,
+    $\sigma_2 = 151.967$); autoevaluación con los 4 tipos y casos límite (numérica justo dentro y justo
+    fuera de la tolerancia, coma decimal, texto, vacío; múltiple parcial; el reintento **no** revela la
+    respuesta) y **sin acumulación de gráficos** tras 4 reinicios; **conjunto de selectores CSS idéntico**
+    al de la plantilla y a los capítulos 2 y 3 (241); geometría medida en 71 pares consecutivos con
+    hueco mínimo **8 px** y mediana 16 px, sin desbordes de canvas ni scroll horizontal.
+  - *Hallazgos de la auditoría (todos incorporados al capítulo):*
+    1. **KPSS confunde un cambio de nivel con una raíz unitaria, y eso explica el caso del Nilo entero.**
+       Monte Carlo de 1000 réplicas de ruido blanco *estacionario por construcción*: sin escalón, KPSS
+       rechaza el **4.8 %** (su tamaño nominal); con el escalón real de 1899 ($\delta = -247.8$, que son
+       1.95 desviaciones típicas), el **100 %**, y `ndiffs` pide diferenciar en el 100 % de las réplicas.
+       El ADF solo se deja engañar en el 0.5 %. Eso explica que sobre el Nilo `ndiffs` dé **1 con KPSS
+       pero 0 con ADF y con PP** — y como `auto.arima` elige $d$ con KPSS, diferencia. Se añadió al
+       precálculo una malla de 400 réplicas × 9 valores de $\delta$ para el simulador del módulo 3.
+    2. **La sobrediferenciación tiene firma algebraica, no solo estadística:** $\hat\theta \to -1$ y una
+       raíz MA **exactamente sobre el círculo unitario**. En la rejilla del Nilo, **4 de los 9 modelos con
+       $d = 2$** la tienen, incluido el mejor por BIC de ese grupo. Y el mínimo de AICc de la rejilla de la
+       **TRM** es un ARIMA(2,1,2) con las dos raíces MA en 1.000 y las AR en 1.0042: gana por 2.56 puntos
+       y hay que descartarlo — que es justo lo que hace `auto.arima`.
+    3. **Descubierto al ejecutar el código del módulo 1:** con los coeficientes reales del Nilo, integrar
+       la serie **no** dispara la varianza (razón 1.006), mientras que sin el término MA la multiplica por
+       32.8. La causa es que $\theta = -0.874$ hace que $(1+\theta B) \approx (1-B)$ y cancele la
+       integración. Es el mismo hilo que el hallazgo 1: el modelo está deshaciendo una diferencia que
+       probablemente no hacía falta. Se convirtió en el hilo conductor del capítulo (se plantea en el
+       módulo 1, se explica en el 3 y se cierra en el 8).
+    4. **Error conceptual mío, corregido:** etiqueté $\sigma\sqrt{h}$ como "lo que valdría si los errores
+       fueran independientes". Es falso: $\sigma\sqrt{h}$ es exactamente lo que da una **caminata
+       aleatoria** (en un ARIMA(0,1,0) todos los $\psi_j$ valen 1, comprobado con error 4.5e-13). Con la
+       lectura correcta el dato se vuelve útil: el Nilo tiene $\psi_\infty = 0.169$ y su incertidumbre
+       crece **4 veces menos** que la de una caminata, mientras que `BJsales` tiene $\psi_\infty = 2.99$ y
+       crece **al doble**. Está ahora como caja de nota en el módulo 9 y en la discusión del ejercicio 3.
+    5. **El pronóstico con $d = 2$ es una recta, no una parábola** (segundas diferencias nulas, medidas).
+       `forecast::Arima` **se niega** a ajustar la deriva con $d \ge 2$ (avisa y la descarta) y
+       `statsmodels` lanza un `ValueError` porque un término de orden menor que $d$ lo elimina la propia
+       diferenciación. Lo habría escrito como "parábola" de memoria.
+    6. **Trampa nueva R↔Python: el truncamiento de KPSS no es el mismo.** `tseries::kpss.test` usa
+       $\lfloor 4(n/100)^{1/4}\rfloor = 4$ y `statsmodels.kpss` con `nlags="legacy"` usa 12, así que sobre
+       el Nilo dan 0.9654 y 0.5497. Con `nlags=4` coinciden hasta el último decimal. Documentado como caja
+       de advertencia en el módulo 3.
+    7. **`statsmodels` reporta `nobs = 100` para todo $d$**: no descuenta las diferencias, así que sus
+       AIC/BIC *parecen* comparables entre distintos $d$ cuando no lo son. En R el $n$ efectivo baja
+       (100, 99, 98) y el problema salta a la vista. Documentado en el bloque Python del módulo 6.
+    8. **Los dos ejercicios salieron mejores de lo diseñado, pero por razones distintas a las previstas.**
+       En `BJsales`, el "IMA(1,1) de libro" **no pasa el diagnóstico** (Ljung–Box $p = 0.0340$, ACF residual
+       $r_2 = 0.248$): gana el ARIMA(1,1,1). Y en `log(lynx)` **la regla de la varianza falla**: diferenciar
+       la reduce un 58 %, así que no dispara ninguna alarma; lo que sí detecta el exceso es la raíz MA en
+       1.000 del ARIMA(2,1,1). Los enunciados y las soluciones se reescribieron contra estos hechos.
+    9. **Cifras corregidas contra la salida real antes de publicar** (todas estaban mal en el borrador):
+       en R, el Ljung–Box del módulo 2 (0.7997371), el pronóstico a 3 pasos (816.18 / 835.56 / 840.49, no
+       833.67 / 838.12), el $p$ del ADF (0.06419542), el estadístico KPSS (0.9654349), el número de líneas
+       de la traza (20 y 44), el Shapiro de `BJsales` (0.6294597), el pseudo-periodo del lince (9.7839) y la
+       banda de los residuales de `BJsales` (**0.1600**, no 0.1606: `residuals()` devuelve $n$ valores y no
+       $n-d$). En Python, **cuatro bloques enteros** en los que había escrito la salida de R como si fuera la
+       de Python: la razón de varianzas (1.363 / 56.7), los $\theta$ y raíces de la sobrediferenciación
+       (−0.9988 / 1.0012, no −1.0000 / 1.0000), el error estándar del escalón (27.77, no 28.15) y todo el
+       bloque de intervalos ($\sigma = 140.599$, no 142.045).
+    10. **Bug propio en el JS, encontrado en el navegador:** mis simuladores destruyen y recrean sus
+       gráficos al repintar, y devolvían funciones donde `destruirSimuladores()` espera objetos con
+       `.destroy()`. Los 10 módulos lanzaban excepción. Se añadió el ayudante `manejador()`, que devuelve
+       un objeto estable que destruye el gráfico **vigente**.
+    11. **`jsonlite` escribe los `Inf` como `null`**, y `Number(null)` es 0: el primer paso de la traza de
+       `auto.arima` mostraba "mejor AICc = 0.000". `fmt()` es ahora defensiva y devuelve un guion.
+    12. **Hueco de 0 px entre el título del quiz y su párrafo**, heredado de los capítulos 2 y 3 y de la
+       plantilla (el `h4` no tiene margen inferior y Tailwind pone los `<p>` a cero). Es la misma clase de
+       fallo que encontró la auditoría de T4d en los simuladores. Se añadió `.quiz > h4 + p` a los
+       **cinco archivos** y el hueco pasó de 0 a 10 px en todos.
+  - *Trampa de método (nueva, anotar):* el contexto de JavaScript del navegador de esta herramienta puede
+    reportar `innerWidth = 0`, con lo que se activa la media query móvil y **toda medición de geometría
+    sale falsa** (llegué a "detectar" un bug de alturas desiguales que no existía). Antes de medir hay que
+    llamar a `resize_window` y **comprobar que `innerWidth > 1024`**. Además, los `await` con `setTimeout`
+    se congelan cuando el panel está oculto: las comprobaciones de simuladores hay que hacerlas síncronas.
+  - *Desviaciones sobre el plan:* (a) el plan pedía 8 módulos y un simulador; se hicieron **10 módulos y
+    10 simuladores** (decisión de Javier sobre densidad, ya vigente desde el cap. 3). (b) Javier pidió
+    incluir **también los intervalos de pronóstico**, por encima de la recomendación: el capítulo 4 los
+    **construye** desde los pesos $\psi$ (comprobación contra `forecast()` con error 9.1e-11) y el
+    **capítulo 6 los evaluará** (cobertura real frente a nominal, backtesting) — **T8 no debe duplicar la
+    construcción**. (c) Caso de estudio = **Nilo** (recorrido completo) + **TRM en niveles** (resultado
+    honesto: caminata aleatoria) + **panel puente** con `log(AirPassengers)`, en vez de solo el Nilo.
+    (d) La rejilla de la Fase 0 se **recalculó** y coincide con la anterior con diferencia máxima de AICc
+    de 0.0000 en los 27 modelos, con los mismos mejores por $d$ (101, 111, 122). (e) El archivo pesa
+    **325 KB**, por encima del límite de la tabla de riesgos: mismo criterio que en los caps. 2 y 3.
+    (f) **No se instaló ningún paquete nuevo.** El bloque de `pmdarima` del módulo 7 se reescribió para que
+    lo ejecutable (rejilla con statsmodels) vaya primero y la alternativa con dependencia extra quede
+    marcada como no ejecutada, en vez de anunciar una salida sin verificar.
+  - *Dependencias:* T2, T5. *Tamaño:* L.
+
+- [x] **T6b · Componente `.ciclo`** (nuevo en la plantilla, decisión de Javier).
+  Diagrama de etapas recorrible con semántica de pestañas (`role="tablist"`/`tab`/`tabpanel`), navegable
+  con las flechas del teclado y con vuelta al principio al llegar al final. Cada etapa despliega **qué
+  haces**, **con qué función** y **qué te devuelve atrás**, que es la dimensión que una lista numerada no
+  sabe dibujar. 22 reglas CSS + `iniciarCiclos()`, en la familia de color naranja para distinguirlo de las
+  cajas verdes de derivación. Fuentes compartidas en `ensamblado/componentes/` (`ciclo.css`, `ciclo.js`,
+  `ciclo_html.py`) para que las cinco instancias tengan exactamente la misma estructura.
+  - **Instancias:** ciclo de Box–Jenkins de 4 etapas en el capítulo 4; y **retropropagado**: pipeline de
+    preprocesamiento de 6 pasos en el cap. 2 (**sustituye** a la caja `.diagram` con la lista, que decía lo
+    mismo sin las vueltas atrás), flujo de descomposición de 4 pasos en el cap. 1, protocolo de
+    identificación ARMA de 4 pasos en el cap. 3, y una demostración de 3 etapas en la plantilla —añadida en
+    la misma sesión, como exige la regla del Checkpoint 0.
+  - *Verificado en los cinco archivos:* las 22 reglas CSS presentes en todos; clic y flechas del teclado
+    (incluida la vuelta circular) conmutan `aria-selected`, `tabIndex` y la visibilidad de los paneles;
+    KaTeX renderizado **antes** del primer clic, también en los paneles ocultos; 0 errores de consola y de
+    KaTeX en los cuatro capítulos tras el injerto, con sus simuladores y autoevaluaciones previos intactos;
+    los cuatro botones del ciclo del cap. 4 miden 75 px de alto en una sola fila (medido con viewport real).
+  - *Nota de homogeneidad pendiente:* el capítulo 1 sigue sin `crearSelector` ni `crearInterruptores` (10
+    selectores CSS menos que los demás) porque ninguno de sus simuladores usa esos controles. Es anterior a
+    esta sesión y no afecta a lo que se ve; si un futuro simulador del cap. 1 los necesita, hay que
+    injertarlos entonces.
 
 ### Fase 3 — Capítulos 5 y 6
 
+**Siguiente tarea: T7.** Al retomar, arranca por aquí y **copia el capítulo 4** como base (trae el
+componente `.ciclo`, el ayudante `manejador()` y los datos de `AirPassengers`). El capítulo 4 dejó
+montado en JS: `diferenciarVeces`, `aniosDesde`, `mesesDesde`, `varianzaDe`, `fmt` (defensiva ante
+`null`), `lineaSimple` y `manejador`. El puente ya está tendido: el módulo 10 del capítulo 4 muestra
+que el mejor ARIMA no estacional sobre `log(AirPassengers)` deja $\hat\rho_{12} = 0.72$ y Ljung–Box(24)
+con $p < 10^{-6}$, y adelanta que el modelo *airline* lo arregla con dos parámetros
+($\hat\rho_{12} = -0.0515$, $p = 0.233$).
+
 - [ ] **T7 · Capítulo 5** (SARIMA) — simulador de diferencias sobre AirPassengers. *Dependencias:* T6. *Tamaño:* L.
-- [ ] **T8 · Capítulo 6** (pronóstico y evaluación) — simuladores de horizonte y rolling-origin. *Dependencias:* T2, T6. *Tamaño:* L.
+- [ ] **T8 · Capítulo 6** (pronóstico y evaluación) — simuladores de horizonte y rolling-origin.
+  **Frontera con el capítulo 4 (acordada en T6):** el capítulo 4 ya **construye** el intervalo de
+  pronóstico desde los pesos $\psi$ ($\sigma_h^2 = \sigma^2\sum_{j<h}\psi_j^2$) y explica la forma del
+  pronóstico según $d$ y la constante. El capítulo 6 **no debe repetir esa construcción**: le toca
+  **evaluarlo** — cobertura empírica frente a la nominal, qué pasa cuando los residuales no son normales
+  (la TRM da Shapiro $p = 0.0006$), métricas de error y validación de origen móvil. El capítulo 4 deja
+  además servida la referencia: sobre el Nilo, el método *naïve* (RMSE 123.06) le gana al ARIMA(1,1,1)
+  (125.05) fuera de muestra, con un abanico pequeño frente a $\hat\sigma = 139.67$.
+  *Dependencias:* T2, T6. *Tamaño:* L.
 
 ### Checkpoint 2
 - [ ] Los 6 capítulos abren sin errores; navegación cruzada entre capítulos consistente; revisión de contenido de Javier.

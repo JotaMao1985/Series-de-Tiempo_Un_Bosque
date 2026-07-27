@@ -415,6 +415,227 @@ cat(sprintf("  phi1 en [%.4f, %.4f] · phi2 en [%.4f, %.4f] · periodo en [%.3f,
             sol$cap3_ej3$rango_periodo[1], sol$cap3_ej3$rango_periodo[2]))
 
 # ============================================================================
+# CAPITULO 4
+# ============================================================================
+
+aicc_de <- function(f, n_ef) { k <- length(f$coef) + 1; as.numeric(f$aic + 2*k*(k+1)/(n_ef-k-1)) }
+bic_de  <- function(f, n_ef) { k <- length(f$coef) + 1; as.numeric(f$aic - 2*k + log(n_ef)*k) }
+modulos_ma <- function(f) {
+  mc <- f$coef[grepl("^ma", names(f$coef))]
+  if (!length(mc)) return(NA_real_)
+  round(min(Mod(polyroot(c(1, mc)))), 4)
+}
+
+# ---- Ej. 1: BJsales, el Box-Jenkins original ------------------------------
+# La Serie M de Box & Jenkins. El punto: elegir d ANTES que (p,q), y ver que
+# el AICc de d=1 y el de d=2 no se pueden comparar porque n cambia.
+cat("\n=== CAP4 · Ej.1 · BJsales de principio a fin ===\n")
+bj <- BJsales
+n_bj <- length(bj)
+sol$cap4_ej1 <- list(
+  serie = "BJsales (Box & Jenkins, Serie M)", n = n_bj,
+  pruebas = list(
+    adf_nivel = round(suppressWarnings(adf.test(bj)$p.value), 4),
+    kpss_nivel = round(p_kpss(bj), 4),
+    adf_d1 = round(suppressWarnings(adf.test(diff(bj))$p.value), 4),
+    kpss_d1 = round(p_kpss(diff(bj)), 4),
+    ndiffs = ndiffs(bj)),
+  varianzas = sapply(0:3, function(d) round(var(difn(bj, d)), 4),
+                     USE.NAMES = FALSE),
+  acf_d1 = round(as.numeric(acf(diff(bj), lag.max = 6, plot = FALSE)$acf)[-1], 4),
+  pacf_d1 = round(as.numeric(pacf(diff(bj), lag.max = 6, plot = FALSE)$acf)[1:6], 4),
+  banda_d1 = round(banda(n_bj - 1), 4)
+)
+rej_bj <- do.call(rbind, lapply(0:2, function(q) do.call(rbind, lapply(0:2, function(p) {
+  f <- tryCatch(arima(bj, order = c(p, 1, q), method = "ML"), error = function(e) NULL)
+  if (is.null(f)) return(NULL)
+  data.frame(modelo = sprintf("ARIMA(%d,1,%d)", p, q),
+             aicc = round(aicc_de(f, n_bj - 1), 3), bic = round(bic_de(f, n_bj - 1), 3),
+             lb20 = round(Box.test(residuals(f), lag = 20, type = "Ljung-Box",
+                                   fitdf = p + q)$p.value, 4),
+             min_raiz_ma = modulos_ma(f))
+}))))
+rej_bj <- rej_bj[order(rej_bj$aicc), ]
+sol$cap4_ej1$rejilla_d1 <- rej_bj
+sol$cap4_ej1$mejor_aicc <- rej_bj$modelo[1]
+sol$cap4_ej1$mejor_bic <- rej_bj$modelo[which.min(rej_bj$bic)]
+# El ganador es el ARIMA(1,1,1) por AICc, por BIC y por auto.arima.
+f_bj <- arima(bj, order = c(1, 1, 1), method = "ML")
+ee_bj <- sqrt(diag(f_bj$var.coef))
+sol$cap4_ej1$ganador <- list(
+  modelo = "ARIMA(1,1,1)",
+  phi = round(coef(f_bj)[["ar1"]], 4), phi_ee = round(ee_bj[["ar1"]], 4),
+  theta = round(coef(f_bj)[["ma1"]], 4), theta_ee = round(ee_bj[["ma1"]], 4),
+  sigma2 = round(f_bj$sigma2, 4),
+  aicc = round(aicc_de(f_bj, n_bj - 1), 3),
+  lb20_p = round(Box.test(residuals(f_bj), lag = 20, type = "Ljung-Box", fitdf = 2)$p.value, 4),
+  shapiro_p = round(shapiro.test(residuals(f_bj))$p.value, 4))
+
+# El "IMA(1,1) de libro" para esta serie NO pasa el diagnostico: ese es el
+# punto del ejercicio, y no se ve mirando solo los criterios de informacion.
+f_bj011 <- arima(bj, order = c(0, 1, 1), method = "ML")
+sol$cap4_ej1$candidato_de_libro <- list(
+  modelo = "ARIMA(0,1,1)",
+  theta = round(coef(f_bj011)[["ma1"]], 4),
+  aicc = round(aicc_de(f_bj011, n_bj - 1), 3),
+  lb20_p = round(Box.test(residuals(f_bj011), lag = 20, type = "Ljung-Box",
+                          fitdf = 1)$p.value, 4),
+  acf_residual_1a4 = round(as.numeric(acf(residuals(f_bj011), lag.max = 4,
+                                          plot = FALSE)$acf)[-1], 4),
+  # residuals() de un ajuste con d = 1 devuelve n valores, no n - d: la banda
+  # que corresponde a ese correlograma se calcula sobre esa longitud.
+  banda = round(banda(length(residuals(f_bj011))), 4),
+  nota = "Estructura residual en los rezagos 2 y 4: el termino AR hace falta.")
+
+# La comparacion INVALIDA que el ejercicio pide detectar, y ademas degenerada.
+rej_bj2 <- do.call(rbind, lapply(0:2, function(q) do.call(rbind, lapply(0:2, function(p) {
+  f <- tryCatch(arima(bj, order = c(p, 2, q), method = "ML"), error = function(e) NULL)
+  if (is.null(f)) return(NULL)
+  data.frame(modelo = sprintf("ARIMA(%d,2,%d)", p, q),
+             aicc = round(aicc_de(f, n_bj - 2), 3), min_raiz_ma = modulos_ma(f))
+}))))
+mejor_d2 <- rej_bj2[which.min(rej_bj2$aicc), ]
+sol$cap4_ej1$trampa_d2 <- list(
+  mejor_modelo = as.character(mejor_d2$modelo), aicc = mejor_d2$aicc,
+  min_raiz_ma = mejor_d2$min_raiz_ma,
+  n_efectivo = n_bj - 2, n_efectivo_d1 = n_bj - 1,
+  aicc_ganador_d1 = round(aicc_de(f_bj, n_bj - 1), 3),
+  nota = paste("Dos motivos independientes para descartarlo: su AICc se calcula",
+               "sobre 148 observaciones y el del d = 1 sobre 149 (no son",
+               "comparables), y su raiz MA cae SOBRE el circulo unitario, que es",
+               "la firma algebraica de haber diferenciado de mas."))
+sol$cap4_ej1$auto <- as.character(auto.arima(bj, stepwise = FALSE,
+                                             approximation = FALSE, seasonal = FALSE))
+cat(sprintf("  n = %d | ndiffs = %d | ADF nivel p = %.4f -> d = 1\n",
+            n_bj, sol$cap4_ej1$pruebas$ndiffs, sol$cap4_ej1$pruebas$adf_nivel))
+cat("  varianza por d:", sol$cap4_ej1$varianzas, "\n")
+print(rej_bj, row.names = FALSE)
+cat(sprintf("  min AICc = %s | min BIC = %s | auto.arima -> %s\n",
+            sol$cap4_ej1$mejor_aicc, sol$cap4_ej1$mejor_bic, sol$cap4_ej1$auto))
+cat(sprintf("  GANADOR (1,1,1): phi = %.4f (e.e. %.4f), theta = %.4f (e.e. %.4f)\n",
+            sol$cap4_ej1$ganador$phi, sol$cap4_ej1$ganador$phi_ee,
+            sol$cap4_ej1$ganador$theta, sol$cap4_ej1$ganador$theta_ee))
+cat(sprintf("           LB(20) p = %.4f | Shapiro p = %.4f\n",
+            sol$cap4_ej1$ganador$lb20_p, sol$cap4_ej1$ganador$shapiro_p))
+cat(sprintf("  EL DE LIBRO (0,1,1) NO PASA: LB(20) p = %.4f | ACF residual r1..r4 = %s (banda %.4f)\n",
+            sol$cap4_ej1$candidato_de_libro$lb20_p,
+            paste(sol$cap4_ej1$candidato_de_libro$acf_residual_1a4, collapse = ", "),
+            sol$cap4_ej1$candidato_de_libro$banda))
+cat(sprintf("  TRAMPA d=2: mejor es %s con AICc %.3f sobre n = %d y |raiz MA| = %.4f\n",
+            sol$cap4_ej1$trampa_d2$mejor_modelo, sol$cap4_ej1$trampa_d2$aicc,
+            sol$cap4_ej1$trampa_d2$n_efectivo, sol$cap4_ej1$trampa_d2$min_raiz_ma))
+
+# ---- Ej. 2: lynx, un ciclo NO es una raiz unitaria ------------------------
+cat("\n=== CAP4 · Ej.2 · log(lynx): ciclo, no raiz unitaria ===\n")
+ly <- log(lynx)
+n_ly <- length(ly)
+f_ly <- arima(ly, order = c(2, 0, 0), method = "ML")
+r_ly <- polyroot(c(1, -coef(f_ly)[1:2]))
+sol$cap4_ej2 <- list(
+  serie = "log(lynx)", n = n_ly,
+  ndiffs_kpss = ndiffs(ly, test = "kpss"),
+  ndiffs_adf = ndiffs(ly, test = "adf"),
+  kpss_p = round(p_kpss(ly), 4), adf_p = round(p_adf(ly), 4),
+  acf = round(as.numeric(acf(ly, lag.max = 12, plot = FALSE)$acf)[-1], 4),
+  banda = round(banda(n_ly), 4),
+  varianzas = sapply(0:2, function(d) round(var(difn(ly, d)), 4), USE.NAMES = FALSE),
+  ar2 = list(phi1 = round(coef(f_ly)[["ar1"]], 4), phi2 = round(coef(f_ly)[["ar2"]], 4),
+             modulo = round(Mod(r_ly)[1], 4),
+             periodo = round(2 * pi / Arg(r_ly[which.max(Im(r_ly))]), 3),
+             aicc = round(aicc_de(f_ly, n_ly), 3),
+             lb20_p = round(Box.test(residuals(f_ly), lag = 20, type = "Ljung-Box",
+                                     fitdf = 2)$p.value, 4)),
+  auto = as.character(auto.arima(ly, stepwise = FALSE, approximation = FALSE, seasonal = FALSE))
+)
+# HALLAZGO: aqui la regla "si te pasas diferenciando, la varianza SUBE" FALLA.
+# Sobre log(lynx) la varianza BAJA al diferenciar, y aun asi d = 1 esta de mas.
+# Lo que si lo detecta es la raiz unitaria que aparece en la parte MA.
+sol$cap4_ej2$regla_varianza <- list(
+  var_d0 = round(var(ly), 4), var_d1 = round(var(diff(ly)), 4),
+  cambio_pct = round(100 * (var(diff(ly)) / var(ly) - 1), 1),
+  la_regla_funciona = var(diff(ly)) > var(ly),
+  nota = paste("La varianza cae un 58 %: la regla heuristica no dispara. En una",
+               "serie con ciclo fuerte, diferenciar reduce la varianza aunque",
+               "sobre. El detector fiable es la raiz del polinomio MA."))
+sol$cap4_ej2$diferenciada <- do.call(rbind, lapply(
+  list(c(2, 1, 0), c(2, 1, 1), c(0, 1, 1)), function(o) {
+    f <- arima(ly, order = o, method = "ML")
+    data.frame(modelo = sprintf("ARIMA(%d,%d,%d)", o[1], o[2], o[3]),
+               aicc = round(aicc_de(f, n_ly - o[2]), 3),
+               min_raiz_ma = modulos_ma(f),
+               lb20_p = round(Box.test(residuals(f), lag = 20, type = "Ljung-Box",
+                                       fitdf = o[1] + o[3])$p.value, 4))
+  }))
+cat(sprintf("  n = %d | ndiffs(kpss) = %d, ndiffs(adf) = %d | KPSS p = %.4f, ADF p = %.4f\n",
+            n_ly, sol$cap4_ej2$ndiffs_kpss, sol$cap4_ej2$ndiffs_adf,
+            sol$cap4_ej2$kpss_p, sol$cap4_ej2$adf_p))
+cat(sprintf("  varianza d=0 -> d=1: %.4f -> %.4f (%.1f %%). La regla de la varianza %s\n",
+            sol$cap4_ej2$regla_varianza$var_d0, sol$cap4_ej2$regla_varianza$var_d1,
+            sol$cap4_ej2$regla_varianza$cambio_pct,
+            ifelse(sol$cap4_ej2$regla_varianza$la_regla_funciona, "dispara", "NO DISPARA")))
+print(sol$cap4_ej2$diferenciada, row.names = FALSE)
+cat("  -> el ARIMA(2,1,1) pone |raiz MA| = 1 exacto: el MA cancela la diferencia.\n")
+cat(sprintf("  AR(2) sin diferenciar: phi = (%.4f, %.4f) | |raiz| = %.4f -> periodo %.2f anios\n",
+            sol$cap4_ej2$ar2$phi1, sol$cap4_ej2$ar2$phi2, sol$cap4_ej2$ar2$modulo,
+            sol$cap4_ej2$ar2$periodo))
+cat(sprintf("  pero LB(20) p = %.4f: tampoco basta | auto.arima -> %s\n",
+            sol$cap4_ej2$ar2$lb20_p, sol$cap4_ej2$auto))
+
+# ---- Ej. 3: intervalos de pronostico a mano, con los pesos psi ------------
+cat("\n=== CAP4 · Ej.3 · el intervalo, a mano, desde los pesos psi ===\n")
+# Sobre el ARIMA(1,1,1), que es el modelo que selecciona el ejercicio 1. Usar
+# el (0,1,1) aqui seria construir un intervalo con un modelo ya rechazado.
+f3 <- Arima(BJsales, order = c(1, 1, 1))
+ph3 <- as.numeric(coef(f3)["ar1"]); th3 <- as.numeric(coef(f3)["ma1"])
+s3 <- sqrt(f3$sigma2)
+H3 <- 12
+# ARIMA(1,1,1) sobre y equivale a un ARMA(2,1) con phi* = (1 + phi, -phi)
+# sobre la serie SIN diferenciar. De ahi salen los psi.
+psi3 <- c(1, ARMAtoMA(ar = c(1 + ph3, -ph3), ma = th3, lag.max = H3))
+sh3 <- s3 * sqrt(cumsum(psi3^2))[1:H3]
+fc3 <- forecast(f3, h = H3, level = c(80, 95))
+semi95 <- as.numeric((fc3$upper[, 2] - fc3$lower[, 2]) / 2)
+f3d <- Arima(BJsales, order = c(1, 1, 1), include.drift = TRUE)
+fc3d <- forecast(f3d, h = H3, level = 95)
+sol$cap4_ej3 <- list(
+  modelo = "ARIMA(1,1,1) sobre BJsales",
+  phi = round(ph3, 4), theta = round(th3, 4), sigma = round(s3, 4),
+  psi_0a4 = round(psi3[1:5], 4),
+  psi_limite = round(psi3[H3 + 1], 4),
+  psi_limite_teorico = round((1 + th3) / (1 - ph3), 4),
+  sigma_h_1a5 = round(sh3[1:5], 4),
+  semiancho95_1a5 = round(semi95[1:5], 4),
+  error_maximo = signif(max(abs(semi95 - qnorm(0.975) * sh3)), 4),
+  razon_h12_h1 = round(sh3[H3] / sh3[1], 4),
+  razon_raiz_h = round(sqrt(H3), 4),
+  con_deriva = list(
+    deriva = round(as.numeric(coef(f3d)["drift"]), 4),
+    ee = round(as.numeric(sqrt(diag(f3d$var.coef))["drift"]), 4),
+    t = round(as.numeric(coef(f3d)["drift"] / sqrt(diag(f3d$var.coef))["drift"]), 3),
+    aicc = round(as.numeric(f3d$aicc), 3), aicc_sin = round(as.numeric(f3$aicc), 3),
+    pronostico_h12 = round(as.numeric(fc3d$mean[H3]), 3),
+    pronostico_h12_sin = round(as.numeric(fc3$mean[H3]), 3),
+    ancho95_h12 = round(as.numeric(fc3d$upper[H3, 1] - fc3d$lower[H3, 1]), 3),
+    ancho95_h12_sin = round(as.numeric(fc3$upper[H3, 2] - fc3$lower[H3, 2]), 3))
+)
+cat(sprintf("  phi = %.4f, theta = %.4f -> psi con ar* = (%.4f, %.4f)\n",
+            ph3, th3, 1 + ph3, -ph3))
+cat("  psi_0..psi_4:", sol$cap4_ej3$psi_0a4, "\n")
+cat(sprintf("  psi_j tiende a (1+theta)/(1-phi) = %.4f (calculado: %.4f)\n",
+            sol$cap4_ej3$psi_limite_teorico, sol$cap4_ej3$psi_limite))
+cat("  sigma_h (h=1..5):", sol$cap4_ej3$sigma_h_1a5, "\n")
+cat("  semiancho 95 % de forecast():", sol$cap4_ej3$semiancho95_1a5, "\n")
+cat(sprintf("  error maximo entre las dos vias: %.3e\n", sol$cap4_ej3$error_maximo))
+cat(sprintf("  sigma_12/sigma_1 = %.4f, frente a sqrt(12) = %.4f\n",
+            sol$cap4_ej3$razon_h12_h1, sol$cap4_ej3$razon_raiz_h))
+cat(sprintf("  deriva = %.4f (e.e. %.4f, t = %.2f) | AICc %.3f con deriva vs. %.3f sin\n",
+            sol$cap4_ej3$con_deriva$deriva, sol$cap4_ej3$con_deriva$ee,
+            sol$cap4_ej3$con_deriva$t, sol$cap4_ej3$con_deriva$aicc,
+            sol$cap4_ej3$con_deriva$aicc_sin))
+cat(sprintf("  pronostico a h=12: %.2f con deriva vs. %.2f sin\n",
+            sol$cap4_ej3$con_deriva$pronostico_h12, sol$cap4_ej3$con_deriva$pronostico_h12_sin))
+
+# ============================================================================
 sol$metadatos <- list(generado = fecha_corte, generador = "precalculo/genera_soluciones.R",
                       versiones = list(R = paste(R.version$major, R.version$minor, sep = "."),
                                        tseries = as.character(packageVersion("tseries")),

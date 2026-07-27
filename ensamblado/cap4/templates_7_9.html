@@ -1,0 +1,649 @@
+  <template id="module-7">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 7</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">4.7 Dentro de
+          <code>auto.arima</code> <span class="text-gray-400 font-normal text-2xl">/ The Hyndman–Khandakar
+          algorithm</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Ver que la caja negra es un algoritmo con reglas
+              explícitas, recorrer su búsqueda paso a paso y conocer su límite.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Hasta aquí la identificación ha sido artesanal. En 2008 Rob Hyndman y Yeasmin Khandakar publicaron un
+        algoritmo que la automatiza, y es el que ejecuta <code>auto.arima()</code>. Conviene entenderlo por dos
+        razones opuestas: porque funciona sorprendentemente bien y hay que saber cuándo confiar, y porque
+        <strong>no es una búsqueda exhaustiva</strong> y hay que saber cuándo desconfiar.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>El algoritmo, en cuatro pasos</h4>
+        <ol>
+          <li><strong>Elegir $d$</strong> con pruebas sucesivas de KPSS: se diferencia mientras KPSS rechace la
+            estacionariedad. (Aquí está el punto débil que destapó el Módulo 3.)</li>
+          <li><strong>Ajustar cuatro modelos iniciales</strong> sobre la serie diferenciada: ARIMA($2,d,2$),
+            ARIMA($0,d,0$), ARIMA($1,d,0$) y ARIMA($0,d,1$), cada uno con y sin constante. El de menor AICc es el
+            <em>modelo actual</em>.</li>
+          <li><strong>Buscar en el vecindario:</strong> se prueban las variantes del modelo actual con $p$ o $q$
+            modificados en $\pm 1$, y con y sin constante. Si alguna mejora el AICc, pasa a ser el modelo actual y
+            se repite el paso.</li>
+          <li><strong>Parar</strong> cuando ninguna variante del vecindario mejore.</li>
+        </ol>
+        <p style="margin-bottom:0;">Se descartan por el camino los ajustes que no convergen y los que tienen raíces
+          demasiado cerca del círculo unitario: a esos el algoritmo les asigna AICc $=\infty$.</p>
+      </div>
+
+      <p>Sobre el Nilo, la búsqueda evalúa <strong>18 modelos</strong>. Recórrela paso a paso:</p>
+
+      <div class="simulador" data-simulador="traza-auto-arima">
+        <h4><i class="fas fa-shoe-prints" aria-hidden="true"></i> La búsqueda, paso a paso</h4>
+        <p class="simulador-intro">Traza real capturada con <code>auto.arima(Nile, trace = TRUE)</code>. La línea
+          verde marca el mejor AICc encontrado hasta cada momento; los puntos naranjas son los modelos que lo
+          mejoraron. Cambia al modo exhaustivo para ver los 42 modelos que evalúa
+          <code>stepwise = FALSE</code>.</p>
+        <div class="simulador-controles"></div>
+        <div class="simulador-lectura"></div>
+        <p class="grafico-etiqueta">AICc de cada modelo evaluado, en orden de evaluación</p>
+        <div class="grafico-wrapper" style="height:230px;">
+          <canvas aria-label="AICc de cada modelo evaluado por la búsqueda, en orden" role="img"></canvas>
+        </div>
+        <div class="ciclo-panel" data-lista-traza style="margin-top:0.75rem;"></div>
+      </div>
+
+      <h3>Escalonada frente a exhaustiva</h3>
+
+      <p>La búsqueda escalonada evaluó $18$ modelos; la exhaustiva, $42$. Las dos llegan al mismo sitio:</p>
+
+      <div class="formula">
+        $$\text{escalonada: ARIMA}(1,1,1),\ \mathrm{AICc} = 1267.507
+          \qquad
+          \text{exhaustiva: ARIMA}(1,1,1),\ \mathrm{AICc} = 1267.507$$
+      </div>
+
+      <p>Que coincidan es lo habitual, pero no está garantizado. Lo que sí revela la búsqueda completa es
+        <strong>cuán apretado está el podio</strong>:</p>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Puesto</th><th>Modelo</th><th>AICc</th><th>Diferencia con el primero</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1.º</td><td>ARIMA($1,1,1$)</td><td>$1267.507$</td><td>—</td></tr>
+            <tr><td>2.º</td><td>ARIMA($1,1,1$) con deriva</td><td>$1268.063$</td><td>$+0.56$</td></tr>
+            <tr><td>3.º</td><td>ARIMA($0,1,2$)</td><td>$1268.210$</td><td>$+0.70$</td></tr>
+            <tr><td>4.º</td><td>ARIMA($0,1,2$) con deriva</td><td>$1268.969$</td><td>$+1.46$</td></tr>
+            <tr><td>5.º</td><td>ARIMA($0,1,1$)</td><td>$1269.216$</td><td>$+1.71$</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note">
+        <p><strong>Cinco modelos en $1.71$ puntos de AICc.</strong> La regla de referencia habitual es que
+          diferencias menores que $2$ no distinguen modelos. Es decir: <code>auto.arima</code> devuelve un ganador
+          con toda la seguridad de una sola línea de salida, y detrás de él hay <strong>cinco candidatos
+          estadísticamente indistinguibles</strong>, incluido el ARIMA($0,1,1$) que proponía el correlograma del
+          Módulo 4. La función no miente; simplemente no está diseñada para comunicar esa incertidumbre. Pedir
+          <code>trace = TRUE</code> cuesta nada y la enseña.</p>
+      </div>
+
+      <div class="warning">
+        <h4><i class="fas fa-triangle-exclamation mr-2" aria-hidden="true"></i>Tres cosas que
+          <code>auto.arima</code> no hace</h4>
+        <ul style="margin-bottom:0;">
+          <li><strong>No mira el gráfico.</strong> Elige $d$ con KPSS, y ya vimos lo que le pasa a KPSS con un
+            cambio de nivel. Si la serie tiene un escalón, el algoritmo lo diferenciará.</li>
+          <li><strong>No garantiza el óptimo.</strong> La búsqueda escalonada explora un vecindario, no la rejilla
+            entera. Con series difíciles conviene contrastar con
+            <code>stepwise = FALSE, approximation = FALSE</code>, que es más lento pero completo.</li>
+          <li><strong>No sabe si el modelo tiene sentido.</strong> Optimiza un criterio numérico. Que la forma del
+            pronóstico resultante sea razonable para el fenómeno es cosa tuya (Módulo 9).</li>
+        </ul>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="El algoritmo de Hyndman-Khandakar">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel" data-lang="r">
+          <pre><code class="language-r">library(forecast)
+
+# trace = TRUE imprime CADA modelo evaluado y su AICc: la caja se abre sola
+ajuste &lt;- auto.arima(Nile, trace = TRUE, seasonal = FALSE)
+#&gt;  ARIMA(2,1,2) with drift         : Inf
+#&gt;  ARIMA(0,1,0) with drift         : 1298.77
+#&gt;  ARIMA(1,1,0) with drift         : 1283.598
+#&gt;  ARIMA(0,1,1) with drift         : 1270.562
+#&gt;  ARIMA(0,1,0)                    : 1296.738
+#&gt;  ARIMA(1,1,1) with drift         : 1268.063
+#&gt;  ...
+#&gt;  Best model: ARIMA(1,1,1)
+
+as.character(ajuste)
+#&gt; [1] "ARIMA(1,1,1)"
+round(ajuste$aicc, 3)
+#&gt; [1] 1267.507
+
+# La busqueda COMPLETA: mas lenta, pero sin vecindarios
+completo &lt;- auto.arima(Nile, stepwise = FALSE, approximation = FALSE,
+                       seasonal = FALSE)
+c(escalonada = as.character(ajuste), exhaustiva = as.character(completo))
+#&gt;     escalonada     exhaustiva
+#&gt; "ARIMA(1,1,1)" "ARIMA(1,1,1)"      coinciden
+
+# Cuantos modelos evalua cada una (contando las lineas de la traza)
+n_lineas &lt;- function(...) sum(grepl("ARIMA", capture.output(auto.arima(...))))
+c(escalonada = n_lineas(Nile, trace = TRUE, seasonal = FALSE),
+  exhaustiva = n_lineas(Nile, trace = TRUE, seasonal = FALSE,
+                        stepwise = FALSE, approximation = FALSE))
+#&gt; escalonada exhaustiva
+#&gt;         20         44        (incluyen lineas de cabecera de la traza)</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" hidden>
+          <pre><code class="language-python"># statsmodels NO trae el algoritmo de Hyndman-Khandakar. Con solo statsmodels
+# la alternativa es la rejilla a mano, que para d fijo es corta y ademas se ve
+# lo que hace, que es justo el objetivo de este modulo.
+import statsmodels.api as sm
+from statsmodels.tsa.arima.model import ARIMA
+import warnings; warnings.filterwarnings("ignore")
+
+nilo = sm.datasets.nile.load_pandas().data["volume"].values
+
+mejor, mejor_aicc, evaluados = None, float("inf"), 0
+for p in range(4):
+    for q in range(4):
+        try:
+            f = ARIMA(nilo, order=(p, 1, q), trend="n").fit()
+        except Exception:
+            continue
+        evaluados += 1
+        k = len(f.params)
+        a = f.aic + 2*k*(k+1)/(f.nobs-k-1)
+        if a &lt; mejor_aicc:
+            mejor, mejor_aicc = (p, 1, q), a
+print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
+#&gt; (1, 1, 1) 1267.469 (16 modelos)
+#   mismo ganador que auto.arima; el AICc difiere en 0.04 porque statsmodels
+#   no descuenta d en nobs (ver el modulo 6)
+
+# ---- Alternativa con una dependencia extra ------------------------------
+# pmdarima.auto_arima es una traduccion directa del algoritmo de R.
+# NO viene con statsmodels: hay que instalarlo aparte, y no se ejecuta en
+# este material, asi que su salida no se reproduce aqui.
+#
+#   pip install pmdarima
+#
+#   import pmdarima as pm
+#   modelo = pm.auto_arima(nilo, seasonal=False, trace=True,
+#                          information_criterion="aicc", stepwise=True)
+#   modelo.order</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="module-8">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 8</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">4.8 Diagnóstico y errores
+          comunes <span class="text-gray-400 font-normal text-2xl">/ Diagnostics &amp; common pitfalls</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Reconocer la sobrediferenciación por su firma
+              algebraica, y cerrar el caso del Nilo que quedó abierto en el Módulo 1.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>El diagnóstico de residuales es el del Capítulo 3 y no cambia: correlograma dentro de la banda, Ljung–Box
+        con <code>fitdf = p + q</code>, media cero, varianza estable. El ARIMA($1,1,1$) del Nilo lo pasa con holgura
+        —Ljung–Box(20) $p = 0.800$, Shapiro $p = 0.731$— y ahí terminaría el capítulo si el diagnóstico se agotara
+        en los residuales. No se agota.</p>
+
+      <h3>La sobrediferenciación tiene una firma exacta</h3>
+
+      <p>Si diferencias de más, el modelo lo compensa introduciendo una <strong>raíz unitaria en la parte MA</strong>:
+        el factor $(1+\theta B)$ se convierte en $(1-B)$ y cancela la diferencia sobrante. No es una metáfora, es
+        álgebra, y se ve en el número:</p>
+
+      <div class="simulador" data-simulador="sobrediferenciacion">
+        <h4><i class="fas fa-scissors" aria-hidden="true"></i> Diferenciar de más, y verlo</h4>
+        <p class="simulador-intro">Sube el orden $d$ sobre el Nilo y ajusta un MA(1) a cada resultado. En $d = 2$ y
+          $d = 3$ el $\hat\theta$ se clava en $-1$ y $|\text{raíz MA}| = 1$: el término MA está deshaciendo la
+          diferencia que acabas de imponer.</p>
+        <div class="simulador-controles"></div>
+        <div class="simulador-lectura"></div>
+        <p class="grafico-etiqueta">Serie diferenciada $\nabla^d y_t$</p>
+        <div class="grafico-wrapper" style="height:190px;">
+          <canvas aria-label="Serie del Nilo diferenciada d veces" role="img"></canvas>
+        </div>
+        <p class="grafico-etiqueta">Varianza por orden de diferenciación (escala logarítmica)</p>
+        <div class="grafico-wrapper" style="height:190px;">
+          <canvas aria-label="Varianza de la serie según el orden de diferenciación" role="img"></canvas>
+        </div>
+      </div>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>$d$</th><th>$\operatorname{Var}(\nabla^d y)$</th><th>$\rho_1$</th><th>$\hat\theta$ de un MA(1)</th><th>Lectura</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>0</td><td>$28\,637.95$</td><td>$0.498$</td><td>$0.378$</td><td>Sin diferenciar.</td></tr>
+            <tr style="background:rgba(1,40,32,0.05);"><td>1</td><td>$28\,268.34$</td><td>$-0.402$</td>
+              <td>$-0.733$</td><td>Mínimo de varianza. Correcto.</td></tr>
+            <tr><td>2</td><td>$80\,055.01$</td><td>$-0.626$</td><td>$\mathbf{-1.000}$</td>
+              <td>Raíz unitaria en el MA.</td></tr>
+            <tr><td>3</td><td>$262\,507.29$</td><td>$-0.719$</td><td>$\mathbf{-1.000}$</td>
+              <td>Peor todavía.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Y esto explica de golpe lo que se veía en la rejilla del Módulo 6. De los nueve modelos con $d = 2$,
+        <strong>cuatro tienen $|\text{raíz MA}| = 1.000$ exactamente</strong>: los ARIMA($0,2,1$), ($0,2,2$),
+        ($1,2,1$) y ($2,2,1$). Entre ellos está el mejor por BIC de ese grupo. La rejilla no solo premia modelos con
+        un $d$ equivocado: premia los que son <em>numéricamente degenerados</em>.</p>
+
+      <div class="warning">
+        <h4><i class="fas fa-triangle-exclamation mr-2" aria-hidden="true"></i>El criterio de la varianza no siempre
+          dispara</h4>
+        <p>La regla habitual —"si al diferenciar la varianza sube, te has pasado"— funcionó en el Nilo, pero
+          <strong>es una heurística, no un teorema</strong>. En una serie con un ciclo marcado puede fallar: sobre
+          <code>log(lynx)</code>, diferenciar <em>reduce</em> la varianza un $58\,\%$ ($1.653 \to 0.687$) y aun así
+          $d = 1$ sobra, como confirman las dos pruebas de raíz unitaria. Lo que sí lo detecta ahí es la raíz: el
+          ARIMA($2,1,1$) sobre esa serie da $|\text{raíz MA}| = 1.000$. <strong>Mira siempre las raíces</strong>; la
+          varianza es solo un primer aviso. (Es el ejercicio 2 de este capítulo.)</p>
+      </div>
+
+      <h3>El caso del Nilo, cerrado</h3>
+
+      <p>Volvamos a lo que quedó pendiente. En el Módulo 1 apareció que integrar la serie del Nilo con sus
+        coeficientes reales <em>casi no cambia la varianza</em> (razón $1.006$), porque $\theta = -0.874$ está cerca
+        de $-1$. En el Módulo 3, que dos de las tres pruebas de raíz unitaria dicen que no hay que diferenciar, y que
+        KPSS —la que usa <code>auto.arima</code>— rechaza el $100\,\%$ de las veces cuando hay un escalón. Las dos
+        piezas encajan en una sola explicación.</p>
+
+      <div class="formula">
+        $$\hat{\delta}_{1899} = -247.78, \qquad \text{e.e.} = 28.15, \qquad t = -8.80$$
+      </div>
+
+      <p>La serie cae de una media de $1097.75$ antes de 1899 a $849.97$ después. El año coincide con la
+        construcción de la presa baja de Asuán. Modelado como un escalón —un modelo con $d = 0$ y un solo
+        regresor— el resultado es contundente <strong>dentro de su propio $d$</strong>: AICc $1257.91$ frente a
+        $1282.50$ del mejor ARMA sin escalón, casi $25$ puntos, y sus residuales pasan Ljung–Box(20) con
+        $p = 0.812$.</p>
+
+      <div class="note">
+        <p><strong>La lectura honesta.</strong> El ARIMA($1,1,1$) probablemente está diferenciando una serie que no
+          tiene raíz unitaria, sino un cambio de nivel; y su $\theta$ cercano a $-1$ es el modelo intentando deshacer
+          esa diferencia de más. Box–Jenkins no tiene una etapa para "detectar intervenciones", así que la absorbe
+          subiendo $d$. Por eso la etapa 1 del ciclo empieza mirando el gráfico y no lanzando pruebas.</p>
+      </div>
+
+      <div class="warning">
+        <p><strong>Y ahora la parte incómoda.</strong> Todo lo anterior es evidencia dentro de muestra. Comparar el
+          escalón contra el ARIMA($1,1,1$) por AICc <strong>no se puede</strong>: uno tiene $d=0$ y el otro $d=1$.
+          La comparación válida es fuera de muestra. Entrenando hasta 1950 y pronosticando los 20 años siguientes:</p>
+        <table>
+          <thead><tr><th>Modelo</th><th>RMSE</th><th>MAE</th></tr></thead>
+          <tbody>
+            <tr><td>Naïve (el último valor)</td><td>$123.06$</td><td>$101.95$</td></tr>
+            <tr><td>ARIMA($1,1,1$)</td><td>$125.05$</td><td>$106.16$</td></tr>
+            <tr><td>Escalón 1899 ($d = 0$)</td><td>$127.99$</td><td>$106.99$</td></tr>
+            <tr><td>Escalón 1899 + AR(1)</td><td>$128.31$</td><td>$107.40$</td></tr>
+            <tr><td>Media de toda la muestra</td><td>$133.31$</td><td>$108.01$</td></tr>
+          </tbody>
+        </table>
+        <p style="margin-bottom:0;">El modelo del escalón, que dominaba dentro de muestra por $25$ puntos de AICc,
+          <strong>no pronostica mejor</strong>. Y el que gana es el más tonto de todos. Ojo con sobreinterpretarlo:
+          el abanico completo va de $123$ a $133$ mientras la desviación típica de los residuales es $139.67$, así
+          que <em>ninguna</em> de estas diferencias es grande. La conclusión no es "el naïve es mejor", sino que
+          <strong>una ventaja de ajuste dentro de muestra no se traduce automáticamente en capacidad de
+          pronóstico</strong>. Medir eso con seriedad —con más de un origen, y preguntándose si la diferencia es
+          significativa— es el Capítulo 6.</p>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Diagnóstico y sobrediferenciación">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel" data-lang="r">
+          <pre><code class="language-r">library(forecast)
+
+# --- La firma de la sobrediferenciacion ---------------------------------
+for (d in 1:3) {
+  x &lt;- diff(Nile, differences = d)
+  f &lt;- arima(x, order = c(0, 0, 1), include.mean = FALSE, method = "ML")
+  cat(sprintf("d = %d  var = %9.0f  theta = %7.4f  |raiz MA| = %.4f\n",
+              d, var(x), coef(f)[["ma1"]], Mod(polyroot(c(1, coef(f)[["ma1"]])))))
+}
+#&gt; d = 1  var =     28268  theta = -0.7329  |raiz MA| = 1.3644
+#&gt; d = 2  var =     80055  theta = -1.0000  |raiz MA| = 1.0000   &lt;- degenerado
+#&gt; d = 3  var =    262507  theta = -1.0000  |raiz MA| = 1.0000
+
+# --- Cuantos modelos de la rejilla son degenerados ----------------------
+for (q in 1:2) for (p in 0:2) {
+  f &lt;- arima(Nile, order = c(p, 2, q), method = "ML")
+  ma &lt;- f$coef[grepl("^ma", names(f$coef))]
+  cat(sprintf("ARIMA(%d,2,%d)  min|raiz MA| = %.4f\n", p, q,
+              min(Mod(polyroot(c(1, ma))))))
+}
+#&gt; ARIMA(0,2,1)  min|raiz MA| = 1.0000
+#&gt; ARIMA(1,2,1)  min|raiz MA| = 1.0000
+#&gt; ARIMA(2,2,1)  min|raiz MA| = 1.0000
+#&gt; ARIMA(0,2,2)  min|raiz MA| = 1.0000
+#&gt; ARIMA(1,2,2)  min|raiz MA| = 1.0316
+#&gt; ARIMA(2,2,2)  min|raiz MA| = 1.0483
+
+# --- El escalon de 1899 -------------------------------------------------
+escalon &lt;- as.numeric(time(Nile) &gt;= 1899)
+fe &lt;- arima(Nile, order = c(0, 0, 0), xreg = escalon, method = "ML")
+round(c(coef(fe)[["escalon"]], sqrt(diag(fe$var.coef))[["escalon"]]), 2)
+#&gt; [1] -247.78   28.15
+Box.test(residuals(fe), lag = 20, type = "Ljung-Box")$p.value
+#&gt; [1] 0.8124319      los residuales de un modelo SIN parte ARMA ya son ruido
+
+# --- La unica comparacion valida entre d distintos: fuera de muestra ----
+ent &lt;- window(Nile, end = 1950); pru &lt;- window(Nile, start = 1951)
+esc_e &lt;- as.numeric(time(ent) &gt;= 1899)
+rmse &lt;- function(p) round(sqrt(mean((as.numeric(pru) - as.numeric(p))^2)), 2)
+c(arima   = rmse(forecast(Arima(ent, order = c(1,1,1)), h = 20)$mean),
+  escalon = rmse(forecast(Arima(ent, order = c(0,0,0), xreg = esc_e),
+                          h = 20, xreg = rep(1, 20))$mean),
+  naive   = rmse(rep(tail(ent, 1), 20)))
+#&gt;   arima escalon   naive
+#&gt;  125.05  127.99  123.06</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" hidden>
+          <pre><code class="language-python">import numpy as np, statsmodels.api as sm
+from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.stats.diagnostic import acorr_ljungbox
+import warnings; warnings.filterwarnings("ignore")
+
+nilo = sm.datasets.nile.load_pandas().data["volume"].values
+anios = np.arange(1871, 1971)
+
+# La firma de la sobrediferenciacion
+for d in (1, 2, 3):
+    x = np.diff(nilo, n=d)
+    f = ARIMA(x, order=(0, 0, 1), trend="n").fit()
+    th = f.params[0]
+    print(f"d = {d}  var = {x.var(ddof=1):9.0f}  theta = {th:7.4f}  "
+          f"|raiz MA| = {abs(np.roots([th, 1])[0]):.4f}")
+#&gt; d = 1  var =     28268  theta = -0.7329  |raiz MA| = 1.3644
+#&gt; d = 2  var =     80055  theta = -0.9988  |raiz MA| = 1.0012
+#&gt; d = 3  var =    262507  theta = -0.9980  |raiz MA| = 1.0020
+#   El optimizador de statsmodels se queda a 0.001 del borde en vez de
+#   clavarse en -1 como el de R. La lectura no cambia: raiz sobre el circulo.
+
+# El escalon de 1899 como regresor externo
+escalon = (anios &gt;= 1899).astype(float).reshape(-1, 1)
+fe = ARIMA(nilo, order=(0, 0, 0), exog=escalon, trend="c").fit()
+print(round(fe.params[1], 2), round(fe.bse[1], 2))
+#&gt; -247.78 27.77     el coeficiente coincide con R; el error estandar no
+#&gt;                   exactamente (R da 28.15). t = -8.9 frente a -8.8.
+print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
+#&gt; 0.8124</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="module-9">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 9</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">4.9 Pronóstico: forma e
+          intervalos <span class="text-gray-400 font-normal text-2xl">/ Forecast shape &amp; intervals</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Ver que $d$ y la constante deciden la
+              <strong>forma</strong> del pronóstico, y construir el intervalo desde los pesos $\psi$ del Capítulo 3.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Aquí es donde la elección de $d$ deja de ser un tecnicismo. Los coeficientes ARMA gobiernan los primeros
+        pasos del pronóstico; a partir de cierto horizonte se agotan y lo único que queda en pie es
+        <strong>$d$ y la constante</strong>. Dos modelos con el mismo ajuste y distinto $d$ pronostican cosas
+        cualitativamente diferentes a largo plazo.</p>
+
+      <div class="simulador" data-simulador="forma-pronostico">
+        <h4><i class="fas fa-chart-line" aria-hidden="true"></i> La forma del pronóstico según $d$</h4>
+        <p class="simulador-intro">Los cuatro casos ajustados sobre el Nilo, con pronóstico a 30 años. Cambia el
+          modelo y observa hacia dónde va la línea naranja cuando se acaban los datos. La banda ancha es el
+          $95\,\%$ y la estrecha el $80\,\%$.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper" style="height:280px;">
+          <canvas aria-label="Serie del Nilo con el pronóstico del modelo seleccionado y sus bandas" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>Modelo</th><th>Forma a largo plazo</th><th>Medido: $\Delta$ y $\Delta^2$ en $h=30$</th><th>Ancho 95 %: $h=1 \to h=30$</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>ARIMA($1,0,1$) con media</td><td>Vuelve a la media $920.70$</td>
+              <td>$\Delta = 0.25$, tiende a $0$</td><td>$561 \to 677$</td></tr>
+            <tr><td>ARIMA($1,1,1$) sin constante</td><td><strong>Constante</strong> en el último nivel</td>
+              <td>$\Delta = 0.00$</td><td>$557 \to 781$</td></tr>
+            <tr><td>ARIMA($1,1,1$) con deriva</td><td><strong>Recta</strong> de pendiente $\hat\delta$</td>
+              <td>$\Delta = -2.88$, $\Delta^2 = 0$</td><td>$555 \to 708$</td></tr>
+            <tr><td>ARIMA($1,2,1$)</td><td><strong>Recta también</strong>, no una parábola</td>
+              <td>$\Delta = -4.05$, $\Delta^2 = 0$</td><td>$613 \to \mathbf{2771}$</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note">
+        <p><strong>Con $d = 2$ el pronóstico es una recta, no una parábola</strong> — y merece la pena entender por
+          qué, porque es un caso donde el software toma una decisión metodológica por ti. La segunda diferencia del
+          pronóstico se anula ($\Delta^2 = 0$ a partir de $h \approx 3$), así que la curva es lineal. Para obtener la
+          parábola haría falta una constante con $d = 2$, y <code>forecast::Arima</code> <strong>se niega</strong>:
+          avisa <em>"No drift term fitted as the order of difference is 2 or more"</em> y la descarta. No es un bug,
+          es una decisión deliberada: extrapolar una parábola a 30 pasos produce disparates. Lo que sí delata a
+          $d = 2$ es el intervalo: pasa de $613$ a $2771$, cuatro veces más ancho que el de $d = 1$.</p>
+      </div>
+
+      <h3>De dónde sale el ancho del intervalo</h3>
+
+      <p>El intervalo no es un adorno que añade el software: se deduce de los pesos $\psi$ de la representación
+        MA($\infty$) que se construyó en el Capítulo 3. Si $y_{T+h} = \hat{y}_{T+h|T} + \sum_{j=0}^{h-1}\psi_j
+        \varepsilon_{T+h-j}$, entonces el error de pronóstico a $h$ pasos tiene varianza:</p>
+
+      <div class="formula">
+        $$\sigma_h^2 = \sigma^2 \sum_{j=0}^{h-1} \psi_j^2,
+          \qquad
+          \hat{y}_{T+h|T} \pm z_{\alpha/2}\,\sigma_h$$
+      </div>
+
+      <p>Con $\psi_0 = 1$ siempre, así que $\sigma_1 = \sigma$: <strong>a un paso, el intervalo lo determina solo la
+        desviación de los residuales</strong>. Para el ARIMA($1,1,1$) del Nilo los pesos $\psi$ salen de expandirlo
+        como ARMA($2,1$) —la derivación del Módulo 1— y con ellos se reconstruyen exactamente los intervalos que
+        devuelve <code>forecast()</code>: el error máximo de la comprobación es
+        <strong>$9.1\times 10^{-11}$</strong>.</p>
+
+      <div class="simulador" data-simulador="pesos-psi-sigma">
+        <h4><i class="fas fa-arrows-left-right-to-line" aria-hidden="true"></i> Los pesos $\psi$ y el ancho del
+          intervalo</h4>
+        <p class="simulador-intro">Arriba, los pesos $\psi_j$ del ARIMA($1,1,1$) del Nilo. Abajo, $\sigma_h$
+          frente a $\sigma\sqrt{h}$, que es exactamente lo que daría una <strong>caminata aleatoria</strong>: en un
+          ARIMA($0,1,0$) todos los pesos valen $\psi_j = 1$ y la fórmula se reduce a $\sigma\sqrt{h}$. Mueve el
+          horizonte y fíjate en cuánto se separan las dos curvas.</p>
+        <div class="simulador-controles"></div>
+        <p class="grafico-etiqueta">Pesos $\psi_j$</p>
+        <div class="grafico-wrapper" style="height:180px;">
+          <canvas aria-label="Pesos psi de la representación MA infinita" role="img"></canvas>
+        </div>
+        <p class="grafico-etiqueta">$\sigma_h$ frente a $\sigma\sqrt{h}$</p>
+        <div class="grafico-wrapper" style="height:180px;">
+          <canvas aria-label="Desviación del error de pronóstico frente al horizonte" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="note">
+        <p><strong>El peso límite dice cómo crece tu incertidumbre.</strong> Como $\psi_j \to \psi_\infty$, para
+          horizontes grandes $\sigma_h \approx \sigma\,\psi_\infty\sqrt{h}$: el cociente contra la caminata
+          aleatoria tiende al propio $\psi_\infty$. En el Nilo $\psi_\infty = (1+\theta)/(1-\phi) = 0.169$, así
+          que a treinta años $\sigma_{30} = 199.4$ frente a los $778.0$ de una caminata — <strong>cuatro veces menos
+          incertidumbre</strong>. Y la razón vuelve a ser la misma de todo el capítulo: con $\theta = -0.874$ el
+          término MA cancela casi toda la integración, así que los choques no se acumulan.</p>
+        <p style="margin-bottom:0;">No siempre es así. Sobre <code>BJsales</code> (ejercicio 3) el mismo tipo de
+          modelo da $\psi_\infty = 2.99$ y la incertidumbre crece <strong>al doble</strong> que la de una caminata.
+          Mirar $\psi_\infty$ cuesta una línea y dice más sobre el pronóstico a largo plazo que cualquier
+          coeficiente por separado.</p>
+      </div>
+
+      <div class="derivacion">
+        <button type="button" class="derivacion-boton" aria-expanded="false" aria-controls="der-sigma-h">
+          <i class="fas fa-square-root-variable" aria-hidden="true"></i>
+          <span class="derivacion-texto">Ver el desarrollo paso a paso</span>
+          <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="derivacion-panel" id="der-sigma-h" hidden>
+          <ol class="derivacion-pasos">
+            <li>
+              <p>Todo proceso ARIMA admite la representación MA($\infty$) sobre los errores futuros:</p>
+              $$y_{T+h} = \mu_{T+h} + \sum_{j=0}^{\infty}\psi_j\,\varepsilon_{T+h-j}$$
+            </li>
+            <li>
+              <p>En el instante $T$ conocemos $\varepsilon_T, \varepsilon_{T-1},\dots$ pero no
+                $\varepsilon_{T+1},\dots,\varepsilon_{T+h}$. El pronóstico óptimo sustituye esos $h$ errores futuros
+                por su esperanza, cero:</p>
+              $$\hat{y}_{T+h|T} = \mu_{T+h} + \sum_{j=h}^{\infty}\psi_j\,\varepsilon_{T+h-j}$$
+            </li>
+            <li>
+              <p>El error de pronóstico es exactamente lo que se descartó — los $h$ primeros términos:</p>
+              $$e_{T+h} = y_{T+h} - \hat{y}_{T+h|T} = \sum_{j=0}^{h-1}\psi_j\,\varepsilon_{T+h-j}$$
+            </li>
+            <li>
+              <p>Como los $\varepsilon_t$ son incorrelados y de varianza $\sigma^2$, la varianza de esa suma es la
+                suma de las varianzas:</p>
+              $$\operatorname{Var}(e_{T+h}) = \sigma^2\sum_{j=0}^{h-1}\psi_j^2$$
+            </li>
+            <li>
+              <p>Dos consecuencias inmediatas. Con $h = 1$ solo sobrevive $\psi_0 = 1$, luego
+                $\sigma_1 = \sigma$. Y como los $\psi_j^2$ son positivos, $\sigma_h$ <strong>crece siempre</strong>
+                con el horizonte: un intervalo de pronóstico no puede estrecharse al alejarse.</p>
+            </li>
+            <li>
+              <p>El ritmo al que crece lo decide $d$. Si el proceso es estacionario, $\psi_j \to 0$ y la suma
+                converge: el intervalo se estabiliza. Si hay una raíz unitaria, $\psi_j$ tiende a una
+                <strong>constante</strong> —en el Nilo, $\psi_j \to 0.169$— y la suma crece sin límite.</p>
+            </li>
+          </ol>
+          <p class="derivacion-resultado">El ancho del intervalo es una consecuencia algebraica de $(p,d,q)$, no un
+            añadido. Y por eso equivocarse en $d$ no solo desplaza el pronóstico puntual: cambia el ritmo al que
+            crece la incertidumbre que declaras.</p>
+        </div>
+      </div>
+
+      <div class="warning">
+        <h4><i class="fas fa-triangle-exclamation mr-2" aria-hidden="true"></i>Todo esto supone normalidad</h4>
+        <p>La fórmula $\hat{y} \pm z_{\alpha/2}\sigma_h$ usa $z_{0.975} = 1.96$ y $z_{0.90} = 1.282$, que son
+          cuantiles de la normal. Las <em>estimaciones</em> de un ARIMA no necesitan que los errores sean normales;
+          los <em>intervalos</em>, sí. Y no siempre lo son: en la TRM del Módulo 10 el test de Shapiro–Wilk sobre los
+          residuales da $p = 0.0006$, un rechazo rotundo. Con colas más pesadas que la normal, un intervalo nominal
+          del $95\,\%$ cubre menos del $95\,\%$.</p>
+        <p style="margin-bottom:0;">Hay dos advertencias más que conviene decir en voz alta: los intervalos
+          <strong>no incluyen la incertidumbre de haber estimado los parámetros</strong> (los tratan como si fueran
+          conocidos), ni la de <strong>haber elegido el modelo</strong>. Son, por tanto, sistemáticamente
+          optimistas. Medir cuánto lo son —la cobertura real frente a la nominal— es trabajo del Capítulo 6.</p>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Pronóstico e intervalos">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel" data-lang="r">
+          <pre><code class="language-r">library(forecast)
+
+# La forma del pronostico segun d, MEDIDA en vez de recordada
+formas &lt;- list(
+  "d=0 con media"    = Arima(Nile, order = c(1,0,1)),
+  "d=1 sin constante"= Arima(Nile, order = c(1,1,1)),
+  "d=1 con deriva"   = Arima(Nile, order = c(1,1,1), include.drift = TRUE),
+  "d=2"              = Arima(Nile, order = c(1,2,1)))
+for (nm in names(formas)) {
+  m &lt;- as.numeric(forecast(formas[[nm]], h = 30)$mean)
+  cat(sprintf("%-18s  1a dif en h=30: %7.3f   2a dif: %9.6f\n",
+              nm, m[30] - m[29], m[30] - 2*m[29] + m[28]))
+}
+#&gt; d=0 con media       1a dif en h=30:   0.254   2a dif: -0.040903
+#&gt; d=1 sin constante   1a dif en h=30:   0.000   2a dif:  0.000000
+#&gt; d=1 con deriva      1a dif en h=30:  -2.883   2a dif: -0.000000
+#&gt; d=2                 1a dif en h=30:  -4.049   2a dif:  0.000000
+# d=2 da una RECTA (2a diferencia nula), no una parabola
+
+# --- El intervalo, reconstruido desde los pesos psi ----------------------
+f   &lt;- Arima(Nile, order = c(1, 1, 1))
+phi &lt;- coef(f)[["ar1"]]; th &lt;- coef(f)[["ma1"]]; s &lt;- sqrt(f$sigma2)
+
+# ARIMA(1,1,1) = ARMA(2,1) con ar* = (1 + phi, -phi) sobre la serie sin diferenciar
+psi     &lt;- c(1, ARMAtoMA(ar = c(1 + phi, -phi), ma = th, lag.max = 30))
+sigma_h &lt;- s * sqrt(cumsum(psi^2))[1:30]
+
+fc &lt;- forecast(f, h = 30, level = 95)
+semiancho &lt;- (fc$upper - fc$lower) / 2
+max(abs(semiancho - qnorm(0.975) * sigma_h))     # deben coincidir
+#&gt; [1] 9.077894e-11
+
+round(c(sigma = s, sigma_h1 = sigma_h[1], sigma_h30 = sigma_h[30],
+        psi_30 = psi[31]), 3)
+#&gt;     sigma  sigma_h1 sigma_h30    psi_30
+#&gt;   142.045   142.045   199.363     0.169
+# psi tiende a una CONSTANTE, no a cero: es la raiz unitaria</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" hidden>
+          <pre><code class="language-python">import numpy as np, statsmodels.api as sm
+from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.tsa.arima_process import arma2ma
+import warnings; warnings.filterwarnings("ignore")
+
+nilo = sm.datasets.nile.load_pandas().data["volume"].values
+f = ARIMA(nilo, order=(1, 1, 1), trend="n").fit()
+phi, th = f.params[0], f.params[1]
+s = np.sqrt(f.params[-1])
+
+# arma2ma pide los polinomios COMPLETOS y con el signo ya aplicado
+psi = arma2ma(np.r_[1, -(1 + phi), phi], np.r_[1, th], lags=31)
+sigma_h = s * np.sqrt(np.cumsum(psi**2))[:30]
+
+ic = f.get_forecast(30).conf_int(alpha=0.05)
+semiancho = (ic[:, 1] - ic[:, 0]) / 2
+print(f"{np.max(np.abs(semiancho - 1.959964 * sigma_h)):.3e}")
+#&gt; 3.044e-06        la formula reproduce el intervalo tambien aqui
+
+print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3))
+#&gt; [140.599 140.599 196.925   0.168]
+#   R da [142.045 142.045 199.363 0.169]: la diferencia viene de sigma^2,
+#   porque forecast::Arima usa CSS-ML y statsmodels maximiza la verosimilitud
+#   exacta. El peso limite psi (lo que decide como crece el intervalo) es el
+#   mismo hasta el tercer decimal.</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>

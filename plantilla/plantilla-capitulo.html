@@ -1153,6 +1153,14 @@
       gap: 0.5rem;
     }
 
+    /* El titulo del quiz y su parrafo introductorio quedaban pegados (hueco de
+       0 px): el h4 no tiene margen inferior y Tailwind pone los <p> a cero.
+       Mismo fallo que la auditoria de T4d encontro en los simuladores, aqui en
+       el componente de autoevaluacion. */
+    .quiz > h4 + p {
+      margin-top: 0.6rem;
+    }
+
     .quiz-pregunta {
       background: white;
       border: 1px solid #fde68a;
@@ -1754,6 +1762,196 @@
       border-top: 1px solid rgba(1, 40, 32, 0.15);
       font-weight: 500;
     }
+
+    /* ------------------------------------------------------------------
+       Componente .ciclo — diagrama de etapas recorrible
+       ------------------------------------------------------------------
+       Para procedimientos que se recorren y en los que se VUELVE ATRÁS
+       (Box-Jenkins, un pipeline de preprocesamiento, un flujo de
+       descomposición). Una imagen fija enseña el orden; esto enseña
+       además qué hace cada etapa, con qué función, y qué hallazgo te
+       devuelve a la anterior — que es donde está el aprendizaje.
+
+       Semántica de pestañas (role="tablist"/"tab"/"tabpanel") en vez de
+       la de acordeón de .derivacion: las etapas son alternativas de una
+       misma cosa, no bloques independientes, y así el teclado recorre el
+       ciclo con las flechas. La familia de color es la naranja de acento,
+       para no confundirlo con las cajas verdes de derivación.
+       ------------------------------------------------------------------ */
+    .ciclo {
+      margin: 1.25rem 0;
+    }
+
+    .ciclo-etapas {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: stretch;
+      gap: 0.4rem;
+      list-style: none;
+      margin: 0 0 0.6rem 0;
+      padding: 0;
+    }
+
+    .ciclo-etapa {
+      display: flex;
+      align-items: stretch;
+    }
+
+    /* La flecha vive en el separador, no en el botón: así el orden se lee
+       aunque las etapas salten de línea. */
+    .ciclo-etapa:not(:last-child)::after {
+      content: "\2192";
+      align-self: center;
+      margin: 0 0.15rem;
+      color: rgba(1, 40, 32, 0.35);
+      font-weight: 700;
+    }
+
+    .ciclo-boton {
+      font-family: inherit;
+      text-align: left;
+      cursor: pointer;
+      background: #ffffff;
+      border: 1px solid rgba(1, 40, 32, 0.2);
+      border-radius: 0.6rem;
+      padding: 0.55rem 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+      min-width: 8.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .ciclo-boton:hover {
+      border-color: #012820;
+      background: rgba(1, 40, 32, 0.04);
+    }
+
+    .ciclo-boton[aria-selected="true"] {
+      background: #012820;
+      border-color: #012820;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(1, 40, 32, 0.25);
+    }
+
+    .ciclo-numero {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #FF6600;
+      font-weight: 600;
+    }
+
+    .ciclo-boton[aria-selected="true"] .ciclo-numero {
+      color: #FFC24B;
+    }
+
+    .ciclo-titulo {
+      font-weight: 600;
+      font-size: 0.9rem;
+      line-height: 1.25;
+    }
+
+    .ciclo-resumen {
+      font-size: 0.74rem;
+      color: #64748b;
+      line-height: 1.3;
+    }
+
+    .ciclo-boton[aria-selected="true"] .ciclo-resumen {
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    /* La vuelta atrás es lo que distingue un ciclo de una lista de pasos. */
+    .ciclo-retorno {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.76rem;
+      color: #64748b;
+      font-style: italic;
+      margin: 0 0 0.7rem 0;
+    }
+
+    .ciclo-retorno::before {
+      content: "\21BA";
+      font-style: normal;
+      font-size: 1rem;
+      color: #FF6600;
+    }
+
+    .ciclo-panel {
+      padding: 1rem 1.15rem;
+      background: #f8fafc;
+      border-left: 3px solid #FF6600;
+      border-radius: 0.5rem;
+      font-size: 0.9rem;
+      color: #1e293b;
+    }
+
+    .ciclo-panel[hidden] {
+      display: none;
+    }
+
+    .ciclo-campo {
+      margin: 0 0 0.7rem 0;
+    }
+
+    .ciclo-campo:last-child {
+      margin-bottom: 0;
+    }
+
+    .ciclo-etiqueta {
+      display: block;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #012820;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+
+    .ciclo-vuelta {
+      margin-top: 0.85rem;
+      padding-top: 0.7rem;
+      border-top: 1px solid rgba(255, 102, 0, 0.25);
+    }
+
+    .ciclo-vuelta .ciclo-etiqueta {
+      color: #FF6600;
+    }
+
+    .ciclo-panel code {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.82rem;
+      background: rgba(1, 40, 32, 0.07);
+      padding: 0.1rem 0.3rem;
+      border-radius: 0.25rem;
+    }
+
+    /* En móvil el ciclo se lee en vertical y las flechas giran con él. */
+    @media (max-width: 640px) {
+      .ciclo-etapas {
+        flex-direction: column;
+      }
+
+      .ciclo-etapa {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .ciclo-boton {
+        width: 100%;
+      }
+
+      .ciclo-etapa:not(:last-child)::after {
+        content: "\2193";
+        align-self: center;
+        margin: 0.15rem 0;
+      }
+    }
   </style>
 </head>
 
@@ -1873,6 +2071,78 @@
             <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
             <p class="text-gray-600 text-sm" style="margin:0;">Ver de un vistazo todos los bloques de contenido
               disponibles. Copia el que necesites y sustituye el texto.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="ciclo" data-ciclo="demo">
+        <ol class="ciclo-etapas" role="tablist" aria-label="Etapas del ciclo">
+          <li class="ciclo-etapa" role="presentation">
+            <button type="button" class="ciclo-boton" role="tab"
+              aria-selected="true" aria-controls="ciclo-demo-planear" tabindex="0">
+              <span class="ciclo-numero">Etapa 1</span>
+              <span class="ciclo-titulo">Planear</span>
+              <span class="ciclo-resumen">¿Qué se quiere responder?</span>
+            </button>
+          </li>
+          <li class="ciclo-etapa" role="presentation">
+            <button type="button" class="ciclo-boton" role="tab"
+              aria-selected="false" aria-controls="ciclo-demo-hacer" tabindex="-1">
+              <span class="ciclo-numero">Etapa 2</span>
+              <span class="ciclo-titulo">Hacer</span>
+              <span class="ciclo-resumen">Ejecutar y medir</span>
+            </button>
+          </li>
+          <li class="ciclo-etapa" role="presentation">
+            <button type="button" class="ciclo-boton" role="tab"
+              aria-selected="false" aria-controls="ciclo-demo-comprobar" tabindex="-1">
+              <span class="ciclo-numero">Etapa 3</span>
+              <span class="ciclo-titulo">Comprobar</span>
+              <span class="ciclo-resumen">¿Se sostiene?</span>
+            </button>
+          </li>
+        </ol>
+        <p class="ciclo-retorno">El ciclo se recorre con clic o con las flechas del teclado, y vuelve al principio cuantas veces haga falta.</p>
+        <div class="ciclo-panel" id="ciclo-demo-planear" role="tabpanel">
+          <div class="ciclo-campo">
+            <span class="ciclo-etiqueta">Qué haces</span>
+            <p>Se describe la etapa en una o dos frases. Este componente es para procedimientos que se <strong>recorren</strong> y en los que se vuelve atrás; si los pasos nunca se repiten, usa la caja <code>.diagram</code> con una lista y ya está.</p>
+          </div>
+          <div class="ciclo-campo">
+            <span class="ciclo-etiqueta">Con qué</span>
+            <p>Aquí van las funciones concretas: <code>funcion()</code> en R, <code>metodo()</code> en Python.</p>
+          </div>
+          <div class="ciclo-campo ciclo-vuelta">
+            <span class="ciclo-etiqueta">Qué te devuelve atrás</span>
+            <p>La etapa 1 es el principio: no se vuelve a ella desde ningún sitio salvo desde el diagnóstico final.</p>
+          </div>
+        </div>
+        <div class="ciclo-panel" id="ciclo-demo-hacer" role="tabpanel" hidden>
+          <div class="ciclo-campo">
+            <span class="ciclo-etiqueta">Qué haces</span>
+            <p>Las fórmulas de KaTeX funcionan dentro del panel, incluidas las de bloque: $\hat{y}_{t} = \phi y_{t-1}$.</p>
+          </div>
+          <div class="ciclo-campo">
+            <span class="ciclo-etiqueta">Con qué</span>
+            <p><code>otra_funcion(x, opcion = TRUE)</code></p>
+          </div>
+          <div class="ciclo-campo ciclo-vuelta">
+            <span class="ciclo-etiqueta">Qué te devuelve atrás</span>
+            <p>Si el resultado no converge, se vuelve a la etapa 1 con otra especificación.</p>
+          </div>
+        </div>
+        <div class="ciclo-panel" id="ciclo-demo-comprobar" role="tabpanel" hidden>
+          <div class="ciclo-campo">
+            <span class="ciclo-etiqueta">Qué haces</span>
+            <p>La última etapa es la que cierra el ciclo: su resultado decide si se termina o si se vuelve al principio.</p>
+          </div>
+          <div class="ciclo-campo">
+            <span class="ciclo-etiqueta">Con qué</span>
+            <p><code>diagnostico(ajuste)</code></p>
+          </div>
+          <div class="ciclo-campo ciclo-vuelta">
+            <span class="ciclo-etiqueta">Qué te devuelve atrás</span>
+            <p>Si la comprobación falla, el ciclo entero empieza otra vez. Esa flecha de vuelta es lo que una lista numerada no sabe dibujar.</p>
           </div>
         </div>
       </div>
@@ -2243,6 +2513,7 @@ round(mean(rnorm(200)), 4)   # 0.0117</code></pre>
         iniciarAutoevaluaciones();
         iniciarEjerciciosGuiados();
         iniciarDerivaciones();
+        iniciarCiclos();
         renderMathInElement(mainContent, {
           delimiters: [
             { left: "$$", right: "$$", display: true },
@@ -3202,6 +3473,47 @@ round(mean(rnorm(200)), 4)   # 0.0117</code></pre>
     // katexEn(panel) aquí es la red de seguridad para contenido inyectado
     // después (una derivación dentro de una solución, por ejemplo).
     // ================================================================
+    // ================================================================
+    // Componente .ciclo — diagrama de etapas recorrible
+    // ================================================================
+    // Cada `<div class="ciclo">` lleva una lista `role="tablist"` de
+    // botones `.ciclo-boton` con aria-controls apuntando a su panel. Se
+    // muestra una etapa a la vez; las flechas del teclado recorren el
+    // ciclo (y dan la vuelta al llegar al final, que es justo lo que hace
+    // el procedimiento que representa).
+    function iniciarCiclos() {
+      mainContent.querySelectorAll('.ciclo').forEach(raiz => {
+        const botones = Array.from(raiz.querySelectorAll('.ciclo-boton'));
+        const paneles = botones.map(b => document.getElementById(b.getAttribute('aria-controls')));
+        if (!botones.length || paneles.some(p => !p)) return;
+
+        function seleccionar(i, moverFoco) {
+          botones.forEach((boton, j) => {
+            const activo = j === i;
+            boton.setAttribute('aria-selected', String(activo));
+            boton.tabIndex = activo ? 0 : -1;
+            paneles[j].hidden = !activo;
+          });
+          katexEn(paneles[i]);
+          if (moverFoco) botones[i].focus();
+        }
+
+        botones.forEach((boton, i) => {
+          boton.addEventListener('click', () => seleccionar(i, false));
+          boton.addEventListener('keydown', evento => {
+            const paso = (evento.key === 'ArrowRight' || evento.key === 'ArrowDown') ? 1
+              : (evento.key === 'ArrowLeft' || evento.key === 'ArrowUp') ? -1 : 0;
+            if (paso === 0) return;
+            evento.preventDefault();
+            seleccionar((i + paso + botones.length) % botones.length, true);
+          });
+        });
+
+        const inicial = botones.findIndex(b => b.getAttribute('aria-selected') === 'true');
+        seleccionar(inicial >= 0 ? inicial : 0, false);
+      });
+    }
+
     function iniciarDerivaciones() {
       mainContent.querySelectorAll('.derivacion-boton').forEach(boton => {
         const panel = document.getElementById(boton.getAttribute('aria-controls'));

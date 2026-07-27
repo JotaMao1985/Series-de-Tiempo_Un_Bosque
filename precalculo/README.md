@@ -9,6 +9,7 @@ que los capítulos HTML incrustan (los capítulos son autocontenidos, sin `fetch
 Rscript genera_datos.R      # series base + capítulos 1, 4 y 6
 Rscript genera_cap2.R       # capítulo 2 (lee la salida del anterior)
 Rscript genera_cap3.R       # capítulo 3 (lee la TRM de la salida del primero)
+Rscript genera_cap4.R       # capítulo 4 (lee Nilo, TRM y AirPassengers del primero)
 Rscript genera_soluciones.R # soluciones de los ejercicios propuestos
 ```
 
@@ -33,7 +34,8 @@ y no hay razón para pagar eso cada vez que se toca un correlograma.
 | `cap2_estacionariedad.json` / `cap2_datos.js` | 8 series de trabajo con su ACF y PACF (24 rezagos), ADF y KPSS (nivel y tendencia), `ndiffs`/`nsdiffs`, λ de Guerrero, tabla de sobrediferenciación y el Monte Carlo de la trampa del ADF estacional | Capítulo 2 |
 | `cap3_arma.json` / `cap3_datos.js` | ACF y PACF **teóricas** (`ARMAacf`) y pesos ψ/π de 8 procesos canónicos; manchas solares 1770–1869 con AR(2) por Yule-Walker, CSS y ML, raíces y pseudo-periodo, rejilla de 11 modelos, diagnóstico de 4 candidatos y el análisis sobre √; log-retornos mensuales de la TRM | Capítulo 3 |
 | `soluciones_ejercicios.json` | Soluciones **resueltas de verdad** de los ejercicios propuestos de los capítulos 1 y 2. El texto de las cajas "Solución" del HTML se contrasta contra este archivo; ninguna cifra se escribe de memoria | Capítulos 1 y 2 |
-| `cap4_rejilla_arima.json` | Rejilla ARIMA(p,d,q), p,d,q ∈ {0,1,2}, sobre el Nilo: AICc/BIC, Ljung–Box, ACF de residuales. **El AICc solo se compara dentro del mismo d** (`mejor_aicc_por_d`) | Capítulo 4 (explorador de modelos) |
+| `cap4_arima.json` / `cap4_datos.js` | Todo el capítulo 4: identificación del Nilo (correlogramas por d, ADF/KPSS/PP, `ndiffs` con las tres pruebas), rejilla de 27 modelos con AICc/BIC/Ljung–Box/ACF residual **y el módulo de las raíces** de cada uno, diagnóstico del ARIMA(1,1,1), el cambio de nivel de 1899 con su Monte Carlo y su malla de δ, sobrediferenciación, las trazas de `auto.arima` (18 pasos escalonada, 42 exhaustiva), las cuatro formas del pronóstico con bandas 80/95, los pesos ψ y σ_h, el caso TRM en niveles y el puente estacional sobre log(AirPassengers) | Capítulo 4 |
+| `cap4_rejilla_arima.json` | Rejilla ARIMA(p,d,q) de la Fase 0, sobre el Nilo. **Superada por `cap4_arima.json`**, que la recalcula con más información; se conserva porque `genera_cap4.R` la usa como verificación cruzada (diferencia máxima de AICc: 0.0000 en los 27 modelos) | — (verificación) |
 | `cap6_pronostico.json` | Modelo airline SARIMA(0,1,1)(0,1,1)[12] sobre log(AirPassengers): pronóstico con bandas 80/95, métricas vs. referencia (naive, snaive, media, deriva) y origen móvil (37 orígenes, h=12) | Capítulo 6 (simuladores de horizonte y backtesting) |
 
 ## Notas metodológicas
@@ -74,5 +76,25 @@ y no hay razón para pagar eso cada vez que se toca un correlograma.
   (el pronóstico puntual es la mediana en la escala original).
 - TRM: se descarta el mes en curso (incompleto); la fecha de consulta queda en
   los metadatos del archivo.
+- **KPSS no usa el mismo truncamiento en R y en Python.** `tseries::kpss.test` usa
+  ⌊4(n/100)^¼⌋ (= 4 con n = 100) y `statsmodels.kpss` con `nlags="legacy"` usa
+  ⌊12(n/100)^¼⌋ (= 12). Sobre el Nilo eso da 0.9654 y 0.5497. Con `nlags=4`
+  coinciden hasta el último decimal. Es la misma clase de trampa que la de
+  `ndiffs`: al comparar dos programas, mira primero el truncamiento.
+- **KPSS no distingue una raíz unitaria de un cambio de nivel.** Monte Carlo de
+  1000 réplicas de ruido blanco estacionario: sin escalón rechaza el 4.8 % (su
+  tamaño nominal); con un escalón de 1.95 desviaciones típicas, el 100 %. El ADF
+  solo cae en el 0.5 % de los casos. Como `auto.arima` elige d con KPSS, una serie
+  con un salto de nivel acaba diferenciada.
+- **La firma algebraica de la sobrediferenciación es una raíz MA sobre el círculo
+  unitario**, y es más fiable que la regla de la varianza: sobre `log(lynx)`
+  diferenciar *reduce* la varianza un 58 % y aun así d = 1 sobra.
+- **`statsmodels` no descuenta d en `nobs`**: informa 100 observaciones para todos
+  los d, así que sus AIC/BIC parecen comparables entre distintos d cuando no lo
+  son. En R el n efectivo sí baja (100, 99, 98).
+- **`residuals()` de un ajuste con d ≥ 1 devuelve n valores, no n − d.** La banda
+  del correlograma de residuales se calcula sobre esa longitud.
+- **`jsonlite` escribe los `Inf` como `null`** (con `na = "null"`). Cualquier JS que
+  lea esos campos tiene que tratar el `null` aparte: `Number(null)` es 0.
 - Para regenerar tras cada semestre basta volver a correr el script; los números
   incrustados en los capítulos deben actualizarse copiando las salidas nuevas.

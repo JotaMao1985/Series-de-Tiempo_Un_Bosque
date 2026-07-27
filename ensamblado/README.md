@@ -8,6 +8,18 @@ aquí se editan directamente.
 |---|---|
 | `ensambla_cap3.py` | Construyó el capítulo 3 **partiendo del capítulo 2** y sustituyendo regiones delimitadas (metadatos, CSS, plantillas de módulo, `courseData`, datos precalculados, JavaScript propio). |
 | `retropropaga.py` | Injertó el componente `.derivacion` y la opción `barrasExtra` en los capítulos 1 y 2, y añadió una caja de derivación en cada uno. |
+| `instala_ciclo.py` | Instaló el componente `.ciclo` en la plantilla y en los capítulos 1, 2 y 3, con una instancia en cada uno. El capítulo 4 **no** aparece: se ensambla desde el 3 y lo hereda por construcción. |
+| `ensambla_cap4.py` | Construyó el capítulo 4 **partiendo del capítulo 3**. Fuentes en `cap4/` (las plantillas de los 10 módulos y el JavaScript propio) y comprobaciones ampliadas: los 10 simuladores registrados **y** sus contenedores, el andamiaje del `.quiz`, las 4 etapas del ciclo, los 3 ejercicios con sus 6 desplegables, y que no quede nada del capítulo 3. |
+
+## Carpetas auxiliares
+
+- `componentes/` — fuentes compartidas de `.ciclo` (`ciclo.css`, `ciclo.js` y el
+  constructor `ciclo_html.py`). Los cinco archivos del proyecto se generan desde
+  aquí, de modo que su marcado es idéntico y la comparación de selectores CSS no
+  encuentra diferencias.
+- `cap4/` — plantillas de módulo y JavaScript del capítulo 4. **Son la fuente**
+  para `ensambla_cap4.py`: si se edita el capítulo publicado a mano, hay que
+  reflejarlo aquí o el siguiente ensamblado lo perderá.
 
 ## Por qué por sustitución y no por concatenación
 
@@ -33,7 +45,23 @@ contenedor `.quiz` le falta `.quiz-preguntas`.
 
 ## Advertencia
 
-`ensambla_cap3.py` está escrito contra el capítulo 2 **anterior** a la
-retropropagación de `.derivacion`. Volver a ejecutarlo hoy abortaría (los
-marcadores del CSS han cambiado), que es exactamente lo que debe hacer. Para el
-capítulo 4, copia el patrón y actualiza los marcadores contra el capítulo 3.
+`ensambla_cap3.py` e `instala_ciclo.py` están escritos contra el estado de los
+archivos **anterior** a su propia ejecución. Volver a ejecutarlos hoy abortaría,
+que es exactamente lo que deben hacer (`instala_ciclo.py` lo comprueba de forma
+explícita: si el archivo ya tiene `.ciclo`, para). `ensambla_cap4.py` **sí** es
+reejecutable, porque su fuente es el capítulo 3 y sus propias plantillas en
+`cap4/`; se ha vuelto a correr varias veces durante la auditoría.
+
+Para el capítulo 5, copia el patrón de `ensambla_cap4.py` y actualiza los
+marcadores contra el capítulo 4.
+
+## Dos aserciones que se aprendieron por las malas
+
+1. **Delimitar una región por dos marcadores únicos no siempre funciona.** Cierres
+   como `    };` o `  </script>` se repiten por todo el archivo. La regla que
+   funciona es: el marcador de **inicio** tiene que ser único —es el que
+   identifica la región—, y el de fin se busca a partir de él.
+2. **Contar una cadena no es contar marcado.** La aserción de las cajas de
+   derivación contaba `<div class="derivacion">` y encontraba una de más: el
+   JavaScript heredado documenta el componente con un ejemplo dentro de un
+   comentario. Ahora la expresión exige el contenedor **y** su botón.

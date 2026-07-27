@@ -1,0 +1,190 @@
+
+    /* ------------------------------------------------------------------
+       Componente .ciclo — diagrama de etapas recorrible
+       ------------------------------------------------------------------
+       Para procedimientos que se recorren y en los que se VUELVE ATRÁS
+       (Box-Jenkins, un pipeline de preprocesamiento, un flujo de
+       descomposición). Una imagen fija enseña el orden; esto enseña
+       además qué hace cada etapa, con qué función, y qué hallazgo te
+       devuelve a la anterior — que es donde está el aprendizaje.
+
+       Semántica de pestañas (role="tablist"/"tab"/"tabpanel") en vez de
+       la de acordeón de .derivacion: las etapas son alternativas de una
+       misma cosa, no bloques independientes, y así el teclado recorre el
+       ciclo con las flechas. La familia de color es la naranja de acento,
+       para no confundirlo con las cajas verdes de derivación.
+       ------------------------------------------------------------------ */
+    .ciclo {
+      margin: 1.25rem 0;
+    }
+
+    .ciclo-etapas {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: stretch;
+      gap: 0.4rem;
+      list-style: none;
+      margin: 0 0 0.6rem 0;
+      padding: 0;
+    }
+
+    .ciclo-etapa {
+      display: flex;
+      align-items: stretch;
+    }
+
+    /* La flecha vive en el separador, no en el botón: así el orden se lee
+       aunque las etapas salten de línea. */
+    .ciclo-etapa:not(:last-child)::after {
+      content: "\2192";
+      align-self: center;
+      margin: 0 0.15rem;
+      color: rgba(1, 40, 32, 0.35);
+      font-weight: 700;
+    }
+
+    .ciclo-boton {
+      font-family: inherit;
+      text-align: left;
+      cursor: pointer;
+      background: #ffffff;
+      border: 1px solid rgba(1, 40, 32, 0.2);
+      border-radius: 0.6rem;
+      padding: 0.55rem 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+      min-width: 8.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .ciclo-boton:hover {
+      border-color: #012820;
+      background: rgba(1, 40, 32, 0.04);
+    }
+
+    .ciclo-boton[aria-selected="true"] {
+      background: #012820;
+      border-color: #012820;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(1, 40, 32, 0.25);
+    }
+
+    .ciclo-numero {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #FF6600;
+      font-weight: 600;
+    }
+
+    .ciclo-boton[aria-selected="true"] .ciclo-numero {
+      color: #FFC24B;
+    }
+
+    .ciclo-titulo {
+      font-weight: 600;
+      font-size: 0.9rem;
+      line-height: 1.25;
+    }
+
+    .ciclo-resumen {
+      font-size: 0.74rem;
+      color: #64748b;
+      line-height: 1.3;
+    }
+
+    .ciclo-boton[aria-selected="true"] .ciclo-resumen {
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    /* La vuelta atrás es lo que distingue un ciclo de una lista de pasos. */
+    .ciclo-retorno {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.76rem;
+      color: #64748b;
+      font-style: italic;
+      margin: 0 0 0.7rem 0;
+    }
+
+    .ciclo-retorno::before {
+      content: "\21BA";
+      font-style: normal;
+      font-size: 1rem;
+      color: #FF6600;
+    }
+
+    .ciclo-panel {
+      padding: 1rem 1.15rem;
+      background: #f8fafc;
+      border-left: 3px solid #FF6600;
+      border-radius: 0.5rem;
+      font-size: 0.9rem;
+      color: #1e293b;
+    }
+
+    .ciclo-panel[hidden] {
+      display: none;
+    }
+
+    .ciclo-campo {
+      margin: 0 0 0.7rem 0;
+    }
+
+    .ciclo-campo:last-child {
+      margin-bottom: 0;
+    }
+
+    .ciclo-etiqueta {
+      display: block;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #012820;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+
+    .ciclo-vuelta {
+      margin-top: 0.85rem;
+      padding-top: 0.7rem;
+      border-top: 1px solid rgba(255, 102, 0, 0.25);
+    }
+
+    .ciclo-vuelta .ciclo-etiqueta {
+      color: #FF6600;
+    }
+
+    .ciclo-panel code {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.82rem;
+      background: rgba(1, 40, 32, 0.07);
+      padding: 0.1rem 0.3rem;
+      border-radius: 0.25rem;
+    }
+
+    /* En móvil el ciclo se lee en vertical y las flechas giran con él. */
+    @media (max-width: 640px) {
+      .ciclo-etapas {
+        flex-direction: column;
+      }
+
+      .ciclo-etapa {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .ciclo-boton {
+        width: 100%;
+      }
+
+      .ciclo-etapa:not(:last-child)::after {
+        content: "\2193";
+        align-self: center;
+        margin: 0.15rem 0;
+      }
+    }

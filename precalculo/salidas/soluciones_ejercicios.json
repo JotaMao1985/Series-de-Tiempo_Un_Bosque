@@ -279,6 +279,190 @@
     "rango_periodo": [10.129, 11.218],
     "nota": "Los coeficientes apenas se mueven, el periodo cae de 11.22 a 10.13 anios y el diagnostico falla fuera de la ventana de Yule porque la prueba gana potencia con n, no porque el modelo empeore."
   },
+  "cap4_ej1": {
+    "serie": "BJsales (Box & Jenkins, Serie M)",
+    "n": 150,
+    "pruebas": {
+      "adf_nivel": 0.5302,
+      "kpss_nivel": 0.01,
+      "adf_d1": 0.0658,
+      "kpss_d1": 0.1,
+      "ndiffs": 1
+    },
+    "varianzas": [461.3769, 2.0851, 2.8823, 8.5626],
+    "acf_d1": [0.3118, 0.2782, 0.2264, 0.2521, 0.1496, 0.1336],
+    "pacf_d1": [0.3118, 0.2005, 0.1091, 0.1383, -0.0029, 0.0103],
+    "banda_d1": 0.1606,
+    "rejilla_d1": [
+      {
+        "modelo": "ARIMA(1,1,1)",
+        "aicc": 514.902,
+        "bic": 523.748,
+        "lb20": 0.6216,
+        "min_raiz_ma": 1.5589
+      },
+      {
+        "modelo": "ARIMA(1,1,2)",
+        "aicc": 516.914,
+        "bic": 528.652,
+        "lb20": 0.5592,
+        "min_raiz_ma": 1.6633
+      },
+      {
+        "modelo": "ARIMA(2,1,1)",
+        "aicc": 516.922,
+        "bic": 528.66,
+        "lb20": 0.5576,
+        "min_raiz_ma": 1.6474
+      },
+      {
+        "modelo": "ARIMA(2,1,2)",
+        "aicc": 518.575,
+        "bic": 533.175,
+        "lb20": 0.4613,
+        "min_raiz_ma": 1.2236
+      },
+      {
+        "modelo": "ARIMA(2,1,0)",
+        "aicc": 520.088,
+        "bic": 528.935,
+        "lb20": 0.2627,
+        "min_raiz_ma": null
+      },
+      {
+        "modelo": "ARIMA(1,1,0)",
+        "aicc": 526.209,
+        "bic": 532.134,
+        "lb20": 0.183,
+        "min_raiz_ma": null
+      },
+      {
+        "modelo": "ARIMA(0,1,2)",
+        "aicc": 527.856,
+        "bic": 536.702,
+        "lb20": 0.1346,
+        "min_raiz_ma": 2.2741
+      },
+      {
+        "modelo": "ARIMA(0,1,1)",
+        "aicc": 533.348,
+        "bic": 539.274,
+        "lb20": 0.034,
+        "min_raiz_ma": 3.9028
+      },
+      {
+        "modelo": "ARIMA(0,1,0)",
+        "aicc": 545.544,
+        "bic": 548.521,
+        "lb20": 0,
+        "min_raiz_ma": null
+      }
+    ],
+    "mejor_aicc": "ARIMA(1,1,1)",
+    "mejor_bic": "ARIMA(1,1,1)",
+    "ganador": {
+      "modelo": "ARIMA(1,1,1)",
+      "phi": 0.8799,
+      "phi_ee": 0.0644,
+      "theta": -0.6415,
+      "theta_ee": 0.1035,
+      "sigma2": 1.7755,
+      "aicc": 514.902,
+      "lb20_p": 0.6216,
+      "shapiro_p": 0.6295
+    },
+    "candidato_de_libro": {
+      "modelo": "ARIMA(0,1,1)",
+      "theta": 0.2562,
+      "aicc": 533.348,
+      "lb20_p": 0.034,
+      "acf_residual_1a4": [0.0142, 0.2483, 0.1185, 0.2087],
+      "banda": 0.16,
+      "nota": "Estructura residual en los rezagos 2 y 4: el termino AR hace falta."
+    },
+    "trampa_d2": {
+      "mejor_modelo": "ARIMA(1,2,2)",
+      "aicc": 515.859,
+      "min_raiz_ma": 1,
+      "n_efectivo": 148,
+      "n_efectivo_d1": 149,
+      "aicc_ganador_d1": 514.902,
+      "nota": "Dos motivos independientes para descartarlo: su AICc se calcula sobre 148 observaciones y el del d = 1 sobre 149 (no son comparables), y su raiz MA cae SOBRE el circulo unitario, que es la firma algebraica de haber diferenciado de mas."
+    },
+    "auto": "ARIMA(1,1,1)"
+  },
+  "cap4_ej2": {
+    "serie": "log(lynx)",
+    "n": 114,
+    "ndiffs_kpss": 0,
+    "ndiffs_adf": 0,
+    "kpss_p": 0.1,
+    "adf_p": 0.01,
+    "acf": [0.7851, 0.3402, -0.1323, -0.4939, -0.6205, -0.4879, -0.1578, 0.2349, 0.5372, 0.6055, 0.3829, -0.0123],
+    "banda": 0.1836,
+    "varianzas": [1.6532, 0.6871, 0.6026],
+    "ar2": {
+      "phi1": 1.3776,
+      "phi2": -0.7399,
+      "modulo": 1.1626,
+      "periodo": 9.784,
+      "aicc": 185.517,
+      "lb20_p": 0.0094
+    },
+    "auto": "ARIMA(2,0,3) with non-zero mean",
+    "regla_varianza": {
+      "var_d0": 1.6532,
+      "var_d1": 0.6871,
+      "cambio_pct": -58.4,
+      "la_regla_funciona": false,
+      "nota": "La varianza cae un 58 %: la regla heuristica no dispara. En una serie con ciclo fuerte, diferenciar reduce la varianza aunque sobre. El detector fiable es la raiz del polinomio MA."
+    },
+    "diferenciada": [
+      {
+        "modelo": "ARIMA(2,1,0)",
+        "aicc": 226.442,
+        "min_raiz_ma": null,
+        "lb20_p": 0
+      },
+      {
+        "modelo": "ARIMA(2,1,1)",
+        "aicc": 187.673,
+        "min_raiz_ma": 1,
+        "lb20_p": 0.0071
+      },
+      {
+        "modelo": "ARIMA(0,1,1)",
+        "aicc": 231.105,
+        "min_raiz_ma": 1.5076,
+        "lb20_p": 0
+      }
+    ]
+  },
+  "cap4_ej3": {
+    "modelo": "ARIMA(1,1,1) sobre BJsales",
+    "phi": 0.88,
+    "theta": -0.6415,
+    "sigma": 1.3416,
+    "psi_0a4": [1, 1.2385, 1.4485, 1.6332, 1.7958],
+    "psi_limite": 2.5593,
+    "psi_limite_teorico": 2.9883,
+    "sigma_h_1a5": [1.3416, 2.1356, 2.8874, 3.6246, 4.3523],
+    "semiancho95_1a5": [2.6295, 4.1857, 5.6592, 7.1042, 8.5303],
+    "error_maximo": 2.398e-14,
+    "razon_h12_h1": 6.7963,
+    "razon_raiz_h": 3.4641,
+    "con_deriva": {
+      "deriva": 0.4001,
+      "ee": 0.2557,
+      "t": 1.564,
+      "aicc": 515.062,
+      "aicc_sin": 514.902,
+      "pronostico_h12": 266.987,
+      "pronostico_h12_sin": 263.759,
+      "ancho95_h12": 32.91,
+      "ancho95_h12_sin": 35.742
+    }
+  },
   "metadatos": {
     "generado": "2026-07-26",
     "generador": "precalculo/genera_soluciones.R",
