@@ -891,27 +891,61 @@ retomar, lo que queda es la revisión de contenido de Javier (Checkpoint 2), la 
     los siete archivos pasa `node --check`.
 
 ### Checkpoint 2
-- [ ] Los 6 capítulos abren sin errores; navegación cruzada entre capítulos consistente; revisión de contenido de Javier.
+- [x] Los 6 capítulos abren sin errores de consola y con 0 errores de KaTeX, en local y en producción;
+      la portada enlaza los seis y la navegación funciona sobre el sitio publicado.
+- [ ] **Pendiente: revisión de contenido de Javier.** Es lo único que queda del proyecto.
 
-### Fase 4 — Portada, repo y publicación
+### Fase 4 — Portada, repo y publicación — ✅ COMPLETADA (2026-07-27)
 
-- [ ] **T9 · index.html + README + .nojekyll + .gitignore** — portada con las 6 tarjetas. *Dependencias:* T3–T8. *Tamaño:* S.
-- [ ] **T10 · Despliegue** — push al repo remoto y activación de Pages.
+- [x] **T9 · index.html + README + .nojekyll + .gitignore** — portada con las 6 tarjetas,
+  `Htmls_Series/index.html`. Mismo formato que la portada de Muestreo (héroe, tarjetas de resumen,
+  tarjetas de capítulo, pie con la bibliografía) con tres diferencias deliberadas: el token de paleta
+  `gold` es el **ámbar `#FFC24B`** que usan los seis capítulos desde el refinamiento del pie de página
+  —no el verde-lima `#90FF00` de Muestreo—, cada tarjeta declara **módulos y simuladores**, y se añadió
+  una sección «un recorrido, no seis temas sueltos» que enseña la secuencia describir → estabilizar →
+  modelar → elegir → estacionalizar → evaluar.
+  - *Verificado:* los 6 enlaces locales resuelven a archivos existentes y hay exactamente una tarjeta
+    por capítulo; **las cifras de las 6 tarjetas se comprobaron contra los archivos** (9/7, 9/8, 10/10,
+    10/10, 11/12, 12/14) y los totales también (**61 módulos, 61 simuladores, 49 preguntas, 20
+    ejercicios**); un solo `<h1>`, `lang="es"`, todos los iconos con `aria-hidden`, el enlace externo con
+    `rel="noopener noreferrer"`, `prefers-reduced-motion` y `*:focus-visible`; consola limpia; a 1440 px
+    dos columnas con **las tarjetas de cada fila a la misma altura** (373/373, 351/351, 373/373) y a
+    375 px una columna, en ambos casos **sin scroll horizontal y sin un solo elemento desbordado**.
+  - *Casi me equivoco:* la primera medición de geometría salió con `innerWidth = 554` —el panel había
+    quedado en tamaño móvil— y daba «filas desiguales». Es la trampa ya anotada en T6: **antes de medir,
+    `resize_window` y comprobar el ancho.**
+  - *Dependencias:* T3–T8. *Tamaño:* S.
+- [x] **T10 · Despliegue** — ✅ **el sitio está publicado** en
+  **https://jotamao1985.github.io/Series-de-Tiempo_Un_Bosque/**
   - *Ya hecho (2026-07-24, adelantado desde T10):* `git init -b main` en `Series de tiempo/`
     (todo el proyecto, no solo los HTML, para rastrear plan + plantilla + precálculos) y
     commit inicial `54e45ef` con 12 archivos. `.gitignore` excluye `*.pdf` — hay dos libros
     de texto (35 MB, uno de z-lib) en la carpeta que **no deben** publicarse ni entrar al
     historial de un repo público.
-  - *Decisión pendiente — cómo sirve Pages:* el repositorio remoto ya existe
-    (`JotaMao1985/Series-de-Tiempo_Un_Bosque`), pero Pages solo publica desde la raíz o
-    desde `/docs`, y los capítulos viven en `Htmls_Series/`. Tres opciones: (a) renombrar
-    `Htmls_Series/` → `docs/` y usar "deploy from /docs" (una sola rama, todo versionado);
-    (b) `git subtree push --prefix Htmls_Series origin gh-pages` (mantiene el nombre, sitio
-    limpio sin plan ni precálculos); (c) repo separado solo para los HTML, como en Muestreo.
-    Recomendación: **(b)**, conserva la convención `Htmls_*` y publica únicamente el sitio.
-  - *Criterios:* sitio accesible en la URL de Pages; KaTeX, simuladores y navegación
-    funcionan en producción; el sitio publicado NO contiene los PDF ni los precálculos.
-  - *Dependencias:* T9. *Tamaño:* XS (+ acción manual de Javier: `git remote add` y activar Pages).
+  - *Decisión tomada — cómo sirve Pages:* se eligió la opción **(b)**,
+    `git subtree push --prefix Htmls_Series origin gh-pages`. La rama `main` conserva todo el
+    proyecto (plan, precálculos, ensamblado, plantilla) y la rama `gh-pages` contiene
+    **únicamente el sitio**. Se descartaron (a) renombrar a `docs/`, que habría publicado también
+    los precálculos, y (c) un repo separado, que habría duplicado el historial.
+  - *Cómo se hizo:* `git remote add origin` + `git push -u origin main`, después
+    `git subtree push --prefix Htmls_Series origin gh-pages`. Pages ya estaba habilitado y quedó
+    apuntando a `gh-pages` / `/` (`build_type: legacy`, `https_enforced: true`).
+    **Para publicar cambios futuros basta repetir el `subtree push`** tras commitear en `main`.
+  - *Verificado en producción:*
+    - La rama `gh-pages` contiene **exactamente los 10 archivos del sitio** y ninguno más:
+      comprobado que no hay PDF, ni `precalculo/`, ni `ensamblado/`, ni el plan, ni la plantilla.
+      El historial completo tampoco tiene ningún PDF ni ningún objeto por encima de 1 MB.
+    - Los **10 recursos responden HTTP 200** y se sirven comprimidos: el capítulo 6 pasa de 445 KB
+      a **130 KB** por gzip, lo que confirma el criterio con el que se aceptó superar el límite de
+      160 KB de la tabla de riesgos.
+    - Sobre el **sitio en vivo**: la portada carga con Tailwind, Montserrat y Font Awesome
+      resueltos; **la navegación portada → capítulo funciona** (lo que el panel de vista previa
+      local no podía comprobar, porque sirve los archivos como instantáneas estáticas); en el
+      capítulo 6 los 12 módulos cargan sin errores de consola, 0 errores de KaTeX y
+      canvas = `graficosActivos`; las dos tablas de ranking reordenan y anuncian; el simulador de
+      Winkler responde; y en el capítulo 1 el mapa estacional pinta sus 144 celdas y la
+      autoevaluación corrige parcialmente **sin el «undefined»** que se corrigió en T8c.
+  - *Dependencias:* T9. *Tamaño:* XS.
 
 ## Riesgos y mitigaciones
 
