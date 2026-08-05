@@ -1184,6 +1184,26 @@
       display: none;
     }
 
+    /* Desglose por opción dentro de la retroalimentación (preguntas de
+       selección múltiple). La regla global `ul li { color: #374151 }`, pensada
+       para las listas del contenido, pisaba el color de .quiz-retro.bien/.mal y
+       dejaba el desglose en gris sobre fondo rojo o verde: el mismo fallo que ya
+       se corrigió en el pie de página. `color: inherit` lo devuelve al color de
+       la caja. */
+    .quiz-retro ul {
+      margin: 0.5rem 0 0 0;
+      padding-left: 1.1rem;
+    }
+
+    .quiz-retro ul li {
+      color: inherit;
+      margin-bottom: 0.35rem;
+    }
+
+    .quiz-retro ul li:last-child {
+      margin-bottom: 0;
+    }
+
     .quiz-marcador {
       margin-top: 1.15rem;
       font-weight: 600;
@@ -2117,9 +2137,9 @@
         </div>
       </div>
 
-      <p>Muchos fenómenos se observan a lo largo del tiempo: el número de pasajeros de una aerolínea cada mes, la tasa
-        de cambio diaria, la concentración de CO₂ en la atmósfera, la demanda de energía cada hora. Cuando registramos
-        una variable en instantes sucesivos obtenemos una <strong>serie de tiempo</strong>.</p>
+      <p>Hay fenómenos que solo se dejan ver a lo largo del tiempo: el número de pasajeros de una aerolínea cada mes,
+        la tasa de cambio diaria, la concentración de CO₂ en la atmósfera, la demanda de energía cada hora. Al
+        registrar una variable en instantes sucesivos se obtiene una <strong>serie de tiempo</strong>.</p>
 
       <div class="definition">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: serie de tiempo (<em>time series</em>)</h4>
@@ -2130,9 +2150,14 @@
 
       <p>La diferencia esencial con los datos de <em>corte transversal</em> (una muestra de individuos observados una
         sola vez) es que en una serie de tiempo <strong>el orden importa</strong> y las observaciones cercanas tienden
-        a parecerse: la temperatura de mañana se parece a la de hoy. A esa relación entre una observación y las que la
-        preceden la llamamos <strong>dependencia temporal</strong>, y es justamente lo que los métodos clásicos
-        —construidos sobre el supuesto de independencia— no capturan.</p>
+        a parecerse: la temperatura de mañana se parece a la de hoy. Esa relación entre una observación y las que la
+        preceden se llama <strong>dependencia temporal</strong>, y es justamente lo que no capturan los métodos
+        construidos sobre el supuesto de observaciones independientes.</p>
+
+      <p>Lejos de ser un estorbo, esa dependencia es la materia prima del análisis. Lo que se registra casi nunca es un
+        solo fenómeno, sino varios superpuestos: una marcha de fondo, un patrón que vuelve cada año, sacudidas sin
+        explicación aparente. <strong>Separar esa mezcla es el asunto de este capítulo</strong>; saber cuándo la
+        separación es de fiar, su parte difícil.</p>
 
       <div class="simulador" data-simulador="serie-airpassengers">
         <h4><i class="fas fa-chart-line" aria-hidden="true"></i> La serie <code>AirPassengers</code></h4>
@@ -2174,7 +2199,8 @@
         </div>
       </div>
 
-      <p>Para trabajar una serie el software necesita conocer dos cosas: el <strong>índice temporal</strong> (a qué
+      <p>Nada de eso lo deduce el software por su cuenta: el orden y el ritmo de la serie hay que declarárselos. Para
+        trabajarla necesita conocer dos cosas: el <strong>índice temporal</strong> (a qué
         instante corresponde cada valor) y la <strong>frecuencia</strong> (cuántas observaciones hay por período
         estacional; 12 para datos mensuales con estacionalidad anual). En R el objeto tradicional es <code>ts</code>,
         y el moderno del ecosistema <em>tidyverts</em> es <code>tsibble</code>; en Python se usa una
@@ -2251,9 +2277,9 @@ print(pasajeros.head())</code></pre>
       </table>
 
       <div class="note">
-        <p><strong>Nota:</strong> definir bien la frecuencia es decisivo: casi todos los métodos de este curso
-          (estacionalidad, diferenciación estacional, SARIMA) la usan. Una frecuencia mal declarada produce
-          descomposiciones y pronósticos sin sentido.</p>
+        <p><strong>La frecuencia no es un detalle administrativo:</strong> casi todos los métodos de este curso
+          —estacionalidad, diferenciación estacional, SARIMA— se apoyan en ella. Declararla mal no produce un error;
+          produce descomposiciones y pronósticos sin sentido, que es bastante peor.</p>
       </div>
     </div>
   </template>
@@ -2279,10 +2305,11 @@ print(pasajeros.head())</code></pre>
         </div>
       </div>
 
-      <p>Antes de cualquier modelo, <strong>hay que mirar la serie</strong>. Cuatro gráficos son el pan de cada día:</p>
+      <p>Con la serie ya declarada, el paso siguiente no es modelar: <strong>es mirarla</strong>. Cuatro gráficos hacen
+        casi todo el trabajo, y cada uno saca a la luz algo que los demás dejan escondido:</p>
       <ul>
         <li><strong>Gráfico de tiempo</strong> (<em>time plot</em>): $y_t$ contra $t$. Revela tendencia, saltos y la
-          forma general (Módulo 1).</li>
+          forma general; es el del Módulo 1.</li>
         <li><strong>Gráfico estacional</strong> (<em>seasonal plot</em>): una línea por año, superponiendo los meses.
           Deja ver el patrón que se repite y cómo cambia entre años.</li>
         <li><strong>Gráfico de subseries</strong> (<em>subseries plot</em>): un mini-panel por mes, con su promedio.</li>
@@ -2346,9 +2373,10 @@ plt.show()</code></pre>
       </div>
 
       <div class="note">
-        <p><strong>Nota:</strong> en el gráfico estacional, líneas casi paralelas indican estacionalidad estable; un
-          abanico que se abre (como aquí) indica que la estacionalidad crece con el nivel de la serie, señal de un
-          modelo <em>multiplicativo</em> (Módulo 6).</p>
+        <p><strong>Cómo leer el abanico:</strong> en el gráfico estacional, líneas casi paralelas indican
+          estacionalidad estable; un abanico que se abre —como el de <code>AirPassengers</code>— indica que la
+          estacionalidad crece con el nivel de la serie. Esa forma es la señal de un modelo <em>multiplicativo</em>, y
+          será la primera decisión que haya que tomar al descomponer, en el Módulo 6.</p>
       </div>
     </div>
   </template>
@@ -2374,7 +2402,8 @@ plt.show()</code></pre>
         </div>
       </div>
 
-      <p>Es útil pensar una serie como la superposición de componentes no observables:</p>
+      <p>Los patrones que revelan esos gráficos tienen nombre, y son cuatro. Conviene pensar una serie como la
+        superposición de <strong>componentes no observables</strong>: no se miden por separado, se estiman.</p>
       <ul>
         <li><strong>Tendencia</strong> ($T_t$): movimiento de largo plazo, creciente o decreciente.</li>
         <li><strong>Estacionalidad</strong> ($S_t$): patrón que se repite con período <em>fijo y conocido</em> (12
@@ -2390,14 +2419,56 @@ plt.show()</code></pre>
           textos agrupan tendencia y ciclo en un solo término <em>tendencia-ciclo</em> $T_t$.</p>
       </div>
 
+      <p>Esa fusión no es pereza de notación, y explica por qué el ciclo casi no volverá a aparecer en el capítulo.
+        Para reconocer un ciclo hacen falta muchas repeticiones, y <code>AirPassengers</code> cubre doce años: un
+        ciclo económico de siete u ocho años cabría ahí una vez y media, indistinguible de una tendencia que sube.
+        Por eso los métodos prácticos —la descomposición clásica y STL de los módulos siguientes incluidas— no separan
+        $T_t$ de $C_t$: estiman un único componente <strong>tendencia-ciclo</strong> que absorbe a los dos. Cuando en
+        adelante se hable de «la tendencia», será en realidad esa mezcla.</p>
+
+      <p>El ruido se define por descarte —es lo que queda cuando los demás ya dieron cuenta de lo suyo—, y
+        precisamente por eso es el componente que juzga el trabajo: <strong>no debería tener forma</strong>. Si al
+        terminar el residuo todavía sube y baja con un patrón reconocible, eso no es ruido sino estructura que la
+        descomposición dejó sin recoger, y la señal de que hay que rehacer algo. Ese es el paso que cierra el bucle
+        del Módulo 6.</p>
+
       <p>Los componentes se combinan de forma <strong>aditiva</strong> o <strong>multiplicativa</strong>:</p>
       <div class="formula">
         $$\underbrace{y_t = T_t + S_t + R_t}_{\text{aditivo}} \qquad\qquad
         \underbrace{y_t = T_t \times S_t \times R_t}_{\text{multiplicativo}}$$
       </div>
       <p>El modelo aditivo conviene cuando la amplitud estacional es <em>constante</em>; el multiplicativo, cuando la
-        amplitud <em>crece con el nivel</em> de la serie (el caso de <code>AirPassengers</code>). Un modelo
-        multiplicativo se vuelve aditivo tomando logaritmos: $\log y_t = \log T_t + \log S_t + \log R_t$.</p>
+        amplitud <em>crece con el nivel</em> de la serie.</p>
+
+      <p>Dicho así, el criterio parece cosa de mirar el gráfico y decidir. Conviene desconfiar de eso y convertirlo en
+        un número: para cada año, la <strong>amplitud estacional</strong> —el mes más alto menos el más bajo— frente
+        al <strong>nivel medio</strong> de ese mismo año. Si el modelo fuera aditivo, la amplitud se mantendría
+        constante mientras el nivel sube; si fuera exactamente multiplicativo, lo constante sería la proporción entre
+        las dos. En <code>AirPassengers</code>:</p>
+
+      <table>
+        <caption class="sr-only">Amplitud estacional y nivel medio de AirPassengers en tres años</caption>
+        <thead>
+          <tr><th scope="col">Año</th><th scope="col">Nivel medio</th>
+            <th scope="col">Amplitud (máx − mín)</th><th scope="col">Amplitud / nivel</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1949</td><td>126.7</td><td>44</td><td>34.7&nbsp;%</td></tr>
+          <tr><td>1954</td><td>238.9</td><td>114</td><td>47.7&nbsp;%</td></tr>
+          <tr><td>1960</td><td>476.2</td><td>232</td><td>48.7&nbsp;%</td></tr>
+        </tbody>
+      </table>
+
+      <p>La amplitud no es constante ni de lejos: pasa de 44 a 232 pasajeros, se multiplica por más de cinco mientras
+        el nivel se multiplica por menos de cuatro. El modelo aditivo queda descartado. Pero la proporción tampoco es
+        del todo estable —sube del 35&nbsp;% al 49&nbsp;%—, así que <code>AirPassengers</code> tampoco es un
+        multiplicativo de manual; simplemente está mucho más cerca de serlo. Conviene quedarse con esa idea:
+        <strong>ningún modelo describe la serie exactamente, se elige el que menos se equivoca</strong>.</p>
+
+      <p>Y elegir el multiplicativo tiene una consecuencia práctica que se usará durante todo el capítulo: un modelo
+        multiplicativo se vuelve aditivo tomando logaritmos, porque
+        $\log y_t = \log T_t + \log S_t + \log R_t$. Convertir el producto en suma es lo que permitirá más adelante
+        aplicarle STL, que solo sabe sumar.</p>
 
       <div class="simulador" data-simulador="construye-tu-serie">
         <h4><i class="fas fa-sliders-h" aria-hidden="true"></i> Simulador: construye tu serie</h4>
@@ -2410,6 +2481,10 @@ plt.show()</code></pre>
           <canvas aria-label="Serie simulada con tendencia, estacionalidad y ruido" role="img"></canvas>
         </div>
       </div>
+
+      <p>Nombrar los componentes, sin embargo, no es separarlos. En el simulador vienen etiquetados porque se
+        construyeron uno a uno; en una serie real se observa solo la suma, y hay que recuperar las partes a partir de
+        ella. De eso trata el resto del capítulo, empezando por el más accesible de los cuatro: la tendencia.</p>
     </div>
   </template>
 
@@ -2434,14 +2509,47 @@ plt.show()</code></pre>
         </div>
       </div>
 
-      <p>Una <strong>media móvil</strong> de orden $m$ promedia cada punto con sus vecinos, atenuando el ruido y la
-        estacionalidad para dejar ver la tendencia. Para $m$ impar:</p>
+      <p>En el gráfico de <code>AirPassengers</code>, tendencia, estacionalidad y ruido aparecen a la vez, y la
+        tendencia queda tapada por el vaivén anual y por las sacudidas. Para verla hay que apagar lo demás, y la manera más simple de
+        conseguirlo es promediar cada punto con sus vecinos: lo que se pone de acuerdo sobrevive al promedio, y lo que
+        oscila se cancela. Eso es una <strong>media móvil</strong> de orden $m$. Para $m$ impar:</p>
       <div class="formula">
         $$\hat{T}_t = \frac{1}{m} \sum_{j=-k}^{k} y_{t+j}, \qquad m = 2k+1$$
       </div>
-      <p>Cuando $m$ es par (por ejemplo $m=12$ para datos mensuales) se usa una <strong>media móvil centrada</strong>
-        $2\times m$: se promedia dos medias móviles consecutivas para que el resultado quede alineado con un período.
-        Una media de orden $m$ igual al período estacional elimina la estacionalidad y estima la tendencia-ciclo.</p>
+      <p>Con $m$ par —el caso de los datos mensuales, donde interesa $m=12$— aparece un estorbo: una ventana de doce
+        meses <em>no tiene centro</em>. Colocada entre junio y julio, la media queda a medio camino entre dos meses y
+        no hay fecha a la que asignarla. La salida es promediar dos ventanas consecutivas, la de enero a diciembre y
+        la de febrero a enero, lo que en la práctica equivale a usar trece meses con los dos extremos a media ración.
+        Es la <strong>media móvil centrada</strong> $2\times m$:</p>
+
+      <div class="formula">
+        $$\hat{T}_t = \tfrac{1}{24}y_{t-6} + \tfrac{1}{12}\big(y_{t-5} + y_{t-4} + \cdots + y_{t+5}\big)
+        + \tfrac{1}{24}y_{t+6}$$
+      </div>
+
+      <p>Los trece pesos suman 1 y la fórmula queda centrada en $t$. Los dos extremos son el mismo mes de años
+        distintos —enero y enero, si $t$ es julio—, y por eso se reparten un peso entre los dos en lugar de contar
+        cada uno por entero: así la ventana sigue valiendo doce meses.</p>
+
+      <h3>Por qué una ventana del tamaño del período borra la estacionalidad</h3>
+
+      <p>Aquí está el motivo de elegir $m$ igual al período y no un número cualquiera. Una ventana de doce meses
+        contiene <strong>cada mes exactamente una vez</strong>: un julio alto y un noviembre bajo, un junio fuerte y
+        un febrero flojo. Al promediarlos, los efectos estacionales se compensan entre sí y lo que sobrevive es el
+        nivel de la serie, limpio del vaivén anual. Con $m=5$ o $m=7$ la ventana recogería unos meses sí y otros no,
+        arrastraría parte de la estacionalidad, y la curva resultante seguiría ondulando al ritmo del año. De ahí que
+        una media móvil del orden del período estime la tendencia-ciclo y no otra cosa.</p>
+
+      <p>El precio se paga en los bordes. Calcular $\hat{T}_t$ exige seis meses a cada lado, y ni los seis primeros
+        ni los seis últimos de la serie los tienen: ahí la media móvil no devuelve nada. De las 144 observaciones de
+        <code>AirPassengers</code> quedan 132. Esa pérdida no es un fallo del programa sino una consecuencia de la
+        definición, y será una de las tres limitaciones que acaben empujando hacia STL.</p>
+
+      <p>Queda un compromiso que decidir, y es el que el simulador de abajo deja tocar. Cuanto mayor es $m$, más
+        suave sale la curva y menos detalle conserva: con $m$ pequeño la tendencia persigue el ruido y deja de ser
+        tendencia; con $m$ grande se aplana también lo que era movimiento real, y encima se pierden más
+        observaciones en los extremos. En una serie estacional la elección viene dada, porque la fija el período;
+        fuera de ese caso hay que tomarla a conciencia.</p>
 
       <div class="simulador" data-simulador="media-movil">
         <h4><i class="fas fa-wave-square" aria-hidden="true"></i> Simulador: media móvil sobre <code>AirPassengers</code></h4>
@@ -2483,6 +2591,10 @@ tendencia.plot(label="media movil (m=12)")
 plt.legend(); plt.show()</code></pre>
         </div>
       </div>
+
+      <p>Ese cálculo, tan modesto que cabe en una línea, es más importante de lo que parece: <strong>ya es el primer
+        paso de un método completo</strong>. Con la tendencia estimada, quitarla de la serie deja al descubierto lo que
+        faltaba —la estacionalidad y el residuo—, y ese encadenamiento tiene nombre propio.</p>
     </div>
   </template>
 
@@ -2507,11 +2619,11 @@ plt.legend(); plt.show()</code></pre>
         </div>
       </div>
 
-      <p>La <strong>descomposición clásica</strong> estima los componentes en pasos: (1) la tendencia $\hat{T}_t$ con
-        una media móvil del orden del período; (2) se quita la tendencia (restando en el aditivo, dividiendo en el
-        multiplicativo); (3) la estacionalidad $\hat{S}_t$ como el promedio, por posición estacional, de la serie sin
-        tendencia; (4) el residuo $\hat{R}_t$ es lo que queda. Abajo, la descomposición <strong>multiplicativa</strong>
-        de <code>AirPassengers</code> (calculada en R con <code>decompose()</code>).</p>
+      <p>Ese encadenamiento se llama <strong>descomposición clásica</strong>, y arranca justo donde terminó el módulo
+        anterior: con una media móvil del orden del período. Lo que no se aprecia al enumerar sus pasos en fila es que
+        no forman una receta sino un <em>bucle</em>; el último de ellos —mirar el residuo— es el que dicta si hay que
+        volver atrás, y a cuál de los anteriores. El recorrido siguiente los presenta uno a uno, cada cual con la señal
+        que obliga a retroceder.</p>
 
       <div class="ciclo" data-ciclo="descomposicion">
         <ol class="ciclo-etapas" role="tablist" aria-label="Etapas del ciclo">
@@ -2552,7 +2664,7 @@ plt.legend(); plt.show()</code></pre>
         <div class="ciclo-panel" id="ciclo-descomposicion-escala" role="tabpanel">
           <div class="ciclo-campo">
             <span class="ciclo-etiqueta">Qué haces</span>
-            <p>Mirar si la amplitud estacional <strong>crece con el nivel</strong> de la serie. Si crece, el modelo es multiplicativo $y_t = T_t \times S_t \times R_t$; si se mantiene, aditivo $y_t = T_t + S_t + R_t$. Trabajar en logaritmos convierte el segundo caso en el primero.</p>
+            <p>Mirar si la amplitud estacional <strong>crece con el nivel</strong> de la serie. Si crece, el modelo es multiplicativo $y_t = T_t \times S_t \times R_t$; si se mantiene, aditivo $y_t = T_t + S_t + R_t$. Tomar logaritmos convierte el caso multiplicativo en uno aditivo, porque $\log(T \times S \times R) = \log T + \log S + \log R$.</p>
           </div>
           <div class="ciclo-campo">
             <span class="ciclo-etiqueta">Con qué</span>
@@ -2580,7 +2692,7 @@ plt.legend(); plt.show()</code></pre>
         <div class="ciclo-panel" id="ciclo-descomposicion-estacionalidad" role="tabpanel" hidden>
           <div class="ciclo-campo">
             <span class="ciclo-etiqueta">Qué haces</span>
-            <p>Quitar la tendencia (restando o dividiendo, según la escala) y promediar por posición estacional. Los índices resultantes son <strong>fijos</strong> para toda la serie: esa es la limitación central del método clásico.</p>
+            <p>Quitar la tendencia —restando en el aditivo, dividiendo en el multiplicativo— deja la <strong>serie sin tendencia</strong>: en ella ya solo quedan estacionalidad y ruido. Al promediar todos los eneros de esa serie el ruido se cancela y sobrevive el índice de enero, y así con los doce meses. Esos índices son <strong>fijos</strong> para toda la serie: esa es la limitación central del método clásico.</p>
           </div>
           <div class="ciclo-campo">
             <span class="ciclo-etiqueta">Con qué</span>
@@ -2607,6 +2719,9 @@ plt.legend(); plt.show()</code></pre>
         </div>
       </div>
 
+      <p>Aplicado a <code>AirPassengers</code> en su versión multiplicativa —la que pedía el abanico del Módulo 3—, el
+        método produce lo siguiente (calculado en R con <code>decompose()</code>):</p>
+
       <div class="simulador" data-simulador="descomp-clasica">
         <h4><i class="fas fa-layer-group" aria-hidden="true"></i> Descomposición multiplicativa de
           <code>AirPassengers</code></h4>
@@ -2617,6 +2732,69 @@ plt.legend(); plt.show()</code></pre>
         <div class="grafico-wrapper" style="height:120px;"><canvas aria-label="Componente tendencia" role="img"></canvas></div>
         <div class="grafico-wrapper" style="height:120px;"><canvas aria-label="Componente estacional" role="img"></canvas></div>
         <div class="grafico-wrapper" style="height:120px;"><canvas aria-label="Componente residuo" role="img"></canvas></div>
+      </div>
+
+      <h3>Cómo se lee una descomposición multiplicativa</h3>
+
+      <p>En la versión aditiva los tres componentes se miden en las unidades de la serie —pasajeros— y se suman. En la
+        multiplicativa no: solo la tendencia conserva las unidades, mientras que estacionalidad y residuo son
+        <strong>factores sin unidades</strong>. Por eso oscilan alrededor de 1 y no de 0, y por eso se leen como
+        porcentajes: un índice de 1.23 significa «un 23&nbsp;% por encima de la tendencia», y uno de 0.80, «un
+        20&nbsp;% por debajo».</p>
+
+      <p>Conviene verlo sobre un punto concreto. En julio de 1955 la serie marcó 364 pasajeros, y la descomposición
+        reparte esa cifra así:</p>
+
+      <div class="formula">
+        $$\underbrace{364}_{y_t} \;\approx\; \underbrace{285.75}_{\hat{T}_t} \;\times\;
+        \underbrace{1.2266}_{\hat{S}_{\text{julio}}} \;\times\; \underbrace{1.0386}_{\hat{R}_t}$$
+      </div>
+
+      <p>Se lee de izquierda a derecha. El nivel de fondo en aquel momento rondaba los 286 pasajeros; julio es un mes
+        alto y multiplica ese nivel por 1.2266, un 22.7&nbsp;% más; y aun así, ese julio en particular quedó un
+        3.9&nbsp;% por encima de lo que tendencia y estacionalidad predecían juntas. Ese sobrante es el residuo, y es
+        justamente la parte que la descomposición <em>no</em> explica.</p>
+
+      <p>Ninguna de las tres cifras es un dato observado: las tres se calculan, y conviene saber de dónde salen.</p>
+
+      <p><strong>La tendencia, 285.75</strong>, es la media móvil centrada del módulo anterior evaluada en ese punto.
+        Su ventana de trece meses va de enero de 1955 a enero de 1956 —242, 233, 267, 269, 270, 315, 364, 347, 312,
+        274, 237, 278 y 284 pasajeros—, con los dos eneros a media ración. Hecha la cuenta, da 285.75 exacto.</p>
+
+      <p><strong>El índice de julio, 1.2266</strong>, es el paso 3 del recorrido. Dividir cada julio entre su
+        tendencia produce once cocientes —uno por cada julio con tendencia definida, de 1949 a 1959—; su promedio es
+        1.2244, y el reescalado final, dividir los doce índices por su media de 0.9982, lo deja en 1.2266. Pero vale
+        la pena mirar esos once cocientes en orden, porque dicen algo que el promedio esconde:</p>
+
+      <div class="formula">
+        1.167 · 1.206 · 1.162 · 1.161 · 1.172 · 1.256 · 1.274 · 1.253 · 1.259 · 1.286 · 1.272
+      </div>
+
+      <p>No son once versiones ruidosas del mismo número: <strong>empiezan cerca de 1.16 y acaban cerca de
+        1.28</strong>. El peso de julio dentro del año fue creciendo a lo largo de la serie. La descomposición
+        clásica los promedia igual y devuelve un único 1.2266 para los doce años: cómodo, pero equivocado en los
+        extremos, porque sobreestima los julios de los primeros años y subestima los de los últimos. Esa es, en un
+        solo número, la limitación que enuncia el aviso del final de este módulo y que STL resuelve.</p>
+
+      <p><strong>El residuo, 1.0386, no se calcula aparte: es lo que sobra.</strong> Fijadas ya tendencia y
+        estacionalidad, se despeja $\hat{R}_t = y_t / (\hat{T}_t \times \hat{S}_t) = 364 / (285.75 \times 1.2266)$
+        —con las cifras redondeadas de arriba da 1.0385, y la diferencia es solo el redondeo—. De ahí se sigue algo
+        que suele malinterpretarse: la igualdad del recuadro <em>se cumple siempre</em>, en cualquier punto y con
+        cualquier serie, porque el residuo se define precisamente para que se cumpla. No es una comprobación de que
+        el método haya funcionado. Lo que sí informa es la <strong>forma</strong> del residuo a lo largo del tiempo, y
+        a eso se dedica el paso 4.</p>
+
+      <p>El mismo criterio sirve para leer el panel estacional de los gráficos de arriba: noviembre, con índice
+        0.8012, es el mes más flojo del año —un 19.9&nbsp;% por debajo de la tendencia—, y julio el más fuerte. Como
+        los índices son fijos, esos porcentajes se aplican igual en 1949 que en 1960; lo que cambia es la tendencia
+        sobre la que se aplican. De ahí que el abanico del gráfico estacional se abra: un mismo 23&nbsp;% vale muchos
+        más pasajeros al final de la serie que al principio.</p>
+
+      <div class="note">
+        <p><strong>Los doce índices promedian 1, y no es casualidad:</strong> el método los reescala dividiéndolos por
+          su media antes de devolverlos. Sin ese ajuste, la estacionalidad podría absorber parte del nivel de la serie
+          y la tendencia saldría desplazada. Los de este capítulo suman 12.0001 sobre doce meses. En la descomposición
+          aditiva la condición equivalente es que <em>sumen</em> 0.</p>
       </div>
 
       <div class="code-tabs" role="group" aria-label="Descomposición clásica en R y Python">
@@ -2679,11 +2857,20 @@ dc.plot()</code></pre>
         </div>
       </div>
 
-      <p><strong>STL</strong> (<em>Seasonal-Trend decomposition using Loess</em>) descompone la serie ajustando curvas
-        locales (Loess). Frente a la clásica, STL: estima la tendencia en <em>toda</em> la serie (sin huecos en los
-        extremos), permite que la <strong>estacionalidad cambie</strong> suavemente con el tiempo, funciona con
-        cualquier frecuencia y es <strong>robusta</strong> a valores atípicos. Como STL es aditiva, para
-        <code>AirPassengers</code> (multiplicativa) se aplica sobre $\log y_t$: así los componentes se suman.</p>
+      <p><strong>STL</strong> (<em>Seasonal-Trend decomposition using Loess</em>) responde a esas tres debilidades una
+        por una, y lo consigue cambiando la herramienta de fondo: en lugar de promediar ventanas fijas, ajusta curvas
+        locales por regresión ponderada (Loess).</p>
+      <ul>
+        <li><strong>Contra los huecos:</strong> la regresión local no exige vecinos a ambos lados, así que la tendencia
+          se estima en <em>toda</em> la serie, extremos incluidos.</li>
+        <li><strong>Contra la estacionalidad congelada:</strong> el patrón estacional puede cambiar suavemente a lo
+          largo del tiempo en vez de repetirse idéntico año tras año.</li>
+        <li><strong>Contra los atípicos:</strong> en su versión robusta, las observaciones que se salen del patrón
+          reciben menos peso y dejan de arrastrar la estimación.</li>
+      </ul>
+      <p>Dos apuntes antes de verlo funcionar. STL admite cualquier frecuencia estacional, no solo las habituales de
+        datos mensuales o trimestrales. Y es <strong>aditiva</strong>: para una serie multiplicativa como
+        <code>AirPassengers</code> se aplica sobre $\log y_t$, que es donde los componentes vuelven a sumarse.</p>
 
       <div class="simulador" data-simulador="descomp-stl">
         <h4><i class="fas fa-stream" aria-hidden="true"></i> STL de <code>log(AirPassengers)</code></h4>
@@ -2695,6 +2882,39 @@ dc.plot()</code></pre>
         <div class="grafico-wrapper" style="height:120px;"><canvas aria-label="estacional STL" role="img"></canvas></div>
         <div class="grafico-wrapper" style="height:120px;"><canvas aria-label="residuo STL" role="img"></canvas></div>
       </div>
+
+      <h3>Cómo se leen los componentes en escala logarítmica</h3>
+
+      <p>Los cuatro paneles de arriba no están medidos en pasajeros sino en logaritmos, y eso cambia la lectura. La
+        ventaja es que los componentes <em>suman</em>; el precio, que ya no se leen directamente. Un valor estacional
+        de 0.2164 no significa «un 21.6&nbsp;% por encima de la tendencia»: hay que deshacer el logaritmo antes de
+        interpretarlo.</p>
+
+      <p>Sirve el mismo punto del módulo anterior, julio de 1955. En logaritmos la descomposición suma:</p>
+
+      <div class="formula">
+        $$\underbrace{5.8972}_{\log y_t} \;\approx\; \underbrace{5.6460}_{\hat{T}_t} \;+\;
+        \underbrace{0.2164}_{\hat{S}_{\text{julio}}} \;+\; \underbrace{0.0347}_{\hat{R}_t}$$
+      </div>
+
+      <p>Y al aplicar $\exp(\cdot)$ a cada término reaparece la forma multiplicativa del Módulo 6, con las unidades
+        de vuelta:</p>
+
+      <div class="formula">
+        $$364 \;\approx\; \underbrace{283.16}_{\hat{T}_t} \times \underbrace{1.2416}_{\hat{S}_{\text{julio}}}
+        \times \underbrace{1.0353}_{\hat{R}_t}$$
+      </div>
+
+      <p>Ahí está la trampa de la escala logarítmica: $\exp(0.2164) = 1.2416$, o sea un 24.2&nbsp;% por encima de la
+        tendencia, no el 21.6&nbsp;% que sugiere leer el número tal cual. La brecha crece con el tamaño del valor.
+        Para componentes pequeños la lectura directa sí sirve —septiembre vale 0.0675 en logaritmos y un
+        +7.0&nbsp;% real, frente al +6.8&nbsp;% de la lectura apresurada—, pero conviene tomar la costumbre de
+        exponenciar siempre.</p>
+
+      <p>Vale la pena comparar este julio con el del método clásico: allí la tendencia valía 285.75 y el índice
+        estacional 1.2266; aquí, 283.16 y 1.2416. <strong>Dos métodos distintos llegan casi al mismo sitio</strong>,
+        que es lo que cabe esperar en una serie tan nítida como esta. Las diferencias entre ambos no asoman en el
+        centro de la muestra, sino allí donde el método clásico flaquea: en los extremos y ante los atípicos.</p>
 
       <div class="code-tabs" role="group" aria-label="STL en R y Python">
         <div class="code-tabs-nav" role="tablist" aria-label="Lenguaje del ejemplo">
@@ -2726,10 +2946,22 @@ res.plot()</code></pre>
         </div>
       </div>
 
+      <div class="warning">
+        <p><strong>Dos de las tres ventajas están apagadas en la figura de arriba.</strong> El gráfico se calculó con
+          <code>s.window = "periodic"</code>, que <em>obliga</em> al patrón estacional a repetirse idéntico: por eso
+          el tercer panel es una onda perfectamente regular, tan congelada como la de la descomposición clásica. Y se
+          calculó sin activar la opción robusta, que en <code>stl()</code> viene desactivada por defecto. Está hecho
+          así a propósito, para que la comparación con el Módulo 6 fuera entre iguales, pero conviene no confundir la
+          figura con el método: quien libera esas dos ventajas es <code>s.window</code> con un número finito en lugar
+          de <code>"periodic"</code>, y <code>robust = TRUE</code>. El ejercicio 3 del cierre mide exactamente cuánto
+          cambia esa segunda opción.</p>
+      </div>
+
       <div class="note">
-        <p><strong>Nota:</strong> deshacer el logaritmo con $\exp(\cdot)$ devuelve los componentes a la escala original,
-          donde vuelven a <em>multiplicarse</em>. STL será además la base para pronosticar descomponiendo (STL +
-          modelo sobre la serie ajustada) más adelante en el curso.</p>
+        <p><strong>De vuelta a la escala original:</strong> deshacer el logaritmo con $\exp(\cdot)$ devuelve los
+          componentes a las unidades de la serie, donde vuelven a <em>multiplicarse</em>. Y STL no se agota aquí: más
+          adelante en el curso será la base de una estrategia de pronóstico —descomponer, modelar la serie ajustada y
+          volver a componer— que descansa por entero en que estos componentes sean de fiar.</p>
       </div>
     </div>
   </template>
@@ -2756,10 +2988,12 @@ res.plot()</code></pre>
         </div>
       </div>
 
-      <p>La <strong>serie desestacionalizada</strong> (<em>seasonally adjusted</em>) quita el componente estacional
-        para dejar ver tendencia y residuo. En el modelo multiplicativo, $y_t^{\text{aj}} = y_t / \hat{S}_t$; en el
-        aditivo, $y_t^{\text{aj}} = y_t - \hat{S}_t$. Es lo que reportan muchas estadísticas oficiales (desempleo,
-        producción) para comparar meses sin el vaivén estacional.</p>
+      <p>Con componentes en los que se puede confiar quedan dos cosas por hacer: quitar uno para ver mejor los demás,
+        y medir cuánto pesa cada cual. La primera da la <strong>serie desestacionalizada</strong>
+        (<em>seasonally adjusted</em>), que retira el componente estacional para dejar a la vista tendencia y residuo.
+        En el modelo multiplicativo, $y_t^{\text{aj}} = y_t / \hat{S}_t$; en el aditivo,
+        $y_t^{\text{aj}} = y_t - \hat{S}_t$. Es lo que reportan muchas estadísticas oficiales —desempleo, producción—
+        para comparar meses sin el vaivén estacional.</p>
 
       <div class="simulador" data-simulador="desestacionalizada">
         <h4><i class="fas fa-adjust" aria-hidden="true"></i> Serie observada vs. desestacionalizada</h4>
@@ -2770,9 +3004,9 @@ res.plot()</code></pre>
         </div>
       </div>
 
-      <p>¿Qué tan marcada es cada componente? Hyndman &amp; Athanasopoulos (FPP3, §3.6) definen la <strong>fuerza de la
-        tendencia</strong> $F_T$ y de la <strong>estacionalidad</strong> $F_S$ a partir de las varianzas de los
-        componentes STL (aquí, sobre la escala log):</p>
+      <p>Queda la segunda: ¿qué tan marcado es cada componente? Hyndman &amp; Athanasopoulos (FPP3, §3.6) definen la
+        <strong>fuerza de la tendencia</strong> $F_T$ y de la <strong>estacionalidad</strong> $F_S$ a partir de las
+        varianzas de los componentes STL (aquí, sobre la escala log):</p>
       <div class="formula">
         $$F_T = \max\!\left(0,\; 1 - \frac{\operatorname{Var}(R_t)}{\operatorname{Var}(T_t + R_t)}\right),
         \qquad
@@ -2799,14 +3033,14 @@ res.plot()</code></pre>
             </li>
             <li>
               <p>Como interesa que <em>más tendencia</em> dé <em>número más alto</em>, se toma el complemento. Y como la
-                razón puede pasar de 1 por el ruido de la estimación —las componentes STL no son exactamente
-                incorreladas—, se trunca en cero:</p>
+                razón puede pasar de 1 por el ruido de la estimación —los componentes STL no son exactamente
+                incorrelados—, se trunca en cero:</p>
               $$F_T = \max\!\left(0,\; 1 - \frac{\operatorname{Var}(R_t)}{\operatorname{Var}(T_t + R_t)}\right)$$
             </li>
             <li>
-              <p>$F_S$ es la misma construcción cambiando el papel de las componentes: se compara
+              <p>$F_S$ es la misma construcción cambiando el papel de los componentes: se compara
                 $\operatorname{Var}(S_t + R_t)$ con $\operatorname{Var}(R_t)$. Por eso las dos medidas se leen igual:
-                $0$ es "esa componente no está" y valores cerca de $1$, "domina la serie".</p>
+                $0$ es "ese componente no está" y valores cerca de $1$, "domina la serie".</p>
             </li>
           </ol>
           <p class="derivacion-resultado">La lectura práctica: $F_T$ y $F_S$ no son porcentajes de varianza explicada
@@ -2816,14 +3050,14 @@ res.plot()</code></pre>
         </div>
       </div>
 
-      <p>Ambas van de 0 (ausente) a 1 (muy marcada). Para <code>AirPassengers</code> resultan
-        $F_T = 0{.}994$ y $F_S = 0{.}937$: una serie con tendencia y estacionalidad <strong>muy fuertes</strong>, justo
-        lo que veíamos a ojo.</p>
+      <p>Ambas van de 0 (componente ausente) a 1 (componente dominante). Para <code>AirPassengers</code> resultan
+        $F_T = 0{.}994$ y $F_S = 0{.}937$: tendencia y estacionalidad <strong>muy fuertes</strong>, que es exactamente
+        lo que ya se veía a ojo en el gráfico estacional del Módulo 3.</p>
 
       <div class="note">
-        <p><strong>Conexión con ciencia de datos:</strong> $F_T$ y $F_S$ son <em>features</em> que resumen una serie en
-          dos números. Sobre colecciones de miles de series (retail, sensores) permiten agrupar, filtrar y elegir el
-          modelo apropiado de forma automática.</p>
+        <p><strong>Una serie entera en dos números:</strong> eso es lo que consiguen $F_T$ y $F_S$, y por eso se usan
+          como <em>features</em>. Sobre colecciones de miles de series —el inventario de un comercio, una flota de
+          sensores— permiten agrupar, filtrar y elegir el modelo apropiado sin mirarlas una por una.</p>
       </div>
     </div>
   </template>
@@ -2850,10 +3084,19 @@ res.plot()</code></pre>
       </div>
 
       <h3>La descomposición como preprocesamiento</h3>
-      <p>Descomponer, desestacionalizar o transformar (log, Box–Cox) son pasos de <strong>preparación de datos
-        temporales</strong> previos a cualquier modelo de pronóstico o de aprendizaje automático. Comprender los
-        componentes permite elegir el modelo (aditivo/multiplicativo), decidir si diferenciar (Capítulo 2) y explicar
-        los pronósticos. Estos conceptos son la base conceptual de métodos más recientes sobre secuencias.</p>
+      <p>El capítulo empezó con una mezcla y termina con las piezas separadas. Ese trabajo —descomponer,
+        desestacionalizar, transformar con logaritmos o Box–Cox— rara vez es el objetivo final: es la
+        <strong>preparación</strong> que va antes de cualquier modelo de pronóstico o de aprendizaje automático. Saber
+        qué componentes hay dentro de una serie es lo que permite elegir entre aditivo y multiplicativo, decidir qué
+        conviene quitar antes de modelar y, más adelante, explicar de dónde sale un pronóstico. Y no es vocabulario que
+        caduque: tendencia, estacionalidad y residuo siguen siendo la manera de describir una serie aunque el modelo
+        que la consuma sea una red neuronal.</p>
+
+      <p>Queda una pregunta pendiente, y es justo la que abre el capítulo siguiente. Aquí la tendencia y la
+        estacionalidad se quitaron <em>para poder verlas</em>. Los modelos que vienen después —AR, MA y, sobre ellos,
+        ARIMA— piden quitarlas por un motivo distinto: están construidos sobre series cuyas propiedades no cambian con
+        el tiempo. Esa condición se llama <strong>estacionariedad</strong>, y el Capítulo 2 se ocupa de cómo
+        comprobarla y de qué hacer cuando no se cumple.</p>
 
       <div class="definition">
         <h4><i class="fas fa-list-check mr-2" aria-hidden="true"></i>Resumen del capítulo</h4>
@@ -3755,6 +3998,13 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
     // Campos comunes: {pregunta, pista, modulo}. `pista` se muestra tras el
     // PRIMER fallo y se deja reintentar; al segundo fallo se revela la
     // respuesta. `modulo` alimenta el resumen final de "qué repasar".
+    //
+    // TODA opción lleva su propio `retro`, también las incorrectas: explicar
+    // dónde falla el razonamiento vale más que decir "incorrecto". En 'opcion' y
+    // 'grafico' se muestra el `retro` de la opción elegida; en 'multiple', el
+    // desglose de cada opción que el estudiante juzgó mal (ver
+    // `desgloseMultiple`). `retroAcierto`/`retroFallo` son el comentario general
+    // que lo encabeza, no un sustituto del `retro` por opción.
     // ================================================================
     const AUTOEVALUACIONES = {};
     const LETRAS = ['a', 'b', 'c', 'd', 'e'];
@@ -3856,6 +4106,29 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         retro.hidden = false;
         katexEn(retro);
         actualizarMarcador();
+      }
+
+      // Desglose por opción de una pregunta de selección múltiple: explica CADA
+      // opción que el estudiante juzgó mal —la que marcó de más y la que se
+      // dejó—, usando el `retro` de esa opción.
+      //
+      // Antes solo se mostraba el `retro` de las opciones CORRECTAS, y solo como
+      // respaldo cuando no había `retroAcierto`: quien fallaba una `multiple`
+      // veía un comentario general y nunca sabía en qué opción concreta se
+      // equivocó. Contradecía la regla del formato («cada opción lleva su propia
+      // retroalimentación, también las incorrectas»). Corregido el 2026-07-30.
+      function desgloseMultiple(p, marcadas, correctas) {
+        const filas = p.opciones.map((op, j) => {
+          const marcada = marcadas.has(j);
+          const esCorrecta = correctas.has(j);
+          if (marcada === esCorrecta) return null;   // esa opción la juzgó bien
+          const etiqueta = marcada ? 'La marcaste y no va' : 'Te faltó marcarla';
+          // El texto de la opción ya trae su punto final, así que la retro se
+          // concatena con un espacio: con dos puntos saldría «... JSON.: El ...».
+          return `<li><strong>${etiqueta}:</strong> ${op.texto}` +
+            `${op.retro ? ` ${op.retro}` : ''}</li>`;
+        }).filter(Boolean);
+        return filas.length ? `<ul>${filas.join('')}</ul>` : '';
       }
 
       function mostrarPista(i, bloque) {
@@ -4006,6 +4279,8 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
               // opciones correctas, que ya estaba escrita y no se mostraba.
               cerrar(i, bloque, true, p.retroAcierto || p.opciones
                 .filter(o => o.correcta).map(o => o.retro).filter(Boolean).join(' '));
+              // No hay desglose: acertar aquí significa haber juzgado bien
+              // TODAS las opciones, así que no queda nada que explicar.
             } else if (estado[i].intentos === 1) {
               const bien = [...marcadas].filter(j => correctas.has(j)).length;
               pista.innerHTML = `<strong>Casi.</strong> De las ${marcadas.size} que marcaste, ` +
@@ -4022,7 +4297,8 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
                 else if (marcadas.has(j)) b.classList.add('incorrecta');
               });
               boton.disabled = true;
-              cerrar(i, bloque, false, p.retroFallo);
+              cerrar(i, bloque, false,
+                (p.retroFallo || '') + desgloseMultiple(p, marcadas, correctas));
             }
           });
 
