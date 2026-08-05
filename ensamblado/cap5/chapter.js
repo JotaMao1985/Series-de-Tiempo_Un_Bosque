@@ -847,6 +847,33 @@
     // ================================================================
     // Autoevaluación del capítulo
     // ================================================================
+    // Tabla ordenable de la comparativa sobre UNA partición. El pie recuerda que
+    // este ranking se desmiente en el capítulo 6 con 61 orígenes.
+    TABLAS_RANKING['comparativa'] = function () {
+      const claves = AP.comparativa.orden_rmse;
+      return {
+        descripcion: 'Los seis métodos sobre los últimos ' + AP.comparativa.n_prueba +
+          ' meses, una sola partición. Pulsa las cabeceras: las tres métricas coinciden ' +
+          'en el orden, lo que da una falsa sensación de solidez.',
+        columnas: [
+          { clave: 'modelo', titulo: 'Método', tipo: 'texto' },
+          { clave: 'rmse', titulo: 'RMSE', decimales: 2, mejor: 'menor' },
+          { clave: 'mae', titulo: 'MAE', decimales: 2, mejor: 'menor' },
+          { clave: 'mape', titulo: 'MAPE', decimales: 2, sufijo: ' %', mejor: 'menor' }
+        ],
+        filas: claves.map(k => ({
+          modelo: AP.comparativa.modelos[k].nombre,
+          rmse: AP.comparativa.modelos[k].rmse,
+          mae: AP.comparativa.modelos[k].mae,
+          mape: AP.comparativa.modelos[k].mape
+        })),
+        inicial: 'rmse',
+        pie: 'Las tres columnas dan el mismo orden y aun así el orden es engañoso: ' +
+          'sobre 61 orígenes en vez de uno, el SARIMA pasa de cuarto a primero. ' +
+          'El Capítulo 6 construye esa evaluación.'
+      };
+    };
+
     AUTOEVALUACIONES['cap5'] = [
       {
         tipo: 'opcion',

@@ -11,6 +11,13 @@ Novedad respecto al capítulo 4: este script además **instala el componente
 `loadModule`), porque es nuevo en este capítulo. `retropropaga_mapa.py` hace lo
 mismo sobre el capítulo 1 y la plantilla.
 
+El componente `.tabla-ranking`, en cambio, **no** lo instala este script: llegó
+al capítulo 5 con `retropropaga_ranking.py` y su CSS y sus ayudantes se heredan
+del capítulo 4. Lo que sí vive aquí es su **instancia** —marcador
+`<!--RANKING:...-->` en `cap5/templates_10_11.html` y el registro en
+`cap5/chapter.js`—, porque está en las dos regiones que el ensamblado sustituye
+(ver la Advertencia del README).
+
 Uso:  python3 ensambla_cap5.py       (desde ensamblado/)
 """
 
@@ -30,6 +37,8 @@ sys.path.insert(0, str(COMPONENTES))
 from ciclo_html import ciclo_html, comprueba_ciclo                    # noqa: E402
 from mapa_estacional_html import (mapa_estacional_html,               # noqa: E402
                                   comprueba_mapa_estacional)
+from tabla_ranking_html import (tabla_ranking_html,                   # noqa: E402
+                                comprueba_tabla_ranking)
 
 
 def lee(p):
@@ -114,18 +123,31 @@ if ".mapa-estacional {" in html:
     raise SystemExit("ABORTA: el capítulo 4 ya trae el componente .mapa-estacional; "
                      "este script está escrito contra el estado anterior.")
 
-ancla_css = """      .ciclo-etapa:not(:last-child)::after {
-        content: "\\2193";
-        align-self: center;
-        margin: 0.15rem 0;
-      }
-    }
-  </style>"""
-html = una_vez(html, ancla_css,
-               ancla_css.replace("  </style>",
-                                 lee(COMPONENTES / "mapa_estacional.css").rstrip("\n")
-                                 + "\n  </style>"),
-               "CSS del mapa estacional")
+# El CSS del mapa va justo detrás del bloque del ciclo, que es lo último que
+# instaló el capítulo 4. Se localiza con la regla del README: el marcador de
+# INICIO tiene que ser único —es el que identifica la región— y el de fin se
+# busca a partir de él.
+#
+# Antes esta ancla era una sola cadena que encadenaba desde la última regla del
+# ciclo hasta `  </style>`. Dejó de existir cuando `retropropaga_ranking.py`
+# insertó el CSS de `.tabla-ranking` entre esos dos extremos, y el script
+# abortaba con «el marcador aparece 0 veces». Anclar al final del bloque del
+# ciclo, y no al cierre de `<style>`, además conserva el ORDEN de los bloques:
+# ciclo → mapa → tabla de ranking, que es el del archivo publicado.
+inicio_css = "      .ciclo-etapa:not(:last-child)::after {"
+if html.count(inicio_css) != 1:
+    raise SystemExit(f"ABORTA [CSS del mapa estacional/inicio]: el marcador aparece "
+                     f"{html.count(inicio_css)} veces, se esperaba 1.")
+i = html.index(inicio_css)
+fin_css = "\n      }\n    }\n"          # cierre de la regla y de su media query
+j = html.find(fin_css, i)
+if j == -1:
+    raise SystemExit("ABORTA [CSS del mapa estacional/fin]: no encuentro el cierre de "
+                     "la media query del ciclo después del marcador de inicio.")
+j += len(fin_css)
+html = (html[:j]
+        + lee(COMPONENTES / "mapa_estacional.css").rstrip("\n") + "\n"
+        + html[j:])
 
 ancla_js = """        const inicial = botones.findIndex(b => b.getAttribute('aria-selected') === 'true');
         seleccionar(inicial >= 0 ? inicial : 0, false);
@@ -136,8 +158,15 @@ html = una_vez(html, ancla_js,
                ancla_js + "\n" + lee(COMPONENTES / "mapa_estacional.js").rstrip("\n") + "\n",
                "JavaScript del mapa estacional")
 
-html = una_vez(html, "        iniciarCiclos();\n",
-               "        iniciarCiclos();\n        iniciarMapasEstacionales();\n",
+# La llamada de arranque va al FINAL del bloque de inicializadores, no pegada a
+# `iniciarCiclos()`: el capítulo 4 ya trae `iniciarTablasRanking()` justo después
+# de los ciclos, y anclar ahí colaba el mapa por delante y cambiaba el orden
+# respecto al archivo publicado. Anclar al cierre del bloque —`renderMathInElement`,
+# que es lo primero que ya no es un inicializador de componente— es estable
+# aunque se añadan más componentes.
+html = una_vez(html, "        renderMathInElement(mainContent, {",
+               "        iniciarMapasEstacionales();\n"
+               "        renderMathInElement(mainContent, {",
                "llamada de arranque del mapa estacional")
 
 # ---------------------------------------------------------------------------
@@ -244,6 +273,23 @@ for clave, (titulo, nota) in MAPAS.items():
     plantillas_nuevas = plantillas_nuevas.replace(
         "        " + marca,
         mapa_estacional_html(clave, titulo, nota, sangria="        ").rstrip("\n"), 1)
+
+# La tabla de ranking llegó a este capítulo con `retropropaga_ranking.py`, después
+# de que se escribieran las fuentes de `cap5/`. Vive aquí para que el reensamblado
+# no la borre: el CSS y los ayudantes compartidos se heredan del capítulo 4, pero
+# la instancia está en una plantilla de módulo y su registro en `chapter.js`, que
+# son justo las dos regiones que este script sustituye.
+RANKINGS = {
+    "comparativa": ("Los seis métodos sobre una sola partición", ""),
+}
+for clave, (titulo, pie) in RANKINGS.items():
+    marca = f"<!--RANKING:{clave}|{titulo}|{pie}-->"
+    if plantillas_nuevas.count(marca) != 1:
+        raise SystemExit(f"ABORTA [ranking {clave}]: el marcador aparece "
+                         f"{plantillas_nuevas.count(marca)} veces")
+    plantillas_nuevas = plantillas_nuevas.replace(
+        "      " + marca,
+        tabla_ranking_html(clave, titulo, pie, sangria="      ").rstrip("\n"), 1)
 
 marca_ciclo = "<!--CICLO:identificacion-estacional-->"
 if plantillas_nuevas.count(marca_ciclo) != 1:
@@ -361,6 +407,25 @@ for pieza, esperadas in [(".mapa-estacional {", 1), (".mapa-estacional-rejilla {
         fallos.append(f"mapa estacional: '{pieza}' aparece {html.count(pieza)} veces, "
                       f"se esperaban {esperadas}")
 
+# Componente .tabla-ranking: no es nuevo aquí —llegó con `retropropaga_ranking.py`
+# después de escribirse `cap5/`—, pero la instancia y su registro viven en las dos
+# regiones que este script sustituye, así que hay que exigirlos igual que en el 4.
+fallos += comprueba_tabla_ranking(html, "comparativa")
+# Se cuentan el TÍTULO de la instancia y la CLAVE del registro, no el contenedor
+# ni `TABLAS_RANKING` a secas: el JavaScript heredado documenta el componente con
+# un ejemplo (`TABLAS_RANKING['id'] = {`) dentro de un comentario.
+for pieza, esperadas in [
+        ('<p class="tabla-ranking-titulo">Los seis métodos sobre una sola '
+         'partición</p>', 1),
+        ("TABLAS_RANKING['comparativa']", 1),
+        # Maquinaria compartida, heredada del capítulo 4
+        (".tabla-ranking {", 1), (".tabla-ranking-marco {", 1),
+        ("function pintarTablaRanking", 1), ("function iniciarTablasRanking", 1),
+        ("const TABLAS_RANKING", 1), ("        iniciarTablasRanking();", 1)]:
+    if html.count(pieza) != esperadas:
+        fallos.append(f"tabla de ranking: '{pieza[:60]}' aparece {html.count(pieza)} "
+                      f"veces, se esperaban {esperadas}")
+
 # Componentes heredados que deben seguir intactos
 for regla in [".derivacion {", ".ciclo-boton {", ".quiz {", ".simulador-lectura",
               ".ejercicio-guiado {", ".grafico-etiqueta", ".simulador-intro",
@@ -415,4 +480,5 @@ if fallos:
 CAP5.write_text(html, encoding="utf-8")
 print(f"OK  {CAP5.name} escrito ({len(html.encode('utf-8')) / 1024:.1f} KB)")
 print(f"    11 plantillas · {len(SIMULADORES)} simuladores · 3 derivaciones · "
-      f"3 ejercicios · 8 preguntas de autoevaluación · componente .mapa-estacional instalado")
+      f"3 ejercicios · 8 preguntas de autoevaluación · 1 tabla de ranking · "
+      f"componente .mapa-estacional instalado")

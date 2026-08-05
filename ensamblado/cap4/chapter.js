@@ -761,6 +761,40 @@
     // ================================================================
     // Autoevaluación del capítulo
     // ================================================================
+    // Tabla ordenable de la rejilla del Nilo. Se incluye a propósito la columna
+    // del n efectivo: ordenar por AICc con modelos de distinto d es el error que
+    // este capítulo enseña a no cometer, y aquí queda a la vista.
+    TABLAS_RANKING['rejilla-nilo'] = function () {
+      const filas = Object.keys(NILO.rejilla).map(k => {
+        const m = NILO.rejilla[k];
+        return {
+          modelo: m.etiqueta, d: m.d, n: m.n_efectivo, k: m.k,
+          aicc: m.aicc, bic: m.bic, lb: m.ljung_box_12_p
+        };
+      });
+      return {
+        descripcion: 'Los 27 modelos ARIMA($p,d,q$) sobre el Nilo. Ordena por AICc y ' +
+          'mira la columna <strong>n efectivo</strong>: el «mejor» tiene $d = 2$ y se ' +
+          'evalúa sobre 98 observaciones, no sobre 100. <strong>Esa ordenación no es ' +
+          'válida.</strong>',
+        columnas: [
+          { clave: 'modelo', titulo: 'Modelo', tipo: 'texto' },
+          { clave: 'd', titulo: 'd', decimales: 0, mejor: 'menor' },
+          { clave: 'n', titulo: 'n efectivo', tituloLargo: 'número de observaciones efectivas', decimales: 0, mejor: 'mayor' },
+          { clave: 'k', titulo: 'Coeficientes', decimales: 0, mejor: 'menor' },
+          { clave: 'aicc', titulo: 'AICc', decimales: 2, mejor: 'menor' },
+          { clave: 'bic', titulo: 'BIC', decimales: 2, mejor: 'menor' },
+          { clave: 'lb', titulo: 'Ljung–Box p', tituloLargo: 'p-valor de Ljung-Box', decimales: 4, mejor: 'mayor' }
+        ],
+        filas: filas,
+        inicial: 'd',
+        destacada: 'ARIMA(1,1,1)',
+        pie: 'Ordena primero por <em>d</em> y compara dentro de cada grupo; solo así ' +
+          'la comparación es legítima. Los mejores por AICc son $(1,0,1)$, $(1,1,1)$ y ' +
+          '$(1,2,2)$, uno por cada $d$, y no se pueden poner en la misma lista.'
+      };
+    };
+
     AUTOEVALUACIONES['cap4'] = [
       {
         tipo: 'opcion',

@@ -8,6 +8,13 @@ construcción. Cada sustitución exige que su marcador aparezca exactamente una
 vez, y al final se comprueba que el resultado contiene todo lo que debe y nada
 de lo que no debe.
 
+El componente `.tabla-ranking` no lo instala este script: llegó al capítulo 4
+con `retropropaga_ranking.py` y su CSS y sus ayudantes se heredan del capítulo 3.
+Lo que sí vive aquí es su **instancia** —marcador `<!--RANKING:...-->` en
+`cap4/templates_4_6.html` y el registro en `cap4/chapter.js`—, porque está en las
+dos regiones que el ensamblado sustituye y sin ella el reensamblado la borraba
+en silencio (ver la Advertencia del README).
+
 Uso:  python3 ensambla_cap4.py       (desde ensamblado/)
 """
 
@@ -15,11 +22,17 @@ import re
 import sys
 from pathlib import Path
 
-RAIZ = Path(__file__).resolve().parent.parent
+AQUI = Path(__file__).resolve().parent
+RAIZ = AQUI.parent
 CAP3 = RAIZ / "Htmls_Series" / "capitulo-3-modelos-ar-ma-arma.html"
 CAP4 = RAIZ / "Htmls_Series" / "capitulo-4-modelos-arima.html"
-FUENTES = Path(__file__).resolve().parent / "cap4"
+FUENTES = AQUI / "cap4"
+COMPONENTES = AQUI / "componentes"
 SALIDAS = RAIZ / "precalculo" / "salidas"
+
+sys.path.insert(0, str(COMPONENTES))
+from tabla_ranking_html import (tabla_ranking_html,                     # noqa: E402
+                                comprueba_tabla_ranking)
 
 
 def lee(p):
@@ -106,6 +119,24 @@ plantillas_nuevas = (
     lee(FUENTES / "templates_7_9.html").rstrip("\n") + "\n\n" +
     lee(FUENTES / "templates_10.html").rstrip("\n") + "\n\n  <script>"
 )
+
+# Los componentes se generan con su constructor, no a mano: así el marcado es
+# idéntico al de las otras instancias del proyecto y la comparación de
+# selectores CSS no encuentra diferencias. La tabla de ranking llegó a este
+# capítulo por `retropropaga_ranking.py`, no por el ensamblado original; vive
+# aquí para que el reensamblado no la borre.
+RANKINGS = {
+    "rejilla-nilo": ("Los 27 modelos del Nilo, con su n efectivo a la vista", ""),
+}
+for clave, (titulo, pie) in RANKINGS.items():
+    marca = f"<!--RANKING:{clave}|{titulo}|{pie}-->"
+    if plantillas_nuevas.count(marca) != 1:
+        raise SystemExit(f"ABORTA [ranking {clave}]: el marcador aparece "
+                         f"{plantillas_nuevas.count(marca)} veces")
+    plantillas_nuevas = plantillas_nuevas.replace(
+        "      " + marca,
+        tabla_ranking_html(clave, titulo, pie, sangria="      ").rstrip("\n"), 1)
+
 html = una_vez(html, plantillas_viejas, plantillas_nuevas, "plantillas de módulo")
 
 # ---------------------------------------------------------------------------
@@ -203,6 +234,30 @@ if html.count('aria-controls="ciclo-box-jenkins-') != 4:
 if html.count("function iniciarCiclos()") != 1 or html.count("        iniciarCiclos();") != 1:
     fallos.append("el componente .ciclo no se heredó bien del capítulo 3")
 
+# El componente .tabla-ranking llegó aquí con `retropropaga_ranking.py`, después
+# de que se escribieran las fuentes de `cap4/`. Reejecutar este script sin estas
+# comprobaciones borraba la tabla en silencio (ocurrió el 2026-07-30): el CSS y
+# los ayudantes compartidos se heredan del capítulo 3 y sobreviven, pero la
+# instancia vive en una plantilla de módulo y su registro en `chapter.js`, que
+# son justo las dos regiones que el ensamblado sustituye.
+fallos += comprueba_tabla_ranking(html, "rejilla-nilo")
+# Se cuenta el TÍTULO de la instancia y la CLAVE del registro, no el contenedor
+# ni la cadena `TABLAS_RANKING` a secas: el JavaScript heredado documenta el
+# componente con un ejemplo (`TABLAS_RANKING['id'] = {`) dentro de un comentario,
+# y contar la cadena suelta daría un falso positivo. Mismo fallo que ya se
+# aprendió con las cajas de derivación.
+for pieza, esperadas in [
+        ('<p class="tabla-ranking-titulo">Los 27 modelos del Nilo, '
+         'con su n efectivo a la vista</p>', 1),
+        ("TABLAS_RANKING['rejilla-nilo']", 1),
+        # Maquinaria compartida, heredada del capítulo 3
+        (".tabla-ranking {", 1), (".tabla-ranking-marco {", 1),
+        ("function pintarTablaRanking", 1), ("function iniciarTablasRanking", 1),
+        ("const TABLAS_RANKING", 1), ("        iniciarTablasRanking();", 1)]:
+    if html.count(pieza) != esperadas:
+        fallos.append(f"tabla de ranking: '{pieza[:60]}' aparece {html.count(pieza)} "
+                      f"veces, se esperaban {esperadas}")
+
 # Componentes heredados que deben seguir intactos
 for regla in [".derivacion {", ".ciclo-boton {", ".quiz {", ".simulador-lectura",
               ".ejercicio-guiado {", ".grafico-etiqueta", ".simulador-intro",
@@ -252,4 +307,4 @@ if fallos:
 CAP4.write_text(html, encoding="utf-8")
 print(f"OK  {CAP4.name} escrito ({len(html.encode('utf-8')) / 1024:.1f} KB)")
 print(f"    10 plantillas · {len(SIMULADORES)} simuladores · 3 derivaciones · "
-      f"3 ejercicios · 8 preguntas de autoevaluación")
+      f"3 ejercicios · 8 preguntas de autoevaluación · 1 tabla de ranking")
