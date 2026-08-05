@@ -1273,6 +1273,26 @@
       display: none;
     }
 
+    /* Desglose por opción dentro de la retroalimentación (preguntas de
+       selección múltiple). La regla global `ul li { color: #374151 }`, pensada
+       para las listas del contenido, pisaba el color de .quiz-retro.bien/.mal y
+       dejaba el desglose en gris sobre fondo rojo o verde: el mismo fallo que ya
+       se corrigió en el pie de página. `color: inherit` lo devuelve al color de
+       la caja. */
+    .quiz-retro ul {
+      margin: 0.5rem 0 0 0;
+      padding-left: 1.1rem;
+    }
+
+    .quiz-retro ul li {
+      color: inherit;
+      margin-bottom: 0.35rem;
+    }
+
+    .quiz-retro ul li:last-child {
+      margin-bottom: 0;
+    }
+
     .quiz-marcador {
       margin-top: 1.15rem;
       font-weight: 600;
@@ -5485,6 +5505,13 @@ round(c(armonico_K4 = 180.200, n_armonico = 467,
     // Campos comunes: {pregunta, pista, modulo}. `pista` se muestra tras el
     // PRIMER fallo y se deja reintentar; al segundo fallo se revela la
     // respuesta. `modulo` alimenta el resumen final de "qué repasar".
+    //
+    // TODA opción lleva su propio `retro`, también las incorrectas: explicar
+    // dónde falla el razonamiento vale más que decir "incorrecto". En 'opcion' y
+    // 'grafico' se muestra el `retro` de la opción elegida; en 'multiple', el
+    // desglose de cada opción que el estudiante juzgó mal (ver
+    // `desgloseMultiple`). `retroAcierto`/`retroFallo` son el comentario general
+    // que lo encabeza, no un sustituto del `retro` por opción.
     // ================================================================
     const AUTOEVALUACIONES = {};
     const LETRAS = ['a', 'b', 'c', 'd', 'e'];
@@ -5586,6 +5613,29 @@ round(c(armonico_K4 = 180.200, n_armonico = 467,
         retro.hidden = false;
         katexEn(retro);
         actualizarMarcador();
+      }
+
+      // Desglose por opción de una pregunta de selección múltiple: explica CADA
+      // opción que el estudiante juzgó mal —la que marcó de más y la que se
+      // dejó—, usando el `retro` de esa opción.
+      //
+      // Antes solo se mostraba el `retro` de las opciones CORRECTAS, y solo como
+      // respaldo cuando no había `retroAcierto`: quien fallaba una `multiple`
+      // veía un comentario general y nunca sabía en qué opción concreta se
+      // equivocó. Contradecía la regla del formato («cada opción lleva su propia
+      // retroalimentación, también las incorrectas»). Corregido el 2026-07-30.
+      function desgloseMultiple(p, marcadas, correctas) {
+        const filas = p.opciones.map((op, j) => {
+          const marcada = marcadas.has(j);
+          const esCorrecta = correctas.has(j);
+          if (marcada === esCorrecta) return null;   // esa opción la juzgó bien
+          const etiqueta = marcada ? 'La marcaste y no va' : 'Te faltó marcarla';
+          // El texto de la opción ya trae su punto final, así que la retro se
+          // concatena con un espacio: con dos puntos saldría «... JSON.: El ...».
+          return `<li><strong>${etiqueta}:</strong> ${op.texto}` +
+            `${op.retro ? ` ${op.retro}` : ''}</li>`;
+        }).filter(Boolean);
+        return filas.length ? `<ul>${filas.join('')}</ul>` : '';
       }
 
       function mostrarPista(i, bloque) {
@@ -5736,6 +5786,8 @@ round(c(armonico_K4 = 180.200, n_armonico = 467,
               // opciones correctas, que ya estaba escrita y no se mostraba.
               cerrar(i, bloque, true, p.retroAcierto || p.opciones
                 .filter(o => o.correcta).map(o => o.retro).filter(Boolean).join(' '));
+              // No hay desglose: acertar aquí significa haber juzgado bien
+              // TODAS las opciones, así que no queda nada que explicar.
             } else if (estado[i].intentos === 1) {
               const bien = [...marcadas].filter(j => correctas.has(j)).length;
               pista.innerHTML = `<strong>Casi.</strong> De las ${marcadas.size} que marcaste, ` +
@@ -5752,7 +5804,8 @@ round(c(armonico_K4 = 180.200, n_armonico = 467,
                 else if (marcadas.has(j)) b.classList.add('incorrecta');
               });
               boton.disabled = true;
-              cerrar(i, bloque, false, p.retroFallo);
+              cerrar(i, bloque, false,
+                (p.retroFallo || '') + desgloseMultiple(p, marcadas, correctas));
             }
           });
 
