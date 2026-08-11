@@ -1562,6 +1562,45 @@
       margin-top: 0.9rem;
     }
 
+    /* ------------------------------------------------------------------
+       Par de gráficos lado a lado (añadido en el Capítulo 1, 2026-08-11).
+
+       Los paneles apilados sirven para leer componentes de una misma
+       descomposición, donde lo que importa es la fecha compartida. Cuando
+       lo que se compara son dos series enteras —aditiva contra
+       multiplicativa, o una serie contra su logaritmo— apilarlas obliga a
+       recordar la de arriba mientras se mira la de abajo, que es
+       exactamente el esfuerzo que el gráfico venía a ahorrar. En pantalla
+       estrecha vuelven a apilarse: ahí no caben dos.
+       ------------------------------------------------------------------ */
+    .grafico-par {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.9rem;
+    }
+
+    @media (min-width: 768px) {
+      .grafico-par {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+    }
+
+    .simulador-intro + .grafico-par,
+    .simulador-controles + .grafico-par {
+      margin-top: 0;
+    }
+
+    /* Dentro del par, la etiqueta encabeza su propia columna y el hueco
+       entre columnas lo pone la rejilla, no el margen del elemento. */
+    .grafico-par .grafico-etiqueta {
+      margin-top: 0;
+    }
+
+    .grafico-par + .simulador-lectura {
+      margin-top: 1rem;
+    }
+
     /* La lectura numérica se separa del lienzo con una línea fina, para que
        se lea como una banda de resultados y no como un pie pegado al gráfico. */
     .simulador-lectura {
@@ -2440,6 +2479,45 @@ plt.show()</code></pre>
       <p>El modelo aditivo conviene cuando la amplitud estacional es <em>constante</em>; el multiplicativo, cuando la
         amplitud <em>crece con el nivel</em> de la serie.</p>
 
+      <p>Escrita así, la diferencia es un signo. Vista, es otra cosa: dos series pueden compartir exactamente la
+        misma tendencia y exactamente el mismo patrón estacional y acabar teniendo formas distintas, según se sumen
+        o se multipliquen.</p>
+
+      <div class="simulador" data-simulador="comparador-escala">
+        <h4><i class="fas fa-columns" aria-hidden="true"></i> Comparador: los mismos componentes, combinados de dos
+          maneras</h4>
+        <p class="simulador-intro">Ambos paneles usan la misma tendencia y la misma forma estacional. La amplitud
+          relativa del multiplicativo se fija en $a = A/T_0$, de modo que las dos oscilaciones <strong>valen lo
+          mismo al nivel de partida</strong> y solo se separan a medida que ese nivel sube: lo que las distingue no
+          es cuánto oscilan, es de qué depende. La banda discontinua es la envolvente de la estacionalidad, y los
+          dos paneles comparten el eje vertical, así que sus anchuras se comparan a simple vista.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-par">
+          <div>
+            <p class="grafico-etiqueta">Aditivo · $y_t = T_t + S_t$</p>
+            <div class="grafico-wrapper" style="height:260px;">
+              <canvas role="img"
+                aria-label="Serie aditiva: la banda estacional conserva la misma anchura mientras la tendencia sube"></canvas>
+            </div>
+          </div>
+          <div>
+            <p class="grafico-etiqueta">Multiplicativo · $y_t = T_t \times S_t$</p>
+            <div class="grafico-wrapper" style="height:260px;">
+              <canvas role="img"
+                aria-label="Serie multiplicativa: la banda estacional se ensancha a medida que la tendencia sube"></canvas>
+            </div>
+          </div>
+        </div>
+        <p class="simulador-lectura"></p>
+      </div>
+
+      <p>La lectura del comparador es la definición hecha imagen: a la izquierda la banda conserva su anchura
+        mientras el nivel sube, y a la derecha se ensancha con él. Conviene fijarse en qué es lo que se mantiene
+        constante en cada caso, porque es justo lo que intercambian los dos modelos. En el aditivo lo constante es
+        la oscilación <em>en unidades</em> —los mismos pasajeros de más en julio, valga la serie lo que valga—; en
+        el multiplicativo lo constante es la oscilación <em>en porcentaje</em>, y por eso en unidades crece. Subir
+        la pendiente no cambia nada en el panel izquierdo y lo cambia todo en el derecho.</p>
+
       <p>Dicho así, el criterio parece cosa de mirar el gráfico y decidir. Conviene desconfiar de eso y convertirlo en
         un número: para cada año, la <strong>amplitud estacional</strong> —el mes más alto menos el más bajo— frente
         al <strong>nivel medio</strong> de ese mismo año. Si el modelo fuera aditivo, la amplitud se mantendría
@@ -2459,16 +2537,69 @@ plt.show()</code></pre>
         </tbody>
       </table>
 
+      <p>Tres años dan la magnitud del cambio, pero no la forma. Con los doce en un mismo gráfico —cada año un
+        punto, su nivel medio en horizontal y su amplitud en vertical— las dos hipótesis dejan de competir en
+        abstracto: cada una predice una curva distinta, y basta ver junto a cuál caen los puntos.</p>
+
+      <div class="simulador" data-simulador="amplitud-nivel">
+        <h4><i class="fas fa-chart-line" aria-hidden="true"></i> Amplitud estacional contra nivel, año a año</h4>
+        <p class="simulador-intro">Los doce años de <code>AirPassengers</code>. Si el modelo fuera aditivo, la
+          amplitud no dependería del nivel y los puntos seguirían la <strong>horizontal</strong>; si fuera
+          exactamente multiplicativo, la amplitud sería una proporción fija del nivel y seguirían el
+          <strong>rayo</strong>. Ambas referencias se anclan en 1949, el primer año. Al pasar el cursor por cada
+          punto aparece el año.</p>
+        <div class="grafico-wrapper" style="height:300px;">
+          <canvas role="img"
+            aria-label="Dispersión de amplitud estacional contra nivel medio para los doce años, con la recta horizontal que predice el modelo aditivo y el rayo que predice el multiplicativo"></canvas>
+        </div>
+        <p class="simulador-lectura"></p>
+      </div>
+
       <p>La amplitud no es constante ni de lejos: pasa de 44 a 232 pasajeros, se multiplica por más de cinco mientras
-        el nivel se multiplica por menos de cuatro. El modelo aditivo queda descartado. Pero la proporción tampoco es
-        del todo estable —sube del 35&nbsp;% al 49&nbsp;%—, así que <code>AirPassengers</code> tampoco es un
-        multiplicativo de manual; simplemente está mucho más cerca de serlo. Conviene quedarse con esa idea:
+        el nivel se multiplica por menos de cuatro. El modelo aditivo queda descartado, y en el gráfico se ve sin
+        necesidad de aritmética: los puntos abandonan la horizontal desde el primer año y no vuelven. Pero la
+        proporción tampoco es del todo estable —sube del 35&nbsp;% al 49&nbsp;%—, y eso también está en el gráfico:
+        los puntos acompañan al rayo, sí, pero se le quedan por encima. Así que <code>AirPassengers</code> tampoco es
+        un multiplicativo de manual; simplemente está mucho más cerca de serlo. Conviene quedarse con esa idea:
         <strong>ningún modelo describe la serie exactamente, se elige el que menos se equivoca</strong>.</p>
 
       <p>Y elegir el multiplicativo tiene una consecuencia práctica que se usará durante todo el capítulo: un modelo
         multiplicativo se vuelve aditivo tomando logaritmos, porque
         $\log y_t = \log T_t + \log S_t + \log R_t$. Convertir el producto en suma es lo que permitirá más adelante
         aplicarle STL, que solo sabe sumar.</p>
+
+      <p>Esa igualdad es de una línea, pero lo que hace se ve mejor que se demuestra: el logaritmo comprime los
+        valores altos más que los bajos, y con ello cierra el abanico.</p>
+
+      <div class="simulador" data-simulador="serie-vs-log">
+        <h4><i class="fas fa-compress-arrows-alt" aria-hidden="true"></i> El logaritmo cierra el abanico</h4>
+        <p class="simulador-intro">La misma serie en las dos escalas. A la izquierda, el vaivén anual crece con el
+          nivel; a la derecha, sobre $\log y_t$, se mantiene casi igual de ancho de principio a fin. Ese «casi» es
+          el mismo matiz de antes, y las cifras de abajo lo miden.</p>
+        <div class="grafico-par">
+          <div>
+            <p class="grafico-etiqueta">Escala original · el producto</p>
+            <div class="grafico-wrapper" style="height:240px;">
+              <canvas role="img"
+                aria-label="AirPassengers en escala original: las oscilaciones anuales se ensanchan con los años"></canvas>
+            </div>
+          </div>
+          <div>
+            <p class="grafico-etiqueta">Escala logarítmica · la suma</p>
+            <div class="grafico-wrapper" style="height:240px;">
+              <canvas role="img"
+                aria-label="Logaritmo de AirPassengers: las oscilaciones anuales conservan una anchura casi constante"></canvas>
+            </div>
+          </div>
+        </div>
+        <p class="simulador-lectura"></p>
+      </div>
+
+      <p>El abanico no se cierra del todo —ahí vuelve a asomar el «casi» de antes—, pero la amplitud pasa de
+        multiplicarse por más de cinco a hacerlo por poco más de uno: el logaritmo no vuelve la serie perfectamente
+        aditiva, la acerca lo bastante como para tratarla así. De ahí que el resto del capítulo trabaje sobre
+        $\log$<code>(AirPassengers)</code> siempre que necesite un método aditivo, y devuelva el resultado a la
+        escala original al final aplicando $\exp(\cdot)$.</p>
 
       <div class="simulador" data-simulador="construye-tu-serie">
         <h4><i class="fas fa-sliders-h" aria-hidden="true"></i> Simulador: construye tu serie</h4>
@@ -3868,6 +3999,272 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
       const g = crearGraficoLinea(raiz.querySelector('canvas'), MESES, datasets,
         { plugins: { legend: { display: false } } });
       return [g];
+    };
+
+    // Amplitud (máx − mín) del bloque de 12 observaciones que empieza en k*12.
+    function amplitudAnio(serie, k) {
+      const v = serie.slice(k * 12, k * 12 + 12);
+      return Math.max(...v) - Math.min(...v);
+    }
+
+    // M4 · Comparador aditivo vs. multiplicativo
+    //
+    // Serie sintética de 8 años: los dos paneles comparten la tendencia
+    // T_t = T0 + beta*t y la forma estacional sin(2*pi*t/12). La amplitud
+    // relativa se deriva de la absoluta, a = A/T0, para que la oscilación
+    // valga lo mismo en los dos modelos cuando el nivel es T0; a partir de
+    // ahí la aditiva la mantiene y la multiplicativa la escala con T_t.
+    //
+    // Los dos gráficos comparten los límites del eje y. Con el autoescalado
+    // de Chart.js cada panel se ajustaría a su propio rango y el abanico se
+    // vería igual de ancho en ambos, que es justo lo contrario de lo que el
+    // comparador viene a mostrar.
+    SIMULADORES['comparador-escala'] = function (raiz) {
+      const N = 96, T0 = 100;
+      const etiquetas = Array.from({ length: N }, (_, t) => t % 12 === 0 ? `Año ${t / 12 + 1}` : '');
+      const forma = Array.from({ length: N }, (_, t) => Math.sin(2 * Math.PI * t / 12));
+      const params = { beta: 2, A: 20 };
+
+      function calcular() {
+        const A = params.A, a = A / T0;
+        const T = Array.from({ length: N }, (_, t) => T0 + params.beta * t);
+        return {
+          T,
+          aditiva: T.map((Tt, t) => Tt + A * forma[t]),
+          multiplicativa: T.map((Tt, t) => Tt * (1 + a * forma[t])),
+          supAditiva: T.map(Tt => Tt + A),
+          infAditiva: T.map(Tt => Tt - A),
+          supMultipl: T.map(Tt => Tt * (1 + a)),
+          infMultipl: T.map(Tt => Tt * (1 - a))
+        };
+      }
+
+      // Rango común a los dos paneles, calculado sobre las envolventes
+      // (que acotan a las series) y no sobre las series mismas.
+      function limites(d) {
+        const todo = d.supAditiva.concat(d.infAditiva, d.supMultipl, d.infMultipl);
+        const min = Math.min(...todo), max = Math.max(...todo);
+        const margen = (max - min) * 0.06;
+        return { min: min - margen, max: max + margen };
+      }
+
+      function opciones(d) {
+        const lim = limites(d);
+        return {
+          plugins: {
+            legend: {
+              labels: {
+                font: { family: 'Montserrat', size: 11 },
+                boxWidth: 20,
+                // La envolvente son dos series; en la leyenda basta una.
+                filter: item => item.text !== ''
+              }
+            },
+            tooltip: { enabled: false }
+          },
+          scales: {
+            x: {
+              ticks: { font: { family: 'Montserrat', size: 11 }, autoSkip: false, maxRotation: 0 },
+              grid: { display: false }
+            },
+            y: {
+              min: lim.min,
+              max: lim.max,
+              ticks: { font: { family: 'Fira Code', size: 11 } },
+              grid: { color: 'rgba(148, 163, 184, 0.2)' }
+            }
+          }
+        };
+      }
+
+      function panel(canvas, d, serie, sup, inf) {
+        return crearGraficoLinea(canvas, etiquetas, [
+          {
+            label: 'Envolvente', data: sup, borderColor: COLORES_GRAFICO.gris,
+            borderWidth: 1, borderDash: [4, 4], pointRadius: 0
+          },
+          {
+            label: '', data: inf, borderColor: COLORES_GRAFICO.gris,
+            borderWidth: 1, borderDash: [4, 4], pointRadius: 0
+          },
+          {
+            label: 'Tendencia', data: d.T, borderColor: COLORES_GRAFICO.secundario,
+            borderWidth: 1.5, pointRadius: 0
+          },
+          {
+            label: 'Serie', data: serie, borderColor: COLORES_GRAFICO.primario,
+            borderWidth: 2, pointRadius: 0
+          }
+        ], opciones(d));
+      }
+
+      const lienzos = raiz.querySelectorAll('canvas');
+      const lectura = raiz.querySelector('.simulador-lectura');
+      let d = calcular();
+      const gAditiva = panel(lienzos[0], d, d.aditiva, d.supAditiva, d.infAditiva);
+      const gMultipl = panel(lienzos[1], d, d.multiplicativa, d.supMultipl, d.infMultipl);
+
+      // La oscilación estacional se mide como desviación máxima respecto a
+      // la tendencia, no como máx − mín del año: así el número aísla el
+      // componente estacional en vez de mezclarlo con lo que sube la
+      // tendencia dentro del propio año.
+      function oscilacion(serie, T, k) {
+        let mayor = 0;
+        for (let t = k * 12; t < k * 12 + 12; t++) {
+          mayor = Math.max(mayor, Math.abs(serie[t] - T[t]));
+        }
+        return mayor;
+      }
+
+      function actualizarLectura(d) {
+        const ult = N / 12 - 1;
+        const a1 = oscilacion(d.aditiva, d.T, 0), a8 = oscilacion(d.aditiva, d.T, ult);
+        const m1 = oscilacion(d.multiplicativa, d.T, 0), m8 = oscilacion(d.multiplicativa, d.T, ult);
+        lectura.innerHTML =
+          '<strong>Oscilación estacional máxima, año 1 → año 8:</strong> ' +
+          `aditiva, de ${a1.toFixed(1)} a ${a8.toFixed(1)} (×${(a8 / a1).toFixed(2)}); ` +
+          `multiplicativa, de ${m1.toFixed(1)} a ${m8.toFixed(1)} (×${(m8 / m1).toFixed(2)}).`;
+      }
+      actualizarLectura(d);
+
+      crearControles(raiz.querySelector('.simulador-controles'), [
+        { clave: 'beta', etiqueta: 'Pendiente de la tendencia (β)', min: 0, max: 4, paso: 0.25 },
+        { clave: 'A', etiqueta: 'Amplitud estacional inicial (A)', min: 4, max: 40, paso: 1 }
+      ], params, () => {
+        d = calcular();
+        const lim = limites(d);
+        [[gAditiva, d.aditiva, d.supAditiva, d.infAditiva],
+         [gMultipl, d.multiplicativa, d.supMultipl, d.infMultipl]].forEach(([g, serie, sup, inf]) => {
+          g.data.datasets[0].data = sup;
+          g.data.datasets[1].data = inf;
+          g.data.datasets[2].data = d.T;
+          g.data.datasets[3].data = serie;
+          g.options.scales.y.min = lim.min;
+          g.options.scales.y.max = lim.max;
+          g.update('none');
+        });
+        actualizarLectura(d);
+      });
+
+      return [gAditiva, gMultipl];
+    };
+
+    // M4 · Amplitud estacional contra nivel medio, año a año
+    //
+    // Estático, y calculado aquí y no en R: sale entero de la serie que ya
+    // está incrustada. Las dos referencias se anclan en el primer año, que
+    // es el único punto en el que las dos hipótesis coinciden por
+    // construcción; a partir de ahí divergen y los puntos eligen.
+    SIMULADORES['amplitud-nivel'] = function (raiz) {
+      const porAnio = {};
+      DATOS_CAP1.fechas.forEach((f, i) => {
+        const anio = f.slice(0, 4);
+        (porAnio[anio] = porAnio[anio] || []).push(DATOS_CAP1.observado[i]);
+      });
+
+      const puntos = Object.keys(porAnio).sort().map(anio => {
+        const v = porAnio[anio];
+        return {
+          anio: anio,
+          x: v.reduce((s, b) => s + b, 0) / v.length,
+          y: Math.max(...v) - Math.min(...v)
+        };
+      });
+
+      const primero = puntos[0];
+      const proporcion = primero.y / primero.x;
+      const xIzq = 100, xDer = 520;
+
+      const g = crearGraficoLinea(raiz.querySelector('canvas'), null, [
+        {
+          label: 'Si fuera aditivo',
+          data: [{ x: xIzq, y: primero.y }, { x: xDer, y: primero.y }],
+          borderColor: COLORES_GRAFICO.gris,
+          borderWidth: 1.5, borderDash: [6, 4], pointRadius: 0
+        },
+        {
+          label: 'Si fuera multiplicativo',
+          data: [{ x: xIzq, y: proporcion * xIzq }, { x: xDer, y: proporcion * xDer }],
+          borderColor: COLORES_GRAFICO.secundario,
+          borderWidth: 1.5, borderDash: [6, 4], pointRadius: 0
+        },
+        {
+          label: 'Años observados',
+          data: puntos,
+          borderColor: COLORES_GRAFICO.primario,
+          backgroundColor: COLORES_GRAFICO.primario,
+          showLine: false,
+          pointRadius: 5,
+          pointHoverRadius: 7
+        }
+      ], {
+        interaction: { mode: 'nearest', intersect: true },
+        plugins: {
+          legend: { labels: { font: { family: 'Montserrat', size: 11 }, boxWidth: 20 } },
+          tooltip: {
+            backgroundColor: '#012820',
+            titleFont: { family: 'Montserrat' },
+            bodyFont: { family: 'Fira Code' },
+            callbacks: {
+              title: items => {
+                const p = items[0].raw;
+                return p.anio ? `Año ${p.anio}` : '';
+              },
+              label: item => {
+                const p = item.raw;
+                if (!p.anio) return '';
+                return `nivel ${p.x.toFixed(1)} · amplitud ${p.y} · ${(100 * p.y / p.x).toFixed(1)} %`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            type: 'linear',
+            min: xIzq, max: xDer,
+            title: { display: true, text: 'Nivel medio del año (miles de pasajeros)', font: { family: 'Montserrat', size: 11 } },
+            ticks: { font: { family: 'Fira Code', size: 11 } },
+            grid: { display: false }
+          },
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: 'Amplitud estacional (máx − mín)', font: { family: 'Montserrat', size: 11 } },
+            ticks: { font: { family: 'Fira Code', size: 11 } },
+            grid: { color: 'rgba(148, 163, 184, 0.2)' }
+          }
+        }
+      });
+
+      const ultimo = puntos[puntos.length - 1];
+      raiz.querySelector('.simulador-lectura').innerHTML =
+        `<strong>De ${primero.anio} a ${ultimo.anio}:</strong> el nivel medio pasa de ` +
+        `${primero.x.toFixed(1)} a ${ultimo.x.toFixed(1)} (×${(ultimo.x / primero.x).toFixed(2)}) y la amplitud, ` +
+        `de ${primero.y} a ${ultimo.y} (×${(ultimo.y / primero.y).toFixed(2)}). ` +
+        `La proporción amplitud/nivel sube del ${(100 * proporcion).toFixed(1)}&nbsp;% al ` +
+        `${(100 * ultimo.y / ultimo.x).toFixed(1)}&nbsp;%.`;
+
+      return [g];
+    };
+
+    // M4 · La serie y su logaritmo, lado a lado
+    SIMULADORES['serie-vs-log'] = function (raiz) {
+      const c = raiz.querySelectorAll('canvas');
+      const y = DATOS_CAP1.observado;
+      const logY = y.map(v => Math.log(v));
+      const ultimo = y.length / 12 - 1;
+
+      const ampY1 = amplitudAnio(y, 0), ampYN = amplitudAnio(y, ultimo);
+      const ampL1 = amplitudAnio(logY, 0), ampLN = amplitudAnio(logY, ultimo);
+
+      raiz.querySelector('.simulador-lectura').innerHTML =
+        '<strong>Amplitud del primer año frente a la del último:</strong> ' +
+        `en escala original, de ${ampY1} a ${ampYN} (×${(ampYN / ampY1).toFixed(2)}); ` +
+        `en logaritmos, de ${ampL1.toFixed(3)} a ${ampLN.toFixed(3)} (×${(ampLN / ampL1).toFixed(2)}).`;
+
+      return [
+        panelComponente(c[0], DATOS_CAP1.fechas, y, 'Pasajeros (miles)', COLORES_GRAFICO.primario),
+        panelComponente(c[1], DATOS_CAP1.fechas, logY, 'log(pasajeros)', COLORES_GRAFICO.terciario)
+      ];
     };
 
     // M5 · Media móvil centrada interactiva sobre AirPassengers
