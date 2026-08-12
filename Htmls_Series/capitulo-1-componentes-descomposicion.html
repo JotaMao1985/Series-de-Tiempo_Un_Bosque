@@ -2926,6 +2926,124 @@ plt.legend(); plt.show()</code></pre>
         </div>
       </div>
 
+      <h3>El método en símbolos</h3>
+
+      <p>Descrito en palabras, el recorrido se sigue, pero no se ejecuta. «Promediar todos los eneros» no dice sobre
+        qué serie se promedia, cuántos eneros entran ni qué se hace después con el resultado, y de esas tres omisiones
+        depende que la descomposición salga bien. Escribirlo en símbolos apenas ocupa más espacio y deja a la vista lo
+        que la prosa mantiene implícito: dónde se separan exactamente las dos escalas.</p>
+
+      <p>Sea $m$ el período —12 en datos mensuales— y $k = 1, \dots, m$ la posición dentro del ciclo, de modo que
+        $k = 1$ es enero y $k = 7$, julio. Llámese $J_k$ al conjunto de instantes que ocupan la posición $k$
+        <em>y</em> tienen tendencia estimada, y $n_k$ a su tamaño. Ese segundo requisito no es un detalle de
+        notación: la media móvil deja sin tendencia los seis primeros meses y los seis últimos, así que en
+        <code>AirPassengers</code> resulta $n_k = 11$ —y no 12— para los doce meses del año. Una abreviatura más:
+        $\bar s$ es la media de los $m$ índices brutos, $\bar s = \frac{1}{m}\sum_{j=1}^{m} \tilde s_j$.</p>
+
+      <table>
+        <caption class="sr-only">Los cuatro pasos de la descomposición clásica escritos en notación, comparando el
+          modelo aditivo con el multiplicativo</caption>
+        <thead>
+          <tr>
+            <th scope="col">Paso</th>
+            <th scope="col">Aditivo · $y_t = T_t + S_t + R_t$</th>
+            <th scope="col">Multiplicativo · $y_t = T_t \times S_t \times R_t$</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">2 · Tendencia</th>
+            <td colspan="2">$\hat{T}_t$, la media móvil centrada de orden $2\times m$ del Módulo 5. Es el único paso
+              que no depende de la escala.</td>
+          </tr>
+          <tr>
+            <th scope="row">3a · Serie sin tendencia</th>
+            <td>$d_t = y_t - \hat{T}_t$</td>
+            <td>$d_t = y_t \,/\, \hat{T}_t$</td>
+          </tr>
+          <tr>
+            <th scope="row">3b · Índice bruto</th>
+            <td colspan="2">$\tilde s_k = \dfrac{1}{n_k} \sum_{t \in J_k} d_t$ &nbsp;— esto es «promediar todos los
+              eneros». La fórmula es idéntica en las dos columnas; lo que cambia es qué se está promediando.</td>
+          </tr>
+          <tr>
+            <th scope="row">3c · Normalización</th>
+            <td>$\hat{S}_k = \tilde s_k - \bar s$</td>
+            <td>$\hat{S}_k = \tilde s_k \,/\, \bar s$</td>
+          </tr>
+          <tr>
+            <th scope="row">3d · Índice repetido</th>
+            <td colspan="2">$\hat{S}_t = \hat{S}_{k(t)}$ &nbsp;— el mismo valor cada año. Ahí está, en un subíndice,
+              toda la rigidez del método clásico.</td>
+          </tr>
+          <tr>
+            <th scope="row">4 · Residuo</th>
+            <td>$\hat{R}_t = y_t - \hat{T}_t - \hat{S}_t$</td>
+            <td>$\hat{R}_t = y_t \,/\, (\hat{T}_t \hat{S}_t)$</td>
+          </tr>
+          <tr>
+            <th scope="row">Condición resultante</th>
+            <td>$\sum_{k=1}^{m} \hat{S}_k = 0$</td>
+            <td>$\sum_{k=1}^{m} \hat{S}_k = m$ &nbsp;(media 1)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Leída en horizontal, la tabla dice que los dos modelos <em>se ejecutan igual</em>: los mismos cuatro pasos,
+        en el mismo orden, con las mismas cantidades intermedias. Lo único que cambia es la operación —restar y sumar
+        a la izquierda, dividir y multiplicar a la derecha—, y de ahí se desprende todo lo demás, incluida la
+        condición de la última fila.</p>
+
+      <p>De los cuatro pasos, el que más extraña es el 3c, porque parece un tecnicismo prescindible: los índices ya
+        estaban calculados en 3b y el reescalado apenas los mueve. Sin él, sin embargo, los dos pasos siguientes
+        salen desplazados.</p>
+
+      <div class="derivacion">
+        <button type="button" class="derivacion-boton" aria-expanded="false" aria-controls="der-normalizacion">
+          <i class="fas fa-square-root-variable" aria-hidden="true"></i>
+          <span class="derivacion-texto">Ver el desarrollo paso a paso</span>
+          <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="derivacion-panel" id="der-normalizacion" hidden>
+          <ol class="derivacion-pasos">
+            <li>
+              <p>Nada obliga a que los $m$ índices brutos salgan ya centrados. La serie sin tendencia $d_t$ no es
+                estacionalidad pura: arrastra el residuo, y la tendencia estimada tiene su propio error. Promediar
+                cancela casi todo eso, pero no exactamente. En <code>AirPassengers</code> los doce índices brutos
+                promedian</p>
+              $$\bar s = 0.998236 \qquad\text{en lugar de } 1$$
+            </li>
+            <li>
+              <p>Un 0.18&nbsp;% de desvío parece despreciable, y lo sería si fuera ruido. No lo es: es un factor
+                <strong>constante</strong> que afecta por igual a las 144 observaciones. Si se dejara dentro de
+                $\hat{S}$, el residuo lo heredaría invertido, porque el paso 4 lo despeja:</p>
+              $$\frac{y_t}{\hat{T}_t\, \tilde s_k} \;=\; \frac{1}{\bar s} \cdot \frac{y_t}{\hat{T}_t\, \hat{S}_k}
+                \;=\; 1.0018 \times \hat{R}_t$$
+              <p>El residuo dejaría de oscilar alrededor de 1 para hacerlo alrededor de 1.0018.</p>
+            </li>
+            <li>
+              <p>Y el desvío se propagaría al Módulo 8. La serie desestacionalizada $y_t / \hat{S}_t$ saldría un
+                0.18&nbsp;% por encima del nivel real en <em>todos</em> sus puntos: no una imprecisión, un
+                desplazamiento sistemático de una serie que se publica como si fuera el nivel limpio.</p>
+            </li>
+            <li>
+              <p>Dividir cada índice por $\bar s$ devuelve ese factor constante a donde pertenece —la tendencia— y
+                deja los índices midiendo solo la desviación respecto del año medio. Para julio, con el promedio
+                bruto del paso 3b:</p>
+              $$\hat{S}_{\text{julio}} = \frac{1.224391}{0.998236} = 1.2266$$
+            </li>
+            <li>
+              <p>En el modelo aditivo la construcción es la misma cambiando la operación: se resta $\bar s$ en vez de
+                dividir por él, y la condición pasa de «media 1» a «suma 0». El argumento no cambia una coma.</p>
+            </li>
+          </ol>
+          <p class="derivacion-resultado">La normalización es lo que garantiza que <strong>quitar la estacionalidad no
+            mueva el nivel de la serie</strong>: un ciclo completo no debe añadir ni multiplicar nada en neto. Sin esa
+            condición, «estacionalidad» y «tendencia» dejarían de estar separadas y una podría absorber parte de la
+            otra.</p>
+        </div>
+      </div>
+
       <p>Aplicado a <code>AirPassengers</code> en su versión multiplicativa —la que pedía el abanico del Módulo 3—, el
         método produce lo siguiente (calculado en R con <code>decompose()</code>):</p>
 
@@ -2998,10 +3116,10 @@ plt.legend(); plt.show()</code></pre>
         más pasajeros al final de la serie que al principio.</p>
 
       <div class="note">
-        <p><strong>Los doce índices promedian 1, y no es casualidad:</strong> el método los reescala dividiéndolos por
-          su media antes de devolverlos. Sin ese ajuste, la estacionalidad podría absorber parte del nivel de la serie
-          y la tendencia saldría desplazada. Los de este capítulo suman 12.0001 sobre doce meses. En la descomposición
-          aditiva la condición equivalente es que <em>sumen</em> 0.</p>
+        <p><strong>Los doce índices promedian 1, y no es casualidad:</strong> es la condición de la última fila de la
+          tabla, y el reescalado del paso 3c está puesto justamente para imponerla. Los de este capítulo suman
+          12.0001 sobre doce meses —ese 0.0001 es el redondeo a cuatro decimales, no una holgura del método—. En la
+          descomposición aditiva la condición equivalente es que <em>sumen</em> 0.</p>
       </div>
 
       <div class="code-tabs" role="group" aria-label="Descomposición clásica en R y Python">
@@ -3018,6 +3136,9 @@ plt.legend(); plt.show()</code></pre>
 dc &lt;- decompose(AirPassengers, type = "multiplicative")
 plot(dc)
 
+# La version aditiva, la que este modulo descarta al final
+da &lt;- decompose(AirPassengers, type = "additive")
+
 # Version tidyverts (aditiva sobre log = multiplicativa)
 library(fpp3)
 as_tsibble(AirPassengers) |&gt;
@@ -3030,9 +3151,53 @@ as_tsibble(AirPassengers) |&gt;
 from statsmodels.tsa.seasonal import seasonal_decompose
 
 dc = seasonal_decompose(pasajeros, model="multiplicative", period=12)
-dc.plot()</code></pre>
+dc.plot()
+
+# La version aditiva, la que este modulo descarta al final
+da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
         </div>
       </div>
+
+      <h3>Qué habría pasado con la otra escala</h3>
+
+      <p>La columna izquierda de la tabla no era decorativa: aplicada a esta misma serie devuelve una descomposición
+        completa, y ponerla al lado de la de arriba es la manera más corta de ver qué significa «elegir mal la
+        escala». El paso 2 no cambia, porque la media móvil no depende del modelo —la tendencia de julio de 1955
+        sigue siendo 285.75—, pero de ahí en adelante se separa todo:</p>
+
+      <div class="formula">
+        $$\underbrace{364}_{y_t} \;=\; \underbrace{285.75}_{\hat{T}_t} \;+\;
+        \underbrace{63.83}_{\hat{S}_{\text{julio}}} \;+\; \underbrace{14.42}_{\hat{R}_t}$$
+      </div>
+
+      <p>La igualdad se cumple, como siempre y por el mismo motivo de antes: el residuo se define para que se cumpla.
+        Hasta el reparto parece razonable. El problema no está en este punto, sino en que ese
+        $\hat{S}_{\text{julio}} = 63.83$ es una cantidad de pasajeros <strong>fija para los doce años</strong>. Basta
+        ponerla junto a lo que julio realmente añade sobre el nivel medio de su propio año, de 1949 a 1960:</p>
+
+      <div class="formula">
+        21.3 · 30.3 · 28.8 · 33.0 · 39.0 · 63.1 · 80.0 · 84.8 · 96.6 · 110.0 · 119.7 · 145.8
+      </div>
+
+      <p>El exceso de julio se multiplica por casi siete a lo largo de la serie, y el modelo aditivo le responde a los
+        doce años con el mismo 63.83: el triple de lo que hace falta en 1949, menos de la mitad en 1960, y acertado
+        casi exactamente en 1954. El multiplicativo tampoco es perfecto —eso quedó dicho en el Módulo 4—, pero su
+        único 1.2266 se traduce en cantidades que sí crecen, porque se aplica sobre una tendencia que crece: 28.7
+        pasajeros de más en 1949 y 107.9 en 1960.</p>
+
+      <p>Ese desajuste no se evapora. Va a parar al residuo, que es donde el paso 4 lo encuentra: la desviación típica
+        del residuo aditivo, calculada año por año, dibuja una U inconfundible.</p>
+
+      <div class="formula">
+        30.5 · 20.7 · 22.4 · 17.0 · 14.5 · 5.6 · 6.1 · 10.0 · 17.2 · 29.4 · 29.4 · 25.4
+      </div>
+
+      <p>El ajuste solo es bueno en mitad de la muestra —hacia 1954 y 1955, justo donde el índice fijo se cruza con la
+        realidad— y se degrada hacia los dos extremos. Eso es estructura en el residuo, no ruido, y es exactamente la
+        señal que el paso 4 del recorrido manda de vuelta al paso 1. Con <code>AirPassengers</code> el bucle se
+        cerraría una sola vez: se volvería sobre la escala, se elegiría la multiplicativa y ahí terminaría el asunto.
+        Conviene retener la forma del argumento más que el caso, porque es el que se repite: <strong>el residuo no se
+        mira para confirmar que todo fue bien, se mira para descubrir en qué paso hay que volver a entrar</strong>.</p>
 
       <div class="warning">
         <p><strong>Limitaciones del método clásico:</strong> la tendencia por media móvil deja <em>sin estimar</em> los
