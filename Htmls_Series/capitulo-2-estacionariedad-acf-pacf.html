@@ -463,6 +463,82 @@
       list-style-type: decimal;
     }
 
+    /* ------------------------------------------------------------------
+       Reafirmación de la tipografía base sobre el Preflight de Tailwind
+       (2026-08-11).
+
+       Las reglas de arriba —h2, h3, h4, p, ul, ol— NO estaban llegando a
+       la página. El Play CDN (`cdn.tailwindcss.com`, línea 18) no sirve
+       una hoja estática: genera la suya en tiempo de ejecución y la ANEXA
+       a <head>, es decir DESPUÉS de este <style>. Su Preflight trae
+
+           h1..h6            { font-size: inherit; font-weight: inherit }
+           ...,h1..h6,hr,p,pre { margin: 0 }
+           ol,ul,menu        { list-style: none; margin: 0; padding: 0 }
+
+       con la MISMA especificidad (0-0-1) que las de arriba, así que ganaba
+       por orden y las dejaba sin efecto: los párrafos sin separación, los
+       h2/h3/h4 al tamaño del cuerpo y las listas sin viñeta ni sangría.
+       Lo apoyado en clases sí funcionaba —de ahí que los simuladores y las
+       cajas se vieran bien y solo la prosa saliera amontonada—.
+
+       Se repara subiendo la especificidad a 0-0-2 con el contenedor
+       `main`, que es la banda exacta que hace falta: gana al Preflight y
+       pierde ante cualquier regla de clase, así que `.simulador h4`,
+       `.simulador-intro`, `.grafico-etiqueta`, `.ciclo-etapas`,
+       `.derivacion-pasos`, `.quiz-opciones` y `h2:first-child` siguen
+       mandando sobre lo suyo. Y queda acotado al área de contenido: la
+       lista del encabezado (`ul.space-y-3`, fuera de <main>) no se toca.
+
+       No se desactiva el Preflight entero (`corePlugins.preflight: false`)
+       porque las utilidades `border-*` de las cabeceras de módulo dependen
+       de su `border-style: solid` por defecto y el filete dejaría de
+       pintarse.
+       ------------------------------------------------------------------ */
+    main h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-top: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    main h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    main h4 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    /* Solo la prosa. Los párrafos de componente —`.simulador-lectura`,
+       `.ciclo-retorno`, `.ejercicio-enunciado`, `.mapa-estacional-nota`,
+       `.derivacion-resultado`— no declaran margen inferior porque venían
+       heredando el 0 del Preflight; `:not([class])` los deja exactamente
+       como están hoy en vez de estrenarles un hueco al pie. */
+    main p:not([class]) {
+      margin-bottom: 1rem;
+    }
+
+    main ul,
+    main ol {
+      margin-left: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    main ul {
+      list-style-type: disc;
+    }
+
+    main ol {
+      list-style-type: decimal;
+    }
+
     /* Custom Box Components - CSS Puro */
     .definition {
       background-color: #f0fdf4;
