@@ -2931,7 +2931,7 @@ deriva = np.cumsum(0.3 + e)   # caminata con deriva</code></pre>
       <div class="definition">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>KPSS — Kwiatkowski, Phillips, Schmidt y Shin</h4>
         <p>Descompone la serie en tendencia determinista + caminata aleatoria + error estacionario, y contrasta
-          $H_0$: la varianza de la componente de caminata es cero, es decir, <strong>la serie ES estacionaria</strong>
+          $H_0$: la varianza del componente de caminata es cero, es decir, <strong>la serie ES estacionaria</strong>
           (en nivel o alrededor de una tendencia, según la variante).</p>
         <p style="margin-bottom:0;">Aquí un <strong>p-valor pequeño rechaza la estacionariedad</strong>. Es
           exactamente al revés que el ADF.</p>
@@ -3088,7 +3088,7 @@ deriva = np.cumsum(0.3 + e)   # caminata con deriva</code></pre>
         unitaria.</p>
 
       <p>Tercero —y es la prueba más contundente— podemos simular series donde <strong>sabemos con certeza</strong> que
-        hay raíz unitaria, porque las construimos como caminatas aleatorias, y añadirles una componente estacional de
+        hay raíz unitaria, porque las construimos como caminatas aleatorias, y añadirles un componente estacional de
         amplitud creciente. Si la prueba fuera inmune a la estacionalidad, debería rechazar $H_0$ alrededor del 5 % de
         las veces sin importar la amplitud:</p>
 
@@ -3995,7 +3995,7 @@ p2 &lt;- replicate(500, suppressWarnings(adf.test(rnorm(100))$p.value))
 100 * mean(p2 &lt; 0.05)  # 93.8 %</code></pre>
             <p><strong>La comparación con el Módulo 6 es el punto del ejercicio.</strong> Aquí el falso rechazo es
               4.6&nbsp;%, prácticamente el 5&nbsp;% nominal; allá llegaba al <strong>17.6&nbsp;%</strong>. La única
-              diferencia entre los dos experimentos es que a aquellas caminatas se les sumó una componente estacional.
+              diferencia entre los dos experimentos es que a aquellas caminatas se les sumó un componente estacional.
               Conclusión: el ADF <strong>no está roto</strong> —sobre caminatas puras se comporta exactamente como
               promete—; lo que lo rompe es aplicarlo a una serie estacional con menos rezagos que el periodo.</p>
           </div>
@@ -5523,7 +5523,7 @@ rbind(resumen(y, "original"),
           etiqueta: '% de falsos rechazos de la raíz unitaria',
           color: COLORES_GRAFICO.secundario,
           lineas: [{ valor: mc.nivel_nominal, etiqueta: 'Nivel nominal 5%', color: COLORES_GRAFICO.primario }],
-          tituloX: 'Amplitud de la componente estacional',
+          tituloX: 'Amplitud del componente estacional',
           min: 0,
           max: 20
         }
