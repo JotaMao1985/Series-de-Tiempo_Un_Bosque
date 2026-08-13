@@ -2594,6 +2594,11 @@ plt.show()</code></pre>
         el multiplicativo lo constante es la oscilación <em>en porcentaje</em>, y por eso en unidades crece. Subir
         la pendiente no cambia nada en el panel izquierdo y lo cambia todo en el derecho.</p>
 
+      <p>«Los mismos pasajeros de más en julio» no es una manera de hablar. En el Módulo 6 se descompondrá
+        <code>AirPassengers</code> también en la escala equivocada, y el modelo aditivo contestará a los doce julios
+        de la serie con una sola cifra: ahí esta banda de anchura constante deja de ser una figura y se cobra en
+        pasajeros.</p>
+
       <p>Dicho así, el criterio parece cosa de mirar el gráfico y decidir. Conviene desconfiar de eso y convertirlo en
         un número: para cada año, la <strong>amplitud estacional</strong> —el mes más alto menos el más bajo— frente
         al <strong>nivel medio</strong> de ese mismo año. Si el modelo fuera aditivo, la amplitud se mantendría
@@ -3172,8 +3177,10 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
 
       <p>La igualdad se cumple, como siempre y por el mismo motivo de antes: el residuo se define para que se cumpla.
         Hasta el reparto parece razonable. El problema no está en este punto, sino en que ese
-        $\hat{S}_{\text{julio}} = 63.83$ es una cantidad de pasajeros <strong>fija para los doce años</strong>. Basta
-        ponerla junto a lo que julio realmente añade sobre el nivel medio de su propio año, de 1949 a 1960:</p>
+        $\hat{S}_{\text{julio}} = 63.83$ es una cantidad de pasajeros <strong>fija para los doce años</strong>. Es la
+        banda de anchura constante del comparador del Módulo 4, ahora con número puesto: lo que allí se anunciaba en
+        el dibujo aparece aquí como el índice que el método devuelve. Basta ponerla junto a lo que julio realmente
+        añade sobre el nivel medio de su propio año, de 1949 a 1960:</p>
 
       <div class="formula">
         21.3 · 30.3 · 28.8 · 33.0 · 39.0 · 63.1 · 80.0 · 84.8 · 96.6 · 110.0 · 119.7 · 145.8
