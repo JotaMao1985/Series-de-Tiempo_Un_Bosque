@@ -54,7 +54,7 @@
 
       <div class="simulador" data-simulador="armonicos-K">
         <h4><i class="fas fa-sliders" aria-hidden="true"></i> ¿Cuántos armónicos hacen falta?</h4>
-        <p class="simulador-intro">El deslizador mueve $K$ sobre $\log(\text{AirPassengers})$: arriba, la componente
+        <p class="simulador-intro">El deslizador mueve $K$ sobre $\log(\text{AirPassengers})$: arriba, el componente
           estacional que dibujan los $2K$ términos; abajo, el AICc <strong>dentro de la familia armónica</strong> y el
           $p$-valor de Ljung–Box. Fíjate en dónde deja de rechazar el diagnóstico: hasta $K=4$ los residuales
           conservan estructura estacional, y hace falta llegar a $K=5$ para que la sinusoide represente bien el pico de
@@ -96,7 +96,7 @@
 
       <h3>STL + ARIMA: quitar la estación primero</h3>
 
-      <p>La tercera vía usa la descomposición del Capítulo 1: se separa la componente estacional con STL, se modela con
+      <p>La tercera vía usa la descomposición del Capítulo 1: se separa el componente estacional con STL, se modela con
         un ARIMA <strong>la serie desestacionalizada</strong>, y al pronosticar se vuelve a sumar el patrón estacional
         (repitiendo el último ciclo estimado). Sobre $\log(\text{AirPassengers})$ da errores ARIMA($1,1,1$) con deriva.
         Sus ventajas: admite cualquier $m$, tolera que el patrón cambie despacio y es rápido. Su límite: supone que la
@@ -200,7 +200,7 @@ print(round(f.aic, 2))
 #&gt; -643.05
 # Cuidado: este AIC no se compara con NINGUNO de los anteriores. Ni siquiera
 # modela la misma serie: modela la desestacionalizada. Y R da -542.95 porque
-# su stlm() estima la componente estacional de otra forma.</code></pre>
+# su stlm() estima el componente estacional de otra forma.</code></pre>
         </div>
       </div>
     </div>
