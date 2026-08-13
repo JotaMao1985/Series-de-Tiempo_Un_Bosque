@@ -4560,8 +4560,25 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
       return [g];
     };
 
-    // Ayudante: dibuja un panel de un componente en un canvas dado
+    // Ayudante: dibuja un panel de un componente en un canvas dado.
+    //
+    // El eje vertical se ciñe a los datos con un margen del 8 %. Sin
+    // límites explícitos, Chart.js elige marcas redondas, y en un lienzo
+    // de unos 100 px de alto solo caben tres: el panel «Observada» salía
+    // de 0 a 1000 para datos que van de 104 a 622, con la serie aplastada
+    // en la mitad inferior y el tercio de arriba vacío. Como el objeto
+    // `scales` sustituye al de `crearGraficoLinea` —Object.assign es
+    // superficial—, hay que repetir aquí las fuentes y la rejilla.
+    //
+    // Cada panel se escala al suyo, y no al conjunto, porque miden
+    // magnitudes distintas: la tendencia va en pasajeros y el factor
+    // estacional es un número sin unidades que ronda 1.
     function panelComponente(canvas, etiquetas, datos, etiqueta, color) {
+      const validos = datos.filter(v => v !== null && v !== undefined && !Number.isNaN(v));
+      const min = Math.min(...validos), max = Math.max(...validos);
+      const rango = max - min;
+      // Una serie constante no da rango del que sacar el margen.
+      const margen = rango > 0 ? rango * 0.08 : (Math.abs(max) * 0.05 || 1);
       return crearGraficoLinea(canvas, etiquetas, [{
         label: etiqueta,
         data: datos,
@@ -4570,7 +4587,24 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         borderWidth: 1.8,
         pointRadius: 0,
         spanGaps: false
-      }]);
+      }], {
+        scales: {
+          x: {
+            ticks: {
+              font: { family: 'Montserrat', size: 11 },
+              maxTicksLimit: 12,
+              maxRotation: 0
+            },
+            grid: { display: false }
+          },
+          y: {
+            min: min - margen,
+            max: max + margen,
+            ticks: { font: { family: 'Fira Code', size: 11 }, maxTicksLimit: 4 },
+            grid: { color: 'rgba(148, 163, 184, 0.2)' }
+          }
+        }
+      });
     }
 
     // M6 · Descomposición clásica multiplicativa (4 paneles)
