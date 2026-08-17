@@ -2773,7 +2773,9 @@ plt.show()</code></pre>
         ventana <strong>completa y centrada</strong>, que es justo lo que la deja muda en los bordes. Ninguna de las
         tres es obligatoria: se puede pesar más a los vecinos próximos que a los lejanos, ajustar una <em>recta</em> en
         vez de un nivel, y apoyarse en un solo lado cuando no hay datos al otro. Aflojar las tres a la vez da otro
-        suavizador, que es sobre el que está construido STL; el Módulo 7 lo aborda de frente antes de usarlo.</p>
+        suavizador, que es sobre el que está construido STL; el Módulo 7 lo aborda de frente antes de usarlo, y su
+        simulador permite volver a apretarlas para comprobar que lo que queda al final del camino es, otra vez, una
+        media móvil como esta.</p>
 
       <p>Queda un compromiso que decidir, y es el que el simulador de abajo deja tocar. Cuanto mayor es $m$, más
         suave sale la curva y menos detalle conserva: con $m$ pequeño la tendencia persigue el ruido y deja de ser
@@ -3325,6 +3327,74 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
             aria-label="Ajuste local en un punto: la ventana de vecinos con su peso, la recta ajustada, la curva Loess resultante, la media móvil y la tendencia de STL"></canvas>
         </div>
         <p class="simulador-lectura"></p>
+      </div>
+
+      <p>Del simulador salen tres lecturas que conviene no dejar pasar. La primera cierra el módulo anterior: al llevar
+        el foco a enero de 1949 o a diciembre de 1960 la media móvil <strong>desaparece</strong> —le faltan nueve meses
+        de un lado— mientras el ajuste local sigue dando un valor. La segunda es que <strong>el grado solo importa en
+        los extremos</strong>: en diciembre de 1954, con la ventana centrada, el nivel y la recta dan el mismo número
+        hasta el cuarto decimal; en diciembre de 1960 se separan 0.0498, y es la recta la que acierta —6.2043 frente a
+        los 6.2048 de <code>stl()</code>—. La tercera es que bajando el grado a 0 <em>y</em> los pesos a planos el
+        ajuste deja de ser Loess: da 5.5482, exactamente lo que da la media móvil de la misma anchura. Las tres
+        decisiones que el Módulo 5 dejó señaladas están ahí, y se pueden apretar y aflojar una por una.</p>
+
+      <div class="derivacion">
+        <button type="button" class="derivacion-boton" aria-expanded="false" aria-controls="der-loess-ajuste">
+          <i class="fas fa-square-root-variable" aria-hidden="true"></i>
+          <span class="derivacion-texto">Ver el ajuste local en símbolos, y por qué el grado solo cuenta en los
+            bordes</span>
+          <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="derivacion-panel" id="der-loess-ajuste" hidden>
+          <ol class="derivacion-pasos">
+            <li>
+              <p>Sea $V_t$ la ventana de $t$ —los $span$ instantes más próximos— y $w_i$ el peso tricúbico de cada uno.
+                Estimar la tendencia en $t$ es resolver unos mínimos cuadrados <em>ponderados</em> sobre esa ventana, y
+                nada más. Conviene medir el tiempo desde el propio $t$, con $x_i = i - t$:</p>
+              $$\min_{a,\,b} \; \sum_{i \in V_t} w_i \left( y_i - a - b\,x_i \right)^2$$
+              <p>Centrar así no es cosmético: como la recta ajustada se evalúa en $x = 0$, el valor que se guarda es
+                <strong>exactamente $\hat a$</strong>. La pendiente $\hat b$ se calcula, se usa para obtener $\hat a$ y
+                se tira.</p>
+            </li>
+            <li>
+              <p>Con las sumas ponderadas $S_w = \sum w_i$, $S_x = \sum w_i x_i$, $S_y = \sum w_i y_i$,
+                $S_{xx} = \sum w_i x_i^2$ y $S_{xy} = \sum w_i x_i y_i$, la solución es la de siempre:</p>
+              $$\hat b = \frac{S_w S_{xy} - S_x S_y}{S_w S_{xx} - S_x^2}, \qquad
+                \hat a = \frac{S_y - \hat b\, S_x}{S_w}$$
+            </li>
+            <li>
+              <p>Aquí está el porqué de la segunda lectura del simulador. <strong>Cuando la ventana está centrada y los
+                pesos son simétricos, $S_x = 0$</strong>: a cada $x_i$ le corresponde un $-x_i$ con el mismo peso, y la
+                suma se cancela. La fórmula de $\hat a$ colapsa:</p>
+              $$S_x = 0 \;\Longrightarrow\; \hat a = \frac{S_y}{S_w}$$
+              <p>Y $S_y / S_w$ es la <em>media ponderada</em> de la ventana, es decir la respuesta de grado 0. Por eso
+                en el centro de la serie el nivel y la recta dan el mismo número: no es que se parezcan, es que
+                <strong>son el mismo cálculo</strong>. La pendiente se ha estimado, pero entra multiplicada por cero.</p>
+            </li>
+            <li>
+              <p>En los bordes la ventana se apoya de un solo lado, $S_x \neq 0$ y el término $\hat b\, S_x$ deja de
+                anularse: la pendiente <strong>corrige</strong> el nivel. Un promedio de vecinos que están todos hacia
+                el futuro devuelve algo demasiado alto si la serie viene subiendo; la recta lo compensa. De ahí los
+                0.0498 de diciembre de 1960, y de ahí que <code>stl()</code> use $t.degree = 1$ para la tendencia,
+                cuyo interés está justo en llegar bien a los extremos.</p>
+            </li>
+            <li>
+              <p>Falta de dónde sale la ventana de 19. <code>stl()</code> no la inventa: la deduce del período $m$ y de
+                la ventana estacional, con la regla de tomar el impar inmediato de</p>
+              $$t.window = \left\lceil \frac{1.5\,m}{1 - 1.5 / s.window} \right\rceil$$
+              <p>Con $m = 12$ y <code>s.window = "periodic"</code>, que en la práctica vale $10n+1 = 1441$, la fracción
+                da 18.02, el techo la sube a <strong>19</strong> y 19 ya es impar. Que la ventana salga del orden de
+                $1.5\,m$ no es casualidad:
+                la ventana de tendencia tiene que ser <em>más ancha</em> que un ciclo completo, o volvería a colarse
+                estacionalidad en la tendencia, que es el argumento del Módulo 5.</p>
+            </li>
+          </ol>
+          <p class="derivacion-resultado">Los dos grados por defecto responden a dos problemas distintos.
+            <strong>$t.degree = 1$</strong> porque la tendencia se estima en toda la serie, extremos incluidos, y ahí
+            la recta es lo que evita el sesgo. <strong>$s.degree = 0$</strong> porque el componente estacional no se
+            ajusta sobre la serie, sino sobre cada <em>subserie</em> de un mismo mes —los doce eneros, los doce
+            febreros—, y esas subseries son cortas: pedirles una pendiente sería pedirle demasiado a doce puntos.</p>
+        </div>
       </div>
 
       <p>Con la herramienta a la vista, las tres debilidades del método clásico se responden una por una:</p>
