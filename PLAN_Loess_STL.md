@@ -59,14 +59,15 @@ arrastra:
 | D3 | Dónde se engancha el puente del M5 | Al **párrafo de la pérdida de extremos**, que ya anuncia STL («será una de las tres limitaciones que acaben empujando hacia STL»), **no** al párrafo final del módulo: ese cierre («ese encadenamiento tiene nombre propio») es la transición al M6 y se rompería |
 | D4 | Sobre qué serie trabaja el simulador | Sobre $\log y_t - \hat S_t$, la **desestacionalizada en log**, que es exactamente lo que STL suaviza en su paso de tendencia. Se obtiene en JS sumando dos vectores ya incrustados (`stl_log.tendencia + stl_log.residuo`). Sobre la serie cruda el vaivén anual taparía los pesos, que son lo que hay que ver |
 | D5 | Qué demuestra el simulador | Un punto focal móvil: la ventana resaltada, los pesos tricúbicos, la recta local ajustada y el punto resultante. **Con la media móvil centrada superpuesta**, que desaparece al llevar el foco a los extremos mientras la recta local sigue existiendo. Es C2 mostrada en vez de afirmada |
-| D6 | ¿El simulador reproduce `stl()`? | **No, y se declara.** Una pasada de Loess a mano no es el bucle iterado de `stl()`: en $t=1$ da 4.8608 contra 4.8294. El simulador dibuja **también** la tendencia real de STL, ya incrustada, para que la diferencia se vea en lugar de esconderse. Es el criterio 4 del [[Criterio de contenido]] |
+| D6 | ¿El simulador reproduce `stl()`? | **Sí, con desvío máximo de 0.0045 en los 144 meses** (corregido el 2026-08-17 al implementarlo; ver D14). El simulador dibuja **también** la tendencia real de STL, ya incrustada: lo que se pensó como una declaración de discrepancia acabó siendo la comprobación de que el método enseñado es el método usado |
 | D7 | Robustez: ¿simulador o cifras? | **Cifras.** Un simulador de robustez duplicaría el Ejercicio 3. Se cierra con la tabla de pesos bicuadrados sobre el mismo atípico del ejercicio (obs. 79), que es lo que le da el mecanismo que le falta |
 | D8 | Orden dentro del M7 | Explicación → simulador → `.derivacion` → robustez → simulador STL de 4 paneles. Primero se ve, después se formaliza |
 | D9 | Grados del polinomio local | Se dicen, con su porqué y medidos: `stl()` usa `t.degree = 1` para la tendencia y `s.degree = 0` para lo estacional. Dato verificado, no generalidad |
 | D10 | `trend(window = 21)` | **Se corrige a 19** (C6). Así el código reproduce la figura, y de paso el número deja de ser mágico: 19 sale de una fórmula que a partir de esta ronda sí se puede explicar. **Confirmado por Javier el 2026-08-17** |
 | D11 | Matemáticas en celdas | Solo `$…$` en línea. Nunca `$$…$$` dentro de `<td>`, como en la ronda anterior |
 | D12 | Controles del simulador | **Grado (0/1) y pesos (planos/tricúbicos)**, además del span. Confirmado por Javier el 2026-08-17, pero **reencuadrado tras medirlo**: el motivo que se argumentó al proponerlo —«el sesgo de la constante en los extremos»— solo se sostiene a medias (ver D13). El titular pasa a ser la identidad con la media móvil |
-| D13 | Qué demuestra el control de grado | **Bajar los dos controles a su posición más simple devuelve la media móvil del M5**: grado 0 con pesos planos da 5.5436 en $t=72$ contra 5.5427 de la media móvil centrada $2\times12$. Es el puente del M5 hecho ejecutable. El sesgo por grado se enseña como lo que la medición dice —el grado **solo** importa donde la ventana es de un lado *y* la serie tiene pendiente local: 0.0246 de diferencia en $t=1$, 0.0000 en $t=72$ y −0.0017 en $t=144$—, no como «el grado 1 acierta y el 0 falla» |
+| D13 | Qué demuestra el control de grado | **Dos cosas, las dos limpias.** (a) Bajar los dos controles a su posición más simple **devuelve exactamente la media móvil**: grado 0 con pesos planos da 5.5482 en $t=72$ y la media móvil de la misma anchura da 5.5482. Es el puente del M5 hecho ejecutable. (b) **El grado solo importa en los extremos**: 0.0000 de diferencia en el centro y **0.0498** en diciembre de 1960, donde el grado 1 clava la tendencia de `stl()` (6.2043 contra 6.2048) y el grado 0 se queda 0.05 por debajo. *Corregida el 2026-08-17: ver D14* |
+| D14 | **Corrección de D6 y D13** | Las cifras con las que se escribieron D6 y D13 salían de una comprobación en R que **truncaba la ventana en los bordes** en vez de desplazarla. Loess toma los $span$ puntos *más próximos*: en enero de 1949 la ventana no encoge a 10 puntos, se apoya en los 19 primeros. Con la regla correcta —la que implementa el simulador, verificada contra R hasta el cuarto decimal— las dos conclusiones que se habían sacado se dan la vuelta: el ajuste a mano **sí** reproduce `stl()` (0.0045, no 0.023) y el grado **sí** se separa en los extremos (0.0498, no −0.0017). El motivo original para pedir el control de grado era correcto; lo que estaba mal era la medición que lo desmintió |
 
 ## 4. Cifras verificadas en R antes de escribir
 
@@ -110,28 +111,34 @@ maestro).
 | Peso mediano del resto de puntos | 0.9469 |
 | Puntos que reciben peso 0 en total | 5 |
 
-**Grado y pesos (D12, D13)** — sobre $\log y_t - \hat S_t$, ventana de 19
+**Grado y pesos (D12, D13)** — sobre $\log y_t - \hat S_t$, ventana de 19.
+Rehecha el 2026-08-17 con la regla de ventana correcta (D14) y **verificada dos veces**: R y el
+JS del simulador coinciden hasta el cuarto decimal.
 
-| Foco | Grado 0 | Grado 1 | Diferencia | `stl()` |
-|---|---|---|---|---|
-| $t=1$ | 4.8362 | 4.8608 | **0.0246** | 4.8294 |
-| $t=5$ | 4.8327 | 4.8343 | 0.0016 | 4.8354 |
-| $t=72$ (centro) | 5.5440 | 5.5440 | **0.0000** | 5.5432 |
-| $t=140$ | 6.1631 | 6.1718 | 0.0087 | 6.1701 |
-| $t=144$ | 6.1835 | 6.1818 | **−0.0017** | 6.2048 |
+| Foco | Grado 1 | Grado 0 | Diferencia | Grado 0 + planos | `stl()` |
+|---|---|---|---|---|---|
+| $t=1$ (ene 1949) | 4.8266 | 4.8409 | 0.0143 | 4.8595 | 4.8294 |
+| $t=5$ | 4.8354 | 4.8436 | 0.0082 | 4.8595 | 4.8354 |
+| $t=72$ (centro) | 5.5439 | 5.5439 | **0.0000** | 5.5482 | 5.5432 |
+| $t=140$ | 6.1698 | 6.1486 | 0.0212 | 6.1296 | 6.1701 |
+| $t=144$ (dic 1960) | **6.2043** | 6.1545 | **0.0498** | 6.1296 | **6.2048** |
 
 | Cifra | Valor |
 |---|---|
-| Grado 0 **con pesos planos** en $t=72$ | 5.5436 |
-| Media móvil centrada $2\times12$ en $t=72$ | **5.5427** — son el mismo objeto (D13) |
+| Grado 0 **con pesos planos** en $t=72$ | 5.5482 |
+| Media móvil de 19 meses en $t=72$ | **5.5482** — coinciden exactamente (D13a) |
+| Desvío máximo del Loess del simulador frente a `stl()`, en los 144 meses | **0.0045** (D6) |
 
-Dos lecturas obligadas de esta tabla, y las dos entran en el material:
+Tres lecturas de esta tabla, y las tres entran en el material:
 
-- El grado **solo se nota donde la ventana es de un lado y la serie tiene pendiente local**.
-  Se separan 0.0246 en $t=1$ y **−0.0017** en $t=144$. La promesa fácil —«el grado 1 corrige
-  el sesgo del 0 en los extremos»— no la sostienen los datos y no se hará (D13).
-- Una pasada de Loess a mano **casa con `stl()` en el interior y se despega en los bordes**:
-  0.0008 de diferencia en $t=72$ contra 0.023 en $t=144$. Es la cifra que sostiene D6.
+- **El grado solo importa en los extremos.** En el centro los dos grados dan el mismo número
+  hasta el cuarto decimal; en diciembre de 1960 se separan **0.0498**, y es el grado 1 el que
+  acierta: 6.2043 contra los 6.2048 de `stl()`. Es la ventaja de la recta sobre el nivel cuando
+  la ventana se apoya de un solo lado, y ahora sí está medida.
+- **Grado 0 con pesos planos deja de ser Loess y vuelve a ser la media móvil**, con la misma
+  cifra hasta el cuarto decimal. El puente del M5 se ejecuta en vez de leerse.
+- **El ajuste local reproduce `stl()`**: 0.0045 de desvío máximo. Lo que el simulador enseña no
+  es una maqueta del método, es el método.
 
 **El hallazgo lateral C6**
 
@@ -174,10 +181,12 @@ comprobarlo antes de tocar nada.
 - [ ] El span está nombrado y `s.window` / `window` explicados a partir de él (C3)
 - [ ] El Ejercicio 3 tiene su mecanismo en el cuerpo del capítulo, no en un comentario de R (C4)
 - [ ] El simulador muestra la media móvil **desapareciendo** en los extremos mientras la recta local sigue
-- [ ] Grado 0 + pesos planos **reproduce la media móvil del M5** en el propio simulador (D13)
-- [ ] El sesgo por grado se enuncia como lo que se midió, **no** como «el grado 1 corrige al 0
-      en los extremos», que la tabla de D13 desmiente en $t=144$
-- [ ] La diferencia entre el Loess del simulador y el de `stl()` está **medida y declarada** (D6)
+- [ ] Grado 0 + pesos planos **reproduce la media móvil del M5** en el propio simulador (D13a)
+- [ ] El sesgo por grado se enuncia como lo que se midió: 0.0000 en el centro y 0.0498 en
+      diciembre de 1960, con el grado 1 clavando `stl()` (D13b)
+- [ ] La ventana toma los $span$ puntos **más próximos** y se desplaza en los bordes, no se
+      trunca. Es lo que separa un Loess de verdad de la aproximación que invalidó D6 y D13 (D14)
+- [ ] La diferencia entre el Loess del simulador y el de `stl()` está **medida** (D6)
 - [ ] La equivalencia `trend(window=)` ⟷ `t.window` está **comprobada**, no supuesta, antes de la tarea 6
 - [ ] El código de la pestaña R reproduce las cifras que cita la prosa (C6)
 - [ ] Ninguna cifra nueva escrita a mano; todas salen de `stl()` y están verificadas
@@ -189,7 +198,8 @@ comprobarlo antes de tocar nada.
 
 | Riesgo | Impacto | Mitigación |
 |---|---|---|
-| El Loess en JS no coincide con `stl()` y el simulador «miente» | **Alto** | D6: se dibuja la tendencia real de STL al lado y la diferencia se declara con cifra (4.8608 contra 4.8294 en $t=1$). El simulador enseña **cómo se construye un punto**, no pretende reproducir la figura |
+| El Loess en JS no coincide con `stl()` y el simulador «miente» | **Cerrado** | Medido: **0.0045** de desvío máximo en los 144 meses, y la tendencia de `stl()` se dibuja al lado para que se vea. El riesgo era real pero no se materializó — lo que sí falló fue la comprobación previa, ver la fila siguiente |
+| Verificar el método con una aproximación en vez de con el método | **Alto, y ya mordió** | La comprobación en R que sostenía D6 y D13 truncaba la ventana en los bordes en vez de desplazarla, y las dos decisiones salieron invertidas (D14). Regla: cuando la cifra vaya a decidir un diseño, el guion de R tiene que replicar **la misma regla** que el código que se va a escribir, y contrastarse contra él |
 | El puente del M5 pisa la transición hacia el M6 | Medio | D3: se engancha al párrafo de la pérdida de extremos, dos párrafos antes del cierre, que no se toca |
 | El M7 ya carga con un simulador de 4 paneles; añadir otro lo recarga | Medio | El nuevo va **antes** y es de un solo panel. El M7 dura hoy 10 min declarados; habrá que revisar la cifra |
 | `Object.assign` de `crearGraficoLinea` es superficial: pasar `scales` o `plugins` los reemplaza enteros | Medio | Reespecificar las fuentes en cada `scales` que se pase. Ya mordió en el M3 y en la ronda de los gráficos |
