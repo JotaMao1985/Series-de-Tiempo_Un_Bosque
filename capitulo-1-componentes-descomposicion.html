@@ -3310,6 +3310,23 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
         futuro, y aun así hay recta y hay valor. El resultado se mide de un vistazo: la media móvil centrada deja
         <strong>12</strong> de las 144 observaciones sin estimar, y <code>stl()</code> no deja <strong>ninguna</strong>.</p>
 
+      <div class="simulador" data-simulador="loess-local">
+        <h4><i class="fas fa-crosshairs" aria-hidden="true"></i> El ajuste local, punto a punto</h4>
+        <p class="simulador-intro">La serie gris es la <strong>desestacionalizada en logaritmos</strong>, que es
+          exactamente lo que STL suaviza para sacar la tendencia. Mueve el <strong>foco</strong> y mira la ventana:
+          los puntos naranjas son los vecinos que entran en ese ajuste y <em>su tamaño es el peso que reciben</em>;
+          la recta naranja es el ajuste, y el punto verde la altura que se guarda. La curva verde es el rastro de
+          repetir la operación en los 144 meses. Lleva el foco a enero de 1949 o a diciembre de 1960 y fíjate en qué
+          le pasa a la media móvil. Y baja los dos últimos controles a 0: el ajuste local deja de ser Loess y
+          <em>vuelve a ser</em> la media móvil del Módulo 5.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper">
+          <canvas role="img"
+            aria-label="Ajuste local en un punto: la ventana de vecinos con su peso, la recta ajustada, la curva Loess resultante, la media móvil y la tendencia de STL"></canvas>
+        </div>
+        <p class="simulador-lectura"></p>
+      </div>
+
       <p>Con la herramienta a la vista, las tres debilidades del método clásico se responden una por una:</p>
       <ul>
         <li><strong>Contra los huecos:</strong> la regresión local no exige vecinos a ambos lados, así que la tendencia
@@ -4636,6 +4653,250 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         g.data.datasets[1].label = `Media móvil (m=${params.m})`;
         g.update('none');
       });
+      return [g];
+    };
+
+    // ================================================================
+    // M7 · Regresión local (Loess), un punto a la vez
+    //
+    // Loess no es una fórmula cerrada sobre la serie entera: es el mismo
+    // ajuste repetido en cada instante. Estas tres funciones son todo el
+    // método, y el simulador las expone para que se vean por separado.
+    // ================================================================
+
+    // Peso tricúbico. Vale 1 sobre el punto que se estima y cae hasta
+    // casi cero en el borde de la ventana (0.0199 con u = 0.9).
+    function pesoTricubo(u) {
+      const a = Math.abs(u);
+      return a >= 1 ? 0 : Math.pow(1 - a * a * a, 3);
+    }
+
+    // Los `span` puntos más próximos al foco. En el interior la ventana
+    // sale centrada; cerca de los bordes se apoya de un solo lado, que es
+    // justo lo que una media móvil no sabe hacer.
+    function ventanaLocal(n, foco, span) {
+      const k = Math.floor((span - 1) / 2);
+      let ini = foco - k, fin = foco + k;
+      if (ini < 0) { fin = Math.min(n - 1, fin - ini); ini = 0; }
+      if (fin > n - 1) { ini = Math.max(0, ini - (fin - (n - 1))); fin = n - 1; }
+      const idx = [];
+      for (let i = ini; i <= fin; i++) idx.push(i);
+      return idx;
+    }
+
+    // Ajuste local en `foco` por mínimos cuadrados ponderados.
+    // grado 0 = un nivel (media ponderada); grado 1 = una recta.
+    // Con grado 0 y pesos planos esto ES la media móvil simple.
+    //
+    // El radio es la distancia al vecino más lejano MÁS UNO, para que ese
+    // vecino conserve el peso 0.0199 de la tabla de arriba en vez de
+    // quedarse en 0 exacto y salir sobrando de la ventana.
+    function ajusteLocal(y, foco, span, grado, tricubo) {
+      const idx = ventanaLocal(y.length, foco, span);
+      const radio = Math.max(...idx.map(i => Math.abs(i - foco))) + 1;
+      const w = idx.map(i => tricubo ? pesoTricubo((i - foco) / radio) : 1);
+      const sw = w.reduce((a, b) => a + b, 0);
+
+      // Coordenada centrada en el foco: así el valor ajustado en el foco
+      // es la propia ordenada al origen y no hay que evaluar la recta.
+      let sx = 0, sy = 0, sxx = 0, sxy = 0;
+      idx.forEach((i, j) => {
+        const x = i - foco;
+        sx += w[j] * x;
+        sy += w[j] * y[i];
+        sxx += w[j] * x * x;
+        sxy += w[j] * x * y[i];
+      });
+
+      let pendiente = 0;
+      if (grado === 1) {
+        const den = sw * sxx - sx * sx;
+        if (den !== 0) pendiente = (sw * sxy - sx * sy) / den;
+      }
+      const nivel = (sy - pendiente * sx) / sw;
+      return { idx: idx, pesos: w, nivel: nivel, pendiente: pendiente };
+    }
+
+    SIMULADORES['loess-local'] = function (raiz) {
+      // La serie que STL suaviza para sacar la tendencia no es log(y),
+      // es log(y) sin su componente estacional. Ambos vectores vienen
+      // precalculados en R, así que la resta se hace aquí y no hay dato
+      // nuevo que incrustar.
+      const stl = DATOS_CAP1.stl_log;
+      const des = stl.tendencia.map((t, i) => t + stl.residuo[i]);
+      const n = des.length;
+      const fechas = DATOS_CAP1.fechas;
+      const params = { span: 19, foco: 72, grado: 1, tricubo: 1 };
+
+      const nulos = () => Array(n).fill(null);
+
+      function curvaLoess() {
+        const out = [];
+        for (let t = 0; t < n; t++) {
+          out.push(ajusteLocal(des, t, params.span, params.grado, params.tricubo === 1).nivel);
+        }
+        return out;
+      }
+
+      function calcular() {
+        const foco = Math.round(params.foco) - 1;
+        const aj = ajusteLocal(des, foco, params.span, params.grado, params.tricubo === 1);
+        const puntos = nulos(), radios = Array(n).fill(0), recta = nulos(), ajustado = nulos();
+        const pesoMax = Math.max(...aj.pesos);
+        aj.idx.forEach((i, j) => {
+          puntos[i] = des[i];
+          radios[i] = 2 + 5 * (aj.pesos[j] / pesoMax);
+          recta[i] = aj.nivel + aj.pendiente * (i - foco);
+        });
+        ajustado[foco] = aj.nivel;
+        return { foco: foco, aj: aj, puntos: puntos, radios: radios, recta: recta, ajustado: ajustado };
+      }
+
+      let d = calcular();
+
+      const g = crearGraficoLinea(raiz.querySelector('canvas'), fechas, [
+        {
+          label: 'Desestacionalizada, en log',
+          data: des,
+          borderColor: COLORES_GRAFICO.gris,
+          backgroundColor: COLORES_GRAFICO.gris,
+          borderWidth: 1,
+          pointRadius: 0
+        },
+        {
+          label: 'Tendencia de stl()',
+          data: stl.tendencia,
+          borderColor: COLORES_GRAFICO.gris,
+          backgroundColor: COLORES_GRAFICO.gris,
+          borderWidth: 1.5,
+          borderDash: [2, 3],
+          pointRadius: 0
+        },
+        {
+          label: 'Media móvil de la misma anchura',
+          data: mediaMovilCentrada(des, params.span),
+          borderColor: COLORES_GRAFICO.terciario,
+          backgroundColor: COLORES_GRAFICO.terciario,
+          borderWidth: 2,
+          borderDash: [6, 4],
+          pointRadius: 0
+        },
+        {
+          label: 'Loess (la curva que resulta)',
+          data: curvaLoess(),
+          borderColor: COLORES_GRAFICO.primario,
+          backgroundColor: COLORES_GRAFICO.primario,
+          borderWidth: 2,
+          pointRadius: 0
+        },
+        {
+          label: 'La ventana, con su peso',
+          data: d.puntos,
+          borderColor: 'transparent',
+          backgroundColor: COLORES_GRAFICO.secundario,
+          pointBackgroundColor: COLORES_GRAFICO.secundario,
+          pointRadius: d.radios,
+          showLine: false
+        },
+        {
+          label: 'Recta local',
+          data: d.recta,
+          borderColor: COLORES_GRAFICO.secundario,
+          backgroundColor: COLORES_GRAFICO.secundario,
+          borderWidth: 2.5,
+          pointRadius: 0,
+          spanGaps: false
+        },
+        {
+          label: 'Valor que se guarda',
+          data: d.ajustado,
+          borderColor: 'transparent',
+          backgroundColor: COLORES_GRAFICO.primario,
+          pointBackgroundColor: COLORES_GRAFICO.primario,
+          pointRadius: 7,
+          pointStyle: 'rectRot',
+          showLine: false
+        }
+      ], {
+        // Object.assign es superficial: al pasar `plugins` se reemplaza el
+        // objeto entero de crearGraficoLinea, así que hay que repetir aquí
+        // las fuentes del tooltip y de la leyenda.
+        plugins: {
+          legend: {
+            labels: {
+              font: { family: 'Montserrat', size: 12 },
+              boxWidth: 24,
+              // Los tres apoyos del ajuste se explican en la intro; en la
+              // leyenda solo estorbarían a las cuatro curvas que importan.
+              filter: item => !['La ventana, con su peso', 'Valor que se guarda'].includes(item.text)
+            }
+          },
+          tooltip: {
+            enabled: false
+          }
+        }
+      });
+
+      const lectura = raiz.querySelector('.simulador-lectura');
+
+      function actualizarLectura() {
+        const mm = mediaMovilCentrada(des, params.span)[d.foco];
+        const stlT = stl.tendencia[d.foco];
+        const planoYNivel = params.grado === 0 && params.tricubo === 0;
+        const faltan = Math.floor((params.span - 1) / 2);
+
+        let txt = `<strong>${fechas[d.foco]}</strong>, ventana de ${params.span} meses, ` +
+          `grado ${params.grado} y pesos ${params.tricubo === 1 ? 'tricúbicos' : 'planos'}: ` +
+          `el ajuste local vale <strong>${d.aj.nivel.toFixed(4)}</strong>. `;
+
+        if (mm === null || mm === undefined) {
+          txt += `La media móvil de la misma anchura <strong>no da nada aquí</strong>: le faltan vecinos ` +
+            `(necesita ${faltan} meses a cada lado). La tendencia de stl() sí llega, y vale ${stlT.toFixed(4)}.`;
+        } else {
+          txt += `La media móvil da ${mm.toFixed(4)} y la tendencia de stl(), ${stlT.toFixed(4)}.`;
+        }
+
+        if (planoYNivel) {
+          txt += mm === null || mm === undefined
+            ? ' <strong>Con grado 0 y pesos planos esto ya no es Loess: es la media móvil</strong>, salvo que aquí' +
+              ' la ventana se apoya de un solo lado y por eso sigue dando valor donde la media móvil calla.'
+            : ' <strong>Con grado 0 y pesos planos esto ya no es Loess: es la media móvil del Módulo 5</strong>,' +
+              ' y por eso las dos cifras coinciden.';
+        }
+        lectura.innerHTML = txt;
+      }
+
+      function redibujar(cambioDeSpan) {
+        d = calcular();
+        if (cambioDeSpan) {
+          g.data.datasets[2].data = mediaMovilCentrada(des, params.span);
+          g.data.datasets[2].label = `Media móvil de ${params.span} meses`;
+        }
+        g.data.datasets[3].data = curvaLoess();
+        g.data.datasets[4].data = d.puntos;
+        g.data.datasets[4].pointRadius = d.radios;
+        g.data.datasets[5].data = d.recta;
+        g.data.datasets[6].data = d.ajustado;
+        g.update('none');
+        actualizarLectura();
+      }
+
+      const inputs = crearControles(raiz.querySelector('.simulador-controles'), [
+        { clave: 'foco', etiqueta: 'Foco: el mes que se está estimando', min: 1, max: n, paso: 1 },
+        { clave: 'span', etiqueta: 'Anchura de la ventana (span)', min: 7, max: 61, paso: 2 },
+        { clave: 'grado', etiqueta: 'Grado local — 0 nivel · 1 recta', min: 0, max: 1, paso: 1 },
+        { clave: 'tricubo', etiqueta: 'Pesos — 0 planos · 1 tricúbicos', min: 0, max: 1, paso: 1 }
+      ], params, () => redibujar(true));
+
+      // El deslizador del foco muestra un número de mes que no dice nada;
+      // la fecha sí. Los otros tres se dejan con su valor numérico.
+      const salidaFoco = inputs.foco.closest('.control-slider').querySelector('output');
+      const ponerFecha = () => { salidaFoco.textContent = fechas[Math.round(params.foco) - 1]; };
+      inputs.foco.addEventListener('input', ponerFecha);
+      ponerFecha();
+
+      g.data.datasets[2].label = `Media móvil de ${params.span} meses`;
+      actualizarLectura();
       return [g];
     };
 
