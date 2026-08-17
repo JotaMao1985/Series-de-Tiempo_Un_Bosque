@@ -3406,6 +3406,60 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
         <li><strong>Contra los atípicos:</strong> en su versión robusta, las observaciones que se salen del patrón
           reciben menos peso y dejan de arrastrar la estimación.</li>
       </ul>
+
+      <h3>La versión robusta, y por qué no viene puesta</h3>
+
+      <p>Las tres respuestas de la lista no tienen el mismo estatus, y conviene no meterlas en el mismo saco. Las dos
+        primeras salen solas del ajuste local: quien estima con una recta ponderada llega a los extremos y puede dejar
+        respirar al componente estacional sin pedirle permiso a nadie. La tercera, no. La resistencia a los atípicos es
+        una <strong>opción aparte</strong>, cuesta un segundo bucle, y en <code>stl()</code> viene
+        <strong>desactivada por defecto</strong>.</p>
+
+      <p>El mecanismo cabe en una frase: <em>desconfiar de lo que no se supo explicar</em>. Hecha una primera
+        descomposición, se miran los residuos. Un punto con un residuo enorme es un punto que el ajuste no ha sabido
+        seguir, así que se le recorta el peso y se rehace todo sin escucharlo; con los pesos nuevos salen componentes
+        nuevos, y con ellos residuos nuevos, y vuelta a empezar. Son <strong>dos bucles</strong>, uno dentro de otro:
+        el interior alterna estacionalidad y tendencia hasta que se estabilizan, y el exterior es el que reparte
+        desconfianza. Ahí está el número que delata la opción: sin <code>robust</code>, el bucle exterior da
+        <strong>cero</strong> vueltas. No es que sea poco resistente; es que ese bucle no llega a correr.</p>
+
+      <p>El recorte no es gradual sino con corte, y lo fija la función <strong>bicuadrada</strong>, medida en unidades
+        de seis veces la mediana de los residuos absolutos:</p>
+
+      <div class="formula">
+        $$\rho_t = \begin{cases} \left(1 - u^2\right)^2 & u < 1 \\[2pt] 0 & u \geq 1 \end{cases}
+          \qquad u = \frac{\left|\hat{R}_t\right|}{6\,\operatorname{mediana}\left|\hat{R}\right|}$$
+      </div>
+
+      <p>Los dos ingredientes están elegidos a conciencia. La <strong>mediana</strong> no la mueve un atípico —esa es
+        toda la razón de usarla en vez de la desviación típica, que el propio atípico inflaría hasta volverse su
+        coartada—, y el <strong>seis</strong> marca dónde se corta. Pasado el umbral el peso no queda pequeño: queda
+        <strong>en cero</strong>, y el punto sale del ajuste.</p>
+
+      <p>Vale la pena verlo sobre el caso que el capítulo usa al final. Si se infla un 50&nbsp;% el julio de 1955
+        —de 364 a 546 pasajeros— y se descompone <em>sin</em> la opción robusta, esto es lo que vería el bucle
+        exterior si se le dejara correr:</p>
+
+      <table>
+        <caption class="sr-only">Pesos de robustez sobre AirPassengers con julio de 1955 contaminado</caption>
+        <thead>
+          <tr><th scope="col">Cantidad</th><th scope="col">Valor</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Residuo del julio contaminado, $\left|\hat{R}_t\right|$</td><td>0.3708</td></tr>
+          <tr><td>Umbral $6\,\operatorname{mediana}\left|\hat{R}\right|$</td><td>0.1150</td></tr>
+          <tr><td>$u$</td><td>3.22 — más del triple del corte</td></tr>
+          <tr><td><strong>Su peso $\rho_t$</strong></td><td><strong>0</strong></td></tr>
+          <tr><td>Peso mediano del resto de la serie</td><td>0.9461</td></tr>
+          <tr><td>Observaciones con peso 0</td><td><strong>una</strong>, y es esa</td></tr>
+        </tbody>
+      </table>
+
+      <p>De las 144 observaciones, el procedimiento expulsa exactamente una, y acierta cuál sin que nadie le haya
+        dicho dónde estaba. Las demás siguen contando casi por entero. Eso es lo que separa a la descomposición
+        robusta de un recorte manual: no hay que <em>encontrar</em> el atípico, basta con activar el bucle que
+        pregunta por él. El <strong>Ejercicio 3</strong> del cierre pone la cifra a lo que se gana —y a lo que se
+        pierde si se olvida el argumento—.</p>
       <p>Dos apuntes antes de verlo funcionar. STL admite cualquier frecuencia estacional, no solo las habituales de
         datos mensuales o trimestrales. Y es <strong>aditiva</strong>: para una serie multiplicativa como
         <code>AirPassengers</code> se aplica sobre $\log y_t$, que es donde los componentes vuelven a sumarse.</p>
@@ -3806,8 +3860,9 @@ round(fuerzas(AirPassengers, usar_log = TRUE), 4)  # FT = 0.9940  FS = 0.9368</c
             <p style="margin:0;">Diseña el experimento para que sea concluyente: toma una serie <em>limpia</em>,
               contamina <strong>un solo</strong> punto, y compara el componente estacional <em>antes y después</em> con
               cada método. Así el único cambio es el atípico. Y ojo con un detalle que decide el resultado: STL tiene un
-              argumento que hay que activar para que sea resistente. Si no lo activas, el ejercicio "demuestra" lo
-              contrario de lo que esperabas.</p>
+              argumento que hay que activar para que sea resistente —el bucle exterior del Módulo 7, el que reparte los
+              pesos bicuadrados—. Si no lo activas, ese bucle da cero vueltas y el ejercicio "demuestra" lo contrario
+              de lo que esperabas.</p>
           </div>
           <div class="ejercicio-panel solucion" id="c1e3-sol" hidden>
             <p><strong>Respuesta: STL resiste, pero solo con <code>robust = TRUE</code>.</strong></p>
@@ -3845,7 +3900,9 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
               a la que se sale del patrón.</p>
             <p style="margin-bottom:0;"><strong>El detalle que hace o deshace el ejercicio:</strong> con
               <code>robust = FALSE</code> —que es el valor <em>por defecto</em> de <code>stl()</code>— la distorsión es
-              +3.14&nbsp;%, prácticamente igual de mala que la clásica. Es decir: STL no es intrínsecamente resistente,
+              +3.14&nbsp;%, prácticamente igual de mala que la clásica. El mecanismo está en el Módulo 7: con
+              <code>robust = TRUE</code> el julio contaminado recibe peso <strong>0</strong> y sale del ajuste, y sin
+              ella nadie se lo pregunta. Es decir: STL no es intrínsecamente resistente,
               lo es la opción. Si le pediste el contraejemplo a un asistente y te dio código sin
               <code>robust = TRUE</code>, la conclusión que habrías sacado sería la contraria a la correcta, y no por
               culpa del método sino de un argumento por defecto. Verificar ejecutando es lo que evita ese error.</p>
