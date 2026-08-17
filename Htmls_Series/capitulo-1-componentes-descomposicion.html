@@ -2765,6 +2765,16 @@ plt.show()</code></pre>
         <code>AirPassengers</code> quedan 132. Esa pérdida no es un fallo del programa sino una consecuencia de la
         definición, y será una de las tres limitaciones que acaben empujando hacia STL.</p>
 
+      <p>Vale la pena separar qué parte de ese precio la impone promediar vecinos y qué parte, tres decisiones que se
+        tomaron por el camino sin discutirlas. La media móvil <strong>no distingue por cercanía</strong>: los once
+        meses centrales pesan $1/12$ cada uno, esté el mes al lado de $t$ o a cinco meses de distancia, y las dos
+        medias raciones de los extremos no son una excepción a eso sino el arreglo que hace que la ventana valga doce
+        meses exactos. Responde además con un <strong>nivel</strong>, un único número para toda la ventana. Y exige la
+        ventana <strong>completa y centrada</strong>, que es justo lo que la deja muda en los bordes. Ninguna de las
+        tres es obligatoria: se puede pesar más a los vecinos próximos que a los lejanos, ajustar una <em>recta</em> en
+        vez de un nivel, y apoyarse en un solo lado cuando no hay datos al otro. Aflojar las tres a la vez da otro
+        suavizador, que es sobre el que está construido STL; el Módulo 7 lo aborda de frente antes de usarlo.</p>
+
       <p>Queda un compromiso que decidir, y es el que el simulador de abajo deja tocar. Cuanto mayor es $m$, más
         suave sale la curva y menos detalle conserva: con $m$ pequeño la tendencia persigue el ruido y deja de ser
         tendencia; con $m$ grande se aplana también lo que era movimiento real, y encima se pierden más
@@ -3246,7 +3256,61 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
 
       <p><strong>STL</strong> (<em>Seasonal-Trend decomposition using Loess</em>) responde a esas tres debilidades una
         por una, y lo consigue cambiando la herramienta de fondo: en lugar de promediar ventanas fijas, ajusta curvas
-        locales por regresión ponderada (Loess).</p>
+        locales por regresión ponderada (Loess). Conviene mirar esa herramienta antes de ver qué construye con ella,
+        porque las tres respuestas salen todas del mismo sitio.</p>
+
+      <h3>Qué hace una regresión local</h3>
+
+      <p><strong>Loess</strong> (<em>locally estimated scatterplot smoothing</em>) estima la tendencia <strong>un
+        instante a la vez</strong>. Para dar el valor en $t$ no mira la serie entera: toma los puntos más próximos a
+        $t$, les ajusta una recta por mínimos cuadrados, se queda con la altura de esa recta justo en $t$ y descarta
+        todo lo demás. Después repite la operación en $t+1$, y así hasta el final. La curva que acaba dibujándose no
+        es ninguna de esas rectas: es el rastro que dejan sus puntos centrales.</p>
+
+      <p>Dos números gobiernan el procedimiento. El primero es cuántos vecinos entran en cada ajuste, la anchura de la
+        ventana o <strong>span</strong>: es lo que en R se pasa como <code>t.window</code> para la tendencia y
+        <code>s.window</code> para lo estacional, los dos argumentos que aparecen en el bloque de código de más abajo.
+        Sobre <code>AirPassengers</code>, <code>stl()</code> calcula por su cuenta una ventana de <strong>19
+        meses</strong> para la tendencia. El segundo es el grado del polinomio local, y no es el mismo en los dos
+        pasos: una recta para la tendencia (<code>t.degree = 1</code>) y una constante para lo estacional
+        (<code>s.degree = 0</code>).</p>
+
+      <p>Falta la palabra que hace el trabajo de verdad: <em>ponderada</em>. Dentro de la ventana los vecinos no
+        cuentan igual, y de eso se encarga la función <strong>tricúbica</strong>, que vale 1 sobre el punto que se está
+        estimando y cae hasta casi desvanecerse en el borde:</p>
+
+      <div class="formula">
+        $$w(u) = \left(1 - |u|^3\right)^3, \qquad u = \frac{\text{distancia a } t}{\text{radio de la ventana}}$$
+      </div>
+
+      <p>La caída no es suave, y conviene ver cuánto pesa cada vecino en esa ventana de 19 meses:</p>
+
+      <table>
+        <caption class="sr-only">Pesos tricúbicos según la distancia al punto estimado, en una ventana de 19
+          meses</caption>
+        <thead>
+          <tr><th scope="col">Distancia a $t$</th><th scope="col">$u$</th><th scope="col">Peso $w(u)$</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>0 — el propio $t$</td><td>0.0</td><td>1</td></tr>
+          <tr><td>3 meses</td><td>0.3</td><td>0.9212</td></tr>
+          <tr><td>6 meses</td><td>0.6</td><td>0.4819</td></tr>
+          <tr><td>9 meses — el borde</td><td>0.9</td><td>0.0199</td></tr>
+        </tbody>
+      </table>
+
+      <p>El mes del borde cuenta unas <strong>50 veces menos</strong> que el que se está estimando. Es la diferencia de
+        fondo con el módulo anterior: allí los once meses centrales valían $1/12$ cada uno, daba igual si estaban al
+        lado o a cinco meses; aquí la ventana tiene un centro de gravedad y los extremos apenas participan.</p>
+
+      <p>De ahí sale, sin más ingredientes, la respuesta al problema de los bordes. Una media móvil necesita seis meses
+        a cada lado porque lo que devuelve es el promedio de la ventana, y un promedio a medias no significa nada. Una
+        recta ponderada no tiene esa exigencia: se ajusta a los puntos que haya, estén repartidos a los dos lados o
+        todos hacia adelante, y sigue dando una altura en $t$. En enero de 1949 la ventana solo se apoya hacia el
+        futuro, y aun así hay recta y hay valor. El resultado se mide de un vistazo: la media móvil centrada deja
+        <strong>12</strong> de las 144 observaciones sin estimar, y <code>stl()</code> no deja <strong>ninguna</strong>.</p>
+
+      <p>Con la herramienta a la vista, las tres debilidades del método clásico se responden una por una:</p>
       <ul>
         <li><strong>Contra los huecos:</strong> la regresión local no exige vecinos a ambos lados, así que la tendencia
           se estima en <em>toda</em> la serie, extremos incluidos.</li>
