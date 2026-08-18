@@ -3,7 +3,7 @@ tipo: plan
 curso: "[[20948 Series de Tiempo]]"
 capitulo: "[[20948-01 Componentes y descomposición]]"
 fecha: 2026-08-17
-estado: aprobado
+estado: completado
 ---
 
 # Plan — Qué es Loess · Capítulo 1, Módulos 5 y 7
