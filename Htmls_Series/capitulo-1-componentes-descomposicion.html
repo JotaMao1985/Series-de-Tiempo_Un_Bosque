@@ -3397,14 +3397,20 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
         </div>
       </div>
 
-      <p>Con la herramienta a la vista, las tres debilidades del método clásico se responden una por una:</p>
+      <p>Con la herramienta a la vista, las tres debilidades del método clásico se responden una por una, y conviene
+        ver que <em>no</em> por el mismo motivo:</p>
       <ul>
-        <li><strong>Contra los huecos:</strong> la regresión local no exige vecinos a ambos lados, así que la tendencia
-          se estima en <em>toda</em> la serie, extremos incluidos.</li>
-        <li><strong>Contra la estacionalidad congelada:</strong> el patrón estacional puede cambiar suavemente a lo
-          largo del tiempo en vez de repetirse idéntico año tras año.</li>
-        <li><strong>Contra los atípicos:</strong> en su versión robusta, las observaciones que se salen del patrón
-          reciben menos peso y dejan de arrastrar la estimación.</li>
+        <li><strong>Contra los huecos</strong> — esta ya está vista: como la ventana no tiene por qué ser simétrica,
+          hay tendencia también donde faltan vecinos de un lado. De 12 observaciones sin estimar a ninguna.</li>
+        <li><strong>Contra la estacionalidad congelada</strong> — aquí entra la pieza que faltaba. El componente
+          estacional no se ajusta sobre la serie entera, sino sobre cada <strong>subserie de ciclo</strong>: los doce
+          eneros por un lado, los doce febreros por otro. Cada subserie recibe su propio Loess, y el span de ese
+          ajuste es <code>s.window</code>. Con un número finito el patrón de julio puede ir moviéndose —con
+          <code>s.window = 11</code>, de un +20.4&nbsp;% en 1949 a un +27.9&nbsp;% en 1960—; con
+          <code>"periodic"</code> la subserie se resume en una sola cifra y el patrón queda tan fijo como en el
+          método clásico.</li>
+        <li><strong>Contra los atípicos</strong> — es la única de las tres que no sale sola del ajuste local:
+          necesita un segundo bucle, viene apagada, y de eso trata el resto del módulo.</li>
       </ul>
 
       <h3>La versión robusta, y por qué no viene puesta</h3>
@@ -3521,11 +3527,13 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
           <pre><code class="language-r"># STL sobre log(AirPassengers): componentes aditivos en escala log
 library(fpp3)
 as_tsibble(log(AirPassengers)) |&gt;
-  model(stl = STL(value ~ trend(window = 21) + season(window = "periodic"))) |&gt;
+  # window = 19 es justo lo que STL calcula solo con m = 12; se escribe
+  # para que se vea. Con 21 la figura sale distinta: S_julio = 1.2405.
+  model(stl = STL(value ~ trend(window = 19) + season(window = "periodic"))) |&gt;
   components() |&gt;
   autoplot()
 
-# R base tambien trae STL:
+# R base tambien trae STL, y ahi el 19 es el valor por defecto:
 plot(stl(log(AirPassengers), s.window = "periodic"))</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
@@ -3540,9 +3548,13 @@ res.plot()</code></pre>
 
       <div class="warning">
         <p><strong>Dos de las tres ventajas están apagadas en la figura de arriba.</strong> El gráfico se calculó con
-          <code>s.window = "periodic"</code>, que <em>obliga</em> al patrón estacional a repetirse idéntico: por eso
-          el tercer panel es una onda perfectamente regular, tan congelada como la de la descomposición clásica. Y se
-          calculó sin activar la opción robusta, que en <code>stl()</code> viene desactivada por defecto. Está hecho
+          <code>s.window = "periodic"</code>, que a estas alturas ya se puede leer como lo que es: no un modo
+          aparte, sino un <em>span</em> tan ancho que se traga la subserie entera —$10n + 1 = 1441$ para 144
+          observaciones—. Con esa anchura el Loess de cada mes se reduce a una única cifra, y por eso el tercer panel
+          es una onda perfectamente regular, tan congelada como la de la descomposición clásica: el recorrido del
+          julio a lo largo de los doce años es de <strong>0.0000</strong>, contra los 0.0602 que daría
+          <code>s.window = 11</code>. Y se calculó sin activar la opción robusta, o sea con el bucle exterior a cero
+          vueltas. Está hecho
           así a propósito, para que la comparación con el Módulo 6 fuera entre iguales, pero conviene no confundir la
           figura con el método: quien libera esas dos ventajas es <code>s.window</code> con un número finito en lugar
           de <code>"periodic"</code>, y <code>robust = TRUE</code>. El ejercicio 3 del cierre mide exactamente cuánto

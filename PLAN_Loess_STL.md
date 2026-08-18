@@ -65,9 +65,10 @@ arrastra:
 | D9 | Grados del polinomio local | Se dicen, con su porqué y medidos: `stl()` usa `t.degree = 1` para la tendencia y `s.degree = 0` para lo estacional. Dato verificado, no generalidad |
 | D10 | `trend(window = 21)` | **Se corrige a 19** (C6). Así el código reproduce la figura, y de paso el número deja de ser mágico: 19 sale de una fórmula que a partir de esta ronda sí se puede explicar. **Confirmado por Javier el 2026-08-17** |
 | D11 | Matemáticas en celdas | Solo `$…$` en línea. Nunca `$$…$$` dentro de `<td>`, como en la ronda anterior |
-| D12 | Controles del simulador | **Grado (0/1) y pesos (planos/tricúbicos)**, además del span. Confirmado por Javier el 2026-08-17, pero **reencuadrado tras medirlo**: el motivo que se argumentó al proponerlo —«el sesgo de la constante en los extremos»— solo se sostiene a medias (ver D13). El titular pasa a ser la identidad con la media móvil |
+| D12 | Controles del simulador | **Grado (0/1) y pesos (planos/tricúbicos)**, además del span. Confirmado por Javier el 2026-08-17. Se reencuadró al medirlo y **se volvió a reencuadrar al implementarlo**: la medición intermedia que parecía desmentir el motivo original estaba mal (D14), así que el argumento con el que se pidió el control era bueno desde el principio |
 | D13 | Qué demuestra el control de grado | **Dos cosas, las dos limpias.** (a) Bajar los dos controles a su posición más simple **devuelve exactamente la media móvil**: grado 0 con pesos planos da 5.5482 en $t=72$ y la media móvil de la misma anchura da 5.5482. Es el puente del M5 hecho ejecutable. (b) **El grado solo importa en los extremos**: 0.0000 de diferencia en el centro y **0.0498** en diciembre de 1960, donde el grado 1 clava la tendencia de `stl()` (6.2043 contra 6.2048) y el grado 0 se queda 0.05 por debajo. *Corregida el 2026-08-17: ver D14* |
 | D14 | **Corrección de D6 y D13** | Las cifras con las que se escribieron D6 y D13 salían de una comprobación en R que **truncaba la ventana en los bordes** en vez de desplazarla. Loess toma los $span$ puntos *más próximos*: en enero de 1949 la ventana no encoge a 10 puntos, se apoya en los 19 primeros. Con la regla correcta —la que implementa el simulador, verificada contra R hasta el cuarto decimal— las dos conclusiones que se habían sacado se dan la vuelta: el ajuste a mano **sí** reproduce `stl()` (0.0045, no 0.023) y el grado **sí** se separa en los extremos (0.0498, no −0.0017). El motivo original para pedir el control de grado era correcto; lo que estaba mal era la medición que lo desmintió |
+| D15 | Estacionalidad evolutiva, medida | La viñeta 2 era la única sin mecanismo en ninguna parte. Se explica por subseries de ciclo, con `s.window` como su span, y con cifra: el julio va de **+20.4 %** en 1949 a **+27.9 %** en 1960 con `s.window = 11`, y su recorrido a lo largo de los doce años es **0.0602**, contra **0.0000** exacto con `"periodic"` |
 
 ## 4. Cifras verificadas en R antes de escribir
 
@@ -148,11 +149,19 @@ Tres lecturas de esta tabla, y las tres entran en el material:
 | $\hat S_{\text{julio}}$ con `t.window = 21` (el código mostrado) | 0.2155 |
 | Diferencia máxima en la tendencia entre ambos | 0.00681 (media 0.00184) |
 
-**Sin verificar todavía:** `fable` no está instalado en esta máquina, así que la equivalencia
-`trend(window = n)` ⟷ `t.window = n` se da por buena pero **no está comprobada**. La línea de
-R base del mismo bloque —`plot(stl(log(AirPassengers), s.window = "periodic"))`— sí usa el
-defecto 19 y sí reproduce la figura; C6 afecta solo al fragmento de `fable`. La tarea 6 debe
-comprobarlo antes de tocar nada.
+**Comprobado el 2026-08-17** con `fable` 0.5.0 y `feasts` 0.5.0, instalados para esto: la
+equivalencia `trend(window = n)` ⟷ `t.window = n` es **exacta** (0.000e+00 a $w=19$,
+8.9e-16 a $w=21$). Medido por la vía real, el desfase de C6 en factor estacional de julio:
+
+| Lo que se ejecute | $\hat S_{\text{julio}}$ |
+|---|---|
+| `trend(window = 21)` — el código publicado | **1.2405** |
+| `trend(window = 19)` | 1.2416 |
+| `stl()` por defecto — la figura y la prosa | **1.2416** |
+
+De paso: `STL(value ~ season(window = "periodic"))` **sin** `trend()` reproduce el defecto de
+`stats::stl` byte a byte, así que la línea de R base del bloque nunca estuvo mal. C6 afectaba
+solo al fragmento de `fable`.
 
 ## 5. Tareas
 
