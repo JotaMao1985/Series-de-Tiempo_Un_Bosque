@@ -12,6 +12,14 @@
 # Si algún día hay que versionar un PDF propio, añádelo con `git add -f`.
 *.pdf
 
+# Y ese día llegó: la plantilla de entrega del Taller 1 se enlaza desde el
+# enunciado, que se publica en Pages. `gh-pages` solo lleva el contenido de
+# `Htmls_Series/`, así que el .tex y su PDF se copian ahí en cada ensamblado
+# (lo hace `ensambla_taller1.py`) y tienen que viajar con el sitio o el enlace
+# da 404. Es material propio, no un libro con derechos: la regla de arriba no
+# lo pretendía cubrir.
+!Htmls_Series/entrega/plantilla_taller1.pdf
+
 # Temporales de ofimática
 ~$*
 *.tmp
@@ -24,3 +32,34 @@ __pycache__/
 # verificar en navegador) y worktrees/. Son herramienta, no material.
 # Si algún día hay que versionar algo de aquí, con !.claude/<archivo> basta.
 .claude/
+
+# Taller 1 (Módulo I): material que resuelve el taller. El repositorio es público
+# y va a Pages, así que su diseño y su clave no pueden viajar con él. Se versionan
+# DESPUÉS de calificar: quitar este bloque y hacer commit entonces.
+/PLAN_Taller_1_Modulo_I.md
+precalculo/genera_taller1.R
+precalculo/verifica_taller1.R
+precalculo/genera_retroalimentacion.R
+# El auditor deduce cual tabla es la sembrada: su logica ES la respuesta a T3.
+precalculo/audita_taller1.py
+precalculo/prueba_auditor_taller1.py
+# El ensamblador y el auditor de prosa llevan la lista de palabras prohibidas,
+# que ENUMERA las cuatro familias de T1 y nombra el modelo correcto de T2. Un
+# estudiante que abra cualquiera de los dos tiene el diseño del taller delante.
+# Se anadieron aqui el 2026-08-19, al comprobarlo: R10 avisa de que esta lista
+# es negra y todo archivo nuevo entra al repositorio por defecto.
+precalculo/ensambla_taller1.py
+precalculo/audita_texto_taller1.py
+precalculo/prueba_texto_taller1.py
+precalculo/salidas/taller1_datos.json
+precalculo/salidas/taller1_clave.json
+precalculo/salidas/checkpoint_a_revision.html
+
+# Subproductos de compilación de LaTeX (la plantilla de entrega vive en
+# entrega/*.tex; el PDF es artefacto y ya lo cubre la regla *.pdf de arriba).
+entrega/*.aux
+entrega/*.log
+entrega/*.out
+entrega/*.fls
+entrega/*.fdb_latexmk
+entrega/*.synctex.gz

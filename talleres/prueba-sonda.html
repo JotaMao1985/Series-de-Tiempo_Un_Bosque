@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARNÉS · Sonda C0 bajo CSP restrictiva</title>
+
+<!--
+  SONDA C0 — Taller 1 de Series de Tiempo (20948)
+  ==============================================================================
+  Qué es: un archivo de diagnóstico. Carga EXACTAMENTE el mismo stack que los
+  seis capítulos del material y comprueba, una por una, que cada pieza llega y
+  funciona dentro de Brightspace.
+
+  Por qué existe: Brightspace sirve el contenido dentro de un iframe y puede
+  aplicar su propia política de seguridad. Si bloquea un CDN o los scripts en
+  línea, el motor de módulos del material no arranca y el taller se ve como una
+  página en blanco SIN UN SOLO ERROR VISIBLE. Ese es el modo de fallo más caro
+  de esta arquitectura, y es el único que puede invalidar el diseño completo.
+
+  Regla de construcción: la interfaz de esta sonda NO usa nada de lo que
+  diagnostica. Todo su CSS es propio y va aquí abajo, en línea. Si Tailwind está
+  bloqueado, la sonda tiene que seguir viéndose para poder decirlo.
+
+  Cómo se usa:
+    1. Subir este archivo a Brightspace igual que se subirá el taller.
+    2. Abrirlo COMO LO VE UN ESTUDIANTE (no en vista previa de docente).
+    3. Leer el semáforo. Copiar el informe del final y pegarlo.
+
+  Todas las filas arrancan en ROJO y solo pasan a verde si la comprobación se
+  ejecuta y sale bien. Un rojo puede significar «falló» o «ni siquiera llegó a
+  correr», y las dos cosas son hallazgos.
+-->
+
+<!-- ===== EL STACK REAL DEL MATERIAL — el objeto del diagnóstico ===== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-r.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+<!-- ===== CSS PROPIO DE LA SONDA — no depende de ningún CDN ===== -->
+<style>
+  body { font-family: Helvetica, Arial, sans-serif; background:#F8FAFC; color:#1E293B;
+         margin:0; padding:1.5rem; line-height:1.5; }
+  .caja { max-width:900px; margin:0 auto; }
+  h1 { font-size:1.35rem; color:#012820; margin:0 0 .25rem; }
+  .sub { color:#475569; font-size:.9rem; margin:0 0 1.25rem; }
+  #veredicto { padding:1rem 1.25rem; border-radius:.6rem; font-weight:700; margin-bottom:1.25rem;
+               background:#fef3c7; color:#92400e; border:2px solid #f59e0b; }
+  #veredicto.ok   { background:#dcfce7; color:#14532d; border-color:#16a34a; }
+  #veredicto.mal  { background:#fee2e2; color:#7f1d1d; border-color:#dc2626; }
+  table { width:100%; border-collapse:collapse; background:#fff; border-radius:.5rem;
+          overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,.08); font-size:.88rem; }
+  th { background:#012820; color:#fff; text-align:left; padding:.6rem .75rem; font-size:.78rem;
+       text-transform:uppercase; letter-spacing:.05em; }
+  td { padding:.55rem .75rem; border-top:1px solid #e2e8f0; vertical-align:top; }
+  td.est { white-space:nowrap; font-weight:700; width:1%; }
+  tr.rojo  td.est { color:#dc2626; }
+  tr.verde td.est { color:#16a34a; }
+  tr.aviso td.est { color:#d97706; }
+  .det { color:#64748b; font-size:.82rem; }
+  h2 { font-size:.95rem; color:#012820; margin:1.75rem 0 .5rem; text-transform:uppercase;
+       letter-spacing:.05em; }
+  #banco { display:none; }
+  textarea { width:100%; height:15rem; font-family:ui-monospace, Menlo, monospace; font-size:.78rem;
+             padding:.75rem; border:1px solid #cbd5e1; border-radius:.5rem; background:#fff; }
+  button { background:#FF6600; color:#fff; border:0; padding:.6rem 1.1rem; border-radius:.4rem;
+           font-weight:700; cursor:pointer; font-size:.88rem; margin:.75rem 0; }
+  .nota { font-size:.82rem; color:#475569; background:#fff; border-left:4px solid #FF6600;
+          padding:.75rem 1rem; border-radius:0 .4rem .4rem 0; margin-top:1rem; }
+  noscript div { background:#fee2e2; color:#7f1d1d; border:2px solid #dc2626; padding:1rem;
+                 border-radius:.6rem; font-weight:700; }
+</style>
+</head>
+<body>
+<div class="caja">
+
+  <h1>ARNÉS — la sonda bajo una CSP que bloquea todos los CDN</h1>
+  <p class="sub">Series de Tiempo 20948 · Taller 1 · Carga el mismo stack que los seis capítulos.</p>
+
+  <noscript>
+    <div>JavaScript está desactivado o bloqueado. El material entero depende de él:
+    sin JavaScript no hay navegación de módulos, ni simuladores, ni fórmulas.</div>
+  </noscript>
+
+  <div id="veredicto">Ejecutando comprobaciones…
+    <div style="font-weight:400;font-size:.85rem;margin-top:.35rem">
+      Si este mensaje no cambia en unos segundos, los <strong>scripts en línea están
+      bloqueados</strong>: ése es, por sí solo, el resultado del diagnóstico.
+    </div>
+  </div>
+
+  <h2>Entorno</h2>
+  <table><thead><tr><th>Dato</th><th>Valor</th></tr></thead><tbody id="entorno"></tbody></table>
+
+  <h2>Comprobaciones</h2>
+  <table>
+    <thead><tr><th>Estado</th><th>Pieza</th><th>Qué se comprueba</th></tr></thead>
+    <tbody id="filas"></tbody>
+  </table>
+
+  <h2>Violaciones de política de seguridad (CSP)</h2>
+  <table><thead><tr><th>Recurso bloqueado</th><th>Directiva</th></tr></thead>
+    <tbody id="csp"><tr><td colspan="2" class="det">Ninguna capturada todavía.</td></tr></tbody></table>
+
+  <!-- Banco de pruebas: elementos reales sobre los que se mide. Oculto. -->
+  <div id="banco" aria-hidden="true">
+    <div id="p-tw" class="p-4 hidden"></div>
+    <i id="p-fa" class="fas fa-check"></i>
+    <span id="p-katex"></span>
+    <span id="p-autorender">Una fórmula: \(y_t = T_t + S_t + R_t\)</span>
+    <canvas id="p-canvas" width="220" height="120"></canvas>
+    <pre><code id="p-prism" class="language-r">x &lt;- ts(v, frequency = 12)</code></pre>
+    <template id="module-1"><p id="dentro-1">contenido del módulo 1</p></template>
+    <template id="module-2"><p id="dentro-2">contenido del módulo 2</p></template>
+    <div id="p-main"></div>
+  </div>
+
+  <h2>Informe para pegar</h2>
+  <button id="copiar" type="button">Copiar informe</button>
+  <textarea id="informe" readonly></textarea>
+
+  <div class="nota">
+    <strong>Cómo leer esto.</strong> Lo que decide es la fila de Tailwind y la de
+    <em>scripts en línea</em>: el resto del material se puede sustituir, pero sin esas dos
+    el motor de módulos no arranca y el taller sale en blanco. Un rojo en KaTeX deja las
+    fórmulas sin renderizar; uno en Chart.js, los gráficos sin pintar. Copia el informe
+    completo aunque todo salga verde: interesa el <em>cómo</em>, no solo el veredicto.
+  </div>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var FILAS = [];
+  function fila(clave, pieza, detalle, estado) {
+    FILAS.push({ clave: clave, pieza: pieza, detalle: detalle, estado: estado });
+  }
+  // estado: 'verde' | 'rojo' | 'aviso'
+
+  // ---- Violaciones de CSP: hay que escuchar ANTES de que nada más corra -----
+  var violaciones = [];
+  window.addEventListener('securitypolicyviolation', function (e) {
+    violaciones.push({ recurso: e.blockedURI || '(en línea)', directiva: e.violatedDirective });
+    pintaCSP();
+  });
+
+  function pintaCSP() {
+    var tb = document.getElementById('csp');
+    if (!violaciones.length) return;
+    tb.innerHTML = '';
+    violaciones.forEach(function (v) {
+      var tr = document.createElement('tr');
+      tr.className = 'rojo';
+      tr.innerHTML = '<td class="det">' + escapa(v.recurso) + '</td><td class="det">' +
+                     escapa(v.directiva) + '</td>';
+      tb.appendChild(tr);
+    });
+  }
+
+  function escapa(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  // ---- Entorno --------------------------------------------------------------
+  var enIframe = (function () { try { return window.self !== window.top; } catch (e) { return true; } })();
+  var padreLegible = (function () {
+    if (!enIframe) return 'n/a (no está en iframe)';
+    try { return window.top.location.origin; } catch (e) { return 'bloqueado por origen cruzado'; }
+  })();
+
+  var ENTORNO = [
+    ['¿Dentro de un iframe?', enIframe ? 'SÍ — así es como Brightspace sirve el contenido' : 'No'],
+    ['Origen de esta página', location.origin || '(archivo local)'],
+    ['Ruta', location.pathname],
+    ['Origen del contenedor', padreLegible],
+    ['Protocolo', location.protocol],
+    ['Navegador', navigator.userAgent]
+  ];
+
+  // ---- Las comprobaciones ---------------------------------------------------
+  function compruebaSincronas() {
+    // 1. Scripts en línea. Si esto corre, se ejecutan: la fila existe para dejarlo dicho.
+    fila('script-inline', 'Scripts en línea',
+         'Este informe se generó desde una etiqueta de script en línea, así que se ejecutan.', 'verde');
+
+    // 2. Tailwind Play CDN — el que más pesa. Genera las clases en tiempo de ejecución.
+    try {
+      var tw = document.getElementById('p-tw');
+      var pad = getComputedStyle(tw).paddingTop;
+      var oculto = getComputedStyle(tw).display;
+      var okTw = (pad === '16px') && (oculto === 'none');
+      fila('tailwind', 'Tailwind (cdn.tailwindcss.com)',
+           'La clase p-4 debe computar 16px (dio ' + pad + ') y .hidden debe dar display:none (dio ' +
+           oculto + ').' + (okTw ? '' : ' SIN ESTO EL TALLER NO SE PUEDE MAQUETAR.'),
+           okTw ? 'verde' : 'rojo');
+    } catch (e) { fila('tailwind', 'Tailwind', 'Excepción: ' + e.message, 'rojo'); }
+
+    // 3. KaTeX cargado
+    var okKatex = (typeof window.katex !== 'undefined');
+    fila('katex-js', 'KaTeX (jsdelivr)',
+         okKatex ? 'El objeto katex existe.' : 'El objeto katex NO existe: las fórmulas saldrían en crudo.',
+         okKatex ? 'verde' : 'rojo');
+
+    // 4. KaTeX renderiza de verdad
+    if (okKatex) {
+      try {
+        var html = window.katex.renderToString('\\hat{S}_{julio} = 63.83', { throwOnError: false });
+        var ok = html.indexOf('katex') !== -1 && html.length > 40;
+        fila('katex-render', 'KaTeX · renderizado',
+             ok ? 'renderToString devolvió ' + html.length + ' caracteres de marcado KaTeX.'
+                : 'Devolvió algo que no parece marcado de KaTeX.', ok ? 'verde' : 'rojo');
+      } catch (e) { fila('katex-render', 'KaTeX · renderizado', 'Excepción: ' + e.message, 'rojo'); }
+    } else {
+      fila('katex-render', 'KaTeX · renderizado', 'No evaluado: KaTeX no cargó.', 'rojo');
+    }
+
+    // 5. auto-render (es el que usa el material sobre la prosa)
+    var okAuto = (typeof window.renderMathInElement !== 'undefined');
+    if (okAuto) {
+      try {
+        window.renderMathInElement(document.getElementById('p-autorender'), {
+          delimiters: [{ left: '\\(', right: '\\)', display: false }], throwOnError: false
+        });
+        var hay = document.getElementById('p-autorender').querySelector('.katex') !== null;
+        fila('katex-auto', 'KaTeX · auto-render',
+             hay ? 'Encontró y renderizó la fórmula del banco de pruebas.'
+                 : 'Cargó pero no renderizó la fórmula.', hay ? 'verde' : 'rojo');
+      } catch (e) { fila('katex-auto', 'KaTeX · auto-render', 'Excepción: ' + e.message, 'rojo'); }
+    } else {
+      fila('katex-auto', 'KaTeX · auto-render', 'renderMathInElement no existe.', 'rojo');
+    }
+
+    // 6. Chart.js cargado
+    var okChart = (typeof window.Chart !== 'undefined');
+    fila('chart-js', 'Chart.js (jsdelivr)',
+         okChart ? 'El objeto Chart existe.' : 'El objeto Chart NO existe: ningún simulador pintaría.',
+         okChart ? 'verde' : 'rojo');
+
+    // 7. Chart.js pinta PÍXELES. Cargar no es pintar.
+    if (okChart) {
+      try {
+        var cv = document.getElementById('p-canvas');
+        new window.Chart(cv, {
+          type: 'line',
+          data: { labels: ['a','b','c','d'], datasets: [{ data: [1,4,2,5], borderColor: '#FF6600', borderWidth: 3 }] },
+          options: { animation: false, responsive: false,
+                     plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
+        });
+        var px = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data;
+        var pintados = 0;
+        for (var i = 3; i < px.length; i += 4) { if (px[i] > 0) pintados++; }
+        fila('chart-pinta', 'Chart.js · píxeles pintados',
+             pintados + ' píxeles no transparentes en un lienzo de ' + cv.width + '×' + cv.height + '.' +
+             (pintados > 100 ? '' : ' Demasiado pocos: cargó pero no dibuja.'),
+             pintados > 100 ? 'verde' : 'rojo');
+      } catch (e) { fila('chart-pinta', 'Chart.js · píxeles', 'Excepción: ' + e.message, 'rojo'); }
+    } else {
+      fila('chart-pinta', 'Chart.js · píxeles', 'No evaluado: Chart.js no cargó.', 'rojo');
+    }
+
+    // 8. Prism + el componente de R, que es lo único que este curso añadió al stack
+    var okPrism = (typeof window.Prism !== 'undefined');
+    var okR = okPrism && window.Prism.languages && !!window.Prism.languages.r;
+    var okPy = okPrism && window.Prism.languages && !!window.Prism.languages.python;
+    fila('prism', 'Prism (cdnjs) + prism-r + prism-python',
+         okPrism ? ('Prism cargado · gramática de R: ' + (okR ? 'sí' : 'NO') +
+                    ' · de Python: ' + (okPy ? 'sí' : 'NO'))
+                 : 'Prism NO cargó: el código saldría sin resaltar (pero legible).',
+         (okPrism && okR && okPy) ? 'verde' : (okPrism ? 'aviso' : 'aviso'));
+
+    // 9. Font Awesome: se comprueba por el ::before del icono, no por la hoja
+    try {
+      var fa = window.getComputedStyle(document.getElementById('p-fa'), ':before');
+      var cont = fa.getPropertyValue('content');
+      var okFa = cont && cont !== 'none' && cont !== 'normal' && cont !== '""';
+      fila('fontawesome', 'Font Awesome (cdnjs)',
+           okFa ? 'El icono resuelve su glifo (content: ' + cont + ').'
+                : 'El icono no resuelve glifo: los iconos saldrían vacíos.', okFa ? 'verde' : 'aviso');
+    } catch (e) { fila('fontawesome', 'Font Awesome', 'Excepción: ' + e.message, 'aviso'); }
+
+    // 10. <template> + clonación: el motor de módulos del material vive de esto
+    try {
+      var tpl = document.getElementById('module-1');
+      var main = document.getElementById('p-main');
+      main.innerHTML = '';
+      main.appendChild(tpl.content.cloneNode(true));
+      var ok1 = main.querySelector('#dentro-1') !== null;
+      // y el salto al módulo 2, que es donde el motor vacía y repuebla
+      main.innerHTML = '';
+      main.appendChild(document.getElementById('module-2').content.cloneNode(true));
+      var ok2 = main.querySelector('#dentro-2') !== null && main.querySelector('#dentro-1') === null;
+      fila('template', 'Motor de módulos (&lt;template&gt; + clonación)',
+           (ok1 && ok2) ? 'Clona el módulo 1, lo vacía y clona el 2. Es el mecanismo exacto de loadModule().'
+                        : 'La clonación de <template> falla: la navegación entre módulos no funcionaría.',
+           (ok1 && ok2) ? 'verde' : 'rojo');
+    } catch (e) { fila('template', 'Motor de módulos', 'Excepción: ' + e.message, 'rojo'); }
+
+    // 11. localStorage: el taller guarda ahí la variante del estudiante.
+    //     Es lo que más se rompe dentro de un iframe de origen cruzado.
+    try {
+      var k = '__sonda_c0__';
+      window.localStorage.setItem(k, 'ok-' + Date.now());
+      var leido = window.localStorage.getItem(k);
+      window.localStorage.removeItem(k);
+      var okLs = (typeof leido === 'string' && leido.indexOf('ok-') === 0);
+      fila('localstorage', 'localStorage dentro del iframe',
+           okLs ? 'Escribe y lee. La variante del estudiante persiste entre módulos.'
+                : 'No devolvió lo escrito.',
+           okLs ? 'verde' : 'rojo');
+    } catch (e) {
+      fila('localstorage', 'localStorage dentro del iframe',
+           'BLOQUEADO (' + e.name + '). El taller tendría que guardar la variante de otra forma. ' +
+           'Excepción: ' + e.message, 'rojo');
+    }
+  }
+
+  // 12. Tipografías.
+  //     DOS TRAMPAS, y el arnés con CSP restrictiva destapó la segunda:
+  //     (a) document.fonts.check() devuelve NO si la fuente aún no se ha descargado, y
+  //         el navegador no descarga una webfont que ninguna regla use. La interfaz de
+  //         esta sonda va en Helvetica a propósito, así que hay que PEDIRLA primero.
+  //     (b) Peor: check() devuelve SÍ cuando NO existe ninguna @font-face que coincida
+  //         —cae a la fuente del sistema, que siempre está «disponible»—. O sea que da
+  //         verde justamente cuando la hoja de Google Fonts está BLOQUEADA.
+  //     La única medida que no se deja engañar es el ancho del texto: se mide la misma
+  //     cadena con la familia pedida y con la de reserva sola. Si miden igual, la
+  //     webfont no se está usando, la hoja llegara o no.
+  function compruebaFuentes(cb) {
+    if (!document.fonts || !document.fonts.load) {
+      fila('fuentes', 'Tipografías', 'document.fonts no existe en este navegador.', 'aviso');
+      return cb();
+    }
+
+    function seUsa(familia, peso, reserva) {
+      var ctx = document.createElement('canvas').getContext('2d');
+      var muestra = 'Series de tiempo 0123456789';
+      ctx.font = peso + ' 48px ' + reserva;
+      var base = ctx.measureText(muestra).width;
+      ctx.font = peso + ' 48px ' + familia + ', ' + reserva;
+      var conFamilia = ctx.measureText(muestra).width;
+      return { usa: Math.abs(conFamilia - base) > 0.5, ancho: conFamilia, base: base };
+    }
+
+    var peticiones = [
+      document.fonts.load('700 1em Montserrat').catch(function () { return []; }),
+      document.fonts.load('400 1em "Fira Code"').catch(function () { return []; })
+    ];
+    Promise.all(peticiones).then(function () {
+      try {
+        var m = seUsa('Montserrat', '700', 'monospace');
+        var f = seUsa('"Fira Code"', '400', 'serif');
+        var ok = m.usa && f.usa;
+        fila('fuentes', 'Tipografías (Google Fonts)',
+             'Medidas por ancho de texto, no por document.fonts.check (que miente en las dos ' +
+             'direcciones). Montserrat: ' + (m.usa ? 'sí' : 'NO') +
+             ' (' + m.ancho.toFixed(1) + 'px contra ' + m.base.toFixed(1) + 'px de reserva) · ' +
+             'Fira Code: ' + (f.usa ? 'sí' : 'NO') +
+             ' (' + f.ancho.toFixed(1) + 'px contra ' + f.base.toFixed(1) + 'px).' +
+             (ok ? '' : ' El material seguiría legible con la tipografía de reserva.'),
+             ok ? 'verde' : 'aviso');
+      } catch (e) { fila('fuentes', 'Tipografías', 'No se pudo medir: ' + e.message, 'aviso'); }
+      cb();
+    }).catch(function (e) {
+      fila('fuentes', 'Tipografías', 'Fallo al pedirlas: ' + e.message, 'aviso');
+      cb();
+    });
+  }
+
+  // ---- Pintado ---------------------------------------------------------------
+  function pinta() {
+    var tb = document.getElementById('entorno');
+    ENTORNO.forEach(function (par) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + escapa(par[0]) + '</td><td class="det">' + escapa(par[1]) + '</td>';
+      tb.appendChild(tr);
+    });
+
+    var tf = document.getElementById('filas');
+    tf.innerHTML = '';
+    FILAS.forEach(function (f) {
+      var tr = document.createElement('tr');
+      tr.className = f.estado;
+      var simbolo = f.estado === 'verde' ? 'OK' : (f.estado === 'rojo' ? 'FALLA' : 'AVISO');
+      tr.innerHTML = '<td class="est">' + simbolo + '</td><td>' + f.pieza +
+                     '</td><td class="det">' + f.detalle + '</td>';
+      tf.appendChild(tr);
+    });
+
+    var rojos  = FILAS.filter(function (f) { return f.estado === 'rojo'; });
+    var avisos = FILAS.filter(function (f) { return f.estado === 'aviso'; });
+    var criticos = rojos.filter(function (f) {
+      return ['tailwind', 'template', 'script-inline', 'localstorage'].indexOf(f.clave) !== -1;
+    });
+
+    var v = document.getElementById('veredicto');
+    if (rojos.length === 0 && avisos.length === 0) {
+      v.className = 'ok';
+      v.textContent = 'VERDE — Brightspace sirve el stack completo. El taller se puede construir con la arquitectura del material.';
+    } else if (criticos.length > 0) {
+      v.className = 'mal';
+      v.textContent = 'ROJO CRÍTICO — falla ' + criticos.map(function (f) { return f.pieza; }).join(', ') +
+        '. El motor de módulos no arrancaría: hay que cambiar de arquitectura (archivo descargable, o incrustar el stack).';
+    } else if (rojos.length > 0) {
+      v.className = 'mal';
+      v.textContent = 'ROJO — ' + rojos.length + ' pieza(s) fallan. El taller arrancaría, pero degradado. Ver detalle.';
+    } else {
+      v.className = 'ok';
+      v.textContent = 'VERDE CON AVISOS — ' + avisos.length + ' pieza(s) no esencial(es) fallan (tipografías o iconos). El taller funciona.';
+    }
+
+    // Informe en texto
+    var t = [];
+    t.push('SONDA C0 · Taller 1 · Series de Tiempo 20948');
+    t.push('Generado: ' + new Date().toISOString());
+    t.push('');
+    t.push('ENTORNO');
+    ENTORNO.forEach(function (p) { t.push('  ' + p[0] + ': ' + p[1]); });
+    t.push('');
+    t.push('COMPROBACIONES');
+    FILAS.forEach(function (f) {
+      var s = f.estado === 'verde' ? 'OK   ' : (f.estado === 'rojo' ? 'FALLA' : 'AVISO');
+      t.push('  [' + s + '] ' + f.pieza.replace(/&lt;/g, '<').replace(/&gt;/g, '>'));
+      t.push('           ' + f.detalle.replace(/<[^>]+>/g, ''));
+    });
+    t.push('');
+    t.push('VIOLACIONES DE CSP: ' + (violaciones.length ? '' : 'ninguna capturada'));
+    violaciones.forEach(function (x) { t.push('  ' + x.directiva + ' -> ' + x.recurso); });
+    t.push('');
+    t.push('VEREDICTO: ' + v.textContent);
+    document.getElementById('informe').value = t.join('\n');
+
+    pintaCSP();
+  }
+
+  document.getElementById('copiar').addEventListener('click', function () {
+    var ta = document.getElementById('informe');
+    ta.select();
+    var hecho = false;
+    try { hecho = document.execCommand('copy'); } catch (e) { hecho = false; }
+    if (!hecho && navigator.clipboard) {
+      navigator.clipboard.writeText(ta.value).then(function () {
+        this.textContent = 'Copiado';
+      }.bind(this)).catch(function () {
+        this.textContent = 'No se pudo copiar — selecciona el texto a mano';
+      }.bind(this));
+    } else {
+      this.textContent = hecho ? 'Copiado' : 'No se pudo copiar — selecciona el texto a mano';
+    }
+  });
+
+  // Los CDN llevan `defer`: hay que esperar a que la ventana cargue del todo, y
+  // un poco más, porque Tailwind Play genera su hoja después de ejecutarse.
+  function arranca() {
+    setTimeout(function () {
+      compruebaSincronas();
+      compruebaFuentes(pinta);
+    }, 700);
+  }
+  if (document.readyState === 'complete') arranca();
+  else window.addEventListener('load', arranca);
+})();
+</script>
+</body>
+</html>
