@@ -1,0 +1,364 @@
+% ============================================================================
+% Taller 1 — Componentes, descomposicion y estacionariedad (Modulo I)
+% Series de Tiempo (20948) · Corte I · Universidad El Bosque · 2026-II
+%
+% PLANTILLA DE ENTREGA. Se entrega el PDF compilado, por Brightspace.
+%
+% Como usarla:
+%   1. Rellena la ficha de la portada. El digito de verificacion es lo primero
+%      que hay que comprobar: un ADF perfectamente calculado sobre la serie
+%      equivocada se ve identico a uno correcto.
+%   2. Rellena la hoja de cifras de la pagina 2 ANTES de escribir prosa.
+%   3. Responde cada literal donde dice \marcador{...}. Los marcadores en gris
+%      que queden sin sustituir se ven en el PDF: esa es su unica funcion.
+%   4. Compila con pdflatex (o subela a Overleaf tal cual: no usa ningun
+%      paquete raro ni ningun archivo externo) y entrega el PDF.
+%
+% Nombre del archivo:  T1_Apellido_XXX.pdf   (XXX = tus tres ultimos digitos)
+% ============================================================================
+\documentclass[11pt,a4paper,oneside]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[a4paper,top=2.3cm,bottom=2.3cm,left=2.4cm,right=2.4cm]{geometry}
+
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\setlength{\headheight}{14pt}
+\usepackage{titlesec}
+\usepackage{amsmath,amssymb}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{hyperref}
+
+% --- Colores institucionales (los mismos del material de Series de Tiempo) ---
+\definecolor{ubosque}{RGB}{1,40,32}
+\definecolor{naranja}{RGB}{255,102,0}
+\definecolor{grisclaro}{RGB}{240,240,240}
+\definecolor{grismarcador}{RGB}{130,130,130}
+
+\hypersetup{colorlinks=true, linkcolor=ubosque, urlcolor=blue!70!black,
+            pdftitle={Taller 1 - Series de Tiempo 20948}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textit{Taller 1 --- Series de Tiempo (20948)}}
+\fancyhead[R]{\small\textit{\leftmark}}
+\fancyfoot[C]{\thepage}
+\fancyfoot[R]{\small Universidad El Bosque}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.3pt}
+
+\setlength{\parskip}{0.5\baselineskip}
+\setlength{\parindent}{0pt}
+\emergencystretch=3em
+\titleformat{\section}{\normalfont\large\bfseries\color{ubosque}}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{}{0em}{}
+\captionsetup{font=small,labelfont=bf,labelsep=period}
+
+\lstset{basicstyle=\ttfamily\footnotesize, breaklines=true, frame=single,
+        rulecolor=\color{grisclaro!60!black}, columns=flexible,
+        showstringspaces=false, xleftmargin=0pt, framexleftmargin=3pt}
+
+% --- Los tres comandos de la plantilla ---
+% Un hueco por rellenar. Se ve en gris y entre corchetes: si queda uno sin
+% sustituir, salta a la vista en el PDF entregado.
+% Ojo con la forma del color: `\textcolor{}{}` (comando) y NO
+% `{\color{} ...}` (declaracion). Dentro de una celda de parrafo —las
+% columnas X de tabularx— la declaracion arranca el parrafo con un whatsit y
+% hunde su primera linea: la etiqueta de la fila queda arriba y su casilla
+% media linea mas abajo. Aislado en un caso minimo: `{\itshape[x]}` alinea,
+% `{\color{gris}[x]}` no. (Lección heredada de la plantilla de Estadistica
+% Espacial; no cambiar sin reproducir el caso minimo.)
+\newcommand{\marcador}[1]{\textcolor{grismarcador}{\textit{[#1]}}}
+
+\newcommand{\tarea}[4]{%
+  \section[#1 · #2]{#1 · #2 \normalfont\small\color{grismarcador}(#3 \% del escrito · #4 palabras)}%
+  \markboth{#1 · #2}{}}
+
+% Un literal: la letra en negrita y el rotulo corto. El enunciado COMPLETO
+% esta en el taller; aqui solo va el rotulo, para no gastar dos paginas en
+% copiar lo que el estudiante ya tiene delante.
+\newcommand{\literal}[2]{\vspace{0.35\baselineskip}\noindent\textbf{(#1)}~\textit{#2}\par}
+
+\begin{document}
+
+% ============================================================================
+% PORTADA — la ficha de variante
+% ============================================================================
+\thispagestyle{empty}
+\begin{center}
+
+{\large\textbf{UNIVERSIDAD EL BOSQUE}}\\[0.15cm]
+{\normalsize Facultad de Ciencias --- Matemáticas y Ciencia de Datos}\\[0.1cm]
+{\normalsize Series de Tiempo (20948) --- 2026-II --- Corte I}\\[0.9cm]
+
+\rule{\textwidth}{1.2pt}\\[0.25cm]
+{\LARGE\textbf{Taller 1}}\\[0.15cm]
+{\large\textit{Componentes, descomposición\\ y estacionariedad}}\\[0.25cm]
+\rule{\textwidth}{1.2pt}\\[0.9cm]
+
+{\large\textbf{Trabajo individual}}\\[0.15cm]
+{\normalsize Escrito 60\,\% \quad · \quad Defensa oral 40\,\%}\\[1.0cm]
+
+\end{center}
+
+\begin{tabular}{rl}
+\textbf{Nombre completo:}          & \marcador{tu nombre} \\[0.25cm]
+\textbf{Número de documento:}      & \marcador{completo} \\[0.25cm]
+\textbf{Tus tres últimos dígitos:} & \marcador{000 a 999} \quad $\rightarrow$ \quad
+                                     \textbf{variante} \marcador{la misma cifra} \\[0.25cm]
+\textbf{Tu serie no estacionaria:} & número \marcador{NN} \quad con $n =$ \marcador{n} observaciones \\[0.25cm]
+\textbf{Tu serie estacional:}      & número \marcador{NN} \quad con $n =$ \marcador{n} observaciones \\[0.25cm]
+\textbf{Dígito de verificación:}   & \marcador{la suma que da la tira del taller} \\[0.25cm]
+\textbf{Fecha de entrega:}         & \textbf{martes 25 de agosto de 2026, 14:00} \\
+\end{tabular}
+
+\vspace{0.9cm}
+
+\noindent\fcolorbox{ubosque}{grisclaro}{%
+\begin{minipage}{0.95\textwidth}
+\small
+\textbf{Antes de escribir nada, comprueba el dígito de verificación.} Es la suma de los valores de
+tu serie, redondeada. Si la tuya no da exactamente esa cifra, no estás trabajando con tu variante,
+y un ADF perfectamente calculado sobre la serie equivocada se ve idéntico a uno correcto. Todo lo
+que construyas encima estaría mal sin que nada avise.
+\end{minipage}}
+
+\vspace{0.5cm}
+
+\noindent\fcolorbox{grisclaro!60!black}{white}{%
+\begin{minipage}{0.95\textwidth}
+\small
+\textbf{Cómo se entrega.} Un solo PDF por \textbf{Brightspace}, compilado con \LaTeX{} a partir de
+esta plantilla. Nombre del archivo: \texttt{T1\_Apellido\_XXX.pdf}, donde \texttt{XXX} son tus tres
+últimos dígitos. Máximo \textbf{11 páginas} sin contar el anexo. Las tablas y figuras no cuentan
+para los límites de palabras de cada tarea.
+
+\smallskip
+\textbf{El enunciado no está aquí.} Vive en el taller publicado, con tu variante resuelta al
+escribir tu documento. Esta plantilla solo recoge las respuestas.
+\end{minipage}}
+
+\vfill
+{\footnotesize\color{grismarcador}\today}
+
+\newpage
+
+% ============================================================================
+% HOJA DE CIFRAS
+% ============================================================================
+\section{Hoja de cifras}
+\markboth{Hoja de cifras}{}
+
+Todas las cifras que el taller pide, juntas. \textbf{Rellénala antes de escribir prosa}: es lo que
+permite que la discusión de cada tarea hable de números que ya están decididos, y es lo primero que
+se revisa al calificar. Usa punto decimal y cuatro decimales donde la cifra los tenga.
+
+\vspace{0.3cm}
+\renewcommand{\arraystretch}{1.25}
+\begingroup\setlength{\parskip}{0pt}
+\begin{tabularx}{\textwidth}{@{}l X r@{}}
+\toprule
+\textbf{Tarea} & \textbf{Cifra} & \textbf{Valor} \\
+\midrule
+T1 & Número de observaciones $n$                             & \marcador{~} \\
+T1 & Suma de la serie (dígito de verificación)               & \marcador{~} \\
+T1 & Autocorrelación en el rezago 1, $r_1$                   & \marcador{~} \\
+T1 & Autocorrelación en el rezago 6, $r_6$                   & \marcador{~} \\
+T1 & ADF: estadístico                                        & \marcador{~} \\
+T1 & ADF: valor $p$                                          & \marcador{~} \\
+T1 & KPSS con nivel: estadístico y valor $p$                 & \marcador{~} \\
+T1 & KPSS con tendencia: estadístico y valor $p$             & \marcador{~} \\
+T1 & \texttt{ndiffs()}                                       & \marcador{~} \\
+T1 & Varianza de $y_t$ y de $\nabla y_t$                     & \marcador{~} \\
+\midrule
+T2 & $F_T$ y $F_S$ con la descomposición \textbf{recibida}   & \marcador{~} \\
+T2 & $F_T$ y $F_S$ ya \textbf{corregida}                     & \marcador{~} \\
+T2 & Índice estacional de julio, en el modelo recibido       & \marcador{~} \\
+T2 & ACF del residual en el rezago 12, $r_{12}$              & \marcador{~} \\
+T2 & Banda del correlograma, $\pm 1.96/\sqrt{n}$             & \marcador{~} \\
+T2 & ¿Cruza $r_{12}$ la banda? Antes / después de corregir   & \marcador{~} \\
+\midrule
+T3 & El orden $(d, D)$ correcto, y con qué transformación     & \marcador{~} \\
+T3 & Varianza mínima \emph{dentro} de esa transformación     & \marcador{~} \\
+\midrule
+T4 & \texttt{nsdiffs()} con la frecuencia mal declarada      & \marcador{~} \\
+T4 & \texttt{nsdiffs()} con la frecuencia correcta           & \marcador{~} \\
+T4 & Rezago del pico de la ACF: mal declarada / correcta     & \marcador{~} \\
+\bottomrule
+\end{tabularx}
+\endgroup
+
+\vspace{0.45cm}
+\noindent\textbf{T3 · las dos tablas.} Copia aquí la tabla que declares \textbf{correcta}, y señala
+en la otra la fila donde su aritmética se delata.
+
+\vspace{0.25cm}
+\begingroup\setlength{\parskip}{0pt}
+\begin{tabularx}{\textwidth}{@{}l c c r X@{}}
+\toprule
+\textbf{Transformación} & \textbf{$d$} & \textbf{$D$} & \textbf{Varianza} & \textbf{¿Comparable con la fila de arriba?} \\
+\midrule
+\marcador{~} & \marcador{~} & \marcador{~} & \marcador{~} & \marcador{~} \\
+\marcador{~} & \marcador{~} & \marcador{~} & \marcador{~} & \marcador{~} \\
+\marcador{~} & \marcador{~} & \marcador{~} & \marcador{~} & \marcador{~} \\
+\bottomrule
+\end{tabularx}
+\endgroup
+
+\vspace{0.2cm}
+{\small\color{grismarcador} T5 no lleva cifras propias: sus datos vienen dados en el enunciado y son
+los mismos para todo el curso.}
+
+\newpage
+
+% ============================================================================
+% LAS CINCO TAREAS
+% ============================================================================
+\tarea{T1}{La serie que no se deja clasificar}{20}{700}
+\literal{a}{Si tu serie es no estacionaria y de qué manera, justificado con las \textbf{dos} pruebas y con el gráfico. \texttt{ndiffs()} no es una justificación: es una cifra que hay que explicar.}
+\marcador{tu respuesta}
+
+\literal{b}{Qué \emph{no} prueba tu resultado. Contesta con el poder de la prueba y con tu $n$, no con el valor $p$.}
+\marcador{tu respuesta}
+
+\literal{c}{Un compañero tiene un ADF casi idéntico al tuyo sobre una serie que no se parece a la tuya. ¿Significan lo mismo los dos estadísticos?}
+\marcador{tu respuesta}
+
+\literal{d}{Si tus tres evidencias —gráfico, ADF y KPSS— no apuntan al mismo sitio, dilo y decide igual. Una contradicción explicada vale más que un acuerdo fabricado.}
+\marcador{tu respuesta}
+
+\tarea{T2}{La descomposición que el gráfico desmiente}{20}{700}
+\literal{a}{Qué síntoma delata que el modelo de descomposición que recibiste no es el correcto. Nómbralo \textbf{antes} de arreglarlo, y sin usar la palabra «error»: di qué se ve y dónde.}
+\marcador{tu respuesta}
+
+\literal{b}{El índice estacional de julio es una constante. Qué afirma esa constante sobre tu serie, y por qué esa afirmación es falsa aquí.}
+\marcador{tu respuesta}
+
+\literal{c}{$F_T$ y $F_S$ antes y después de corregir. Cuál de las dos fuerzas se mueve más, y por qué esa y no la otra.}
+\marcador{remite a la hoja de cifras, y comenta aquí lo que las cifras no dicen}
+
+\literal{d}{Qué habría pasado aguas abajo si nadie lo nota. Usa la serie desestacionalizada como ejemplo concreto.}
+\marcador{tu respuesta}
+
+\tarea{T3}{La auditoría}{25}{800}
+\literal{a}{Cuál de las dos tablas está mal, con evidencia \textbf{interna a la tabla}: comprobable con los números que ves y una calculadora, sin recalcular nada sobre la serie.}
+\marcador{tu respuesta, y la aritmética que la sostiene}
+
+\literal{b}{Qué elige de verdad esa tabla, si no es el orden de diferenciación.}
+\marcador{tu respuesta}
+
+\literal{c}{Cuál es la pareja $(d, D)$ correcta y con qué evidencia de la propia tabla, y en qué escala la lees. La que declaraste incorrecta también contiene esa respuesta: señala dónde.}
+\marcador{tu respuesta}
+
+\literal{d}{Por qué este error no se vería mirando el gráfico de la serie.}
+\marcador{tu respuesta}
+
+\literal{e}{Si el criterio «elige el $d$ que minimiza la varianza» es entonces inútil, o si el problema es otro. Decide.}
+\marcador{tu respuesta}
+
+\tarea{T4}{Declarar no es transformar}{15}{600}
+\literal{a}{Qué síntoma lo delata. \textbf{El gráfico estacional y el de rezagos antes que cualquier cifra}: di qué ves y por qué es imposible.}
+\marcador{tu respuesta}
+
+\literal{b}{Arréglalo: el componente estacional y \texttt{nsdiffs()} antes y después, con qué función y por qué esa.}
+\marcador{tu respuesta}
+
+\literal{c}{Qué habría pasado aguas abajo si nadie lo nota.}
+\marcador{tu respuesta}
+
+\literal{d}{Si declarar la frecuencia a mano es tan peligroso, por qué existe: un caso real en que sí es lo correcto.}
+\marcador{tu respuesta}
+
+\tarea{T5}{Auditar a la IA}{20}{650}
+\literal{a}{Clasifica las tres afirmaciones como correcta, a medias o falsa, con una cifra o un contraejemplo detrás de cada veredicto.}
+\marcador{tu respuesta}
+
+\literal{b}{La falsa, reescrita para que quede correcta sin cambiar de tema.}
+\marcador{tu reescritura}
+
+\literal{c}{La de «a medias»: dónde se rompe exactamente, qué parte es cierta, cuál no, y qué cifra lo demuestra.}
+\marcador{tu respuesta}
+
+\literal{d}{Una frase: qué tipo de pregunta contesta bien un modelo sobre este material y cuál contesta mal, apoyada en lo que te pasó durante el taller.}
+\marcador{una frase}
+
+\newpage
+% ============================================================================
+% DECLARACIÓN DE USO DE IA
+% ============================================================================
+\section{Declaración de uso de inteligencia artificial}
+\markboth{Declaración de uso de IA}{}
+
+El uso de IA en este taller es \textbf{libre y no hay que pedir permiso}. Lo que se califica —el
+10\,\% del escrito, dimensión de comunicación y honestidad— es esta declaración: qué consultaste y
+\textbf{cómo lo verificaste}. Declarar no penaliza; no declarar, sí.
+
+Escribe una fila por tarea. Si en alguna no consultaste nada, escríbelo: «no consulté» es una
+declaración válida y dejarla en blanco no lo es.
+
+\vspace{0.3cm}
+\renewcommand{\arraystretch}{1.4}
+\begingroup\setlength{\parskip}{0pt}
+\begin{tabularx}{\textwidth}{@{}l X X@{}}
+\toprule
+\textbf{Tarea} & \textbf{Qué consulté y a qué modelo} & \textbf{Cómo verifiqué la respuesta} \\
+\midrule
+T1 & \marcador{~} & \marcador{~} \\
+T2 & \marcador{~} & \marcador{~} \\
+T3 & \marcador{~} & \marcador{~} \\
+T4 & \marcador{~} & \marcador{~} \\
+T5 & \marcador{~} & \marcador{~} \\
+\bottomrule
+\end{tabularx}
+\endgroup
+
+% ============================================================================
+% DECISIONES PARA LA DEFENSA
+% ============================================================================
+\section{Decisiones que sostendré en la defensa}
+\markboth{Decisiones para la defensa}{}
+
+La defensa vale el 40\,\%, y hay una regla que le da dientes: \textbf{una decisión entregada por
+escrito que no se pueda sostener en la defensa se recalifica}. Escribe entre tres y cinco
+decisiones tuyas —no resultados: decisiones— y de qué tarea salen.
+
+\begin{enumerate}[leftmargin=*,itemsep=4pt]
+  \item \marcador{decisión} \hfill \textcolor{grismarcador}{\small (tarea \marcador{Tn})}
+  \item \marcador{decisión} \hfill \textcolor{grismarcador}{\small (tarea \marcador{Tn})}
+  \item \marcador{decisión} \hfill \textcolor{grismarcador}{\small (tarea \marcador{Tn})}
+  \item \marcador{opcional} \hfill \textcolor{grismarcador}{\small (tarea \marcador{Tn})}
+  \item \marcador{opcional} \hfill \textcolor{grismarcador}{\small (tarea \marcador{Tn})}
+\end{enumerate}
+
+\newpage
+% ============================================================================
+% ANEXO — no cuenta para el limite de paginas
+% ============================================================================
+\section*{Anexo. Código ejecutado y entorno}
+\markboth{Anexo}{}
+\addcontentsline{toc}{section}{Anexo}
+
+Pega aquí el código que ejecutaste de verdad para T1, T2 y T4, y la salida de
+\texttt{sessionInfo()}. No se califica su elegancia: sirve para saber sobre qué serie trabajaste si
+alguna cifra no cuadra.
+
+\begin{lstlisting}[language=R]
+# Pega aqui tu codigo
+\end{lstlisting}
+
+\begin{lstlisting}
+# Pega aqui la salida de sessionInfo()
+\end{lstlisting}
+
+\end{document}

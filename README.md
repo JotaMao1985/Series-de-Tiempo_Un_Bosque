@@ -2,7 +2,7 @@
 
 Material de estudio autónomo e interactivo para el curso **Series de Tiempo 2026-II** del programa
 de Matemáticas y Ciencia de Datos. Seis capítulos que van de la descomposición de una serie al
-*backtesting* de un pronóstico, con teoría, fórmulas KaTeX, código en **R** y **Python**, **61
+*backtesting* de un pronóstico, con teoría, fórmulas KaTeX, código en **R** y **Python**, **65
 simuladores** interactivos, autoevaluación con retroalimentación por opción y ejercicios resueltos.
 
 🌐 **Sitio web:** https://jotamao1985.github.io/Series-de-Tiempo_Un_Bosque/
@@ -11,15 +11,30 @@ simuladores** interactivos, autoevaluación con retroalimentación por opción y
 
 | # | Capítulo | Temas | Módulos | Simuladores |
 |---|----------|-------|:---:|:---:|
-| 1 | [Componentes y descomposición](capitulo-1-componentes-descomposicion.html) | Objetos temporales, gráficos estacionales, los cuatro componentes, medias móviles, descomposición clásica y STL | 9 | 7 |
+| 1 | [Componentes y descomposición](capitulo-1-componentes-descomposicion.html) | Objetos temporales, gráficos estacionales, los cuatro componentes, medias móviles, descomposición clásica y STL | 9 | 11 |
 | 2 | [Estacionariedad, ACF y PACF](capitulo-2-estacionariedad-acf-pacf.html) | Ruido blanco, correlograma, PACF, caminata aleatoria, ADF y KPSS, diferenciación, Box–Cox | 9 | 8 |
 | 3 | [Modelos AR, MA y ARMA](capitulo-3-modelos-ar-ma-arma.html) | Polinomios característicos, invertibilidad, dualidad AR↔MA, identificación, máxima verosimilitud, diagnóstico | 10 | 10 |
 | 4 | [Modelos ARIMA y Box–Jenkins](capitulo-4-modelos-arima.html) | Orden de integración, ciclo de Box–Jenkins, AICc, Hyndman–Khandakar, sobrediferenciación, intervalos | 10 | 10 |
 | 5 | [Modelos SARIMA](capitulo-5-sarima.html) | Firma estacional, notación multiplicativa, modelo *airline*, SARIMAX, Fourier y STL | 11 | 12 |
 | 6 | [Pronóstico y evaluación](capitulo-6-pronostico-evaluacion.html) | Métricas de error, fuga de información, origen móvil, backtesting, Diebold–Mariano, cobertura, auditoría de IA | 12 | 14 |
 
-La portada [`index.html`](index.html) enlaza los seis capítulos. En total: **61 módulos, 61
+La portada [`index.html`](index.html) enlaza los seis capítulos. En total: **61 módulos, 65
 simuladores, 49 preguntas de autoevaluación y 20 ejercicios guiados con solución comentada.**
+
+## Talleres
+
+| # | Taller | Cubre | Módulos | Tareas |
+|---|--------|-------|:---:|:---:|
+| 1 | [Módulo I · Componentes y estacionariedad](taller-1-modulo-1.html) | Capítulos 1 y 2 · Corte I, semana 4 | 8 | 5 |
+
+El taller es **individual y por variante**: cada estudiante recibe su propia serie no estacionaria
+y su propia serie estacional, asignadas por los tres últimos dígitos de su documento a partir de
+1000 variantes precalculadas en R. El navegador no calcula nada — busca la fila. El enunciado
+incluye la rúbrica y el banco de preguntas de la defensa, y la plantilla de entrega en LaTeX está
+en [`entrega/`](entrega/).
+
+Lo que **no** viaja en este repositorio mientras el taller esté abierto: el generador de las
+series, los auditores y el ensamblador. Se versionan después de calificar.
 
 ## Cómo está construido
 
@@ -48,8 +63,8 @@ simuladores, 49 preguntas de autoevaluación y 20 ejercicios guiados con soluci�
 
 ## Componentes interactivos
 
-Además de los simuladores, el material usa cinco componentes propios, presentes en todos los
-capítulos que los necesitan:
+Además de los simuladores, el material usa siete componentes propios, presentes en todos los
+capítulos y talleres que los necesitan:
 
 | Componente | Qué hace |
 |---|---|
@@ -59,6 +74,7 @@ capítulos que los necesitan:
 | `.ciclo` | Diagrama de etapas recorrible con teclado, que muestra a qué etapa te devuelve cada fallo |
 | `.mapa-estacional` | Mapa de calor mes × año, donde un mes sistemáticamente alto dibuja una banda vertical |
 | `.tabla-ranking` | Tabla comparativa ordenable: al pulsar una columna cambia el orden, y con él el ganador |
+| `.rubrica` | Criterios de calificación recorribles: se pulsa uno y aparece qué mide y qué distingue cada nivel. Va dentro del material, no en un anexo del profesor — una rúbrica que se lee después de entregar no sirve |
 
 ## Despliegue
 
