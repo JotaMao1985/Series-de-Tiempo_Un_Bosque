@@ -2320,6 +2320,267 @@
         padding: 0.42rem 0.4rem;
       }
     }
+
+    /* ------------------------------------------------------------------
+       Componente .rubrica — criterios de calificación recorribles
+       ------------------------------------------------------------------
+       Para entregables que se califican por varios criterios a la vez: un
+       taller, un proyecto. Publicar la rúbrica DENTRO del material —y no
+       como anexo del profesor— es lo que permite leerla antes de escribir,
+       que es cuando sirve de algo.
+
+       Se pulsa un criterio y el panel de abajo muestra su foco y sus
+       niveles. El `foco` es obligatorio en la práctica aunque el código no
+       lo exija: es la frase que dice QUÉ MIDE el criterio, y sin ella la
+       rúbrica se lee como una lista de castigos.
+
+       El panel es `role="status"` con `aria-live="polite"`, así que el
+       cambio de criterio se anuncia; los criterios son botones con
+       `aria-pressed`, no <div> con onclick.
+       ------------------------------------------------------------------ */
+    .rubrica {
+      margin: 1.75rem 0;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.75rem;
+      background: #f8fafc;
+      overflow: hidden;
+    }
+
+    .rubrica-titulo {
+      margin: 0;
+      padding: 0.7rem 1.1rem;
+      background: #012820;
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .rubrica-puntos-total {
+      margin-left: auto;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      background: rgba(255, 255, 255, 0.16);
+      border-radius: 50px;
+      padding: 0.15rem 0.6rem;
+      white-space: nowrap;
+    }
+
+    .rubrica-intro {
+      margin: 0;
+      padding: 0.75rem 1.1rem 0;
+      font-size: 0.85rem;
+      color: #475569;
+    }
+
+    .rubrica-criterios {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      padding: 0.9rem 1.1rem 0.35rem;
+    }
+
+    .rubrica-criterio {
+      flex: 1 1 9.5rem;
+      min-width: 9.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.2rem;
+      font-family: inherit;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.6rem;
+      padding: 0.6rem 0.7rem;
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease,
+        background 0.15s ease, color 0.15s ease;
+    }
+
+    .rubrica-criterio:hover {
+      border-color: #012820;
+      box-shadow: 0 1px 4px rgba(1, 40, 32, 0.12);
+    }
+
+    .rubrica-criterio.activo {
+      background: #012820;
+      border-color: #012820;
+      color: white;
+    }
+
+    .rubrica-criterio-clave {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #FF6600;
+    }
+
+    .rubrica-criterio.activo .rubrica-criterio-clave {
+      color: #ffb37a;
+    }
+
+    .rubrica-criterio-nombre {
+      font-size: 0.8rem;
+      font-weight: 700;
+      line-height: 1.25;
+      color: #1e293b;
+    }
+
+    .rubrica-criterio.activo .rubrica-criterio-nombre {
+      color: white;
+    }
+
+    .rubrica-criterio-puntos {
+      font-size: 0.72rem;
+      color: #64748b;
+    }
+
+    .rubrica-criterio.activo .rubrica-criterio-puntos {
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .rubrica-detalle {
+      margin: 0.5rem 1.1rem 0;
+    }
+
+    .rubrica-foco {
+      margin: 0 0 0.6rem;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-left: 3px solid #FF6600;
+      border-radius: 0.5rem;
+      padding: 0.7rem 0.9rem;
+      font-size: 0.85rem;
+      line-height: 1.55;
+      color: #334155;
+    }
+
+    .rubrica-foco strong {
+      color: #012820;
+    }
+
+    .rubrica-niveles {
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .rubrica-nivel {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #94a3b8;
+      border-radius: 0.5rem;
+      padding: 0.6rem 0.85rem;
+    }
+
+    .rubrica-nivel[data-grado="0"] { border-left-color: #12805c; }
+    .rubrica-nivel[data-grado="1"] { border-left-color: #0f766e; }
+    .rubrica-nivel[data-grado="2"] { border-left-color: #d97706; }
+    .rubrica-nivel[data-grado="3"] { border-left-color: #b91c1c; }
+
+    .rubrica-nivel-marca {
+      flex: 0 0 5.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .rubrica-nivel-nombre {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: #1e293b;
+      line-height: 1.2;
+    }
+
+    .rubrica-nivel-rango {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #64748b;
+      white-space: nowrap;
+    }
+
+    .rubrica-nivel-observa {
+      margin: 0;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: #334155;
+    }
+
+    .rubrica-nivel-observa strong {
+      color: #012820;
+    }
+
+    .rubrica-anula {
+      margin: 0.85rem 1.1rem 0;
+      background: rgba(185, 28, 28, 0.05);
+      border: 1px dashed rgba(185, 28, 28, 0.35);
+      border-radius: 0.5rem;
+      padding: 0.7rem 1rem;
+      font-size: 0.83rem;
+      color: #1e293b;
+    }
+
+    .rubrica-anula .rotulo {
+      display: block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #b91c1c;
+      margin-bottom: 0.3rem;
+    }
+
+    .rubrica-anula ul {
+      margin: 0;
+      padding-left: 1.1rem;
+    }
+
+    .rubrica-anula li {
+      margin: 0.2rem 0;
+      color: #475569;
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+
+    .rubrica-nota {
+      margin: 0;
+      padding: 0.75rem 1.1rem 1rem;
+      font-size: 0.78rem;
+      color: #64748b;
+    }
+
+    @media (max-width: 900px) {
+      .rubrica-criterio {
+        min-width: 0;
+      }
+
+      .rubrica-nivel {
+        flex-direction: column;
+        gap: 0.3rem;
+      }
+
+      .rubrica-nivel-marca {
+        /* El `flex: 0 0 5.6rem` de arriba fija la BASE, y al pasar el nivel
+           a columna la base deja de ser el ancho y pasa a ser el alto: la
+           marca se estira a 5.6rem con 1.2rem de contenido y deja un hueco
+           vacío del tamaño del propio texto. Se restituye a `auto`. */
+        flex: 0 0 auto;
+        flex-direction: row;
+        align-items: baseline;
+        gap: 0.5rem;
+      }
+    }
   </style>
 </head>
 
@@ -2810,6 +3071,17 @@ round(mean(rnorm(200)), 4)   # 0.0117</code></pre>
         </div>
       </div>
 
+
+      <div class="note">
+        <h3>Cuándo usar <code>.rubrica</code></h3>
+        <p style="margin-bottom:0;">Solo para entregables que se califican por varios criterios a la vez —un
+          taller, un proyecto—, y siempre <strong>dentro</strong> del material: una rúbrica que vive en un anexo
+          del profesor se lee después de entregar, que es cuando ya no sirve. Cada criterio necesita su
+          <code>foco</code>, la frase que dice <em>qué mide</em>. Sin ella queda una lista de castigos.</p>
+      </div>
+
+      <div class="rubrica" data-rubrica="demo-rubrica"></div>
+
       <div class="references">
         <h3><i class="fas fa-book-open mr-2" aria-hidden="true"></i>Lecturas de este capítulo</h3>
         <ul style="margin-bottom:0;">
@@ -2900,6 +3172,7 @@ round(mean(rnorm(200)), 4)   # 0.0117</code></pre>
         iniciarCiclos();
         iniciarTablasRanking();
         iniciarMapasEstacionales();
+        iniciarRubricas();
         renderMathInElement(mainContent, {
           delimiters: [
             { left: "$$", right: "$$", display: true },
@@ -4292,6 +4565,100 @@ round(mean(rnorm(200)), 4)   # 0.0117</code></pre>
       });
     }
     // ================================================================
+    // Componente .rubrica — criterios de calificación recorribles
+    //
+    // RUBRICAS['id'] = {titulo, intro, total, criterios, anulan, nota}
+    // sobre un contenedor con data-rubrica="id". Cada criterio es
+    //
+    //   { clave, nombre, puntos, foco, niveles: [{nombre, rango, observa}] }
+    //
+    // Los niveles se declaran de mayor a menor desempeño; el índice
+    // decide el color de la banda lateral, así que el orden importa.
+    //
+    // Si se declara `total` y los criterios no lo suman, avisa por consola
+    // en vez de callarse: una rúbrica sobre 95 es la clase de cuenta que
+    // nadie rehace. El texto admite LaTeX entre $…$ y marcado HTML, y al
+    // cambiar de criterio se vuelve a pasar KaTeX por el panel.
+    // ================================================================
+    const RUBRICAS = {};
+
+
+    function iniciarRubricas() {
+      mainContent.querySelectorAll('[data-rubrica]').forEach(raiz => {
+        const spec = RUBRICAS[raiz.dataset.rubrica];
+        if (!spec) {
+          console.warn(`Rúbrica no registrada: ${raiz.dataset.rubrica}`);
+          return;
+        }
+        pintarRubrica(raiz, spec);
+      });
+    }
+
+    function pintarRubrica(raiz, spec) {
+      const suma = spec.criterios.reduce((a, c) => a + (c.puntos || 0), 0);
+      const total = spec.total || suma;
+      if (spec.total && spec.total !== suma) {
+        console.warn(`Rúbrica ${raiz.dataset.rubrica}: los criterios suman ${suma} y el total declarado es ${spec.total}`);
+      }
+
+      raiz.innerHTML = `
+        <p class="rubrica-titulo"><i class="fas fa-list-check" aria-hidden="true"></i>${spec.titulo}
+          <span class="rubrica-puntos-total">${total} pts</span></p>
+        ${spec.intro ? `<p class="rubrica-intro">${spec.intro}</p>` : ''}
+        <div class="rubrica-criterios" role="group" aria-label="${spec.titulo}"></div>
+        <div class="rubrica-detalle" role="status" aria-live="polite"></div>
+        ${(spec.anulan || []).length ? `<div class="rubrica-anula">
+          <span class="rotulo">${spec.rotuloAnula || 'Condiciones que anulan el trabajo'}</span>
+          <ul>${spec.anulan.map(a => `<li>${a}</li>`).join('')}</ul>
+        </div>` : ''}
+        ${spec.nota ? `<p class="rubrica-nota">${spec.nota}</p>` : ''}`;
+
+      const lista = raiz.querySelector('.rubrica-criterios');
+      const detalle = raiz.querySelector('.rubrica-detalle');
+
+      spec.criterios.forEach((crit, i) => {
+        const boton = document.createElement('button');
+        boton.type = 'button';
+        boton.className = 'rubrica-criterio';
+        boton.dataset.criterio = String(i);
+        boton.setAttribute('aria-pressed', 'false');
+        boton.innerHTML = `
+          <span class="rubrica-criterio-clave">${crit.clave}</span>
+          <span class="rubrica-criterio-nombre">${crit.nombre}</span>
+          <span class="rubrica-criterio-puntos">${crit.puntos} pts · ${Math.round(100 * crit.puntos / total)} % de la nota</span>`;
+        boton.addEventListener('click', () => seleccionar(i));
+        lista.appendChild(boton);
+      });
+
+      function seleccionar(i) {
+        const crit = spec.criterios[i];
+        lista.querySelectorAll('.rubrica-criterio').forEach(b => {
+          const activo = b.dataset.criterio === String(i);
+          b.classList.toggle('activo', activo);
+          b.setAttribute('aria-pressed', String(activo));
+        });
+
+        detalle.innerHTML =
+          (crit.foco ? `<p class="rubrica-foco"><strong>${crit.clave} · ${crit.nombre} (${crit.puntos} pts).</strong> ${crit.foco}</p>` : '') +
+          `<div class="rubrica-niveles">${crit.niveles.map((n, g) => `
+            <div class="rubrica-nivel" data-grado="${g}">
+              <span class="rubrica-nivel-marca">
+                <span class="rubrica-nivel-nombre">${n.nombre}</span>
+                <span class="rubrica-nivel-rango">${n.rango} pts</span>
+              </span>
+              <p class="rubrica-nivel-observa">${n.observa}</p>
+            </div>`).join('')}</div>`;
+
+        if (typeof katexEn === 'function') katexEn(detalle);
+      }
+
+      const anula = raiz.querySelector('.rubrica-anula');
+      if (anula && typeof katexEn === 'function') katexEn(anula);
+      seleccionar(0);
+    }
+
+
+    // ================================================================
     // Ayudantes genéricos que suelen hacer falta en cualquier capítulo
     // ================================================================
 
@@ -4445,6 +4812,38 @@ round(mean(rnorm(200)), 4)   # 0.0117</code></pre>
     // {tipo, modulo, pregunta, pista}. `modulo` alimenta el resumen
     // final de "qué repasar".
     // ================================================================
+
+    // Rúbrica de demostración. Dos criterios bastan para ver la mecánica;
+    // una rúbrica real lleva las dimensiones que declare el instrumento.
+    RUBRICAS['demo-rubrica'] = {
+      titulo: 'Rúbrica de demostración',
+      total: 50,
+      intro: 'Estructura de una rúbrica analítica. Pulsa un criterio para ver qué mide y qué distingue cada nivel.',
+      nota: 'Cada criterio se puntúa por separado y los niveles son excluyentes: se elige uno, no se promedian.',
+      criterios: [
+        {
+          clave: 'A', nombre: 'Interpretación de resultados', puntos: 25,
+          foco: 'Mide si la cifra se usa para <strong>decidir</strong>: qué significa, y sobre todo qué <em>no</em> significa. Un valor $p$ alto no acepta la hipótesis nula.',
+          niveles: [
+            { nombre: 'Excelente', rango: '22–25', observa: 'Decide con la cifra y acota explícitamente qué no queda probado.' },
+            { nombre: 'Aceptable', rango: '15–21', observa: 'Interpreta bien la cifra pero no dice qué se queda fuera.' },
+            { nombre: 'Insuficiente', rango: '8–14', observa: 'Describe la cifra sin llegar a una decisión.' },
+            { nombre: 'No logrado', rango: '0–7', observa: 'Confunde no rechazar con aceptar.' }
+          ]
+        },
+        {
+          clave: 'B', nombre: 'Comprensión del procedimiento', puntos: 25,
+          foco: 'Mide si explica <strong>por qué el procedimiento hace lo que hace</strong>, no solo qué función se llama.',
+          niveles: [
+            { nombre: 'Excelente', rango: '22–25', observa: 'Explica el mecanismo y anticipa dónde falla.' },
+            { nombre: 'Aceptable', rango: '15–21', observa: 'Explica el mecanismo sin discutir sus límites.' },
+            { nombre: 'Insuficiente', rango: '8–14', observa: 'Nombra la función y describe la salida.' },
+            { nombre: 'No logrado', rango: '0–7', observa: 'Reporta el número sin procedimiento detrás.' }
+          ]
+        }
+      ]
+    };
+
     // Demostración del componente .tabla-ranking. Datos fijos: la plantilla no
     // incrusta ningún precálculo, igual que sus simuladores generan sus series.
     TABLAS_RANKING['demo'] = function () {
