@@ -2590,12 +2590,13 @@ print(np.round(r[[0, 1, 11]], 4))   # [0.948  0.8756 0.7604]</code></pre>
         <p>La <strong>autocorrelación parcial</strong> en el rezago $k$, que denotamos $\phi_{kk}$, es la correlación
           entre $y_t$ y $y_{t-k}$ <strong>una vez descontado</strong> el efecto de los rezagos intermedios
           $y_{t-1}, \ldots, y_{t-k+1}$.</p>
-        <p style="margin-bottom:0;">Equivalentemente: es el coeficiente $\phi_{kk}$ de la regresión</p>
+        <p style="margin-bottom:0;">Equivalentemente: sobre la serie centrada —a la que ya se le restó su media—, es el
+          coeficiente $\phi_{kk}$ de la regresión</p>
         $$y_t = \phi_{k1} y_{t-1} + \phi_{k2} y_{t-2} + \cdots + \phi_{kk} y_{t-k} + \varepsilon_t$$
       </div>
 
       <p>En la práctica no se corren $k$ regresiones: se obtiene la PACF a partir de la ACF con la <strong>recursión de
-          Durbin–Levinson</strong>, que es lo que hacen <code>pacf()</code> en R y el simulador de esta página.</p>
+          Durbin–Levinson</strong>, que es lo que hace <code>pacf()</code> en R.</p>
 
       <div class="derivacion">
         <button type="button" class="derivacion-boton" aria-expanded="false" aria-controls="der-durbin-levinson">
@@ -2625,6 +2626,13 @@ print(np.round(r[[0, 1, 11]], 4))   # [0.948  0.8756 0.7604]</code></pre>
             <li>
               <p>Léelo como lo que es: en el numerador está la autocorrelación del rezago $k$ <strong>menos lo que ya
                   explican</strong> los rezagos anteriores. Justamente la parte "parcial" que buscábamos.</p>
+              <p>El denominador tampoco es un normalizador cualquiera: vale $v_{k-1}/\gamma_0$, donde</p>
+              $$v_{k-1} = \gamma_0\Bigl(1 - \sum_{j=1}^{k-1}\phi_{k-1,j}\,\rho_j\Bigr)$$
+              <p>es la varianza del error que deja la predicción de orden $k-1$, es decir, lo que los rezagos anteriores
+                <strong>todavía no explican</strong>. Dividir por ella es lo que convierte el numerador en una
+                <strong>correlación</strong>, acotada entre $-1$ y $1$, y no en una covarianza. De paso aparece la otra
+                mitad de la recursión: $v_k = v_{k-1}\,(1 - \phi_{kk}^2)$. Añadir un rezago nunca empeora la predicción,
+                y la mejora tanto más cuanto mayor sea $|\phi_{kk}|$.</p>
             </li>
             <li>
               <p>Y los demás coeficientes se actualizan con una sola pasada:</p>
@@ -2633,16 +2641,17 @@ print(np.round(r[[0, 1, 11]], 4))   # [0.948  0.8756 0.7604]</code></pre>
             </li>
           </ol>
           <p class="derivacion-resultado">Esta es exactamente la recursión que implementan <code>pacf()</code> de R, el
-            método <code>ywm</code> de statsmodels y la función <code>calcularPACF()</code> de los simuladores de esta
-            página. Las tres coinciden hasta el redondeo con que se guardó el precálculo.</p>
+            método <code>ywm</code> de statsmodels y la función <code>calcularPACF()</code> que mueve los simuladores de
+            los capítulos 3 y 5. Las tres coinciden hasta el redondeo con que se guardó el precálculo.</p>
         </div>
       </div>
 
       <div class="note">
-        <p><strong>Verificación.</strong> El correlograma que ves abajo se calculó en R con <code>stats::pacf()</code> y
-          se incrustó en esta página. La misma recursión implementada en JavaScript para los simuladores interactivos
-          reproduce esos valores con una diferencia máxima de $6.2 \times 10^{-5}$, que es exactamente el redondeo con el
-          que se guardaron. R, Python (<code>statsmodels</code>, método <code>ywm</code>) y el navegador coinciden.</p>
+        <p><strong>Verificación.</strong> El correlograma de abajo no lo calcula el navegador: se obtuvo en R con
+          <code>stats::pacf()</code> y se incrustó ya resuelto en esta página. La misma recursión implementada en
+          JavaScript, aplicada a las series crudas del precálculo, reproduce esos valores con una diferencia máxima de
+          $6.2 \times 10^{-5}$: el orden del redondeo con el que se guardó el JSON. R, Python
+          (<code>statsmodels</code>, método <code>ywm</code>) y el navegador coinciden.</p>
       </div>
 
       <div class="simulador" data-simulador="explorador-acf-pacf">
@@ -2691,7 +2700,7 @@ par(mfrow = c(1, 2))
 acf(AirPassengers,  lag.max = 24, main = "ACF")
 pacf(AirPassengers, lag.max = 24, main = "PACF")
 
-# pacf() NO devuelve el rezago 0 (a diferencia de acf(), que empieza en 1)
+# pacf() empieza en el rezago 1; acf() empieza en el rezago 0, que siempre vale 1
 p &lt;- pacf(AirPassengers, lag.max = 24, plot = FALSE)$acf
 round(p[1:3], 4)
 
