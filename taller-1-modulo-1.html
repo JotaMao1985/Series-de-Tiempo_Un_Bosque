@@ -5593,9 +5593,10 @@
     };
 
     // --- T3 · las dos tablas de varianzas -----------------------------
-    // Cuál de las dos es la sembrada lo sorteó R y NO viaja en el JSON: este
-    // código no lo sabe, y por eso no puede delatarlo. Se pintan como «A» y
-    // «B» en el orden en que vienen.
+    // Cuál de las dos lleva el defecto lo sorteó R y NO viaja en el JSON:
+    // este código no lo sabe, y por eso no puede delatarlo. Se pintan como
+    // «A» y «B» en el orden en que vienen. (Si buscas la respuesta aquí, no
+    // está; sale de comparar las filas entre sí, que es la tarea.)
     SIMULADORES['taller1-var-tablas'] = function (raiz) {
       const lectura = raiz.querySelector('.simulador-lectura');
 
@@ -5694,6 +5695,13 @@
               <th scope="col">Qué salió</th></tr></thead>
             <tbody>
               <tr><th scope="row">A</th>
+                  <td>Un ruido blanco de ${s.n} valores, diferenciado una vez. Varianza antes y
+                      después, y el $\\hat\\theta_1$ de un MA(1) ajustado a la serie
+                      diferenciada.</td>
+                  <td>Varianza ${T1_D4(s.var_ruido)} &rarr; ${T1_D4(s.var_diferenciado)}
+                      (razón <strong>${T1_D4(s.razon)}</strong>) ·
+                      $\\hat\\theta_1 = $ <strong>${T1_D4(s.ma1_estimado)}</strong>.</td></tr>
+              <tr><th scope="row">B</th>
                   <td>Sobre las <strong>${DATOS_T1.series_t1.length} series de T1</strong> del
                       taller: en cuántas el ADF rechaza la raíz unitaria al 5&nbsp;%, y qué
                       devuelve <code>ndiffs()</code> en esas mismas.</td>
@@ -5702,20 +5710,13 @@
                       <strong>${nd.de_esas_ndiffs_dice_1}</strong> de esas
                       ${nd.series_donde_el_adf_rechaza}, <code>ndiffs()</code> devuelve
                       <strong>1</strong>.</td></tr>
-              <tr><th scope="row">B</th>
+              <tr><th scope="row">C</th>
                   <td>${a.replicas} réplicas simuladas de un <strong>${a.descripcion}</strong>,
                       que es estacionario por construcción. En cuántas el ADF <em>no</em> rechaza
                       <em>y</em> a la vez el KPSS de nivel sí rechaza — es decir, en cuántas las dos
                       pruebas apuntan juntas a «no estacionaria».</td>
                   <td>En el <strong>${a.pct_ambas_dicen_no_estacionaria}&nbsp;%</strong> de
                       las ${a.replicas}.</td></tr>
-              <tr><th scope="row">C</th>
-                  <td>Un ruido blanco de ${s.n} valores, diferenciado una vez. Varianza antes y
-                      después, y el $\\hat\\theta_1$ de un MA(1) ajustado a la serie
-                      diferenciada.</td>
-                  <td>Varianza ${T1_D4(s.var_ruido)} &rarr; ${T1_D4(s.var_diferenciado)}
-                      (razón <strong>${T1_D4(s.razon)}</strong>) ·
-                      $\\hat\\theta_1 = $ <strong>${T1_D4(s.ma1_estimado)}</strong>.</td></tr>
             </tbody>
           </table>
         </div>`);
