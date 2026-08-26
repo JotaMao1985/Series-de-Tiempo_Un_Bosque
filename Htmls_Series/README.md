@@ -21,7 +21,7 @@ simuladores** interactivos, autoevaluación con retroalimentación por opción y
 La portada [`index.html`](index.html) enlaza los seis capítulos. En total: **61 módulos, 65
 simuladores, 49 preguntas de autoevaluación y 20 ejercicios guiados con solución comentada.**
 
-## Talleres
+## Taller y preparcial
 
 | # | Taller | Cubre | Módulos | Tareas |
 |---|--------|-------|:---:|:---:|
@@ -35,6 +35,25 @@ en [`entrega/`](entrega/).
 
 Lo que **no** viaja en este repositorio mientras el taller esté abierto: el generador de las
 series, los auditores y el ensamblador. Se versionan después de calificar.
+
+| # | Preparcial | Cubre | Módulos | Ítems |
+|---|------------|-------|:---:|:---:|
+| I | [Corte I · Componentes, estacionariedad, ACF y PACF](preparcial-corte-1.html) | Capítulos 1 y 2 · antes del Parcial 1 | 8 | 32 |
+
+El preparcial **no se entrega y no tiene nota**, y por eso es el mismo para los nueve: aquí copiar
+no tiene sentido, porque el que copia se queda sin lo único que produce. Sus 32 ítems se reparten
+en cuatro bloques —concepto, procedimiento, interpretación y análisis gráfico— en la misma
+proporción con la que está construido el parcial, y esa tabla de especificaciones se publica dentro
+del propio instrumento: estudiar sin saber qué pesa es estudiar a ciegas.
+
+Corre sobre **series generadas aparte, ninguna de ellas `AirPassengers`**. Sobre la serie canónica
+del material reconocer sustituye a razonar, y entonces el diagnóstico miente. Al terminar cada
+bloque, un termómetro por objetivo dice en cuál se está flojo y enlaza al módulo exacto del capítulo
+que hay que releer. Las soluciones viajan dentro de la página: no hay clave oculta que proteger.
+
+Ninguna cifra del instrumento está escrita a mano — todas salen de R — y
+`precalculo/verifica_preparcial.R` las vuelve a calcular desde los valores publicados y las
+contrasta, además de comprobar que ningún enunciado repita uno de los que el estudiante ya vio.
 
 ## Cómo está construido
 
