@@ -5807,13 +5807,13 @@ rbind(resumen(y, "original"),
         pista: 'Son tres. Piensa en qué le pasa a la dispersión de la serie, qué autocorrelación aparece de la nada, y qué tipo de modelo queda inducido.',
         opciones: [
           { texto: 'La varianza deja de bajar y vuelve a subir.', correcta: true },
+          { texto: 'La serie pierde observaciones en cada diferencia.', correcta: false },
           { texto: 'Aparece autocorrelación negativa fuerte en el rezago 1, cerca de $-0.5$.', correcta: true },
           { texto: 'Queda inducido un MA(1) con $\\theta = -1$, que además no es invertible.', correcta: true },
-          { texto: 'La serie pierde observaciones en cada diferencia.', correcta: false },
           { texto: 'Aparecen picos en los rezagos múltiplos del periodo estacional.', correcta: false }
         ],
         retroAcierto: 'Las tres van juntas y son la misma cosa vista de tres formas. Si $y_t$ ya era ruido blanco, $\\nabla y_t = \\varepsilon_t - \\varepsilon_{t-1}$ tiene varianza $2\\sigma^2$ (el doble) y $\\rho_1 = -0.5$ exactamente. En log(<code>AirPassengers</code>): la varianza va $0.0114 \\to 0.0182 \\to 0.0469$ y $r_1$ va $0.200 \\to -0.293 \\to -0.534$.',
-        retroFallo: 'Las correctas son las tres primeras: varianza que repunta, $r_1$ cerca de $-0.5$ y un MA(1) no invertible inducido. Las otras dos son distractores: <em>perder observaciones</em> pasa con cualquier diferencia, útil o no, así que no distingue nada; y los <em>picos en los múltiplos del periodo</em> son la firma de la estacionalidad, que es lo contrario del problema (ahí te falta diferenciar, no te has pasado).'
+        retroFallo: 'Las tres correctas son: varianza que repunta, $r_1$ cerca de $-0.5$ y un MA(1) no invertible inducido. Las otras dos son distractores: <em>perder observaciones</em> pasa con cualquier diferencia, útil o no, así que no distingue nada; y los <em>picos en los múltiplos del periodo</em> son la firma de la estacionalidad, que es lo contrario del problema (ahí te falta diferenciar, no te has pasado).'
       },
       {
         tipo: 'opcion',

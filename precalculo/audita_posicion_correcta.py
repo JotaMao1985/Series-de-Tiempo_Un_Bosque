@@ -6,13 +6,28 @@ Material de Series de Tiempo 2026-II (20948).
 
 Extiende a los seis capítulos la comprobación que `verifica_preparcial.R` hace
 sobre el preparcial en su §4 («Dónde cae la opción correcta»): mismas dos reglas
-y mismos dos umbrales, sobre el mismo defecto.
+y mismos dos umbrales, sobre el mismo defecto. Y añade una tercera para las
+preguntas de varias respuestas, que §4 no necesita —el preparcial no tiene
+ninguna— pero los capítulos sí.
 
 El motor pinta las opciones EN EL ORDEN EN QUE ESTÁN ESCRITAS: no baraja
 (`renderAutoevaluacion()`, `p.opciones.map((op, j) => ...)`). Como al redactar se
 escribe primero la respuesta y luego los distractores, el 2026-08-26 los seis
 capítulos tenían la correcta en la posición 1 en **28 de 28** ítems de una sola
 correcta. Quien se diera cuenta aprobaba los quizzes sin leer ni una pregunta.
+
+En las de varias respuestas el mismo defecto entra por otra puerta: si las `k`
+correctas son las `k` primeras, se aprueba marcando el prefijo sin leer. El
+2026-08-26 lo eran en seis de las ocho. La regla pide que **no ocupen posiciones
+consecutivas**, que de un golpe descarta el prefijo, el sufijo y cualquier bloque
+seguido.
+
+Y una tercera trampa, que costó descubrir moviéndolas: ocho retroalimentaciones
+decían «las correctas son **las tres primeras**». Al repartirlas, esa frase pasó
+a ser mentira sin que nada fallara — el motor seguía corrigiendo bien y el texto
+enseñaba el error. Por eso se comprueba también que ninguna prosa nombre un
+tramo de posiciones que ya no es el de las correctas. Se arregla nombrando el
+contenido («las que hablan de X, de Y y de Z»), no la casilla.
 
 Se comprueba el **reparto**, no un orden concreto, para que una reordenación
 futura siga pasando. Y se comprueba por **archivo**, no por `data-quiz`: la
@@ -128,8 +143,8 @@ def quizzes(texto: str) -> list[tuple[str, int, int]]:
     return salida
 
 
-def items(texto: str, ini: int, fin: int) -> list[tuple[int, int, list[int]]]:
-    """Por ítem con opciones: (número del ítem, cuántas opciones, correctas).
+def items(texto: str, ini: int, fin: int) -> list[tuple[int, int, list[int], str]]:
+    """Por ítem con opciones: (número, cuántas opciones, correctas, su texto).
 
     Los de tipo 'numerica' no tienen `opciones:` y no aparecen, pero sí gastan
     número: el que se devuelve es el que el motor pinta en pantalla, para poder
@@ -144,8 +159,38 @@ def items(texto: str, ini: int, fin: int) -> list[tuple[int, int, list[int]]]:
         spans = elementos(texto, oi, cierra(texto, oi))
         correctas = [k + 1 for k, (x, y) in enumerate(spans)
                      if re.search(r"\bcorrecta\s*:\s*true\b", texto[x:y + 1])]
-        salida.append((n, len(spans), correctas))
+        salida.append((n, len(spans), correctas, texto[a:b + 1]))
     return salida
+
+
+NUMEROS = {"dos": 2, "tres": 3, "cuatro": 4, "cinco": 5, "seis": 6}
+TRAMO = re.compile(r"l[ao]s\s+(dos|tres|cuatro|cinco|seis)\s+(primer|últim)", re.I)
+
+
+def prosa_miente(texto_item: str, correctas: list[int], nopc: int) -> str | None:
+    """Frase que nombra un tramo de posiciones que no es el de las correctas.
+
+    Solo mira frases cuyo número coincide con cuántas correctas hay: así
+    «las dos primeras autocorrelaciones», en un ítem de tres correctas, no
+    dispara. Y si el tramo que nombra SÍ es el de las correctas, la frase es
+    cierta y pasa — lo que falla es la que dejó de serlo.
+    """
+    for m in re.finditer(r"\b(pregunta|pista|retro|retroAcierto|retroFallo)\s*:\s*'((?:[^'\\]|\\.)*)'",
+                         texto_item):
+        for f in TRAMO.finditer(m.group(2)):
+            k = NUMEROS[f.group(1).lower()]
+            if k != len(correctas):
+                continue
+            tramo = list(range(1, k + 1)) if f.group(2).lower().startswith("primer") \
+                else list(range(nopc - k + 1, nopc + 1))
+            if correctas != tramo:
+                return f"{m.group(1)}: «{f.group(0)}» pero las correctas están en {correctas}"
+    return None
+
+
+def consecutivas(pos: list[int]) -> bool:
+    """¿Las correctas ocupan posiciones seguidas? (prefijo, sufijo o bloque)."""
+    return len(pos) > 1 and pos == list(range(pos[0], pos[0] + len(pos)))
 
 
 def racha_maxima(pos: list[int]) -> tuple[int, int]:
@@ -192,7 +237,7 @@ def juzga(etiqueta: str, pos: list[int], avisos: list[str]) -> None:
 def main() -> int:
     rutas = [pathlib.Path(a) for a in sys.argv[1:]] or sorted(SITIO.glob("*.html"))
     avisos: list[str] = []
-    prefijos: list[str] = []
+    varias: list[tuple[str, int, list[int]]] = []
     auditados = 0
 
     # Los dos umbrales, probados contra el estado del que se viene: si no
@@ -203,23 +248,31 @@ def main() -> int:
               "(las 28 en la primera)")
     comprueba(racha_maxima([4, 2, 2, 2, 1])[0] > RACHA_MAXIMA,
               "y la regla de la racha RECHAZA tres seguidas en el mismo sitio")
+    comprueba(consecutivas([1, 2, 3]) and not consecutivas([2, 3, 5]),
+              "y la de varias respuestas RECHAZA el prefijo del que se viene "
+              "(las tres primeras)")
+    comprueba(prosa_miente("retroFallo: 'Las correctas son las tres primeras.'", [1, 3, 5], 5)
+              and not prosa_miente("retroFallo: 'Las correctas son las tres primeras.'", [1, 2, 3], 5)
+              and not prosa_miente("retro: 'incluidas las dos primeras.'", [1, 3, 5], 5),
+              "y la de la prosa RECHAZA «las tres primeras» cuando ya no lo son, "
+              "sin morder ni a la frase cierta ni a «las dos primeras» de otra cosa")
 
     for ruta in rutas:
         texto = ruta.read_text(encoding="utf-8")
         pos, etiquetas = [], []
         for quiz, ini, fin in quizzes(texto):
             auditados += 1
-            for n, nopc, correctas in items(texto, ini, fin):
+            for n, nopc, correctas, trozo in items(texto, ini, fin):
+                miente = prosa_miente(trozo, correctas, nopc)
+                if miente:
+                    comprueba(False, f"{ruta.name} · {quiz} #{n}: la prosa nombra "
+                                     f"posiciones que ya no son las de las correctas",
+                              miente)
                 if len(correctas) == 1:
                     pos.append(correctas[0])
                     etiquetas.append(f"{quiz}#{n}")
-                # Una 'multiple' cuyas correctas son las primeras del array se
-                # aprueba marcando el prefijo, sin leer nada. Cae fuera de las
-                # dos reglas —que solo miran los ítems de una sola correcta— y
-                # se informa, porque es el mismo defecto por otra puerta.
-                elif correctas == list(range(1, len(correctas) + 1)) and len(correctas) > 1:
-                    prefijos.append(f"{ruta.name} · {quiz} #{n}: las {len(correctas)} "
-                                    f"correctas son las {len(correctas)} primeras de {nopc}")
+                elif len(correctas) > 1:
+                    varias.append((f"{ruta.name} · {quiz} #{n}", nopc, correctas))
         if pos:
             print(f"\n{ruta.name} — posición de la correcta, en el orden en que "
                   f"se encuentran:")
@@ -231,11 +284,19 @@ def main() -> int:
         for a in avisos:
             print(f"  ·  {a}")
 
-    if prefijos:
-        print("\nAviso — preguntas de varias respuestas cuyas correctas ocupan las\n"
-              "primeras posiciones, y que por tanto se aprueban marcando el prefijo:")
-        for p in prefijos:
-            print(f"  ·  {p}")
+    if varias:
+        # Si alguna vez falla el taller de auditoría del capítulo 6
+        # (`auditoria #1`), NO se arregla barajando: sus diez opciones son los
+        # diez pasos numerados de un flujo y su orden es el enunciado. Habría
+        # que cambiar qué pasos son engañosos, no dónde están.
+        print("\nPreguntas de varias respuestas — dónde caen sus correctas:")
+        for etiqueta, nopc, pos in varias:
+            comprueba(not consecutivas(pos),
+                      f"{etiqueta}: las {len(pos)} correctas no ocupan posiciones "
+                      f"seguidas",
+                      f"{pos} de {nopc}")
+        primeras = sum(1 for _, _, pos in varias if pos[0] == 1)
+        print(f"    la posición 1 es correcta en {primeras} de {len(varias)}")
 
     print(f"\n{auditados} quizzes auditados en {len(rutas)} archivos.")
     if fallos:

@@ -6838,12 +6838,12 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
         opciones: [
           { texto: 'Con $d = 1$ la constante es la media de las <em>diferencias</em>, es decir una tendencia lineal en la serie original.', correcta: true },
           { texto: 'Con $d \\ge 1$, <code>stats::arima</code> ignora <code>include.mean</code> sin avisar.', correcta: true },
-          { texto: 'Con $d \\ge 2$, <code>forecast::Arima</code> avisa y no ajusta la deriva.', correcta: true },
           { texto: 'Sin constante, un modelo con $d = 2$ pronostica una parábola.', correcta: false },
+          { texto: 'Con $d \\ge 2$, <code>forecast::Arima</code> avisa y no ajusta la deriva.', correcta: true },
           { texto: 'La constante de un ARIMA($p,0,q$) es la ordenada al origen de una regresión, no la media del proceso.', correcta: false }
         ],
-        retroAcierto: 'Las tres primeras. Y las dos falsas son justo las que el capítulo desmiente midiendo: con $d = 2$ y sin constante la segunda diferencia del pronóstico se anula ($\\Delta^2 = 0$), es decir sale una <strong>recta</strong>; y el <code>intercept</code> que devuelve R para un ARIMA($p,0,q$) <strong>es</strong> la media del proceso, $920.70$ en el Nilo, pese al nombre.',
-        retroFallo: 'Las correctas son las tres primeras. Sobre las falsas: la parábola necesitaría constante <em>con</em> $d = 2$, y <code>forecast</code> se niega precisamente a eso; sin constante, el pronóstico con $d = 2$ es una recta (lo verifica el Módulo 9 midiendo $\\Delta^2 = 0$). Y el <code>intercept</code> de R en un modelo con $d = 0$ es la media, no una ordenada al origen: el nombre despista.'
+        retroAcierto: 'Las tres. Y las dos falsas son justo las que el capítulo desmiente midiendo: con $d = 2$ y sin constante la segunda diferencia del pronóstico se anula ($\\Delta^2 = 0$), es decir sale una <strong>recta</strong>; y el <code>intercept</code> que devuelve R para un ARIMA($p,0,q$) <strong>es</strong> la media del proceso, $920.70$ en el Nilo, pese al nombre.',
+        retroFallo: 'Las tres correctas son las que hablan de la constante con $d = 1$, de <code>include.mean</code> con $d \\ge 1$ y de la deriva con $d \\ge 2$. Sobre las falsas: la parábola necesitaría constante <em>con</em> $d = 2$, y <code>forecast</code> se niega precisamente a eso; sin constante, el pronóstico con $d = 2$ es una recta (lo verifica el Módulo 9 midiendo $\\Delta^2 = 0$). Y el <code>intercept</code> de R en un modelo con $d = 0$ es la media, no una ordenada al origen: el nombre despista.'
       },
       {
         tipo: 'opcion',
