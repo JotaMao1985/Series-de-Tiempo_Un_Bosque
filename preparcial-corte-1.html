@@ -5070,12 +5070,12 @@
         pregunta: 'Tienes tres conjuntos de datos: <strong>(i)</strong> el peso de 200 pacientes medido una sola vez; <strong>(ii)</strong> las ventas mensuales de una tienda durante 10 años; <strong>(iii)</strong> el ingreso de 50 hogares en 2020 y en 2024. ¿Sobre cuál tienen sentido las herramientas de este curso, y por qué?',
         pista: 'La pregunta no es cuántas observaciones hay, ni si hay más de un momento en el tiempo. Es si <em>reordenar las filas destruye información</em>.',
         opciones: [
-          { texto: 'Solo sobre (ii), porque es el único donde el orden de las observaciones es un dato en sí mismo.', correcta: true,
-            retro: 'Eso es lo que define una serie de tiempo. En (i) las filas se pueden barajar sin perder nada. En (iii) hay dos momentos, pero no una secuencia: no hay rezagos que calcular, ni tendencia, ni estacionalidad. En (ii), barajar los meses destruye exactamente aquello que se quiere modelar.' },
           { texto: 'Sobre (ii) y (iii), porque las dos tienen una dimensión temporal.', correcta: false,
             retro: 'Tener fechas no basta. Con dos cortes no hay rezago 1, ni correlograma, ni componente estacional: (iii) es un panel, y se analiza con otras herramientas. La serie necesita una secuencia, no dos fotos.' },
           { texto: 'Sobre las tres, porque cualquier conjunto de datos se puede ordenar.', correcta: false,
             retro: 'Ordenar (i) por peso produce una secuencia, sí — pero una en la que el «rezago 1» no significa nada. El orden tiene que venir del fenómeno, no de la manipulación.' },
+          { texto: 'Solo sobre (ii), porque es el único donde el orden de las observaciones es un dato en sí mismo.', correcta: true,
+            retro: 'Eso es lo que define una serie de tiempo. En (i) las filas se pueden barajar sin perder nada. En (iii) hay dos momentos, pero no una secuencia: no hay rezagos que calcular, ni tendencia, ni estacionalidad. En (ii), barajar los meses destruye exactamente aquello que se quiere modelar.' },
           { texto: 'Solo sobre (ii), porque es el único con más de 100 observaciones.', correcta: false,
             retro: 'La conclusión es la correcta pero por la razón equivocada, y eso importa: (i) tiene 200 observaciones y sigue sin ser una serie. Lo que decide no es el tamaño, es que el orden lleve información.' }
         ]
@@ -5085,10 +5085,10 @@
         pregunta: 'En la serie <code>demanda</code> hay un mes anómalo: un valor un 55&nbsp;% por encima de lo que le tocaba. Al descomponerla con STL, el salto aparece en el residuo con magnitud <strong>0.356</strong>, en la tendencia con <strong>0.042</strong> y en el componente estacional con <strong>0.040</strong>. ¿Qué dice eso de los cuatro componentes?',
         pista: 'Los cuatro componentes no son cuatro cajones iguales. Tres se estiman con una regla; el cuarto es lo que sobra.',
         opciones: [
-          { texto: 'Que el residuo es el componente donde cae lo que no es sistemático — y por eso es el único que no se modela: se estima por diferencia.', correcta: true,
-            retro: 'Exacto. La tendencia y la estacionalidad se estiman imponiendo una estructura (suave la una, periódica la otra); un pico de un solo mes no cabe en ninguna de las dos, así que va a parar al residuo casi entero. El residuo no es «el error»: es todo lo que las reglas no capturaron.' },
           { texto: 'Que el atípico es estacional, porque afecta a un mes concreto.', correcta: false,
             retro: 'Afectar a un mes no es ser estacional. La estacionalidad es un patrón que <em>se repite</em> cada periodo: tendría que aparecer en ese mismo mes todos los años. Aquí ocurrió una vez, y por eso el componente estacional apenas se mueve (0.040).' },
+          { texto: 'Que el residuo es el componente donde cae lo que no es sistemático — y por eso es el único que no se modela: se estima por diferencia.', correcta: true,
+            retro: 'Exacto. La tendencia y la estacionalidad se estiman imponiendo una estructura (suave la una, periódica la otra); un pico de un solo mes no cabe en ninguna de las dos, así que va a parar al residuo casi entero. El residuo no es «el error»: es todo lo que las reglas no capturaron.' },
           { texto: 'Que la descomposición está mal hecha, porque un residuo tan grande indica un mal ajuste.', correcta: false,
             retro: 'Al revés: un residuo grande en el punto anómalo es señal de que la descomposición hizo lo correcto — aisló la anomalía en vez de repartirla. Preocupante sería que la tendencia se hubiera doblado para perseguir ese punto.' },
           { texto: 'Que hay que quitar ese dato antes de descomponer.', correcta: false,
@@ -5100,10 +5100,10 @@
         pregunta: 'Cuatro series del preparcial, partidas en tres tramos iguales. <code>linea</code>: medias 24.8, 35.0, 45.6 con varianzas 17.0, 11.9, 14.0. <code>demanda</code>: medias 36.5, 49.5, 65.3 con varianzas 28.9, 50.7, 103.4. <code>residuo_blanco</code>: medias 0.03, −0.06, −0.16 con varianzas 0.86, 0.86, 0.82. ¿Cuál viola <strong>solo la primera</strong> condición de la estacionariedad débil?',
         pista: 'Las condiciones son tres: media constante, varianza constante y autocovarianza que dependa solo del rezago. Mira cuál de las series mueve la media pero deja la varianza quieta.',
         opciones: [
-          { texto: '<code>linea</code>: la media sube de 24.8 a 45.6, pero la varianza se queda alrededor de 14.', correcta: true,
-            retro: 'Eso es. La media depende de $t$ —falla la condición (1)— y la varianza no —se sostiene la (2)—. Es el caso de una tendencia determinista: estacionaria alrededor de una recta, no alrededor de una constante. Y es exactamente la serie que hace discrepar al ADF y al KPSS de nivel.' },
           { texto: '<code>demanda</code>: la media sube de 36.5 a 65.3.', correcta: false,
             retro: 'La media sube, sí, pero la varianza también: de 28.9 a 103.4, casi cuatro veces. Viola las dos primeras condiciones, no solo la primera. Por eso <code>demanda</code> pide una transformación antes que una diferencia.' },
+          { texto: '<code>linea</code>: la media sube de 24.8 a 45.6, pero la varianza se queda alrededor de 14.', correcta: true,
+            retro: 'Eso es. La media depende de $t$ —falla la condición (1)— y la varianza no —se sostiene la (2)—. Es el caso de una tendencia determinista: estacionaria alrededor de una recta, no alrededor de una constante. Y es exactamente la serie que hace discrepar al ADF y al KPSS de nivel.' },
           { texto: '<code>residuo_blanco</code>: las medias no son exactamente iguales.', correcta: false,
             retro: 'Ninguna media muestral sale exactamente igual: 0.03, −0.06 y −0.16 son variación de muestreo con varianza cercana a 0.86 y unas 67 observaciones por tramo. La condición es sobre la media <em>teórica</em>, no sobre las tres cifras que salieron.' },
           { texto: 'Ninguna: las tres violan al menos dos condiciones.', correcta: false,
@@ -5115,14 +5115,14 @@
         pregunta: 'Una serie tiene media constante y varianza constante en todo el recorrido. Pero al partirla en tres tramos, su autocovarianza al rezago 1 vale <strong>10.9</strong>, <strong>25.3</strong> y <strong>35.8</strong>. ¿Es estacionaria en sentido débil?',
         pista: 'Cuenta las condiciones. Con dos cumplidas todavía falta una, y es la que casi nadie comprueba.',
         opciones: [
-          { texto: 'No: la tercera condición pide que $\\operatorname{Cov}(y_t, y_{t+h})$ dependa solo de $h$, y aquí depende también de dónde estés en la serie.', correcta: true,
-            retro: 'Correcto. Las tres condiciones son media constante, varianza constante y autocovarianza función solo del rezago. Aquí las dos primeras se cumplen y la tercera no: el mismo rezago 1 da 10.9 al principio y 35.8 al final. Es la condición que casi nadie mira, y la que hace que el correlograma muestral no signifique nada — porque promedia estructuras distintas.' },
           { texto: 'Sí: con media y varianza constantes ya se cumple la estacionariedad débil.', correcta: false,
             retro: 'Eso sería la estacionariedad de primer y segundo momento marginal, que no basta. La definición débil pide además que la <em>dependencia</em> entre observaciones sea la misma en todas partes. Sin eso, la ACF que calcules es un promedio de cosas que no son la misma.' },
           { texto: 'No, pero porque la varianza tiene que estar creciendo si la autocovarianza crece.', correcta: false,
             retro: 'No se sigue. La autocovarianza al rezago 1 puede crecer con la varianza fija si lo que cambia es la <em>correlación</em>: una serie cuya dependencia se hace más fuerte con el tiempo sin que su dispersión cambie. El enunciado dice que la varianza es constante; tómalo por bueno.' },
           { texto: 'No se puede saber sin aplicar una prueba de raíz unitaria.', correcta: false,
-            retro: 'La definición se comprueba con la definición. Además, ADF y KPSS no prueban esto: el ADF busca una raíz unitaria y el KPSS mira la constancia del nivel. Ninguno de los dos detecta que la dependencia cambie a lo largo de la serie.' }
+            retro: 'La definición se comprueba con la definición. Además, ADF y KPSS no prueban esto: el ADF busca una raíz unitaria y el KPSS mira la constancia del nivel. Ninguno de los dos detecta que la dependencia cambie a lo largo de la serie.' },
+          { texto: 'No: la tercera condición pide que $\\operatorname{Cov}(y_t, y_{t+h})$ dependa solo de $h$, y aquí depende también de dónde estés en la serie.', correcta: true,
+            retro: 'Correcto. Las tres condiciones son media constante, varianza constante y autocovarianza función solo del rezago. Aquí las dos primeras se cumplen y la tercera no: el mismo rezago 1 da 10.9 al principio y 35.8 al final. Es la condición que casi nadie mira, y la que hace que el correlograma muestral no signifique nada — porque promedia estructuras distintas.' }
         ]
       },
       {
@@ -5130,12 +5130,12 @@
         pregunta: 'Si el ADF ya contrasta la raíz unitaria, ¿para qué correr además el KPSS? Dicho de otra forma: ¿qué situación caza el KPSS que el ADF deja pasar?',
         pista: 'Piensa en qué incluye por defecto la regresión del ADF, y qué está preguntando el KPSS <em>de nivel</em>.',
         opciones: [
-          { texto: 'La serie estacionaria alrededor de una tendencia: el ADF la trata bien porque su regresión incluye la tendencia, y el KPSS <em>de nivel</em> la rechaza porque el nivel no es constante.', correcta: true,
-            retro: 'Ese es el caso, y en el preparcial lo tienes medido: sobre <code>linea</code> el ADF da p < 0.01 —no hay raíz unitaria— y el KPSS de nivel también rechaza —el nivel no es constante—, mientras el KPSS de tendencia no rechaza (p > 0.10). Las tres cifras juntas dicen «estacionaria alrededor de una recta», que no es lo mismo que estacionaria.' },
           { texto: 'Ninguna: son la misma prueba con la hipótesis nula al revés, así que siempre concuerdan.', correcta: false,
             retro: 'Tener nulas contrapuestas no las hace equivalentes. No rechazar el ADF y no rechazar el KPSS pueden ocurrir a la vez —significa que los datos no alcanzan—, y rechazar las dos también, que es justo el caso de la tendencia determinista.' },
           { texto: 'La serie con estacionalidad fuerte, que el ADF no sabe manejar.', correcta: false,
             retro: 'La estacionalidad sí distorsiona al ADF, pero el KPSS de nivel no es el remedio: también se confunde. Ahí lo que se hace es desestacionalizar o diferenciar estacionalmente antes de aplicar cualquiera de los dos.' },
+          { texto: 'La serie estacionaria alrededor de una tendencia: el ADF la trata bien porque su regresión incluye la tendencia, y el KPSS <em>de nivel</em> la rechaza porque el nivel no es constante.', correcta: true,
+            retro: 'Ese es el caso, y en el preparcial lo tienes medido: sobre <code>linea</code> el ADF da p < 0.01 —no hay raíz unitaria— y el KPSS de nivel también rechaza —el nivel no es constante—, mientras el KPSS de tendencia no rechaza (p > 0.10). Las tres cifras juntas dicen «estacionaria alrededor de una recta», que no es lo mismo que estacionaria.' },
           { texto: 'La serie con un atípico, que infla el estadístico del ADF.', correcta: false,
             retro: 'Un atípico afecta a las dos pruebas, y no es la razón por la que se recomienda correrlas juntas. Lo que hace útil el par es que sus nulas contrapuestas permiten distinguir «hay evidencia» de «no hay datos suficientes».' }
         ]
@@ -5145,12 +5145,12 @@
         pregunta: 'En <code>demanda</code>, la varianza por tramos pasa de 28.9 a 50.7 y a 103.4, y tras tomar logaritmos queda en 0.022, 0.020 y 0.024. Las medias, en cambio, siguen subiendo después del logaritmo (3.59, 3.89, 4.17). ¿Qué condición de la estacionariedad ataca la transformación, y cuál no toca?',
         pista: 'Mira qué números se aplanaron y cuáles no. La transformación hizo una cosa muy bien y la otra en absoluto.',
         opciones: [
-          { texto: 'Ataca la varianza constante (condición 2) y no toca la media constante (condición 1): sigue haciendo falta diferenciar.', correcta: true,
-            retro: 'Eso es. Después del logaritmo la varianza por tramos es prácticamente la misma (0.022, 0.020, 0.024) y la media sigue creciendo. La transformación y la diferencia resuelven problemas distintos y por eso van en ese orden: primero estabilizar la varianza, después quitar la tendencia.' },
           { texto: 'Ataca las dos: el logaritmo comprime la serie y con eso aplana también el nivel.', correcta: false,
             retro: 'Comprime la escala, pero no elimina la tendencia: 3.59 → 3.89 → 4.17 sigue siendo una subida sistemática. Lo que el logaritmo convierte es un crecimiento multiplicativo en uno aditivo, que es más fácil de diferenciar — no en uno inexistente.' },
           { texto: 'Ataca la media constante, porque el logaritmo reduce los valores grandes más que los pequeños.', correcta: false,
             retro: 'Reduce más los valores grandes, sí, y por eso estabiliza la <em>varianza</em>. Pero la media transformada sigue dependiendo de $t$: mira las tres cifras del enunciado.' },
+          { texto: 'Ataca la varianza constante (condición 2) y no toca la media constante (condición 1): sigue haciendo falta diferenciar.', correcta: true,
+            retro: 'Eso es. Después del logaritmo la varianza por tramos es prácticamente la misma (0.022, 0.020, 0.024) y la media sigue creciendo. La transformación y la diferencia resuelven problemas distintos y por eso van en ese orden: primero estabilizar la varianza, después quitar la tendencia.' },
           { texto: 'Ninguna de las dos: solo cambia las unidades y la conclusión sobre estacionariedad no varía.', correcta: false,
             retro: 'A veces es así —tomar logaritmos de una serie con varianza ya constante es solo un cambio de unidades—, pero no aquí. Pasar de una razón de varianzas de 3.6 a una de 1.2 es un cambio real en la condición (2).' }
         ]
@@ -5259,12 +5259,12 @@
         pregunta: 'Se descompone $\\log(\\texttt{demanda})$ con STL tres veces, cambiando solo <code>s.window</code>. La autocorrelación del <strong>residuo</strong> en el rezago 12 sale: con <code>s.window = 5</code>, <strong>−0.599</strong>; con <code>s.window = 21</code>, <strong>−0.148</strong>; con <code>"periodic"</code>, <strong>−0.127</strong>. La banda es <strong>±0.179</strong>. ¿Qué está pasando con la ventana pequeña?',
         pista: 'La barra del rezago 12 se sale de banda, y se sale <em>hacia abajo</em>. Un residuo con autocorrelación negativa en el periodo no es estacionalidad que sobró.',
         opciones: [
-          { texto: 'Con <code>s.window = 5</code> el componente estacional se ajusta tan deprisa que absorbe ruido; el residuo queda con estructura de signo contrario en el periodo. Es sobreajuste, no falta de ajuste.', correcta: true,
-            retro: 'Exacto, y el signo es la clave. Si el estacional se hubiera quedado corto, quedaría autocorrelación <em>positiva</em> en el rezago 12: la parte de estacionalidad no capturada. Lo que hay es −0.599, muy fuera de banda hacia abajo: el estacional se llevó por delante variación que era ruido, y el residuo lo compensa. Un <code>s.window</code> pequeño es tan malo como uno grande.' },
           { texto: 'Con <code>s.window = 5</code> queda estacionalidad sin quitar, y por eso el residuo la conserva.', correcta: false,
             retro: 'Esa sería la lectura si la barra fuera positiva. Es −0.599: negativa y grande. Estacionalidad sin quitar deja correlación positiva en el periodo; lo que ves es el residuo compensando un estacional que se pasó de flexible.' },
           { texto: 'Nada relevante: las tres opciones dan resultados equivalentes dentro del margen de error.', correcta: false,
             retro: 'Con banda ±0.179, un valor de −0.599 está más de tres veces fuera. Las otras dos (−0.148 y −0.127) sí están dentro. La ventana pequeña es la única que rompe.' },
+          { texto: 'Con <code>s.window = 5</code> el componente estacional se ajusta tan deprisa que absorbe ruido; el residuo queda con estructura de signo contrario en el periodo. Es sobreajuste, no falta de ajuste.', correcta: true,
+            retro: 'Exacto, y el signo es la clave. Si el estacional se hubiera quedado corto, quedaría autocorrelación <em>positiva</em> en el rezago 12: la parte de estacionalidad no capturada. Lo que hay es −0.599, muy fuera de banda hacia abajo: el estacional se llevó por delante variación que era ruido, y el residuo lo compensa. Un <code>s.window</code> pequeño es tan malo como uno grande.' },
           { texto: 'Que <code>"periodic"</code> es siempre la mejor opción, porque da el residuo más limpio.', correcta: false,
             retro: '«Periodic» fija el estacional idéntico todos los años, y aquí funciona porque la serie se simuló así. En una serie cuya estacionalidad cambia de verdad, esa rigidez es un defecto y la diferencia se le carga al residuo. La conclusión correcta no es «usa periodic», es «mira el residuo».' }
         ]
@@ -5289,14 +5289,14 @@
         pregunta: 'La serie <code>indice</code>, partida en tres tramos, tiene varianzas <strong>11.8</strong>, <strong>26.3</strong> y <strong>38.5</strong>. El ADF da $-1.87$ con $p = 0.6302$. Tras diferenciar una vez, el ADF da $-5.75$ con $p &lt; 0.01$. ¿Qué es esta serie y qué explica la varianza creciente?',
         pista: 'Escribe la caminata como suma de choques desde el origen. ¿Cuánto vale la varianza de esa suma en el instante $t$?',
         opciones: [
-          { texto: 'Una caminata aleatoria: $y_t = \\sum_{i \\le t} \\varepsilon_i$, así que $\\operatorname{Var}(y_t) = t\\sigma^2$ crece sin límite. Diferenciar recupera los choques, que sí son estacionarios.', correcta: true,
-            retro: 'Eso es, y las tres varianzas lo confirman: crecen de forma aproximadamente lineal con el tramo. La consecuencia conceptual es la que importa en el parcial: en una caminata un choque <strong>no se olvida nunca</strong> —entra en el nivel y se queda—, y por eso no hay una media a la que volver.' },
           { texto: 'Una serie con tendencia determinista, porque el nivel se desplaza.', correcta: false,
             retro: 'Una tendencia determinista mueve la <em>media</em> pero deja la varianza estable — es el caso de <code>linea</code>, con varianzas 17.0, 11.9, 14.0. Aquí lo que crece es la dispersión, que es la firma de la raíz unitaria, no la de una recta.' },
           { texto: 'Una serie heterocedástica, que se arregla con logaritmos.', correcta: false,
             retro: 'La varianza crece, sí, pero no porque la escala dependa del nivel: crece porque los choques se acumulan. El logaritmo no lo arregla —de hecho <code>indice</code> ni siquiera tiene por qué ser positiva—. Lo que lo arregla es diferenciar, y el ADF tras diferenciar lo confirma.' },
           { texto: 'No se puede saber: el ADF con $p = 0.63$ no rechaza, pero eso no prueba nada.', correcta: false,
-            retro: 'La cautela es correcta en general —no rechazar nunca prueba la nula— pero aquí no estás solo con el $p$-valor: tienes la varianza creciendo por tramos y el ADF rechazando tras diferenciar. Tres piezas que apuntan al mismo sitio sí permiten decidir.' }
+            retro: 'La cautela es correcta en general —no rechazar nunca prueba la nula— pero aquí no estás solo con el $p$-valor: tienes la varianza creciendo por tramos y el ADF rechazando tras diferenciar. Tres piezas que apuntan al mismo sitio sí permiten decidir.' },
+          { texto: 'Una caminata aleatoria: $y_t = \\sum_{i \\le t} \\varepsilon_i$, así que $\\operatorname{Var}(y_t) = t\\sigma^2$ crece sin límite. Diferenciar recupera los choques, que sí son estacionarios.', correcta: true,
+            retro: 'Eso es, y las tres varianzas lo confirman: crecen de forma aproximadamente lineal con el tramo. La consecuencia conceptual es la que importa en el parcial: en una caminata un choque <strong>no se olvida nunca</strong> —entra en el nivel y se queda—, y por eso no hay una media a la que volver.' }
         ]
       },
       {
@@ -5319,12 +5319,12 @@
         pregunta: 'Sobre tres series muy distintas del preparcial se calculan $r_1$ y $\\phi_{11}$: <code>demanda</code> da 0.9112 y 0.9112; <code>caudal</code>, 0.2587 y 0.2587; <code>indice</code>, 0.9837 y 0.9837. Coinciden hasta el último decimal en las tres. ¿Casualidad?',
         pista: '¿Qué significa «parcial»? ¿Qué habría que descontar en el <em>primer</em> rezago?',
         opciones: [
-          { texto: 'No: $\\phi_{11} = r_1$ siempre, por definición. La PACF descuenta el efecto de los rezagos intermedios, y entre $t$ y $t-1$ no hay ninguno.', correcta: true,
-            retro: 'Exacto, y no es un detalle de trivia: fija qué es la PACF. En el rezago 2 hay un intermedio que descontar y por eso $\\phi_{22} \\neq r_2$; en el rezago 1 no hay nada que descontar y las dos funciones coinciden por construcción, sea cual sea la serie. Si alguna vez te salen distintas, hay un error de cálculo.' },
           { texto: 'Sí: coinciden porque las tres series tienen dependencia de primer orden dominante.', correcta: false,
             retro: 'Las tres son procesos muy distintos —una estacional con tendencia, una AR(1) débil y una caminata— y aun así coinciden exactamente. Eso descarta que sea una propiedad de estas series: es una identidad.' },
           { texto: 'Sí, pero solo porque el rezago 1 se estima con casi toda la muestra y el error es pequeño.', correcta: false,
             retro: 'No es una cuestión de precisión: la diferencia es exactamente cero, no pequeña. Con $n$ pequeño seguirían coincidiendo, porque es una identidad algebraica y no una aproximación.' },
+          { texto: 'No: $\\phi_{11} = r_1$ siempre, por definición. La PACF descuenta el efecto de los rezagos intermedios, y entre $t$ y $t-1$ no hay ninguno.', correcta: true,
+            retro: 'Exacto, y no es un detalle de trivia: fija qué es la PACF. En el rezago 2 hay un intermedio que descontar y por eso $\\phi_{22} \\neq r_2$; en el rezago 1 no hay nada que descontar y las dos funciones coinciden por construcción, sea cual sea la serie. Si alguna vez te salen distintas, hay un error de cálculo.' },
           { texto: 'No, y además pasa lo mismo en el rezago 2 por la misma razón.', correcta: false,
             retro: 'En el rezago 2 ya no: ahí sí hay un intermedio. Sobre <code>ocupacion</code>, $r_2 = -0.3766$ y $\\phi_{22} = -0.4257$. La coincidencia es exclusiva del primer rezago.' }
         ]
@@ -5334,10 +5334,10 @@
         pregunta: 'La misma serie <code>potencia</code>, un AR(1) con $\\phi = 0.82$, se somete al ADF dos veces. Con las <strong>40</strong> primeras observaciones: estadístico $-2.63$, $p = 0.3262$. Con las <strong>200</strong>: estadístico $-4.28$, $p &lt; 0.01$. El proceso no ha cambiado. ¿Qué cambió?',
         pista: 'Ninguna de las dos conclusiones es «falsa». Pregúntate qué es lo que una prueba puede hacer con 40 datos y no con 200.',
         opciones: [
-          { texto: 'La <strong>potencia</strong> de la prueba. Con 40 observaciones el ADF no distingue $\\phi = 0.82$ de $\\phi = 1$; con 200 sí. La conclusión fiable es la de la muestra grande.', correcta: true,
-            retro: 'Eso es. El proceso es estacionario en los dos casos —$|\\phi| &lt; 1$—, así que con $n=40$ la prueba se equivocó al no rechazar: un falso negativo. Y esto tiene una consecuencia práctica dura: <strong>«no rechazo» en una serie corta no es evidencia de raíz unitaria, es ausencia de evidencia</strong>. Diferenciar por ese motivo es sobrediferenciar.' },
           { texto: 'Que con más datos la serie se volvió estacionaria.', correcta: false,
             retro: 'Una serie no se vuelve estacionaria por observarla más tiempo: la estacionariedad es una propiedad del proceso, no de la muestra. Lo que cambia con $n$ es la capacidad de la prueba para detectarla.' },
+          { texto: 'La <strong>potencia</strong> de la prueba. Con 40 observaciones el ADF no distingue $\\phi = 0.82$ de $\\phi = 1$; con 200 sí. La conclusión fiable es la de la muestra grande.', correcta: true,
+            retro: 'Eso es. El proceso es estacionario en los dos casos —$|\\phi| &lt; 1$—, así que con $n=40$ la prueba se equivocó al no rechazar: un falso negativo. Y esto tiene una consecuencia práctica dura: <strong>«no rechazo» en una serie corta no es evidencia de raíz unitaria, es ausencia de evidencia</strong>. Diferenciar por ese motivo es sobrediferenciar.' },
           { texto: 'Que el estadístico cambió de signo o de escala al cambiar el número de rezagos.', correcta: false,
             retro: 'Los rezagos pasan de 3 a 5, sí, pero el estadístico no cambia de signo: pasa de $-2.63$ a $-4.28$, más negativo. Lo que decide es que el valor crítico se cruza, y eso ocurre porque el estimador de $\\phi$ es mucho más preciso con 200 datos.' },
           { texto: 'Nada relevante: los dos $p$-valores son compatibles y la conclusión es la misma.', correcta: false,
@@ -5349,14 +5349,14 @@
         pregunta: 'Sobre <code>linea</code> —una recta más ruido— se corre <code>ur.df</code> de dos formas. Con <code>type = "drift"</code>: estadístico $-1.09$, críticos $-3.46$, $-2.88$, $-2.57$. Con <code>type = "trend"</code>: estadístico $-7.44$, críticos $-3.99$, $-3.43$, $-3.13$. ¿Qué pasó, y qué habría ocurrido eligiendo la primera?',
         pista: 'La especificación no es un detalle de configuración: cambia qué se está contrastando contra qué.',
         opciones: [
-          { texto: 'Con <code>"trend"</code> se rechaza sin discusión y con <code>"drift"</code> no se rechaza. Elegir <code>"drift"</code> habría llevado a diferenciar una serie que no tiene raíz unitaria.', correcta: true,
-            retro: 'Correcto. Sin el término de tendencia en la regresión, la subida sistemática de la serie no tiene dónde ir y la prueba la confunde con persistencia: $-1.09$ ni se acerca al crítico. Con el término puesto, $-7.44$ lo cruza con holgura. La regla práctica: si el gráfico muestra una tendencia clara, la especificación tiene que incluirla, y decidirlo <em>antes</em> de ver el $p$-valor.' },
           { texto: 'Los dos resultados son válidos y contestan la misma pregunta con distinta potencia.', correcta: false,
             retro: 'No contestan la misma pregunta. <code>"drift"</code> contrasta raíz unitaria frente a estacionariedad alrededor de una <em>constante</em>; <code>"trend"</code>, frente a estacionariedad alrededor de una <em>recta</em>. Son hipótesis alternativas distintas, no la misma con más o menos poder.' },
           { texto: 'Que <code>"trend"</code> siempre rechaza más, así que conviene usarlo por defecto.', correcta: false,
             retro: 'No siempre: añadir el término de tendencia consume grados de libertad y desplaza los valores críticos hacia la izquierda (de $-2.88$ a $-3.43$ al 5&nbsp;%). En una serie sin tendencia, usar <code>"trend"</code> pierde potencia. Se elige por el gráfico, no por el resultado.' },
           { texto: 'Que la serie tiene raíz unitaria, porque una de las dos pruebas no rechaza.', correcta: false,
-            retro: '<code>linea</code> es una recta más ruido: por construcción no tiene raíz unitaria. Que una especificación mal elegida no rechace es un defecto de la especificación, no una propiedad de la serie. Quedarse con el resultado que no rechaza es exactamente el error que el ítem señala.' }
+            retro: '<code>linea</code> es una recta más ruido: por construcción no tiene raíz unitaria. Que una especificación mal elegida no rechace es un defecto de la especificación, no una propiedad de la serie. Quedarse con el resultado que no rechaza es exactamente el error que el ítem señala.' },
+          { texto: 'Con <code>"trend"</code> se rechaza sin discusión y con <code>"drift"</code> no se rechaza. Elegir <code>"drift"</code> habría llevado a diferenciar una serie que no tiene raíz unitaria.', correcta: true,
+            retro: 'Correcto. Sin el término de tendencia en la regresión, la subida sistemática de la serie no tiene dónde ir y la prueba la confunde con persistencia: $-1.09$ ni se acerca al crítico. Con el término puesto, $-7.44$ lo cruza con holgura. La regla práctica: si el gráfico muestra una tendencia clara, la especificación tiene que incluirla, y decidirlo <em>antes</em> de ver el $p$-valor.' }
         ]
       },
       {
@@ -5442,14 +5442,14 @@
         pregunta: 'Se toman los 120 valores de <code>demanda</code> y se barajan al azar. La media y la desviación típica no cambian <strong>en absoluto</strong> — son exactamente las mismas. Este es el correlograma del resultado. ¿Qué demuestra?',
         pista: 'Compara lo que sí cambió con lo que no. La serie original tiene $r_1 = 0.911$; aquí la primera barra vale 0.0017.',
         opciones: [
-          { texto: 'Que la información temporal no está en los valores, sino en su orden: barajar la destruye entera sin tocar un solo estadístico marginal.', correcta: true,
-            retro: 'Ese es el punto de partida de todo el curso. Media, varianza, mínimo, máximo, histograma: idénticos. Y sin embargo $r_1$ pasa de 0.911 a prácticamente cero. Todo lo que hace este curso —tendencia, estacionalidad, ACF, pruebas de raíz unitaria— vive en el orden, que es justo lo que una muestra i.i.d. no tiene. Que tres de las 24 barras crucen la banda no lo contradice: al 5 % se esperan 1.2 por azar, y estas caen en rezagos sin ningún sentido mecánico —13, 14 y 18—. Lo que delata estructura es <em>dónde</em> se sale una barra, no que se salga alguna.' },
           { texto: 'Que la serie barajada es ruido blanco, así que barajar es una forma de limpiar una serie.', correcta: false,
             retro: 'Se comporta como ruido blanco en el correlograma, sí — pero llamarlo «limpiar» es al revés: has borrado toda la señal y te has quedado con lo que no sirve para pronosticar. Del resultado no se puede predecir nada.' },
           { texto: 'Que el correlograma es poco fiable, porque dos series con los mismos valores dan resultados distintos.', correcta: false,
             retro: 'Da resultados distintos porque son series distintas: mismos valores, distinto orden. Eso es precisamente lo que se le pide a un correlograma, y hace lo contrario de ponerlo en duda.' },
           { texto: 'Que hacen falta más de 120 observaciones para estimar bien la ACF.', correcta: false,
-            retro: 'Con 120 la ACF se estima perfectamente bien: la banda es ±0.179 y en la serie original la primera barra vale 0.911, cinco veces la banda. Que aquí no se detecte estructura es porque no la hay, no porque falten datos.' }
+            retro: 'Con 120 la ACF se estima perfectamente bien: la banda es ±0.179 y en la serie original la primera barra vale 0.911, cinco veces la banda. Que aquí no se detecte estructura es porque no la hay, no porque falten datos.' },
+          { texto: 'Que la información temporal no está en los valores, sino en su orden: barajar la destruye entera sin tocar un solo estadístico marginal.', correcta: true,
+            retro: 'Ese es el punto de partida de todo el curso. Media, varianza, mínimo, máximo, histograma: idénticos. Y sin embargo $r_1$ pasa de 0.911 a prácticamente cero. Todo lo que hace este curso —tendencia, estacionalidad, ACF, pruebas de raíz unitaria— vive en el orden, que es justo lo que una muestra i.i.d. no tiene. Que tres de las 24 barras crucen la banda no lo contradice: al 5 % se esperan 1.2 por azar, y estas caen en rezagos sin ningún sentido mecánico —13, 14 y 18—. Lo que delata estructura es <em>dónde</em> se sale una barra, no que se salga alguna.' }
         ]
       },
       {
@@ -5481,10 +5481,10 @@
         pregunta: 'La serie <code>demanda_atipico</code> tiene <strong>un</strong> mes anómalo, en <strong>marzo</strong>. Aquí está su componente estacional estimado por STL con <code>robust = TRUE</code> y con <code>robust = FALSE</code>. ¿Qué está pasando?',
         pista: 'Las dos curvas son casi idénticas once meses del año. Mira dónde se separan y relaciónalo con dónde está el atípico.',
         opciones: [
-          { texto: 'Sin robustez, el atípico se cuela en el componente estacional de <em>su</em> mes: marzo sube de 0.012 a 0.033. La versión robusta lo deja fuera y lo manda al residuo.', correcta: true,
-            retro: 'Exacto, y fíjate en la magnitud relativa: la diferencia en marzo es 0.021, unas cuatro veces mayor que en cualquier otro mes. Eso es lo que significa «robusto» en STL: pondera a la baja las observaciones que no encajan, para que un dato raro de un año no contamine el patrón anual de los diez. Sin esa protección, el modelo se cree que marzo es sistemáticamente alto — y lo era una sola vez.' },
           { texto: 'Que las dos versiones son equivalentes: las curvas se superponen prácticamente en todo el año.', correcta: false,
             retro: 'Se superponen en once meses de doce, y esa es justamente la trampa. La diferencia está concentrada en el mes del atípico, que es el único donde importa. Un defecto local no deja de serlo por ser local: distorsiona el índice de marzo de todos los años.' },
+          { texto: 'Sin robustez, el atípico se cuela en el componente estacional de <em>su</em> mes: marzo sube de 0.012 a 0.033. La versión robusta lo deja fuera y lo manda al residuo.', correcta: true,
+            retro: 'Exacto, y fíjate en la magnitud relativa: la diferencia en marzo es 0.021, unas cuatro veces mayor que en cualquier otro mes. Eso es lo que significa «robusto» en STL: pondera a la baja las observaciones que no encajan, para que un dato raro de un año no contamine el patrón anual de los diez. Sin esa protección, el modelo se cree que marzo es sistemáticamente alto — y lo era una sola vez.' },
           { texto: 'Que la versión robusta subestima la estacionalidad de marzo.', correcta: false,
             retro: 'Al revés: la robusta es la que estima bien. El valor de marzo sin atípico está en torno a 0.012, y la no robusta lo infla a 0.033 arrastrada por un único año. La robusta no subestima, se resiste a que un dato la mueva.' },
           { texto: 'Que hay que quitar el atípico antes de descomponer, porque STL no sabe manejarlo.', correcta: false,
@@ -5498,10 +5498,10 @@
         pregunta: 'Uno de estos dos correlogramas es de ruido blanco puro y el otro de una serie con dependencia débil. Este es uno de ellos, con $n = 200$ y banda $\\pm 0.139$. ¿Cuál es, y en qué te fijas?',
         pista: 'No cuentes cuántas barras se salen. Fíjate en <em>cuál</em> se sale y en si eso tiene sentido estructural.',
         opciones: [
-          { texto: 'El de dependencia débil: la barra que se sale es la del rezago 1 (0.259), y que sea justo la primera es lo que delata la estructura, no que se salga alguna.', correcta: true,
-            retro: 'Correcto, y la distinción es la que hay que llevar al parcial. En ruido blanco puro también se salen barras —se esperan 1.8 de cada 36— pero caen en rezagos <em>cualesquiera</em>: en <code>residuo_blanco</code> la única que se sale es la del rezago 17, que no significa nada. Aquí es la del 1, y la del 1 es la que tiene sentido mecánico: cada valor depende del anterior. La posición importa más que el recuento.' },
           { texto: 'El de ruido blanco: solo se sale una barra de 36, que es aproximadamente lo esperado por azar.', correcta: false,
             retro: 'El recuento encaja, pero el recuento no basta. La barra que se sale es la del rezago 1, que es exactamente donde un proceso con dependencia deja su huella. En el correlograma del ruido blanco de verdad la que se sale es la del rezago 17.' },
+          { texto: 'El de dependencia débil: la barra que se sale es la del rezago 1 (0.259), y que sea justo la primera es lo que delata la estructura, no que se salga alguna.', correcta: true,
+            retro: 'Correcto, y la distinción es la que hay que llevar al parcial. En ruido blanco puro también se salen barras —se esperan 1.8 de cada 36— pero caen en rezagos <em>cualesquiera</em>: en <code>residuo_blanco</code> la única que se sale es la del rezago 17, que no significa nada. Aquí es la del 1, y la del 1 es la que tiene sentido mecánico: cada valor depende del anterior. La posición importa más que el recuento.' },
           { texto: 'No se puede decidir sin ver el otro correlograma.', correcta: false,
             retro: 'Sí se puede, y es lo que se te va a pedir en el parcial: leer un correlograma solo. La banda ya te da el punto de comparación con la hipótesis de ruido blanco; no hace falta un segundo gráfico.' },
           { texto: 'El de dependencia débil, porque las barras decaen de forma visible hacia cero.', correcta: false,
@@ -5515,12 +5515,12 @@
         pregunta: 'Correlograma de $\\nabla \\log(\\texttt{demanda})$, una serie <strong>mensual</strong> ya diferenciada una vez. Las barras que superan la banda están en los rezagos <strong>6, 12, 18, 24, 30 y 36</strong>. ¿Qué periodo tiene la estructura que queda?',
         pista: 'No mires solo dónde hay picos: mira el <em>signo</em> de los que están en 6, 18 y 30 frente a los de 12, 24 y 36.',
         opciones: [
-          { texto: 'Doce meses: los rezagos 12, 24 y 36 son los múltiplos del periodo; los de 6, 18 y 30 son los semiperiodos, con el signo contrario.', correcta: true,
-            retro: 'Eso es. En una serie mensual con estacionalidad anual, la ACF marca los múltiplos de 12 con correlación positiva y los puntos intermedios —6, 18, 30— con correlación negativa: medio año después, la serie está sistemáticamente en el otro extremo del ciclo. El patrón alternante confirma el periodo mucho mejor que un pico suelto.' },
           { texto: 'Seis meses, porque el primer pico está en el rezago 6.', correcta: false,
             retro: 'El primer pico no marca el periodo si su signo es el contrario. Comprueba el signo: los de 6, 18 y 30 son negativos y los de 12, 24 y 36 positivos. Un periodo de 6 daría picos <em>positivos</em> en 6, 12, 18, 24…' },
           { texto: 'No hay periodo: seis barras de 36 fuera de banda son las esperables por azar.', correcta: false,
             retro: 'Por azar se esperan 1.8, no 6 — y sobre todo, no en posiciones regulares. Que caigan exactamente en los múltiplos de 6 es lo que descarta el azar: el azar no ordena las barras.' },
+          { texto: 'Doce meses: los rezagos 12, 24 y 36 son los múltiplos del periodo; los de 6, 18 y 30 son los semiperiodos, con el signo contrario.', correcta: true,
+            retro: 'Eso es. En una serie mensual con estacionalidad anual, la ACF marca los múltiplos de 12 con correlación positiva y los puntos intermedios —6, 18, 30— con correlación negativa: medio año después, la serie está sistemáticamente en el otro extremo del ciclo. El patrón alternante confirma el periodo mucho mejor que un pico suelto.' },
           { texto: 'Treinta y seis, porque es el rezago más alto con un pico.', correcta: false,
             retro: 'El 36 es simplemente el último rezago que se pintó; con 48 habría un pico ahí también. El periodo es la <em>distancia entre</em> picos, no el mayor de ellos.' }
         ]
@@ -5549,14 +5549,14 @@
         pregunta: 'Gráfico de rezagos de <code>ocupacion</code>, una serie <strong>trimestral</strong>: cada punto enfrenta $y_t$ con $y_{t-4}$. Sabiendo que $r_1 = 0.186$ y $r_4 = 0.848$, ¿qué está diciendo esta nube?',
         pista: 'Cuatro trimestres es exactamente un año. ¿Qué tienen en común dos observaciones separadas por un año en una serie trimestral?',
         opciones: [
-          { texto: 'Que cada trimestre se parece mucho al mismo trimestre del año anterior ($r_4 = 0.848$) y bastante poco al trimestre inmediatamente anterior ($r_1 = 0.186$): eso es estacionalidad, no inercia.', correcta: true,
-            retro: 'Exacto, y la comparación entre las dos cifras es todo el diagnóstico. Si la serie tuviera inercia —cada valor parecido al anterior— $r_1$ sería alto. Lo que hay es lo contrario: el vecino inmediato informa poco y el de hace un año informa mucho. En una serie trimestral eso solo lo produce un patrón que se repite cada cuatro trimestres.' },
           { texto: 'Que la serie tiene una tendencia creciente fuerte, que es lo que alinea los puntos.', correcta: false,
             retro: 'Hay tendencia, y contribuye a que la nube suba. Pero la tendencia afectaría igual a $r_1$, y $r_1$ es 0.186. Si lo que alineara los puntos fuera solo la tendencia, el gráfico contra $y_{t-1}$ estaría igual de alineado, y no lo está.' },
           { texto: 'Que hay dependencia de orden 4 en el sentido de un proceso autorregresivo, y por tanto hay que ajustar un AR(4).', correcta: false,
             retro: 'Identificar un modelo concreto es el capítulo 3, y aquí no toca. Además, la lectura correcta de este dibujo es estacionalidad trimestral, que se trata diferenciando estacionalmente o con términos estacionales, no necesariamente con un AR(4).' },
           { texto: 'Que la relación es no lineal, porque los puntos no caen sobre una recta perfecta.', correcta: false,
-            retro: 'La dispersión alrededor de la recta es ruido, no curvatura: no hay ningún patrón sistemático que se desvíe. Con $r_4 = 0.848$ la relación lineal explica la mayor parte de la variación.' }
+            retro: 'La dispersión alrededor de la recta es ruido, no curvatura: no hay ningún patrón sistemático que se desvíe. Con $r_4 = 0.848$ la relación lineal explica la mayor parte de la variación.' },
+          { texto: 'Que cada trimestre se parece mucho al mismo trimestre del año anterior ($r_4 = 0.848$) y bastante poco al trimestre inmediatamente anterior ($r_1 = 0.186$): eso es estacionalidad, no inercia.', correcta: true,
+            retro: 'Exacto, y la comparación entre las dos cifras es todo el diagnóstico. Si la serie tuviera inercia —cada valor parecido al anterior— $r_1$ sería alto. Lo que hay es lo contrario: el vecino inmediato informa poco y el de hace un año informa mucho. En una serie trimestral eso solo lo produce un patrón que se repite cada cuatro trimestres.' }
         ]
       },
       {
@@ -5566,10 +5566,10 @@
         pregunta: 'Correlograma de $\\log(\\texttt{demanda})$ <strong>después</strong> de aplicar una diferencia regular. El ADF ahora da $p &lt; 0.01$ y el KPSS de nivel $p &gt; 0.10$: las dos pruebas dicen «estacionaria». La barra del rezago 12 vale <strong>0.581</strong>, con banda $\\pm 0.180$. ¿Bastó con $d = 1$?',
         pista: 'Las pruebas de raíz unitaria contrastan una cosa concreta. ¿Miran el rezago 12?',
         opciones: [
-          { texto: 'No: las pruebas dan por buena la serie porque ya no hay tendencia, pero queda estacionalidad intacta — 0.581 es más de tres veces la banda. Hace falta además una diferencia estacional.', correcta: true,
-            retro: 'Ese es el hueco que hay que ver. El ADF y el KPSS de nivel contrastan el comportamiento del <em>nivel</em>, y la diferencia regular ya lo arregló. Ninguno de los dos está mirando el rezago 12. Fiarse solo de las pruebas y saltarse el correlograma deja pasar la estacionalidad entera, y luego aparece en los residuos del modelo.' },
           { texto: 'Sí: las dos pruebas coinciden en que es estacionaria, que es el criterio más fiable que hay.', correcta: false,
             retro: 'Coinciden, y aun así se les escapa lo que el gráfico enseña. La coincidencia de ADF y KPSS es una buena señal <em>sobre lo que ellos contrastan</em> —el nivel—, no un certificado general de estacionariedad. El rezago 12 queda fuera de su alcance.' },
+          { texto: 'No: las pruebas dan por buena la serie porque ya no hay tendencia, pero queda estacionalidad intacta — 0.581 es más de tres veces la banda. Hace falta además una diferencia estacional.', correcta: true,
+            retro: 'Ese es el hueco que hay que ver. El ADF y el KPSS de nivel contrastan el comportamiento del <em>nivel</em>, y la diferencia regular ya lo arregló. Ninguno de los dos está mirando el rezago 12. Fiarse solo de las pruebas y saltarse el correlograma deja pasar la estacionalidad entera, y luego aparece en los residuos del modelo.' },
           { texto: 'No, y lo que falta es una segunda diferencia regular.', correcta: false,
             retro: 'Una segunda diferencia regular ataca la tendencia otra vez, que ya no está: sería sobrediferenciar, y la tabla de varianzas lo confirma (sube de 0.0107 a 0.0231). Lo que queda es un patrón de periodo 12, y eso se quita con $\\nabla_{12}$.' },
           { texto: 'No se puede decidir sin volver a correr las pruebas sobre la serie diferenciada estacionalmente.', correcta: false,
