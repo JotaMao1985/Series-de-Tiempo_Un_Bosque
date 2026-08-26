@@ -4989,14 +4989,18 @@
     // Ayudantes genéricos que suelen hacer falta en cualquier capítulo
     // ================================================================
 
-    // Semiancho de la banda de un correlograma bajo H0 de ruido blanco
-    function banda(n) { return 1.96 / Math.sqrt(n); }
-
     // Las dos rectas de referencia de un correlograma, listas para
     // `crearGraficoBarras`. La segunda va sin etiqueta para no duplicarla
     // en la leyenda.
-    function lineasBanda(n) {
-      const b = banda(n);
+    //
+    // El semiancho NO se recalcula aquí. Se dibuja el que
+    // `genera_preparcial.R` publicó junto a esa misma ACF —el que §3 del
+    // verificador rehace desde los valores publicados y el que el
+    // enunciado imprime—, para que no haya dos 1.96/√T que puedan
+    // discrepar. Cuando la página lo calculaba a partir de una `n`
+    // escrita a mano, el gráfico del ítem 19 pintaba la banda de 120
+    // observaciones sobre la ACF de 119 sin que nada lo viera.
+    function lineasBanda(b) {
       return [{ valor: b, etiqueta: 'Banda ±1.96/√T' }, { valor: -b, etiqueta: '' }];
     }
     // ================================================================
@@ -5398,12 +5402,12 @@
                    'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
     // Correlograma sobre un vector de ACF ya calculado, con su banda.
-    function correlograma(canvas, acf, n, opciones = {}) {
+    function correlograma(canvas, acf, banda, opciones = {}) {
       return crearGraficoBarras(
         canvas,
         acf.map((_, i) => String(i + 1)),
         acf,
-        Object.assign({ etiqueta: opciones.etiqueta || 'ACF', lineas: lineasBanda(n) }, opciones)
+        Object.assign({ etiqueta: opciones.etiqueta || 'ACF', lineas: lineasBanda(banda) }, opciones)
       );
     }
 
@@ -5433,25 +5437,25 @@
     AUTOEVALUACIONES['bloque-d'] = [
       {
         tipo: 'grafico', clave: '1.1', objetivo: 'O1', alto: 220,
-        descripcionGrafico: 'Correlograma plano: las 24 barras caen dentro de la banda de confianza',
-        dibujar: c => correlograma(c, D.i01.acf_barajada.acf, D.i01.acf_barajada.n),
+        descripcionGrafico: 'Correlograma sin estructura: la primera barra es prácticamente cero y las 24 oscilan sin patrón reconocible; tres cruzan la banda, en los rezagos dispersos 13, 14 y 18',
+        dibujar: c => correlograma(c, D.i01.acf_barajada.acf, D.i01.acf_barajada.banda),
         pregunta: 'Se toman los 120 valores de <code>demanda</code> y se barajan al azar. La media y la desviación típica no cambian <strong>en absoluto</strong> — son exactamente las mismas. Este es el correlograma del resultado. ¿Qué demuestra?',
-        pista: 'Compara lo que sí cambió con lo que no. La serie original tiene $r_1 = 0.911$; aquí ninguna barra llega a la banda.',
+        pista: 'Compara lo que sí cambió con lo que no. La serie original tiene $r_1 = 0.911$; aquí la primera barra vale 0.0017.',
         opciones: [
           { texto: 'Que la información temporal no está en los valores, sino en su orden: barajar la destruye entera sin tocar un solo estadístico marginal.', correcta: true,
-            retro: 'Ese es el punto de partida de todo el curso. Media, varianza, mínimo, máximo, histograma: idénticos. Y sin embargo $r_1$ pasa de 0.911 a prácticamente cero. Todo lo que hace este curso —tendencia, estacionalidad, ACF, pruebas de raíz unitaria— vive en el orden, que es justo lo que una muestra i.i.d. no tiene.' },
+            retro: 'Ese es el punto de partida de todo el curso. Media, varianza, mínimo, máximo, histograma: idénticos. Y sin embargo $r_1$ pasa de 0.911 a prácticamente cero. Todo lo que hace este curso —tendencia, estacionalidad, ACF, pruebas de raíz unitaria— vive en el orden, que es justo lo que una muestra i.i.d. no tiene. Que tres de las 24 barras crucen la banda no lo contradice: al 5 % se esperan 1.2 por azar, y estas caen en rezagos sin ningún sentido mecánico —13, 14 y 18—. Lo que delata estructura es <em>dónde</em> se sale una barra, no que se salga alguna.' },
           { texto: 'Que la serie barajada es ruido blanco, así que barajar es una forma de limpiar una serie.', correcta: false,
             retro: 'Se comporta como ruido blanco en el correlograma, sí — pero llamarlo «limpiar» es al revés: has borrado toda la señal y te has quedado con lo que no sirve para pronosticar. Del resultado no se puede predecir nada.' },
           { texto: 'Que el correlograma es poco fiable, porque dos series con los mismos valores dan resultados distintos.', correcta: false,
             retro: 'Da resultados distintos porque son series distintas: mismos valores, distinto orden. Eso es precisamente lo que se le pide a un correlograma, y hace lo contrario de ponerlo en duda.' },
           { texto: 'Que hacen falta más de 120 observaciones para estimar bien la ACF.', correcta: false,
-            retro: 'Con 120 la ACF se estima perfectamente bien: la banda es ±0.179 y en la serie original la primera barra vale 0.911, cinco veces la banda. Que aquí no se detecte nada es porque no hay nada, no porque falten datos.' }
+            retro: 'Con 120 la ACF se estima perfectamente bien: la banda es ±0.179 y en la serie original la primera barra vale 0.911, cinco veces la banda. Que aquí no se detecte estructura es porque no la hay, no porque falten datos.' }
         ]
       },
       {
         tipo: 'grafico', clave: '1.3', objetivo: 'O1', alto: 250,
         descripcionGrafico: 'Gráfico de subseries de la demanda mensual: doce grupos, uno por mes, cada uno con su secuencia de diez años y su media',
-        dibujar: c => subseries(c, S.demanda.valores, 12),
+        dibujar: c => subseries(c, S.demanda.valores, S.demanda.frecuencia),
         pregunta: 'Este es el <strong>gráfico de subseries</strong> de <code>demanda</code>: los diez años de cada mes, agrupados por mes, con la media del mes en naranja. ¿Qué muestra que el gráfico estacional no muestra?',
         pista: 'El gráfico estacional superpone los años. Aquí están puestos <em>en fila dentro de cada mes</em>. ¿Qué se puede ver así que allí se pierde?',
         opciones: [
@@ -5490,7 +5494,7 @@
       {
         tipo: 'grafico', clave: '2.2', objetivo: 'O3', alto: 220,
         descripcionGrafico: 'Correlograma de 36 rezagos con la primera barra por encima de la banda y el resto dentro',
-        dibujar: c => correlograma(c, D.i15.ar_debil.acf, D.i15.ar_debil.n),
+        dibujar: c => correlograma(c, D.i15.ar_debil.acf, D.i15.ar_debil.banda),
         pregunta: 'Uno de estos dos correlogramas es de ruido blanco puro y el otro de una serie con dependencia débil. Este es uno de ellos, con $n = 200$ y banda $\\pm 0.139$. ¿Cuál es, y en qué te fijas?',
         pista: 'No cuentes cuántas barras se salen. Fíjate en <em>cuál</em> se sale y en si eso tiene sentido estructural.',
         opciones: [
@@ -5507,7 +5511,7 @@
       {
         tipo: 'grafico', clave: '2.3', objetivo: 'O4', alto: 220,
         descripcionGrafico: 'Correlograma con picos regulares en los rezagos 6, 12, 18, 24, 30 y 36',
-        dibujar: c => correlograma(c, D.i19.acf, 120),
+        dibujar: c => correlograma(c, D.i19.acf, D.i19.banda),
         pregunta: 'Correlograma de $\\nabla \\log(\\texttt{demanda})$, una serie <strong>mensual</strong> ya diferenciada una vez. Las barras que superan la banda están en los rezagos <strong>6, 12, 18, 24, 30 y 36</strong>. ¿Qué periodo tiene la estructura que queda?',
         pista: 'No mires solo dónde hay picos: mira el <em>signo</em> de los que están en 6, 18 y 30 frente a los de 12, 24 y 36.',
         opciones: [
@@ -5558,7 +5562,7 @@
       {
         tipo: 'grafico', clave: '2.7', objetivo: 'O5', alto: 220,
         descripcionGrafico: 'Correlograma tras una diferencia regular, con un pico muy marcado en el rezago 12',
-        dibujar: c => correlograma(c, D.i29.despues.acf, 119),
+        dibujar: c => correlograma(c, D.i29.despues.acf, D.i29.despues.banda),
         pregunta: 'Correlograma de $\\log(\\texttt{demanda})$ <strong>después</strong> de aplicar una diferencia regular. El ADF ahora da $p &lt; 0.01$ y el KPSS de nivel $p &gt; 0.10$: las dos pruebas dicen «estacionaria». La barra del rezago 12 vale <strong>0.581</strong>, con banda $\\pm 0.180$. ¿Bastó con $d = 1$?',
         pista: 'Las pruebas de raíz unitaria contrastan una cosa concreta. ¿Miran el rezago 12?',
         opciones: [
