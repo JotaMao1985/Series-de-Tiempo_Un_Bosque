@@ -4216,7 +4216,7 @@ rbind(resumen(y, "original"),
 
     document.addEventListener('DOMContentLoaded', () => {
       renderNavigation();
-      loadModule(1);
+      loadModule(moduloDelHash());
       setupEventListeners();
     });
 
@@ -4233,8 +4233,38 @@ rbind(resumen(y, "original"),
             `).join('');
     }
 
+    // ================================================================
+    // Enlaces directos a un módulo:  archivo.html#modulo-6
+    //
+    // Sin esto, un enlace con ancla abre el capítulo por el módulo 1 y el
+    // lector tiene que buscar a mano. El preparcial del Corte I remite a
+    // módulos concretos desde su diagnóstico, y ahí la diferencia entre
+    // llegar al sitio y llegar al principio es el instrumento entero.
+    // ================================================================
+    function moduloDelHash() {
+      const m = /^#modulo-(\d+)$/.exec(window.location.hash || '');
+      if (!m) return 1;
+      const id = parseInt(m[1], 10);
+      return (id >= 1 && id <= courseData.modules.length) ? id : 1;
+    }
+
+    function fijarHashDelModulo(id) {
+      // `replaceState` y no `location.hash` para no llenar el historial con
+      // una entrada por módulo visitado. Sobre file:// puede lanzar, y que
+      // falle no es grave: lo que importa es LEER el ancla al entrar.
+      try {
+        window.history.replaceState(null, '', `#modulo-${id}`);
+      } catch (e) { /* file:// sin permisos de historial */ }
+    }
+
+    window.addEventListener('hashchange', () => {
+      const id = moduloDelHash();
+      if (id !== currentModuleId) loadModule(id);
+    });
+
     function loadModule(id) {
       currentModuleId = id;
+      fijarHashDelModulo(id);
 
       if (!completedModules.has(id)) {
         completedModules.add(id);
