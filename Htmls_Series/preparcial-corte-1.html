@@ -141,6 +141,16 @@
       }
     }
 
+    /* Por debajo de 768 px la barra lateral está en `display: none`, pero el
+       botón flotante que la pliega seguía ahí: un círculo fijo a media altura
+       que TAPA la prosa —se comía el título de sección en el módulo 1 y en el
+       5— y que además declaraba `aria-expanded="true"` sobre algo que no
+       existe. Se oculta donde no controla nada. En móvil la navegación son
+       los botones Anterior / Siguiente del pie de cada módulo. */
+    @media (max-width: 767.98px) {
+      #sidebarToggle { display: none; }
+    }
+
     .sidebar-inner {
       position: sticky;
       top: 9rem;
@@ -2690,6 +2700,27 @@
       padding: 0.1rem 0.45rem;
       font-size: 0.82rem;
     }
+    /* El estado, escrito. El color del borde izquierdo distingue los cinco
+       veredictos de un vistazo, pero SOLO por color: quien no lo perciba
+       tenía que leerse el párrafo entero de cada objetivo para saber cuál
+       ataca primero. Este distintivo lleva la misma información en palabras,
+       y el color pasa a ser refuerzo en vez de único canal. */
+    .termometro-estado {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border-radius: 0.35rem;
+      padding: 0.12rem 0.45rem;
+      white-space: nowrap;
+      border: 1px solid transparent;
+    }
+    .es-solido   .termometro-estado { background: #dcfce7; color: #14532d; border-color: #86efac; }
+    .es-encurso  .termometro-estado { background: #cffafe; color: #164e63; border-color: #67e8f9; }
+    .es-dudoso   .termometro-estado { background: #fef3c7; color: #713f12; border-color: #fcd34d; }
+    .es-flojo    .termometro-estado { background: #ffedd5; color: #7c2d12; border-color: #fdba74; }
+    .es-pendiente .termometro-estado { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
+
     .termometro-titulo { font-weight: 600; font-size: 0.95rem; flex: 1 1 12rem; }
     .termometro-peso { font-size: 0.75rem; color: #64748b; font-weight: 600; white-space: nowrap; }
     .termometro-cuenta {
@@ -4013,6 +4044,22 @@
     // Lo que respondió el estudiante, por bloque. Lo llena cada
     // autoevaluación al cerrar un ítem y lo lee el termómetro (módulo 6).
     const RESULTADOS = {};
+
+    // Lo que el estudiante ha HECHO en cada bloque, para poder reponerlo.
+    //
+    // `renderAutoevaluacion` vuelve a pintar el bloque entero cada vez que se
+    // entra en su módulo, y eso borraba las respuestas — y con ellas el
+    // diagnóstico, que es el único producto de este instrumento. En los
+    // capítulos daba igual: un quiz, un módulo, nadie sale a media pregunta.
+    // Aquí una sola evaluación vive repartida entre CUATRO módulos (D4), y en
+    // móvil la única navegación son Anterior / Siguiente: retroceder un
+    // módulo bastaba para perderlo todo, sin aviso.
+    //
+    // Se guardan las acciones y no el estado pintado. Al volver se repiten
+    // contra los mismos manejadores, así que lo repuesto no puede desviarse
+    // de lo que habría pasado en vivo — que es justo el modo de fallo de
+    // cualquier restauración que reconstruya el DOM por su cuenta.
+    const ACCIONES = {};
     const LETRAS = ['a', 'b', 'c', 'd', 'e'];
     const NOMBRE_TIPO = {
       opcion: 'Opción múltiple',
@@ -4069,6 +4116,16 @@
       const resumen = raiz.querySelector('.quiz-resumen');
 
       const estado = preguntas.map(() => ({ resuelta: false, intentos: 0, acierto: false }));
+
+      // Las acciones de este bloque sobreviven al repintado; el estado de
+      // arriba, no. Al final del render se reponen las unas sobre el otro.
+      const acciones = ACCIONES[raiz.dataset.quiz] ||
+        (ACCIONES[raiz.dataset.quiz] = preguntas.map(() => []));
+      const reproductor = [];
+      // Mientras se repone, los manejadores no deben volver a apuntar lo que
+      // ya está apuntado: se duplicaría en cada visita al módulo.
+      let reponiendo = false;
+      const apunta = (i, accion) => { if (!reponiendo) acciones[i].push(accion); };
 
       function actualizarMarcador() {
         const resueltas = estado.filter(e => e.resuelta).length;
@@ -4196,6 +4253,11 @@
 
         const pista = document.createElement('div');
         pista.className = 'quiz-pista';
+        // La pista ES la retroalimentación del primer fallo: aparece sin que
+        // el foco se mueva, así que sin `role="status"` un lector de pantalla
+        // no la anuncia y el estudiante se queda sin ella. La retro final ya
+        // lo tenía; esto le faltaba.
+        pista.setAttribute('role', 'status');
         pista.hidden = true;
 
         const retro = document.createElement('div');
@@ -4225,10 +4287,12 @@
             // Se acepta coma o punto como separador decimal
             const dada = parseFloat(String(input.value).trim().replace(',', '.'));
             if (!isFinite(dada)) {
+              // No se apunta: no llegó a ser un intento.
               pista.innerHTML = '<strong>Escribe un número</strong> antes de comprobar.';
               pista.hidden = false;
               return;
             }
+            apunta(i, { valor: input.value });
             estado[i].intentos++;
             const acierto = Math.abs(dada - p.respuesta) <= p.tolerancia;
             if (acierto) {
@@ -4249,6 +4313,7 @@
           if (p.unidad) fila.appendChild(unidad);
           fila.appendChild(boton);
           bloque.appendChild(fila);
+          reproductor[i] = a => { input.value = a.valor; comprobarNumerica(); };
 
         } else if (tipo === 'multiple') {
           // ---- Varias respuestas correctas --------------------------
@@ -4285,8 +4350,9 @@
             if (marcadas.size === 0) {
               pista.innerHTML = '<strong>Marca al menos una opción</strong> antes de comprobar.';
               pista.hidden = false;
-              return;
+              return;   // no se apunta: no llegó a ser un intento
             }
+            apunta(i, { marcadas: [...marcadas] });
             estado[i].intentos++;
             const correctas = new Set(p.opciones.map((o, j) => o.correcta ? j : -1).filter(j => j >= 0));
             const exacto = marcadas.size === correctas.size &&
@@ -4330,6 +4396,10 @@
 
           bloque.appendChild(lista);
           bloque.appendChild(boton);
+          reproductor[i] = a => {
+            botones.forEach((b, j) => { if (marcadas.has(j) !== a.marcadas.includes(j)) b.click(); });
+            boton.click();
+          };
 
         } else {
           // ---- Una sola respuesta ('opcion' y 'grafico') ------------
@@ -4345,6 +4415,7 @@
             b.innerHTML = `<span class="quiz-letra">${LETRAS[j]})</span><span>${op.texto}</span>`;
             b.addEventListener('click', () => {
               if (estado[i].resuelta) return;
+              apunta(i, { opcion: j });
               estado[i].intentos++;
               if (op.correcta) {
                 botones.forEach((x, k) => { x.disabled = true; if (p.opciones[k].correcta) x.classList.add('correcta'); });
@@ -4364,6 +4435,7 @@
             return b;
           });
           bloque.appendChild(lista);
+          reproductor[i] = a => botones[a.opcion].click();
         }
 
         bloque.appendChild(pista);
@@ -4372,10 +4444,37 @@
       });
 
       katexEn(contenedor);
+
+      // Reponer lo ya respondido. Se repiten las acciones apuntadas contra
+      // los manejadores recién montados: cada una vuelve a pasar por la misma
+      // rama que la primera vez, así que el bloque queda exactamente como el
+      // estudiante lo dejó — opciones deshabilitadas, retro visible, pista
+      // donde tocaba— sin una sola línea que reconstruya nada a mano.
+      //
+      // Va dentro de un `try` con `reponiendo` restaurado en el `finally`: si
+      // una acción guardada dejara de ser válida (un ítem reescrito entre dos
+      // visitas), lo que se pierde es esa reposición, no el bloque entero ni
+      // la capacidad de seguir apuntando.
+      reponiendo = true;
+      try {
+        preguntas.forEach((_, i) => {
+          const guardadas = acciones[i];
+          if (!guardadas.length || typeof reproductor[i] !== 'function') return;
+          guardadas.forEach(a => { try { reproductor[i](a); } catch (e) { console.warn('No se pudo reponer', raiz.dataset.quiz, i, e); } });
+        });
+      } finally {
+        reponiendo = false;
+      }
+
       actualizarMarcador();
 
       const reiniciar = raiz.querySelector('.quiz-reiniciar');
-      if (reiniciar) reiniciar.onclick = () => renderAutoevaluacion(raiz, preguntas);
+      if (reiniciar) reiniciar.onclick = () => {
+        // Reiniciar tiene que borrar también lo apuntado: si no, el bloque se
+        // repinta y la reposición lo deja tal cual estaba.
+        ACCIONES[raiz.dataset.quiz] = preguntas.map(() => []);
+        renderAutoevaluacion(raiz, preguntas);
+      };
     }
 
     // ================================================================
@@ -5064,7 +5163,7 @@
         pista: 'La primera observación es julio de 2019 y <em>cuenta como una</em>. Desde ahí quedan 29 meses más, no 30.',
         respuesta: 2021, tolerancia: 0,
         retroAcierto: 'Julio de 2019 más 29 meses es diciembre de 2021. El error habitual es sumar 30 y llegar a enero de 2022: la primera observación ya ocupa el mes de arranque.',
-        retroFallo: 'Es <strong>2021</strong>. Julio de 2019 es la observación 1, así que la 30 está 29 meses después: diciembre de 2021. Si sumas 30 meses te vas a enero de 2022, que sería la observación 31.'
+        retroFallo: 'Julio de 2019 es la observación 1, así que la 30 está 29 meses después: diciembre de 2021. Si sumas 30 meses te vas a enero de 2022, que sería la observación 31.'
       },
       {
         tipo: 'numerica', clave: '1.5', objetivo: 'O2',
@@ -5072,23 +5171,23 @@
         pista: 'Una 2×4 es la media de dos medias móviles de orden 4 consecutivas. Al desarrollarla, los pesos sobre las cinco observaciones son $\\tfrac18, \\tfrac14, \\tfrac14, \\tfrac14, \\tfrac18$.',
         respuesta: 62.81, tolerancia: 0.03,
         retroAcierto: '$0.125(53.70) + 0.25(66.54 + 72.27 + 57.24) + 0.125(56.70) = 62.81$. Ese doble paso es todo lo que significa «centrar»: con orden par, una sola media móvil quedaría entre dos trimestres, y promediando dos consecutivas vuelve a caer sobre uno.',
-        retroFallo: 'Es <strong>62.81</strong>. Los pesos no son cinco cuartos iguales: son $\\tfrac18, \\tfrac14, \\tfrac14, \\tfrac14, \\tfrac18$, que suman 1. Si promedias las cinco a partes iguales te sale 61.29, y si usas solo cuatro te sale un valor que no cae sobre ningún trimestre.'
+        retroFallo: 'Los pesos no son cinco cuartos iguales: son $\\tfrac18, \\tfrac14, \\tfrac14, \\tfrac14, \\tfrac18$, que suman 1. Si promedias las cinco a partes iguales te sale 61.29, y si usas solo cuatro te sale un valor que no cae sobre ningún trimestre.'
       },
       {
         tipo: 'numerica', clave: '1.6', objetivo: 'O2',
         pregunta: 'Sobre <code>ocupacion</code>, tras quitar la tendencia, los promedios por trimestre son <strong>−6.2184</strong> (T1), <strong>2.9970</strong> (T2), <strong>9.5724</strong> (T3) y <strong>−6.3475</strong> (T4). Calcula el <strong>índice estacional del tercer trimestre</strong> por el método clásico. Da cuatro decimales.',
         pista: 'Los índices tienen que sumar cero. Los cuatro promedios no lo hacen todavía: hay un paso más.',
-        respuesta: 9.5715, tolerancia: 0.001,
+        respuesta: 9.5715, tolerancia: 0.0005,
         retroAcierto: 'La media de los cuatro promedios es 0.0009, y el índice es el promedio menos esa media: $9.5724 - 0.0009 = 9.5715$. El centrado parece una formalidad y no lo es: sin él los índices arrastran un sesgo que se le resta a la tendencia.',
-        retroFallo: 'Es <strong>9.5715</strong>. Falta centrar: se calcula la media de los cuatro promedios (0.0009) y se le resta a cada uno, para que los índices sumen exactamente cero. Dar 9.5724 es quedarse en el paso anterior.'
+        retroFallo: 'Falta centrar: se calcula la media de los cuatro promedios (0.0009) y se le resta a cada uno, para que los índices sumen exactamente cero. Dar 9.5724 es quedarse en el paso anterior.'
       },
       {
         tipo: 'numerica', clave: '2.2', objetivo: 'O3',
-        pregunta: 'Vas a mirar el correlograma de <code>residuo_blanco</code> ($n = 200$) hasta el rezago <strong>36</strong>. Si la serie fuera ruido blanco puro, ¿<strong>cuántas</strong> barras esperarías fuera de la banda del 95&nbsp;% solo por azar? Da un decimal.',
+        pregunta: 'El correlograma de <code>residuo_blanco</code> ($n = 200$) hasta el rezago <strong>36</strong> deja <strong>una</strong> barra por fuera de la banda del 95&nbsp;%, la del rezago 17. Bajo ruido blanco puro, ¿con <strong>cuántas</strong> contabas por puro azar? Da un decimal.',
         pista: 'La banda del 95&nbsp;% deja fuera al 5&nbsp;% de las barras <em>bajo la hipótesis nula</em>. No es cero.',
         respuesta: 1.8, tolerancia: 0.15,
-        retroAcierto: '$0.05 \\times 36 = 1.8$. Es el número que hay que tener en la cabeza antes de mirar el gráfico: una o dos barras fuera de banda en 36 rezagos es lo <em>normal</em> en ruido blanco, no una señal. En esta serie hay exactamente 1, en el rezago 17.',
-        retroFallo: 'Es <strong>1.8</strong>, el 5&nbsp;% de 36. Si respondiste 0, estás asumiendo que la banda contiene todo bajo la nula, y no es así: por construcción deja fuera al 5&nbsp;%. Esa expectativa es la que evita leer estructura donde solo hay azar.'
+        retroAcierto: '$0.05 \\times 36 = 1.8$. Ahora haz la comparación, que es el ejercicio entero: se esperaban 1.8 y salió 1. La lectura correcta no es «hay una barra fuera, luego hay estructura», sino «hay una barra fuera y se esperaban casi dos, luego no la hay». Ese número hay que tenerlo en la cabeza <em>antes</em> de mirar el gráfico, no después.',
+        retroFallo: 'Es el 5&nbsp;% de 36. Si respondiste 0, estás asumiendo que la banda contiene todo bajo la nula, y no es así: por construcción deja fuera al 5&nbsp;%. Y mira lo que se sigue de compararlo con lo que de verdad salió: 1 observada frente a 1.8 esperadas es una serie que se comporta como ruido blanco. Esa expectativa es la que evita leer estructura donde solo hay azar.'
       },
       {
         tipo: 'numerica', clave: '2.3', objetivo: 'O4',
@@ -5096,7 +5195,7 @@
         pista: 'La media es $14.\\overline{3}$. El numerador suma cinco productos $(y_t - \\bar y)(y_{t+1} - \\bar y)$; el denominador suma los <strong>seis</strong> cuadrados $(y_t - \\bar y)^2$.',
         respuesta: -0.5333, tolerancia: 0.006,
         retroAcierto: 'Numerador $-17.78$, denominador $33.33$, cociente $-0.5333$. Fíjate en la asimetría: cinco términos arriba y seis abajo. Es lo que hace que $|r_h| \\le 1$ siempre y que la ACF muestral se encoja hacia cero en los rezagos altos.',
-        retroFallo: 'Es <strong>−0.5333</strong>. El fallo casi seguro es dividir entre cinco términos abajo en vez de seis: eso daría $-0.64$. La definición muestral usa <em>todas</em> las desviaciones en el denominador, no solo las que participan en el numerador.'
+        retroFallo: 'El fallo casi seguro es dividir entre cinco términos abajo en vez de seis: eso daría $-0.64$. La definición muestral usa <em>todas</em> las desviaciones en el denominador, no solo las que participan en el numerador.'
       },
       {
         tipo: 'numerica', clave: '2.4', objetivo: 'O4',
@@ -5104,7 +5203,7 @@
         pista: 'Sustituye y opera. $r_1^2 = 0.0344$.',
         respuesta: -0.4257, tolerancia: 0.006,
         retroAcierto: '$(-0.3766 - 0.0344)/(1 - 0.0344) = -0.4257$. Y fíjate en lo que hace la fórmula: le quita a $r_2$ la parte que se explica por pasar dos veces por el rezago 1. Lo que queda es la dependencia <em>directa</em>.',
-        retroFallo: 'Es <strong>−0.4257</strong>. Con $r_1^2 = 0.0344$: numerador $-0.3766 - 0.0344 = -0.4110$, denominador $1 - 0.0344 = 0.9656$. Si te sale $-0.3766$ es que no descontaste nada, y entonces la PACF sería la ACF.'
+        retroFallo: 'Con $r_1^2 = 0.0344$: numerador $-0.3766 - 0.0344 = -0.4110$, denominador $1 - 0.0344 = 0.9656$. Si te sale $-0.3766$ es que no descontaste nada, y entonces la PACF sería la ACF.'
       },
       {
         tipo: 'numerica', clave: '2.6', objetivo: 'O5',
@@ -5112,7 +5211,7 @@
         pista: '$(120/100)^{1/4} = 1.0466$. Multiplica por 4 y trunca hacia abajo.',
         respuesta: 4, tolerancia: 0,
         retroAcierto: '$\\lfloor 4 \\times 1.0466 \\rfloor = \\lfloor 4.186 \\rfloor = 4$. Ahora lo importante: <code>ndiffs()</code> <strong>no</strong> llama a <code>kpss.test</code>, sino a <code>urca::ur.kpss</code>, cuyo truncamiento es $\\lfloor 3\\sqrt{n}/13 \\rfloor = 2$. Sobre la serie <code>frontera</code> del preparcial eso hace que <code>ndiffs()</code> devuelva 1 —diferencia— mientras <code>kpss.test()</code> da p > 0.10 —no diferencies—. El mismo dato y dos veredictos opuestos.',
-        retroFallo: 'Es <strong>4</strong>: $\\lfloor 4(1.2)^{1/4} \\rfloor = \\lfloor 4.186 \\rfloor$. Si diste 2, ese es el truncamiento de <code>urca::ur.kpss</code>, que es el que usa <code>ndiffs()</code> por dentro — y precisamente por eso las dos funciones pueden contradecirse sobre la misma serie.'
+        retroFallo: 'Sale de $\\lfloor 4(1.2)^{1/4} \\rfloor = \\lfloor 4.186 \\rfloor$. Si diste 2, ese es el truncamiento de <code>urca::ur.kpss</code>, que es el que usa <code>ndiffs()</code> por dentro — y precisamente por eso las dos funciones pueden contradecirse sobre la misma serie.'
       },
       {
         tipo: 'numerica', clave: '2.7', objetivo: 'O5',
@@ -5120,7 +5219,7 @@
         pista: 'El criterio es la varianza mínima. Fíjate en qué pasa después del mínimo, porque eso también es información.',
         respuesta: 1, tolerancia: 0,
         retroAcierto: 'La varianza cae de 0.0786 a 0.0107 con la primera diferencia y <strong>vuelve a subir</strong> con la segunda. Ese repunte es la firma de la sobrediferenciación: cada diferencia de más añade ruido en vez de quitar estructura. Con $d=3$ ya casi se ha vuelto al punto de partida.',
-        retroFallo: 'Es <strong>1</strong>. La varianza mínima está en $d=1$ (0.010659) y a partir de ahí crece: 0.023 y 0.070. Elegir $d=2$ o $d=3$ es sobrediferenciar, y se paga con ruido añadido y un MA espurio en los residuos.'
+        retroFallo: 'La varianza mínima está en $d=1$ (0.010659) y a partir de ahí crece: 0.023 y 0.070. Elegir $d=2$ o $d=3$ es sobrediferenciar, y se paga con ruido añadido y un MA espurio en los residuos.'
       },
       {
         tipo: 'numerica', clave: '2.8', objetivo: 'O6',
@@ -5128,7 +5227,7 @@
         pista: 'Es aritmética directa, pero calcula con todos los decimales que puedas: con $\\lambda$ tan pequeño, redondear pronto se lleva el resultado por delante.',
         respuesta: 3.3586, tolerancia: 0.01,
         retroAcierto: '$(28.27^{0.003} - 1)/0.003 = 3.3586$. Y ahora compara: $\\log(28.27) = 3.3418$. Difieren en 0.017, un 0.5&nbsp;%. Con $\\lambda$ tan cerca de cero, Box–Cox <em>es</em> el logaritmo a efectos prácticos — y el logaritmo se interpreta, así que se prefiere.',
-        retroFallo: 'Es <strong>3.3586</strong>. El resultado se parece muchísimo a $\\log(28.27) = 3.3418$, y no por casualidad: cuando $\\lambda \\to 0$, la transformación de Box–Cox tiende al logaritmo. Si te salió algo del orden de 28 o de 0.003, revisa el orden de las operaciones.'
+        retroFallo: 'El resultado se parece muchísimo a $\\log(28.27) = 3.3418$, y no por casualidad: cuando $\\lambda \\to 0$, la transformación de Box–Cox tiende al logaritmo. Si te salió algo del orden de 28 o de 0.003, revisa el orden de las operaciones.'
       }
     ];
 
@@ -5549,6 +5648,13 @@
     // Cada texto recibe el recuento y el objetivo. Se pasan los dos en vez
     // de leer el peso de una variable de fuera: el veredicto depende de
     // ambos y no hay razón para que uno viaje por un canal distinto.
+    // El mismo veredicto en una palabra, para el distintivo de la tarjeta.
+    // Sin esto el estado solo viajaba en el color del borde y en el párrafo.
+    const NOMBRE_VEREDICTO = {
+      solido: 'Sólido', encurso: 'En curso', dudoso: 'Dudoso',
+      flojo: 'Flojo', pendiente: 'Sin responder'
+    };
+
     const TEXTO_VEREDICTO = {
       solido: (e) => `Todo al primer intento, ${e.total} de ${e.total}. Está en su sitio: no le dediques más tiempo.`,
       encurso: (e) => `Bien hasta aquí: ${e.alPrimero} de ${e.alPrimero} al primer intento, pero faltan ${e.total - e.resueltas} ítems por responder. Termínalos antes de fiarte de esto.`,
@@ -5592,11 +5698,12 @@
           <li class="termometro-objetivo es-${v}">
             <div class="termometro-fila">
               <span class="termometro-clave">${clave}</span>
+              <span class="termometro-estado">${NOMBRE_VEREDICTO[v]}</span>
               <span class="termometro-titulo">${meta.titulo}</span>
               <span class="termometro-peso">${meta.peso}&nbsp;% del parcial</span>
               <span class="termometro-cuenta">${e.alPrimero} de ${e.total} ítems al primer intento</span>
             </div>
-            <div class="termometro-barra"><span style="width:${pct}%"></span></div>
+            <div class="termometro-barra" aria-hidden="true"><span style="width:${pct}%"></span></div>
             <p class="termometro-veredicto">${TEXTO_VEREDICTO[v](e, meta)}</p>
             ${repaso.length ? `<ul class="termometro-repaso">${repaso.map(k => {
               const m = moduloPorClave(k);
