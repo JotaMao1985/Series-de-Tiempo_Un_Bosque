@@ -1045,11 +1045,6 @@
         pista: 'Pregúntate qué datos vio el modelo cuando produjo las predicciones que entran en ese número.',
         opciones: [
           {
-            texto: 'Que ese número son residuales y no dice nada sobre pronóstico: evaluado fuera de muestra, el mismo modelo da $18.92$.',
-            correcta: true,
-            retro: 'Exacto. <code>accuracy()</code> con un solo argumento devuelve la fila <code>Training set</code>, calculada sobre datos que el modelo usó para estimarse. La razón entre los dos números es $1.86$ en este caso, y depende del tramo: en los once cortes medidos va de $0.85$ a $4.07$.'
-          },
-          {
             texto: 'Que el RMSE no es la métrica adecuada y habría que usar MASE.',
             correcta: false,
             retro: 'Cambiar de métrica no arregla nada: el MASE de esos mismos residuales es $0.2297$ y es igual de engañoso. El problema no es qué se mide sino <em>sobre qué datos</em> se mide.'
@@ -1058,6 +1053,11 @@
             texto: 'Que falta indicar el horizonte al que se pronostica.',
             correcta: false,
             retro: 'Es una observación correcta y aparte —el error sí depende de $h$, y por eso el Módulo 7 insiste en declararlo—, pero aquí el problema es anterior: ese número no corresponde a ningún horizonte de pronóstico, son ajustes de un paso dentro de la muestra.'
+          },
+          {
+            texto: 'Que ese número son residuales y no dice nada sobre pronóstico: evaluado fuera de muestra, el mismo modelo da $18.92$.',
+            correcta: true,
+            retro: 'Exacto. <code>accuracy()</code> con un solo argumento devuelve la fila <code>Training set</code>, calculada sobre datos que el modelo usó para estimarse. La razón entre los dos números es $1.86$ en este caso, y depende del tramo: en los once cortes medidos va de $0.85$ a $4.07$.'
           },
           {
             texto: 'Que hay que comprobar antes que los residuales pasen Ljung–Box.',
@@ -1112,11 +1112,6 @@
         pista: 'Compara la dirección del error: ¿el procedimiento prometió más o menos error del que hubo?',
         opciones: [
           {
-            texto: 'Que en este montaje concreto el $k$-fold aleatorio no sobrestimó el desempeño: se quedó corto, que es el lado seguro.',
-            correcta: true,
-            retro: 'Exacto, y es la parte del eslogan que conviene matizar. Con rezagos como únicos predictores, el reparto al azar no regala información porque los rezagos ya contienen a los vecinos. El optimismo aparece cuando el modelo <em>interpola en el tiempo</em>: con $3$ vecinos más cercanos sube al $58\\,\\%$ y con un polinomio de grado $8$ al $99\\,\\%$.'
-          },
-          {
             texto: 'Que la validación cruzada aleatoria siempre sobrestima el desempeño en series de tiempo, y aquí hay un error de cálculo.',
             correcta: false,
             retro: 'La afirmación «siempre» es la que este módulo desmiente midiendo. No hay error de cálculo: los cinco montajes del simulador se evalúan con el mismo código y solo tres de los cinco muestran optimismo.'
@@ -1130,6 +1125,11 @@
             texto: 'Que hay que usar <code>TimeSeriesSplit</code> de sklearn, que sí respeta el orden.',
             correcta: false,
             retro: 'Respeta el orden, sí, y es preferible al $k$-fold aleatorio. Pero su ventana de prueba crece de tamaño y no fija el horizonte $h$, así que no responde «¿cuánto me equivoco a 12 meses vista?». Para eso hay que construir el origen móvil (Módulo 7).'
+          },
+          {
+            texto: 'Que en este montaje concreto el $k$-fold aleatorio no sobrestimó el desempeño: se quedó corto, que es el lado seguro.',
+            correcta: true,
+            retro: 'Exacto, y es la parte del eslogan que conviene matizar. Con rezagos como únicos predictores, el reparto al azar no regala información porque los rezagos ya contienen a los vecinos. El optimismo aparece cuando el modelo <em>interpola en el tiempo</em>: con $3$ vecinos más cercanos sube al $58\\,\\%$ y con un polinomio de grado $8$ al $99\\,\\%$.'
           }
         ]
       },
@@ -1151,14 +1151,14 @@
         pista: 'Un intervalo demasiado estrecho fallaría en los dos niveles. Piensa qué otra cosa puede desplazar sistemáticamente el intervalo respecto del valor observado.',
         opciones: [
           {
-            texto: 'El pronóstico está <strong>sesgado</strong>: su centro está desplazado casi una desviación típica, así que la banda estrecha se queda del lado equivocado y la ancha todavía alcanza.',
-            correcta: true,
-            retro: 'Eso es. El sesgo medio del naïve estacional en estos orígenes es $+38.68$ frente a un RMSE de $42.55$: una razón de $0.909$. La banda de $\\pm 1.28\\sigma$ no llega y la de $\\pm 1.96\\sigma$ sí. Comprobar solo el $95\\,\\%$ habría dado el intervalo por bueno.'
-          },
-          {
             texto: 'El intervalo es demasiado estrecho y hay que ensancharlo.',
             correcta: false,
             retro: 'Si fuera demasiado estrecho fallaría también al $95\\,\\%$, y ahí cubre $93.4\\,\\%$, prácticamente lo prometido. El problema no es el ancho sino dónde está el centro.'
+          },
+          {
+            texto: 'El pronóstico está <strong>sesgado</strong>: su centro está desplazado casi una desviación típica, así que la banda estrecha se queda del lado equivocado y la ancha todavía alcanza.',
+            correcta: true,
+            retro: 'Eso es. El sesgo medio del naïve estacional en estos orígenes es $+38.68$ frente a un RMSE de $42.55$: una razón de $0.909$. La banda de $\\pm 1.28\\sigma$ no llega y la de $\\pm 1.96\\sigma$ sí. Comprobar solo el $95\\,\\%$ habría dado el intervalo por bueno.'
           },
           {
             texto: 'Los residuales no son normales y por eso los cuantiles están mal.',
@@ -1224,11 +1224,6 @@
         pista: 'Piensa cuántos números independientes hay detrás de cada una de las dos evaluaciones, y qué tramo concreto de la serie cubre la primera.',
         opciones: [
           {
-            texto: 'Que la partición mide el comportamiento en <em>un</em> tramo, y ese tramo empieza justo después del escalón de 1899, donde una recta descendente parece razonable.',
-            correcta: true,
-            retro: 'Eso es. Con $20$ observaciones de un solo tramo, qué tramo toque pesa más que la diferencia entre métodos. Promediando sobre $36$ orígenes el efecto se diluye y aparece lo que el Capítulo 4 ya había concluido por otras vías: la caída del caudal fue un cambio de nivel, no una pendiente.'
-          },
-          {
             texto: 'Que el horizonte cambia de $20$ a $5$, y la deriva empeora con horizontes cortos.',
             correcta: false,
             retro: 'El horizonte sí cambia y sí influye, pero en la dirección contraria: extrapolar una tendencia se vuelve <em>más</em> arriesgado cuanto más lejos se mira, no menos. Si el horizonte fuera la explicación, la deriva debería salir mejor con $h = 5$.'
@@ -1237,6 +1232,11 @@
             texto: 'Que el ARIMA$(1,1,1)$ está sobreajustado y por eso gana en la evaluación con más datos.',
             correcta: false,
             retro: 'Un modelo sobreajustado gana <em>dentro</em> de la muestra y pierde fuera; aquí pasa lo contrario. Además el origen móvil reajusta el modelo en cada origen, así que un sobreajuste se penalizaría, no se premiaría.'
+          },
+          {
+            texto: 'Que la partición mide el comportamiento en <em>un</em> tramo, y ese tramo empieza justo después del escalón de 1899, donde una recta descendente parece razonable.',
+            correcta: true,
+            retro: 'Eso es. Con $20$ observaciones de un solo tramo, qué tramo toque pesa más que la diferencia entre métodos. Promediando sobre $36$ orígenes el efecto se diluye y aparece lo que el Capítulo 4 ya había concluido por otras vías: la caída del caudal fue un cambio de nivel, no una pendiente.'
           },
           {
             texto: 'Que hay un error en una de las dos evaluaciones, porque el mismo código no puede dar órdenes opuestos.',

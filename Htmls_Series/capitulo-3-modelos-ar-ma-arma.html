@@ -6852,11 +6852,6 @@ round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
         pista: 'La condición no es sobre los coeficientes, es sobre las <em>raíces</em>. Y fíjate bien en la dirección de la desigualdad: ¿dentro o fuera del círculo unitario?',
         opciones: [
           {
-            texto: 'Sí, porque el módulo es mayor que 1: las raíces caen fuera del círculo unitario.',
-            correcta: true,
-            retro: 'Correcto. La condición es $|B_i| > 1$ para todas las raíces. $1.054 > 1$, aunque por poco: es un proceso muy persistente, cerca de la frontera de la no estacionariedad.'
-          },
-          {
             texto: 'No, porque las raíces deberían estar dentro del círculo unitario.',
             correcta: false,
             retro: 'Es al revés, y es la confusión más común del capítulo. El polinomio está escrito en $B$, no en $1/B$: para el AR(1) la raíz es $1/\\phi$, así que $|\\phi| < 1$ equivale a $|1/\\phi| > 1$, es decir, raíz <strong>fuera</strong> del círculo.'
@@ -6870,6 +6865,11 @@ round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
             texto: 'No se puede saber sin conocer $\\sigma^2$.',
             correcta: false,
             retro: 'La varianza del ruido no interviene: escala la serie, pero no cambia si el proceso olvida o no su pasado. Eso lo deciden únicamente las raíces de $\\phi(B)$.'
+          },
+          {
+            texto: 'Sí, porque el módulo es mayor que 1: las raíces caen fuera del círculo unitario.',
+            correcta: true,
+            retro: 'Correcto. La condición es $|B_i| > 1$ para todas las raíces. $1.054 > 1$, aunque por poco: es un proceso muy persistente, cerca de la frontera de la no estacionariedad.'
           }
         ]
       },
@@ -6895,14 +6895,14 @@ round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
         }),
         opciones: [
           {
-            texto: 'Un MA(2): la ACF se corta tras el rezago 2 y la PACF decae.',
-            correcta: true,
-            retro: 'Exacto. Es el MA(2) con $\\theta = (0.6,\\ 0.4)$: $\\rho_1 = 0.5526$, $\\rho_2 = 0.2632$ y a partir de ahí <strong>exactamente</strong> cero, porque dos observaciones separadas por más de $q = 2$ periodos no comparten ningún choque.'
-          },
-          {
             texto: 'Un AR(2): tiene dos barras significativas, luego $p = 2$.',
             correcta: false,
             retro: 'Contar barras no basta: hay que mirar cuál de las dos funciones se corta. En un AR(2) es la <strong>PACF</strong> la que cae a cero tras el rezago 2, mientras la ACF decae sin cortarse nunca. Aquí ocurre justo lo contrario.'
+          },
+          {
+            texto: 'Un MA(2): la ACF se corta tras el rezago 2 y la PACF decae.',
+            correcta: true,
+            retro: 'Exacto. Es el MA(2) con $\\theta = (0.6,\\ 0.4)$: $\\rho_1 = 0.5526$, $\\rho_2 = 0.2632$ y a partir de ahí <strong>exactamente</strong> cero, porque dos observaciones separadas por más de $q = 2$ periodos no comparten ningún choque.'
           },
           {
             texto: 'Un ARMA(2,2), porque hay dos rezagos en cada función.',
@@ -6949,11 +6949,6 @@ round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
         pista: 'Compara los grados de libertad que usa la prueba por defecto con los que debería usar cuando los residuales vienen de un modelo <em>estimado</em>. ¿En qué dirección se equivoca?',
         opciones: [
           {
-            texto: 'Falta <code>fitdf = 3</code>: sin él la prueba usa demasiados grados de libertad y se vuelve demasiado indulgente.',
-            correcta: true,
-            retro: 'Correcto. Con $p+q = 3$ parámetros estimados, el estadístico se distribuye $\\chi^2_{12-3}$, no $\\chi^2_{12}$. Sobre el AR(2) de las manchas, omitir <code>fitdf</code> cambiaba el $p$-valor de $0.0461$ (se rechaza) a $0.0996$ (no se rechaza): la conclusión se invierte por omitir un argumento.'
-          },
-          {
             texto: 'Ninguno: <code>Box.test()</code> descuenta los parámetros automáticamente.',
             correcta: false,
             retro: 'No lo hace. <code>fitdf</code> vale $0$ por defecto, porque la función no sabe de dónde vienen los residuales que le pasas: podrían ser datos crudos. Hay que decírselo siempre.'
@@ -6962,6 +6957,11 @@ round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
             texto: 'Falta <code>fitdf = 3</code>, y sin él la prueba rechaza demasiado a menudo.',
             correcta: false,
             retro: 'El argumento que falta es el correcto, pero la dirección del error es la contraria. Más grados de libertad significa un valor crítico más alto y por tanto un $p$-valor mayor: la prueba rechaza <em>menos</em>, y aprueba modelos que debería suspender.'
+          },
+          {
+            texto: 'Falta <code>fitdf = 3</code>: sin él la prueba usa demasiados grados de libertad y se vuelve demasiado indulgente.',
+            correcta: true,
+            retro: 'Correcto. Con $p+q = 3$ parámetros estimados, el estadístico se distribuye $\\chi^2_{12-3}$, no $\\chi^2_{12}$. Sobre el AR(2) de las manchas, omitir <code>fitdf</code> cambiaba el $p$-valor de $0.0461$ (se rechaza) a $0.0996$ (no se rechaza): la conclusión se invierte por omitir un argumento.'
           },
           {
             texto: 'El rezago 12 es demasiado alto para una serie anual.',

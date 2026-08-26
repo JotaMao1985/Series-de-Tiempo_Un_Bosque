@@ -5738,11 +5738,6 @@ rbind(resumen(y, "original"),
         pista: 'Vuelve a la primera condición de la estacionariedad débil. No dice "la media anual es constante", dice $E[y_t] = \\mu$ <em>para todo</em> $t$. ¿Es la misma esperanza en diciembre que en febrero?',
         opciones: [
           {
-            texto: 'No, porque la media depende del mes y, por tanto, de $t$.',
-            correcta: true,
-            retro: 'La primera condición pide $E[y_t] = \\mu$ para <em>todo</em> $t$. Con estacionalidad, la esperanza de diciembre es distinta de la de febrero. "Estacional" y "estacionario" suenan parecido y significan cosas opuestas.'
-          },
-          {
             texto: 'Sí, porque el nivel promedio anual no cambia.',
             correcta: false,
             retro: 'La condición no es sobre el promedio anual, sino sobre la media en cada instante $t$. Promediar el año entero esconde justamente la variación que rompe la estacionariedad.'
@@ -5751,6 +5746,11 @@ rbind(resumen(y, "original"),
             texto: 'Sí, siempre que la varianza sea constante.',
             correcta: false,
             retro: 'La varianza constante es la condición (2), pero hacen falta las tres a la vez. Aquí falla la (1).'
+          },
+          {
+            texto: 'No, porque la media depende del mes y, por tanto, de $t$.',
+            correcta: true,
+            retro: 'La primera condición pide $E[y_t] = \\mu$ para <em>todo</em> $t$. Con estacionalidad, la esperanza de diciembre es distinta de la de febrero. "Estacional" y "estacionario" suenan parecido y significan cosas opuestas.'
           },
           {
             texto: 'No se puede saber sin aplicar una prueba ADF.',
@@ -5822,11 +5822,6 @@ rbind(resumen(y, "original"),
         pista: 'Antes de mirar los p-valores, escribe la $H_0$ de cada prueba. Son contrarias, así que "no rechazar" en una y "rechazar" en la otra puede significar lo mismo.',
         opciones: [
           {
-            texto: 'Que no es estacionaria: las dos pruebas coinciden.',
-            correcta: true,
-            retro: 'Exacto, y es el caso de la TRM (ADF $-1.978$, KPSS $2.243$). El ADF <em>no rechaza</em> su $H_0$ (hay raíz unitaria) y el KPSS <em>rechaza</em> la suya (es estacionaria): las dos apuntan a lo mismo.'
-          },
-          {
             texto: 'Que las dos pruebas se contradicen.',
             correcta: false,
             retro: 'Parecería si se leyeran los p-valores sin mirar las hipótesis. Como las $H_0$ son opuestas, "no rechazar" en una y "rechazar" en la otra es justamente el caso de <em>acuerdo</em>.'
@@ -5840,6 +5835,11 @@ rbind(resumen(y, "original"),
             texto: 'Que los datos son poco informativos para decidir.',
             correcta: false,
             retro: 'Ese es el caso en que <em>ninguna</em> de las dos rechaza. Aquí el KPSS sí rechaza, con lo que sí hay conclusión.'
+          },
+          {
+            texto: 'Que no es estacionaria: las dos pruebas coinciden.',
+            correcta: true,
+            retro: 'Exacto, y es el caso de la TRM (ADF $-1.978$, KPSS $2.243$). El ADF <em>no rechaza</em> su $H_0$ (hay raíz unitaria) y el KPSS <em>rechaza</em> la suya (es estacionaria): las dos apuntan a lo mismo.'
           }
         ]
       },
@@ -5853,14 +5853,14 @@ rbind(resumen(y, "original"),
         dibujar: canvas => correlogramaDe(canvas, 'caminata', 'acf'),
         opciones: [
           {
-            texto: 'Diferenciarla: el decaimiento lento y casi lineal es la firma de una raíz unitaria.',
-            correcta: true,
-            retro: 'Es la ACF de una caminata aleatoria ($r_1 = 0.961$, $r_{12} = 0.488$). Como la dependencia se propaga en cadena, la ACF tarda muchísimo en bajar. Una sola diferencia la convierte en ruido blanco: pruébalo en el simulador del Módulo 5 poniendo $\\phi = 1$ y activando $\\nabla$.'
-          },
-          {
             texto: 'Nada: ya es estacionaria, solo tiene memoria larga.',
             correcta: false,
             retro: 'Con $r_1 = 0.961$ y $r_{12}$ todavía en $0.488$ no hay reversión a la media. Un proceso estacionario AR(1) con $\\phi = 0.5$ tendría $r_{12} = 0.5^{12} \\approx 0.0002$.'
+          },
+          {
+            texto: 'Diferenciarla: el decaimiento lento y casi lineal es la firma de una raíz unitaria.',
+            correcta: true,
+            retro: 'Es la ACF de una caminata aleatoria ($r_1 = 0.961$, $r_{12} = 0.488$). Como la dependencia se propaga en cadena, la ACF tarda muchísimo en bajar. Una sola diferencia la convierte en ruido blanco: pruébalo en el simulador del Módulo 5 poniendo $\\phi = 1$ y activando $\\nabla$.'
           },
           {
             texto: 'Aplicarle logaritmo para estabilizar la varianza.',
@@ -5891,11 +5891,6 @@ rbind(resumen(y, "original"),
         pista: 'No es porque el logaritmo gane en el criterio: no gana. Piensa en quién tiene que <em>entender</em> el resultado y en qué pasa al deshacer la transformación.',
         opciones: [
           {
-            texto: 'Porque $\\lambda = 0$ es interpretable, deshacer la transformación es trivial y el óptimo es a su vez una estimación con incertidumbre.',
-            correcta: true,
-            retro: 'Y conviene saber lo que cuesta: el criterio vale 0.153 con el logaritmo frente a 0.081 en el óptimo (un 88&nbsp;% más), aunque capta el 84&nbsp;% de la mejora respecto a no transformar (0.530). Se acepta ese sobrecosto a cambio de poder leer los cambios como variaciones porcentuales.'
-          },
-          {
             texto: 'Porque el logaritmo estabiliza mejor la varianza.',
             correcta: false,
             retro: 'No: por construcción, el $\\lambda$ óptimo es el que mejor la estabiliza según el criterio, y el logaritmo queda un 88&nbsp;% por encima de ese mínimo. Se prefiere <em>pese</em> a ser peor en esa métrica, no por ser mejor.'
@@ -5909,6 +5904,11 @@ rbind(resumen(y, "original"),
             texto: 'Porque el criterio de Guerrero solo es válido para series anuales.',
             correcta: false,
             retro: 'Al contrario: necesita partir la serie en bloques estacionales, y aquí usa bloques de $m = 12$ meses. Con series anuales sin ciclo habría que fijar el tamaño de bloque a mano.'
+          },
+          {
+            texto: 'Porque $\\lambda = 0$ es interpretable, deshacer la transformación es trivial y el óptimo es a su vez una estimación con incertidumbre.',
+            correcta: true,
+            retro: 'Y conviene saber lo que cuesta: el criterio vale 0.153 con el logaritmo frente a 0.081 en el óptimo (un 88&nbsp;% más), aunque capta el 84&nbsp;% de la mejora respecto a no transformar (0.530). Se acepta ese sobrecosto a cambio de poder leer los cambios como variaciones porcentuales.'
           }
         ]
       }

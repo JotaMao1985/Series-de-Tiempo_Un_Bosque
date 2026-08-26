@@ -803,14 +803,14 @@
         pista: 'Antes de comparar dos números, pregúntate si están calculados sobre los mismos datos. ¿Cuántas observaciones entran en la verosimilitud de cada uno?',
         opciones: [
           {
-            texto: 'Ninguno de los dos por esta comparación: no son comparables, porque tienen distinto $d$.',
-            correcta: true,
-            retro: 'Exacto. El primero se calcula sobre $n^{*} = 99$ diferencias y el segundo sobre $98$ segundas diferencias: <strong>datos distintos</strong>. La comparación por AICc solo vale dentro de un mismo $d$. Para decidir entre distintos $d$ hay que usar las pruebas de raíz unitaria, el gráfico, o una evaluación fuera de muestra.'
-          },
-          {
             texto: 'El ARIMA($1,2,2$), porque $1264.60 < 1267.51$.',
             correcta: false,
             retro: 'Es la trampa central del capítulo. Un AICc menor con más diferencias no significa un modelo mejor: significa, en buena parte, <strong>menos observaciones que explicar</strong>. Y en el Nilo ese modelo concreto tiene además una raíz MA en $1.03$, casi sobre el círculo unitario.'
+          },
+          {
+            texto: 'Ninguno de los dos por esta comparación: no son comparables, porque tienen distinto $d$.',
+            correcta: true,
+            retro: 'Exacto. El primero se calcula sobre $n^{*} = 99$ diferencias y el segundo sobre $98$ segundas diferencias: <strong>datos distintos</strong>. La comparación por AICc solo vale dentro de un mismo $d$. Para decidir entre distintos $d$ hay que usar las pruebas de raíz unitaria, el gráfico, o una evaluación fuera de muestra.'
           },
           {
             texto: 'El ARIMA($1,1,1$), porque menos diferencias es siempre mejor por parsimonia.',
@@ -849,11 +849,6 @@
           }),
         opciones: [
           {
-            texto: 'Pasar a un modelo estacional: el patrón está en los múltiplos del período $m = 12$.',
-            correcta: true,
-            retro: 'Correcto. $\\hat\\rho_{12} = 0.72$ y $\\hat\\rho_{24} = 0.67$ frente a una banda de $0.163$: la estructura sobrante es exactamente estacional. Subir $q$ hasta 24 lo cubriría con dos docenas de parámetros; un SARIMA lo hace con dos. Es el Capítulo 5.'
-          },
-          {
             texto: 'Aumentar $q$ hasta que las barras entren en la banda.',
             correcta: false,
             retro: 'Funcionaría en el sentido técnico, pero necesitarías $q = 24$ para alcanzar el rezago 24, es decir veinticuatro parámetros para describir un patrón que se repite cada doce meses. Un modelo estacional captura lo mismo con dos.'
@@ -862,6 +857,11 @@
             texto: 'Diferenciar una vez más: la autocorrelación alta indica no estacionariedad.',
             correcta: false,
             retro: 'Diferenciar de nuevo en el rezago 1 no toca el patrón de los rezagos 12 y 24, y además introduciría la raíz unitaria en el MA que estudió el Módulo 8. Lo que hace falta aquí es una diferencia <strong>estacional</strong> $\\nabla_{12}$, que es otra cosa.'
+          },
+          {
+            texto: 'Pasar a un modelo estacional: el patrón está en los múltiplos del período $m = 12$.',
+            correcta: true,
+            retro: 'Correcto. $\\hat\\rho_{12} = 0.72$ y $\\hat\\rho_{24} = 0.67$ frente a una banda de $0.163$: la estructura sobrante es exactamente estacional. Subir $q$ hasta 24 lo cubriría con dos docenas de parámetros; un SARIMA lo hace con dos. Es el Capítulo 5.'
           },
           {
             texto: 'Nada: la mayoría de las barras están dentro de la banda, así que el modelo es adecuado.',
@@ -926,11 +926,6 @@
         }),
         opciones: [
           {
-            texto: 'Nada todavía: esa forma indica no estacionariedad, y hay que diferenciar antes de leer $p$ y $q$.',
-            correcta: true,
-            retro: 'Exacto. Una ACF que decae despacio y no corta —aquí $0.498,\\ 0.385,\\ 0.328,\\ 0.239,\\dots$— es el retrato de una serie no estacionaria. La tabla de identificación presupone estacionariedad; aplicarla aquí no informa de nada. Tras diferenciar, la misma serie tiene una sola barra fuera de la banda.'
-          },
-          {
             texto: 'Es un AR de orden alto, porque hay muchas barras fuera de la banda.',
             correcta: false,
             retro: 'Es el error de principiante más caro del capítulo. Un AR estacionario tiene una ACF que decae <strong>geométricamente</strong>, es decir, deprisa; ésta lleva veinte rezagos sin acercarse a cero. Lo que ves no es memoria larga del proceso: es que el nivel de la serie está vagando.'
@@ -944,6 +939,11 @@
             texto: 'Que $d = 1$, porque el primer valor es $0.498$, cercano a $0.5$.',
             correcta: false,
             retro: 'La conclusión sobre $d$ es correcta pero el argumento no: el valor de $\\rho_1$ no determina $d$. Lo que indica no estacionariedad es la <strong>forma</strong> del decaimiento —lento y sin cortar—, no la altura de la primera barra. Un AR(1) con $\\phi = 0.5$ tendría también $\\rho_1 = 0.5$ y sería perfectamente estacionario.'
+          },
+          {
+            texto: 'Nada todavía: esa forma indica no estacionariedad, y hay que diferenciar antes de leer $p$ y $q$.',
+            correcta: true,
+            retro: 'Exacto. Una ACF que decae despacio y no corta —aquí $0.498,\\ 0.385,\\ 0.328,\\ 0.239,\\dots$— es el retrato de una serie no estacionaria. La tabla de identificación presupone estacionariedad; aplicarla aquí no informa de nada. Tras diferenciar, la misma serie tiene una sola barra fuera de la banda.'
           }
         ]
       },
@@ -954,11 +954,6 @@
         pista: '¿Cuánta diferencia de AICc hace falta para distinguir dos modelos? Compara ese umbral con la distancia entre el primero y el quinto.',
         opciones: [
           {
-            texto: 'Que hay cinco modelos prácticamente indistinguibles, y conviene decirlo en vez de presentar un único ganador.',
-            correcta: true,
-            retro: 'Correcto. La diferencia entre el primero y el quinto es de $1.71$ puntos, por debajo del umbral habitual de $2$. Entre esos cinco está el ARIMA($0,1,1$) que proponía el correlograma. <code>auto.arima</code> no miente, pero su salida de una línea no comunica esa incertidumbre; <code>trace = TRUE</code> sí.'
-          },
-          {
             texto: 'Que el ARIMA($1,1,1$) es el modelo verdadero, ya que lo confirman las dos búsquedas.',
             correcta: false,
             retro: 'Que dos búsquedas coincidan dice que el <em>algoritmo</em> es consistente, no que el modelo sea verdadero. Ambas optimizan el mismo criterio sobre los mismos datos, así que coincidir es lo esperable. Y con cinco candidatos en $1.71$ puntos, el criterio apenas los separa.'
@@ -967,6 +962,11 @@
             texto: 'Que la búsqueda escalonada es innecesaria, porque la exhaustiva llega al mismo sitio.',
             correcta: false,
             retro: 'Aquí llegaron al mismo sitio, pero eso no está garantizado: la escalonada explora un vecindario y puede quedarse en un óptimo local. Es la escalonada la que existe por eficiencia ($18$ modelos frente a $42$); precisamente por eso conviene contrastar con la completa en casos difíciles.'
+          },
+          {
+            texto: 'Que hay cinco modelos prácticamente indistinguibles, y conviene decirlo en vez de presentar un único ganador.',
+            correcta: true,
+            retro: 'Correcto. La diferencia entre el primero y el quinto es de $1.71$ puntos, por debajo del umbral habitual de $2$. Entre esos cinco está el ARIMA($0,1,1$) que proponía el correlograma. <code>auto.arima</code> no miente, pero su salida de una línea no comunica esa incertidumbre; <code>trace = TRUE</code> sí.'
           },
           {
             texto: 'Que como la diferencia es menor que $2$, hay que elegir el modelo con menos parámetros de los cinco.',

@@ -882,11 +882,6 @@
         pista: 'Fíjate en qué vale $\\hat\\rho_1$ en esa misma serie, y en qué le pasa a la ACF de cualquier serie con tendencia.',
         opciones: [
           {
-            texto: 'Nada todavía: en niveles la tendencia infla <em>todos</em> los $\\hat\\rho_k$, así que el diagnóstico hay que hacerlo sobre la serie ya diferenciada.',
-            correcta: true,
-            retro: 'Exacto. En esa misma serie $\\hat\\rho_1 = 0.964$ y $\\hat\\rho_{36} = 0.225$: es el decaimiento lento típico de una tendencia, no un pico estacional. Sobre $\\nabla$TRM los tres múltiplos de $12$ valen $-0.0025$, $-0.067$ y $0.071$, todos dentro de la banda.'
-          },
-          {
             texto: 'Que la TRM tiene estacionalidad anual, porque $0.637$ supera claramente la banda.',
             correcta: false,
             retro: 'Es la conclusión que el módulo está diseñado para evitar. Una serie con tendencia da autocorrelaciones grandes en <em>todos</em> los rezagos, incluidos los múltiplos de $12$. Cuatro evidencias independientes (Módulo 8) muestran que esta serie no tiene estacionalidad.'
@@ -900,6 +895,11 @@
             texto: 'Que la banda está mal calculada, porque con $n = 138$ debería ser mayor.',
             correcta: false,
             retro: 'La banda es $1.96/\\sqrt{n} = 1.96/\\sqrt{138} = 0.1668$, correcta. El problema no está en la banda sino en aplicarla a una serie no estacionaria: bajo tendencia, la distribución de referencia de $\\hat\\rho_k$ ya no es la que justifica esa banda.'
+          },
+          {
+            texto: 'Nada todavía: en niveles la tendencia infla <em>todos</em> los $\\hat\\rho_k$, así que el diagnóstico hay que hacerlo sobre la serie ya diferenciada.',
+            correcta: true,
+            retro: 'Exacto. En esa misma serie $\\hat\\rho_1 = 0.964$ y $\\hat\\rho_{36} = 0.225$: es el decaimiento lento típico de una tendencia, no un pico estacional. Sobre $\\nabla$TRM los tres múltiplos de $12$ valen $-0.0025$, $-0.067$ y $0.071$, todos dentro de la banda.'
           }
         ]
       },
@@ -985,11 +985,6 @@
         },
         opciones: [
           {
-            texto: 'Un SAR($1$)$_{12}$ con $\\Phi > 0$: los picos decaen geométricamente ($0.70$, $0.49$, $0.34$).',
-            correcta: true,
-            retro: 'Correcto. Los tres picos son $\\Phi$, $\\Phi^2$ y $\\Phi^3$ con $\\Phi = 0.7$, y todos los rezagos intermedios valen exactamente cero porque no hay parte regular. La PACF de este proceso se cortaría tras el rezago $12$.'
-          },
-          {
             texto: 'Un SMA($1$)$_{12}$: hay un pico en el rezago $12$ y estacionalidad clara.',
             correcta: false,
             retro: 'Un SMA($1$)$_{12}$ se <strong>corta</strong>: tendría un pico en el $12$ y exactamente $0$ en el $24$ y el $36$. Aquí los tres picos están presentes y decaen, que es la firma del SAR.'
@@ -998,6 +993,11 @@
             texto: 'Un modelo <em>airline</em>, por los picos en los múltiplos de $12$.',
             correcta: false,
             retro: 'El <em>airline</em> tiene además parte regular, así que su ACF sería distinta de cero en el rezago $1$ y en los satélites $11$ y $13$. Aquí esos rezagos valen cero, así que no hay componente regular.'
+          },
+          {
+            texto: 'Un SAR($1$)$_{12}$ con $\\Phi > 0$: los picos decaen geométricamente ($0.70$, $0.49$, $0.34$).',
+            correcta: true,
+            retro: 'Correcto. Los tres picos son $\\Phi$, $\\Phi^2$ y $\\Phi^3$ con $\\Phi = 0.7$, y todos los rezagos intermedios valen exactamente cero porque no hay parte regular. La PACF de este proceso se cortaría tras el rezago $12$.'
           },
           {
             texto: 'Un AR($1$)$\\times$SAR($1$): se ven los satélites alrededor de los picos.',
@@ -1013,14 +1013,14 @@
         pista: 'Antes de comparar dos AICc, pregúntate sobre cuántas observaciones se ha evaluado la verosimilitud de cada uno.',
         opciones: [
           {
-            texto: 'Ninguno con esa información: los AICc no son comparables porque se calculan sobre $143$ y $131$ observaciones.',
-            correcta: true,
-            retro: 'Correcto, y es la lección central del Módulo 10. Es la misma trampa que el Capítulo 4 documentó con $d$, agravada porque cada $D$ cuesta $m = 12$ observaciones en vez de una. Entre familias solo se puede comparar fuera de muestra.'
-          },
-          {
             texto: 'La armónica, que gana por $38$ puntos de AICc, que es una diferencia enorme.',
             correcta: false,
             retro: 'La diferencia es enorme precisamente porque los dos números no viven en la misma escala: doce observaciones menos cambian la log-verosimilitud mucho más que cualquier parámetro. Comparar esos AICc es el error que el módulo señala.'
+          },
+          {
+            texto: 'Ninguno con esa información: los AICc no son comparables porque se calculan sobre $143$ y $131$ observaciones.',
+            correcta: true,
+            retro: 'Correcto, y es la lección central del Módulo 10. Es la misma trampa que el Capítulo 4 documentó con $d$, agravada porque cada $D$ cuesta $m = 12$ observaciones en vez de una. Entre familias solo se puede comparar fuera de muestra.'
           },
           {
             texto: 'El <em>airline</em>, porque tiene $2$ parámetros frente a $16$ y la parsimonia desempata.',
