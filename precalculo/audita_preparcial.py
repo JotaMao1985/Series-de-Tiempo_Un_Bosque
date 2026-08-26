@@ -1,0 +1,184 @@
+#!/usr/bin/env python3
+"""
+audita_preparcial.py — que cada cifra del preparcial enseñe lo que su ítem afirma
+
+Material de Series de Tiempo 2026-II (20948).
+
+`genera_preparcial.R` produce cifras correctas. Eso no basta: una cifra correcta
+puede ilustrar **lo contrario** de lo que el ítem promete, y entonces el
+preparcial enseña el error justo antes del parcial. Este auditor comprueba la
+afirmación pedagógica, no la aritmética.
+
+Ejemplo de por qué existe: el ítem 25 prometía que `ndiffs()` y `kpss.test()`
+discrepan. Sobre la serie original discrepaban en el truncamiento pero llegaban
+a la MISMA conclusión — el ítem no enseñaba nada. Se cambió la serie por una
+donde de verdad se contradicen. Sin este guion, eso se publica.
+
+Uso:  python3 precalculo/audita_preparcial.py
+      (desde la carpeta `Series de tiempo/` o desde `precalculo/`)
+
+Devuelve 1 si alguna afirmación no se sostiene.
+"""
+from __future__ import annotations
+
+import json
+import pathlib
+import sys
+
+AQUI = pathlib.Path(__file__).resolve().parent
+DATOS = AQUI / "salidas" / "preparcial_datos.json"
+
+fallos: list[str] = []
+
+
+def check(cond: bool, msg: str, extra: str = "") -> None:
+    print(("  OK   " if cond else "  FALLA") + f"  {msg}" + (f"   [{extra}]" if extra else ""))
+    if not cond:
+        fallos.append(msg)
+
+
+def main() -> int:
+    d = json.loads(DATOS.read_text(encoding="utf-8"))
+    I = d["items"]
+
+    print("— i01 · barajar destruye la autocorrelación, no la media ni la sd")
+    check(abs(I["i01"]["media_igual"]) < 1e-9 and abs(I["i01"]["sd_igual"]) < 1e-9,
+          "media y sd idénticas tras barajar")
+    check(abs(I["i01"]["acf_original"]["acf"][0]) > 0.5
+          and abs(I["i01"]["acf_barajada"]["acf"][0]) < I["i01"]["acf_barajada"]["banda"],
+          "r1 alto en la serie, dentro de banda en la barajada",
+          f"{I['i01']['acf_original']['acf'][0]} vs {I['i01']['acf_barajada']['acf'][0]}")
+
+    print("— i04 · el gráfico de subseries enseña la tendencia DENTRO de cada mes")
+    p = I["i04"]["pendiente_por_mes"]
+    check(min(p) > 0, "los 12 meses tienen pendiente positiva", f"min={min(p)}")
+
+    print("— i05 · el atípico lo absorbe el residuo, no la tendencia ni el estacional")
+    r, t_, s = (abs(I["i05"][k]) for k in
+                ("salto_en_residuo", "salto_en_tendencia", "salto_en_estacional"))
+    check(r > 5 * max(t_, s), "el residuo domina", f"res={r} tend={t_} est={s}")
+
+    print("— i07 · la 2×4 centrada pierde dos observaciones en cada extremo")
+    check(I["i07"]["no_estimados_inicio"] == 2 and I["i07"]["no_estimados_final"] == 2,
+          "pierde 2 y 2")
+
+    print("— i08 · los índices estacionales clásicos suman cero")
+    check(abs(I["i08"]["suman_cero"]) < 1e-9, "suman cero")
+
+    print("— i09 · la malla de s.window discrimina de verdad")
+    q = [(m["s_window"], m["acf_residuo_12"], m["queda_estacionalidad"]) for m in I["i09"]["malla"]]
+    for sw, a, f in q:
+        print(f"        s.window={str(sw):9} acf12={a:+.4f} deja estructura={f}")
+    check(len({f for _, _, f in q}) == 2, "no todas las s.window dan el mismo veredicto")
+
+    print("— i10 · sin robust, el atípico contamina el estacional de su mes")
+    er = abs(I["i10"]["estacional_del_mes"]["robusto"])
+    en = abs(I["i10"]["estacional_del_mes"]["no_robusto"])
+    check(en > er, "no robusto contamina más", f"rob={er} no_rob={en}")
+
+    print("— i11 · F_T casi igual, F_S muy distinta")
+    check(I["i11"]["diferencia_FT"] < 0.03 and I["i11"]["diferencia_FS"] > 0.4,
+          "el par cumple lo que el ítem promete",
+          f"dFT={I['i11']['diferencia_FT']} dFS={I['i11']['diferencia_FS']}")
+
+    print("— i15 · la PACF en el rezago 1 separa ruido blanco de AR(1)")
+    check(abs(I["i15"]["pacf1_blanco"]) < 0.1 and I["i15"]["pacf1_ar"] > 0.15,
+          "PACF1 separa", f"blanco={I['i15']['pacf1_blanco']} ar={I['i15']['pacf1_ar']}")
+
+    print("— i16 · la caminata: varianza creciente y ADF que no rechaza")
+    v = I["i16"]["varianza_por_tramo"]
+    check(v[0] < v[1] < v[2], "la varianza crece tramo a tramo", str(v))
+    check(I["i16"]["adf"]["p_valor"] > 0.10, "ADF no rechaza en niveles")
+    check(I["i16"]["adf_diferenciada"]["p_valor"] < 0.05, "ADF rechaza tras diferenciar")
+
+    print("— i18 · una ACF lenta NO prueba raíz unitaria")
+    check(I["i18"]["acf_linea"][0] > 0.8 and I["i18"]["acf_caminata"][0] > 0.8,
+          "las dos ACF decaen despacio")
+    check(I["i18"]["linea_adf"]["p_valor"] < 0.05,
+          "el ADF SÍ rechaza en la tendencia determinista")
+    check(I["i18"]["caminata_adf"]["p_valor"] > 0.10, "el ADF NO rechaza en la caminata")
+
+    print("— i19 · los picos del correlograma delatan el periodo 12")
+    check(all(k in I["i19"]["picos"] for k in (12, 24)), "12 y 24 entre los picos",
+          str(I["i19"]["picos"]))
+
+    print("— i22 · r4 alto: la estacionalidad trimestral se ve en el rezago 4")
+    check(I["i22"]["r4"] > 0.4 and I["i22"]["r4"] > I["i22"]["r1"], "r4 alto y mayor que r1",
+          f"r1={I['i22']['r1']} r4={I['i22']['r4']}")
+
+    print("— i23 · el KPSS de nivel caza lo que el ADF deja pasar")
+    L = I["i23"]["linea"]
+    check(L["adf"]["p_valor"] < 0.05 and L["kpss_nivel"]["p_valor"] < 0.05
+          and L["kpss_tendencia"]["p_valor"] > 0.05,
+          "ADF rechaza · KPSS nivel rechaza · KPSS tendencia no")
+
+    print("— i24 · el ADF cambia de conclusión al crecer n (potencia)")
+    check(I["i24"]["corto"]["adf"]["p_valor"] > 0.10
+          and I["i24"]["largo"]["adf"]["p_valor"] < 0.05, "cambia de conclusión")
+
+    print("— i25 · ndiffs() y kpss.test() se contradicen sobre el MISMO dato")
+    check(bool(I["i25"]["se_contradicen"]), "se contradicen de verdad, no solo en el truncamiento",
+          f"ndiffs={I['i25']['ndiffs']} kpss.test p={I['i25']['kpss_test_nivel']['p_valor']}")
+    check(I["i25"]["truncamiento_urca"] != I["i25"]["truncamiento_kpss_test"],
+          "y los truncamientos difieren",
+          f"urca={I['i25']['truncamiento_urca']} kpss.test={I['i25']['truncamiento_kpss_test']}")
+
+    print("— i26 · ur.df con tendencia rechaza, con deriva no")
+    check(I["i26"]["rechaza_trend_5"] and not I["i26"]["rechaza_drift_5"],
+          "elegir mal la especificación cambia la conclusión")
+
+    print("— i27 · la varianza mínima señala d = 1")
+    check(I["i27"]["minimo_en"] == I["i27"]["ndiffs"], "la tabla coincide con ndiffs()",
+          f"tabla={I['i27']['minimo_en']} ndiffs={I['i27']['ndiffs']}")
+
+    print("— i28 · las dos diferencias conmutan")
+    check(bool(I["i28"]["conmutan"]) and I["i28"]["diferencia_maxima"] == 0,
+          "diferencia máxima exactamente cero")
+
+    print("— i29 · tras d = 1 queda estacionalidad en el rezago 12")
+    check(abs(I["i29"]["acf12_despues"]) > I["i29"]["despues"]["banda"],
+          "acf12 fuera de banda", f"acf12={I['i29']['acf12_despues']}")
+
+    print("— i30 · el logaritmo estabiliza la varianza por tramos")
+    vc, vl = I["i30"]["var_por_tramo_cruda"], I["i30"]["var_por_tramo_log"]
+    check(max(vc) / min(vc) > 3 and max(vl) / min(vl) < 2, "la razón de varianzas cae",
+          f"{max(vc)/min(vc):.1f}x -> {max(vl)/min(vl):.1f}x")
+
+    print("— i31 · λ ≈ 0: la transformación es prácticamente el logaritmo")
+    check(abs(I["i31"]["transformado"] - I["i31"]["log_del_valor"]) < 0.05,
+          "coincide con log", f"λ={I['i31']['lambda']}")
+
+    print("— i32 · tras diferenciar, el logaritmo falla en más de un tercio de los datos")
+    check(I["i32"]["cuantos_NaN"] > 0.3 * len(I["i32"]["valores"]),
+          "bastantes NaN", f"{I['i32']['cuantos_NaN']} NaN")
+
+    print("\n— p-valores en el borde de la tabla (obligan a escribir «p < 0.01», no «p = 0.01»)")
+    bordes = []
+
+    def recorre(nodo, ruta=""):
+        if isinstance(nodo, dict):
+            if nodo.get("fuera_tabla") is True:
+                bordes.append(f"{ruta} (p={nodo.get('p_valor')})")
+            for k, v in nodo.items():
+                recorre(v, f"{ruta}.{k}" if ruta else k)
+        elif isinstance(nodo, list):
+            for k, v in enumerate(nodo):
+                recorre(v, f"{ruta}[{k}]")
+
+    recorre(I)
+    for b in bordes:
+        print(f"        {b}")
+    print(f"        -> {len(bordes)} p-valores fuera de tabla. P2 tiene que escribirlos con < o >.")
+
+    print()
+    if fallos:
+        print(f"AUDITORÍA: {len(fallos)} FALLOS")
+        for f in fallos:
+            print(f"  · {f}")
+        return 1
+    print("AUDITORÍA: todo en verde")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
