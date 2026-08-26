@@ -2922,8 +2922,9 @@
       </ul>
 
       <p>Después va <strong>tu diagnóstico</strong>, que es el producto de verdad: no un puntaje, sino qué módulo
-        concreto te falta. Y al final, un <strong>simulacro cronometrado</strong> con el formato del parcial y una
-        página de cierre con las reglas de decisión del módulo.</p>
+        concreto te falta. Y al final, una página de cierre con las reglas de
+        decisión del módulo. El <strong>simulacro cronometrado</strong> se publica aparte, más adelante:
+        su módulo está creado pero todavía vacío.</p>
 
       <div class="tip-box">
         <p style="margin:0;"><strong>Cada opción incorrecta te dice por qué lo es.</strong> No solo la correcta. Falla a
@@ -3190,10 +3191,22 @@
           <div>
             <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
             <p class="text-gray-600 text-sm" style="margin:0;">Seis ítems con el formato y el tiempo del parcial, sin
-              retroalimentación hasta el final.</p>
+              retroalimentación hasta el final. <strong>Todavía no está publicado.</strong></p>
           </div>
         </div>
       </div>
+
+      <div class="tip-box">
+        <p style="margin:0;"><strong>Este módulo todavía está vacío.</strong> El simulacro se publica aparte,
+        después que el resto del preparcial; hasta entonces no hay nada que hacer aquí y no te estás
+        perdiendo ningún ítem: <strong>los 32 están en los bloques A a D</strong>, y el diagnóstico del
+        módulo 6 ya los recoge todos.</p>
+      </div>
+
+      <p>Lo que este módulo va a añadir no es contenido nuevo, es la <em>condición</em>: resolver con el
+      reloj en marcha y sin retroalimentación inmediata, que es como se resuelve el parcial. Mientras
+      tanto, lo más parecido es rehacer el bloque en el que el diagnóstico te marcó flojo sin volver a
+      mirar las retros.</p>
 
       <div class="simulacro" data-simulacro="corte-1"></div>
     </div>
@@ -3327,7 +3340,7 @@
         { id: 4, title: "Bloque C · Interpretación",  shortTitle: "C · Interpret.", duration: "18 min" },
         { id: 5, title: "Bloque D · Análisis gráfico", shortTitle: "D · Gráficos",  duration: "12 min" },
         { id: 6, title: "Tu diagnóstico",             shortTitle: "Diagnóstico",   duration: "5 min" },
-        { id: 7, title: "Simulacro cronometrado",     shortTitle: "Simulacro",     duration: "35 min" },
+        { id: 7, title: "Simulacro cronometrado",     shortTitle: "Simulacro",     duration: "pendiente" },
         { id: 8, title: "Qué llevar al parcial",      shortTitle: "Al parcial",    duration: "6 min" }
       ]
     };
@@ -5097,7 +5110,7 @@
       },
       {
         tipo: 'opcion', clave: '2.1', objetivo: 'O3',
-        pregunta: 'Cuatro series del preparcial, partidas en tres tramos iguales. <code>linea</code>: medias 24.8, 35.0, 45.6 con varianzas 17.0, 11.9, 14.0. <code>demanda</code>: medias 36.5, 49.5, 65.3 con varianzas 28.9, 50.7, 103.4. <code>residuo_blanco</code>: medias 0.03, −0.06, −0.16 con varianzas 0.86, 0.86, 0.82. ¿Cuál viola <strong>solo la primera</strong> condición de la estacionariedad débil?',
+        pregunta: 'Tres series del preparcial, partidas en tres tramos iguales. <code>linea</code>: medias 24.8, 35.0, 45.6 con varianzas 17.0, 11.9, 14.0. <code>demanda</code>: medias 36.5, 49.5, 65.3 con varianzas 28.9, 50.7, 103.4. <code>residuo_blanco</code>: medias 0.03, −0.06, −0.16 con varianzas 0.86, 0.86, 0.82. ¿Cuál viola <strong>solo la primera</strong> condición de la estacionariedad débil?',
         pista: 'Las condiciones son tres: media constante, varianza constante y autocovarianza que dependa solo del rezago. Mira cuál de las series mueve la media pero deja la varianza quieta.',
         opciones: [
           { texto: '<code>demanda</code>: la media sube de 36.5 a 65.3.', correcta: false,
@@ -5135,7 +5148,7 @@
           { texto: 'La serie con estacionalidad fuerte, que el ADF no sabe manejar.', correcta: false,
             retro: 'La estacionalidad sí distorsiona al ADF, pero el KPSS de nivel no es el remedio: también se confunde. Ahí lo que se hace es desestacionalizar o diferenciar estacionalmente antes de aplicar cualquiera de los dos.' },
           { texto: 'La serie estacionaria alrededor de una tendencia: el ADF la trata bien porque su regresión incluye la tendencia, y el KPSS <em>de nivel</em> la rechaza porque el nivel no es constante.', correcta: true,
-            retro: 'Ese es el caso, y en el preparcial lo tienes medido: sobre <code>linea</code> el ADF da p < 0.01 —no hay raíz unitaria— y el KPSS de nivel también rechaza —el nivel no es constante—, mientras el KPSS de tendencia no rechaza (p > 0.10). Las tres cifras juntas dicen «estacionaria alrededor de una recta», que no es lo mismo que estacionaria.' },
+            retro: 'Ese es el caso, y en el preparcial lo tienes medido: sobre <code>linea</code> el ADF da $p &lt; 0.01$ —no hay raíz unitaria— y el KPSS de nivel también rechaza —el nivel no es constante—, mientras el KPSS de tendencia no rechaza ($p &gt; 0.10$). Las tres cifras juntas dicen «estacionaria alrededor de una recta», que no es lo mismo que estacionaria.' },
           { texto: 'La serie con un atípico, que infla el estadístico del ADF.', correcta: false,
             retro: 'Un atípico afecta a las dos pruebas, y no es la razón por la que se recomienda correrlas juntas. Lo que hace útil el par es que sus nulas contrapuestas permiten distinguir «hay evidencia» de «no hay datos suficientes».' }
         ]
@@ -5214,12 +5227,12 @@
         pregunta: 'Sobre una serie de $n = 120$, ¿cuántos rezagos usa <code>kpss.test()</code> de <code>tseries</code>? Su truncamiento es $\\lfloor 4(n/100)^{1/4} \\rfloor$.',
         pista: '$(120/100)^{1/4} = 1.0466$. Multiplica por 4 y trunca hacia abajo.',
         respuesta: 4, tolerancia: 0,
-        retroAcierto: '$\\lfloor 4 \\times 1.0466 \\rfloor = \\lfloor 4.186 \\rfloor = 4$. Ahora lo importante: <code>ndiffs()</code> <strong>no</strong> llama a <code>kpss.test</code>, sino a <code>urca::ur.kpss</code>, cuyo truncamiento es $\\lfloor 3\\sqrt{n}/13 \\rfloor = 2$. Sobre la serie <code>frontera</code> del preparcial eso hace que <code>ndiffs()</code> devuelva 1 —diferencia— mientras <code>kpss.test()</code> da p > 0.10 —no diferencies—. El mismo dato y dos veredictos opuestos.',
+        retroAcierto: '$\\lfloor 4 \\times 1.0466 \\rfloor = \\lfloor 4.186 \\rfloor = 4$. Ahora lo importante: <code>ndiffs()</code> <strong>no</strong> llama a <code>kpss.test</code>, sino a <code>urca::ur.kpss</code>, cuyo truncamiento es $\\lfloor 3\\sqrt{n}/13 \\rfloor = 2$. Sobre la serie <code>frontera</code> del preparcial eso hace que <code>ndiffs()</code> devuelva 1 —diferencia— mientras <code>kpss.test()</code> da $p &gt; 0.10$ —no diferencies—. El mismo dato y dos veredictos opuestos.',
         retroFallo: 'Sale de $\\lfloor 4(1.2)^{1/4} \\rfloor = \\lfloor 4.186 \\rfloor$. Si diste 2, ese es el truncamiento de <code>urca::ur.kpss</code>, que es el que usa <code>ndiffs()</code> por dentro — y precisamente por eso las dos funciones pueden contradecirse sobre la misma serie.'
       },
       {
         tipo: 'numerica', clave: '2.7', objetivo: 'O5',
-        pregunta: 'Varianza de $\\log(\\texttt{demanda})$ según el orden de diferenciación: <strong>$d=0$: 0.078568</strong> · <strong>$d=1$: 0.010659</strong> · <strong>$d=2$: 0.023068</strong> · <strong>$d=3$: 0.069824</strong>. ¿Qué orden $d$ eligirías?',
+        pregunta: 'Varianza de $\\log(\\texttt{demanda})$ según el orden de diferenciación: <strong>$d=0$: 0.078568</strong> · <strong>$d=1$: 0.010659</strong> · <strong>$d=2$: 0.023068</strong> · <strong>$d=3$: 0.069824</strong>. ¿Qué orden $d$ elegirías?',
         pista: 'El criterio es la varianza mínima. Fíjate en qué pasa después del mínimo, porque eso también es información.',
         respuesta: 1, tolerancia: 0,
         retroAcierto: 'La varianza cae de 0.0786 a 0.0107 con la primera diferencia y <strong>vuelve a subir</strong> con la segunda. Ese repunte es la firma de la sobrediferenciación: cada diferencia de más añade ruido en vez de quitar estructura. Con $d=3$ ya casi se ha vuelto al punto de partida.',
@@ -5244,8 +5257,8 @@
         pregunta: 'Sobre <code>ocupacion</code> se estiman dos tendencias. La media móvil <strong>2×4 centrada</strong> da, en los trimestres 3, 4 y 5: <strong>62.81, 63.06, 62.95</strong>. La media móvil de orden 4 <strong>sin centrar</strong> (de un solo lado) da, en esos mismos trimestres: <strong>62.44, 63.19, 62.92</strong>. ¿Qué le pasa a la segunda?',
         pista: 'Una media de un solo lado resume el pasado. ¿A qué instante corresponde de verdad el número que produce?',
         opciones: [
-          { texto: 'Va desfasada medio periodo: el valor que asigna al trimestre $t$ resume en realidad el intervalo centrado en $t - 1.5$.', correcta: true,
-            retro: 'Eso es. Una media de orden 4 de un solo lado promedia $t, t-1, t-2, t-3$, cuyo centro está en $t-1.5$. Etiquetarla como $t$ la retrasa medio periodo, y en una serie con tendencia eso sesga la estimación de forma sistemática. El doble paso de la 2×4 existe justamente para devolver el promedio a un punto de la rejilla.' },
+          { texto: 'Va desfasada trimestre y medio: el valor que asigna al trimestre $t$ resume en realidad el intervalo centrado en $t - 1.5$.', correcta: true,
+            retro: 'Eso es. Una media de orden 4 de un solo lado promedia $t, t-1, t-2, t-3$, cuyo centro está en $t-1.5$. Etiquetarla como $t$ la retrasa trimestre y medio, y en una serie con tendencia eso sesga la estimación de forma sistemática. El doble paso de la 2×4 existe justamente para devolver el promedio a un punto de la rejilla.' },
           { texto: 'Es más ruidosa, porque usa menos observaciones.', correcta: false,
             retro: 'Usa las mismas cuatro. Lo que cambia no es cuántas, sino dónde caen respecto al punto que etiqueta: todas por detrás en vez de repartidas alrededor.' },
           { texto: 'No le pasa nada: las dos series de números son casi iguales.', correcta: false,
@@ -5403,11 +5416,20 @@
 
     // Correlograma sobre un vector de ACF ya calculado, con su banda.
     function correlograma(canvas, acf, banda, opciones = {}) {
+      // El eje se ajusta a lo que hay que leer. Con el -1..1 fijo, en un
+      // lienzo de 121 px la banda del ítem 15 quedaba a 8 px del eje y la
+      // barra que hay que verla cruzar, a 16: el ítem entero —«no cuentes
+      // cuántas se salen, fíjate en cuál»— vivía en 7 píxeles. `acf()` y
+      // `ggAcf()` autoescalan, así que además es lo que el estudiante ve
+      // en la consola. El suelo de 1.6 veces la banda impide que un
+      // correlograma plano se dibuje magnificado y parezca lo que no es.
+      const alcance = Math.max(1.15 * Math.max(...acf.map(Math.abs)), 1.6 * banda);
       return crearGraficoBarras(
         canvas,
         acf.map((_, i) => String(i + 1)),
         acf,
-        Object.assign({ etiqueta: opciones.etiqueta || 'ACF', lineas: lineasBanda(banda) }, opciones)
+        Object.assign({ etiqueta: opciones.etiqueta || 'ACF', lineas: lineasBanda(banda),
+                        min: -alcance, max: alcance }, opciones)
       );
     }
 
@@ -5510,7 +5532,7 @@
       },
       {
         tipo: 'grafico', clave: '2.3', objetivo: 'O4', alto: 220,
-        descripcionGrafico: 'Correlograma con picos regulares en los rezagos 6, 12, 18, 24, 30 y 36',
+        descripcionGrafico: 'Correlograma con picos regulares en los rezagos 6, 12, 18, 24, 30 y 36; los de 12, 24 y 36 son positivos y los de 6, 18 y 30, negativos',
         dibujar: c => correlograma(c, D.i19.acf, D.i19.banda),
         pregunta: 'Correlograma de $\\nabla \\log(\\texttt{demanda})$, una serie <strong>mensual</strong> ya diferenciada una vez. Las barras que superan la banda están en los rezagos <strong>6, 12, 18, 24, 30 y 36</strong>. ¿Qué periodo tiene la estructura que queda?',
         pista: 'No mires solo dónde hay picos: mira el <em>signo</em> de los que están en 6, 18 y 30 frente a los de 12, 24 y 36.',
@@ -5561,9 +5583,9 @@
       },
       {
         tipo: 'grafico', clave: '2.7', objetivo: 'O5', alto: 220,
-        descripcionGrafico: 'Correlograma tras una diferencia regular, con un pico muy marcado en el rezago 12',
+        descripcionGrafico: 'Correlograma tras una diferencia regular: varias barras superan la banda, y la del rezago 12 es con diferencia la mayor — más del triple de la banda',
         dibujar: c => correlograma(c, D.i29.despues.acf, D.i29.despues.banda),
-        pregunta: 'Correlograma de $\\log(\\texttt{demanda})$ <strong>después</strong> de aplicar una diferencia regular. El ADF ahora da $p &lt; 0.01$ y el KPSS de nivel $p &gt; 0.10$: las dos pruebas dicen «estacionaria». La barra del rezago 12 vale <strong>0.581</strong>, con banda $\\pm 0.180$. ¿Bastó con $d = 1$?',
+        pregunta: 'Correlograma de $\\log(\\texttt{demanda})$ <strong>después</strong> de aplicar una diferencia regular. El ADF ahora da $p &lt; 0.01$ y el KPSS de nivel $p &gt; 0.10$: las dos pruebas dicen «estacionaria». Mira el correlograma antes de contestar: ¿bastó con $d = 1$?',
         pista: 'Las pruebas de raíz unitaria contrastan una cosa concreta. ¿Miran el rezago 12?',
         opciones: [
           { texto: 'Sí: las dos pruebas coinciden en que es estacionaria, que es el criterio más fiable que hay.', correcta: false,
@@ -5724,7 +5746,7 @@
                <p>Los enlaces naranjas abren el módulo del capítulo <em>en su sitio</em>, no por el principio.</p>`
             : (faltan.length
                 ? `<p><strong>Nada marcado para repasar por ahora</strong>, pero todavía faltan bloques. El diagnóstico no vale mucho hasta que los termines: lo que no se ha respondido no puede fallar.</p>`
-                : `<p><strong>No hay nada marcado para repasar.</strong> Pasa al simulacro cronometrado: lo que queda por entrenar no es el contenido, es hacerlo con el reloj en marcha.</p>`)}
+                : `<p><strong>No hay nada marcado para repasar.</strong> Lo que queda por entrenar no es el contenido, es hacerlo con el reloj en marcha y sin retroalimentación: repasa el módulo 8 y vuelve cuando se publique el simulacro.</p>`)}
         </div>`;
 
       caja.innerHTML = `

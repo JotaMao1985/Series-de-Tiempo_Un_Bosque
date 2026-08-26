@@ -1173,6 +1173,56 @@ comprueba(max(racha$lengths) <= RACHA_MAXIMA,
           sprintf("racha más larga: %d (posición %d)", max(racha$lengths),
                   racha$values[which.max(racha$lengths)]))
 
+# ---------------------------------------------------------------------
+# Tipografía y terminología (A5)
+# ---------------------------------------------------------------------
+# No hay corrector de ortografía en esta máquina —ni `hunspell`, ni
+# `aspell`, ni `ispell`, ni `pyobjc` para el de macOS— así que la
+# ortografía se lee. Lo que sí se mecaniza es lo que una lectura hace
+# peor que un `grep`: que no se cuele un carácter roto, que las
+# matemáticas cierren, y que el vocabulario no se bifurque a mitad del
+# instrumento. En un archivo cuyas tildes ya viajaron rotas una vez, lo
+# primero no es paranoia.
+CARACTERES_ESPERADOS <- c("á","é","í","ó","ú","ü","ñ","Á","É","Í","Ó","Ú","Ñ",
+                          "¿","¡","«","»","—","–","·","×","≠","≤","≥","±",
+                          "∇","−","↔","→","∑","…","°","º","ª","🎯")
+prosa_items <- paste(vapply(1:32, function(n) prosa_de(trozo_de_item(n)), ""), collapse = " ")
+raros <- setdiff(unique(strsplit(gsub("[ -~\n\t]", "", prosa_items), "")[[1]]),
+                 CARACTERES_ESPERADOS)
+comprueba(length(raros) == 0,
+          "ningún carácter fuera del repertorio esperado: las tildes siguen enteras",
+          if (length(raros)) paste(raros, collapse = " ") else
+            sprintf("%d caracteres no ASCII, todos declarados",
+                    length(unique(strsplit(gsub("[ -~\n\t]", "", prosa_items), "")[[1]]))))
+
+# Los `$` de KaTeX, campo a campo: uno impar deja media fórmula en crudo.
+campos_sueltos <- unlist(lapply(1:32, function(n) {
+  s <- trozo_de_item(n)
+  unlist(lapply(CAMPOS, function(cp)
+    regmatches(s, gregexpr(sprintf("(?<![A-Za-z])%s: '((\\\\'|[^'])*)'", cp), s, perl = TRUE))[[1]]))
+}))
+impares <- sum(vapply(campos_sueltos, function(z) nchar(gsub("[^$]", "", z)) %% 2 == 1, TRUE))
+comprueba(impares == 0, "los `$` de KaTeX cierran en los 32 ítems, campo a campo",
+          sprintf("%d campos con número impar de $ (de %d)", impares, length(campos_sueltos)))
+
+# El vocabulario no se bifurca. El de la izquierda es el término del
+# material; el de la derecha, el sinónimo que lo rompería.
+TERMINOS <- list(c("rezago", "retardo"), c("banda", "intervalo de confianza"),
+                 c("correlograma", "gráfico de autocorrelación"), c("atípico", "outlier"))
+bifurcado <- character(0)
+for (par in TERMINOS) {
+  n_malo <- length(gregexpr(par[2], prosa_items, fixed = TRUE)[[1]])
+  if (!(n_malo == 1 && gregexpr(par[2], prosa_items, fixed = TRUE)[[1]][1] == -1))
+    bifurcado <- c(bifurcado, sprintf("«%s» aparece %d veces junto a «%s»", par[2], n_malo, par[1]))
+}
+comprueba(length(bifurcado) == 0,
+          "la terminología no se bifurca: un solo término para cada cosa",
+          if (length(bifurcado)) paste(bifurcado, collapse = " · ") else
+            paste(vapply(TERMINOS, function(p) p[1], ""), collapse = " · "))
+
+comprueba(!grepl("--", prosa_items, fixed = TRUE),
+          "ni un guion doble donde va una raya (—)")
+
 # El borde de la tabla de `tseries`: 16 p-valores llegan como 0.01 o 0.1
 # porque son los extremos interpolables, y escribirlos con un igual es
 # afirmar de más. El plan lo exige y la página lo cumple; esto lo mantiene.
@@ -1464,6 +1514,13 @@ sabotea("ruta-de-dibujo-rota", "D.i10.ciclo_no_robusto", "D.i10.ciclo_sin_robust
 #     la frase original y se exige que ahora sí se caiga.
 sabotea("prosa-que-desmiente-al-grafico", "Correlograma sin estructura: la primera barra",
         "Correlograma plano: la primera barra", "4")
+
+# (8) Una tilde rota, que es como se rompen de verdad: no desaparece, se
+#     convierte en dos caracteres. Ya le pasó a este proyecto una vez.
+sabotea("tilde-mangiada-por-el-utf8", "el último decimal en las tres",
+        "el \u00c3\u00baltimo decimal en las tres", "4")
+# (9) El vocabulario bifurcado a mitad del instrumento.
+sabotea("rezago-que-se-vuelve-retardo", "la del rezago 17", "la del retardo 17", "4")
 
 # (7) Una segunda opción marcada como correcta. Prueba de extremo a
 #     extremo la lectura de las opciones desde el HTML, que es de donde
