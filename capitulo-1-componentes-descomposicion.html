@@ -5795,14 +5795,14 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         pista: 'Los dos son subidas y bajadas que se repiten. Piensa en si puedes decir <em>de antemano</em> cuánto va a durar la próxima repetición.',
         opciones: [
           {
-            texto: 'La estacionalidad se repite con un periodo fijo y conocido; el ciclo, con duración variable e impredecible.',
-            correcta: true,
-            retro: 'Esa es la diferencia definitoria. La estacionalidad de <code>AirPassengers</code> es anual y siempre dura 12 meses; un ciclo económico puede durar 4 años o 9, y no se sabe de antemano.'
-          },
-          {
             texto: 'El ciclo siempre dura más de un año y la estacionalidad, menos.',
             correcta: false,
             retro: 'Las duraciones típicas sí suelen ser esas, pero no es lo que los define. Lo determinante es que el periodo de la estacionalidad es <em>fijo y conocido</em>, y el del ciclo no.'
+          },
+          {
+            texto: 'La estacionalidad se repite con un periodo fijo y conocido; el ciclo, con duración variable e impredecible.',
+            correcta: true,
+            retro: 'Esa es la diferencia definitoria. La estacionalidad de <code>AirPassengers</code> es anual y siempre dura 12 meses; un ciclo económico puede durar 4 años o 9, y no se sabe de antemano.'
           },
           {
             texto: 'La estacionalidad se aprecia en el gráfico de tiempo y el ciclo no.',
@@ -5823,11 +5823,6 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         pista: 'Si la oscilación es un <em>porcentaje</em> del nivel en vez de una cantidad fija, ¿los componentes se suman o se multiplican? Y recuerda qué le hace el logaritmo a un producto.',
         opciones: [
           {
-            texto: 'Multiplicativa, o equivalentemente aditiva sobre el logaritmo.',
-            correcta: true,
-            retro: 'Cuando la amplitud es proporcional al nivel, el modelo natural es $y_t = T_t \\times S_t \\times R_t$. Y como $\\log(T \\times S \\times R) = \\log T + \\log S + \\log R$, tomar logaritmos convierte el problema en aditivo: por eso este capítulo aplica STL sobre $\\log(y_t)$.'
-          },
-          {
             texto: 'Aditiva sobre la serie original.',
             correcta: false,
             retro: 'Dejaría un componente estacional de amplitud constante: subestimaría las oscilaciones de 1960 y sobreestimaría las de 1949. El residuo delataría el problema con un patrón en forma de embudo.'
@@ -5841,6 +5836,11 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
             texto: 'Ninguna: primero hay que diferenciar la serie.',
             correcta: false,
             retro: 'Diferenciar (Capítulo 2) sirve para quitar la tendencia, no para estabilizar una amplitud que crece. Para eso está la transformación logarítmica o Box–Cox.'
+          },
+          {
+            texto: 'Multiplicativa, o equivalentemente aditiva sobre el logaritmo.',
+            correcta: true,
+            retro: 'Cuando la amplitud es proporcional al nivel, el modelo natural es $y_t = T_t \\times S_t \\times R_t$. Y como $\\log(T \\times S \\times R) = \\log T + \\log S + \\log R$, tomar logaritmos convierte el problema en aditivo: por eso este capítulo aplica STL sobre $\\log(y_t)$.'
           }
         ]
       },
@@ -5923,11 +5923,6 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         pista: 'Las dos van de 0 a 1. Pregúntate qué significa el extremo 0 y qué significa el 1, y si tiene sentido comparar una con la otra cuando sus denominadores son distintos.',
         opciones: [
           {
-            texto: 'Los dos componentes dominan claramente sobre el residuo: un valor cercano a 1 indica componente fuerte.',
-            correcta: true,
-            retro: 'Cada fuerza compara la varianza del residuo con la del componente más el residuo, así que va de 0 (componente despreciable) a 1 (componente dominante). Aquí las dos son altísimas, exactamente lo que se ve en el gráfico.'
-          },
-          {
             texto: 'La tendencia explica el 99.4 % de la varianza total de la serie.',
             correcta: false,
             retro: 'No es una proporción de la varianza total. $F_T = 1 - \\operatorname{Var}(R)/\\operatorname{Var}(T+R)$: el denominador solo incluye tendencia y residuo, no la estacionalidad.'
@@ -5936,6 +5931,11 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
             texto: 'La estacionalidad es débil, porque $0.937$ está por debajo de $F_T$.',
             correcta: false,
             retro: '$0.937$ es un valor muy alto en una escala de 0 a 1. Además $F_T$ y $F_S$ tienen denominadores distintos, así que compararlas entre sí no dice cuál componente "gana".'
+          },
+          {
+            texto: 'Los dos componentes dominan claramente sobre el residuo: un valor cercano a 1 indica componente fuerte.',
+            correcta: true,
+            retro: 'Cada fuerza compara la varianza del residuo con la del componente más el residuo, así que va de 0 (componente despreciable) a 1 (componente dominante). Aquí las dos son altísimas, exactamente lo que se ve en el gráfico.'
           },
           {
             texto: 'Como $F_T > F_S$, conviene descartar el componente estacional al modelar.',
@@ -5951,14 +5951,14 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         pista: 'Piensa en las noticias: "el desempleo cayó respecto al mes pasado". ¿Qué habría que quitar para que esa comparación signifique algo, si enero siempre cae?',
         opciones: [
           {
-            texto: 'Para comparar periodos consecutivos sin que el patrón anual enmascare el movimiento de fondo.',
-            correcta: true,
-            retro: 'Es justo el uso que le dan las cifras oficiales de empleo o PIB: sin ajustar, la caída de enero frente a diciembre diría poco, porque enero siempre cae. Ajustada, la comparación revela el cambio real.'
-          },
-          {
             texto: 'Para pronosticar directamente, ya que no hay que modelar la estacionalidad.',
             correcta: false,
             retro: 'Se puede pronosticar la serie ajustada, pero para devolver el pronóstico a la escala original hay que <em>volver a añadir</em> el componente estacional. No desaparece del problema.'
+          },
+          {
+            texto: 'Para comparar periodos consecutivos sin que el patrón anual enmascare el movimiento de fondo.',
+            correcta: true,
+            retro: 'Es justo el uso que le dan las cifras oficiales de empleo o PIB: sin ajustar, la caída de enero frente a diciembre diría poco, porque enero siempre cae. Ajustada, la comparación revela el cambio real.'
           },
           {
             texto: 'Para eliminar la tendencia de la serie.',
