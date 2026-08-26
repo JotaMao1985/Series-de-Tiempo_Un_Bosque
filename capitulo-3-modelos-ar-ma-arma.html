@@ -6922,14 +6922,14 @@ round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
         pregunta: 'Marca <strong>todas</strong> las afirmaciones correctas sobre la invertibilidad de un MA.',
         pista: 'Son tres. Piensa en: qué les pasa a los pesos $\\pi$, si los datos pueden distinguir el modelo, y qué hace el software cuando le pides ajustar un MA.',
         opciones: [
-          { texto: 'Si $|\\theta| > 1$ en un MA(1), los pesos $\\pi$ de la representación AR($\\infty$) crecen sin límite.', correcta: true },
-          { texto: 'Los valores $\\theta$ y $1/\\theta$ producen exactamente la misma ACF, así que ningún dato los distingue.', correcta: true },
-          { texto: '<code>arima()</code> devuelve siempre la solución invertible, aunque hayas simulado la otra.', correcta: true },
           { texto: 'Un MA no invertible tampoco es estacionario.', correcta: false },
-          { texto: 'La invertibilidad se comprueba con las raíces de $\\phi(B)$.', correcta: false }
+          { texto: 'Si $|\\theta| > 1$ en un MA(1), los pesos $\\pi$ de la representación AR($\\infty$) crecen sin límite.', correcta: true },
+          { texto: 'La invertibilidad se comprueba con las raíces de $\\phi(B)$.', correcta: false },
+          { texto: 'Los valores $\\theta$ y $1/\\theta$ producen exactamente la misma ACF, así que ningún dato los distingue.', correcta: true },
+          { texto: '<code>arima()</code> devuelve siempre la solución invertible, aunque hayas simulado la otra.', correcta: true }
         ],
-        retroAcierto: 'Las tres primeras describen el mismo hecho desde tres ángulos: la representación AR($\\infty$) diverge, el modelo no queda identificado, y por eso el software impone el convenio $|\\theta| < 1$. Puedes verlo en el simulador del Módulo 4 llevando $\\theta$ más allá de 1.',
-        retroFallo: 'Las correctas son las tres primeras. Las dos falsas confunden los dos polinomios: un MA($q$) es <strong>siempre estacionario</strong> —es una suma finita de ruido blanco, sin condición alguna— y la invertibilidad se lee en las raíces de $\\theta(B)$, no de $\\phi(B)$. Cada polinomio responde por lo suyo.'
+        retroAcierto: 'Las tres describen el mismo hecho desde tres ángulos: la representación AR($\\infty$) diverge, el modelo no queda identificado, y por eso el software impone el convenio $|\\theta| < 1$. Puedes verlo en el simulador del Módulo 4 llevando $\\theta$ más allá de 1.',
+        retroFallo: 'Las tres correctas son las que hablan de los pesos de la representación AR($\\infty$), de la identificación del modelo y del convenio que impone el software. Las dos falsas confunden los dos polinomios: un MA($q$) es <strong>siempre estacionario</strong> —es una suma finita de ruido blanco, sin condición alguna— y la invertibilidad se lee en las raíces de $\\theta(B)$, no de $\\phi(B)$. Cada polinomio responde por lo suyo.'
       },
       {
         tipo: 'numerica',
@@ -7011,13 +7011,13 @@ round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
         pista: 'Son tres. Piensa en: para qué modelos sirve Yule–Walker, qué ignora exactamente CSS, y qué hace <code>arima()</code> cuando no le indicas ningún método.',
         opciones: [
           { texto: 'Yule–Walker solo sirve para modelos AR puros, porque parte de las ecuaciones de momentos del AR.', correcta: true },
-          { texto: 'CSS ignora la contribución de las primeras observaciones a la verosimilitud.', correcta: true },
-          { texto: 'Por defecto <code>arima()</code> usa <code>"CSS-ML"</code>: arranca con CSS y termina maximizando la verosimilitud exacta.', correcta: true },
           { texto: 'Los tres métodos dan siempre las mismas estimaciones salvo por errores de redondeo.', correcta: false },
-          { texto: 'El $\\hat\\sigma^2$ de Yule–Walker es comparable con el de máxima verosimilitud para calcular el AIC.', correcta: false }
+          { texto: 'CSS ignora la contribución de las primeras observaciones a la verosimilitud.', correcta: true },
+          { texto: 'El $\\hat\\sigma^2$ de Yule–Walker es comparable con el de máxima verosimilitud para calcular el AIC.', correcta: false },
+          { texto: 'Por defecto <code>arima()</code> usa <code>"CSS-ML"</code>: arranca con CSS y termina maximizando la verosimilitud exacta.', correcta: true }
         ],
-        retroAcierto: 'Las tres primeras. Y el contraejemplo de las dos falsas está en el propio capítulo: sobre las manchas solares, Yule–Walker y ML se separaron $1.26$ y $1.10$ errores estándar, y sus $\\hat\\sigma^2$ fueron $298.96$ frente a $229.43$.',
-        retroFallo: 'Las correctas son las tres primeras. Las dos falsas son justo lo que el módulo desmiente con números: los métodos <strong>no</strong> coinciden —YW quedó a más de un error estándar de ML— y sus $\\hat\\sigma^2$ no miden lo mismo, así que mezclar salidas de <code>ar()</code> y <code>arima()</code> para comparar criterios de información no tiene sentido.'
+        retroAcierto: 'Las tres. Y el contraejemplo de las dos falsas está en el propio capítulo: sobre las manchas solares, Yule–Walker y ML se separaron $1.26$ y $1.10$ errores estándar, y sus $\\hat\\sigma^2$ fueron $298.96$ frente a $229.43$.',
+        retroFallo: 'Las tres correctas son las que hablan de Yule–Walker, de lo que ignora CSS y del <code>"CSS-ML"</code> por defecto. Las dos falsas son justo lo que el módulo desmiente con números: los métodos <strong>no</strong> coinciden —YW quedó a más de un error estándar de ML— y sus $\\hat\\sigma^2$ no miden lo mismo, así que mezclar salidas de <code>ar()</code> y <code>arima()</code> para comparar criterios de información no tiene sentido.'
       }
     ];
   </script>

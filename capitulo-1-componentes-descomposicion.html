@@ -5897,14 +5897,14 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         pregunta: 'Marca <strong>todas</strong> las ventajas reales de STL frente a la descomposición clásica.',
         pista: 'Son tres. Piensa en qué le pasa al patrón estacional año tras año, qué ocurre en los extremos de la serie, y qué pasa si hay un dato disparatado.',
         opciones: [
+          { texto: 'No necesita que se le declare el periodo estacional.', correcta: false },
           { texto: 'Permite que el patrón estacional cambie a lo largo del tiempo.', correcta: true },
           { texto: 'Estima la tendencia también en los extremos, sin dejar <code>NA</code>.', correcta: true },
-          { texto: 'Con <code>robust = TRUE</code>, resiste los valores atípicos.', correcta: true },
-          { texto: 'No necesita que se le declare el periodo estacional.', correcta: false },
-          { texto: 'Evita tener que transformar la serie cuando la amplitud crece con el nivel.', correcta: false }
+          { texto: 'Evita tener que transformar la serie cuando la amplitud crece con el nivel.', correcta: false },
+          { texto: 'Con <code>robust = TRUE</code>, resiste los valores atípicos.', correcta: true }
         ],
         retroAcierto: 'Las tres. Y las tres se ven en este mismo capítulo: la tendencia de STL del Módulo 7 tiene los 144 valores, mientras que la clásica del Módulo 6 solo tiene 132. La robustez la exploras en el ejercicio 3.',
-        retroFallo: 'Las correctas son las tres primeras. Las otras dos son falsas: STL <strong>sí</strong> necesita el periodo $m$ (parte de él igual que la clásica), y <strong>no</strong> evita transformar, porque STL es <em>aditiva</em> — precisamente por eso este capítulo la aplica sobre $\\log(y_t)$ y no sobre la serie original.'
+        retroFallo: 'Las tres correctas son que el patrón estacional puede cambiar, que la tendencia llega a los extremos y que <code>robust = TRUE</code> resiste los atípicos. Las otras dos son falsas: STL <strong>sí</strong> necesita el periodo $m$ (parte de él igual que la clásica), y <strong>no</strong> evita transformar, porque STL es <em>aditiva</em> — precisamente por eso este capítulo la aplica sobre $\\log(y_t)$ y no sobre la serie original.'
       },
       {
         tipo: 'numerica',

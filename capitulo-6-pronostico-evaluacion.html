@@ -7569,24 +7569,24 @@ c(arima = anchos(function(tr,h,nv) forecast(Arima(tr, order=c(1,1,1)), h=h, leve
         pista: 'Mira qué hay en el denominador de cada métrica y qué le pasa a ese denominador en una serie de retornos.',
         opciones: [
           {
-            texto: 'El $1093\\,\\%$ no mide la calidad del pronóstico sino la cercanía de la serie al cero.',
-            correcta: true,
-            retro: 'Sí. Un solo mes con retorno $-0.0029\\,\\%$ aporta un error porcentual de $16\\,092\\,\\%$; la mediana de los $|p_i|$ es $116.73\\,\\%$, diez veces menor que la media.'
-          },
-          {
-            texto: 'El MASE $< 1$ indica que el pronóstico le gana al método de referencia.',
-            correcta: true,
-            retro: 'Correcto, y es la conclusión útil: la misma predicción que el MAPE declara catastrófica es mejor que la referencia.'
-          },
-          {
             texto: 'Bastaría con quitar los meses cercanos a cero para que el MAPE fuera válido.',
             correcta: false,
             retro: 'No: eso es elegir qué observaciones entran en la evaluación según su valor, que sesga la métrica y la vuelve incomparable. Además hay $6$ meses con $|{\\cdot}| < 0.1\\,\\%$ en esta serie, y el problema reaparecería con cualquier corte.'
           },
           {
+            texto: 'El $1093\\,\\%$ no mide la calidad del pronóstico sino la cercanía de la serie al cero.',
+            correcta: true,
+            retro: 'Sí. Un solo mes con retorno $-0.0029\\,\\%$ aporta un error porcentual de $16\\,092\\,\\%$; la mediana de los $|p_i|$ es $116.73\\,\\%$, diez veces menor que la media.'
+          },
+          {
             texto: 'El sMAPE resolvería el problema porque su denominador es simétrico.',
             correcta: false,
             retro: 'No lo resuelve. Sobre estos mismos datos el sMAPE da $121.80\\,\\%$: un número más cómodo pero igual de arbitrario, porque su denominador $|y|+|\\hat y|$ también se acerca a cero.'
+          },
+          {
+            texto: 'El MASE $< 1$ indica que el pronóstico le gana al método de referencia.',
+            correcta: true,
+            retro: 'Correcto, y es la conclusión útil: la misma predicción que el MAPE declara catastrófica es mejor que la referencia.'
           }
         ]
       },
