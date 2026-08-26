@@ -1103,6 +1103,76 @@ for (id in names(EXCEPCION))
   cat(sprintf("    %s  %-28s  %s\n", id,
               paste(EXCEPCION[[id]]$valores, collapse = " "), EXCEPCION[[id]]$razon))
 
+# ---------------------------------------------------------------------
+# Dónde cae la opción correcta
+# ---------------------------------------------------------------------
+# El motor pinta las opciones EN EL ORDEN EN QUE ESTÁN ESCRITAS: no
+# baraja. Los 23 ítems de opción y de gráfico se escribieron con la
+# correcta la primera, los 23, y así el instrumento se aprueba sin
+# leerlo: marcando siempre la primera salen 23 de 32 y ningún objetivo
+# del termómetro llega a «flojo». Es el peor defecto posible aquí,
+# porque el diagnóstico es el único producto (D9) y el patrón se ve a
+# los tres ítems.
+#
+# Se comprueba lo que importa —el reparto—, no un orden concreto, para
+# que una reordenación futura siga pasando.
+UMBRAL_POSICION <- 0.40   # ninguna posición se lleva más del 40 %
+RACHA_MAXIMA    <- 2L     # ni tres ítems seguidos con la correcta en el mismo sitio
+
+posicion_correcta <- function(s) {
+  a <- regexpr("opciones: [", s, fixed = TRUE)
+  if (a < 0) return(integer(0))
+  resto <- substring(s, a)
+  z <- regexpr("\n        ]", resto, fixed = TRUE)
+  ops <- strsplit(substring(resto, 1, z - 1), "\n          { texto: ", fixed = TRUE)[[1]][-1]
+  attr(ops, "n") <- length(ops)
+  structure(which(grepl("correcta: true", ops, fixed = TRUE)), n = length(ops))
+}
+
+# En el orden en que el estudiante los encuentra: bloque A, bloque C,
+# bloque D. El bloque B es numérico y no tiene opciones.
+n_A <- sum(DIMENSION == "C"); n_C <- sum(DIMENSION == "I"); n_D <- sum(DIMENSION == "G")
+ORDEN_ENCUENTRO <- c(which(DIMENSION == "C"), which(DIMENSION == "I"), which(DIMENSION == "G"))
+ETIQUETAS <- paste0(rep(c("A", "C", "D"), c(n_A, n_C, n_D)),
+                    c(seq_len(n_A), seq_len(n_C), seq_len(n_D)))
+POSICIONES <- lapply(ORDEN_ENCUENTRO, function(n) posicion_correcta(trozo_de_item(n)))
+n_opciones <- vapply(POSICIONES, function(z) as.integer(attr(z, "n")), 0L)
+# Una sola correcta por ítem, o NA. Sin este colador, un ítem con dos
+# correctas alargaba el vector y REVENTABA el informe en vez de hacerlo
+# fallar — que es la forma más tonta de que una comprobación no sirva.
+pos <- vapply(POSICIONES, function(z) if (length(z) == 1L) as.integer(z) else NA_integer_, 0L)
+sanos <- !is.na(pos)
+
+comprueba(length(ORDEN_ENCUENTRO) == 23L && all(n_opciones == 4L) && all(sanos),
+          "los 23 ítems de opción y gráfico traen cuatro opciones y exactamente una correcta",
+          sprintf("%d ítems · opciones %s · con una sola correcta %d de %d",
+                  length(ORDEN_ENCUENTRO), paste(unique(n_opciones), collapse = "/"),
+                  sum(sanos), length(pos)))
+
+reparto <- table(factor(pos[sanos], levels = 1:4))
+cat("\n  Posición de la opción correcta, en el orden en que se encuentran:\n")
+cat("   ", paste(sprintf("%s:%s", ETIQUETAS, ifelse(sanos, pos, "?")), collapse = "  "), "\n")
+cat("    reparto: ", paste(sprintf("%d->%d", 1:4, as.integer(reparto)), collapse = "  "), "\n", sep = "")
+
+# Los dos umbrales, probados contra el estado del que se viene: si no
+# mordieran, pasarían igual de verdes y no se notaría. La extracción
+# desde el HTML la prueba la siembra de §8; esto prueba las reglas.
+comprueba(max(table(rep(1L, 23L))) / 23 > UMBRAL_POSICION,
+          "la regla del 40 % RECHAZA el reparto del que se viene (las 23 en la primera)")
+comprueba(max(rle(c(4L, 2L, 2L, 2L, 1L))$lengths) > RACHA_MAXIMA,
+          "y la regla de la racha RECHAZA tres seguidas en el mismo sitio")
+
+comprueba(sum(sanos) > 0 && max(reparto) / sum(sanos) <= UMBRAL_POSICION,
+          sprintf("ninguna posición concentra más del %.0f %% de las respuestas correctas",
+                  100 * UMBRAL_POSICION),
+          sprintf("la peor es la %d con %d de %d (%.0f %%)", which.max(reparto), max(reparto),
+                  sum(sanos), 100 * max(reparto) / max(sum(sanos), 1)))
+racha <- rle(pos[sanos])
+comprueba(max(racha$lengths) <= RACHA_MAXIMA,
+          sprintf("ni %d ítems seguidos con la correcta en la misma posición", RACHA_MAXIMA + 1L),
+          sprintf("racha más larga: %d (posición %d)", max(racha$lengths),
+                  racha$values[which.max(racha$lengths)]))
+
 # El borde de la tabla de `tseries`: 16 p-valores llegan como 0.01 o 0.1
 # porque son los extremos interpolables, y escribirlos con un igual es
 # afirmar de más. El plan lo exige y la página lo cumple; esto lo mantiene.
@@ -1395,6 +1465,11 @@ sabotea("ruta-de-dibujo-rota", "D.i10.ciclo_no_robusto", "D.i10.ciclo_sin_robust
 sabotea("prosa-que-desmiente-al-grafico", "Correlograma sin estructura: la primera barra",
         "Correlograma plano: la primera barra", "4")
 
+# (7) Una segunda opción marcada como correcta. Prueba de extremo a
+#     extremo la lectura de las opciones desde el HTML, que es de donde
+#     salen el reparto de posiciones y la racha.
+sabotea("dos-opciones-correctas", "así que siempre concuerdan.', correcta: false,",
+        "así que siempre concuerdan.', correcta: true,", "4")
 }
 
 # =====================================================================
