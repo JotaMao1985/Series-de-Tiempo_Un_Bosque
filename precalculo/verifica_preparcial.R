@@ -816,6 +816,139 @@ comprueba(length(refs_mal) == 0,
           "y las referencias `D.iNN` que los gráficos ya llevan escritas confirman el mapa",
           if (length(refs_mal)) paste(refs_mal, collapse = " ") else "6 gráficos comprobados")
 
+# ---------------------------------------------------------------------
+# Los argumentos de `dibujar` — la tercera superficie
+# ---------------------------------------------------------------------
+# §3 recorre el JSON y el resto de §4 recorre la prosa. Lo que se le pasa
+# a las funciones de dibujo no es ni lo uno ni lo otro, y nadie lo
+# miraba: ahí vivía el gráfico del ítem 19, que pintaba la banda de 120
+# observaciones sobre la ACF de 119. Ninguna barra caía entre las dos, así
+# que no enseñaba nada falso — pero era una cifra escrita a mano en una
+# página cuya premisa es que ninguna lo está.
+#
+# Tres comprobaciones, y la tercera es la que cierra el agujero:
+#   (i)   ningún argumento de datos es un literal: todos son rutas del JSON
+#   (ii)  toda ruta `D.…` / `S.…` del dibujo resuelve en el JSON incrustado
+#         —que es lo que habría delatado el día uno el gráfico vacío del
+#         ítem 10, cuando el bloque incrustado se quedó atrás—
+#   (iii) la banda que se dibuja es la HERMANA de la ACF que se dibuja, y la
+#         frecuencia del subseries la de SU serie: así una cifra correcta no
+#         puede acabar emparejada con la serie equivocada, que es
+#         exactamente lo que le pasó al ítem 19
+
+# El cuerpo del `dibujar` de un ítem: desde `dibujar:` hasta el campo
+# siguiente, que en este archivo va siempre a ocho espacios de sangría.
+cuerpo_dibujar <- function(s) {
+  i <- regexpr("dibujar: ", s, fixed = TRUE)
+  if (i < 0) return("")
+  resto <- substring(s, i)
+  j <- regexpr("\n        [A-Za-z]+:", resto)
+  if (j > 0) substring(resto, 1, j - 1) else resto
+}
+
+# Las funciones de dibujo que reciben DATOS. Las otras llamadas del
+# cuerpo —`new Chart`, `crearGraficoLinea`— llevan literales de estilo
+# (grosores, radios, tensiones) que no son cifras del instrumento.
+AYUDANTES <- c("correlograma", "subseries")
+FUENTE    <- c(correlograma = "acf", subseries = "valores")
+HERMANA   <- c(correlograma = "banda", subseries = "frecuencia")
+# Sufijos que son métodos de JavaScript, no niveles del JSON.
+METODOS_JS <- c("map", "forEach", "slice", "filter", "reduce", "join", "concat", "length")
+
+# `D.` en la página son los ítems y `S.` las series (`const D =
+# PREPARCIAL_DATOS.items`), así que la ruta se resuelve contra el JSON
+# incrustado, que es de donde el navegador las va a leer.
+resuelve_ruta <- function(ruta) {
+  partes <- strsplit(ruta, ".", fixed = TRUE)[[1]]
+  nodo <- if (partes[1] == "D") I else if (partes[1] == "S") D$series else NULL
+  if (is.null(nodo)) return(NULL)
+  for (k in partes[-1]) {
+    if (!is.list(nodo)) return(NULL)
+    if (!(k %in% names(nodo))) return(NULL)
+    nodo <- nodo[[k]]
+    if (is.null(nodo)) return(NULL)
+  }
+  nodo
+}
+# Se cae por los métodos de JS antes de darla por rota: `D.i22.pares.x.map`
+# es la ruta `D.i22.pares.x` con un `.map()` detrás.
+resuelve_con_metodos <- function(ruta) {
+  partes <- strsplit(ruta, ".", fixed = TRUE)[[1]]
+  while (length(partes) > 1) {
+    v <- resuelve_ruta(paste(partes, collapse = "."))
+    if (!is.null(v)) return(list(ok = TRUE, ruta = paste(partes, collapse = "."), valor = v))
+    if (!(partes[length(partes)] %in% METODOS_JS)) break
+    partes <- partes[-length(partes)]
+  }
+  list(ok = FALSE, ruta = ruta, valor = NULL)
+}
+
+CUERPOS <- vapply(1:32, function(n) cuerpo_dibujar(trozo_de_item(n)), "")
+con_dibujo <- which(nzchar(CUERPOS))
+comprueba(identical(as.integer(con_dibujo), as.integer(which(DIMENSION == "G"))),
+          "los siete ítems con `dibujar` son exactamente los siete de dimensión G",
+          paste(sprintf("i%02d", con_dibujo), collapse = " "))
+
+# (i) y (iii): las llamadas a los ayudantes que reciben datos
+literales <- character(0); descuadres <- character(0); pares <- character(0)
+CORRELOGRAMAS <- list()
+for (n in con_dibujo) {
+  id <- sprintf("i%02d", n)
+  llamadas <- regmatches(CUERPOS[n],
+    gregexpr(sprintf("(%s)\\([^()]*\\)", paste(AYUDANTES, collapse = "|")), CUERPOS[n]))[[1]]
+  for (ll in llamadas) {
+    fn   <- sub("\\(.*", "", ll)
+    args <- trimws(strsplit(sub("^[a-z]+\\(", "", sub("\\)$", "", ll)), ",", fixed = TRUE)[[1]])
+    datos <- args[-1]                      # el primero es el canvas
+    malos <- datos[!grepl("^[DS]\\.[A-Za-z_]", datos)]
+    if (length(malos)) literales <- c(literales, sprintf("%s·%s(%s)", id, fn, paste(malos, collapse = "|")))
+    if (length(datos) == 2L && !length(malos)) {
+      p <- strsplit(datos[1], ".", fixed = TRUE)[[1]]
+      esperada <- paste(c(p[-length(p)], HERMANA[[fn]]), collapse = ".")
+      ok <- p[length(p)] == FUENTE[[fn]] && identical(datos[2], esperada)
+      if (!ok) descuadres <- c(descuadres, sprintf("%s· %s no es la hermana de %s", id, datos[2], datos[1]))
+      pares <- c(pares, sprintf("%s:%s", id, datos[2]))
+      # Se apunta el par para el recuento de barras fuera de banda, que
+      # necesita la prosa y por tanto se comprueba más abajo.
+      if (fn == "correlograma" && ok)
+        CORRELOGRAMAS[[id]] <- list(item = n,
+                                     acf = as.numeric(unlist(resuelve_ruta(datos[1]))),
+                                     banda = as.numeric(resuelve_ruta(datos[2])))
+    }
+  }
+}
+comprueba(length(literales) == 0,
+          "ningún argumento de datos de `dibujar` es un literal escrito a mano",
+          if (length(literales)) paste(literales, collapse = " ") else
+            sprintf("%d llamadas a %s, todas con rutas del JSON", length(pares),
+                    paste(AYUDANTES, collapse = "/")))
+comprueba(length(descuadres) == 0,
+          "y cada banda/frecuencia dibujada es la HERMANA en el JSON de la serie que dibuja",
+          if (length(descuadres)) paste(descuadres, collapse = " · ") else paste(pares, collapse = " "))
+
+# (ii) Toda ruta del dibujo resuelve, y las que van al ayudante son numéricas
+rotas <- character(0); no_numericas <- character(0); n_rutas <- 0L
+for (n in con_dibujo) {
+  id <- sprintf("i%02d", n)
+  rutas <- unique(regmatches(CUERPOS[n],
+    gregexpr("[DS]\\.[A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)*", CUERPOS[n]))[[1]])
+  for (r in rutas) {
+    n_rutas <- n_rutas + 1L
+    res <- resuelve_con_metodos(r)
+    if (!res$ok) { rotas <- c(rotas, sprintf("%s·%s", id, r)); next }
+    v <- unlist(res$valor, use.names = FALSE)
+    if (!length(v) || !all(is.finite(suppressWarnings(as.numeric(v)))))
+      no_numericas <- c(no_numericas, sprintf("%s·%s", id, res$ruta))
+  }
+}
+comprueba(length(rotas) == 0,
+          "las rutas `D.…`/`S.…` de los siete dibujos resuelven en el JSON incrustado",
+          if (length(rotas)) paste(rotas, collapse = " ") else sprintf("%d rutas seguidas", n_rutas))
+comprueba(length(no_numericas) == 0,
+          "y todas traen datos numéricos, no un hueco que dibujaría un gráfico vacío",
+          if (length(no_numericas)) paste(no_numericas, collapse = " ") else "")
+
+
 # --- La prosa, limpia de marcado ---
 CAMPOS <- c("pregunta", "pista", "retro", "retroAcierto", "retroFallo", "texto", "descripcionGrafico")
 prosa_de <- function(s) {
@@ -864,6 +997,9 @@ EXCEPCION <- list(
 # una se rehace aquí en R. Son las que más lo necesitan: no vienen de
 # `genera_preparcial.R`, las escribió una frase.
 DERIVADAS <- list(
+  # Las esperadas por azar en los 24 rezagos del correlograma barajado:
+  # el mismo 5 % con el que el item 14 cuenta 1.8 sobre 36.
+  i01 = c(esperadas_fuera_por_azar     = 0.05 * length(I$i01$acf_barajada$acf)),
   i03 = c(meses_desde_el_inicio         = I$i03$n - 1,
           anio_si_sumas_30              = as.numeric(I$i03$inicio[1]) + floor((as.numeric(I$i03$inicio[2]) - 1 + I$i03$n) / 12),
           observacion_siguiente         = I$i03$n + 1),
@@ -925,6 +1061,42 @@ for (n in 1:32) {
   comprueba(is.null(h), sprintf("%s · las %d cifras de su prosa tienen origen", id, length(nums)),
             if (is.null(h)) "" else paste("sin origen:", paste(h, collapse = " ")))
 }
+
+# ---------------------------------------------------------------------
+# Lo que la prosa AFIRMA de su propio correlograma
+# ---------------------------------------------------------------------
+# Todo lo anterior comprueba cifras, y una afirmación falsa no siempre
+# lleva una cifra dentro. El ítem 1 decía «correlograma plano: las 24
+# barras caen dentro de la banda» y «aquí ninguna barra llega a la
+# banda» — con tres barras fuera, en los rezagos 13, 14 y 18. Las dos
+# frases pasaban las 370 comprobaciones porque no contenían ninguna
+# cifra sin origen: 0.1789 existe, la ACF está bien calculada, y «plano»
+# no es un número.
+#
+# Aquí se recuenta desde los datos que el gráfico dibuja y se exige que
+# la prosa del ítem no lo desmienta. El recuento se IMPRIME siempre, que
+# es lo que convierte «nadie lo miró» en «está en la salida».
+FRASES_DE_VACIO <- c("ninguna barra", "correlograma plano", "caen dentro de la banda",
+                     "llega a la banda", "todas dentro de la banda", "ninguna se sale")
+cat("\n  Barras fuera de banda en cada correlograma dibujado:\n")
+desmentidos <- character(0)
+for (id in names(CORRELOGRAMAS)) {
+  cg <- CORRELOGRAMAS[[id]]
+  fuera <- which(abs(cg$acf) > cg$banda)
+  cat(sprintf("    %s  %2d de %2d fuera (banda %.4f)%s\n", id, length(fuera), length(cg$acf),
+              cg$banda, if (length(fuera)) paste("  rezagos", paste(fuera, collapse = ", ")) else ""))
+  if (length(fuera)) {
+    pr <- tolower(prosa_de(trozo_de_item(cg$item)))
+    dichas <- FRASES_DE_VACIO[vapply(FRASES_DE_VACIO, function(f) grepl(f, pr, fixed = TRUE), TRUE)]
+    if (length(dichas))
+      desmentidos <- c(desmentidos, sprintf("%s dice «%s» con %d barras fuera",
+                                            id, paste(dichas, collapse = "»/«"), length(fuera)))
+  }
+}
+comprueba(length(desmentidos) == 0,
+          "ninguna prosa afirma que su correlograma está limpio cuando tiene barras fuera de banda",
+          if (length(desmentidos)) paste(desmentidos, collapse = " · ") else
+            sprintf("%d correlogramas recontados desde sus propios datos", length(CORRELOGRAMAS)))
 
 cat("\n  Excepciones declaradas (cifras impresas que NO salen de R):\n")
 for (id in names(EXCEPCION))
@@ -1200,6 +1372,29 @@ sabotea("tolerancia-que-lo-admite-todo", "respuesta: -0.5333, tolerancia: 0.006"
 # (4) El reparto de la tabla de especificaciones, descuadrado.
 sabotea("peso-de-un-objetivo", "ordenar el pipeline', peso: 10 }",
         "ordenar el pipeline', peso: 15 }", "6")
+
+# (5) Los argumentos de `dibujar`, que son la tercera superficie: ni JSON
+#     ni prosa. Las tres siembras son los tres defectos que de verdad
+#     aparecieron o pudieron aparecer en este archivo.
+#     a) el hallazgo 0 tal cual: la `n` del correlograma, escrita a mano.
+sabotea("banda-escrita-a-mano", "correlograma(c, D.i19.acf, D.i19.banda)",
+        "correlograma(c, D.i19.acf, 120)", "4")
+#     b) la banda de OTRA serie del mismo ítem: 0.1789 sobre la ACF de
+#        0.1797. Es correcta, existe en el JSON y está mal emparejada —
+#        que es exactamente lo que le pasaba al ítem 19.
+sabotea("banda-de-la-serie-equivocada", "correlograma(c, D.i29.despues.acf, D.i29.despues.banda)",
+        "correlograma(c, D.i29.despues.acf, D.i29.antes.banda)", "4")
+#     c) una ruta que no resuelve: el gráfico sale VACÍO y el archivo no
+#        da ninguna señal. Le pasó al ítem 10 al quedarse atrás el bloque
+#        incrustado, y hasta ahora solo se veía abriendo la página.
+sabotea("ruta-de-dibujo-rota", "D.i10.ciclo_no_robusto", "D.i10.ciclo_sin_robustez", "4")
+
+# (6) Una afirmación falsa SIN cifras dentro: el hallazgo del ítem 1, que
+#     pasó 370 comprobaciones porque «plano» no es un número. Se recupera
+#     la frase original y se exige que ahora sí se caiga.
+sabotea("prosa-que-desmiente-al-grafico", "Correlograma sin estructura: la primera barra",
+        "Correlograma plano: la primera barra", "4")
+
 }
 
 # =====================================================================
