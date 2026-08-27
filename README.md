@@ -38,10 +38,13 @@ series, los auditores y el ensamblador. Se versionan después de calificar.
 
 | # | Preparcial | Cubre | Módulos | Ítems |
 |---|------------|-------|:---:|:---:|
-| I | [Corte I · Componentes, estacionariedad, ACF y PACF](preparcial-corte-1.html) | Capítulos 1 y 2 · antes del Parcial 1 | 8 | 32 |
+| I | [Corte I · Componentes, estacionariedad, ACF y PACF](preparcial-corte-1.html) | Capítulos 1 y 2 · antes del Parcial 1 | 8 | 38 |
 
 El preparcial **no se entrega y no tiene nota**, y por eso es el mismo para los nueve: aquí copiar
-no tiene sentido, porque el que copia se queda sin lo único que produce. Sus 32 ítems se reparten
+no tiene sentido, porque el que copia se queda sin lo único que produce. De sus 38 ítems, **32 alimentan el
+diagnóstico** y los otros **6 son un simulacro cronometrado** —uno por objetivo, con el reloj en
+marcha y sin retroalimentación hasta entregar—, que no cuenta para el termómetro porque lo que
+entrena no es el contenido sino la condición. Los 32 se reparten
 en cuatro bloques —concepto, procedimiento, interpretación y análisis gráfico— en la misma
 proporción con la que está construido el parcial, y esa tabla de especificaciones se publica dentro
 del propio instrumento: estudiar sin saber qué pesa es estudiar a ciegas.

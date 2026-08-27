@@ -2922,9 +2922,9 @@
       </ul>
 
       <p>Después va <strong>tu diagnóstico</strong>, que es el producto de verdad: no un puntaje, sino qué módulo
-        concreto te falta. Y al final, una página de cierre con las reglas de
-        decisión del módulo. El <strong>simulacro cronometrado</strong> se publica aparte, más adelante:
-        su módulo está creado pero todavía vacío.</p>
+        concreto te falta. Y al final, un <strong>simulacro cronometrado</strong> de seis
+        ítems —uno por objetivo, con el reloj en marcha y sin retroalimentación hasta entregar— y una
+        página de cierre con las reglas de decisión del módulo.</p>
 
       <div class="tip-box">
         <p style="margin:0;"><strong>Cada opción incorrecta te dice por qué lo es.</strong> No solo la correcta. Falla a
@@ -3191,22 +3191,14 @@
           <div>
             <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
             <p class="text-gray-600 text-sm" style="margin:0;">Seis ítems con el formato y el tiempo del parcial, sin
-              retroalimentación hasta el final. <strong>Todavía no está publicado.</strong></p>
+              retroalimentación hasta el final.</p>
           </div>
         </div>
       </div>
 
-      <div class="tip-box">
-        <p style="margin:0;"><strong>Este módulo todavía está vacío.</strong> El simulacro se publica aparte,
-        después que el resto del preparcial; hasta entonces no hay nada que hacer aquí y no te estás
-        perdiendo ningún ítem: <strong>los 32 están en los bloques A a D</strong>, y el diagnóstico del
-        módulo 6 ya los recoge todos.</p>
-      </div>
-
-      <p>Lo que este módulo va a añadir no es contenido nuevo, es la <em>condición</em>: resolver con el
-      reloj en marcha y sin retroalimentación inmediata, que es como se resuelve el parcial. Mientras
-      tanto, lo más parecido es rehacer el bloque en el que el diagnóstico te marcó flojo sin volver a
-      mirar las retros.</p>
+      <p>Lo que este módulo añade no es contenido nuevo, es la <em>condición</em>: resolver con el reloj
+      en marcha y sin retroalimentación inmediata, que es como se resuelve el parcial. Los seis ítems
+      corren sobre las mismas series y no repiten ninguno de los 32.</p>
 
       <div class="simulacro" data-simulacro="corte-1"></div>
     </div>
@@ -3340,7 +3332,7 @@
         { id: 4, title: "Bloque C · Interpretación",  shortTitle: "C · Interpret.", duration: "18 min" },
         { id: 5, title: "Bloque D · Análisis gráfico", shortTitle: "D · Gráficos",  duration: "12 min" },
         { id: 6, title: "Tu diagnóstico",             shortTitle: "Diagnóstico",   duration: "5 min" },
-        { id: 7, title: "Simulacro cronometrado",     shortTitle: "Simulacro",     duration: "pendiente" },
+        { id: 7, title: "Simulacro cronometrado",     shortTitle: "Simulacro",     duration: "25 min" },
         { id: 8, title: "Qué llevar al parcial",      shortTitle: "Al parcial",    duration: "6 min" }
       ]
     };
@@ -3433,6 +3425,7 @@
         initCodeTabs();
         iniciarSimuladores();
         iniciarAutoevaluaciones();
+        iniciarSimulacro();
       iniciarMapaModulos();
       iniciarTermometro();
         iniciarEjerciciosGuiados();
@@ -5600,6 +5593,361 @@
       }
     ];
 
+
+    // ================================================================
+    // MÓDULO 7 · El simulacro cronometrado                       (P8)
+    //
+    // Seis ítems, uno por objetivo del parcial, con SU formato y SU
+    // tiempo: cronómetro en marcha y sin retroalimentación hasta el
+    // final. Eso es lo único que añade sobre los bloques A a D, y es
+    // justo lo que no se puede ensayar respondiendo con la retro
+    // delante.
+    //
+    // NO entra en el diagnóstico. El termómetro reparte 32 ítems por
+    // objetivo y meter estos seis lo descuadraría: son otra cosa, con su
+    // propio marcador y sus soluciones al final.
+    //
+    // Ninguna cifra es nueva. Las seis salen de hojas de
+    // `preparcial_datos.json` que los 32 ítems no usan, para no tener
+    // que regenerar el precálculo — que cambiaría todas las cifras del
+    // instrumento y obligaría a releer los 32 (R3 del plan).
+    // ================================================================
+    const SIMULACRO = {
+      minutos: 25,
+      items: [
+        {
+          objetivo: 'O1', clave: '1.4', tipo: 'opcion',
+          pregunta: 'El residuo de la descomposición de <code>demanda</code> tiene desviación típica <strong>0.0362</strong>. El de <code>demanda_atipico</code> —la misma serie con <strong>un</strong> mes anómalo de 120— tiene <strong>0.0480</strong>. ¿Qué se sigue de esa diferencia?',
+          opciones: [
+            { texto: 'Que la descomposición de <code>demanda_atipico</code> está peor hecha: un buen ajuste no deja residuos tan dispersos.', correcta: false,
+              retro: 'Al revés. Que el residuo se mueva es señal de que la descomposición aisló la anomalía en vez de repartirla. Preocupante sería que la desviación típica del residuo no cambiara — querría decir que el salto se ha ido a la tendencia o al estacional.' },
+            { texto: 'Que un solo dato de 120 sube la dispersión del residuo cerca de un tercio: el residuo recoge lo que no cabe en la tendencia ni en la estacionalidad, así que se lleva el atípico entero — y su desviación típica deja de describir el ruido de fondo.', correcta: true,
+              retro: 'Eso es, y tiene una consecuencia práctica: cualquier banda o prueba que se apoye en la desviación típica del residuo queda inflada por un único mes. Antes de usarla hay que mirar si el residuo tiene un pico, no solo su resumen.' },
+            { texto: 'Que el atípico se repartió entre los cuatro componentes, y por eso la subida es pequeña.', correcta: false,
+              retro: 'La subida no es pequeña —de 0.0362 a 0.0480 es un tercio más— y el reparto no ocurrió: el salto entra casi entero en el residuo. Que la tendencia y el estacional apenas se muevan es justamente lo que se quería comprobar.' },
+            { texto: 'Que <code>demanda_atipico</code> tiene más varianza, y eso se corrige tomando logaritmos antes de descomponer.', correcta: false,
+              retro: 'El logaritmo estabiliza la varianza cuando la dispersión crece con el nivel, que es un problema sistemático. Un atípico es un punto, no una tendencia de la varianza: tomar logaritmos lo comprime un poco y no lo quita.' }
+          ]
+        },
+        {
+          objetivo: 'O2', clave: '1.7', tipo: 'opcion',
+          pregunta: 'En el mes anómalo de <code>demanda_atipico</code>, el residuo de STL con <code>robust = TRUE</code> vale <strong>0.381</strong>, y con <code>robust = FALSE</code>, <strong>0.325</strong>. La versión robusta deja <em>más</em> en el residuo. ¿Por qué es eso lo que se quiere?',
+          opciones: [
+            { texto: 'Porque la versión robusta ajusta peor, y un ajuste peor deja siempre más residuo.', correcta: false,
+              retro: 'No se trata de ajustar peor sino de ajustar a lo que se repite. La robusta pondera a la baja las observaciones que no encajan; sobre los once meses normales las dos versiones dan prácticamente lo mismo. La diferencia está solo donde está el atípico.' },
+            { texto: 'No se quiere: un residuo mayor indica siempre un modelo peor, así que aquí conviene <code>robust = FALSE</code>.', correcta: false,
+              retro: 'Ese criterio lleva justo al defecto. Minimizar el residuo a toda costa es lo que hace que un componente sistemático se coma un dato que no lo es, y entonces el patrón anual queda contaminado por un año. El residuo pequeño se paga en el estacional.' },
+            { texto: 'Porque la robusta descarta el dato y estima el estacional con una observación menos, y con menos datos el residuo sale mayor.', correcta: false,
+              retro: 'No lo descarta: lo pondera. La observación sigue en la serie y sigue teniendo su residuo — que es precisamente el 0.381. Y el tamaño del residuo aquí no viene de estimar con menos datos, viene de no haber absorbido el salto.' },
+            { texto: 'Porque la robusta se niega a que el atípico entre en el componente estacional: lo deja fuera, y «fuera» es el residuo. La no robusta deja menos residuo porque parte del salto se lo ha llevado el estacional de ese mes, que queda contaminado para todos los años.', correcta: true,
+              retro: 'Exacto, y por eso el residuo mayor es la buena noticia. Lo que se compara no son los dos residuos entre sí, sino lo que le pasa al componente estacional: el de marzo pasa de 0.0118 a 0.0329 cuando se le deja absorber el atípico. Un residuo grande en un punto anómalo es la señal de que la descomposición hizo su trabajo.' }
+          ]
+        },
+        {
+          objetivo: 'O3', clave: '2.5', tipo: 'opcion',
+          pregunta: 'De la caminata <code>indice</code>, partida en tres tramos, las medias son <strong>105.275</strong>, <strong>112.592</strong> y <strong>137.981</strong>, y las varianzas <strong>11.756</strong>, <strong>26.258</strong> y <strong>38.481</strong>. Alguien concluye: «la media sube, luego hay tendencia; le ajusto una recta, se la resto y ya está». ¿Qué falla en ese razonamiento?',
+          opciones: [
+            { texto: 'Que la subida no es una tendencia determinista, sino la acumulación de los choques. Restarle una recta deja una serie que sigue teniendo raíz unitaria y varianza creciente: lo que la vuelve estacionaria es diferenciar, no quitarle una recta.', correcta: true,
+              retro: 'Ese es el punto, y las varianzas lo delatan antes que cualquier prueba: una tendencia determinista mueve la media y deja la varianza quieta. Aquí la varianza se triplica, que es lo que hace una caminata — cada choque entra en el nivel y se queda. Quitarle una recta a una caminata produce una serie que sigue sin tener a qué volver.' },
+            { texto: 'Nada: quitarle la recta es lo correcto, y es justo lo que hace <code>ur.df</code> con <code>type = "trend"</code>.', correcta: false,
+              retro: 'Incluir el término de tendencia en la regresión del ADF no es lo mismo que restarle una recta a la serie y seguir adelante. Lo primero es una especificación de la prueba; lo segundo es una decisión de modelado que aquí sería la equivocada.' },
+            { texto: 'Que además hay que tomar logaritmos, porque la varianza crece con el tramo.', correcta: false,
+              retro: 'La varianza crece, pero no porque la escala dependa del nivel: crece porque los choques se acumulan. El logaritmo atacaría la condición equivocada — y sobre una caminata la varianza seguiría creciendo después de tomarlo.' },
+            { texto: 'Que con tres tramos no hay bastante para afirmar que la media sube.', correcta: false,
+              retro: 'Con tres tramos y este salto —de 105.3 a 138.0— la subida no está en duda. El problema no es si la media sube, es qué la hace subir: una recta o un paseo sin memoria de dónde empezó.' }
+          ]
+        },
+        {
+          objetivo: 'O4', clave: '2.3', tipo: 'grafico', alto: 240,
+          descripcionGrafico: 'Nube de puntos de cada valor trimestral contra el inmediatamente anterior: los puntos se reparten por todo el cuadro sin alinearse en ninguna dirección',
+          dibujar: c => new Chart(c, {
+            type: 'scatter',
+            data: { datasets: [{ label: 'y(t) contra y(t−1)',
+              data: D.i22.pares_rezago1.x.map((x, i) => ({ x: x, y: D.i22.pares_rezago1.y[i] })),
+              backgroundColor: COLORES_GRAFICO.secundario, pointRadius: 4 }] },
+            options: {
+              responsive: true, maintainAspectRatio: false, animation: false,
+              plugins: { legend: { display: true, labels: { boxWidth: 12, font: { size: 11 } } } },
+              scales: { x: { title: { display: true, text: 'y(t − 1)' }, grid: { color: '#f1f5f9' } },
+                        y: { title: { display: true, text: 'y(t)' }, grid: { color: '#f1f5f9' } } }
+            }
+          }),
+          pregunta: 'Gráfico de rezagos de <code>ocupacion</code>, una serie <strong>trimestral</strong>: cada punto enfrenta $y_t$ con $y_{t-1}$. ¿Qué se lee aquí?',
+          opciones: [
+            { texto: 'Que la serie es ruido blanco: sin alineación no hay dependencia de ningún tipo.', correcta: false,
+              retro: 'Este dibujo solo habla del rezago 1. Que ahí no haya nada no dice nada de los demás — y en una serie trimestral el rezago que importa suele ser otro. Concluir «ruido blanco» desde un único gráfico de rezagos es exactamente el salto que hay que no dar.' },
+            { texto: 'Que la dependencia es negativa, porque la nube desciende de izquierda a derecha.', correcta: false,
+              retro: 'No desciende: se reparte. Una dependencia negativa se vería como una nube inclinada de forma sistemática hacia abajo, y aquí no hay inclinación en ningún sentido.' },
+            { texto: 'Que el trimestre inmediatamente anterior informa poco: la nube no se alinea. Y en una serie trimestral eso no significa que no haya dependencia — significa que no está en el rezago 1.', correcta: true,
+              retro: 'Correcto, y esa es la lectura que hay que llevar al parcial: un gráfico de rezagos responde por <em>un</em> rezago. La conclusión completa necesita mirar el que corresponde al periodo, que en trimestral es el 4. Un rezago 1 plano y un rezago 4 alineado es la firma de la estacionalidad, y lo contrario —el 1 alineado— sería inercia.' },
+            { texto: 'Que la serie no tiene tendencia, porque los puntos no se desplazan hacia arriba.', correcta: false,
+              retro: 'Un gráfico de rezagos no es el sitio donde se lee la tendencia: los ejes son la serie contra sí misma, no contra el tiempo. Para la tendencia hay que mirar la serie, o su descomposición.' }
+          ]
+        },
+        {
+          objetivo: 'O5', clave: '2.7', tipo: 'numerica',
+          pregunta: 'A $\\log(\\texttt{demanda})$ se le aplica <strong>una diferencia estacional</strong> $\\nabla_{12}$. La varianza del resultado, según cuántas diferencias <strong>regulares</strong> se añadan después, es: 0 → <strong>0.003367</strong> · 1 → <strong>0.007395</strong> · 2 → <strong>0.023265</strong>. ¿Cuántas diferencias regulares hacen falta?',
+          respuesta: 0, tolerancia: 0,
+          retroAcierto: 'Ninguna, y eso es lo que el ítem quiere que veas. $\\nabla_{12}$ aplicado a una tendencia aproximadamente lineal deja una constante, así que la diferencia estacional se llevó por delante también el nivel. Compáralo con el otro camino: empezando por la regular, la varianza mínima era 0.010659 — tres veces la de 0.003367. El orden entre las dos diferencias no cambia el resultado de aplicar las dos, pero sí cambia <em>cuántas</em> hacen falta.',
+          retroFallo: 'El mínimo está en 0, antes de añadir ninguna diferencia regular: 0.003367 frente a 0.007395 y 0.023265. Añadir una es sobrediferenciar, y se paga con ruido — el mismo repunte que en la tabla sin diferencia estacional.'
+        },
+        {
+          objetivo: 'O6', clave: '2.8', tipo: 'opcion',
+          pregunta: '<code>residuo_blanco</code> tiene varianzas por tramo <strong>0.860</strong>, <strong>0.864</strong> y <strong>0.819</strong>, y toma valores negativos. Alguien propone aplicarle Box–Cox «por si acaso». ¿Qué está mal?',
+          opciones: [
+            { texto: 'Solo lo segundo: basta desplazar la serie hasta hacerla positiva, y entonces aplicarla es correcto.', correcta: false,
+              retro: 'Desplazar resuelve el dominio y deja intacto el otro problema: no hay varianza que estabilizar. Y el desplazamiento no es gratis — la constante es arbitraria y el resultado depende de ella, así que se paga con una transformación que ya no se interpreta.' },
+            { texto: 'Nada: aplicar Box–Cox nunca empeora, y si no hace falta, el $\\lambda$ estimado lo refleja.', correcta: false,
+              retro: 'Sí empeora si no está definida: sobre valores negativos no devuelve un número, devuelve <code>NaN</code>. Y «nunca empeora» no es un criterio: una transformación se aplica cuando hay una razón, y aquí las varianzas por tramo ya son 0.860, 0.864 y 0.819.' },
+            { texto: 'Solo lo primero: la transformación sí admite negativos mientras $\\lambda$ sea un entero.', correcta: false,
+              retro: 'Con $\\lambda$ entero la potencia se puede calcular, sí, pero eso no la hace aplicable: el criterio de Guerrero y la interpretación de Box–Cox se apoyan en que la serie sea positiva. La familia se define para $y > 0$.' },
+            { texto: 'Las dos cosas a la vez: la varianza ya es constante, así que no hay nada que estabilizar, y la transformación no está definida sobre valores negativos. Box–Cox se aplica cuando la dispersión crece con el nivel, no por rutina.', correcta: true,
+              retro: 'Exacto, y el orden importa: primero se comprueba si hay un problema, y solo después si la herramienta es aplicable. Con 0.860, 0.864 y 0.819 no hay ni siquiera el primero. Compáralo con <code>demanda</code>, donde la varianza por tramos va de 28.9 a 103.4: ahí sí hay algo que estabilizar, y ahí la serie es positiva.' }
+          ]
+        }
+      ]
+    };
+
+    // El estado vive FUERA del DOM, como las acciones de los bloques A a D
+    // (P10b). `loadModule` repinta el módulo entero cada vez que se entra,
+    // así que cualquier cosa guardada en la pantalla se pierde al navegar —
+    // y aquí eso significaría perder el examen a medias. El cronómetro se
+    // guarda como INSTANTE DE FIN, no como segundos restantes: así sigue
+    // corriendo mientras el estudiante está en otro módulo, que es lo que
+    // hace un examen.
+    const SIM = { fase: 'inicio', finAt: null, respuestas: {}, tick: null };
+
+    function simTiempoRestante() {
+      if (!SIM.finAt) return SIMULACRO.minutos * 60;
+      return Math.max(0, Math.round((SIM.finAt - Date.now()) / 1000));
+    }
+    function simReloj(seg) {
+      const m = Math.floor(seg / 60), s = seg % 60;
+      return `${m}:${String(s).padStart(2, '0')}`;
+    }
+    function simAcierta(p, r) {
+      if (r === undefined || r === null) return false;
+      if (p.tipo === 'numerica') {
+        const v = parseFloat(String(r).trim().replace(',', '.'));
+        return isFinite(v) && Math.abs(v - p.respuesta) <= p.tolerancia;
+      }
+      return p.opciones[r] && p.opciones[r].correcta === true;
+    }
+
+    function iniciarSimulacro() {
+      mainContent.querySelectorAll('[data-simulacro]').forEach(renderSimulacro);
+    }
+
+    function renderSimulacro(raiz) {
+      if (SIM.tick) { clearInterval(SIM.tick); SIM.tick = null; }
+      raiz.innerHTML = '';
+
+      // Si el tiempo se agotó mientras estaba en otro módulo, al volver ya
+      // está terminado: el reloj no se detiene porque nadie lo mire.
+      if (SIM.fase === 'curso' && simTiempoRestante() === 0) SIM.fase = 'terminado';
+
+      if (SIM.fase === 'inicio') return simPantallaInicio(raiz);
+      simPantallaExamen(raiz);
+    }
+
+    function simPantallaInicio(raiz) {
+      const caja = document.createElement('div');
+      caja.className = 'tip-box';
+      caja.innerHTML =
+        `<p style="margin:0 0 .6rem 0;"><strong>${SIMULACRO.items.length} ítems, ` +
+        `${SIMULACRO.minutos} minutos.</strong> Uno por cada objetivo del parcial, en su misma ` +
+        `proporción.</p>` +
+        `<p style="margin:0 0 .6rem 0;">A diferencia de los bloques A a D, aquí <strong>no hay ` +
+        `retroalimentación hasta el final</strong> y no hay segundo intento: se responde, se ` +
+        `entrega y entonces se ve todo. El cronómetro <strong>sigue corriendo</strong> aunque ` +
+        `salgas a otro módulo, igual que el reloj del salón.</p>` +
+        `<p style="margin:0;">No cuenta para el diagnóstico: los 32 ítems que lo alimentan están ` +
+        `en los bloques A a D. Lo que esto entrena es la <em>condición</em>, no el contenido.</p>`;
+      raiz.appendChild(caja);
+
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'quiz-comprobar';
+      b.style.marginTop = '1rem';
+      b.textContent = 'Empezar el simulacro';
+      b.addEventListener('click', () => {
+        SIM.fase = 'curso';
+        SIM.finAt = Date.now() + SIMULACRO.minutos * 60 * 1000;
+        SIM.respuestas = {};
+        renderSimulacro(raiz);
+        const primera = raiz.querySelector('.quiz-opcion, input');
+        if (primera) primera.focus();
+      });
+      raiz.appendChild(b);
+    }
+
+    function simPantallaExamen(raiz) {
+      const terminado = SIM.fase === 'terminado';
+
+      // --- La barra del cronómetro -----------------------------------
+      const barra = document.createElement('div');
+      barra.className = 'tip-box';
+      barra.style.cssText = 'position:sticky; top:0; z-index:5; margin-bottom:1.2rem;';
+      const reloj = document.createElement('p');
+      reloj.style.cssText = 'margin:0; font-weight:700;';
+      reloj.setAttribute('role', 'status');
+      barra.appendChild(reloj);
+      raiz.appendChild(barra);
+
+      const pinta = () => {
+        if (terminado) {
+          const bien = SIMULACRO.items.filter((p, i) => simAcierta(p, SIM.respuestas[i])).length;
+          reloj.textContent = `Terminado · ${bien} de ${SIMULACRO.items.length}`;
+          return;
+        }
+        const s = simTiempoRestante();
+        const sin = SIMULACRO.items.filter((_, i) => SIM.respuestas[i] === undefined).length;
+        reloj.textContent = `Quedan ${simReloj(s)}` +
+          (sin ? ` · ${sin} sin responder` : ' · las ' + SIMULACRO.items.length + ' respondidas');
+        if (s === 0) { SIM.fase = 'terminado'; renderSimulacro(raiz); }
+      };
+      pinta();
+      if (!terminado) SIM.tick = setInterval(pinta, 1000);
+
+      // --- Los ítems --------------------------------------------------
+      SIMULACRO.items.forEach((p, i) => {
+        const caja = document.createElement('div');
+        caja.className = 'quiz';
+        caja.style.marginBottom = '1.5rem';
+
+        const enun = document.createElement('p');
+        enun.className = 'quiz-pregunta';
+        enun.innerHTML = `<strong>${i + 1}.</strong> ${p.pregunta} ` +
+          `<span class="quiz-etiqueta">${p.objetivo} · módulo ${p.clave}</span>`;
+        caja.appendChild(enun);
+
+        if (p.tipo === 'grafico') {
+          const cont = document.createElement('div');
+          cont.className = 'quiz-grafico';
+          cont.style.height = (p.alto || 220) + 'px';
+          const cv = document.createElement('canvas');
+          cv.setAttribute('role', 'img');
+          cv.setAttribute('aria-label', p.descripcionGrafico);
+          cont.appendChild(cv);
+          caja.appendChild(cont);
+          requestAnimationFrame(() => { try { p.dibujar(cv); } catch (e) { /* sin datos, sin gráfico */ } });
+        }
+
+        if (p.tipo === 'numerica') {
+          const fila = document.createElement('div');
+          fila.className = 'quiz-numerica';
+          const input = document.createElement('input');
+          input.type = 'text'; input.inputMode = 'decimal';
+          input.className = 'quiz-input';
+          input.setAttribute('aria-label', `Respuesta de la pregunta ${i + 1}`);
+          if (SIM.respuestas[i] !== undefined) input.value = SIM.respuestas[i];
+          input.disabled = terminado;
+          input.addEventListener('input', () => {
+            SIM.respuestas[i] = input.value;
+            if (!input.value.trim()) delete SIM.respuestas[i];
+          });
+          fila.appendChild(input);
+          caja.appendChild(fila);
+        } else {
+          const lista = document.createElement('div');
+          lista.className = 'quiz-opciones';
+          lista.setAttribute('role', 'radiogroup');
+          lista.setAttribute('aria-label', `Opciones de la pregunta ${i + 1}`);
+          p.opciones.forEach((op, j) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'quiz-opcion';
+            b.setAttribute('role', 'radio');
+            b.setAttribute('aria-checked', String(SIM.respuestas[i] === j));
+            b.innerHTML = op.texto;
+            if (SIM.respuestas[i] === j) b.classList.add('marcada');
+            if (terminado) {
+              b.disabled = true;
+              if (op.correcta) b.classList.add('correcta');
+              else if (SIM.respuestas[i] === j) b.classList.add('incorrecta');
+              b.classList.remove('marcada');
+            } else {
+              b.addEventListener('click', () => {
+                SIM.respuestas[i] = j;
+                [...lista.children].forEach((x, k) => {
+                  x.classList.toggle('marcada', k === j);
+                  x.setAttribute('aria-checked', String(k === j));
+                });
+              });
+            }
+            lista.appendChild(b);
+          });
+          caja.appendChild(lista);
+        }
+
+        // --- La solución, solo al terminar ---------------------------
+        if (terminado) {
+          const bien = simAcierta(p, SIM.respuestas[i]);
+          const sol = document.createElement('div');
+          sol.className = 'quiz-retro ' + (bien ? 'es-acierto' : 'es-fallo');
+          const cabeza = SIM.respuestas[i] === undefined
+            ? '<strong>Sin responder.</strong> '
+            : (bien ? '<strong>Correcta.</strong> ' : '<strong>Incorrecta.</strong> ');
+          let cuerpo;
+          if (p.tipo === 'numerica') {
+            // La cifra solo se anuncia si NO se acertó: si se acertó, ya está
+            // escrita en la casilla y `retroAcierto` la vuelve a nombrar.
+            cuerpo = bien ? p.retroAcierto
+              : `La respuesta es <strong>${p.respuesta}</strong>. ${p.retroFallo}`;
+          } else {
+            const elegida = SIM.respuestas[i];
+            const correcta = p.opciones.find(o => o.correcta);
+            // Las retros de las correctas empiezan por «Exacto» o «Correcto»,
+            // que a quien no respondió le diría lo contrario de lo que pasó.
+            // Solo se leen como confirmación cuando hubo acierto.
+            cuerpo = bien ? correcta.retro
+              : (elegida !== undefined
+                  ? `${p.opciones[elegida].retro} <br><br>La correcta es la marcada en verde: ${correcta.retro}`
+                  : `La correcta es la marcada en verde: ${correcta.retro}`);
+          }
+          sol.innerHTML = cabeza + cuerpo;
+          caja.appendChild(sol);
+        }
+
+        raiz.appendChild(caja);
+      });
+
+      // --- Entregar / reiniciar ---------------------------------------
+      const pie = document.createElement('div');
+      pie.style.marginTop = '1rem';
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'quiz-comprobar';
+      b.textContent = terminado ? 'Reiniciar el simulacro' : 'Entregar';
+      b.addEventListener('click', () => {
+        if (terminado) { SIM.fase = 'inicio'; SIM.finAt = null; SIM.respuestas = {}; }
+        else SIM.fase = 'terminado';
+        renderSimulacro(raiz);
+        raiz.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      });
+      pie.appendChild(b);
+      raiz.appendChild(pie);
+
+      if (terminado) {
+        const cierre = document.createElement('div');
+        cierre.className = 'tip-box';
+        cierre.style.marginTop = '1rem';
+        const bien = SIMULACRO.items.filter((p, i) => simAcierta(p, SIM.respuestas[i])).length;
+        cierre.innerHTML = `<p style="margin:0;"><strong>${bien} de ${SIMULACRO.items.length}.</strong> ` +
+          `El número importa menos que el reloj: si te sobró tiempo y fallaste, es contenido; ` +
+          `si te faltó y sabías, es oficio, y eso se entrena repitiendo con el cronómetro puesto. ` +
+          `Lo que hay que repasar sigue estando en el módulo 6.</p>`;
+        raiz.appendChild(cierre);
+      }
+
+      renderMathInElement(raiz, {
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false }
+        ]
+      });
+    }
+
     // ================================================================
     // El mapa de módulos del cierre, pintado desde MODULOS_MODULO_I
     //
@@ -5746,7 +6094,7 @@
                <p>Los enlaces naranjas abren el módulo del capítulo <em>en su sitio</em>, no por el principio.</p>`
             : (faltan.length
                 ? `<p><strong>Nada marcado para repasar por ahora</strong>, pero todavía faltan bloques. El diagnóstico no vale mucho hasta que los termines: lo que no se ha respondido no puede fallar.</p>`
-                : `<p><strong>No hay nada marcado para repasar.</strong> Lo que queda por entrenar no es el contenido, es hacerlo con el reloj en marcha y sin retroalimentación: repasa el módulo 8 y vuelve cuando se publique el simulacro.</p>`)}
+                : `<p><strong>No hay nada marcado para repasar.</strong> Pasa al simulacro cronometrado: lo que queda por entrenar no es el contenido, es hacerlo con el reloj en marcha y sin retroalimentación.</p>`)}
         </div>`;
 
       caja.innerHTML = `
