@@ -1119,14 +1119,14 @@ for (id in names(EXCEPCION))
 UMBRAL_POSICION <- 0.40   # ninguna posición se lleva más del 40 %
 RACHA_MAXIMA    <- 2L     # ni tres ítems seguidos con la correcta en el mismo sitio
 
+# Se cuentan las banderas `correcta:`, no los bloques de texto: los ítems
+# del diagnóstico y los del simulacro tienen sangrías distintas, y cortar
+# por sangría hacía que el simulacro contara CERO opciones sin que nada
+# lo dijera. Contar banderas no depende del formato.
 posicion_correcta <- function(s) {
-  a <- regexpr("opciones: [", s, fixed = TRUE)
-  if (a < 0) return(integer(0))
-  resto <- substring(s, a)
-  z <- regexpr("\n        ]", resto, fixed = TRUE)
-  ops <- strsplit(substring(resto, 1, z - 1), "\n          { texto: ", fixed = TRUE)[[1]][-1]
-  attr(ops, "n") <- length(ops)
-  structure(which(grepl("correcta: true", ops, fixed = TRUE)), n = length(ops))
+  m <- regmatches(s, gregexpr("correcta: (true|false)", s))[[1]]
+  if (!length(m)) return(structure(integer(0), n = 0L))
+  structure(which(m == "correcta: true"), n = length(m))
 }
 
 # En el orden en que el estudiante los encuentra: bloque A, bloque C,
@@ -1222,6 +1222,94 @@ comprueba(length(bifurcado) == 0,
 
 comprueba(!grepl("--", prosa_items, fixed = TRUE),
           "ni un guion doble donde va una raya (—)")
+
+
+# ---------------------------------------------------------------------
+# El simulacro (P8): seis ítems que NO estaban en las comprobaciones
+# ---------------------------------------------------------------------
+# El simulacro vive fuera de `AUTOEVALUACIONES` a propósito —no entra en
+# el diagnóstico— y por eso todo lo de arriba lo ignoraba: sus cifras no
+# se trazaban, sus enunciados no se contrastaban contra los 56 previos y
+# la posición de su opción correcta no la miraba nadie. Seis ítems
+# publicados sin una sola comprobación es exactamente el estado del que
+# esta auditoría viene.
+sim_bloque <- local({
+  i <- regexpr("const SIMULACRO = {", TXT, fixed = TRUE)
+  if (i < 0) stop("No encuentro `const SIMULACRO`")
+  resto <- substring(TXT, i)
+  j <- regexpr("\n    };", resto, fixed = TRUE)
+  substring(resto, 1, j)
+})
+SIM_TROZOS <- local({
+  pos <- as.integer(gregexpr("\n          objetivo: '", sim_bloque, fixed = TRUE)[[1]])
+  fin <- c(pos[-1] - 1L, nchar(sim_bloque))
+  vapply(seq_along(pos), function(k) substring(sim_bloque, pos[k], fin[k]), "")
+})
+
+comprueba(length(SIM_TROZOS) == 6L, "el simulacro declara seis ítems",
+          sprintf("%d", length(SIM_TROZOS)))
+
+sim_obj <- vapply(SIM_TROZOS, function(s)
+  sub(".*objetivo: '(O[0-9])'.*", "\\1", regmatches(s, regexpr("objetivo: 'O[0-9]'", s))), "")
+comprueba(identical(unname(sim_obj), sprintf("O%d", 1:6)),
+          "uno por objetivo, O1 a O6: es el formato del parcial en pequeño",
+          paste(sim_obj, collapse = " "))
+
+sim_min <- as.integer(sub(".*: *", "", regmatches(sim_bloque, regexpr("minutos: [0-9]+", sim_bloque))))
+comprueba(is.finite(sim_min) && sim_min > 0,
+          "declara cuántos minutos dura, y la barra lateral dice lo mismo",
+          sprintf("%d min · barra lateral: %s", sim_min,
+                  regmatches(TXT, regexpr('shortTitle: "Simulacro",\\s*duration: "[^"]+"', TXT))))
+comprueba(grepl(sprintf('shortTitle: "Simulacro", *duration: "%d min"', sim_min), TXT),
+          "y la duración de la barra lateral no se ha quedado atrás")
+
+# La posición de la correcta, igual que en los 23 del diagnóstico.
+sim_pos <- lapply(SIM_TROZOS, posicion_correcta)
+# El ítem numérico no tiene `opciones`, así que no trae el atributo: sin
+# este colador el `vapply` reventaba en vez de contar cinco.
+sim_con_opciones <- which(vapply(sim_pos, function(z) {
+  n <- attr(z, "n"); if (is.null(n)) 0L else as.integer(n)
+}, 0L) > 0L)
+sim_p <- vapply(sim_pos[sim_con_opciones],
+                function(z) if (length(z) == 1L) as.integer(z) else NA_integer_, 0L)
+comprueba(all(!is.na(sim_p)) && length(sim_con_opciones) == 5L,
+          "los cinco ítems de opción del simulacro traen exactamente una correcta",
+          sprintf("%d ítems de opción · posiciones %s", length(sim_con_opciones),
+                  paste(sim_p, collapse = " ")))
+comprueba(length(sim_p) > 0 && max(table(sim_p)) <= 2L,
+          "y su correcta no se concentra en una posición",
+          sprintf("posiciones %s", paste(sim_p, collapse = " ")))
+
+# De qué ítems del precálculo toma prestadas sus cifras cada uno. El
+# simulacro no tiene entrada propia en el JSON —no se generó nada nuevo
+# para él, que es lo que evita regenerar el precálculo (R3)— así que su
+# procedencia se declara aquí y se comprueba igual que la de la prosa.
+CITAS_SIMULACRO <- list(S1 = "i05", S2 = "i10", S3 = "i12", S4 = "i22",
+                        S5 = "i27", S6 = c("i12", "i30"))
+sim_sin_origen <- list()
+for (k in 1:6) {
+  id <- sprintf("S%d", k)
+  candidatas <- c(NOTACION,
+                  unlist(lapply(CITAS_SIMULACRO[[id]], function(z) hojas_de(I[[z]]))),
+                  as.numeric(unlist(lapply(D$series, function(s) c(s$n, s$frecuencia, s$inicio)))))
+  huerfanas <- character(0)
+  for (z in cifras_de(prosa_de(SIM_TROZOS[k]))) {
+    dec <- if (grepl("\\.", z)) nchar(sub(".*\\.", "", z)) else 0
+    v <- as.numeric(z); ulp <- 0.5 * 10^(-dec) + 1e-9
+    if (!any(abs(candidatas - v) <= ulp) && !any(abs(abs(candidatas) - abs(v)) <= ulp))
+      huerfanas <- c(huerfanas, z)
+  }
+  if (length(huerfanas)) sim_sin_origen[[id]] <- huerfanas
+}
+for (k in 1:6) {
+  id <- sprintf("S%d", k)
+  nums <- cifras_de(prosa_de(SIM_TROZOS[k]))
+  h <- sim_sin_origen[[id]]
+  comprueba(is.null(h),
+            sprintf("%s · las %d cifras de su prosa salen de %s", id, length(nums),
+                    paste(CITAS_SIMULACRO[[id]], collapse = "+")),
+            if (is.null(h)) "" else paste("sin origen:", paste(h, collapse = " ")))
+}
 
 # El borde de la tabla de `tseries`: 16 p-valores llegan como 0.01 o 0.1
 # porque son los extremos interpolables, y escribirlos con un igual es
@@ -1410,12 +1498,27 @@ enunciado_de <- function(n) {
   if (!length(m)) "" else sub("^pregunta: '", "", sub("'$", "", m))
 }
 
+# Los 38 enunciados publicados: los 32 del diagnóstico y los 6 del
+# simulacro. El simulacro se escribió después de todo esto, así que si no
+# entrara aquí sería la única parte del instrumento sin contrastar contra
+# los 56 — y el estudiante no distingue de qué bloque viene una pregunta
+# que ya ha visto.
+ENUNCIADOS <- c(vapply(1:32, enunciado_de, ""),
+                vapply(SIM_TROZOS, function(s) {
+                  m <- regmatches(s, regexpr("(?<![A-Za-z])pregunta: '((\\\\'|[^'])*)'", s, perl = TRUE))
+                  if (!length(m)) "" else sub("^pregunta: '", "", sub("'$", "", m))
+                }, ""))
+ETIQ <- c(sprintf("i%02d", 1:32), sprintf("S%d", 1:6))
+comprueba(length(ENUNCIADOS) == 38L && all(nzchar(ENUNCIADOS)),
+          "los 38 enunciados publicados entran a la comparación: 32 del diagnóstico y 6 del simulacro",
+          sprintf("%d enunciados, %d no vacíos", length(ENUNCIADOS), sum(nzchar(ENUNCIADOS))))
+
 peor <- data.frame(item = integer(0), jac = numeric(0), tir = integer(0),
                    fuente = character(0), stringsAsFactors = FALSE)
 prev_pal <- lapply(previos, function(z) strsplit(z$texto, " ", fixed = TRUE)[[1]])
 prev_tri <- lapply(prev_pal, trigramas)
-for (n in 1:32) {
-  w <- palabras(enunciado_de(n)); t3 <- trigramas(w)
+for (n in seq_along(ENUNCIADOS)) {
+  w <- palabras(ENUNCIADOS[n]); t3 <- trigramas(w)
   j <- vapply(prev_tri, function(x) jaccard(t3, x), 0)
   s <- vapply(prev_pal, function(x) as.numeric(tirada_comun(w, x)), 0)
   k <- which.max(j); kt <- which.max(s)
@@ -1426,16 +1529,16 @@ for (n in 1:32) {
 orden <- order(-peor$jac)
 cat("\n  Los seis enunciados que más se acercan a algo que el estudiante ya vio:\n")
 for (r in head(orden, 6))
-  cat(sprintf("    i%02d   jaccard %.3f   tirada %2d palabras   %s\n",
-              peor$item[r], peor$jac[r], peor$tir[r], peor$fuente[r]))
+  cat(sprintf("    %-4s  jaccard %.3f   tirada %2d palabras   %s\n",
+              ETIQ[peor$item[r]], peor$jac[r], peor$tir[r], peor$fuente[r]))
 
 comprueba(max(peor$jac) < UMBRAL_JACCARD,
           sprintf("ningún enunciado comparte más del %.0f %% de sus trigramas con uno de los 56",
                   100 * UMBRAL_JACCARD),
-          sprintf("máximo %.3f en i%02d", max(peor$jac), peor$item[which.max(peor$jac)]))
+          sprintf("máximo %.3f en %s", max(peor$jac), ETIQ[peor$item[which.max(peor$jac)]]))
 comprueba(max(peor$tir) < UMBRAL_TIRADA,
           sprintf("ningún enunciado repite %d palabras seguidas de uno de los 56", UMBRAL_TIRADA),
-          sprintf("máxima %d en i%02d", max(peor$tir), peor$item[which.max(peor$tir)]))
+          sprintf("máxima %d en %s", max(peor$tir), ETIQ[peor$item[which.max(peor$tir)]]))
 
 # =====================================================================
 if (INYECTA && !INTERNO) {
@@ -1521,6 +1624,13 @@ sabotea("tilde-mangiada-por-el-utf8", "el último decimal en las tres",
         "el \u00c3\u00baltimo decimal en las tres", "4")
 # (9) El vocabulario bifurcado a mitad del instrumento.
 sabotea("rezago-que-se-vuelve-retardo", "la del rezago 17", "la del retardo 17", "4")
+
+# (10) El simulacro, que se escribió después de todo lo demás y por eso
+#      es el que más fácil se quedaría sin comprobar.
+sabotea("simulacro-con-un-objetivo-repetido", "objetivo: 'O3', clave: '2.5'",
+        "objetivo: 'O2', clave: '2.5'", "4")
+sabotea("cifra-inventada-en-el-simulacro", "vale <strong>0.381</strong>",
+        "vale <strong>0.391</strong>", "4")
 
 # (7) Una segunda opción marcada como correcta. Prueba de extremo a
 #     extremo la lectura de las opciones desde el HTML, que es de donde
