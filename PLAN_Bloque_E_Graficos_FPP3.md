@@ -6,8 +6,9 @@ Series de Tiempo 2026-II (20948) · Universidad El Bosque
 **Encargo:** que el banco de preguntas evalúe el capítulo 2 de FPP3
 (*Time series graphics*, <https://otexts.com/fpp3/graphics.html>), que hoy
 cubre solo a medias.
-**Estado:** 🟢 Fases 0, 1, 2 y 4 completas. Queda la 3 —que espera la pregunta
-abierta 1, qué par de series para §2.6— y la 5 (cierre).
+**Estado:** 🟢 Fases 0 a 4 completas. Las nueve secciones de FPP3 §2 quedan
+cubiertas y el banco está en 46 ítems. Solo falta la Fase 5 (cierre: la prosa,
+la tabla de especificaciones y los cuatro paquetes).
 
 > El parcial del Corte I es **hoy**. Nada de esto lo toca: el bloque E se
 > publica después, y su público son el Corte II, un supletorio o el repaso.
@@ -235,7 +236,7 @@ con Chart.js sobre series que ya existen en el precálculo, más los dos ítems.
 
 ### Fase 3 · §2.6, el caro
 
-#### Tarea 5: El par de series relacionadas
+#### Tarea 5: El par de series relacionadas  ✅ *hecha*
 
 **Descripción:** Añadir a `genera_preparcial.R` dos pares bivariados: uno con
 relación en U y correlación lineal alta (el clásico demanda contra
@@ -254,7 +255,7 @@ efectivamente alto **y** que la relación sea claramente no lineal.
 **Dependencias:** Tarea 4 · **Archivos:** `genera_preparcial.R`,
 `verifica_preparcial.R` · **Tamaño:** M
 
-#### Tarea 6: E05 y E06, con sus dispersiones
+#### Tarea 6: E05 y E06, con sus dispersiones  ✅ *hecha*
 
 **Descripción:** Los dos ítems de §2.6 y sus dos gráficos de dispersión.
 
@@ -267,9 +268,10 @@ efectivamente alto **y** que la relación sea claramente no lineal.
 **Archivos:** `preparcial-corte-1.html`, `audita_preparcial.py` ·
 **Tamaño:** M
 
-### ✅ Punto de control · Bloque E completo
-- [ ] 38 ítems en el banco, las nueve secciones de FPP3 §2 con al menos uno
-- [ ] La tabla de especificaciones publicada concuerda con el reparto real (§6)
+### ✅ Punto de control · Bloque E completo  ✅ *superado*
+- [x] **46 ítems** en el banco y las nueve secciones de FPP3 §2 con al menos uno
+- [x] 402 comprobaciones de `verifica_preparcial.R` · los tres auditores en 568 / 663 / 381
+- [ ] La tabla de especificaciones publicada concuerda con el reparto real (§6) — *pendiente, Fase 5*
 
 ### Fase 4 · La cosecha
 
@@ -329,10 +331,11 @@ QTI, banco y sonda).
 
 ## 6 · Preguntas abiertas
 
-1. **¿Qué par de series para §2.6?** La propuesta es demanda eléctrica contra
-   temperatura, que es el ejemplo de FPP3 y hace evidente la U. Alternativa con
-   sabor local: consumo contra temperatura en una ciudad de altura, donde la U
-   es asimétrica.
+1. ~~**¿Qué par de series para §2.6?**~~ **RESUELTA (2026-09-01): demanda
+   eléctrica contra temperatura**, el ejemplo de FPP3. Salieron dos pares, no
+   uno: el de la U asimétrica (r = 0.786 con residuo +10.66 / −20.06 / +8.63
+   por tercil) y el espurio de dos caminatas independientes (r = 0.857 en
+   niveles, 0.007 en diferencias).
 2. **¿El simulacro crece?** Hoy tiene seis ítems, uno por objetivo. Si el
    bloque E añade una dimensión de lectura de gráficos, quizá quiera un séptimo.
 3. ~~**¿Los ítems de `tsibble` encajan con lo que enseñas?**~~ **RESUELTA

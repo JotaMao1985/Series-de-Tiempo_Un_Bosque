@@ -222,6 +222,54 @@ def main() -> int:
           "y tampoco es el año de media más alta: promediar también falla",
           f"media más alta en el año {medias.index(max(medias)) + 1}, atípico en el {raro + 1}")
 
+    print("— E05 · la correlación alta que no significa relación lineal")
+    B = d["bloque_e"]["dispersion"]
+    check(B["correlacion"] > 0.75,
+          "la correlación es alta de verdad: sin eso el ítem no engaña a nadie",
+          f"r = {B['correlacion']}")
+    lo, medio, hi = B["residuo_por_tercil"]
+    check(lo > 0 and medio < 0 and hi > 0,
+          "y la nube es una U alrededor de la recta: corta en los extremos, larga en el centro",
+          f"residuo medio por tercil: {lo:+.2f} {medio:+.2f} {hi:+.2f}")
+    check(min(lo, hi) > abs(medio) / 3,
+          "el desvío de los extremos no es ruido: se ve al lado del central",
+          f"extremos {lo:+.2f}/{hi:+.2f} contra centro {medio:+.2f}")
+
+    print("— E06 · dos series sin relación que correlacionan por tener tendencia")
+    P = d["bloque_e"]["espuria"]
+    check(P["correlacion_niveles"] > 0.8,
+          "los niveles correlacionan tanto que invitan a concluir algo",
+          f"r = {P['correlacion_niveles']}")
+    check(abs(P["correlacion_diferencias"]) < 0.15,
+          "y las diferencias no correlacionan: no había nada detrás",
+          f"r = {P['correlacion_diferencias']}")
+    check(P["de_cada_cien"] > 50,
+          "no es una casualidad rebuscada: pasa en más de la mitad de los pares",
+          f"{P['pares_con_r_alto']} de {P['pares_probados']} pares independientes")
+
+    # Las cifras que estos dos ítems IMPRIMEN tienen que ser las que R calculó.
+    # Las §3 y §4 de `verifica_preparcial.R` hacen esto con los 32 del blueprint
+    # y no miran el bloque E, así que aquí va su equivalente: si el generador
+    # cambia un número y la prosa se queda con el viejo, esto lo dice.
+    prosa_e = pathlib.Path(AQUI.parent / "Htmls_Series" / "preparcial-corte-1.html").read_text(
+        encoding="utf-8")
+    ini = prosa_e.index("AUTOEVALUACIONES['bloque-e']")
+    prosa_e = prosa_e[ini:prosa_e.index("const SIMULACRO", ini)]
+    citadas = {
+        "la correlación de la dispersión": str(B["correlacion"]),
+        "el R² de la recta": str(B["r2_lineal"]),
+        "el residuo del tercil frío": f"{lo:+.2f}".lstrip("+"),
+        "el residuo del tercil templado": f"{medio:.2f}",
+        "el residuo del tercil caluroso": f"{hi:+.2f}".lstrip("+"),
+        "la correlación espuria de niveles": str(P["correlacion_niveles"]),
+        "la correlación espuria de diferencias": str(P["correlacion_diferencias"]),
+        "los pares que pasan de 0.7": str(P["pares_con_r_alto"]),
+        "los pares probados": str(P["pares_probados"]),
+    }
+    for que, valor in citadas.items():
+        check(valor in prosa_e,
+              f"la prosa del bloque E cita {que} tal como R lo calculó", valor)
+
     print()
     if fallos:
         print(f"AUDITORÍA: {len(fallos)} FALLOS")

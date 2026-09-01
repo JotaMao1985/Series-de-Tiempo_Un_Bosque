@@ -593,11 +593,113 @@ items$i02 <- list(modulo = "1.1 · 1.9", dimension = "C", sin_cifras = TRUE)
 
 items <- items[order(names(items))]
 
+
+# ---------------------------------------------------------------------------
+# 4b. Los dos pares del bloque E (FPP3 §2.6, diagramas de dispersion)
+#
+# Son los unicos datos BIVARIADOS del preparcial: todo lo demas es univariado,
+# y sin dos series relacionadas no hay diagrama de dispersion que ensenar. Cada
+# par existe para que una lectura concreta falle:
+#
+#   (1) temperatura / demanda_electrica — correlacion ALTA y relacion NO lineal.
+#       Es el ejemplo del capitulo 2 de FPP3: la demanda sube con el calor por
+#       el aire acondicionado y vuelve a subir con el frio por la calefaccion.
+#       En clima templado la rama de calor domina, asi que la recta ajusta
+#       "bien" —r alto— y aun asi se equivoca sistematicamente en los extremos.
+#       Ese es el ítem: un coeficiente alto no dice que la relacion sea lineal.
+#
+#   (2) ventas_norte / ventas_sur — correlacion alta y relacion NINGUNA. Dos
+#       caminatas aleatorias INDEPENDIENTES, generadas con semillas distintas.
+#       El delator es que sus diferencias no se correlacionan: lo que compartian
+#       era la tendencia, no el comportamiento.
+# ---------------------------------------------------------------------------
+
+set.seed(SEMILLA + 700)
+n_disp <- 120
+temperatura <- round(runif(n_disp, 8, 32), 1)
+# Confort en 18 grados; la rama de calor pesa mas que la de frio, que es lo que
+# hace la U asimetrica y deja la correlacion lineal alta.
+calor <- pmax(0, temperatura - 18)
+frio  <- pmax(0, 15 - temperatura)
+demanda_electrica <- round(120 + 2.4 * calor^1.45 + 2.1 * frio^1.35 +
+                             rnorm(n_disp, 0, 6), 2)
+
+ajuste_disp <- lm(demanda_electrica ~ temperatura)
+resid_disp  <- residuals(ajuste_disp)
+tercil <- cut(temperatura, quantile(temperatura, c(0, 1/3, 2/3, 1)),
+              include.lowest = TRUE, labels = FALSE)
+resid_por_tercil <- tapply(resid_disp, tercil, mean)
+
+# El par espurio tampoco se fija a ojo, por la misma razon que la realizacion
+# del item 25: hace falta una donde el fenomeno se VEA. Se recorren pares
+# independientes y se elige el primero con correlacion de niveles alta y
+# correlacion de diferencias despreciable. Y de paso se cuenta cuantos de los
+# `intentos` pasan de 0.7, que es el dato que de verdad ensena el item: no es
+# que hayamos tenido suerte, es que pasa constantemente.
+buscar_espurias <- function(intentos = 400, r_min = 0.85, r_dif_max = 0.15) {
+  hallado <- NULL
+  altos <- 0L
+  for (k in seq_len(intentos)) {
+    set.seed(SEMILLA + 7000 + 2 * k)
+    a <- cumsum(rnorm(n_disp, 0.8, 4)) + 200
+    set.seed(SEMILLA + 7001 + 2 * k)
+    b <- cumsum(rnorm(n_disp, 0.7, 4)) + 180
+    if (abs(cor(a, b)) > 0.7) altos <- altos + 1L
+    if (is.null(hallado) && cor(a, b) > r_min &&
+        abs(cor(diff(a), diff(b))) < r_dif_max) {
+      hallado <- list(k = k, a = a, b = b)
+    }
+  }
+  if (is.null(hallado)) {
+    stop("No se encontro un par espurio con r > ", r_min, " y diferencias planas")
+  }
+  c(hallado, list(intentos = intentos, altos = altos))
+}
+
+esp <- buscar_espurias()
+ventas_norte <- esp$a
+ventas_sur   <- esp$b
+cat(sprintf("Bloque E · par espurio hallado en el intento %d; %d de %d pares independientes pasan de |r| = 0.7\n",
+            esp$k, esp$altos, esp$intentos))
+
+bloque_e <- list(
+  dispersion = list(
+    n = n_disp,
+    correlacion = r3(cor(temperatura, demanda_electrica), 3),
+    r2_lineal = r3(summary(ajuste_disp)$r.squared, 3),
+    # El patron que delata la curva: la recta se queda CORTA en los dos
+    # extremos y se pasa en el centro. Es la U vista desde la recta.
+    residuo_por_tercil = r3(as.numeric(resid_por_tercil), 2),
+    temperatura_confort = 18),
+  espuria = list(
+    n = n_disp,
+    correlacion_niveles = r3(cor(ventas_norte, ventas_sur), 3),
+    correlacion_diferencias = r3(cor(diff(ventas_norte), diff(ventas_sur)), 3),
+    pares_probados = esp$intentos,
+    pares_con_r_alto = esp$altos,
+    de_cada_cien = as.integer(round(100 * esp$altos / esp$intentos))))
+
+cat("\n=== Bloque E · los dos pares =================================\n")
+cat(sprintf("dispersion  r = %.3f  R2 = %.3f  residuo por tercil: %s\n",
+            bloque_e$dispersion$correlacion, bloque_e$dispersion$r2_lineal,
+            paste(sprintf("%+.2f", bloque_e$dispersion$residuo_por_tercil), collapse = " ")))
+cat(sprintf("espuria     r(niveles) = %.3f   r(diferencias) = %.3f\n",
+            bloque_e$espuria$correlacion_niveles,
+            bloque_e$espuria$correlacion_diferencias))
+
 # ---------------------------------------------------------------------------
 # 5. Salida
 # ---------------------------------------------------------------------------
 
 series <- list(
+  temperatura = serie_json(ts(temperatura), "Temperatura media diaria",
+                           "Ciento veinte dias de temperatura, entre 8 y 32 grados", "grados C"),
+  demanda_electrica = serie_json(ts(demanda_electrica), "Demanda electrica diaria",
+                                 "La de esos mismos dias: sube con el calor y vuelve a subir con el frio", "MW"),
+  ventas_norte = serie_json(ts(ventas_norte), "Ventas de la tienda del norte",
+                            "Caminata aleatoria con deriva", "millones"),
+  ventas_sur = serie_json(ts(ventas_sur), "Ventas de la tienda del sur",
+                          "Otra caminata aleatoria, generada aparte y sin relacion con la anterior", "millones"),
   demanda = serie_json(demanda, "Demanda mensual", "Serie mensual con tendencia y estacionalidad de amplitud creciente", "miles de unidades"),
   demanda_atipico = serie_json(demanda_atipico, "Demanda con atípico", "La misma, con un mes anómalo sembrado", "miles de unidades"),
   ocupacion = serie_json(ocupacion, "Ocupación trimestral", "Serie trimestral con tendencia y estacionalidad aditiva", "por ciento"),
@@ -621,7 +723,8 @@ salida <- list(
     n_items = length(items),
     nota = "Preparcial del Corte I. Formativo, sin nota: no hay clave oculta."),
   series = series,
-  items = items)
+  items = items,
+  bloque_e = bloque_e)
 
 ruta_json <- file.path(dir_salidas, "preparcial_datos.json")
 write_json(salida, ruta_json, auto_unbox = TRUE, digits = NA, pretty = TRUE, null = "null")

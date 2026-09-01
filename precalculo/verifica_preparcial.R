@@ -258,8 +258,17 @@ comprueba(length(D$items) == 32L,
           "y hay 32 entradas de ítem", as.character(length(D$items)))
 comprueba(identical(sort(names(D$items)), sprintf("i%02d", 1:32)),
           "los identificadores van de i01 a i32 sin huecos")
-comprueba(length(D$series) == 10L,
-          "hay 10 series propias", paste(names(D$series), collapse = ", "))
+# Diez del blueprint y cuatro del bloque E. Se cuentan por separado a
+# propósito: las del bloque E son los únicos datos BIVARIADOS del preparcial
+# —los dos pares de §2.6 de FPP3— y no alimentan ningún ítem de los 32, así
+# que mezclarlas en la cuenta escondería si alguna de las diez desapareciera.
+SERIES_E <- c("temperatura", "demanda_electrica", "ventas_norte", "ventas_sur")
+comprueba(length(setdiff(names(D$series), SERIES_E)) == 10L,
+          "hay 10 series propias del blueprint",
+          paste(setdiff(names(D$series), SERIES_E), collapse = ", "))
+comprueba(all(SERIES_E %in% names(D$series)),
+          "y las cuatro del bloque E, que son los dos pares de la dispersión",
+          paste(SERIES_E, collapse = ", "))
 comprueba(!any(grepl("AirPassengers", names(D$series))) &&
             !grepl("AirPassengers", INC$texto, fixed = TRUE),
           "ninguna serie es AirPassengers (D14)")
