@@ -257,7 +257,8 @@ def main() -> int:
     prosa_e = prosa_e[ini:prosa_e.index("const SIMULACRO", ini)]
     citadas = {
         "la correlación de la dispersión": str(B["correlacion"]),
-        "el R² de la recta": str(B["r2_lineal"]),
+        # La prosa lo publica como porcentaje; el JSON lo guarda como fracción.
+        "el R² de la recta, en porcentaje": f'{B["r2_lineal"] * 100:.1f}',
         "el residuo del tercil frío": f"{lo:+.2f}".lstrip("+"),
         "el residuo del tercil templado": f"{medio:.2f}",
         "el residuo del tercil caluroso": f"{hi:+.2f}".lstrip("+"),
