@@ -6,9 +6,8 @@ Series de Tiempo 2026-II (20948) · Universidad El Bosque
 **Encargo:** que el banco de preguntas evalúe el capítulo 2 de FPP3
 (*Time series graphics*, <https://otexts.com/fpp3/graphics.html>), que hoy
 cubre solo a medias.
-**Estado:** 🟢 Fases 0 a 4 completas. Las nueve secciones de FPP3 §2 quedan
-cubiertas y el banco está en 46 ítems. Solo falta la Fase 5 (cierre: la prosa,
-la tabla de especificaciones y los cuatro paquetes).
+**Estado:** ✅ **Cerrado (2026-09-01).** Las cinco fases hechas: las nueve
+secciones de FPP3 §2 quedan evaluadas y el banco está en 46 ítems.
 
 > El parcial del Corte I es **hoy**. Nada de esto lo toca: el bloque E se
 > publica después, y su público son el Corte II, un supletorio o el repaso.
@@ -138,8 +137,7 @@ escritos a mano.
 **Cosecha:** 10 ítems de una sola respuesta de `AUTOEVALUACIONES['cap1']` y
 `['cap2']` (5 y 5; quedan fuera 4 numéricas y 2 de varias respuestas).
 
-**Tamaño final del banco:** 28 + 6 + 2 + 10 = **46 ítems**. Hoy van **44**:
-faltan E05 y E06, que son los de §2.6.
+**Tamaño final del banco:** 28 + 6 + 2 + 10 = **46 ítems**. Alcanzado.
 
 ---
 
@@ -294,7 +292,7 @@ declara 0 Multi-Select.
 
 ### Fase 5 · Cierre
 
-#### Tarea 8: La prosa, el reparto y los cuatro paquetes
+#### Tarea 8: La prosa, el reparto y los cuatro paquetes  ✅ *hecha*
 
 **Descripción:** Actualizar las ocho apariciones de «32 ítems» en la prosa, la
 tabla de especificaciones publicada, y regenerar los cuatro paquetes (D2L y
@@ -309,9 +307,17 @@ QTI, banco y sonda).
 
 **Dependencias:** Tarea 7 · **Tamaño:** S
 
-### ✅ Punto de control · Listo
-- [ ] 46 ítems · FPP3 §2 cubierto de 2.1 a 2.9 · cero Multi-Select
+### ✅ Punto de control · Listo  ✅ *superado*
+- [x] **46 ítems** · FPP3 §2 cubierto de 2.1 a 2.9 · cero Multi-Select
+- [x] Los cuatro paquetes regenerados y auditados: 568 / 42 / 663 / 381 / 29
+- [x] Reconstrucción desde cero: mismo `questiondb.xml` y mismo `questestinterop.xml`, byte a byte
 - [ ] Revisado con el humano antes de publicar
+
+> **Lo que NO se tocó y conviene decidir aparte:** la introducción sigue diciendo
+> «El Parcial 1 es el martes 1 de septiembre». Era cierto el día que se escribió
+> este plan y hoy ya es pasado. Cambiarlo es decidir para qué sirve el documento
+> a partir de ahora —repaso, supletorio, Corte II—, y eso no es una tarea de
+> cierre.
 
 ---
 
