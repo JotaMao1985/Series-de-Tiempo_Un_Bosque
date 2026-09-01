@@ -5501,6 +5501,49 @@
       ]);
     }
 
+    // El gráfico de tiempo: la serie tal cual, con el año rotulado en cada
+    // arranque de ciclo. Es lo primero que FPP3 manda dibujar, y el bloque E
+    // pregunta por lo que sabe y por lo que no sabe enseñar.
+    function lineaTiempo(canvas, valores, frecuencia, inicio) {
+      const etiquetas = valores.map((_, i) => {
+        const pos = inicio[1] - 1 + i;
+        return pos % frecuencia === 0 ? String(inicio[0] + Math.floor(pos / frecuencia)) : '';
+      });
+      const g = crearGraficoLinea(canvas, etiquetas, [
+        { label: 'Valor', data: valores, borderColor: COLORES_GRAFICO.primario,
+          borderWidth: 1.6, pointRadius: 0, tension: 0 }
+      ]);
+      // `crearGraficoLinea` limita el eje a 12 marcas, y con 120 puntos Chart.js
+      // se come ocho de los diez años: el ítem habla de una década y el eje
+      // enseñaba dos fechas. Las etiquetas vacías no ocupan sitio, así que basta
+      // con apagar el salteo. No va por `opciones` porque el ayudante mezcla en
+      // un solo nivel y `scales` sustituiría el bloque entero.
+      g.options.scales.x.ticks.autoSkip = false;
+      g.update('none');
+      return g;
+    }
+
+    // El gráfico estacional: un trazo por ciclo, todos superpuestos sobre los
+    // mismos meses. Es el gemelo de `subseries` —los mismos datos agrupados al
+    // revés— y lo que dibuja `gg_season`. El color va del claro al oscuro con
+    // el año, que es como se lee el orden sin tener que perseguir la leyenda.
+    function estacional(canvas, valores, frecuencia, inicio) {
+      const ciclos = [];
+      valores.forEach((v, i) => {
+        const pos = inicio[1] - 1 + i, c = Math.floor(pos / frecuencia);
+        (ciclos[c] = ciclos[c] || Array(frecuencia).fill(null))[pos % frecuencia] = v;
+      });
+      const etiquetas = frecuencia === 12
+        ? MESES
+        : Array.from({ length: frecuencia }, (_, k) => `T${k + 1}`);
+      return crearGraficoLinea(canvas, etiquetas, ciclos.map((datos, c) => ({
+        label: String(inicio[0] + c),
+        data: datos,
+        borderColor: `hsl(163, 42%, ${58 - 3.2 * c}%)`,
+        borderWidth: 1.6, pointRadius: 0, tension: 0
+      })));
+    }
+
     AUTOEVALUACIONES['bloque-d'] = [
       {
         tipo: 'grafico', clave: '1.1', objetivo: 'O1', alto: 220,
@@ -5668,6 +5711,40 @@
             retro: 'Esa es la regla del tsibble: índice y clave juntos identifican una fila y solo una. El índice dice cuándo; la clave, de cuál de las series. Es la diferencia con <code>ts()</code>, que solo sabe guardar una serie y le fía el «cuándo» a <code>start</code> y <code>frequency</code> en vez de a una columna.' },
           { texto: 'Que el <code>data.frame</code> trae filas repetidas por un error de origen; hay que limpiarlas con <code>distinct()</code>.', correcta: false,
             retro: 'No hay filas repetidas: hay cinco series. Dos filas del mismo mes y distinta tienda son observaciones distintas, no duplicados. <code>distinct()</code> se llevaría por delante cuatro de cada cinco tiendas sin avisar de nada.' }
+        ]
+      },
+      {
+        tipo: 'grafico', clave: '1.3', objetivo: 'O1', alto: 220,
+        descripcionGrafico: 'Gráfico de tiempo de la demanda mensual a lo largo de diez años: sube de forma sostenida y repite cada año un mismo dibujo de subidas y bajadas, con los altibajos cada vez más anchos',
+        dibujar: c => lineaTiempo(c, S.demanda.valores, S.demanda.frecuencia, S.demanda.inicio),
+        pregunta: 'Este es el gráfico de tiempo de <code>demanda</code>, diez años de datos mensuales. Tres de estas cuatro afirmaciones se sostienen mirando <strong>solo</strong> esta figura. ¿Cuál <strong>no</strong>?',
+        pista: 'Pregúntate cuál de las cuatro te obliga a comparar el mismo mes de años distintos, y si esta figura te deja hacerlo.',
+        opciones: [
+          { texto: 'La serie crece a lo largo de la década.', correcta: false,
+            retro: 'Esa se ve, y es lo primero que enseña un gráfico de tiempo: la tendencia. No hace falta ninguna otra figura para afirmarla.' },
+          { texto: 'Dentro de cada año se repite un mismo dibujo de subidas y bajadas.', correcta: false,
+            retro: 'También se ve. El gráfico de tiempo delata que hay estacionalidad —el diente de sierra es regular— aunque no sirva para estudiarla de cerca.' },
+          { texto: 'Los altibajos son cada vez más anchos a medida que la serie sube.', correcta: false,
+            retro: 'Se ve, y es la observación que decide entre descomposición aditiva y multiplicativa. Un gráfico de tiempo sí sirve para eso: la amplitud crece con el nivel a ojo.' },
+          { texto: 'El mes más alto es el mismo todos los años.', correcta: true,
+            retro: 'Esta es la que no se puede sostener aquí. Los diez picos están uno detrás de otro y ninguno lleva rótulo de mes: para saber si caen siempre en el mismo hay que <em>superponer</em> los años, que es lo que hacen <code>gg_season</code> y <code>gg_subseries</code>. Y de hecho no es cierto: en esta serie cinco años pican en julio y cinco en agosto. El gráfico de tiempo no miente, simplemente no responde a esa pregunta.' }
+        ]
+      },
+      {
+        tipo: 'grafico', clave: '1.3', objetivo: 'O1', alto: 240,
+        descripcionGrafico: 'Gráfico estacional: diez trazos superpuestos, uno por año, sobre los doce meses. Los trazos suben de nivel con el año y todos siguen la misma forma, salvo uno que en marzo se dispara muy por encima de sus propios vecinos y vuelve a bajar en abril',
+        dibujar: c => estacional(c, S.demanda_atipico.valores, S.demanda_atipico.frecuencia, S.demanda_atipico.inicio),
+        pregunta: 'Gráfico estacional de <code>demanda_atipico</code>: un trazo por año, los doce meses en el eje. La serie esconde <strong>un</strong> mes anómalo. ¿Cómo se encuentra en esta figura?',
+        pista: 'La serie tiene tendencia: los años recientes están altos en todos los meses. Así que «el punto más alto» y «el punto anómalo» no tienen por qué ser el mismo.',
+        opciones: [
+          { texto: 'Por la línea que se dobla donde las demás no: en marzo un año se dispara respecto a su propio febrero y su propio abril, mientras los otros nueve apenas suben.', correcta: true,
+            retro: 'Eso es lo que hace visible el gráfico estacional: no el nivel, sino la <em>forma</em>. Los diez trazos comparten dibujo y solo uno se rompe, y se rompe justo encima de marzo, que es donde está el atípico. El gráfico de tiempo también enseña el pico, pero para saber en qué mes cae hay que ponerse a contar.' },
+          { texto: 'Por el punto más alto del gráfico: el valor anómalo es el máximo de la serie.', correcta: false,
+            retro: 'No lo es. Con una tendencia que sube durante diez años, los meses de verano del último año están más altos que el atípico, que ocurre a mitad de la serie. Buscar el máximo te lleva al año más reciente, no al año raro.' },
+          { texto: 'Comparando la media de cada año: la del año con el atípico se despega de las demás.', correcta: false,
+            retro: 'La media más alta es la del último año, por la tendencia, no la del año del atípico. Y un solo mes movido apenas mueve una media de doce: por eso el atípico se busca mirando la forma, no promediando.' },
+          { texto: 'No se puede: al superponer los años el atípico queda tapado, y hace falta volver al gráfico de tiempo.', correcta: false,
+            retro: 'Es al revés. El gráfico de tiempo enseña que hay un pico, pero no en qué mes; este lo pone directamente sobre marzo y además dice en qué año, porque cada trazo es un año. Superponer no tapa: alinea.' }
         ]
       },
       {

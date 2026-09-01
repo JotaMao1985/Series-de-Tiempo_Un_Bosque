@@ -6,8 +6,8 @@ Series de Tiempo 2026-II (20948) · Universidad El Bosque
 **Encargo:** que el banco de preguntas evalúe el capítulo 2 de FPP3
 (*Time series graphics*, <https://otexts.com/fpp3/graphics.html>), que hoy
 cubre solo a medias.
-**Estado:** 🟢 Fases 0 y 1 completas. Quedan las Fases 2 a 5; la 3 espera la
-pregunta abierta 1 (qué par de series para §2.6).
+**Estado:** 🟢 Fases 0, 1 y 2 completas. Quedan la 3 —que espera la pregunta
+abierta 1, qué par de series para §2.6—, la 4 (cosecha) y la 5 (cierre).
 
 > El parcial del Corte I es **hoy**. Nada de esto lo toca: el bloque E se
 > publica después, y su público son el Corte II, un supletorio o el repaso.
@@ -210,7 +210,7 @@ con cuatro opciones cada una. Los distractores que faltan se calculan en
 
 ### Fase 2 · Los que necesitan figura
 
-#### Tarea 4: E02 y E03, con sus gráficos
+#### Tarea 4: E02 y E03, con sus gráficos  ✅ *hecha*
 
 **Descripción:** El gráfico de tiempo de E02 y el `gg_season` de E03, dibujados
 con Chart.js sobre series que ya existen en el precálculo, más los dos ítems.
@@ -226,10 +226,10 @@ con Chart.js sobre series que ya existen en el precálculo, más los dos ítems.
 **Dependencias:** Tarea 3 · **Archivos:** `preparcial-corte-1.html`,
 `genera_preparcial.R`, `audita_preparcial.py` · **Tamaño:** M
 
-### ✅ Punto de control · Sin datos nuevos
-- [x] *(Fase 1)* Banco de 32 ítems · 401 comprobaciones de R · los tres auditores del paquete en 393 / 460 / 269
-- [ ] Banco de 34 ítems tras la Fase 2, las cuatro auditorías limpias
-- [ ] FPP3 §2.1, §2.2, §2.4 y §2.9 cubiertos
+### ✅ Punto de control · Sin datos nuevos  ✅ *superado*
+- [x] Banco de **34 ítems** · 401 comprobaciones de R · los tres auditores del paquete en 421 / 490 / 285
+- [x] FPP3 §2.1, §2.2, §2.4 y §2.9 cubiertos
+- [x] Las seis afirmaciones de E02 y E03 comprobadas contra el dato en `audita_preparcial.py`
 - [ ] Revisar con el humano antes de tocar los datos
 
 ### Fase 3 · §2.6, el caro

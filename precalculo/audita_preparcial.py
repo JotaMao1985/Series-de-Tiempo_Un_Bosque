@@ -30,6 +30,9 @@ DATOS = AQUI / "salidas" / "preparcial_datos.json"
 
 fallos: list[str] = []
 
+MESES = ["ene", "feb", "mar", "abr", "may", "jun",
+         "jul", "ago", "sep", "oct", "nov", "dic"]
+
 
 def check(cond: bool, msg: str, extra: str = "") -> None:
     print(("  OK   " if cond else "  FALLA") + f"  {msg}" + (f"   [{extra}]" if extra else ""))
@@ -169,6 +172,55 @@ def main() -> int:
     for b in bordes:
         print(f"        {b}")
     print(f"        -> {len(bordes)} p-valores fuera de tabla. P2 tiene que escribirlos con < o >.")
+
+
+    # -----------------------------------------------------------------
+    # Bloque E · lo que cada figura promete que se ve
+    #
+    # Estos ítems no están en el blueprint, así que las §3 y §4 de
+    # `verifica_preparcial.R` —que recorren los 32— no los miran. Y son los
+    # únicos del instrumento cuya respuesta correcta es una afirmación sobre
+    # LO QUE LA FIGURA DEJA VER: si el dato cambia y deja de verse, el ítem
+    # enseña lo contrario de lo que promete sin que nada falle. De ahí que se
+    # comprueben aquí, una a una, las cuatro afirmaciones de cada uno.
+    # -----------------------------------------------------------------
+    S = d["series"]
+
+    def por_ciclo(nombre):
+        v, f = S[nombre]["valores"], S[nombre]["frecuencia"]
+        return [v[a * f:(a + 1) * f] for a in range(len(v) // f)]
+
+    print("— E02 · el gráfico de tiempo enseña tres cosas y esconde la cuarta")
+    anios = por_ciclo("demanda")
+    niveles = [sum(a) / len(a) for a in anios]
+    amplitudes = [max(a) - min(a) for a in anios]
+    check(niveles[-1] > niveles[0],
+          "se ve: la serie crece a lo largo de la década",
+          f"{niveles[0]:.1f} → {niveles[-1]:.1f}")
+    check(sum(amplitudes[-3:]) / 3 > 1.3 * (sum(amplitudes[:3]) / 3),
+          "se ve: los altibajos se ensanchan con el nivel",
+          f"{sum(amplitudes[:3]) / 3:.1f} → {sum(amplitudes[-3:]) / 3:.1f}")
+    picos = [a.index(max(a)) for a in anios]
+    check(len(set(picos)) > 1,
+          "NO se ve, y además es falso: el mes más alto no es el mismo todos los años",
+          " ".join(f"{MESES[m]}×{picos.count(m)}" for m in sorted(set(picos))))
+
+    print("— E03 · el atípico se encuentra por la forma, no por el nivel")
+    ay = por_ciclo("demanda_atipico")
+    plano = S["demanda_atipico"]["valores"]
+    quiebres = [a[2] - (a[1] + a[3]) / 2 for a in ay]  # marzo menos sus vecinos
+    raro = quiebres.index(max(quiebres))
+    otros = [q for i, q in enumerate(quiebres) if i != raro]
+    check(max(quiebres) > 2.5 * max(otros),
+          "se ve: un solo año rompe la forma en marzo, y por goleada",
+          f"{max(quiebres):.1f} frente a {max(otros):.1f} del siguiente")
+    check(max(ay[raro]) < max(plano),
+          "el atípico NO es el máximo de la serie: buscar el punto más alto falla",
+          f"atípico {max(ay[raro]):.1f} · máximo {max(plano):.1f}")
+    medias = [sum(a) / len(a) for a in ay]
+    check(medias.index(max(medias)) != raro,
+          "y tampoco es el año de media más alta: promediar también falla",
+          f"media más alta en el año {medias.index(max(medias)) + 1}, atípico en el {raro + 1}")
 
     print()
     if fallos:
