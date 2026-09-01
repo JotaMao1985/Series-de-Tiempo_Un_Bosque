@@ -49,21 +49,24 @@ const arg = (nombre, pordefecto) => {
 };
 
 const BASE = arg('--url', 'http://localhost:8731/');
+const autoprueba = process.argv.includes('--autoprueba');
 const DESTINO = path.resolve(RAIZ, arg('--destino', 'precalculo/salidas/graficos_preparcial'));
 const PAGINA = 'preparcial-corte-1.html';
 const PUERTO = 9223;
 const ANCHO = 1440, ALTO = 1100;
 
-// Dónde vive cada quiz. El bloque es la clave con la que `exporta_brightspace.py`
-// nombra los ítems, así que los PNG salen con ese mismo nombre y no hace falta
-// un segundo convenio para casarlos.
-const OBJETIVOS = [
-  { modulo: 2, bloque: 'bloque-a' },
-  { modulo: 3, bloque: 'bloque-b' },
-  { modulo: 4, bloque: 'bloque-c' },
-  { modulo: 5, bloque: 'bloque-d' },
-  { modulo: 7, bloque: 'simulacro', arranca: true },
-];
+// Los módulos NO se declaran aquí: se leen de `courseData.modules` en la
+// página. Declararlos obliga a acordarse de este archivo cada vez que el
+// preparcial gane o pierda un módulo, y olvidarlo no da error — da un banco
+// al que le faltan gráficos en silencio.
+//
+// Y dentro de cada módulo se captura POR CONTENEDOR `[data-quiz]`, no por
+// módulo entero. El bloque es la clave con la que `exporta_brightspace.py`
+// nombra los ítems, así que los PNG salen con ese mismo nombre y no hace
+// falta un segundo convenio para casarlos. Capturar por módulo funcionaba
+// solo mientras cada módulo tuviera un quiz: con dos, los lienzos del
+// segundo se numeran a continuación de los del primero y cada pregunta
+// acaba con la figura de otra. Eso importa sin un solo error.
 
 const CHROME = [
   '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
@@ -120,6 +123,21 @@ class Chrome {
     });
   }
 
+  // Espera a que una expresión de la página sea cierta. Dormir un rato fijo
+  // funciona hasta el día que no: si el servidor está caído o la página tarda,
+  // el guion sigue adelante y falla más abajo con un error que no señala la
+  // causa.
+  async esperaHasta(expresion, ms, quejaSiNo) {
+    const hasta = Date.now() + ms;
+    for (;;) {
+      try {
+        if (await this.evalua(expresion)) return true;
+      } catch (e) { /* la página aún no tiene ni ámbito */ }
+      if (Date.now() > hasta) throw new Error(quejaSiNo);
+      await espera(200);
+    }
+  }
+
   async evalua(expresion) {
     const r = await this.enviar('Runtime.evaluate', {
       expression: expresion, awaitPromise: true, returnByValue: true,
@@ -156,41 +174,107 @@ const ARRANCA_SIMULACRO = `
     return 'simulacro arrancado';
   })()`;
 
-const captura = bloque => `
+const CAPTURA = `
   (() => {
     if (window.innerWidth < 1024) {
       return { error: 'innerWidth = ' + window.innerWidth + ', hacen falta 1024 o más' };
     }
     const raiz = document.querySelector('main') || document.body;
-    const lienzos = [...raiz.querySelectorAll('.quiz-grafico canvas')];
-    const imagenes = [], problemas = [];
+    const cajas = [...raiz.querySelectorAll('[data-quiz], [data-simulacro]')];
+    const bloques = [];
 
-    lienzos.forEach((canvas, k) => {
-      const w = canvas.width, h = canvas.height;
-      if (!w || !h) { problemas.push('lienzo ' + k + ': ' + w + '×' + h); return; }
+    for (const caja of cajas) {
+      const esSimulacro = caja.hasAttribute('data-simulacro');
+      const bloque = esSimulacro ? 'simulacro' : caja.dataset.quiz;
 
-      const plano = document.createElement('canvas');
-      plano.width = w; plano.height = h;
-      const ctx = plano.getContext('2d');
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, w, h);
-      ctx.drawImage(canvas, 0, 0);
-
-      const datos = ctx.getImageData(0, 0, w, h).data;
-      let tinta = 0;
-      for (let i = 0; i < datos.length; i += 4) {
-        if (datos[i] !== 255 || datos[i+1] !== 255 || datos[i+2] !== 255) tinta++;
+      // Cuántos gráficos DECLARA el bloque. \`AUTOEVALUACIONES\` y
+      // \`SIMULACRO\` son \`const\` de nivel superior del guion de la página:
+      // viven en el ámbito léxico global y NO cuelgan de \`window\`, así que se
+      // leen por su nombre. Si el bloque no tiene registro —el \`data-quiz\`
+      // de ejemplo del componente— se devuelve null y no se exige nada.
+      let declarados = null;
+      if (esSimulacro) {
+        if (typeof SIMULACRO === 'object' && SIMULACRO && SIMULACRO.items) {
+          declarados = SIMULACRO.items.filter(p => p.tipo === 'grafico').length;
+        }
+      } else {
+        const registro = (typeof AUTOEVALUACIONES === 'object' ? AUTOEVALUACIONES : {})[bloque];
+        if (registro) declarados = registro.filter(p => p.tipo === 'grafico').length;
       }
-      const pct = (100 * tinta) / (w * h);
-      if (pct < 1) problemas.push('lienzo ' + k + ': solo ' + pct.toFixed(2) + ' % con tinta');
 
-      imagenes.push({ orden: k, ancho: w, alto: h, tinta: Number(pct.toFixed(2)),
-                      dataURI: plano.toDataURL('image/png') });
-    });
+      const lienzos = [...caja.querySelectorAll('.quiz-grafico canvas')];
+      const imagenes = [], problemas = [];
 
-    return { bloque: ${JSON.stringify(bloque)}, innerWidth: window.innerWidth,
-             lienzos: lienzos.length, problemas, imagenes };
+      lienzos.forEach((canvas, k) => {
+        const w = canvas.width, h = canvas.height;
+        if (!w || !h) { problemas.push('lienzo ' + (k + 1) + ': ' + w + '×' + h); return; }
+
+        const plano = document.createElement('canvas');
+        plano.width = w; plano.height = h;
+        const ctx = plano.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(canvas, 0, 0);
+
+        const datos = ctx.getImageData(0, 0, w, h).data;
+        let tinta = 0;
+        for (let i = 0; i < datos.length; i += 4) {
+          if (datos[i] !== 255 || datos[i+1] !== 255 || datos[i+2] !== 255) tinta++;
+        }
+        const pct = (100 * tinta) / (w * h);
+        if (pct < 1) problemas.push('lienzo ' + (k + 1) + ': solo ' + pct.toFixed(2) + ' % con tinta');
+
+        imagenes.push({ orden: k, ancho: w, alto: h, tinta: Number(pct.toFixed(2)),
+                        dataURI: plano.toDataURL('image/png') });
+      });
+
+      bloques.push({ bloque, declarados, encontrados: lienzos.length, problemas, imagenes });
+    }
+
+    return { innerWidth: window.innerWidth, bloques };
   })()`;
+
+// Lo mismo que CAPTURA pero SIN codificar ni un PNG: por bloque, cuántos
+// gráficos declara y cuántos lienzos hay. Es exactamente lo que compara el
+// guardián, así que es lo único que la autoprueba necesita mirar — y evita
+// volver a codificar ocho imágenes para comprobar una resta.
+const RECUENTO = `
+  (() => {
+    const raiz = document.querySelector('main') || document.body;
+    return [...raiz.querySelectorAll('[data-quiz], [data-simulacro]')].map(caja => {
+      const esSimulacro = caja.hasAttribute('data-simulacro');
+      const bloque = esSimulacro ? 'simulacro' : caja.dataset.quiz;
+      let declarados = null;
+      if (esSimulacro) {
+        if (typeof SIMULACRO === 'object' && SIMULACRO && SIMULACRO.items) {
+          declarados = SIMULACRO.items.filter(p => p.tipo === 'grafico').length;
+        }
+      } else {
+        const registro = (typeof AUTOEVALUACIONES === 'object' ? AUTOEVALUACIONES : {})[bloque];
+        if (registro) declarados = registro.filter(p => p.tipo === 'grafico').length;
+      }
+      return { bloque, declarados,
+               encontrados: caja.querySelectorAll('.quiz-grafico canvas').length };
+    });
+  })()`;
+
+// Quita un lienzo del bloque que se le diga. Solo lo usa `--autoprueba`: el
+// descuadre entre lo declarado y lo encontrado es la avería que este guion
+// existe para cazar, y una comprobación que nunca se ha visto fallar no está
+// probada.
+const QUITA_UN_LIENZO = bloque => `
+  (() => {
+    const caja = document.querySelector('[data-quiz="' + ${JSON.stringify(bloque)} + '"]');
+    const uno = caja && caja.querySelector('.quiz-grafico canvas');
+    if (!uno) return 'no había lienzo que quitar';
+    uno.closest('.quiz-grafico').remove();
+    return 'quitado un lienzo de ' + ${JSON.stringify(bloque)};
+  })()`;
+
+// ¿Hay un simulacro sin arrancar en el módulo que está a la vista?
+const HAY_QUE_ARRANCAR = `
+  !!document.querySelector('[data-simulacro]') &&
+  [...document.querySelectorAll('button')].some(b => /empezar el simulacro/i.test(b.textContent))`;
 
 // ------------------------------------------------------------------ principal
 
@@ -211,6 +295,7 @@ async function main() {
 
   const inventario = [];
   let problemas = [];
+  let descuadreDetectado = null;
   try {
     const c = await Chrome.abrir(PUERTO);
     await c.enviar('Page.enable');
@@ -218,32 +303,92 @@ async function main() {
 
     const url = BASE.replace(/\/$/, '') + '/' + PAGINA;
     await c.enviar('Page.navigate', { url });
-    // El documento monta los módulos en cuanto corre su script; medio segundo
-    // basta y no hay evento mejor: `loadEventFired` llega antes de que el
-    // módulo 1 esté pintado.
-    await espera(1500);
+    // Se espera a que el guion del documento haya corrido —`courseData` es lo
+    // primero que declara— en vez de dormir un rato fijo. `loadEventFired`
+    // no sirve: llega antes de que el módulo 1 esté pintado.
+    await c.esperaHasta("typeof courseData !== 'undefined'", 20000,
+      `la página no llegó a ejecutar su guion en 20 s.\n        ` +
+      `¿Está sirviéndose ${url}? El servidor de desarrollo es ` +
+      `\`htmls-series\` en .claude/launch.json.`);
+
+    // El documento carga Chart.js y KaTeX de un CDN, y `loadModule` llama a
+    // `renderMathInElement` sin comprobar que exista. Si una de las dos no
+    // llegó —red lenta, CDN caído— el guion moría con un ReferenceError que
+    // no dice de qué va la cosa, o peor: dibujaba cero lienzos y el banco
+    // salía sin figuras. Se esperan las dos y se nombra la que falte.
+    await c.esperaHasta(
+      "typeof Chart !== 'undefined' && typeof renderMathInElement === 'function'", 20000,
+      'las librerías externas del documento no cargaron en 20 s. Falta ' +
+      (await c.evalua("[typeof Chart === 'undefined' ? 'Chart.js' : null, " +
+                      "typeof renderMathInElement !== 'function' ? 'KaTeX (auto-render)' : null]" +
+                      ".filter(Boolean).join(' y ')") || 'alguna') +
+      '.\n        Las dos vienen de un CDN: hace falta red para rasterizar.');
     console.log('  ' + await c.evalua(SIN_ANIMACION));
 
-    for (const { modulo, bloque, arranca } of OBJETIVOS) {
+    const modulos = await c.evalua('courseData.modules.map(m => m.id)');
+    console.log(`  ${modulos.length} módulos declarados en la página`);
+
+    const vistos = new Set();
+    for (const modulo of modulos) {
       await c.evalua(`loadModule(${modulo}), 'ok'`);
       await espera(1200);
-      if (arranca) {
+
+      // El simulacro no pinta nada hasta que se pulsa «Empezar». Se pregunta
+      // al DOM en vez de llevarlo apuntado: así el guion no depende de en qué
+      // módulo esté el simulacro hoy.
+      if (await c.evalua(HAY_QUE_ARRANCAR)) {
         console.log('  ' + await c.evalua(ARRANCA_SIMULACRO));
         await espera(1200);
       }
-      const r = await c.evalua(captura(bloque));
-      if (r.error) { problemas.push(`${bloque}: ${r.error}`); continue; }
-      problemas = problemas.concat((r.problemas || []).map(p => `${bloque}: ${p}`));
 
-      r.imagenes.forEach((img, k) => {
-        const nombre = `${bloque}_${k + 1}.png`;
-        const bytes = Buffer.from(img.dataURI.split(',')[1], 'base64');
-        fs.writeFileSync(path.join(DESTINO, nombre), bytes);
-        inventario.push({ archivo: nombre, bloque, orden: img.orden,
-                          ancho: img.ancho, alto: img.alto, tinta: img.tinta,
-                          bytes: bytes.length });
-      });
-      console.log(`  ${bloque}: ${r.imagenes.length} gráfico(s) · innerWidth ${r.innerWidth}`);
+      const r = await c.evalua(CAPTURA);
+      if (r.error) { problemas.push(`módulo ${modulo}: ${r.error}`); continue; }
+
+      for (const b of r.bloques) {
+        problemas = problemas.concat((b.problemas || []).map(p => `${b.bloque}: ${p}`));
+
+        if (vistos.has(b.bloque)) {
+          problemas.push(`${b.bloque}: aparece en más de un módulo; el segundo ` +
+                         `sobrescribiría los PNG del primero`);
+          continue;
+        }
+        vistos.add(b.bloque);
+
+        // La comprobación que justifica capturar por contenedor: si el bloque
+        // declara N ítems de tipo `grafico` y no hay exactamente N lienzos, el
+        // mapa imagen↔ítem que usa `exporta_brightspace.py` —el k-ésimo
+        // gráfico del bloque es `<bloque>_k.png`— está descuadrado, y una
+        // pregunta viajaría con la figura de otra sin dar un solo error.
+        if (b.declarados !== null && b.declarados !== b.encontrados) {
+          problemas.push(`${b.bloque}: declara ${b.declarados} ítem(s) de tipo ` +
+                         `\`grafico\` y hay ${b.encontrados} lienzo(s)`);
+        }
+
+        b.imagenes.forEach((img, k) => {
+          const nombre = `${b.bloque}_${k + 1}.png`;
+          const bytes = Buffer.from(img.dataURI.split(',')[1], 'base64');
+          fs.writeFileSync(path.join(DESTINO, nombre), bytes);
+          inventario.push({ archivo: nombre, bloque: b.bloque, orden: img.orden,
+                            ancho: img.ancho, alto: img.alto, tinta: img.tinta,
+                            bytes: bytes.length });
+        });
+
+        if (b.encontrados || b.declarados) {
+          console.log(`  módulo ${modulo} · ${b.bloque}: ${b.imagenes.length} gráfico(s)` +
+                      (b.declarados !== null ? ` de ${b.declarados} declarado(s)` : ''));
+        }
+
+        // La autoprueba se hace sobre el primer bloque que traiga gráficos:
+        // se le quita uno del DOM y se exige que el recuento lo note.
+        if (autoprueba && !descuadreDetectado && b.declarados > 1 && !b.bloque.startsWith('sim')) {
+          console.log('  ' + await c.evalua(QUITA_UN_LIENZO(b.bloque)));
+          const roto = (await c.evalua(RECUENTO)).find(x => x.bloque === b.bloque);
+          if (roto && roto.declarados !== null && roto.declarados !== roto.encontrados) {
+            descuadreDetectado = `${roto.bloque}: ${roto.declarados} declarados, ` +
+                                 `${roto.encontrados} encontrados`;
+          }
+        }
+      }
     }
   } finally {
     proc.kill();
@@ -255,6 +400,15 @@ async function main() {
 
   fs.writeFileSync(path.join(DESTINO, 'inventario.json'),
                    JSON.stringify({ base: BASE, imagenes: inventario }, null, 2));
+
+  if (autoprueba) {
+    if (!descuadreDetectado) {
+      console.error('\n  ✗ autoprueba: quité un lienzo y el guion no se quejó. ' +
+                    'El recuento declarado-contra-encontrado NO protege nada.');
+      process.exit(1);
+    }
+    console.log(`  ✓ autoprueba: el descuadre se detecta — ${descuadreDetectado}`);
+  }
 
   console.log(`\n  ${inventario.length} PNG en ${path.relative(RAIZ, DESTINO)}/`);
   if (problemas.length) {
