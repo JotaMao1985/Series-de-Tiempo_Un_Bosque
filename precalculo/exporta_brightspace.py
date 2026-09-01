@@ -64,6 +64,25 @@ from audita_posicion_correcta import cierra, elementos, quizzes  # noqa: E402
 CAPITULOS = [("capitulo-1-componentes-descomposicion.html", 1),
              ("capitulo-2-estacionariedad-acf-pacf.html", 2)]
 
+
+def objetivos_por_modulo(ruta_preparcial):
+    """El mapa módulo → objetivo, leído de `MODULOS_MODULO_I`.
+
+    Los ítems de capítulo no declaran objetivo —dentro de un capítulo no hace
+    falta—, pero el banco sí lo necesita: es la columna por la que se arman los
+    pools del cuestionario. El objetivo es una propiedad del MÓDULO, y el
+    único sitio del repositorio donde módulo y objetivo viven juntos es la
+    tabla que el preparcial publica. De ahí se lee, y no se copia aquí, para
+    que no haya dos versiones del mismo mapa.
+    """
+    t = ruta_preparcial.read_text(encoding="utf-8")
+    mapa = dict(re.findall(
+        r"clave: '([\d.]+)', n: \d+, archivo: CAP\d, titulo: '[^']*', objetivo: '(O\d)'", t))
+    if len(mapa) != 18:
+        sys.exit(f"PARADO: esperaba los 18 módulos del Módulo I en MODULOS_MODULO_I, "
+                 f"encontré {len(mapa)}. Sin ese mapa no se puede etiquetar por objetivo.")
+    return mapa
+
 CANDIDATOS_SKILL = [
     pathlib.Path.home() / ".claude/skills/brightspace-elbosque/scripts",
     pathlib.Path.home() / ".claude/plugins/cache/brightspace-elbosque/scripts",
@@ -263,14 +282,20 @@ NOMBRE_BLOQUE = {"bloque-a": "Bloque A · Conceptos", "bloque-b": "Bloque B · C
                  "cap2": "Capítulo 2 · Estacionariedad, ACF y PACF"}
 
 
-def construye(items, imagenes_dir, prefijo, con_pista, d2l):
+def construye(items, imagenes_dir, prefijo, con_pista, d2l, obj_de_modulo=None):
     """(ítems D2L crudos, imágenes, fuera, descartados) — sin escribir nada."""
     crudos, imagenes, fuera, descartados = [], {}, [], []
     graficos_por_bloque = {}
+    obj_de_modulo = obj_de_modulo or {}
 
     for it in items:
+        # El OBJETIVO abre el identificador y el título. En la Biblioteca de
+        # Preguntas la lista se ordena por título, así que ponerlo delante
+        # agrupa el banco por objetivo sin tocar nada más, que es la columna
+        # con la que se arman los pools de un cuestionario.
+        objetivo = it["objetivo"] or obj_de_modulo.get(it["clave"])
         etiqueta = f"{LETRA[it['bloque']]}{it['n']:02d}"
-        qid = f"{prefijo}_{etiqueta}"
+        qid = f"{prefijo}_{objetivo}_{etiqueta}" if objetivo else f"{prefijo}_{etiqueta}"
         modulo = (it["clave"] or "?") + (f" y {it['claveExtra']}" if it["claveExtra"] else "")
 
         if it["tipo"] == "numerica":
@@ -309,15 +334,16 @@ def construye(items, imagenes_dir, prefijo, con_pista, d2l):
         opciones = [{"texto": limpia(o["texto"]), "correcta": o["correcta"],
                      "retro": limpia(o["retro"])} for o in it["opciones"]]
 
-        cola = it["objetivo"] or it.get("titulo_modulo") or ""
+        cola = it.get("titulo_modulo") or ""
         crudos.append({
             "qid": qid,
             "enunciado_html": "".join(partes),
-            "titulo": f"{NOMBRE_BLOQUE[it['bloque']]} · módulo {modulo}"
+            "titulo": (f"{objetivo} · " if objetivo else "")
+                      + f"{NOMBRE_BLOQUE[it['bloque']]} · módulo {modulo}"
                       + (f" · {cola}" if cola else ""),
             "opciones": opciones,
             "_tipo": it["tipo"],
-            "_objetivo": it["objetivo"],
+            "_objetivo": objetivo,
             "_correctas": sum(1 for o in opciones if o["correcta"]),
         })
 
@@ -356,11 +382,18 @@ def main():
         for arch, n_cap in CAPITULOS:
             items += lee_capitulo(RAIZ / "Htmls_Series" / arch, n_cap)
     crudos, imagenes, fuera, descartados = construye(
-        items, RAIZ / a.imagenes, a.prefijo, a.con_pista, d2l)
+        items, RAIZ / a.imagenes, a.prefijo, a.con_pista, d2l,
+        objetivos_por_modulo(RAIZ / a.html))
 
     if not crudos:
         sys.exit("PARADO: cero ítems. Un banco vacío se importa sin protestar "
                  "y deja el cuestionario sin preguntas.")
+
+    huerfanos = [c["qid"] for c in crudos if not c["_objetivo"]]
+    if huerfanos:
+        sys.exit(f"PARADO: {len(huerfanos)} ítem(s) sin objetivo: {', '.join(huerfanos[:6])}.\n"
+                 f"        El objetivo abre el título y es la columna con la que se arman los\n"
+                 f"        pools del cuestionario; uno sin él se pierde en la Biblioteca.")
 
     salida = RAIZ / a.salida
     salida.mkdir(parents=True, exist_ok=True)

@@ -52,7 +52,8 @@ sys.path.insert(0, str(RAIZ / "precalculo"))
 # Se importa el lector del documento en vez de repetirlo: si algún día cambia
 # la forma de los ítems, los dos paquetes cambian juntos o ninguno.
 from exporta_brightspace import (CAPITULOS, LETRA, NOMBRE_BLOQUE,  # noqa: E402
-                                 carga_d2l, construye, lee_capitulo, lee_documento)
+                                 carga_d2l, construye, lee_capitulo, lee_documento,
+                                 objetivos_por_modulo)
 
 QTI_NS = "http://www.imsglobal.org/xsd/ims_qtiasiv1p2"
 CP_NS = "http://www.imsglobal.org/xsd/imscp_v1p1"
@@ -189,7 +190,8 @@ def main():
         for arch, n_cap in CAPITULOS:
             items += lee_capitulo(RAIZ / "Htmls_Series" / arch, n_cap)
     crudos, imagenes, fuera, _ = construye(
-        items, RAIZ / a.imagenes, a.prefijo, a.con_pista, d2l)
+        items, RAIZ / a.imagenes, a.prefijo, a.con_pista, d2l,
+        objetivos_por_modulo(RAIZ / a.html))
 
     if not crudos:
         sys.exit("PARADO: cero ítems.")
