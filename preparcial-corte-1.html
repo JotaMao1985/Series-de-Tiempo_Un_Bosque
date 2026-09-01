@@ -2651,7 +2651,7 @@
     /* ================================================================
        Componente .termometro — el diagnóstico del módulo 7
 
-       Junta los cuatro bloques y los reordena por lo que pesa en el
+       Junta los bloques A a D y los reordena por lo que pesa en el
        parcial, no por el orden en que se respondieron. Un objetivo que
        vale el 20 % y va flojo tiene que salir arriba aunque sea el
        último bloque. El color no lleva la información solo: cada estado
@@ -2799,7 +2799,7 @@
             <h1 class="text-xl font-bold text-white leading-tight tracking-tight" style="margin:0;">Preparcial · Corte I
             </h1>
             <p class="text-xs text-white/70 font-medium tracking-wide" style="margin:0; text-align:left;">MÓDULO I · CAPÍTULOS 1 Y 2 •
-              32 ÍTEMS SIN NOTA • UNBOSQUE</p>
+              32 ÍTEMS DE DIAGNÓSTICO, SIN NOTA • UNBOSQUE</p>
           </div>
         </div>
       </div>
@@ -2907,12 +2907,14 @@
 
       <p>El <strong>Parcial 1</strong> es el <strong>martes 1 de septiembre</strong> y evalúa el <strong>Módulo I</strong>:
         los capítulos 1 y 2 completos, de los componentes de una serie a la diferenciación. Este preparcial recorre los
-        <strong>18 módulos</strong> de esos dos capítulos con 32 ítems y, al terminar cada bloque, te dice en qué
-        objetivo estás flojo y a qué módulo volver.</p>
+        <strong>18 módulos</strong> de esos dos capítulos con 32 ítems de diagnóstico y, al terminar cada bloque, te dice en
+        qué objetivo estás flojo y a qué módulo volver. Después hay seis ítems más de práctica sobre
+        gráficos, fuera del diagnóstico, y un simulacro de otros seis.</p>
 
       <h3>Cómo está organizado</h3>
 
-      <p>Cuatro bloques, uno por cada cosa que el parcial te va a pedir hacer:</p>
+      <p><strong>Cuatro bloques de diagnóstico</strong>, uno por cada cosa que el parcial te va a
+        pedir hacer:</p>
 
       <ul>
         <li><strong>Bloque A · Conceptos</strong> — si la definición está en su sitio, no memorizada.</li>
@@ -2920,6 +2922,12 @@
         <li><strong>Bloque C · Interpretación</strong> — si sabes qué <em>no</em> prueba un resultado.</li>
         <li><strong>Bloque D · Análisis gráfico</strong> — si lees un gráfico sin que te digan qué mirar.</li>
       </ul>
+
+      <p>Luego hay un <strong>bloque E · Gráficos de series</strong>, que <em>no</em> entra en el
+        diagnóstico: seis ítems sobre los gráficos con los que se mira una serie antes de
+        modelarla —el índice temporal, el gráfico de tiempo, el estacional y la dispersión entre dos
+        series—, tomados del capítulo 2 de <em>Forecasting: Principles and Practice</em>. Es práctica
+        extra, y se cuenta aparte para no descuadrar el reparto de arriba.</p>
 
       <p>Después va <strong>tu diagnóstico</strong>, que es el producto de verdad: no un puntaje, sino qué módulo
         concreto te falta. Y al final, un <strong>simulacro cronometrado</strong> de seis
@@ -2933,8 +2941,8 @@
 
       <h3>Qué pesa cada cosa en el parcial</h3>
 
-      <p>Esta es la tabla con la que está construido el parcial, y es la misma con la que está repartido este
-        preparcial. Se publica a propósito: estudiar sin saber qué pesa es estudiar a ciegas.</p>
+      <p>Esta es la tabla con la que está construido el parcial, y es la misma con la que están repartidos
+        los <strong>32 ítems del diagnóstico</strong>. Se publica a propósito: estudiar sin saber qué pesa es estudiar a ciegas.</p>
 
       <div class="overflow-x-auto">
         <table>
@@ -4210,7 +4218,7 @@
                      ? `<li><a href="${enlaceModulo(clave)}">Módulo ${clave} · <strong>${m.titulo}</strong></a></li>`
                      : `<li>Módulo ${clave}</li>`;
                  }).join('')}</ul>
-                 <p style="margin:0.6rem 0 0;">Cuando termines los cuatro bloques, el módulo <strong>Tu diagnóstico</strong> los junta.</p>`
+                 <p style="margin:0.6rem 0 0;">Cuando termines los bloques A a D, el módulo <strong>Tu diagnóstico</strong> los junta.</p>`
               : `<p style="margin:0;">Todo al primer intento. Sigue con el bloque siguiente.</p>`);
           resumen.hidden = false;
           katexEn(resumen);
@@ -6224,7 +6232,7 @@
     // ================================================================
     // El termómetro — módulo 7
     //
-    // Junta los cuatro bloques y ordena los seis objetivos por lo que
+    // Junta los bloques A a D y ordena los seis objetivos por lo que
     // PESAN EN EL PARCIAL, no por el orden en que se respondieron: un
     // objetivo del 20 % que va flojo tiene que salir arriba aunque sea
     // del último bloque. El producto no es el puntaje, es la lista de
@@ -6298,7 +6306,7 @@
       encurso: (e) => `Bien hasta aquí: ${e.alPrimero} de ${e.alPrimero} al primer intento, pero faltan ${e.total - e.resueltas} ítems por responder. Termínalos antes de fiarte de esto.`,
       dudoso: (e) => `Acertaste ${e.aciertos} de los ${e.resueltas} que respondiste, pero ${e.resueltas - e.alPrimero} al segundo intento. Lo tienes cogido con alfileres — un repaso rápido y basta.`,
       flojo: (e, meta) => `Acertaste ${e.aciertos} de los ${e.resueltas} que respondiste${e.resueltas < e.total ? ` (de ${e.total} en total)` : ''}. Aquí es donde más ganas por hora invertida: pesa el ${meta.peso}&nbsp;% del parcial.`,
-      pendiente: (e) => `Sin responder. Son ${e.total} ítems repartidos entre los cuatro bloques.`
+      pendiente: (e) => `Sin responder. Son ${e.total} ítems repartidos entre los bloques A a D.`
     };
 
     function pintarTermometro(caja) {
