@@ -5656,6 +5656,21 @@
     // ================================================================
     AUTOEVALUACIONES['bloque-e'] = [
       {
+        tipo: 'opcion', clave: '1.2', objetivo: 'O1',
+        pregunta: 'Un <code>data.frame</code> trae las ventas <strong>mensuales de cinco tiendas</strong>: una fila por tienda y mes, con las columnas <code>mes</code>, <code>tienda</code> y <code>ventas</code>. Se corre <code>as_tsibble(ventas_df, index = mes)</code> y R responde que un tsibble válido necesita filas distintas identificadas por la clave y el índice. ¿Qué falta?',
+        pista: 'El índice dice <em>cuándo</em>. Pregúntate qué columna hace falta para que «cuándo» identifique una sola fila.',
+        opciones: [
+          { texto: 'Que <code>mes</code> sea de tipo fecha: hay que convertirlo con <code>yearmonth()</code> antes de declarar el índice.', correcta: false,
+            retro: 'Convertir el índice a <code>yearmonth</code> suele hacer falta, pero no es lo que R está reclamando aquí. Ese error saldría con otro mensaje, y saldría igual con una sola tienda. Este aparece porque hay cinco filas por mes.' },
+          { texto: 'Agregar las tiendas antes: sumar o promediar sus ventas para tener una sola fila por mes.', correcta: false,
+            retro: 'Eso resuelve el error tirando el dato. La clave existe precisamente para que varias series convivan en un mismo tsibble sin mezclarse: con <code>key = tienda</code> tienes las cinco series a la vez, y <code>gg_season</code> o <code>ACF</code> las tratan por separado. Agregar es una decisión de análisis, no un requisito del formato.' },
+          { texto: 'Declarar <code>key = tienda</code>: el índice solo tiene que identificar una fila <em>dentro de cada clave</em>, y aquí cada mes tiene cinco.', correcta: true,
+            retro: 'Esa es la regla del tsibble: índice y clave juntos identifican una fila y solo una. El índice dice cuándo; la clave, de cuál de las series. Es la diferencia con <code>ts()</code>, que solo sabe guardar una serie y le fía el «cuándo» a <code>start</code> y <code>frequency</code> en vez de a una columna.' },
+          { texto: 'Que el <code>data.frame</code> trae filas repetidas por un error de origen; hay que limpiarlas con <code>distinct()</code>.', correcta: false,
+            retro: 'No hay filas repetidas: hay cinco series. Dos filas del mismo mes y distinta tienda son observaciones distintas, no duplicados. <code>distinct()</code> se llevaría por delante cuatro de cada cinco tiendas sin avisar de nada.' }
+        ]
+      },
+      {
         tipo: 'opcion', clave: '1.3', objetivo: 'O1',
         pregunta: 'Una serie de consumo eléctrico medida <strong>cada media hora</strong> durante tres años tiene tres estacionalidades a la vez: la del día, la de la semana y la del año. Sobre ella se corren <code>gg_season(consumo, period = "day")</code> y <code>gg_season(consumo, period = "week")</code>. ¿Qué distingue lo que muestra cada uno?',
         pista: '<code>period</code> no describe cada cuánto se midió el dato, sino qué ciclo se quiere ver superpuesto consigo mismo.',

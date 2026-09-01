@@ -6,8 +6,8 @@ Series de Tiempo 2026-II (20948) · Universidad El Bosque
 **Encargo:** que el banco de preguntas evalúe el capítulo 2 de FPP3
 (*Time series graphics*, <https://otexts.com/fpp3/graphics.html>), que hoy
 cubre solo a medias.
-**Estado:** 🟢 Fase 0 completa · Fase 1 a medias (E04 y las dos conversiones
-hechas; E01 espera la pregunta abierta 3).
+**Estado:** 🟢 Fases 0 y 1 completas. Quedan las Fases 2 a 5; la 3 espera la
+pregunta abierta 1 (qué par de series para §2.6).
 
 > El parcial del Corte I es **hoy**. Nada de esto lo toca: el bloque E se
 > publica después, y su público son el Corte II, un supletorio o el repaso.
@@ -188,7 +188,7 @@ sigue pasando.
 
 ### Fase 1 · Lo que no necesita datos nuevos
 
-#### Tarea 3: E01 y E04, y las dos conversiones  ✅ *parcial (E04 y conversiones hechas, `bd62c85`)*
+#### Tarea 3: E01 y E04, y las dos conversiones  ✅ *hecha* (`bd62c85` y E01 aparte)
 
 **Descripción:** Escribir E01 (`as_tsibble` índice vs clave) y E04
 (`gg_season(period=)`), y convertir B01 y B04 de numérica a opción múltiple
@@ -227,7 +227,8 @@ con Chart.js sobre series que ya existen en el precálculo, más los dos ítems.
 `genera_preparcial.R`, `audita_preparcial.py` · **Tamaño:** M
 
 ### ✅ Punto de control · Sin datos nuevos
-- [ ] Banco de 36 ítems, las cuatro auditorías limpias
+- [x] *(Fase 1)* Banco de 32 ítems · 401 comprobaciones de R · los tres auditores del paquete en 393 / 460 / 269
+- [ ] Banco de 34 ítems tras la Fase 2, las cuatro auditorías limpias
 - [ ] FPP3 §2.1, §2.2, §2.4 y §2.9 cubiertos
 - [ ] Revisar con el humano antes de tocar los datos
 
@@ -333,7 +334,8 @@ QTI, banco y sonda).
    es asimétrica.
 2. **¿El simulacro crece?** Hoy tiene seis ítems, uno por objetivo. Si el
    bloque E añade una dimensión de lectura de gráficos, quizá quiera un séptimo.
-3. **¿Los ítems de `tsibble` encajan con lo que enseñas?** El módulo 1.2 se
-   llama «Series de tiempo en software» y B01 evalúa `ts()` de base R,
-   mientras los capítulos usan `as_tsibble`. E01 evalúa `tsibble`: conviene
-   confirmar que esa es la herramienta que quieres que dominen.
+3. ~~**¿Los ítems de `tsibble` encajan con lo que enseñas?**~~ **RESUELTA
+   (2026-09-01): `tsibble`.** E01 evalúa la regla del formato —índice y clave
+   identifican una fila y solo una— sobre el error que R lanza cuando falta la
+   clave. Queda de pareja con B01, que evalúa `ts()`: el módulo 1.2 enseña las
+   dos herramientas y ahora el instrumento pregunta por las dos.
