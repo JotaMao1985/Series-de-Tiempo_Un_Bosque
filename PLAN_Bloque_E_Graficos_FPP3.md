@@ -313,6 +313,28 @@ QTI, banco y sonda).
 - [x] Reconstrucción desde cero: mismo `questiondb.xml` y mismo `questestinterop.xml`, byte a byte
 - [ ] Revisado con el humano antes de publicar
 
+### Ronda de auditoría (2026-09-01, posterior al cierre)
+
+Cuatro auditores independientes —corrección estadística, fidelidad a FPP3,
+calidad psicométrica y las figuras— revisaron los 18 ítems que entraron al
+banco. Ninguna clave estaba mal y ningún distractor resultó defendible. Se
+arreglaron tres defectos graves (textos alternativos que entregaban la
+respuesta en E02 y E03; la figura de E06, que no contenía la evidencia de su
+clave), cinco retroalimentaciones que afirmaban algo falso, ocho detalles de
+redacción, una rampa de color que dejaba cuatro trazos por debajo del 3:1 de
+WCAG, y una contradicción heredada entre B04 y un ítem del capítulo 2
+publicado.
+
+**Y una tercera cosa, que era curricular y no un fallo del ítem:** E01 y E04
+examinaban material que el curso no enseñaba. El módulo 1.2 definía el contrato
+del tsibble como *índice + frecuencia* —que es el de `ts`, no el de
+`tsibble`— y su único ejemplo era una serie sin clave; el módulo 1.3 definía el
+gráfico estacional como «una línea por año», que es justo lo que la clave de
+E04 contradice. Ampliados los dos: 1.2 explica ahora la **clave** y por qué sin
+ella un tsibble de cinco tiendas se niega a construirse; 1.3 define el gráfico
+estacional por **ciclo** y no por año, y explica `period` con el caso de la
+estacionalidad múltiple.
+
 > **Lo que NO se tocó y conviene decidir aparte:** la introducción sigue diciendo
 > «El Parcial 1 es el martes 1 de septiembre». Era cierto el día que se escribió
 > este plan y hoy ya es pasado. Cambiarlo es decidir para qué sirve el documento
