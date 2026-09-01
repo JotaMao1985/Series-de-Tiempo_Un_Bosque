@@ -89,6 +89,10 @@ def lee_zip(ruta):
             "enunciado": it.find("./presentation/flow/material/mattext").text or "",
             "opciones": opciones,
             "correctas": {o["texto"] for o in opciones if puntos.get(o["id"], 0) > 0},
+            # Las retro son la mitad del texto del banco y hasta ahora no las
+            # miraba nadie: la comprobación 4.1 las necesita.
+            "retros": {fb.get("ident"): (fb.findtext(".//mattext") or "")
+                       for fb in it.iter("itemfeedback")},
         })
     return items, imagenes, xml
 
@@ -130,13 +134,28 @@ def bloque_de_la_opcion(doc, texto_plano):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--zip", default="parcial/brightspace/banco_brightspace.zip")
-    ap.add_argument("--html", default="Htmls_Series/preparcial-corte-1.html")
+    # El corpus es TODO el material del que el banco puede salir, no solo el
+    # preparcial: con `--capitulos`, el exportador cosecha también las
+    # autoevaluaciones de los capítulos 1 y 2, y una opción que viniera de ahí
+    # se declararía «ausente del documento» por mirar donde no era.
+    ap.add_argument("--html", nargs="+", default=[
+        "Htmls_Series/preparcial-corte-1.html",
+        "Htmls_Series/capitulo-1-componentes-descomposicion.html",
+        "Htmls_Series/capitulo-2-estacionariedad-acf-pacf.html"])
     a = ap.parse_args()
 
-    ruta_zip, ruta_html = RAIZ / a.zip, RAIZ / a.html
-    print(f"\n  Contrastando {ruta_zip.name} contra {ruta_html.name}\n")
+    ruta_zip = RAIZ / a.zip
+    rutas = [RAIZ / h for h in a.html]
+    faltan = [r.name for r in rutas if not r.exists()]
+    if faltan:
+        sys.exit(f"PARADO: no encuentro {', '.join(faltan)}")
+    print(f"\n  Contrastando {ruta_zip.name} contra "
+          f"{len(rutas)} documento(s): {', '.join(r.name for r in rutas)}\n")
 
-    doc = ruta_html.read_text(encoding="utf-8")
+    # Se concatenan con un separador que no puede aparecer dentro de un literal
+    # de JavaScript, para que ningún objeto quede a caballo entre dos archivos.
+    doc = "\n/*=== corte entre documentos ===*/\n".join(
+        r.read_text(encoding="utf-8") for r in rutas)
     items, imagenes, xml = lee_zip(ruta_zip)
 
     paso("1.1 el banco no está vacío", len(items) > 0)
@@ -164,10 +183,18 @@ def main():
                  (re.search(r"\bretro\s*:\s*'", bloque) is None) or True)
 
     # --- las fórmulas: ni un `$` suelto debe quedar (Brightspace usa \(…\))
-    texto_todo = " ".join([i["enunciado"] for i in items] +
-                          [o["texto"] for i in items for o in i["opciones"]])
-    paso("4.1 no queda ningún $ como delimitador (MathJax usa \\(…\\))",
-         "$" not in _html.unescape(texto_todo))
+    # Se miran también las retroalimentaciones, que son la mitad del banco. Y se
+    # descuentan los <code>: ahí un `$` es el operador de R, no una fórmula sin
+    # convertir, y exigir cero dólares volvería este auditor un mentiroso.
+    def sin_codigo(t):
+        return re.sub(r"<code>.*?</code>", " ", _html.unescape(t or ""), flags=re.S)
+
+    texto_todo = " ".join([sin_codigo(i["enunciado"]) for i in items] +
+                          [sin_codigo(o["texto"]) for i in items for o in i["opciones"]] +
+                          [sin_codigo(r) for i in items for r in i.get("retros", {}).values()])
+    paso("4.1 no queda ningún $ como delimitador fuera de <code> (MathJax usa \\(…\\))",
+         "$" not in texto_todo,
+         "quedan fórmulas en la sintaxis de KaTeX")
     paso("4.2 no quedan entidades HTML con nombre sin traducir",
          not re.search(r"&(nbsp|mdash|ndash|hellip|times|minus);",
                        _html.unescape(texto_todo)))

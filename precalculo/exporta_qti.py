@@ -51,8 +51,8 @@ sys.path.insert(0, str(RAIZ / "precalculo"))
 
 # Se importa el lector del documento en vez de repetirlo: si algún día cambia
 # la forma de los ítems, los dos paquetes cambian juntos o ninguno.
-from exporta_brightspace import (LETRA, NOMBRE_BLOQUE, carga_d2l,  # noqa: E402
-                                 construye, lee_documento)
+from exporta_brightspace import (CAPITULOS, LETRA, NOMBRE_BLOQUE,  # noqa: E402
+                                 carga_d2l, construye, lee_capitulo, lee_documento)
 
 QTI_NS = "http://www.imsglobal.org/xsd/ims_qtiasiv1p2"
 CP_NS = "http://www.imsglobal.org/xsd/imscp_v1p1"
@@ -173,18 +173,23 @@ def escribe(ruta, items_xml, imagenes, titulo, ident):
 def main():
     ap = argparse.ArgumentParser(description="Preparcial del Corte I → IMS QTI 1.2 estándar.")
     ap.add_argument("--html", default="Htmls_Series/preparcial-corte-1.html")
-    ap.add_argument("--imagenes", default="precalculo/salidas/graficos_preparcial")
+    ap.add_argument("--imagenes", default="precalculo/salidas/graficos")
     ap.add_argument("--salida", default="parcial/qti")
     ap.add_argument("--prefijo", default="ST_C1")
     ap.add_argument("--titulo", default="Series de Tiempo · Corte I")
     ap.add_argument("--skill")
     ap.add_argument("--sonda", action="store_true")
     ap.add_argument("--con-pista", action="store_true")
+    ap.add_argument("--capitulos", action="store_true")
     a = ap.parse_args()
 
     d2l = carga_d2l(a.skill)
-    crudos, imagenes, fuera = construye(
-        lee_documento(RAIZ / a.html), RAIZ / a.imagenes, a.prefijo, a.con_pista, d2l)
+    items = lee_documento(RAIZ / a.html)
+    if a.capitulos:
+        for arch, n_cap in CAPITULOS:
+            items += lee_capitulo(RAIZ / "Htmls_Series" / arch, n_cap)
+    crudos, imagenes, fuera, _ = construye(
+        items, RAIZ / a.imagenes, a.prefijo, a.con_pista, d2l)
 
     if not crudos:
         sys.exit("PARADO: cero ítems.")

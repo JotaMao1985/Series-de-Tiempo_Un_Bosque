@@ -6,8 +6,8 @@ Series de Tiempo 2026-II (20948) · Universidad El Bosque
 **Encargo:** que el banco de preguntas evalúe el capítulo 2 de FPP3
 (*Time series graphics*, <https://otexts.com/fpp3/graphics.html>), que hoy
 cubre solo a medias.
-**Estado:** 🟢 Fases 0, 1 y 2 completas. Quedan la 3 —que espera la pregunta
-abierta 1, qué par de series para §2.6—, la 4 (cosecha) y la 5 (cierre).
+**Estado:** 🟢 Fases 0, 1, 2 y 4 completas. Queda la 3 —que espera la pregunta
+abierta 1, qué par de series para §2.6— y la 5 (cierre).
 
 > El parcial del Corte I es **hoy**. Nada de esto lo toca: el bloque E se
 > publica después, y su público son el Corte II, un supletorio o el repaso.
@@ -137,7 +137,8 @@ escritos a mano.
 **Cosecha:** 10 ítems de una sola respuesta de `AUTOEVALUACIONES['cap1']` y
 `['cap2']` (5 y 5; quedan fuera 4 numéricas y 2 de varias respuestas).
 
-**Tamaño final del banco:** 28 + 6 + 2 + 10 = **46 ítems**.
+**Tamaño final del banco:** 28 + 6 + 2 + 10 = **46 ítems**. Hoy van **44**:
+faltan E05 y E06, que son los de §2.6.
 
 ---
 
@@ -272,7 +273,7 @@ efectivamente alto **y** que la relación sea claramente no lineal.
 
 ### Fase 4 · La cosecha
 
-#### Tarea 7: El exportador lee también los capítulos
+#### Tarea 7: El exportador lee también los capítulos  ✅ *hecha*
 
 **Descripción:** Enseñar a `exporta_brightspace.py` la forma de ítem de
 capítulo (`modulo: N`, sin `clave`) y añadir `--capitulos` para incluirlos,

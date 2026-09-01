@@ -32,7 +32,8 @@
 //   4. Las animaciones se apagan. Capturar a media animación da una figura
 //      a medio dibujar, y el fallo es intermitente.
 //
-// Sale: <destino>/<bloque>_<n>.png, uno por ítem de tipo `grafico`, más
+// Sale: <destino>/<bloque>_<n>.png, uno por ítem de tipo `grafico` de CADA
+//       documento que se le pase, más
 //       <destino>/inventario.json con el tamaño y la tinta de cada uno.
 
 const fs = require('fs');
@@ -50,8 +51,12 @@ const arg = (nombre, pordefecto) => {
 
 const BASE = arg('--url', 'http://localhost:8731/');
 const autoprueba = process.argv.includes('--autoprueba');
-const DESTINO = path.resolve(RAIZ, arg('--destino', 'precalculo/salidas/graficos_preparcial'));
-const PAGINA = 'preparcial-corte-1.html';
+// Varias páginas en una sola sesión de Chrome, y un solo inventario. Los PNG
+// se nombran por BLOQUE —`bloque-d_3`, `cap2_1`— y los bloques no se repiten
+// entre documentos, así que comparten carpeta sin pisarse. Separarlos en una
+// carpeta por página obligaría al exportador a saber en cuál buscar cada uno.
+const PAGINAS = arg('--paginas', 'preparcial-corte-1.html').split(',').map(x => x.trim());
+const DESTINO = path.resolve(RAIZ, arg('--destino', 'precalculo/salidas/graficos'));
 const PUERTO = 9223;
 const ANCHO = 1440, ALTO = 1100;
 
@@ -296,12 +301,15 @@ async function main() {
   const inventario = [];
   let problemas = [];
   let descuadreDetectado = null;
+  const vistos = new Set();
   try {
     const c = await Chrome.abrir(PUERTO);
     await c.enviar('Page.enable');
     await c.enviar('Runtime.enable');
 
+    for (const PAGINA of PAGINAS) {
     const url = BASE.replace(/\/$/, '') + '/' + PAGINA;
+    if (PAGINAS.length > 1) console.log(`\n  · ${PAGINA}`);
     await c.enviar('Page.navigate', { url });
     // Se espera a que el guion del documento haya corrido —`courseData` es lo
     // primero que declara— en vez de dormir un rato fijo. `loadEventFired`
@@ -328,7 +336,6 @@ async function main() {
     const modulos = await c.evalua('courseData.modules.map(m => m.id)');
     console.log(`  ${modulos.length} módulos declarados en la página`);
 
-    const vistos = new Set();
     for (const modulo of modulos) {
       await c.evalua(`loadModule(${modulo}), 'ok'`);
       await espera(1200);
@@ -380,7 +387,7 @@ async function main() {
 
         // La autoprueba se hace sobre el primer bloque que traiga gráficos:
         // se le quita uno del DOM y se exige que el recuento lo note.
-        if (autoprueba && !descuadreDetectado && b.declarados > 1 && !b.bloque.startsWith('sim')) {
+        if (autoprueba && !descuadreDetectado && b.declarados > 1 && !b.bloque.startsWith('sim')) {  // eslint-disable-line
           console.log('  ' + await c.evalua(QUITA_UN_LIENZO(b.bloque)));
           const roto = (await c.evalua(RECUENTO)).find(x => x.bloque === b.bloque);
           if (roto && roto.declarados !== null && roto.declarados !== roto.encontrados) {
@@ -389,6 +396,7 @@ async function main() {
           }
         }
       }
+    }
     }
   } finally {
     proc.kill();

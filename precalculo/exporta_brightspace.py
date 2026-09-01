@@ -30,7 +30,7 @@ dice qué distractor sí tiene cada una, para que quien quiera incluirlas sepa
 exactamente qué le falta y dónde calcularlo.
 
 Entra:  Htmls_Series/preparcial-corte-1.html
-        precalculo/salidas/graficos_preparcial/   (node precalculo/rasteriza_graficos.js)
+        precalculo/salidas/graficos/              (node precalculo/rasteriza_graficos.js)
 Sale:   parcial/brightspace/banco_brightspace.zip
         parcial/brightspace/sonda_brightspace.zip   con --sonda
 
@@ -57,6 +57,12 @@ sys.path.insert(0, str(RAIZ / "precalculo"))
 # desincronizan sin que nada falle, y el de este guion fallaría en silencio
 # exportando de menos.
 from audita_posicion_correcta import cierra, elementos, quizzes  # noqa: E402
+
+# Los capítulos cuyas autoevaluaciones se pueden cosechar. Son los dos del
+# Módulo I, que es lo que evalúa el Corte I; los demás capítulos van de materia
+# que el parcial no toca.
+CAPITULOS = [("capitulo-1-componentes-descomposicion.html", 1),
+             ("capitulo-2-estacionariedad-acf-pacf.html", 2)]
 
 CANDIDATOS_SKILL = [
     pathlib.Path.home() / ".claude/skills/brightspace-elbosque/scripts",
@@ -172,6 +178,44 @@ def lee_documento(ruta):
     return items
 
 
+def lee_capitulo(ruta, n_cap):
+    """Los ítems de la autoevaluación de un capítulo.
+
+    Misma forma que los del preparcial salvo dos diferencias, y ninguna es
+    accidental: el módulo viene como entero (`modulo: 4`) en vez de como clave
+    ('1.4'), porque dentro de un capítulo no hace falta decir de qué capítulo
+    es; y no declaran objetivo, porque repartir por objetivos es cosa del
+    blueprint del parcial y no del material.
+
+    El título del módulo se lee del PROPIO capítulo, que lo declara en
+    `courseData`, y no del mapa que publica el preparcial: cada documento es
+    dueño de los nombres de sus módulos.
+    """
+    t = ruta.read_text(encoding="utf-8")
+    titulos = dict(re.findall(r'\{\s*id:\s*(\d+),\s*title:\s*"([^"]+)"', t))
+    items = []
+    for qid, i, f in quizzes(t):
+        if not qid.startswith("cap"):
+            continue
+        for n, (a, b) in enumerate(elementos(t, i, f), 1):
+            c = t[a:b + 1]
+            m = re.search(r"\bmodulo\s*:\s*(\d+)", c)
+            mod = m.group(1) if m else None
+            items.append({
+                "bloque": qid, "n": n, "tipo": campo(c, "tipo"),
+                "clave": f"{n_cap}.{mod}" if mod else None,
+                "titulo_modulo": titulos.get(mod, ""),
+                "claveExtra": None, "objetivo": None,
+                "pregunta": campo(c, "pregunta") or "",
+                "pista": campo(c, "pista") or "",
+                "descripcion": campo(c, "descripcionGrafico") or "",
+                "respuesta": None,
+                "retroFallo": campo(c, "retroFallo") or "",
+                "opciones": opciones_de(c),
+            })
+    return items
+
+
 # =====================================================================
 # PASARLO A LO QUE BRIGHTSPACE RENDERIZA
 # =====================================================================
@@ -180,9 +224,17 @@ def lee_documento(ruta):
 # MathJax de Brightspace **no** trata el `$` como delimitador por defecto: sin
 # esta conversión las fórmulas salen en crudo, con los dólares a la vista.
 def a_mathjax(html):
-    html = re.sub(r"\$\$(.+?)\$\$", r"\\[\1\\]", html, flags=re.S)
-    html = re.sub(r"(?<!\\)\$(.+?)(?<!\\)\$", r"\\(\1\\)", html, flags=re.S)
-    return html
+    # La conversión se hace SOLO fuera de <code>. Dentro, un `$` es el operador
+    # de R —`decompose(x)$trend`— y no un delimitador: emparejarlo con el de una
+    # fórmula vecina se tragaría todo el texto que hubiera en medio, y el ítem
+    # seguiría importando sin un solo error. Hoy hay un caso así en el capítulo 1.
+    partes = re.split(r"(<code>.*?</code>)", html, flags=re.S)
+    for i, trozo in enumerate(partes):
+        if trozo.startswith("<code>"):
+            continue
+        trozo = re.sub(r"\$\$(.+?)\$\$", r"\\[\1\\]", trozo, flags=re.S)
+        partes[i] = re.sub(r"(?<!\\)\$(.+?)(?<!\\)\$", r"\\(\1\\)", trozo, flags=re.S)
+    return "".join(partes)
 
 
 # `&nbsp;` y demás entidades con nombre viajan bien en HTML, pero el XML solo
@@ -201,26 +253,37 @@ def limpia(html):
 
 
 LETRA = {"bloque-a": "A", "bloque-b": "B", "bloque-c": "C", "bloque-d": "D",
-         "bloque-e": "E", "simulacro": "S"}
+         "bloque-e": "E", "simulacro": "S", "cap1": "CAP1_", "cap2": "CAP2_"}
 
 NOMBRE_BLOQUE = {"bloque-a": "Bloque A · Conceptos", "bloque-b": "Bloque B · Cálculo",
                  "bloque-c": "Bloque C · Interpretación", "bloque-d": "Bloque D · Gráficos",
                  "bloque-e": "Bloque E · Gráficos de series (FPP3 cap. 2)",
-                 "simulacro": "Simulacro cronometrado"}
+                 "simulacro": "Simulacro cronometrado",
+                 "cap1": "Capítulo 1 · Componentes y descomposición",
+                 "cap2": "Capítulo 2 · Estacionariedad, ACF y PACF"}
 
 
 def construye(items, imagenes_dir, prefijo, con_pista, d2l):
-    """(ítems D2L crudos, imágenes, fuera) — sin escribir nada todavía."""
-    crudos, imagenes, fuera = [], {}, []
+    """(ítems D2L crudos, imágenes, fuera, descartados) — sin escribir nada."""
+    crudos, imagenes, fuera, descartados = [], {}, [], []
     graficos_por_bloque = {}
 
     for it in items:
         etiqueta = f"{LETRA[it['bloque']]}{it['n']:02d}"
         qid = f"{prefijo}_{etiqueta}"
-        modulo = it["clave"] + (f" y {it['claveExtra']}" if it["claveExtra"] else "")
+        modulo = (it["clave"] or "?") + (f" y {it['claveExtra']}" if it["claveExtra"] else "")
 
         if it["tipo"] == "numerica":
             fuera.append(it)
+            continue
+
+        # Los de varias respuestas se quedan fuera, y no por capricho: saldrían
+        # como Multi-Select, que es la forma que la skill `brightspace-elbosque`
+        # NUNCA ha visto importar en un Brightspace real. Además, los de los
+        # capítulos no llevan retroalimentación por opción sino un `retroAcierto`
+        # global, así que viajarían mudos. Se nombran en el informe.
+        if sum(1 for o in it["opciones"] if o.get("correcta")) > 1:
+            descartados.append(it)
             continue
 
         partes = [f"<p>{limpia(it['pregunta'])}</p>"]
@@ -246,17 +309,19 @@ def construye(items, imagenes_dir, prefijo, con_pista, d2l):
         opciones = [{"texto": limpia(o["texto"]), "correcta": o["correcta"],
                      "retro": limpia(o["retro"])} for o in it["opciones"]]
 
+        cola = it["objetivo"] or it.get("titulo_modulo") or ""
         crudos.append({
             "qid": qid,
             "enunciado_html": "".join(partes),
-            "titulo": f"{NOMBRE_BLOQUE[it['bloque']]} · módulo {modulo} · {it['objetivo']}",
+            "titulo": f"{NOMBRE_BLOQUE[it['bloque']]} · módulo {modulo}"
+                      + (f" · {cola}" if cola else ""),
             "opciones": opciones,
             "_tipo": it["tipo"],
             "_objetivo": it["objetivo"],
             "_correctas": sum(1 for o in opciones if o["correcta"]),
         })
 
-    return crudos, imagenes, fuera
+    return crudos, imagenes, fuera, descartados
 
 
 def arma(crudos, d2l):
@@ -272,7 +337,7 @@ def arma(crudos, d2l):
 def main():
     ap = argparse.ArgumentParser(description="Preparcial del Corte I → banco de Brightspace.")
     ap.add_argument("--html", default="Htmls_Series/preparcial-corte-1.html")
-    ap.add_argument("--imagenes", default="precalculo/salidas/graficos_preparcial")
+    ap.add_argument("--imagenes", default="precalculo/salidas/graficos")
     ap.add_argument("--salida", default="parcial/brightspace")
     ap.add_argument("--prefijo", default="ST_C1")
     ap.add_argument("--titulo", default="Series de Tiempo · Corte I")
@@ -281,11 +346,16 @@ def main():
                     help="además, un paquete de 3 ítems para probar la importación")
     ap.add_argument("--con-pista", action="store_true",
                     help="incluye la pista del documento (banco de práctica, no de examen)")
+    ap.add_argument("--capitulos", action="store_true",
+                    help="añade las autoevaluaciones de los capítulos 1 y 2")
     a = ap.parse_args()
 
     d2l = carga_d2l(a.skill)
     items = lee_documento(RAIZ / a.html)
-    crudos, imagenes, fuera = construye(
+    if a.capitulos:
+        for arch, n_cap in CAPITULOS:
+            items += lee_capitulo(RAIZ / "Htmls_Series" / arch, n_cap)
+    crudos, imagenes, fuera, descartados = construye(
         items, RAIZ / a.imagenes, a.prefijo, a.con_pista, d2l)
 
     if not crudos:
@@ -312,7 +382,10 @@ def main():
     # ------------------------------------------------------------ informe
     from collections import Counter
     por_tipo = Counter(c["_tipo"] for c in crudos)
-    por_obj = Counter(c["_objetivo"] for c in crudos)
+    # Los ítems de capítulo no declaran objetivo —repartir por objetivos es del
+    # blueprint del parcial, no del material—, así que se cuentan aparte.
+    por_obj = Counter(c["_objetivo"] for c in crudos if c["_objetivo"])
+    sin_obj = sum(1 for c in crudos if not c["_objetivo"])
     ms = [c["qid"] for c in crudos if c["_correctas"] > 1]
 
     print(f"\n  Banco: {zip_banco.relative_to(RAIZ)}  ({tam // 1024} KB)")
@@ -322,11 +395,21 @@ def main():
           f"{por_tipo['grafico']} con gráfico · {len(imagenes)} imagen(es)")
     print(f"  Retroalimentación: {sum(1 for c in crudos for o in c['opciones'] if o['retro'])}"
           f"/{sum(len(c['opciones']) for c in crudos)} opciones con explicación")
-    print("  Por objetivo: " + " · ".join(f"{k} {por_obj[k]}" for k in sorted(por_obj)))
+    print("  Por objetivo: " + " · ".join(f"{k} {por_obj[k]}" for k in sorted(por_obj))
+          + (f"  (+{sin_obj} de los capítulos, sin objetivo declarado)" if sin_obj else ""))
     if ms:
         print(f"\n  ⚠ {len(ms)} ítem(s) de varias respuestas ({', '.join(ms)}): salen como "
               f"Multi-Select, que NUNCA se ha importado a un Brightspace real. Pruébalos "
               f"con la sonda antes de subir el banco.")
+
+    if descartados:
+        print(f"\n  {len(descartados)} de varias respuestas FUERA — saldrían como Multi-Select,")
+        print("  la forma que nunca se ha visto importar en un Brightspace real, y las de los")
+        print("  capítulos ni siquiera llevan explicación por opción:\n")
+        for it in descartados:
+            n_ok = sum(1 for o in it["opciones"] if o.get("correcta"))
+            print(f"      {LETRA[it['bloque']]}{it['n']:02d} · módulo {it['clave']} · "
+                  f"{n_ok} correctas de {len(it['opciones'])}")
 
     if fuera:
         print(f"\n  {len(fuera)} numérica(s) FUERA — la Biblioteca de Preguntas no importa")
@@ -345,8 +428,8 @@ def main():
                        + re.findall(r"(?<![\d.])-?\d+(?![\d.])", prosa))
             resp = str(it["respuesta"])
             otras = [c for c in dict.fromkeys(citadas) if c != resp][:3]
-            print(f"      {LETRA[it['bloque']]}{it['n']:02d} · módulo {it['clave']:4s} "
-                  f"· {it['objetivo']} · respuesta {resp:>8s} · "
+            print(f"      {LETRA[it['bloque']]}{it['n']:02d} · módulo {str(it['clave']):4s} "
+                  f"· {it['objetivo'] or '—'} · respuesta {resp:>8s} · "
                   f"el fallo que nombra: {', '.join(otras) if otras else '—'}")
 
     print(f"\n  Audita antes de subir:\n"
