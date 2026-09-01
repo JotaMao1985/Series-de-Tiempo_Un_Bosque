@@ -6,7 +6,8 @@ Series de Tiempo 2026-II (20948) · Universidad El Bosque
 **Encargo:** que el banco de preguntas evalúe el capítulo 2 de FPP3
 (*Time series graphics*, <https://otexts.com/fpp3/graphics.html>), que hoy
 cubre solo a medias.
-**Estado:** 🟡 planificado, sin escribir una línea.
+**Estado:** 🟢 Fase 0 completa · Fase 1 a medias (E04 y las dos conversiones
+hechas; E01 espera la pregunta abierta 3).
 
 > El parcial del Corte I es **hoy**. Nada de esto lo toca: el bloque E se
 > publica después, y su público son el Corte II, un supletorio o el repaso.
@@ -49,6 +50,17 @@ material.
 
 ### Decisiones de arquitectura
 
+0. **CORRECCIÓN (2026-09-01, al implementar): el bloque E queda FUERA del
+   diagnóstico.** El plan lo metía en `BLOQUES` sin mirar la §6 del
+   verificador: el termómetro calca el blueprint del parcial, cuyos pesos
+   publicados —15/20/15/20/20/10— se cumplen hoy con **1.9 puntos de margen**
+   sobre los 2 que esa sección tolera. Un solo ítem más movería el reparto
+   fuera de la banda y el diagnóstico dejaría de medir lo que dice medir. El
+   bloque E evalúa gráficos que están en el material pero no en el blueprint:
+   es práctica, como el simulacro, y como él vive fuera del termómetro. Esto
+   además **desbloquea el resto del plan**, que si no habría tenido que añadir
+   los seis ítems de golpe para no descuadrar los pesos.
+
 1. **El bloque E es un módulo propio (`module-6`), no un segundo quiz dentro
    del D.** `BLOQUES` codifica «un bloque, un módulo» y el diagnóstico lee de
    ahí. Obliga a renumerar 6→7, 7→8, 8→9, que es mecánico y está acotado:
@@ -58,11 +70,18 @@ material.
    asume un quiz por módulo; funcionó de milagro con el simulacro porque está
    solo en el suyo. Sin esto, el mapa imagen↔ítem se rompe en silencio en
    cuanto un módulo tenga dos quizzes, y ese defecto no da síntoma.
-3. **El ítem de ciclo vs estacionalidad NO se escribe.** Ya existe en la
+3. **CORRECCIÓN (2026-09-01): el bloque E no lo cubren §3 ni §4 del
+   verificador de R**, que recorren `1:32` —los ítems del blueprint— y son las
+   que exigen que cada cifra impresa tenga origen en el precálculo. E04 no
+   trae cifras del material y no lo necesita, pero **el primer ítem del bloque
+   E que publique una cifra tiene que entrar antes en esas dos secciones**.
+   Va como criterio de aceptación de la Tarea 4.
+
+4. **El ítem de ciclo vs estacionalidad NO se escribe.** Ya existe en la
    autoevaluación del capítulo 1, y `verifica_preparcial.R` §7 rechaza los
    casi-duplicados de los 56 ítems que el estudiante ya vio. Lo cubre la
    cosecha, que es justo para lo que sirve.
-4. **La cosecha no reescribe ítems: los lee.** El exportador aprende la forma
+5. **La cosecha no reescribe ítems: los lee.** El exportador aprende la forma
    de capítulo (`modulo: N` en vez de `clave: '1.4'`) y filtra `multiple`.
 
 ---
@@ -126,7 +145,7 @@ escritos a mano.
 
 ### Fase 0 · El terreno
 
-#### Tarea 1: El rasterizador captura por quiz, no por módulo
+#### Tarea 1: El rasterizador captura por quiz, no por módulo  ✅ *hecha, `b43763e`*
 
 **Descripción:** `rasteriza_graficos.js` recorre módulos y captura todos los
 `.quiz-grafico canvas` que encuentre. Pasa a recorrer contenedores
@@ -145,7 +164,7 @@ precalculo/exporta_brightspace.py` y los dos auditores siguen limpios.
 **Dependencias:** ninguna · **Archivos:** `precalculo/rasteriza_graficos.js` ·
 **Tamaño:** S
 
-#### Tarea 2: Módulo 6 vacío para el bloque E
+#### Tarea 2: Módulo 6 vacío para el bloque E  ✅ *hecha, `b43763e`*
 
 **Descripción:** Insertar `<template id="module-6">` con el encabezado del
 bloque E y su `<div data-quiz="bloque-e">`, renumerar 6→7, 7→8, 8→9, y añadir
@@ -169,7 +188,7 @@ sigue pasando.
 
 ### Fase 1 · Lo que no necesita datos nuevos
 
-#### Tarea 3: E01 y E04, y las dos conversiones
+#### Tarea 3: E01 y E04, y las dos conversiones  ✅ *parcial (E04 y conversiones hechas, `bd62c85`)*
 
 **Descripción:** Escribir E01 (`as_tsibble` índice vs clave) y E04
 (`gg_season(period=)`), y convertir B01 y B04 de numérica a opción múltiple
