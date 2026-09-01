@@ -2393,8 +2393,33 @@ print(pasajeros.head())</code></pre>
             <td><code>start()</code></td>
             <td><code>index[0]</code></td>
           </tr>
+          <tr>
+            <td>Varias series en un objeto</td>
+            <td><code>key =</code> de <code>tsibble</code> (<code>ts</code> no puede)</td>
+            <td>columnas, o <code>MultiIndex</code></td>
+          </tr>
         </tbody>
       </table>
+
+      <p>Esa última fila es la diferencia de fondo entre <code>ts</code> y <code>tsibble</code>, y conviene no pasarla
+        por alto. Un <code>ts</code> guarda <strong>una</strong> serie y le fía el «cuándo» a <code>start</code> y
+        <code>frequency</code>. Un <code>tsibble</code> guarda el «cuándo» en una columna —el <strong>índice</strong>—
+        y admite <strong>varias series a la vez</strong> si le declaras cuál es la columna que las distingue: la
+        <strong>clave</strong>.</p>
+
+      <p>La regla que gobierna el objeto es una sola: <strong>índice y clave, juntos, identifican una fila y solo
+        una</strong>. Si le pasas ventas mensuales de cinco tiendas y declaras únicamente el índice, cada mes tiene
+        cinco filas y el objeto se niega a construirse:</p>
+
+      <pre><code class="lang-r">as_tsibble(ventas, index = mes)
+#> Error: A valid tsibble must have distinct rows identified by key and index
+
+as_tsibble(ventas, index = mes, key = tienda)   # las cinco series, cada una la suya
+#> # A tsibble: 120 x 3 [1M]
+#> # Key:       tienda [5]</code></pre>
+
+      <p>Con <code>AirPassengers</code> no hace falta clave porque hay una sola serie, y por eso
+        <code>as_tsibble(AirPassengers)</code> funciona sin más. En cuanto haya dos, la clave deja de ser opcional.</p>
 
       <div class="note">
         <p><strong>La frecuencia no es un detalle administrativo:</strong> casi todos los métodos de este curso
@@ -2430,12 +2455,26 @@ print(pasajeros.head())</code></pre>
       <ul>
         <li><strong>Gráfico de tiempo</strong> (<em>time plot</em>): $y_t$ contra $t$. Revela tendencia, saltos y la
           forma general; es el del Módulo 1.</li>
-        <li><strong>Gráfico estacional</strong> (<em>seasonal plot</em>): una línea por año, superponiendo los meses.
-          Deja ver el patrón que se repite y cómo cambia entre años.</li>
+        <li><strong>Gráfico estacional</strong> (<em>seasonal plot</em>): una línea por <strong>ciclo</strong>,
+          superponiendo las estaciones. Con datos mensuales y estacionalidad anual, eso es una línea por año y los
+          doce meses en el eje. Deja ver el patrón que se repite y cómo cambia de un ciclo al siguiente.</li>
         <li><strong>Gráfico de subseries</strong> (<em>subseries plot</em>): un mini-panel por mes, con su promedio.</li>
         <li><strong>Gráfico de rezagos</strong> (<em>lag plot</em>): $y_t$ contra $y_{t-k}$, anticipo de la
           autocorrelación del Capítulo 2.</li>
       </ul>
+
+      <div class="note">
+        <p><strong>Una serie puede tener más de una estacionalidad, y entonces «ciclo» hay que elegirlo.</strong> El
+          consumo eléctrico medido cada media hora repite tres patrones a la vez: el del día (la curva de la mañana y
+          la tarde), el de la semana (el sábado no se parece al martes) y el del año (el invierno no se parece al
+          verano). Con datos mensuales no aparece el problema —solo cabe un ciclo, el año— pero en cuanto se baja de
+          la escala diaria sí.</p>
+        <p>Por eso <code>gg_season()</code> admite <code>period</code>: no describe cada cuánto se midió el dato,
+          sino <em>qué ciclo se quiere ver superpuesto consigo mismo</em>.
+          <code>gg_season(consumo, period = "day")</code> dibuja un trazo por día sobre un eje de 48 medias horas;
+          <code>period = "week"</code>, un trazo por semana sobre un eje de siete días. Mismos datos, dos preguntas
+          distintas.</p>
+      </div>
 
       <div class="mapa-estacional" data-mapa="cap1-airpassengers">
         <p class="mapa-estacional-titulo">AirPassengers, mes × año</p>
