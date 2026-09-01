@@ -239,11 +239,34 @@ items$i01 <- list(
   sd_igual = r3(sd(demanda) - sd(demanda_barajada), 10))
 
 # --- Item 3 [1.2 · P] aritmetica del objeto ts -------------------------------
+# Item de opcion multiple: la Biblioteca de Preguntas de Brightspace no importa
+# respuesta numerica, asi que las cuatro opciones son cuatro fechas. Las tres
+# equivocadas NO se escriben a mano: se calculan con la misma aritmetica de
+# `ts` que la correcta, cada una a partir del error que representa. Si algun
+# dia cambian el arranque o el numero de observaciones, los distractores se
+# mueven solos y siguen siendo esos errores.
+MESES_ES <- c("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio",
+              "agosto", "septiembre", "octubre", "noviembre", "diciembre")
+en_prosa <- function(fin) sprintf("%s de %d", MESES_ES[fin[2]], fin[1])
+
 ts_demo <- ts(rep(0, 30), start = c(2019, 7), frequency = 12)
+fin_correcto <- end(ts_demo)
+# sumar 30 meses en vez de 29: la primera observacion ya ocupa el mes de arranque
+fin_suma_n    <- end(ts(rep(0, 31), start = c(2019, 7), frequency = 12))
+# contar los 30 meses desde enero, olvidando que la serie arranca en julio
+fin_desde_ene <- end(ts(rep(0, 30), start = c(2019, 1), frequency = 12))
+# creer que `frequency = 12` obliga a anios completos: 30 observaciones -> 3 anios
+fin_anios     <- end(ts(rep(0, 37), start = c(2019, 7), frequency = 12))
+
 items$i03 <- list(
   modulo = "1.2", dimension = "P", n = 30, inicio = c(2019, 7), frecuencia = 12,
-  ultimo = as.numeric(end(ts_demo)),
-  ultimo_texto = sprintf("%d-%02d", end(ts_demo)[1], end(ts_demo)[2]))
+  ultimo = as.numeric(fin_correcto),
+  ultimo_texto = sprintf("%d-%02d", fin_correcto[1], fin_correcto[2]),
+  ultimo_prosa = en_prosa(fin_correcto),
+  errores = list(
+    suma_n      = en_prosa(fin_suma_n),
+    desde_enero = en_prosa(fin_desde_ene),
+    anios       = en_prosa(fin_anios)))
 
 # --- Item 4 [1.3 · G] gg_subseries: medias por mes ---------------------------
 meses <- cycle(demanda)
@@ -368,11 +391,20 @@ items$i13 <- list(
 # --- Items 14 y 15 [2.2 · P, G] ruido blanco ---------------------------------
 a_blanco <- acf_de(residuo_blanco, 36)
 fuera <- sum(abs(a_blanco$acf) > a_blanco$banda)
+# Tambien de opcion multiple, y por lo mismo. Los tres distractores son tres
+# formas concretas de equivocarse con la banda, calculadas y no escritas.
 items$i14 <- list(
   modulo = "2.2", dimension = "P", n = length(residuo_blanco), rezagos = 36,
   banda = a_blanco$banda, acf = a_blanco$acf,
   observadas_fuera = as.integer(fuera),
   esperadas_fuera = r3(0.05 * 36, 2),
+  errores = list(
+    # creer que bajo la nula no se sale ninguna barra
+    ninguna    = 0,
+    # aplicar el 5 % a las observaciones en vez de a los rezagos
+    sobre_n    = r3(0.05 * length(residuo_blanco), 2),
+    # contar dos veces las dos colas y usar el 10 %
+    doble_cola = r3(0.10 * 36, 2)),
   rezagos_fuera = as.integer(which(abs(a_blanco$acf) > a_blanco$banda)))
 items$i15 <- list(
   modulo = "2.2", dimension = "G",

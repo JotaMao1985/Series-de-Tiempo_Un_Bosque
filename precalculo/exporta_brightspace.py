@@ -201,10 +201,11 @@ def limpia(html):
 
 
 LETRA = {"bloque-a": "A", "bloque-b": "B", "bloque-c": "C", "bloque-d": "D",
-         "simulacro": "S"}
+         "bloque-e": "E", "simulacro": "S"}
 
 NOMBRE_BLOQUE = {"bloque-a": "Bloque A · Conceptos", "bloque-b": "Bloque B · Cálculo",
                  "bloque-c": "Bloque C · Interpretación", "bloque-d": "Bloque D · Gráficos",
+                 "bloque-e": "Bloque E · Gráficos de series (FPP3 cap. 2)",
                  "simulacro": "Simulacro cronometrado"}
 
 

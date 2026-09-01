@@ -25,7 +25,7 @@
 #   §4  La procedencia de cada cifra IMPRESA EN LA PROSA de los 32
 #       ítems. Es la sección que ninguna otra herramienta cubre: el JSON
 #       puede estar perfecto y el enunciado citar un 0.898 que no existe.
-#   §5  Las nueve claves numéricas del bloque B y sus tolerancias: que
+#   §5  Las siete claves numéricas del bloque B y sus tolerancias: que
 #       acepten la respuesta correcta y RECHACEN el error que la propia
 #       retroalimentación nombra.
 #   §6  La tabla de especificaciones publicada (D13) contra el reparto
@@ -1320,7 +1320,7 @@ comprueba(!grepl("p = 0\\.01(?![0-9])", prosa_toda, perl = TRUE) &&
           "ni un `p = 0.01` ni un `p = 0.10` en la prosa: los bordes van con < o >")
 
 # =====================================================================
-seccion("§5 · Las nueve claves numéricas y sus tolerancias")
+seccion("§5 · Las siete claves numéricas y los dos ítems convertidos")
 # =====================================================================
 # Una clave numérica no basta con que sea correcta: su TOLERANCIA tiene
 # que dejar fuera el error que la propia retroalimentación nombra. Si lo
@@ -1329,22 +1329,22 @@ seccion("§5 · Las nueve claves numéricas y sus tolerancias")
 
 claves_b <- regmatches(TROZOS[["bloque-b"]],
                        regexpr("respuesta: (-?[0-9.]+), tolerancia: ([0-9.]+)", TROZOS[["bloque-b"]]))
-comprueba(length(claves_b) == 9L, "los nueve ítems del bloque B declaran respuesta y tolerancia",
-          sprintf("%d de 9", length(claves_b)))
+# Siete y no nueve: i03 e i14 son ahora de opción múltiple. La Biblioteca de
+# Preguntas de Brightspace no importa respuesta numérica, y esos dos eran los
+# ítems de FPP3 §2.1 y §2.9 — los únicos de sus temas en todo el instrumento.
+# Convertirlos los mete en el banco; lo que se comprueba de ellos está abajo.
+comprueba(length(claves_b) == 7L, "los siete ítems numéricos del bloque B declaran respuesta y tolerancia",
+          sprintf("%d de 7", length(claves_b)))
 respuesta_de  <- as.numeric(sub(".*respuesta: (-?[0-9.]+), .*", "\\1", claves_b))
 tolerancia_de <- as.numeric(sub(".*tolerancia: ([0-9.]+).*", "\\1", claves_b))
 
 # Ítem del blueprint, lo que R vuelve a calcular, y el error típico que
 # la retroalimentación de ese mismo ítem nombra con todas sus letras.
 CLAVES <- list(
-  list(item = 3,  recalculado = as.numeric(end(demo))[1],
-       error = as.numeric(end(demo))[1] + 1, porque = "sumar 30 meses en vez de 29 y llegar a 2022"),
   list(item = 6,  recalculado = sum(c(0.125, 0.25, 0.25, 0.25, 0.125) * cinco),
        error = mean(cinco), porque = "promediar las cinco a partes iguales (61.29)"),
   list(item = 8,  recalculado = (prom - mean(prom))[3],
        error = prom[3], porque = "no centrar: quedarse en el promedio sin restar la media (9.5724)"),
-  list(item = 14, recalculado = 0.05 * 36,
-       error = 0, porque = "creer que bajo la nula no se sale ninguna barra"),
   list(item = 17, recalculado = num6 / den6,
        error = num6 / sum((seis[-1] - m6)^2), porque = "dividir entre cinco desviaciones y no entre seis (-0.64)"),
   list(item = 20, recalculado = phi22,
@@ -1367,6 +1367,50 @@ for (k in seq_along(CLAVES)) {
   comprueba(!admite_error,
             sprintf("%s · la tolerancia (%s) RECHAZA el error típico: %s", id, format(tol), cv$porque),
             sprintf("|%s - %s| = %.4f", format(cv$error), format(r), abs(cv$error - r)))
+}
+
+# --- Los dos que dejaron de ser numéricos ----------------------------------
+# i03 e i14 ya no tienen tolerancia que pueda admitir el error típico: ahora el
+# error ES una de las cuatro opciones. La garantía cambia de forma y no de
+# fondo — se comprueba que la opción marcada como correcta sea la que lleva la
+# cifra que R calcula, y que cada distractor lleve exactamente la del error que
+# dice representar. Si el generador cambia una, el ítem deja de cuadrar y esto
+# lo dice, que es lo mismo que hacía la tolerancia.
+
+opciones_de <- function(trozo) {
+  crudo <- regmatches(trozo, gregexpr("texto: '[^']*', correcta: (true|false)", trozo))[[1]]
+  data.frame(texto = sub("^texto: '(.*)', correcta: (true|false)$", "\\1", crudo),
+             correcta = grepl("correcta: true$", crudo),
+             stringsAsFactors = FALSE)
+}
+
+CONVERTIDOS <- list(
+  list(id = "i03", k = 1L, correcta = I$i03$ultimo_prosa,
+       errores = unlist(I$i03$errores, use.names = FALSE)),
+  list(id = "i14", k = 4L, correcta = format(I$i14$esperadas_fuera),
+       errores = vapply(I$i14$errores, format, ""))
+)
+
+for (cv in CONVERTIDOS) {
+  s5 <- TROZOS[["bloque-b"]][cv$k]
+  comprueba(grepl("tipo: 'opcion'", s5, fixed = TRUE),
+            sprintf("%s · es de opción múltiple y no numérica (la Biblioteca no importa numéricas)", cv$id))
+  ops <- opciones_de(s5)
+  comprueba(nrow(ops) == 4L, sprintf("%s · ofrece cuatro opciones", cv$id),
+            sprintf("%d", nrow(ops)))
+
+  lleva <- function(valor) grepl(valor, ops$texto, fixed = FALSE, ignore.case = TRUE)
+  comprueba(sum(lleva(cv$correcta) & ops$correcta) == 1L &&
+              sum(lleva(cv$correcta)) == 1L,
+            sprintf("%s · la ÚNICA opción que lleva la cifra de R (%s) es la marcada correcta",
+                    cv$id, cv$correcta),
+            paste(sprintf("[%s]%s", ops$texto, ifelse(ops$correcta, "*", "")), collapse = " · "))
+
+  for (e in cv$errores) {
+    comprueba(sum(lleva(e) & !ops$correcta) == 1L,
+              sprintf("%s · el error «%s» está ofrecido como distractor, y solo como distractor",
+                      cv$id, e))
+  }
 }
 
 # =====================================================================
