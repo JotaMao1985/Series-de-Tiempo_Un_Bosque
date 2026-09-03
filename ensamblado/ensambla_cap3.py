@@ -29,24 +29,33 @@ este script insertaba —el CSS y el JS del componente .derivacion, y el
 `barrasExtra` de crearGraficoBarras—, de modo que esas secciones ya no
 insertan: COMPRUEBAN que estén. El CSS de .tabla-ranking sí se inserta (2b).
 
-Con eso, la verificación deja exactamente dos diferencias, ambas conocidas:
+Con eso, la verificación deja una sola diferencia, y conocida:
 
-  ~180 líneas que están en el capítulo 3 y no en lo ensamblado
+  ~179 líneas que están en el capítulo 3 y no en lo ensamblado
       El motor JS de .tabla-ranking (iniciarTablasRanking y su bloque). Está
       guardado en cap3/tabla_ranking.js, pero NO se inserta: en el capítulo 3
       va después de iniciarCiclos(), y en el capítulo 2 el orden de esos
       componentes es otro, así que no hay un marcador único donde anclarlo
       sin reordenar el capítulo 2.
 
-  ~31 líneas que están en el capítulo 2 y no en el 3
-      La función moduloDelHash() (enlaces directos del tipo archivo.html#modulo-6),
-      añadida al capítulo 2 después de generarse el 3.
+La segunda diferencia que aquí se documentaba —las ~31 líneas de
+moduloDelHash(), presentes en el capítulo 2 y ausentes del 3— quedó CERRADA el
+2026-09-02. El capítulo 3 ignoraba los enlaces con ancla y abría siempre por el
+módulo 1. El bloque se copió del capítulo 2 sin tocar una coma (el comentario,
+moduloDelHash(), fijarHashDelModulo() y el oyente de hashchange), junto con las
+dos líneas que lo activan: loadModule(moduloDelHash()) al arrancar y
+fijarHashDelModulo(id) dentro de loadModule(). Se copió verbatim, y no
+adaptado, a propósito: el bloque cae en la región que este script hereda del
+capítulo 2 tal cual —cap3_js.js empieza más abajo, en las series de trabajo del
+capítulo—, de modo que cualquier retoque de redacción habría reabierto la
+diferencia. Comprobado por HTTP, no por file://: #modulo-6 abre el módulo 6;
+#modulo-99 y la URL sin ancla abren el 1.
 
-La raíz común es que el modelo "derivar el capítulo 3 parcheando el 2" se
-agotó: los dos capítulos evolucionaron por separado y sus motores JS ya no
-están en el mismo orden. Reconstruir byte a byte exigiría reordenar el
-capítulo 2, que es una tarea distinta y con su propio riesgo. Por eso este
-script verifica y avisa en vez de escribir.
+La diferencia que queda tiene la raíz de siempre: el modelo "derivar el
+capítulo 3 parcheando el 2" se agotó, porque los dos capítulos evolucionaron
+por separado y sus motores JS ya no están en el mismo orden. Reconstruir byte a
+byte exigiría reordenar el capítulo 2, que es una tarea distinta y con su
+propio riesgo. Por eso este script verifica y avisa en vez de escribir.
 
 FUENTES: ensamblado/cap3/ (dentro del repositorio). Antes vivían en un
 scratchpad de sesión que se borró; se recuperaron del HTML ya corregido, así
