@@ -9,6 +9,48 @@ perdió un bloque de CSS entero al montar el capítulo 2.
 Toda sustitución pasa por reemplazar(), que aborta si el marcador no aparece
 exactamente una vez, y al final se comprueba que el resultado contiene todo
 lo que debe contener.
+
+MODO POR DEFECTO: VERIFICAR, NO ESCRIBIR
+----------------------------------------
+Sin argumentos, el script ensambla en memoria y compara con el archivo que ya
+existe en disco. Si coinciden, dice que el capítulo es reproducible; si no,
+muestra en qué difieren y NO toca nada. Para sobrescribir hay que pedirlo:
+
+    python3 ensambla_cap3.py --escribir
+
+La razón es histórica y concreta: el capítulo 3 acumuló correcciones hechas
+sobre el HTML (auditorías de contenido) que este script no conocía, y una
+reejecución distraída las habría borrado en silencio.
+
+ESTADO CONOCIDO (2026-09-02), medido, no supuesto
+-------------------------------------------------
+El capítulo 2 ha seguido evolucionando y ya trae por su cuenta tres cosas que
+este script insertaba —el CSS y el JS del componente .derivacion, y el
+`barrasExtra` de crearGraficoBarras—, de modo que esas secciones ya no
+insertan: COMPRUEBAN que estén. El CSS de .tabla-ranking sí se inserta (2b).
+
+Con eso, la verificación deja exactamente dos diferencias, ambas conocidas:
+
+  ~180 líneas que están en el capítulo 3 y no en lo ensamblado
+      El motor JS de .tabla-ranking (iniciarTablasRanking y su bloque). Está
+      guardado en cap3/tabla_ranking.js, pero NO se inserta: en el capítulo 3
+      va después de iniciarCiclos(), y en el capítulo 2 el orden de esos
+      componentes es otro, así que no hay un marcador único donde anclarlo
+      sin reordenar el capítulo 2.
+
+  ~31 líneas que están en el capítulo 2 y no en el 3
+      La función moduloDelHash() (enlaces directos del tipo archivo.html#modulo-6),
+      añadida al capítulo 2 después de generarse el 3.
+
+La raíz común es que el modelo "derivar el capítulo 3 parcheando el 2" se
+agotó: los dos capítulos evolucionaron por separado y sus motores JS ya no
+están en el mismo orden. Reconstruir byte a byte exigiría reordenar el
+capítulo 2, que es una tarea distinta y con su propio riesgo. Por eso este
+script verifica y avisa en vez de escribir.
+
+FUENTES: ensamblado/cap3/ (dentro del repositorio). Antes vivían en un
+scratchpad de sesión que se borró; se recuperaron del HTML ya corregido, así
+que incorporan las correcciones de las auditorías.
 """
 import json
 import pathlib
@@ -16,7 +58,7 @@ import re
 import sys
 
 BASE = pathlib.Path("/Users/javiermauriciosierra/Documents/Trabajo 2026/Bosque 2026/Series de tiempo")
-SCRATCH = pathlib.Path("/private/tmp/claude-501/-Users-javiermauriciosierra-Documents-Trabajo-2026-Bosque-2026/831bcb00-26c3-43d4-8bd7-3dd033784b31/scratchpad")
+FUENTES = BASE / "ensamblado" / "cap3"
 
 ORIGEN = BASE / "Htmls_Series" / "capitulo-2-estacionariedad-acf-pacf.html"
 DESTINO = BASE / "Htmls_Series" / "capitulo-3-modelos-ar-ma-arma.html"
@@ -93,63 +135,49 @@ html = reemplazar(
     "pie de página")
 
 # ---------------------------------------------------------------------------
-# 2. CSS del componente .derivacion (idéntico al de la plantilla)
+# 2. CSS del componente .derivacion
 # ---------------------------------------------------------------------------
-css_derivacion = (SCRATCH / "derivacion.css").read_text(encoding="utf-8")
+# Ya no se inserta: el capítulo 2 lo trae desde que el componente se
+# retro-portó allí. Aquí solo se comprueba que efectivamente esté, porque el
+# capítulo 3 lo usa en catorce cajas de derivación.
+for marca in (".derivacion-boton {", ".derivacion-pasos > li::before {"):
+    if marca not in html:
+        sys.exit(f"ABORTA: el capítulo 2 ya no trae el CSS de .derivacion ({marca!r}). "
+                 "Hay que volver a insertarlo aquí.")
+
+# ---------------------------------------------------------------------------
+# 2b. CSS del componente .tabla-ranking (propio del capítulo 3)
+# ---------------------------------------------------------------------------
+# Este sí hay que insertarlo: el capítulo 2 no lo tiene. Va al final del
+# <style>, que es donde lo dejó la ronda que creó el componente.
+css_ranking = (FUENTES / "tabla_ranking.css").read_text(encoding="utf-8")
 html = reemplazar(
     html,
-    "    /* Enunciado de una pregunta con gráfico: mismo criterio de separación */\n"
-    "    .quiz-pregunta .quiz-enunciado + .quiz-grafico {\n"
-    "      margin-top: 0.9rem;\n"
-    "    }\n"
-    "  </style>",
-    "    /* Enunciado de una pregunta con gráfico: mismo criterio de separación */\n"
-    "    .quiz-pregunta .quiz-enunciado + .quiz-grafico {\n"
-    "      margin-top: 0.9rem;\n"
-    "    }\n\n"
-    + css_derivacion.rstrip("\n") + "\n  </style>",
-    "CSS de .derivacion")
+    "      }\n    }\n  </style>",
+    "      }\n    }\n\n" + css_ranking.rstrip("\n") + "\n  </style>",
+    "CSS de .tabla-ranking")
 
 # ---------------------------------------------------------------------------
 # 3. crearGraficoBarras: barras adicionales (teórica frente a muestral)
 # ---------------------------------------------------------------------------
-html = reemplazar(
-    html,
-    """      (opciones.lineas || []).forEach(linea => {
-        datasets.push({
-          type: 'line',""",
-    """      // Barras adicionales sobre el mismo eje (p. ej. la ACF muestral junto a
-      // la teórica). Van antes que las rectas de referencia para que el orden
-      // de los datasets sea estable: 0 = principal, 1..k = extra, luego líneas.
-      (opciones.barrasExtra || []).forEach(extra => {
-        datasets.push({
-          type: 'bar',
-          label: extra.etiqueta || '',
-          data: extra.valores,
-          backgroundColor: extra.color || COLORES_GRAFICO.secundario,
-          borderWidth: 0,
-          barPercentage: 0.4,
-          categoryPercentage: 0.9,
-          order: 2
-        });
-      });
-      (opciones.lineas || []).forEach(linea => {
-        datasets.push({
-          type: 'line',""",
-    "crearGraficoBarras con barrasExtra")
+# Igual que el CSS de .derivacion: el capítulo 2 ya lo trae. Se comprueba.
+if "barrasExtra" not in html:
+    sys.exit("ABORTA: el capítulo 2 ya no trae `barrasExtra` en crearGraficoBarras. "
+             "Los simuladores del capítulo 3 que superponen ACF teórica y muestral "
+             "lo necesitan; hay que volver a insertarlo aquí.")
 
 # ---------------------------------------------------------------------------
 # 4. Los diez módulos
 # ---------------------------------------------------------------------------
-plantillas = "\n".join(
-    (SCRATCH / n).read_text(encoding="utf-8").rstrip("\n")
-    for n in ("cap3_mod1_5.html", "cap3_mod6_10.html", "cap3_mod10.html")
-) + "\n\n"
+# Un solo archivo, extraído del HTML ya auditado: trae las correcciones de
+# contenido (rejilla de once candidatos, cifras de Guerrero, ACF residual,
+# derivación de Ljung-Box, etc.).
+plantillas = (FUENTES / "cap3_modulos.html").read_text(encoding="utf-8")
 
 html = recortar(
     html,
     "  <!-- ============================================================ -->\n"
-    "  <!-- MÓDULO 1 · Estacionariedad",
+    "  <!-- MÓDULO 1 ·",
     "  <script>\n"
     "    // ================================================================\n"
     "    // Configuración del capítulo",
@@ -196,38 +224,16 @@ sustituciones += 1
 # ---------------------------------------------------------------------------
 # 7. Enganche y función de las derivaciones plegables
 # ---------------------------------------------------------------------------
-html = reemplazar(
-    html,
-    "        iniciarEjerciciosGuiados();\n",
-    "        iniciarEjerciciosGuiados();\n        iniciarDerivaciones();\n",
-    "llamada a iniciarDerivaciones")
-
-js_derivacion = (SCRATCH / "derivacion.js").read_text(encoding="utf-8")
-html = reemplazar(
-    html,
-    """          if (!abierto) {
-            if (typeof Prism !== 'undefined') Prism.highlightAllUnder(panel);
-            katexEn(panel);
-          }
-        });
-      });
-    }
-""",
-    """          if (!abierto) {
-            if (typeof Prism !== 'undefined') Prism.highlightAllUnder(panel);
-            katexEn(panel);
-          }
-        });
-      });
-    }
-
-""" + js_derivacion.rstrip("\n") + "\n",
-    "función iniciarDerivaciones")
+# Tercera pieza que el capítulo 2 ya trae: la función y su llamada. Se comprueba.
+for marca in ("function iniciarDerivaciones()", "iniciarDerivaciones();"):
+    if marca not in html:
+        sys.exit(f"ABORTA: el capítulo 2 ya no trae {marca!r}. "
+                 "Las derivaciones plegables del capítulo 3 no funcionarían.")
 
 # ---------------------------------------------------------------------------
 # 8. JavaScript propio del capítulo (simuladores y autoevaluación)
 # ---------------------------------------------------------------------------
-js_cap3 = (SCRATCH / "cap3_js.js").read_text(encoding="utf-8")
+js_cap3 = (FUENTES / "cap3_js.js").read_text(encoding="utf-8")
 html = recortar(
     html,
     "    // ================================================================\n"
@@ -298,6 +304,33 @@ if fallos:
     for f in fallos:
         print("  ✗", f)
     sys.exit(1)
+
+# ---------------------------------------------------------------------------
+# 10. Verificar por defecto; escribir solo si se pide
+# ---------------------------------------------------------------------------
+escribir = "--escribir" in sys.argv
+previo = DESTINO.read_text(encoding="utf-8") if DESTINO.exists() else None
+
+if previo is not None and previo != html:
+    import difflib
+    d = list(difflib.unified_diff(previo.splitlines(), html.splitlines(),
+                                  "en disco", "ensamblado", lineterm="", n=0))
+    mas = sum(1 for l in d if l.startswith("+") and not l.startswith("+++"))
+    menos = sum(1 for l in d if l.startswith("-") and not l.startswith("---"))
+    print(f"DIFIERE del archivo en disco: +{mas} / -{menos} líneas.")
+    print("Primeras diferencias:")
+    for l in [x for x in d if x.startswith(("+", "-"))
+              and not x.startswith(("+++", "---"))][:12]:
+        print("   ", l[:118])
+    if not escribir:
+        print("\nNo se ha escrito nada. El archivo en disco manda: puede llevar")
+        print("correcciones de contenido posteriores a este script.")
+        print("Para sobrescribirlo de todas formas: python3 ensambla_cap3.py --escribir")
+        sys.exit(2)
+
+if not escribir:
+    print(f"OK: {DESTINO.name} es reproducible byte a byte desde este script.")
+    sys.exit(0)
 
 DESTINO.write_text(html, encoding="utf-8")
 

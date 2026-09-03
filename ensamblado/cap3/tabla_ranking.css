@@ -1,0 +1,210 @@
+    /* ------------------------------------------------------------------
+       Componente .tabla-ranking — tabla comparativa ordenable
+       ------------------------------------------------------------------
+       Una tabla estática obliga a decir con palabras que el orden depende
+       de la columna por la que se mire. Aquí se pulsa la cabecera y el
+       orden cambia ante los ojos: el puesto de cada fila se renumera, la
+       fila ganadora se ilumina y el mejor valor de la columna activa se
+       marca. Es el argumento del capítulo convertido en componente.
+
+       Sin dependencias: una <table> de verdad, con cabeceras que son
+       botones. El estado va en `aria-sort` sobre el <th>, y cada
+       reordenación se anuncia en una región `role="status"`, así que el
+       componente funciona igual leído con un lector de pantalla.
+       ------------------------------------------------------------------ */
+    .tabla-ranking {
+      margin: 1.1rem 0;
+    }
+
+    .tabla-ranking-titulo {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.66rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #012820;
+      font-weight: 600;
+      margin: 0 0 0.5rem 0;
+    }
+
+    /* En pantallas estrechas la tabla se desplaza dentro de su caja en vez
+       de desbordar la página. */
+    .tabla-ranking-marco {
+      overflow-x: auto;
+      padding-bottom: 0.2rem;
+      border-radius: 0.4rem;
+      border: 1px solid #e2e8f0;
+    }
+
+    .tabla-ranking table {
+      width: 100%;
+      min-width: 34rem;
+      border-collapse: collapse;
+      margin: 0;
+      font-size: 0.8rem;
+    }
+
+    .tabla-ranking caption {
+      caption-side: top;
+      text-align: left;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.78rem;
+      color: #64748b;
+      line-height: 1.4;
+      padding: 0 0 0.5rem 0;
+    }
+
+    .tabla-ranking th,
+    .tabla-ranking td {
+      padding: 0.4rem 0.55rem;
+      border-bottom: 1px solid #e2e8f0;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .tabla-ranking th:first-child,
+    .tabla-ranking td:first-child,
+    .tabla-ranking th:nth-child(2),
+    .tabla-ranking td:nth-child(2) {
+      text-align: left;
+    }
+
+    .tabla-ranking thead th {
+      background: #012820;
+      color: #ffffff;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      font-size: 0.72rem;
+      padding: 0;
+      position: sticky;
+      top: 0;
+    }
+
+    /* La cabecera entera es el botón: así el objetivo táctil es la celda y
+       no un texto de dos palabras dentro de ella. */
+    .tabla-ranking-boton {
+      width: 100%;
+      background: none;
+      border: none;
+      color: inherit;
+      font: inherit;
+      cursor: pointer;
+      padding: 0.5rem 0.55rem;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.3rem;
+      text-align: right;
+    }
+
+    .tabla-ranking th:nth-child(2) .tabla-ranking-boton {
+      justify-content: flex-start;
+      text-align: left;
+    }
+
+    .tabla-ranking-boton:hover,
+    .tabla-ranking-boton:focus-visible {
+      background: rgba(255, 102, 0, 0.22);
+      outline: none;
+    }
+
+    .tabla-ranking-boton:focus-visible {
+      box-shadow: inset 0 0 0 2px #FF6600;
+    }
+
+    /* La flecha marca la columna activa; las inactivas llevan un signo
+       tenue que anuncia que se puede pulsar. */
+    .tabla-ranking-flecha {
+      font-size: 0.62rem;
+      opacity: 0.35;
+    }
+
+    .tabla-ranking th[aria-sort="ascending"] .tabla-ranking-flecha,
+    .tabla-ranking th[aria-sort="descending"] .tabla-ranking-flecha {
+      opacity: 1;
+      color: #FFC24B;
+    }
+
+    .tabla-ranking tbody tr {
+      background: #ffffff;
+      transition: background 0.15s ease;
+    }
+
+    .tabla-ranking tbody tr:nth-child(even) {
+      background: #f8fafc;
+    }
+
+    /* El primer puesto de la ordenación vigente. */
+    .tabla-ranking tbody tr.ganadora {
+      background: rgba(1, 40, 32, 0.09);
+      font-weight: 600;
+    }
+
+    /* Fila señalada por quien escribe el capítulo ("el método del que
+       veníamos hablando"), independiente de qué columna ordene. */
+    .tabla-ranking tbody tr.destacada td:first-child {
+      box-shadow: inset 3px 0 0 #FF6600;
+    }
+
+    .tabla-ranking-puesto {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.72rem;
+      color: #64748b;
+      width: 2.2rem;
+    }
+
+    .tabla-ranking tbody tr.ganadora .tabla-ranking-puesto {
+      color: #012820;
+    }
+
+    .tabla-ranking td.numero {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.75rem;
+    }
+
+    /* El mejor valor de la columna por la que se está ordenando. */
+    .tabla-ranking td.mejor {
+      color: #0f766e;
+      font-weight: 700;
+    }
+
+    .tabla-ranking td.columna-activa {
+      background: rgba(255, 102, 0, 0.08);
+    }
+
+    .tabla-ranking-referencia {
+      font-size: 0.66rem;
+      color: #64748b;
+      font-family: 'Fira Code', monospace;
+      margin-left: 0.35rem;
+    }
+
+    .tabla-ranking-pie {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.78rem;
+      color: #64748b;
+      margin: 0.5rem 0 0 0;
+      line-height: 1.4;
+    }
+
+    .tabla-ranking-estado {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.74rem;
+      color: #012820;
+      margin: 0.6rem 0 0 0;
+      min-height: 1.1em;
+    }
+
+    @media (max-width: 640px) {
+      .tabla-ranking table {
+        font-size: 0.72rem;
+      }
+
+      .tabla-ranking th,
+      .tabla-ranking td {
+        padding: 0.32rem 0.4rem;
+      }
+
+      .tabla-ranking-boton {
+        padding: 0.42rem 0.4rem;
+      }
+    }

@@ -1,0 +1,2449 @@
+  <!-- ============================================================ -->
+  <!-- MÓDULO 1 · Operador de rezago y polinomios característicos    -->
+  <!-- ============================================================ -->
+  <template id="module-1">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 1</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">3.1 El operador de rezago
+          <span class="text-gray-400 font-normal text-2xl">/ The lag operator</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Escribir un modelo de series de tiempo como un polinomio
+              y leer en sus <strong>raíces</strong> si el proceso es estacionario. Es la notación que sostiene todo el
+              capítulo.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>En el Capítulo 2 apareció, casi de contrabando, el operador $B$ para escribir la diferencia como
+        $\nabla y_t = (1-B)y_t$. Ese atajo de notación es en realidad la herramienta central del análisis clásico de
+        series de tiempo, y conviene presentarla en serio antes de construir modelos con ella.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: operador de rezago (<em>lag operator</em>)</h4>
+        <p>El <strong>operador de rezago</strong> $B$ retrasa una serie un periodo:</p>
+        $$B\, y_t = y_{t-1}$$
+        <p style="margin-bottom:0;">Aplicado $k$ veces, retrasa $k$ periodos: $B^k y_t = y_{t-k}$. Por convenio
+          $B^0 = 1$ (el operador identidad) y $B$ deja fijas las constantes: $Bc = c$.</p>
+      </div>
+
+      <p>Lo interesante es que $B$ <strong>se comporta como un número</strong> en las operaciones algebraicas: se puede
+        sumar, multiplicar, elevar a potencias y factorizar. Eso convierte manipulaciones de recursiones —que son
+        engorrosas— en manipulaciones de polinomios, que son rutina.</p>
+
+      <div class="note">
+        <p><strong>Un ejemplo de lo que compra la notación.</strong> La diferencia estacional de orden $m$ aplicada
+          después de una diferencia regular es $\nabla_m \nabla y_t$. Con polinomios, eso es
+          $(1-B^m)(1-B)y_t$, y basta multiplicar para saber exactamente qué combinación de rezagos interviene:</p>
+        $$(1-B^m)(1-B) = 1 - B - B^m + B^{m+1}
+          \;\Longrightarrow\; y_t - y_{t-1} - y_{t-m} + y_{t-m-1}$$
+        <p style="margin-bottom:0;">Ese es exactamente el preprocesamiento del modelo <em>airline</em> que verás en el
+          Capítulo 5, obtenido sin escribir una sola recursión.</p>
+      </div>
+
+      <h3>Polinomios característicos</h3>
+
+      <p>Todos los modelos del capítulo se escriben con dos polinomios en $B$: uno del lado de la serie y otro del lado
+        del ruido.</p>
+
+      <div class="formula">
+        <p>Polinomio <strong>autorregresivo</strong> de orden $p$ y polinomio de <strong>medias móviles</strong> de
+          orden $q$:</p>
+        $$\phi(B) = 1 - \phi_1 B - \phi_2 B^2 - \cdots - \phi_p B^p$$
+        $$\theta(B) = 1 + \theta_1 B + \theta_2 B^2 + \cdots + \theta_q B^q$$
+      </div>
+
+      <div class="warning">
+        <p><strong>Ojo con los signos.</strong> Los coeficientes $\phi$ entran <strong>restando</strong> y los $\theta$
+          <strong>sumando</strong>. No es un capricho: así, al pasar todo al mismo lado, un AR queda
+          $\phi(B)y_t = \varepsilon_t$ y un MA queda $y_t = \theta(B)\varepsilon_t$, con los signos "naturales" en la
+          forma en que se escribe cada modelo. La consecuencia práctica es que <strong>R y Python usan este mismo
+            convenio</strong>, pero algunos textos —y algún paquete— invierten el signo de $\theta$. Si un $\theta$
+          estimado te sale con el signo contrario al que esperabas, comprueba el convenio antes de dudar de tus datos.</p>
+      </div>
+
+      <h3>Las raíces son la respuesta</h3>
+
+      <p>La pregunta que resolverá el polinomio $\phi(B)$ es si el proceso es estacionario. Para responderla se trata
+        $B$ como una variable compleja y se buscan las raíces de $\phi(B)=0$.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Condición de estacionariedad</h4>
+        <p style="margin-bottom:0;">Un proceso autorregresivo es <strong>estacionario</strong> si todas las raíces de
+          $\phi(B) = 0$ están <strong>fuera</strong> del círculo unitario, es decir, si $|B_i| > 1$ para toda raíz
+          $B_i$ (incluyendo el módulo si la raíz es compleja).</p>
+      </div>
+
+      <p>La palabra <em>fuera</em> sorprende la primera vez. La intuición es que el polinomio está escrito en $B$, no
+        en $1/B$: para el AR(1) $y_t = \phi y_{t-1} + \varepsilon_t$ el polinomio es $1 - \phi B$, cuya única raíz es
+        $B = 1/\phi$. Que la raíz esté fuera del círculo, $|1/\phi| > 1$, es lo mismo que la condición conocida
+        $|\phi| < 1$.</p>
+
+      <div class="derivacion">
+        <button type="button" class="derivacion-boton" aria-expanded="false" aria-controls="der-ar1-estacionario">
+          <i class="fas fa-square-root-variable" aria-hidden="true"></i>
+          <span class="derivacion-texto">Ver el desarrollo paso a paso</span>
+          <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="derivacion-panel" id="der-ar1-estacionario" hidden>
+          <ol class="derivacion-pasos">
+            <li>
+              <p>Parte del AR(1) y sustituye $y_{t-1}$ por su propia definición, una y otra vez:</p>
+              $$y_t = \phi y_{t-1} + \varepsilon_t = \phi(\phi y_{t-2} + \varepsilon_{t-1}) + \varepsilon_t
+                = \varepsilon_t + \phi\varepsilon_{t-1} + \phi^2 y_{t-2}$$
+            </li>
+            <li>
+              <p>Tras $k$ sustituciones queda una suma de choques más un resto que arrastra el pasado lejano:</p>
+              $$y_t = \sum_{j=0}^{k-1}\phi^j \varepsilon_{t-j} + \phi^{k} y_{t-k}$$
+            </li>
+            <li>
+              <p>Aquí está todo el asunto. Si $|\phi| < 1$, entonces $\phi^k \to 0$ y el resto <strong>se
+                  desvanece</strong>: el pasado remoto deja de influir y queda una suma convergente</p>
+              $$y_t = \sum_{j=0}^{\infty}\phi^j \varepsilon_{t-j}$$
+              <p>Si $|\phi| \ge 1$, el resto no desaparece: el proceso no olvida y no existe una solución estacionaria.</p>
+            </li>
+            <li>
+              <p>La varianza de esa suma es una serie geométrica, y solo converge bajo la misma condición:</p>
+              $$\operatorname{Var}(y_t) = \sigma^2\sum_{j=0}^{\infty}\phi^{2j} = \frac{\sigma^2}{1-\phi^2},
+                \qquad |\phi| < 1$$
+            </li>
+          </ol>
+          <p class="derivacion-resultado">La condición $|\phi| < 1$ es exactamente $|1/\phi| > 1$: la raíz de
+            $1 - \phi B$ está fuera del círculo unitario. Y de paso apareció la representación
+            $y_t = \sum_j \phi^j \varepsilon_{t-j}$, que es el <strong>MA($\infty$)</strong> del Módulo 4.</p>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>Enlace con el Capítulo 2.</strong> Cuando una raíz cae <em>exactamente</em> sobre el círculo
+          ($|B| = 1$, es decir $\phi = 1$), el proceso es la <strong>caminata aleatoria</strong>: la ACF que no decaía
+          y el KPSS que rechazaba. De ahí el nombre <em>raíz unitaria</em>. Diferenciar es justamente dividir por el
+          factor $(1-B)$ que produce esa raíz.</p>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Raíces del polinomio característico">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel" data-lang="r">
+          <pre><code class="language-r"># Raices de phi(B) = 1 - phi1*B - phi2*B^2
+# polyroot() recibe los coeficientes en orden ASCENDENTE de potencia
+phi &lt;- c(1.4, -0.75)
+raices &lt;- polyroot(c(1, -phi))
+raices
+#&gt; [1] 0.9333333+0.6798693i 0.9333333-0.6798693i   (complejas conjugadas)
+
+Mod(raices)          # modulo: debe ser &gt; 1 para que sea estacionario
+#&gt; [1] 1.154701 1.154701
+all(Mod(raices) &gt; 1) # veredicto
+#&gt; [1] TRUE
+
+# Un caso NO estacionario: phi = 1 es la caminata aleatoria
+Mod(polyroot(c(1, -1)))
+#&gt; [1] 1            (justo sobre el circulo: raiz unitaria)</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" hidden>
+          <pre><code class="language-python">import numpy as np
+
+# numpy.roots recibe los coeficientes en orden DESCENDENTE de potencia,
+# justo al reves que polyroot() de R: hay que invertir el vector.
+phi = np.array([1.4, -0.75])
+coef = np.r_[1.0, -phi]              # [1, -phi1, -phi2] en orden ascendente
+raices = np.roots(coef[::-1])        # se invierte para numpy
+
+print(raices)
+print(np.abs(raices))                # modulo
+print(bool(np.all(np.abs(raices) > 1)))
+
+# statsmodels lo hace directamente y con el convenio correcto
+from statsmodels.tsa.arima_process import ArmaProcess
+proceso = ArmaProcess(np.r_[1, -phi], np.r_[1])
+print(proceso.arroots, proceso.isstationary)</code></pre>
+        </div>
+      </div>
+
+      <div class="warning">
+        <p><strong>El orden de los coeficientes cambia entre lenguajes.</strong> <code>polyroot()</code> de R los toma
+          en orden <strong>ascendente</strong> de potencia y <code>np.roots()</code> de NumPy en orden
+          <strong>descendente</strong>. Es un error silencioso: no falla, simplemente devuelve las raíces de otro
+          polinomio. Si comparas resultados entre R y Python y no coinciden, empieza por aquí.</p>
+      </div>
+    </div>
+  </template>
+
+  <!-- ============================================================ -->
+  <!-- MÓDULO 2 · Procesos AR(p)                                     -->
+  <!-- ============================================================ -->
+  <template id="module-2">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 2</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">3.2 Procesos autorregresivos
+          <span class="text-gray-400 font-normal text-2xl">/ Autoregressive processes</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Reconocer un AR($p$) por su firma: <strong>PACF que se
+                corta</strong> en el rezago $p$ y ACF que decae. Y saber cuándo es estacionario.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: proceso AR($p$)</h4>
+        <p>Un proceso <strong>autorregresivo de orden $p$</strong> explica el valor actual como una combinación lineal
+          de sus $p$ valores anteriores más un choque de ruido blanco:</p>
+        $$y_t = c + \phi_1 y_{t-1} + \phi_2 y_{t-2} + \cdots + \phi_p y_{t-p} + \varepsilon_t,
+          \qquad \varepsilon_t \sim \text{RB}(0,\sigma^2)$$
+        <p style="margin-bottom:0;">En forma compacta, $\phi(B)\, y_t = c + \varepsilon_t$.</p>
+      </div>
+
+      <p>El nombre lo dice todo: es una <strong>regresión de la serie sobre sí misma</strong>. Si sustituyes $y_{t-1}$
+        por $x_1$, $y_{t-2}$ por $x_2$ y así, tienes una regresión múltiple corriente. La diferencia —y no es
+        menor— es que los regresores no son fijos: son la propia variable desplazada, y por eso los errores estándar
+        y la teoría asintótica no son las de la regresión clásica.</p>
+
+      <div class="note">
+        <p><strong>Sobre la constante.</strong> $c$ no es la media del proceso. Tomando esperanzas en la definición y
+          usando que $E[y_t] = \mu$ para todo $t$ (estacionariedad), se obtiene
+          $\mu = c/(1 - \phi_1 - \cdots - \phi_p)$. Por eso <code>arima()</code> de R reporta una columna
+          <code>intercept</code> que en realidad es $\hat\mu$, <strong>no</strong> $\hat c$. Es una de las confusiones
+          más frecuentes al leer una salida.</p>
+      </div>
+
+      <h3>La firma del AR: la PACF se corta</h3>
+
+      <p>Recuerda del Capítulo 2 que la PACF mide la correlación <em>directa</em> entre $y_t$ y $y_{t-k}$, descontando
+        los rezagos intermedios. En un AR($p$), toda la dependencia directa está en los $p$ primeros rezagos, por
+        construcción. Más allá de $p$ no queda nada que descontar.</p>
+
+      <div class="formula">
+        <p style="margin-bottom:0;">Para un proceso AR($p$): $\;\phi_{kk} = 0\;$ para todo $k > p$, <strong>exactamente
+            cero</strong>, no aproximadamente. Y la ACF decae hacia cero sin cortarse nunca.</p>
+      </div>
+
+      <div class="simulador" data-simulador="panel-ar-teorico">
+        <h4><i class="fas fa-chart-column" aria-hidden="true"></i> Las cuatro firmas del AR</h4>
+        <p class="simulador-intro">ACF y PACF <strong>teóricas</strong> —calculadas con <code>ARMAacf()</code>, no
+          simuladas— de cuatro procesos autorregresivos. Fíjate en que la PACF cae a cero de golpe en el rezago $p$
+          y se queda ahí, mientras la ACF nunca termina de cortarse.</p>
+        <div class="simulador-controles"></div>
+        <p class="grafico-etiqueta">ACF teórica</p>
+        <div class="grafico-wrapper" style="height:190px;">
+          <canvas aria-label="Función de autocorrelación teórica del proceso seleccionado" role="img"></canvas>
+        </div>
+        <p class="grafico-etiqueta">PACF teórica</p>
+        <div class="grafico-wrapper" style="height:190px;">
+          <canvas aria-label="Función de autocorrelación parcial teórica del proceso seleccionado" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <p>Los cuatro casos merecen un comentario. Con $\phi = 0.8$ la ACF decae despacio y siempre positiva
+        ($0.800,\,0.640,\,0.512,\ldots$: son las potencias de $0.8$). Con $\phi = -0.7$ decae
+        <strong>alternando de signo</strong> ($-0.700,\,0.490,\,-0.343,\ldots$), que es la firma de un proceso que
+        rebota. El AR(2) con raíces reales decae de forma monótona. Y el AR(2) con
+        $\phi = (1.4,\,-0.75)$ produce algo nuevo: una ACF que <strong>oscila</strong>
+        ($0.800,\,0.370,\,-0.082,\,-0.392$), cruzando el cero y volviendo. Esa oscilación es un
+        <em>pseudo-ciclo</em>, y es el fenómeno que hará interesante el caso real del Módulo 9.</p>
+
+      <h3>El triángulo de estacionariedad del AR(2)</h3>
+
+      <p>Para $p = 1$ la condición es simplemente $|\phi_1| < 1$. Para $p = 2$, aplicar la condición de las raíces se
+        traduce en tres desigualdades que recortan un triángulo en el plano $(\phi_1, \phi_2)$.</p>
+
+      <div class="formula">
+        <p>Un AR(2) es estacionario si y solo si el par $(\phi_1,\phi_2)$ cumple las tres condiciones:</p>
+        $$\phi_1 + \phi_2 < 1, \qquad \phi_2 - \phi_1 < 1, \qquad -1 < \phi_2 < 1$$
+      </div>
+
+      <div class="simulador" data-simulador="triangulo-ar2">
+        <h4><i class="fas fa-sliders-h" aria-hidden="true"></i> El triángulo de estacionariedad</h4>
+        <p class="simulador-intro">Mueve $\phi_1$ y $\phi_2$ y observa dónde cae el punto. Dentro del triángulo el
+          proceso es estacionario; bajo la parábola $\phi_1^2 + 4\phi_2 = 0$ las raíces son <strong>complejas</strong> y
+          la serie desarrolla un pseudo-ciclo cuyo periodo aparece en la lectura. Prueba
+          $\phi_1 = 1.40$ y $\phi_2 = -0.69$, que es —redondeado al paso del deslizador— el modelo de las manchas
+          solares del Módulo 9: sale un ciclo de unos 11 periodos.</p>
+        <div class="simulador-controles"></div>
+        <p class="grafico-etiqueta">Región de estacionariedad</p>
+        <div class="grafico-wrapper" style="height:280px;">
+          <canvas aria-label="Triángulo de estacionariedad del AR(2) con el punto (phi1, phi2) marcado" role="img"></canvas>
+        </div>
+        <p class="grafico-etiqueta">Realización simulada del proceso</p>
+        <div class="grafico-wrapper" style="height:190px;">
+          <canvas aria-label="Serie simulada del proceso AR(2) seleccionado" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="note">
+        <p><strong>Raíces complejas y ciclos.</strong> Cuando $\phi_1^2 + 4\phi_2 < 0$ las raíces son complejas
+          conjugadas y la ACF oscila con un periodo medio de</p>
+        $$\text{periodo} = \frac{2\pi}{\arccos\!\left(\dfrac{\phi_1}{2\sqrt{-\phi_2}}\right)}$$
+        <p style="margin-bottom:0;">Es un ciclo <em>estocástico</em>: ni la longitud ni la amplitud se repiten
+          exactamente, a diferencia de la estacionalidad determinista del Capítulo 1. Por eso un ciclo económico se
+          modela así y una estacionalidad mensual no.</p>
+      </div>
+
+      <h3>Las ecuaciones de Yule–Walker</h3>
+
+      <p>¿De dónde sale la ACF teórica que dibuja el simulador? De un sistema de ecuaciones que relaciona los
+        $\phi$ con las autocorrelaciones, y que además será nuestro primer método de estimación en el Módulo 7.</p>
+
+      <div class="derivacion">
+        <button type="button" class="derivacion-boton" aria-expanded="false" aria-controls="der-yule-walker">
+          <i class="fas fa-square-root-variable" aria-hidden="true"></i>
+          <span class="derivacion-texto">Ver el desarrollo paso a paso</span>
+          <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="derivacion-panel" id="der-yule-walker" hidden>
+          <ol class="derivacion-pasos">
+            <li>
+              <p>Escribe el AR($p$) centrado (sin pérdida de generalidad, con $\mu = 0$) y multiplica los dos lados por
+                $y_{t-k}$, con $k \ge 1$:</p>
+              $$y_t\, y_{t-k} = \phi_1 y_{t-1}y_{t-k} + \cdots + \phi_p y_{t-p}y_{t-k} + \varepsilon_t y_{t-k}$$
+            </li>
+            <li>
+              <p>Toma esperanzas. Cada término $E[y_{t-i}y_{t-k}]$ es una autocovarianza $\gamma_{k-i}$. El término del
+                ruido <strong>se anula</strong>: $\varepsilon_t$ es independiente de todo lo anterior a $t$, y
+                $k \ge 1$ garantiza que $y_{t-k}$ pertenece al pasado.</p>
+              $$\gamma_k = \phi_1\gamma_{k-1} + \phi_2\gamma_{k-2} + \cdots + \phi_p\gamma_{k-p}$$
+            </li>
+            <li>
+              <p>Divide todo entre $\gamma_0$. Como $\rho_k = \gamma_k/\gamma_0$, la misma recursión vale para las
+                autocorrelaciones — y esta es la forma en que se usa:</p>
+              $$\rho_k = \phi_1\rho_{k-1} + \phi_2\rho_{k-2} + \cdots + \phi_p\rho_{k-p}, \qquad k \ge 1$$
+            </li>
+            <li>
+              <p>Escribiendo esa relación para $k = 1,\ldots,p$ y usando $\rho_{-k} = \rho_k$ queda un sistema lineal
+                de $p$ ecuaciones con $p$ incógnitas. Para el AR(2):</p>
+              $$\rho_1 = \phi_1 + \phi_2\rho_1, \qquad \rho_2 = \phi_1\rho_1 + \phi_2$$
+              <p>que se resuelve en</p>
+              $$\rho_1 = \frac{\phi_1}{1-\phi_2}, \qquad \rho_2 = \phi_2 + \frac{\phi_1^2}{1-\phi_2}$$
+            </li>
+          </ol>
+          <p class="derivacion-resultado">El sistema se puede leer en las dos direcciones. De los $\phi$ a las $\rho$
+            da la <strong>ACF teórica</strong> (lo que dibuja el simulador). De las $\rho$ muestrales a los $\phi$ da el
+            <strong>estimador de Yule–Walker</strong> del Módulo 7. Compruébalo con el AR(2) de
+            $\phi = (0.5,\,0.3)$: $\rho_1 = 0.5/0.7 = 0.714$ y $\rho_2 = 0.3 + 0.25/0.7 = 0.657$, exactamente las
+            cifras del simulador.</p>
+        </div>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="ACF y PACF teóricas de un AR">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel" data-lang="r">
+          <pre><code class="language-r"># ACF y PACF TEORICAS (exactas, no simuladas)
+phi &lt;- c(0.5, 0.3)
+
+round(ARMAacf(ar = phi, lag.max = 5)[-1], 4)          # se quita el rezago 0
+#&gt; [1] 0.7143 0.6571 0.5429 0.4686 0.3971
+
+round(ARMAacf(ar = phi, lag.max = 5, pacf = TRUE), 4) # PACF
+#&gt; [1] 0.7143 0.3000 0.0000 0.0000 0.0000
+#   la PACF se corta EXACTAMENTE en el rezago p = 2
+
+# Comprobacion de la formula de Yule-Walker para el AR(2)
+rho1 &lt;- phi[1] / (1 - phi[2])
+rho2 &lt;- phi[2] + phi[1]^2 / (1 - phi[2])
+round(c(rho1, rho2), 4)
+#&gt; [1] 0.7143 0.6571
+
+# Estacionariedad
+all(Mod(polyroot(c(1, -phi))) &gt; 1)
+#&gt; [1] TRUE</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" hidden>
+          <pre><code class="language-python">import numpy as np
+from statsmodels.tsa.arima_process import ArmaProcess, arma_acf, arma_pacf
+
+phi = np.array([0.5, 0.3])
+ar = np.r_[1, -phi]      # convenio de statsmodels: 1 - phi1 B - phi2 B^2
+ma = np.r_[1]
+
+print(np.round(arma_acf(ar, ma, lags=6)[1:], 4))
+# [0.7143 0.6571 0.5429 0.4686 0.3971]
+
+print(np.round(arma_pacf(ar, ma, lags=6)[1:], 4))
+# [ 0.7143  0.3    -0.      0.     -0.    ]
+#   los "-0." son ceros con signo negativo del punto flotante: la PACF
+#   se corta igual de exactamente que en R
+
+proceso = ArmaProcess(ar, ma)
+print(proceso.isstationary)   # True</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- ============================================================ -->
+  <!-- MÓDULO 3 · Procesos MA(q)                                     -->
+  <!-- ============================================================ -->
+  <template id="module-3">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 3</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">3.3 Procesos de medias móviles
+          <span class="text-gray-400 font-normal text-2xl">/ Moving average processes</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Reconocer un MA($q$) por su firma —<strong>ACF que se
+                corta</strong> en el rezago $q$— y entender qué es la invertibilidad y por qué el software la impone.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: proceso MA($q$)</h4>
+        <p>Un proceso de <strong>medias móviles de orden $q$</strong> expresa el valor actual como una combinación
+          lineal del choque presente y de los $q$ choques anteriores:</p>
+        $$y_t = \mu + \varepsilon_t + \theta_1\varepsilon_{t-1} + \cdots + \theta_q\varepsilon_{t-q}$$
+        <p style="margin-bottom:0;">En forma compacta, $y_t = \mu + \theta(B)\,\varepsilon_t$.</p>
+      </div>
+
+      <div class="warning">
+        <p><strong>El nombre engaña.</strong> Un proceso de "medias móviles" <em>no</em> es la media móvil de
+          suavizamiento del Capítulo 1. Aquella promediaba <strong>valores observados</strong> de la serie; esta
+          combina <strong>choques no observados</strong> del ruido, y los pesos $\theta_j$ ni suman uno ni tienen por
+          qué ser positivos. Coinciden solo en el nombre, que es un accidente histórico.</p>
+      </div>
+
+      <h3>Un MA siempre es estacionario</h3>
+
+      <p>Aquí no hay condición que verificar. Un MA($q$) es una suma <strong>finita</strong> de variables de ruido
+        blanco con pesos fijos, así que su media y su varianza no dependen de $t$ y su autocovarianza solo depende del
+        rezago. Es estacionario para cualquier valor de los $\theta$.</p>
+
+      <div class="formula">
+        <p>Varianza y autocorrelaciones de un MA($q$):</p>
+        $$\gamma_0 = \sigma^2\left(1 + \sum_{j=1}^{q}\theta_j^2\right), \qquad
+          \rho_k = \frac{\sum_{j=0}^{q-k}\theta_j\theta_{j+k}}{1+\sum_{j=1}^{q}\theta_j^2}
+          \;\; (k \le q), \qquad \rho_k = 0 \;\; (k > q)$$
+        <p style="margin-bottom:0;">con el convenio $\theta_0 = 1$.</p>
+      </div>
+
+      <p>Ese $\rho_k = 0$ para $k > q$ es <strong>exacto</strong> y es la firma que buscamos: si dos observaciones están
+        separadas por más de $q$ periodos, no comparten ni un solo choque, luego su covarianza es cero. El MA tiene
+        <em>memoria finita</em>, literalmente de $q$ periodos.</p>
+
+      <div class="simulador" data-simulador="panel-ma-teorico">
+        <h4><i class="fas fa-chart-column" aria-hidden="true"></i> Las firmas del MA</h4>
+        <p class="simulador-intro">ACF y PACF teóricas de tres procesos de medias móviles. Ahora los papeles están
+          <strong>intercambiados</strong> respecto al AR: es la <strong>ACF</strong> la que se corta en seco tras el
+          rezago $q$, y la PACF la que decae sin fin.</p>
+        <div class="simulador-controles"></div>
+        <p class="grafico-etiqueta">ACF teórica</p>
+        <div class="grafico-wrapper" style="height:190px;">
+          <canvas aria-label="Función de autocorrelación teórica del proceso de medias móviles seleccionado" role="img"></canvas>
+        </div>
+        <p class="grafico-etiqueta">PACF teórica</p>
+        <div class="grafico-wrapper" style="height:190px;">
+          <canvas aria-label="Función de autocorrelación parcial teórica del proceso de medias móviles seleccionado" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <h3>Invertibilidad: por qué $\theta$ y $1/\theta$ son el mismo modelo</h3>
+
+      <p>Hay un problema serio escondido en el MA, y conviene verlo con el caso más simple. Para un MA(1),
+        $\rho_1 = \theta/(1+\theta^2)$. Pon $\theta = 0.5$ y $\theta = 2$:</p>
+
+      <div class="formula">
+        $$\rho_1(0.5) = \frac{0.5}{1.25} = 0.4, \qquad \rho_1(2) = \frac{2}{5} = 0.4$$
+      </div>
+
+      <p>Los dos procesos tienen <strong>exactamente la misma ACF</strong>, y por tanto la misma estructura de
+        autocorrelación observable. Ningún dato podría distinguirlos. Si no se impone una regla, el modelo no está
+        identificado.</p>
+
+      <div class="derivacion">
+        <button type="button" class="derivacion-boton" aria-expanded="false" aria-controls="der-ma1-invertible">
+          <i class="fas fa-square-root-variable" aria-hidden="true"></i>
+          <span class="derivacion-texto">Ver el desarrollo paso a paso</span>
+          <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="derivacion-panel" id="der-ma1-invertible" hidden>
+          <ol class="derivacion-pasos">
+            <li>
+              <p>Calcula la varianza del MA(1) $y_t = \varepsilon_t + \theta\varepsilon_{t-1}$. Los dos choques son
+                independientes, así que las varianzas se suman:</p>
+              $$\gamma_0 = \operatorname{Var}(\varepsilon_t) + \theta^2\operatorname{Var}(\varepsilon_{t-1})
+                = \sigma^2(1+\theta^2)$$
+            </li>
+            <li>
+              <p>La autocovarianza de orden 1: $y_t$ e $y_{t-1}$ comparten un único choque, $\varepsilon_{t-1}$.</p>
+              $$\gamma_1 = E[(\varepsilon_t + \theta\varepsilon_{t-1})(\varepsilon_{t-1} + \theta\varepsilon_{t-2})]
+                = \theta\sigma^2$$
+              <p>Para $k \ge 2$ no comparten ninguno, luego $\gamma_k = 0$.</p>
+            </li>
+            <li>
+              <p>Por tanto</p>
+              $$\rho_1 = \frac{\theta}{1+\theta^2}$$
+              <p>y esta función es <strong>invariante bajo $\theta \mapsto 1/\theta$</strong>: sustituyendo,
+                $\dfrac{1/\theta}{1+1/\theta^2} = \dfrac{\theta}{\theta^2+1}$, que es lo mismo.</p>
+            </li>
+            <li>
+              <p>De paso, $\rho_1$ tiene un máximo. Derivando, se alcanza en $\theta = 1$, donde $\rho_1$ vale
+                exactamente $1/2$; de ahí la cota</p>
+              $$|\rho_1| \le \frac{1}{2}$$
+              <p>Un MA(1) <strong>no puede</strong> producir una autocorrelación de primer orden mayor que $0.5$ en
+                valor absoluto.</p>
+            </li>
+          </ol>
+          <p class="derivacion-resultado">De los dos valores $\theta$ y $1/\theta$ se elige por convenio el que cumple
+            $|\theta| < 1$: el <strong>invertible</strong>. Es el que permite escribir el proceso como un AR($\infty$)
+            convergente (Módulo 4) y, en consecuencia, el que permite reconstruir los choques a partir de lo observado.</p>
+        </div>
+      </div>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Condición de invertibilidad</h4>
+        <p style="margin-bottom:0;">Un MA($q$) es <strong>invertible</strong> si todas las raíces de $\theta(B) = 0$
+          están fuera del círculo unitario. Es la misma condición que la estacionariedad del AR, aplicada al otro
+          polinomio.</p>
+      </div>
+
+      <div class="note">
+        <p><strong>El límite $|\rho_1| \le 0.5$ es una herramienta de diagnóstico.</strong> Si en un correlograma
+          muestral ves $r_1 = 0.8$ y quisieras ajustar un MA(1), no hay ningún $\theta$ que lo produzca. Esa
+          autocorrelación pide un AR, o al menos un componente autorregresivo. Sirve para descartar modelos sin
+          ajustar nada.</p>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="MA e invertibilidad">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel" data-lang="r">
+          <pre><code class="language-r"># Dos MA(1) con la MISMA ACF: theta y 1/theta
+round(ARMAacf(ma = 0.5, lag.max = 3)[-1], 4)
+#&gt; [1] 0.4 0.0 0.0
+round(ARMAacf(ma = 2.0, lag.max = 3)[-1], 4)
+#&gt; [1] 0.4 0.0 0.0     <- identicas: el modelo no esta identificado
+
+# Invertibilidad: raices de theta(B) = 1 + theta*B
+Mod(polyroot(c(1, 0.5)))   # theta = 0.5  -> raiz en -2
+#&gt; [1] 2
+Mod(polyroot(c(1, 2.0)))   # theta = 2    -> raiz en -0.5
+#&gt; [1] 0.5              <- DENTRO del circulo: NO invertible
+
+# El maximo de |rho_1| de un MA(1) esta en theta = 1
+th &lt;- seq(-3, 3, by = 0.01)
+max(abs(th / (1 + th^2)))
+#&gt; [1] 0.5
+
+# arima() devuelve siempre la version invertible
+set.seed(1)
+y &lt;- arima.sim(n = 500, list(ma = 2.0))   # se le pide theta = 2...
+coef(arima(y, order = c(0, 0, 1)))["ma1"] # ...y devuelve ~1/2
+#&gt;       ma1
+#&gt; 0.4794171</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" hidden>
+          <pre><code class="language-python">import numpy as np
+from statsmodels.tsa.arima_process import ArmaProcess, arma_acf
+
+# Dos MA(1) con la misma ACF
+for theta in (0.5, 2.0):
+    acf = arma_acf(np.r_[1], np.r_[1, theta], lags=4)[1:]
+    proc = ArmaProcess(np.r_[1], np.r_[1, theta])
+    print(f"theta={theta}: acf={np.round(acf, 4)}  invertible={proc.isinvertible}")
+# theta=0.5: acf=[0.4 0.  0. ]  invertible=True
+# theta=2.0: acf=[0.4 0.  0. ]  invertible=False
+
+# El maximo de |rho_1| de un MA(1)
+th = np.arange(-3, 3, 0.01)
+print(np.max(np.abs(th / (1 + th**2))))   # 0.5
+</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- ============================================================ -->
+  <!-- MÓDULO 4 · Dualidad AR ↔ MA                                   -->
+  <!-- ============================================================ -->
+  <template id="module-4">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 4</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">3.4 Dualidad AR ↔ MA
+          <span class="text-gray-400 font-normal text-2xl">/ AR–MA duality</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Ver que AR y MA son dos formas de escribir lo mismo, y
+              manejar los pesos $\psi$ y $\pi$, que reaparecerán en los intervalos de pronóstico del Capítulo 6.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>En el Módulo 1, al desarrollar el AR(1) hacia atrás, apareció sin buscarlo la expresión
+        $y_t = \sum_j \phi^j \varepsilon_{t-j}$: un AR(1) escrito como un MA de orden infinito. No es una casualidad
+        del caso particular, sino un hecho general y una de las ideas más útiles del capítulo.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Las dos representaciones</h4>
+        <p>Todo proceso ARMA estacionario e invertible admite dos escrituras equivalentes:</p>
+        $$\underbrace{y_t = \sum_{j=0}^{\infty}\psi_j\,\varepsilon_{t-j}}_{\text{MA}(\infty)\;:\;\psi(B)=\theta(B)/\phi(B)}
+          \qquad\qquad
+          \underbrace{\varepsilon_t = \sum_{j=0}^{\infty}\pi_j\,y_{t-j}}_{\text{AR}(\infty)\;:\;\pi(B)=\phi(B)/\theta(B)}$$
+        <p style="margin-bottom:0;">con $\psi_0 = \pi_0 = 1$.</p>
+      </div>
+
+      <p>Cada una responde a una pregunta distinta. Los <strong>pesos $\psi$</strong> dicen cuánto de un choque
+        ocurrido hace $j$ periodos sigue presente hoy: son la <em>función de respuesta al impulso</em>. Los
+        <strong>pesos $\pi$</strong> dicen cuánto pesa la observación de hace $j$ periodos al reconstruir el choque
+        actual: son la base de la predicción.</p>
+
+      <div class="simulador" data-simulador="dualidad-psi-pi">
+        <h4><i class="fas fa-sliders-h" aria-hidden="true"></i> Pesos $\psi$ y $\pi$ de un ARMA(1,1)</h4>
+        <p class="simulador-intro">Mueve $\phi$ y $\theta$ y observa las dos representaciones. Con $\phi = 0.8$ y
+          $\theta = 0$ tienes el AR(1): los $\psi$ son las potencias $0.8^j$ y solo hay <strong>un</strong> peso $\pi$.
+          Lleva ahora $\theta$ más allá de $1$ —el MA deja de ser invertible— y mira lo que les pasa a los $\pi$.</p>
+        <div class="simulador-controles"></div>
+        <p class="grafico-etiqueta">Pesos $\psi_j$ — representación MA($\infty$)</p>
+        <div class="grafico-wrapper" style="height:190px;">
+          <canvas aria-label="Pesos psi de la representación de medias móviles infinita" role="img"></canvas>
+        </div>
+        <p class="grafico-etiqueta">Pesos $\pi_j$ — representación AR($\infty$)</p>
+        <div class="grafico-wrapper" style="height:190px;">
+          <canvas aria-label="Pesos pi de la representación autorregresiva infinita" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="warning">
+        <p><strong>Lo que acabas de ver con $|\theta| > 1$.</strong> Los pesos $\pi$ crecen sin límite en vez de
+          desvanecerse. Eso significa que reconstruir el choque de hoy exigiría dar un peso cada vez
+          <em>mayor</em> a observaciones cada vez <strong>más antiguas</strong>, lo cual es absurdo. Esa es la
+          traducción operativa de la no invertibilidad, y la razón de fondo por la que el software siempre te devuelve
+          la raíz invertible.</p>
+      </div>
+
+      <h3>Cómo se calculan los pesos</h3>
+
+      <div class="derivacion">
+        <button type="button" class="derivacion-boton" aria-expanded="false" aria-controls="der-pesos-psi">
+          <i class="fas fa-square-root-variable" aria-hidden="true"></i>
+          <span class="derivacion-texto">Ver el desarrollo paso a paso</span>
+          <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="derivacion-panel" id="der-pesos-psi" hidden>
+          <ol class="derivacion-pasos">
+            <li>
+              <p>Parte de la identidad que define los $\psi$ y quítate la división multiplicando por $\phi(B)$:</p>
+              $$\psi(B) = \frac{\theta(B)}{\phi(B)} \;\Longleftrightarrow\; \phi(B)\,\psi(B) = \theta(B)$$
+            </li>
+            <li>
+              <p>Desarrolla el producto y agrupa por potencias de $B$. El coeficiente de $B^j$ del lado izquierdo es
+                $\psi_j - \phi_1\psi_{j-1} - \cdots - \phi_p\psi_{j-p}$, y del lado derecho es $\theta_j$
+                (o cero si $j > q$).</p>
+            </li>
+            <li>
+              <p>Igualando coeficiente a coeficiente sale una <strong>recursión</strong>, que es lo que implementan el
+                simulador de esta página y el precálculo en R:</p>
+              $$\psi_j = \theta_j + \sum_{i=1}^{p}\phi_i\,\psi_{j-i}, \qquad \psi_0 = 1,\;\; \theta_j = 0 \text{ si } j>q$$
+            </li>
+            <li>
+              <p>Para los $\pi$ el razonamiento es idéntico sobre $\theta(B)\pi(B) = \phi(B)$, e intercambia los
+                papeles:</p>
+              $$\pi_j = -\phi_j - \sum_{i=1}^{q}\theta_i\,\pi_{j-i}, \qquad \pi_0 = 1,\;\; \phi_j = 0 \text{ si } j>p$$
+            </li>
+            <li>
+              <p>Con los $\psi$ se obtiene además la autocovarianza sin resolver ningún sistema, porque los
+                $\varepsilon$ son incorrelados:</p>
+              $$\gamma_k = \sigma^2\sum_{j=0}^{\infty}\psi_j\,\psi_{j+k}$$
+            </li>
+          </ol>
+          <p class="derivacion-resultado">Esta última fórmula es la que usa el <strong>laboratorio del Módulo 5</strong>
+            para dibujar la ACF teórica en el navegador: trunca la serie en 2000 términos y divide entre $\gamma_0$.
+            Contrastada contra <code>ARMAacf()</code> de R sobre los ocho procesos del capítulo, el error máximo es de
+            $6.7\times10^{-16}$, o sea, el redondeo de la aritmética de punto flotante.</p>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>Por qué esto reaparece en el Capítulo 6.</strong> La varianza del error de pronóstico a $h$ pasos
+          de un ARMA es</p>
+        $$\operatorname{Var}(e_{T+h}) = \sigma^2\sum_{j=0}^{h-1}\psi_j^2$$
+        <p style="margin-bottom:0;">Los pesos $\psi$ son, literalmente, lo que da su forma de abanico a las bandas de
+          un pronóstico. Cuanto más lentamente decaen, más rápido se abre la incertidumbre.</p>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Pesos psi y pi">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel" data-lang="r">
+          <pre><code class="language-r"># Pesos psi (respuesta al impulso) de un ARMA(1,1)
+psi &lt;- ARMAtoMA(ar = 0.7, ma = 0.5, lag.max = 8)
+round(psi, 4)
+#&gt; [1] 1.2000 0.8400 0.5880 0.4116 0.2881 0.2017 0.1412 0.0988
+#   ojo: ARMAtoMA NO devuelve psi_0 = 1, empieza en psi_1
+
+# Un AR(1) puro: los psi son las potencias de phi
+round(ARMAtoMA(ar = 0.8, lag.max = 5), 4)
+#&gt; [1] 0.8000 0.6400 0.5120 0.4096 0.3277
+round(0.8^(1:5), 4)
+#&gt; [1] 0.8000 0.6400 0.5120 0.4096 0.3277   <- identicos
+
+# Pesos pi: como pi(B) = phi(B)/theta(B), son los psi del proceso que
+# intercambia los dos polinomios. Ojo a los signos: el "ar" de aqui es
+# -theta y el "ma" es -phi, por el convenio de signos del Modulo 1.
+pi_w &lt;- ARMAtoMA(ar = -0.5, ma = -0.7, lag.max = 8)
+round(pi_w, 4)
+#&gt; [1] -1.2000  0.6000 -0.3000  0.1500 -0.0750  0.0375 -0.0187  0.0094
+# se alternan de signo y se desvanecen: el MA(1) con theta = 0.5 SI es invertible
+
+# La ACF teorica a partir de los psi (lo que hace el simulador)
+psi0 &lt;- c(1, ARMAtoMA(ar = 0.7, ma = 0.5, lag.max = 2000))
+g &lt;- sapply(0:5, function(k) sum(psi0[1:(2001 - k)] * psi0[(1 + k):2001]))
+round((g / g[1])[-1], 4)
+#&gt; [1] 0.8308 0.5815 0.4071 0.2850 0.1995
+round(ARMAacf(ar = 0.7, ma = 0.5, lag.max = 5)[-1], 4)   # exacta
+#&gt; [1] 0.8308 0.5815 0.4071 0.2850 0.1995   <- coinciden</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" hidden>
+          <pre><code class="language-python">import numpy as np
+from statsmodels.tsa.arima_process import ArmaProcess, arma_acf
+
+proceso = ArmaProcess(np.r_[1, -0.7], np.r_[1, 0.5])
+
+# Pesos psi: aqui SI incluyen psi_0 = 1
+psi = proceso.arma2ma(lags=9)
+print(np.round(psi, 4))
+# [1.     1.2    0.84   0.588  0.4116 0.2881 0.2017 0.1412 0.0988]
+
+# Pesos pi: aqui tampoco hay que invertir nada, arma2ar aplica el convenio
+pi_w = proceso.arma2ar(lags=9)
+print(np.round(pi_w, 4))
+# [ 1.     -1.2     0.6    -0.3     0.15   -0.075   0.0375 -0.0188  0.0094]
+
+# ACF teorica a partir de los psi
+psi0 = proceso.arma2ma(lags=2001)
+g = np.array([np.dot(psi0[:2001 - k], psi0[k:2001]) for k in range(6)])
+print(np.round((g / g[0])[1:], 4))
+# [0.8308 0.5815 0.4071 0.285  0.1995]
+print(np.round(arma_acf(np.r_[1, -0.7], np.r_[1, 0.5], lags=6)[1:], 4))
+# [0.8308 0.5815 0.4071 0.285  0.1995]
+</code></pre>
+        </div>
+      </div>
+
+      <div class="warning">
+        <p><strong>Dos convenios distintos para $\psi_0$.</strong> <code>ARMAtoMA()</code> de R empieza en $\psi_1$ y
+          <code>arma2ma()</code> de statsmodels empieza en $\psi_0 = 1$. Al comparar salidas o al programar la fórmula
+          de la varianza del pronóstico, un desplazamiento de un índice cambia el resultado sin dar ningún error.</p>
+      </div>
+    </div>
+  </template>
+
+  <!-- ============================================================ -->
+  <!-- MÓDULO 5 · ARMA(p,q) e identificación                         -->
+  <!-- ============================================================ -->
+  <template id="module-5">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 5</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">3.5 Modelos ARMA e
+          identificación <span class="text-gray-400 font-normal text-2xl">/ ARMA models &amp; identification</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Usar la tabla ACF/PACF para proponer $(p,q)$ — y
+              descubrir de primera mano por qué esa tabla funciona mucho mejor en la teoría que con datos reales.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="ciclo" data-ciclo="identificacion-arma">
+        <ol class="ciclo-etapas" role="tablist" aria-label="Etapas del ciclo">
+          <li class="ciclo-etapa" role="presentation">
+            <button type="button" class="ciclo-boton" role="tab"
+              aria-selected="true" aria-controls="ciclo-identificacion-arma-acf" tabindex="0">
+              <span class="ciclo-numero">Paso 1</span>
+              <span class="ciclo-titulo">Leer la ACF</span>
+              <span class="ciclo-resumen">¿Decae o corta?</span>
+            </button>
+          </li>
+          <li class="ciclo-etapa" role="presentation">
+            <button type="button" class="ciclo-boton" role="tab"
+              aria-selected="false" aria-controls="ciclo-identificacion-arma-pacf" tabindex="-1">
+              <span class="ciclo-numero">Paso 2</span>
+              <span class="ciclo-titulo">Leer la PACF</span>
+              <span class="ciclo-resumen">¿Decae o corta?</span>
+            </button>
+          </li>
+          <li class="ciclo-etapa" role="presentation">
+            <button type="button" class="ciclo-boton" role="tab"
+              aria-selected="false" aria-controls="ciclo-identificacion-arma-proponer" tabindex="-1">
+              <span class="ciclo-numero">Paso 3</span>
+              <span class="ciclo-titulo">Proponer $(p, q)$</span>
+              <span class="ciclo-resumen">Con la tabla</span>
+            </button>
+          </li>
+          <li class="ciclo-etapa" role="presentation">
+            <button type="button" class="ciclo-boton" role="tab"
+              aria-selected="false" aria-controls="ciclo-identificacion-arma-comprobar" tabindex="-1">
+              <span class="ciclo-numero">Paso 4</span>
+              <span class="ciclo-titulo">Comprobar</span>
+              <span class="ciclo-resumen">Teórica vs. muestral</span>
+            </button>
+          </li>
+        </ol>
+        <p class="ciclo-retorno">Identificar es un ciclo de conjeturas, no una lectura única: el diagnóstico devuelve al correlograma tantas veces como haga falta.</p>
+        <div class="ciclo-panel" id="ciclo-identificacion-arma-acf" role="tabpanel">
+          <div class="ciclo-campo">
+            <span class="ciclo-etiqueta">Qué haces</span>
+            <p>Si la ACF <strong>corta</strong> tras el rezago $q$, hay una parte MA($q$). Si <strong>decae</strong> —geométrica o con ondas—, la parte MA no manda y hay que mirar la PACF.</p>
+          </div>
+          <div class="ciclo-campo">
+            <span class="ciclo-etiqueta">Con qué</span>
+            <p><code>acf(y, lag.max = 20)</code>; en Python, <code>plot_acf(y)</code>. La banda $\pm 1.96/\sqrt{n}$ marca qué es ruido.</p>
+          </div>
+          <div class="ciclo-campo ciclo-vuelta">
+            <span class="ciclo-etiqueta">Qué te devuelve atrás</span>
+            <p>Si la ACF no decae en absoluto, la serie no es estacionaria: esto no es un problema de identificación sino del Capítulo 2.</p>
+          </div>
+        </div>
+        <div class="ciclo-panel" id="ciclo-identificacion-arma-pacf" role="tabpanel" hidden>
+          <div class="ciclo-campo">
+            <span class="ciclo-etiqueta">Qué haces</span>
+            <p>Si la PACF corta tras el rezago $p$, hay una parte AR($p$). Si <strong>las dos</strong> decaen sin cortar, es un ARMA mixto y la tabla ya no basta: hay que probar.</p>
+          </div>
+          <div class="ciclo-campo">
+            <span class="ciclo-etiqueta">Con qué</span>
+            <p><code>pacf(y)</code> — ojo, <code>pacf(y)$acf</code> devuelve un array de tres dimensiones; envuélvelo en <code>as.numeric()</code>.</p>
+          </div>
+          <div class="ciclo-campo ciclo-vuelta">
+            <span class="ciclo-etiqueta">Qué te devuelve atrás</span>
+            <p>Un corte limpio en la teoría se vuelve borroso con datos reales: con $n$ pequeño, vuelve al paso 1 sabiendo que la banda es ancha.</p>
+          </div>
+        </div>
+        <div class="ciclo-panel" id="ciclo-identificacion-arma-proponer" role="tabpanel" hidden>
+          <div class="ciclo-campo">
+            <span class="ciclo-etiqueta">Qué haces</span>
+            <p>Cruzar las dos lecturas en la tabla de identificación. Proponer <strong>varios</strong> candidatos vecinos, no uno: la tabla acota la búsqueda, no la resuelve.</p>
+          </div>
+          <div class="ciclo-campo">
+            <span class="ciclo-etiqueta">Con qué</span>
+            <p><code>arima(y, order = c(p, 0, q))</code> para cada candidato, y los criterios AICc/BIC del Módulo 8 para compararlos.</p>
+          </div>
+          <div class="ciclo-campo ciclo-vuelta">
+            <span class="ciclo-etiqueta">Qué te devuelve atrás</span>
+            <p>Si ningún candidato pasa el diagnóstico, vuelve aquí y amplía el conjunto antes de dar por buena la lectura de los correlogramas.</p>
+          </div>
+        </div>
+        <div class="ciclo-panel" id="ciclo-identificacion-arma-comprobar" role="tabpanel" hidden>
+          <div class="ciclo-campo">
+            <span class="ciclo-etiqueta">Qué haces</span>
+            <p>Enfrentar la ACF/PACF <strong>teórica</strong> del modelo propuesto contra la muestral, y revisar los residuales. Es el paso que convierte una corazonada en un modelo.</p>
+          </div>
+          <div class="ciclo-campo">
+            <span class="ciclo-etiqueta">Con qué</span>
+            <p><code>ARMAacf()</code> para la teórica y <code>Box.test(..., type = "Ljung-Box", fitdf = p + q)</code> para los residuales.</p>
+          </div>
+          <div class="ciclo-campo ciclo-vuelta">
+            <span class="ciclo-etiqueta">Qué te devuelve atrás</span>
+            <p>Residuales con estructura → paso 3 con otro candidato. Curvas teórica y muestral que no se parecen ni de lejos → paso 1.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: proceso ARMA($p,q$)</h4>
+        <p>Combina las dos partes anteriores en un solo modelo:</p>
+        $$y_t = c + \phi_1 y_{t-1} + \cdots + \phi_p y_{t-p}
+          + \varepsilon_t + \theta_1\varepsilon_{t-1} + \cdots + \theta_q\varepsilon_{t-q}$$
+        <p style="margin-bottom:0;">o, en forma compacta, $\;\phi(B)\,y_t = c + \theta(B)\,\varepsilon_t$. Es
+          <strong>estacionario</strong> si las raíces de $\phi(B)$ están fuera del círculo unitario, e
+          <strong>invertible</strong> si lo están las de $\theta(B)$: cada polinomio responde por lo suyo.</p>
+      </div>
+
+      <p>¿Para qué mezclarlos? Por <strong>parsimonia</strong>. Un proceso que necesitaría un AR(8) para describirse
+        bien puede quedar capturado por un ARMA(1,1) con dos parámetros. Menos parámetros significa estimaciones más
+        precisas y pronósticos más estables, que es de lo que se trata.</p>
+
+      <h3>La tabla de identificación</h3>
+
+      <table>
+        <caption class="sr-only">Reglas de identificación según los patrones de ACF y PACF</caption>
+        <thead>
+          <tr>
+            <th scope="col">Modelo</th>
+            <th scope="col">ACF</th>
+            <th scope="col">PACF</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>AR($p$)</strong></td>
+            <td>Decae (exponencial u oscilante)</td>
+            <td><strong>Se corta</strong> tras el rezago $p$</td>
+          </tr>
+          <tr>
+            <td><strong>MA($q$)</strong></td>
+            <td><strong>Se corta</strong> tras el rezago $q$</td>
+            <td>Decae (exponencial u oscilante)</td>
+          </tr>
+          <tr>
+            <td><strong>ARMA($p,q$)</strong></td>
+            <td>Decae tras el rezago $q$</td>
+            <td>Decae tras el rezago $p$</td>
+          </tr>
+          <tr>
+            <td>Ruido blanco</td>
+            <td>Todo dentro de la banda</td>
+            <td>Todo dentro de la banda</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="warning">
+        <p><strong>La tercera fila es la débil.</strong> "Las dos decaen" no dice cuáles son $p$ y $q$: ni el
+          correlograma ni el correlograma parcial identifican los órdenes de un ARMA mixto. En la práctica se propone
+          un modelo pequeño, se diagnostica y se compara por criterios de información (Módulo 8). La tabla sirve para
+          <strong>arrancar</strong>, no para decidir.</p>
+      </div>
+
+      <div class="simulador" data-simulador="laboratorio-arma">
+        <h4><i class="fas fa-flask" aria-hidden="true"></i> Laboratorio ARMA</h4>
+        <p class="simulador-intro">Mueve los cuatro parámetros y compara la ACF/PACF <strong>teórica</strong> (barras
+          sólidas) con la <strong>muestral</strong> de una realización de longitud $T$ (barras claras). Cambia $T$ y
+          verás lo que de verdad ocurre al identificar: con $T = 60$ el patrón teórico casi no se reconoce, y con
+          $T = 1000$ emerge limpio. La banda punteada es $\pm 1.96/\sqrt{T}$.</p>
+        <div class="simulador-controles"></div>
+        <p class="grafico-etiqueta">Realización simulada</p>
+        <div class="grafico-wrapper" style="height:170px;">
+          <canvas aria-label="Serie simulada del proceso ARMA seleccionado" role="img"></canvas>
+        </div>
+        <p class="grafico-etiqueta">ACF — teórica frente a muestral</p>
+        <div class="grafico-wrapper" style="height:190px;">
+          <canvas aria-label="Función de autocorrelación teórica y muestral" role="img"></canvas>
+        </div>
+        <p class="grafico-etiqueta">PACF — teórica frente a muestral</p>
+        <div class="grafico-wrapper" style="height:190px;">
+          <canvas aria-label="Función de autocorrelación parcial teórica y muestral" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="note">
+        <p><strong>Lo que enseña el deslizador de $T$.</strong> La ACF muestral es un <em>estimador</em>, y uno con
+          bastante varianza. Con $T = 60$, la banda vale $\pm 0.253$: cualquier autocorrelación teórica menor que eso
+          es indistinguible de cero. Con $T = 1000$ baja a $\pm 0.062$. Cuando en el Módulo 9 veas un correlograma
+          real que no encaja en ninguna fila de la tabla, recuerda este simulador: casi nunca es que el modelo no
+          exista, es que la muestra es corta.</p>
+      </div>
+
+      <h3>Redundancia de parámetros: cuando sobra un factor</h3>
+
+      <p>Hay una trampa específica de los modelos mixtos. Si $\phi(B)$ y $\theta(B)$ comparten un factor, ese factor se
+        cancela y el modelo es en realidad más pequeño de lo que aparenta.</p>
+
+      <div class="formula">
+        <p>Tomemos el ARMA(1,1) con $\phi_1 = 0.5$ y $\theta_1 = -0.5$:</p>
+        $$(1-0.5B)\,y_t = (1-0.5B)\,\varepsilon_t \;\Longrightarrow\; y_t = \varepsilon_t$$
+        <p style="margin-bottom:0;">Es <strong>ruido blanco</strong> escrito con dos parámetros de más.</p>
+      </div>
+
+      <div class="warning">
+        <p><strong>Cómo se manifiesta en una salida real.</strong> Cuando dos factores casi se cancelan, la
+          verosimilitud es casi plana en esa dirección: los coeficientes salen con <strong>errores estándar enormes</strong>,
+          el optimizador puede no converger, y valores muy distintos de $(\phi,\theta)$ dan ajustes casi idénticos. Si
+          ves un ARMA con $\hat\phi_1 \approx -\hat\theta_1$ y errores estándar grandes, prueba el modelo más pequeño
+          antes de interpretar nada.</p>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Redundancia de parámetros">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel" data-lang="r">
+          <pre><code class="language-r"># Redundancia: phi = -theta hace que el modelo colapse a ruido blanco
+round(ARMAacf(ar = 0.5, ma = -0.5, lag.max = 5)[-1], 6)
+#&gt; [1] 0 0 0 0 0        <- la ACF de un ruido blanco
+
+# Un proceso CASI redundante: phi = 0.5 y theta = -0.45 casi se cancelan,
+# asi que en la practica es casi ruido blanco
+round(ARMAacf(ar = 0.5, ma = -0.45, lag.max = 5)[-1], 4)
+#&gt; [1] 0.0515 0.0257 0.0129 0.0064 0.0032    <- autocorrelaciones minusculas
+
+set.seed(11)
+y &lt;- arima.sim(n = 200, list(ar = 0.5, ma = -0.45))
+ajuste &lt;- arima(y, order = c(1, 0, 1))
+#&gt; Warning: possible convergence problem: optim gave code = 1
+round(cbind(coef = coef(ajuste), ee = sqrt(diag(ajuste$var.coef))), 4)
+#&gt;              coef     ee
+#&gt; ar1        0.8300 0.2307
+#&gt; ma1       -0.7953 0.2477
+#&gt; intercept  0.0137 0.0806
+
+# Los verdaderos son 0.5 y -0.45; la estimacion se va a 0.83 y -0.80.
+# Lo que SI reproduce es la suma (0.0347 frente a 0.05): el ajuste fija
+# la cancelacion, no cada coeficiente por separado.
+
+# Y el modelo mas pequeno gana:
+aicc &lt;- function(f, n) { k &lt;- length(f$coef) + 1; f$aic + 2*k*(k+1)/(n-k-1) }
+c(arma11 = aicc(ajuste, 200),
+  ar1    = aicc(arima(y, order = c(1, 0, 0)), 200),
+  ruido  = aicc(arima(y, order = c(0, 0, 0)), 200))
+#&gt;   arma11      ar1    ruido
+#&gt; 554.3463 552.9939 550.9449</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" hidden>
+          <pre><code class="language-python">import numpy as np
+from statsmodels.tsa.arima_process import ArmaProcess, arma_acf
+from statsmodels.tsa.arima.model import ARIMA
+
+# Redundancia exacta: phi = -theta colapsa a ruido blanco
+print(np.round(arma_acf(np.r_[1, -0.5], np.r_[1, -0.5], lags=6)[1:], 6))
+# [0. 0. 0. 0. 0.]
+
+# Redundancia CASI exacta: phi = 0.5, theta = -0.45
+print(np.round(arma_acf(np.r_[1, -0.5], np.r_[1, -0.45], lags=6)[1:], 4))
+# [0.0515 0.0257 0.0129 0.0064 0.0032]
+
+# Simular ese proceso y ajustarle un ARMA(1,1): los coeficientes se van
+# lejos de los verdaderos, con errores estandar grandes, pero su SUMA
+# reproduce la cancelacion. La semilla no coincide con la de R, asi que
+# las cifras exactas difieren; el sintoma es el mismo.
+proceso = ArmaProcess(np.r_[1, -0.5], np.r_[1, -0.45])
+y = proceso.generate_sample(nsample=200, distrvs=np.random.default_rng(11).standard_normal)
+res = ARIMA(y, order=(1, 0, 1)).fit()
+print(res.summary().tables[1])
+print("suma ar1 + ma1 =", round(res.arparams[0] + res.maparams[0], 4))
+</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>
+  <!-- ============================================================ -->
+  <!-- MÓDULO 6 · Simular y reconocer procesos                       -->
+  <!-- ============================================================ -->
+  <template id="module-6">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 6</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">3.6 Simular y reconocer
+          procesos <span class="text-gray-400 font-normal text-2xl">/ Simulating &amp; recognising processes</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Generar procesos de orden conocido para entrenar el ojo,
+              y medir cuánto se separa una ACF muestral de la teórica que la generó.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>La mejor forma de aprender a identificar es al revés: simular procesos cuyo orden ya conoces y mirar sus
+        correlogramas. Es lo único que da la calibración necesaria para no ver estructura donde solo hay azar.</p>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Simular procesos ARMA">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel" data-lang="r">
+          <pre><code class="language-r">set.seed(3)
+
+# arima.sim descarta automaticamente un periodo de calentamiento (burn-in),
+# asi que la serie que devuelve ya esta en regimen estacionario.
+ar1   &lt;- arima.sim(n = 200, model = list(ar = 0.8))
+ma1   &lt;- arima.sim(n = 200, model = list(ma = 0.8))
+arma  &lt;- arima.sim(n = 200, model = list(ar = 0.7, ma = 0.5))
+
+par(mfrow = c(3, 3), mar = c(3, 4, 2, 1))
+for (nm in c("ar1", "ma1", "arma")) {
+  x &lt;- get(nm)
+  plot(x, main = nm, ylab = "")
+  acf(x,  lag.max = 16, main = "ACF")
+  pacf(x, lag.max = 16, main = "PACF")
+}
+
+# arima.sim EXIGE un modelo estacionario: si le pides una raiz unitaria falla
+try(arima.sim(n = 100, model = list(ar = 1)))
+#&gt; Error in arima.sim(...) : 'ar' part of model is not stationary
+# Para simular una caminata aleatoria hay que usar cumsum(rnorm(n)),
+# como se hizo en el Capitulo 2.</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" hidden>
+          <pre><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from statsmodels.tsa.arima_process import ArmaProcess
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+
+rng = np.random.default_rng(3)
+
+procesos = {
+    "ar1":  ArmaProcess(np.r_[1, -0.8], np.r_[1]),
+    "ma1":  ArmaProcess(np.r_[1], np.r_[1, 0.8]),
+    "arma": ArmaProcess(np.r_[1, -0.7], np.r_[1, 0.5]),
+}
+
+fig, ejes = plt.subplots(3, 3, figsize=(13, 8))
+for fila, (nombre, proc) in enumerate(procesos.items()):
+    x = proc.generate_sample(nsample=200, distrvs=rng.standard_normal)
+    ejes[fila, 0].plot(x); ejes[fila, 0].set_title(nombre)
+    plot_acf(x,  lags=16, ax=ejes[fila, 1], title="ACF")
+    plot_pacf(x, lags=16, ax=ejes[fila, 2], title="PACF", method="ywm")
+plt.tight_layout()
+
+# generate_sample NO descarta calentamiento por defecto: se pide con burnin=
+x = procesos["ar1"].generate_sample(nsample=200, burnin=100,
+                                    distrvs=rng.standard_normal)</code></pre>
+        </div>
+      </div>
+
+      <div class="warning">
+        <p><strong>Una diferencia real entre R y Python.</strong> <code>arima.sim()</code> descarta por su cuenta un
+          tramo de calentamiento (<em>burn-in</em>) para que la serie salga ya en régimen estacionario;
+          <code>generate_sample()</code> de statsmodels <strong>no lo hace</strong> salvo que se le pase
+          <code>burnin=</code>. Con procesos muy persistentes ($\phi$ cerca de 1), olvidarlo mete una tendencia
+          espuria al principio de la serie que después se lee como si fuera estructura.</p>
+      </div>
+
+      <h3>Cuánto se aleja la muestra de la teoría</h3>
+
+      <p>El laboratorio del módulo anterior lo insinuaba; aquí lo cuantificamos con tres realizaciones concretas de
+        longitud 200 generadas con <code>set.seed(3)</code>. Cada barra sólida es el valor teórico y cada barra clara
+        el muestral.</p>
+
+      <div class="simulador" data-simulador="teorica-vs-muestral">
+        <h4><i class="fas fa-chart-column" aria-hidden="true"></i> Teórica frente a muestral, $T = 200$</h4>
+        <p class="simulador-intro">Tres procesos de orden conocido. Fíjate sobre todo en los rezagos donde la teoría
+          dice <strong>exactamente cero</strong>: la muestra pone ahí valores pequeños pero no nulos, y alguno se
+          asoma fuera de la banda. Eso, y no otra cosa, es lo que ves en un correlograma real.</p>
+        <div class="simulador-controles"></div>
+        <p class="grafico-etiqueta">ACF</p>
+        <div class="grafico-wrapper" style="height:200px;">
+          <canvas aria-label="ACF teórica y muestral del proceso seleccionado" role="img"></canvas>
+        </div>
+        <p class="grafico-etiqueta">PACF</p>
+        <div class="grafico-wrapper" style="height:200px;">
+          <canvas aria-label="PACF teórica y muestral del proceso seleccionado" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="note">
+        <p><strong>La regla del 5 %.</strong> La banda $\pm 1.96/\sqrt{T}$ es un intervalo al 95 % <em>para cada
+            rezago por separado</em>. Si miras 20 rezagos de una serie que es ruido blanco puro, esperas que
+          $20 \times 0.05 = 1$ de ellos se salga por puro azar. Ver uno o dos picos fuera de la banda no es evidencia
+          de nada; por eso existe la prueba de Ljung–Box del Módulo 8, que evalúa todos los rezagos a la vez.</p>
+      </div>
+    </div>
+  </template>
+
+  <!-- ============================================================ -->
+  <!-- MÓDULO 7 · Estimación                                         -->
+  <!-- ============================================================ -->
+  <template id="module-7">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 7</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">3.7 Estimación de parámetros
+          <span class="text-gray-400 font-normal text-2xl">/ Parameter estimation</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Conocer los tres estimadores que usa el software,
+              entender en qué se diferencian y comprobar sobre datos reales <strong>cuánto</strong> se separan.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Hasta aquí los $\phi$ y los $\theta$ eran datos del problema. Con una serie real hay que estimarlos, y no hay
+        un único procedimiento: hay tres, y no dan lo mismo. Empecemos por la serie que nos acompañará el resto del
+        capítulo.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>La serie de trabajo: manchas solares</h4>
+        <p style="margin-bottom:0;">Número anual de manchas solares (<em>Wolf number</em>) entre <strong>1770 y
+            1869</strong>, $n = 100$ observaciones. Es la ventana centenaria sobre la que <strong>Udny Yule</strong>
+          inventó en 1927 el modelo autorregresivo, precisamente para explicar por qué el Sol tiene un ciclo que se
+          repite "más o menos" cada once años sin ser nunca exactamente periódico. Está en R como
+          <code>sunspot.year</code>.</p>
+      </div>
+
+      <div class="simulador" data-simulador="manchas-identificacion">
+        <h4><i class="fas fa-chart-column" aria-hidden="true"></i> Identificación: la serie y sus correlogramas</h4>
+        <p class="simulador-intro">La PACF tiene dos picos grandes ($0.806$ y $-0.634$) y a partir del tercero se mete
+          dentro de la banda $\pm 0.196$. La ACF, en cambio, ondula y cruza el cero. Según la tabla del Módulo 5, eso
+          es un <strong>AR(2)</strong> — y la ondulación anticipa raíces complejas.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper" style="height:200px;">
+          <canvas aria-label="Serie anual de manchas solares 1770-1869" role="img"></canvas>
+        </div>
+        <p class="grafico-etiqueta">ACF</p>
+        <div class="grafico-wrapper" style="height:190px;">
+          <canvas aria-label="Función de autocorrelación de las manchas solares" role="img"></canvas>
+        </div>
+        <p class="grafico-etiqueta">PACF</p>
+        <div class="grafico-wrapper" style="height:190px;">
+          <canvas aria-label="Función de autocorrelación parcial de las manchas solares" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <h3>Tres formas de estimar el mismo AR(2)</h3>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Los tres métodos</h4>
+        <ul style="margin-bottom:0;">
+          <li><strong>Yule–Walker</strong> (método de momentos). Toma las ecuaciones del Módulo 2, sustituye las
+            $\rho_k$ teóricas por las muestrales $r_k$ y resuelve el sistema. Solo sirve para modelos AR puros. Es
+            explícito, rápido y no necesita optimización.</li>
+          <li><strong>CSS</strong> (<em>conditional sum of squares</em>). Minimiza $\sum \hat\varepsilon_t^2$
+            condicionando en los primeros valores observados. Es una mínimos cuadrados no lineal: descarta la
+            información de las primeras observaciones.</li>
+          <li><strong>Máxima verosimilitud</strong>. Maximiza la verosimilitud gaussiana <em>exacta</em>, que
+            incluye la contribución de las primeras observaciones. Es el más eficiente y el que da errores estándar
+            fiables.</li>
+        </ul>
+      </div>
+
+      <div class="derivacion">
+        <button type="button" class="derivacion-boton" aria-expanded="false" aria-controls="der-verosimilitud">
+          <i class="fas fa-square-root-variable" aria-hidden="true"></i>
+          <span class="derivacion-texto">Ver el desarrollo paso a paso</span>
+          <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="derivacion-panel" id="der-verosimilitud" hidden>
+          <ol class="derivacion-pasos">
+            <li>
+              <p>Supón ruido gaussiano y escribe la densidad conjunta de la muestra factorizándola en condicionales,
+                que es lo natural en una serie de tiempo:</p>
+              $$f(y_1,\ldots,y_T) = f(y_1)\prod_{t=2}^{T} f(y_t \mid y_{t-1},\ldots,y_1)$$
+            </li>
+            <li>
+              <p>Para un AR(1), la condicional es inmediata: dado $y_{t-1}$, el único término aleatorio es
+                $\varepsilon_t$, luego $y_t \mid y_{t-1} \sim N(\phi y_{t-1},\, \sigma^2)$. Tomando logaritmos, la
+                parte condicional de la log-verosimilitud es</p>
+              $$-\frac{T-1}{2}\log(2\pi\sigma^2) - \frac{1}{2\sigma^2}\sum_{t=2}^{T}(y_t - \phi y_{t-1})^2$$
+            </li>
+            <li>
+              <p>Maximizar eso equivale a <strong>minimizar la suma de cuadrados</strong>
+                $\sum_{t=2}^{T}(y_t-\phi y_{t-1})^2$. Ahí está el método <strong>CSS</strong>: es máxima
+                verosimilitud, pero <em>condicionada</em> a $y_1$, cuya densidad se ha ignorado.</p>
+            </li>
+            <li>
+              <p>La verosimilitud <strong>exacta</strong> añade el término que falta. La primera observación no es
+                un dato fijo: procede de la distribución estacionaria, $y_1 \sim N\!\left(0,\ \sigma^2/(1-\phi^2)\right)$,
+                y contribuye con</p>
+              $$-\tfrac{1}{2}\log\frac{2\pi\sigma^2}{1-\phi^2} - \frac{(1-\phi^2)\,y_1^2}{2\sigma^2}$$
+            </li>
+            <li>
+              <p>Ese término aporta el factor $\tfrac{1}{2}\log(1-\phi^2)$, que <strong>penaliza</strong> los valores
+                de $\phi$ cercanos a $1$. Con $T$ grande, un sumando frente a $T$ es despreciable y los dos métodos
+                convergen; con $T$ pequeño o $\phi$ cerca de la frontera, no.</p>
+            </li>
+          </ol>
+          <p class="derivacion-resultado">De ahí la jerarquía: CSS es más barato y sirve para arrancar; ML es más
+            preciso. Por eso <code>arima()</code> usa por defecto <code>method = "CSS-ML"</code>, que estima por CSS
+            para obtener valores iniciales y termina maximizando la verosimilitud exacta.</p>
+        </div>
+      </div>
+
+      <p>Apliquemos los tres a las manchas solares. Las cifras de la tabla salen de ejecutar el código de abajo, no de
+        ninguna otra parte.</p>
+
+      <table>
+        <caption class="sr-only">AR(2) sobre las manchas solares estimado por tres métodos</caption>
+        <thead>
+          <tr>
+            <th scope="col">Método</th>
+            <th scope="col">$\hat\phi_1$</th>
+            <th scope="col">$\hat\phi_2$</th>
+            <th scope="col">$\hat\sigma^2$</th>
+            <th scope="col">Pseudo-periodo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Yule–Walker</td><td>$1.3173$</td><td>$-0.6338$</td><td>$298.96$</td><td>$10.53$ años</td>
+          </tr>
+          <tr>
+            <td>CSS</td><td>$1.4032$</td><td>$-0.7099$</td><td>$229.03$</td><td>$10.71$ años</td>
+          </tr>
+          <tr>
+            <td><strong>Máxima verosimilitud</strong></td>
+            <td>$\mathbf{1.4059}$</td><td>$\mathbf{-0.7111}$</td><td>$\mathbf{229.43}$</td>
+            <td>$\mathbf{10.74}$ años</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <p><strong>¿Cuánto es "distinto"?</strong> Comparar en bruto no dice nada; hay que medir en unidades de error
+          estándar. Los de máxima verosimilitud son $0.0706$ y $0.0702$. La diferencia entre Yule–Walker y ML es de
+          $-0.0886$ en $\phi_1$ y $+0.0773$ en $\phi_2$, es decir <strong>1.26 y 1.10 errores estándar</strong>.
+          Traducción: no es un error de cálculo ni un detalle numérico —Yule–Walker está sesgado hacia el interior de
+          la región estacionaria con muestras cortas— pero tampoco cambia las conclusiones: los dos dicen "AR(2) con
+          raíces complejas y ciclo de unos diez años y medio". <strong>CSS y ML, en cambio, distan $0.04$ y $0.02$
+            errores estándar: a efectos prácticos son el mismo ajuste.</strong></p>
+      </div>
+
+      <div class="warning">
+        <p><strong>No compares un $\hat\sigma^2$ de Yule–Walker con uno de ML.</strong> $298.96$ frente a $229.43$
+          parece un abismo, pero no miden lo mismo: Yule–Walker lo obtiene de la ecuación de la varianza del proceso y
+          ML lo maximiza junto al resto. Los criterios de información del Módulo 8 se construyen sobre la
+          verosimilitud, así que solo tienen sentido con ajustes de <code>arima()</code>, nunca mezclando salidas de
+          <code>ar()</code> y <code>arima()</code>.</p>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Estimar un AR(2) por tres métodos">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel" data-lang="r">
+          <pre><code class="language-r">manchas &lt;- window(sunspot.year, start = 1770, end = 1869)   # n = 100
+
+# 1. Yule-Walker (metodo de momentos)
+yw &lt;- ar(manchas, order.max = 2, aic = FALSE, method = "yule-walker")
+round(yw$ar, 4)
+#&gt; [1]  1.3173 -0.6338
+
+# 2. Suma de cuadrados condicional
+css &lt;- arima(manchas, order = c(2, 0, 0), method = "CSS")
+round(coef(css)[1:2], 4)
+#&gt;     ar1     ar2
+#&gt;  1.4032 -0.7099
+
+# 3. Maxima verosimilitud exacta
+ml &lt;- arima(manchas, order = c(2, 0, 0), method = "ML")
+ml
+#&gt; Coefficients:
+#&gt;          ar1      ar2  intercept
+#&gt;       1.4059  -0.7111    48.2616
+#&gt; s.e.  0.0706   0.0702     4.9751
+#&gt; sigma^2 estimated as 229.4:  log likelihood = -414.94,  aic = 837.88
+
+# La distancia entre YW y ML, medida en errores estandar
+ee &lt;- sqrt(diag(ml$var.coef))[1:2]
+round((yw$ar - coef(ml)[1:2]) / ee, 2)
+#&gt;   ar1   ar2
+#&gt; -1.26  1.10
+
+# Raices, modulo y pseudo-periodo del ajuste por ML
+raices &lt;- polyroot(c(1, -coef(ml)[1:2]))
+round(Mod(raices), 4)
+#&gt; [1] 1.1859 1.1859        (&gt; 1: estacionario)
+round(2 * pi / Arg(raices[1]), 4)
+#&gt; [1] 10.7369              anios por ciclo
+
+# La formula cerrada del AR(2) da lo mismo
+phi &lt;- coef(ml)[1:2]
+round(2 * pi / acos(phi[1] / (2 * sqrt(-phi[2]))), 4)
+#&gt; [1] 10.7369</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" hidden>
+          <pre><code class="language-python">import numpy as np
+import statsmodels.api as sm
+from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.regression.linear_model import yule_walker
+
+datos = sm.datasets.sunspots.load_pandas().data
+manchas = datos.loc[(datos.YEAR &gt;= 1770) &amp; (datos.YEAR &lt;= 1869), "SUNACTIVITY"].values
+print(len(manchas))   # 100
+
+# 1. Yule-Walker. OJO: statsmodels usa por defecto el divisor n-k ("adjusted");
+#    para reproducir ar() de R hay que pedir method="mle", que usa el divisor n.
+rho, sigma = yule_walker(manchas - manchas.mean(), order=2, method="mle")
+print(np.round(rho, 4))     # [ 1.3173 -0.6338]
+
+# 2. CSS: la API nueva de ARIMA NO lo ofrece. Sus method= son statespace,
+#    innovations_mle, hannan_rissanen, burg, innovations y yule_walker;
+#    fit(method="css") lanza ValueError: "css" is not a valid estimator.
+#    El antiguo tsa.arima_model.ARMA, que si tenia method="css", fue
+#    retirado en statsmodels 0.13. El CSS de R (1.4032, -0.7099) no tiene
+#    equivalente directo aqui.
+
+# 3. Maxima verosimilitud. statespace (el defecto) e innovations_mle son
+#    AMBOS verosimilitud exacta y dan el mismo punto:
+ml  = ARIMA(manchas, order=(2, 0, 0), trend="c").fit()
+mle = ARIMA(manchas, order=(2, 0, 0), trend="c").fit(method="innovations_mle")
+print(np.round(ml.arparams, 4))    # [ 1.4059 -0.7111]
+print(np.round(mle.arparams, 4))   # [ 1.4059 -0.7111]  identico
+
+# Raices y pseudo-periodo
+phi = ml.arparams
+raices = np.roots(np.r_[1, -phi][::-1])
+print(np.round(np.abs(raices), 4))                 # [1.1859 1.1859]
+print(round(2 * np.pi / np.angle(raices[0]), 4))   # 10.7365
+# R daba 10.7369: los optimizadores convergen a puntos ligerisimamente
+# distintos. La diferencia es de 4 diezmilesimas de anio, irrelevante aqui.</code></pre>
+        </div>
+      </div>
+
+      <div class="warning">
+        <p><strong>Yule–Walker no es el mismo en R y en Python.</strong> <code>yule_walker()</code> de statsmodels usa
+          por defecto <code>method="adjusted"</code> (divisor $n-k$) y <code>ar()</code> de R usa el divisor $n$. Con
+          las opciones por defecto, las estimaciones <strong>no coinciden</strong>. Hay que pedir
+          <code>method="mle"</code> —nombre desafortunado, porque no es máxima verosimilitud, solo indica el
+          divisor— para reproducir la salida de R. Es la misma clase de discrepancia que el ADF del Capítulo 2.</p>
+      </div>
+    </div>
+  </template>
+
+  <!-- ============================================================ -->
+  <!-- MÓDULO 8 · Criterios de información y diagnóstico             -->
+  <!-- ============================================================ -->
+  <template id="module-8">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 8</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">3.8 Criterios de información
+          y diagnóstico <span class="text-gray-400 font-normal text-2xl">/ Information criteria &amp; diagnostics</span>
+        </h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Elegir entre modelos candidatos y —más importante—
+              comprobar si el elegido deja residuales que se parezcan a ruido blanco.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>AIC, AICc y BIC</h3>
+
+      <p>Añadir parámetros siempre mejora la verosimilitud. Los criterios de información compensan esa mejora con una
+        penalización por complejidad, y se elige el modelo con el <strong>menor</strong> valor.</p>
+
+      <div class="formula">
+        $$\text{AIC} = -2\log L + 2k, \qquad
+          \text{AICc} = \text{AIC} + \frac{2k(k+1)}{n-k-1}, \qquad
+          \text{BIC} = -2\log L + k\log n$$
+        <p style="margin-bottom:0;">donde $k$ es el número de parámetros estimados —incluido $\sigma^2$— y $n$ el
+          número de observaciones.</p>
+      </div>
+
+      <div class="note">
+        <p><strong>Cuál usar.</strong> El AICc corrige el sesgo del AIC en muestras pequeñas y converge a él cuando
+          $n$ crece, así que <strong>no hay razón para preferir el AIC</strong>. El BIC penaliza más
+          ($\log n > 2$ en cuanto $n > 7$) y por eso tiende a elegir modelos más pequeños. Si buscas pronosticar,
+          AICc; si buscas identificar el modelo "verdadero", BIC.</p>
+      </div>
+
+      <div class="warning">
+        <p><strong>La trampa que reaparecerá en el Capítulo 4.</strong> Los criterios solo son comparables entre
+          modelos ajustados a <strong>los mismos datos</strong>. Diferenciar cambia los datos: un ARIMA con $d=1$ se
+          ajusta sobre $n-1$ observaciones distintas de las del modelo con $d=0$. Comparar sus AIC no significa nada.
+          Aquí todos los candidatos tienen $d=0$ sobre la misma serie, así que la comparación es lícita.</p>
+      </div>
+
+      <h3>Diagnóstico: los residuales deben ser ruido blanco</h3>
+
+      <p>El criterio de información dice cuál de los candidatos es relativamente mejor, pero no si <em>alguno</em> es
+        bueno. Para eso están los residuales $\hat\varepsilon_t$: si el modelo ha capturado toda la estructura, lo que
+        queda no debe tener ninguna.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Prueba de Ljung–Box</h4>
+        <p>Contrasta si las primeras $h$ autocorrelaciones de los residuales son <strong>conjuntamente</strong> nulas:</p>
+        $$Q(h) = T(T+2)\sum_{k=1}^{h}\frac{\hat r_k^2}{T-k}
+          \;\;\sim\;\; \chi^2_{\,h-p-q} \quad\text{bajo } H_0$$
+        <p style="margin-bottom:0;">$H_0$ es "los residuales son ruido blanco". Un $p$-valor <strong>pequeño</strong>
+          significa que <strong>queda estructura sin modelar</strong>: el modelo no basta.</p>
+      </div>
+
+      <div class="derivacion">
+        <button type="button" class="derivacion-boton" aria-expanded="false" aria-controls="der-ljung-box">
+          <i class="fas fa-square-root-variable" aria-hidden="true"></i>
+          <span class="derivacion-texto">Ver el desarrollo paso a paso</span>
+          <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="derivacion-panel" id="der-ljung-box" hidden>
+          <ol class="derivacion-pasos">
+            <li>
+              <p>Si una serie es ruido blanco, cada autocorrelación muestral cumple aproximadamente
+                $\hat r_k \sim N(0,\,1/T)$. Entonces $T\hat r_k^2$ es aproximadamente $\chi^2_1$, y sumando $h$
+                rezagos independientes se obtiene el estadístico de Box–Pierce:</p>
+              $$Q^{*}(h) = T\sum_{k=1}^{h}\hat r_k^2 \;\sim\; \chi^2_h$$
+            </li>
+            <li>
+              <p>Esa aproximación es mala con $T$ moderado, porque la varianza real de $\hat r_k$ es algo menor que
+                $1/T$, y tanto menor cuanto mayor es $k$ —quedan menos pares de observaciones separados por $k$
+                periodos con los que estimarla—: $\operatorname{Var}(\hat r_k) \approx (T-k)/\big(T(T+2)\big)$. Ljung
+                y Box (1978) reemplazaron el factor $T$ por el inverso exacto de esa varianza, que por eso
+                <em>crece</em> con el rezago:</p>
+              $$T \;\longrightarrow\; \frac{T(T+2)}{T-k}$$
+            </li>
+            <li>
+              <p>Falta el ajuste clave. Los $\hat r_k$ no se calculan sobre ruido blanco observado, sino sobre
+                <strong>residuales de un modelo estimado</strong>. Al estimar $p+q$ parámetros se han impuesto $p+q$
+                restricciones que fuerzan a los residuales a estar menos correlacionados de lo que estarían por azar.</p>
+            </li>
+            <li>
+              <p>Ignorarlo infla el $p$-valor y hace que la prueba <strong>no rechace cuando debería</strong>. La
+                corrección consiste en descontar esos parámetros de los grados de libertad:</p>
+              $$Q(h) \sim \chi^2_{\,h-p-q}$$
+              <p>En R eso es el argumento <code>fitdf = p + q</code> de <code>Box.test()</code>, que
+                <strong>no</strong> se aplica solo. Solo tiene sentido evaluar en $h > p+q$.</p>
+            </li>
+          </ol>
+          <p class="derivacion-resultado">Regla práctica: sobre los residuales de un ARMA($p,q$) hay que llamar a
+            <code>Box.test(residuals(ajuste), lag = h, type = "Ljung-Box", fitdf = p + q)</code>. Si omites
+            <code>fitdf</code>, la prueba es demasiado indulgente y aprobará modelos insuficientes.</p>
+        </div>
+      </div>
+
+      <div class="tabla-ranking" data-ranking="criterios">
+        <p class="tabla-ranking-titulo">Los criterios de información sobre las manchas solares</p>
+        <div class="tabla-ranking-marco" aria-label="Los criterios de información sobre las manchas solares"></div>
+        <p class="tabla-ranking-estado" role="status" aria-live="polite"></p>
+        <p class="tabla-ranking-pie"></p>
+      </div>
+
+      <div class="simulador" data-simulador="diagnostico-residuales">
+        <h4><i class="fas fa-stethoscope" aria-hidden="true"></i> Diagnóstico de cuatro candidatos</h4>
+        <p class="simulador-intro">Elige un modelo ajustado a las manchas solares y examina lo que deja atrás. Empieza
+          por el AR(1) —insuficiente sin discusión— y sigue por el AR(2), el modelo que la identificación proponía.
+          Observa que su $p$-valor de Ljung–Box en el rezago 12 se queda <strong>justo por debajo</strong> de $0.05$.</p>
+        <div class="simulador-controles"></div>
+        <p class="grafico-etiqueta">Residuales</p>
+        <div class="grafico-wrapper" style="height:170px;">
+          <canvas aria-label="Residuales del modelo seleccionado" role="img"></canvas>
+        </div>
+        <p class="grafico-etiqueta">ACF de los residuales</p>
+        <div class="grafico-wrapper" style="height:180px;">
+          <canvas aria-label="Función de autocorrelación de los residuales" role="img"></canvas>
+        </div>
+        <p class="grafico-etiqueta">$p$-valor de Ljung–Box por rezago</p>
+        <div class="grafico-wrapper" style="height:180px;">
+          <canvas aria-label="p-valor de la prueba de Ljung-Box acumulada por rezago" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <h3>El problema: el modelo "correcto" no pasa el examen</h3>
+
+      <p>Pongamos juntos los dos criterios sobre la serie <strong>cruda</strong> de manchas solares. Todos los
+        candidatos tienen $d=0$, así que la comparación es legítima. La tabla recoge los siete de los once que la
+        discusión necesita; la tabla ordenable de arriba los tiene todos.</p>
+
+      <table>
+        <caption class="sr-only">Rejilla de modelos ARMA sobre las manchas solares crudas</caption>
+        <thead>
+          <tr>
+            <th scope="col">Modelo</th><th scope="col">AICc</th><th scope="col">BIC</th>
+            <th scope="col">Ljung–Box(12)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>AR(1)</td><td>$904.33$</td><td>$911.89$</td><td>$&lt;0.0001$</td></tr>
+          <tr><td>AR(2)</td><td>$838.30$</td><td>$848.30$</td><td>$0.0461$</td></tr>
+          <tr><td>AR(3)</td><td>$836.52$</td><td>$848.91$</td><td>$0.1658$</td></tr>
+          <tr><td>MA(2)</td><td>$853.56$</td><td>$863.56$</td><td>$&lt;0.0001$</td></tr>
+          <tr><td>ARMA(1,1)</td><td>$850.50$</td><td>$860.50$</td><td>$&lt;0.0001$</td></tr>
+          <tr>
+            <td><strong>ARMA(2,1)</strong></td>
+            <td><strong>$834.73$</strong></td><td><strong>$847.12$</strong></td><td>$0.2246$</td>
+          </tr>
+          <tr><td>ARMA(2,2)</td><td>$836.63$</td><td>$851.36$</td><td>$0.1510$</td></tr>
+        </tbody>
+      </table>
+
+      <div class="warning">
+        <p><strong>Aquí hay un problema, y conviene no taparlo.</strong> El AR(2) es el modelo que la identificación
+          proponía y el que hizo famoso a Yule, pero:</p>
+        <ul style="margin-bottom:0;">
+          <li>su Ljung–Box en el rezago 12 da $p = 0.0461$, es decir, <strong>se rechaza</strong> al 5 %: quedan
+            autocorrelaciones sin explicar;</li>
+          <li>y <strong>no</strong> es el mejor por AICc ni por BIC. Gana el ARMA(2,1), cuyo $\hat\theta_1 = 0.3732$
+            es significativo ($t = 2.78$) y cuyos residuales sí pasan la prueba ($p = 0.2246$).</li>
+        </ul>
+      </div>
+
+      <div class="warning">
+        <p><strong>R y Python no dan el mismo $p$-valor de Ljung–Box, y aquí la conclusión cambia.</strong> Sobre el
+          AR(2), R da $0.0461$ (se rechaza) y statsmodels $0.1085$ (no se rechaza). Los ajustes son idénticos —AICc y
+          BIC coinciden hasta el último decimal—, así que la diferencia está en los <strong>residuales</strong>.
+          Comparándolos uno a uno: del tercero en adelante son los mismos ($8.728$ frente a $8.727$, $-15.396$ frente a
+          $-15.397$…); los que difieren son los <strong>dos primeros</strong>, porque cada programa inicializa de otra
+          forma el filtro para las $p$ primeras observaciones (R da $21.06$ y statsmodels $52.54$ para el primero). Y
+          $Q$ pondera mucho $\hat r_1$.</p>
+        <p style="margin-bottom:0;">La comprobación decisiva: si se descartan los $\max(p,q)$ primeros residuales,
+          los dos coinciden — ARMA(2,0): $0.0232$ en R y $0.0232$ en Python; ARMA(2,1): $0.1424$ y $0.1420$. Es decir,
+          <strong>el rechazo del AR(2) es real y se refuerza</strong> ($0.0232 < 0.0461$); lo que hay es una
+          inicialización que infla el primer residual y relaja la prueba. Moraleja general: cuando dos programas
+          discrepen en un contraste sobre residuales, compara primero los residuales, no los $p$-valores.</p>
+      </div>
+
+      <div class="note">
+        <p><strong>Un detalle que justifica la prueba conjunta.</strong> Si abres el simulador en el AR(2), verás que
+          <strong>ninguna</strong> de sus 20 autocorrelaciones residuales se sale de la banda $\pm 0.196$: la mayor es
+          $0.1839$ en el rezago 11 y la siguiente $0.1718$ en el 9 — dentro, pero la primera se queda a un pelo.
+          Mirando el correlograma barra por barra habrías dado el modelo por bueno. Y sin embargo Ljung–Box lo
+          rechaza, porque evalúa las doce <strong>a la vez</strong>: $Q$ suma los <strong>cuadrados</strong> de todas,
+          de modo que media docena de autocorrelaciones moderadas, cada una insignificante por separado, acumulan un
+          $Q$ que sí lo es. Para eso existe la prueba, y por eso no basta con mirar el dibujo.</p>
+      </div>
+
+      <p>La tentación es aceptar el ARMA(2,1) y seguir. Pero antes de añadir un parámetro para tapar un problema,
+        conviene preguntarse <strong>qué problema es</strong>. Eso es lo que hace el módulo siguiente.</p>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Criterios de información y Ljung-Box">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel" data-lang="r">
+          <pre><code class="language-r">manchas &lt;- window(sunspot.year, start = 1770, end = 1869)
+n &lt;- length(manchas)
+
+# arima() reporta AIC pero NO AICc: hay que calcularlo
+aicc &lt;- function(ajuste, n) {
+  k &lt;- length(ajuste$coef) + 1        # +1 por sigma^2
+  ajuste$aic + 2 * k * (k + 1) / (n - k - 1)
+}
+
+# La rejilla no es un producto cartesiano: son ordenes bajos en las dos partes
+# mas dos AR largos. Es lo que justifica la lectura de los correlogramas, y son
+# los once candidatos de la tabla ordenable de arriba.
+rejilla &lt;- list(c(1,0), c(2,0), c(3,0), c(4,0),
+                c(0,1), c(0,2), c(0,3),
+                c(1,1), c(2,1), c(1,2), c(2,2))
+
+resultado &lt;- do.call(rbind, lapply(rejilla, function(pq) {
+  p &lt;- pq[1]; q &lt;- pq[2]
+  aj &lt;- arima(manchas, order = c(p, 0, q), method = "ML")
+  data.frame(
+    modelo = sprintf("ARMA(%d,%d)", p, q),
+    AICc = round(aicc(aj, n), 2),
+    BIC  = round(BIC(aj), 2),
+    # fitdf = p + q es IMPRESCINDIBLE: sin el, la prueba es indulgente
+    LB12 = round(Box.test(residuals(aj), lag = 12,
+                          type = "Ljung-Box", fitdf = p + q)$p.value, 4)
+  )
+}))
+resultado[order(resultado$AICc), ]
+#&gt;       modelo   AICc    BIC   LB12
+#&gt; 9  ARMA(2,1) 834.73 847.12 0.2246
+#&gt; 3  ARMA(3,0) 836.52 848.91 0.1658
+#&gt; 11 ARMA(2,2) 836.63 851.36 0.1510
+#&gt; 4  ARMA(4,0) 836.78 851.51 0.1118
+#&gt; 2  ARMA(2,0) 838.30 848.30 0.0461
+#&gt; 10 ARMA(1,2) 840.51 852.90 0.0110
+#&gt; 7  ARMA(0,3) 845.35 857.74 0.0010
+#&gt; 8  ARMA(1,1) 850.50 860.50 0.0000
+#&gt; 6  ARMA(0,2) 853.56 863.56 0.0000
+#&gt; 1  ARMA(1,0) 904.33 911.89 0.0000
+#&gt; 5  ARMA(0,1) 908.13 915.70 0.0000
+
+# El AR(2), mirado de cerca
+ar2 &lt;- arima(manchas, order = c(2, 0, 0), method = "ML")
+round(acf(residuals(ar2), lag.max = 3, plot = FALSE)$acf[-1], 4)
+#&gt; [1]  0.1297 -0.1477  0.0285
+Box.test(residuals(ar2), lag = 12, type = "Ljung-Box", fitdf = 2)$p.value
+#&gt; [1] 0.04614324        <- se rechaza al 5%
+
+# Lo que pasa si se OLVIDA fitdf: el mismo modelo "aprueba"
+Box.test(residuals(ar2), lag = 12, type = "Ljung-Box")$p.value
+#&gt; [1] 0.09957107        <- conclusion opuesta por omitir un argumento</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" hidden>
+          <pre><code class="language-python">import numpy as np
+import pandas as pd
+import statsmodels.api as sm
+from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.stats.diagnostic import acorr_ljungbox
+
+datos = sm.datasets.sunspots.load_pandas().data
+manchas = datos.loc[(datos.YEAR &gt;= 1770) &amp; (datos.YEAR &lt;= 1869), "SUNACTIVITY"].values
+
+# La misma lista de once candidatos que en R, no un producto cartesiano.
+rejilla = [(1,0), (2,0), (3,0), (4,0),
+           (0,1), (0,2), (0,3),
+           (1,1), (2,1), (1,2), (2,2)]
+
+filas = []
+for p, q in rejilla:
+    res = ARIMA(manchas, order=(p, 0, q), trend="c").fit()
+    # model_df descuenta los parametros estimados, igual que fitdf en R
+    lb = acorr_ljungbox(res.resid, lags=[12], model_df=p + q)
+    filas.append({"modelo": f"ARMA({p},{q})", "AICc": round(res.aicc, 2),
+                  "BIC": round(res.bic, 2),
+                  "LB12": round(float(lb["lb_pvalue"].iloc[0]), 4)})
+
+print(pd.DataFrame(filas).sort_values("AICc").to_string(index=False))
+#    modelo   AICc    BIC   LB12
+# ARMA(2,1) 834.73 847.12 0.3211
+# ARMA(3,0) 836.52 848.91 0.3176
+# ARMA(2,2) 836.63 851.36 0.1939
+# ARMA(4,0) 836.78 851.51 0.1677
+# ARMA(2,0) 838.30 848.30 0.1085   <- en R da 0.0461
+# AICc y BIC coinciden con R hasta el ultimo decimal. Los p-valores de
+# Ljung-Box NO: ver la advertencia de abajo.
+
+# Reconciliacion: descartando los max(p,q) primeros residuales, los dos
+# programas coinciden.
+for p, q in [(2, 0), (2, 1), (2, 2)]:
+    r = ARIMA(manchas, order=(p, 0, q), trend="c").fit()
+    corte = max(p, q)
+    lb = acorr_ljungbox(r.resid[corte:], lags=[12], model_df=p + q)
+    print(f"ARMA({p},{q}) recortado: {float(lb['lb_pvalue'].iloc[0]):.4f}")
+# ARMA(2,0) recortado: 0.0232      (R: 0.0232)
+# ARMA(2,1) recortado: 0.1420      (R: 0.1424)
+# ARMA(2,2) recortado: 0.1051      (R: 0.1057)
+
+# statsmodels SI trae aicc; R no lo trae en arima() y hay que calcularlo.
+# Cuidado tambien con model_df: por defecto vale 0 y la prueba se relaja.</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- ============================================================ -->
+  <!-- MÓDULO 9 · Dos casos reales                                   -->
+  <!-- ============================================================ -->
+  <template id="module-9">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 9</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">3.9 Dos casos reales
+          <span class="text-gray-400 font-normal text-2xl">/ Two real case studies</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Cerrar el caso de las manchas solares —y descubrir que
+              el problema no estaba donde parecía— y ver un caso en el que la respuesta correcta es "aquí no hay nada
+              que modelar".</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>Caso 1 · Manchas solares: el parámetro que sobraba</h3>
+
+      <p>Nos quedamos con un AR(2) que no pasaba Ljung–Box y un ARMA(2,1) que ganaba por AICc. Antes de aceptar el
+        parámetro extra, volvamos al Capítulo 2: <strong>¿la serie está en la escala adecuada?</strong></p>
+
+      <p>Los números de manchas solares son <strong>conteos</strong>. Es de esperar que su variabilidad crezca con el
+        nivel: en un máximo solar hay más manchas y también fluctúan más. Eso se comprueba, no se supone. Midiendo la
+        elasticidad amplitud–nivel (la pendiente de $\log(\text{desviación})$ contra $\log(\text{media})$ por bloques,
+        el mismo diagnóstico del Capítulo 1):</p>
+
+      <table>
+        <caption class="sr-only">Elasticidad amplitud-nivel de las manchas solares según el tamaño de bloque</caption>
+        <thead>
+          <tr>
+            <th scope="col">Bloques</th><th scope="col">$\hat b$</th><th scope="col">IC 95 %</th>
+            <th scope="col">$R^2$</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>10 años</td><td>$0.8165$</td><td>$[0.593,\ 1.040]$</td><td>$0.899$</td></tr>
+          <tr><td>11 años (un ciclo)</td><td>$0.7658$</td><td>$[0.533,\ 0.998]$</td><td>$0.897$</td></tr>
+          <tr><td>5 años</td><td>$0.7034$</td><td>$[0.475,\ 0.931]$</td><td>$0.700$</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <p><strong>Qué dicen y qué no dicen estos números.</strong> Los tres intervalos excluyen $b=0$ con holgura:
+          <strong>hay que transformar</strong>, eso es firme y no depende de cómo se hagan los bloques. Pero ninguno
+          separa limpiamente $b=0.5$ (raíz cuadrada) de $b=1$ (logaritmo): los intervalos contienen los dos valores o
+          casi. Los datos piden una transformación y no dicen exactamente cuál.</p>
+      </div>
+
+      <p>Lo que decide es otra cosa, y es contundente: <strong>la serie tiene un año con cero manchas</strong> (1810;
+        en la serie completa 1700–1988 hay tres). El logaritmo de cero no existe. La raíz cuadrada, en cambio, está
+        definida en cero y es la transformación estabilizadora clásica para conteos. Además, el $\lambda$ de Guerrero
+        del Capítulo 2 sobre esta serie —desplazada una unidad, porque el criterio exige datos estrictamente positivos
+        y está ese cero— da $0.3062$, que cae <strong>entre</strong> el logaritmo y la raíz cuadrada.</p>
+
+      <div class="simulador" data-simulador="manchas-transformada">
+        <h4><i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i> La serie antes y después de la raíz</h4>
+        <p class="simulador-intro">Cambia entre la escala original y la raíz cuadrada. En la original, los máximos son
+          picos altos y estrechos y los mínimos son planos: la serie es asimétrica. En la raíz, los ciclos se parecen
+          mucho más entre sí y la PACF se corta más limpiamente en el rezago 2.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper" style="height:200px;">
+          <canvas aria-label="Serie de manchas solares en la escala seleccionada" role="img"></canvas>
+        </div>
+        <p class="grafico-etiqueta">PACF</p>
+        <div class="grafico-wrapper" style="height:190px;">
+          <canvas aria-label="Función de autocorrelación parcial en la escala seleccionada" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <p>Y ahora el resultado. Repitiendo exactamente la misma rejilla del Módulo 8 sobre $\sqrt{\text{manchas}}$:</p>
+
+      <table>
+        <caption class="sr-only">Comparación de la rejilla de modelos sobre la serie cruda y sobre la raíz cuadrada</caption>
+        <thead>
+          <tr>
+            <th scope="col">Modelo</th>
+            <th scope="col">AICc (cruda)</th><th scope="col">LB(12)</th>
+            <th scope="col">AICc ($\sqrt{\ }$)</th><th scope="col">LB(12)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>AR(2)</td><td>$838.30$</td><td>$0.0461$ ✗</td>
+            <td><strong>$324.00$</strong> ✓ mínimo</td><td>$0.1644$ ✓</td></tr>
+          <tr><td>AR(3)</td><td>$836.52$</td><td>$0.1658$</td><td>$325.35$</td><td>$0.2005$</td></tr>
+          <tr><td>ARMA(2,1)</td><td><strong>$834.73$</strong> mínimo</td><td>$0.2246$</td>
+            <td>$325.41$</td><td>$0.1856$</td></tr>
+          <tr><td>ARMA(2,2)</td><td>$836.63$</td><td>$0.1510$</td><td>$327.42$</td><td>$0.1833$</td></tr>
+        </tbody>
+      </table>
+
+      <div class="definition">
+        <h4><i class="fas fa-lightbulb mr-2" aria-hidden="true"></i>El hallazgo</h4>
+        <p>Sobre la raíz cuadrada, el <strong>AR(2) es a la vez el mejor por AICc y el mejor por BIC</strong>
+          ($324.00$ y $334.00$, ambos mínimos de la rejilla) y sus residuales pasan Ljung–Box ($p = 0.1644$). El
+          término MA que el AICc pedía sobre la serie cruda <strong>ya no aporta nada</strong>.</p>
+        <p style="margin-bottom:0;">Es decir: aquel $\hat\theta_1 = 0.3732$ no estaba capturando dinámica que faltara,
+          estaba <strong>parcheando un problema de escala</strong>. Añadir parámetros puede disimular un
+          preprocesamiento incorrecto, y el criterio de información no distingue una cosa de la otra.</p>
+      </div>
+
+      <p>El modelo final es, entonces:</p>
+
+      <div class="formula">
+        $$\sqrt{y_t} - 6.33 = 1.4027\,(\sqrt{y_{t-1}} - 6.33) - 0.6853\,(\sqrt{y_{t-2}} - 6.33) + \varepsilon_t$$
+        <p style="margin-bottom:0;">con errores estándar $0.0727$ y $0.0724$; raíces complejas de módulo $1.208$.</p>
+      </div>
+
+      <p>Y la recompensa está en el pseudo-periodo. Sobre la serie cruda daba $10.74$ años; sobre la raíz cuadrada da
+        <strong>$11.22$ años</strong>. El ciclo solar documentado por los astrónomos es de aproximadamente
+        <strong>11 años</strong>. Corregir la escala no solo arregló el diagnóstico: acercó la estimación al valor
+        físico.</p>
+
+      <div class="note">
+        <p><strong>¿Y si el $0.5$ fuera arbitrario?</strong> Con el $\lambda = 0.3062$ de Guerrero en vez de la raíz
+          cuadrada, el AR(2) da un pseudo-periodo de $11.39$ años y un Ljung–Box de $p = 0.4892$. Conviene notar dónde
+          se aplica cada cosa: ese $\lambda$ se <strong>estima</strong> sobre <code>manchas + 1</code>, porque Guerrero
+          exige datos estrictamente positivos y la serie tiene un cero, pero se <strong>aplica</strong> sobre la serie
+          original, <code>manchas^0.3062</code>. Sobre la desplazada saldría $11.28$ y $p = 0.2217$: la misma lectura.
+          La conclusión <strong>no depende</strong> de haber elegido exactamente $0.5$: cualquier transformación de
+          potencia moderada hace el mismo trabajo. Eso es señal de que el hallazgo es robusto y no un artefacto.</p>
+      </div>
+
+      <div class="warning">
+        <p><strong>Lo que sigue sin estar bien.</strong> La normalidad de los residuales mejora pero no llega: la
+          asimetría baja de $0.791$ a $0.573$ y el $p$-valor de Shapiro–Wilk sube de $0.0007$ a $0.0470$, que sigue
+          rechazando al 5 %. El número de manchas solares sube más rápido de lo que baja, y esa asimetría es una
+          <strong>no linealidad</strong> que ningún modelo lineal ARMA puede capturar. Los intervalos de pronóstico del
+          Capítulo 6, que suponen normalidad, quedarán algo mal calibrados. Decirlo es parte del trabajo.</p>
+      </div>
+
+      <h3>Caso 2 · Log-retornos de la TRM: cuando no hay nada que modelar</h3>
+
+      <p>Retomemos la TRM del Capítulo 2. Allí quedó establecido que tiene una raíz unitaria y que su primera
+        diferencia es estacionaria. Trabajemos con los <strong>log-retornos</strong>
+        $r_t = 100 \times \log(y_t/y_{t-1})$, que es la variación porcentual mensual y la magnitud habitual en
+        finanzas ($n = 137$).</p>
+
+      <div class="simulador" data-simulador="trm-retornos">
+        <h4><i class="fas fa-chart-column" aria-hidden="true"></i> Log-retornos mensuales de la TRM</h4>
+        <p class="simulador-intro">La serie y sus dos correlogramas. La banda es $\pm 0.1675$. Prácticamente todo cae
+          dentro: solo asoman <strong>dos</strong> barras, el rezago 5 ($0.193$) y el rezago 8 ($-0.198$), y ya
+          sabemos por el Módulo 6 que con 20 rezagos se espera <strong>uno</strong> fuera por puro azar. Dos, en
+          rezagos sin ninguna interpretación en una serie mensual, es exactamente lo que produce el azar.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper" style="height:190px;">
+          <canvas aria-label="Log-retornos mensuales de la TRM" role="img"></canvas>
+        </div>
+        <p class="grafico-etiqueta">ACF</p>
+        <div class="grafico-wrapper" style="height:185px;">
+          <canvas aria-label="ACF de los log-retornos de la TRM" role="img"></canvas>
+        </div>
+        <p class="grafico-etiqueta">PACF</p>
+        <div class="grafico-wrapper" style="height:185px;">
+          <canvas aria-label="PACF de los log-retornos de la TRM" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <p>Ljung–Box sobre la serie da $p = 0.0931$ en el rezago 6, $p = 0.0601$ en el 12 y $p = 0.0599$ en el 20: no se
+        rechaza en ninguno, aunque el $0.06$ es lo bastante bajo como para no cantar victoria. Y si se ajusta el MA(1)
+        que sugiere <code>auto.arima</code>:</p>
+
+      <div class="formula">
+        $$\hat\theta_1 = 0.1262 \quad (\text{e.e. } 0.0912,\ t = 1.38)$$
+        <p style="margin-bottom:0;">Comparado en igualdad de condiciones con el ruido blanco puro, el MA(1) da un AICc
+          de $722.653$ frente a $722.663$: una diferencia de <strong>una centésima</strong>. Son indistinguibles.</p>
+      </div>
+
+      <div class="definition">
+        <h4><i class="fas fa-lightbulb mr-2" aria-hidden="true"></i>La conclusión honesta</h4>
+        <p style="margin-bottom:0;">Los log-retornos mensuales de la TRM son, a efectos prácticos,
+          <strong>ruido blanco</strong>. El mejor modelo ARMA para esta serie es el modelo sin parámetros, y el mejor
+          pronóstico de la variación del mes que viene es la media histórica. No es un fracaso del análisis: es su
+          resultado, y coincide con lo que predice la teoría de mercados eficientes para una tasa de cambio.</p>
+      </div>
+
+      <div class="warning">
+        <p><strong>Ojo con la media.</strong> <code>auto.arima()</code> devuelve el MA(1) <strong>sin</strong> término
+          constante. No es un capricho: la media mensual estimada es $0.2681\ \%$ con un error estándar de $0.3195$,
+          o sea $t = 0.84$. Con 137 meses no hay evidencia de que la TRM tenga una deriva distinta de cero. Si al
+          comparar AICc de dos modelos uno incluye media y el otro no, no los estás comparando en igualdad de
+          condiciones.</p>
+      </div>
+
+      <div class="note">
+        <p><strong>Donde sí hay estructura: en el cuadrado.</strong> Ljung–Box sobre $r_t$ da $p = 0.0601$, pero sobre
+          $r_t^2$ da $p = 0.9166$: en esta serie mensual tampoco hay agrupamiento de volatilidad detectable. En datos
+          diarios de la misma tasa el resultado suele ser el opuesto —el nivel es ruido blanco y el cuadrado no— y esa
+          es la puerta de entrada a los modelos ARCH y GARCH. La frecuencia de muestreo cambia el fenómeno que se ve.</p>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Los dos casos reales">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel" data-lang="r">
+          <pre><code class="language-r">## ---- Caso 1: manchas solares en raiz cuadrada -------------------------
+manchas &lt;- window(sunspot.year, start = 1770, end = 1869)
+
+min(manchas)          # el logaritmo NO es una opcion
+#&gt; [1] 0
+sum(manchas == 0)
+#&gt; [1] 1
+
+library(forecast)
+# Guerrero exige datos ESTRICTAMENTE positivos y aqui hay un cero, asi que
+# se desplaza la serie una unidad (con el cero crudo, R lanza un aviso).
+round(BoxCox.lambda(manchas + 1, method = "guerrero"), 4)
+#&gt; [1] 0.3062      entre el logaritmo (0) y la raiz cuadrada (0.5)
+
+ar2s &lt;- arima(sqrt(manchas), order = c(2, 0, 0), method = "ML")
+round(coef(ar2s), 4)
+#&gt;     ar1     ar2  intercept
+#&gt;  1.4027 -0.6853     6.3317
+
+Box.test(residuals(ar2s), lag = 12, type = "Ljung-Box", fitdf = 2)$p.value
+#&gt; [1] 0.1643575          <- ahora SI pasa
+
+phi &lt;- coef(ar2s)[1:2]
+round(2 * pi / Arg(polyroot(c(1, -phi))[1]), 4)
+#&gt; [1] 11.2178            anios; el ciclo solar documentado es ~11
+
+# Comparacion directa con la serie cruda
+aicc &lt;- function(f, n) { k &lt;- length(f$coef) + 1; f$aic + 2*k*(k+1)/(n-k-1) }
+c(cruda_ar2 = aicc(arima(manchas, order = c(2,0,0), method = "ML"), 100),
+  cruda_21  = aicc(arima(manchas, order = c(2,0,1), method = "ML"), 100))
+#&gt; cruda_ar2  cruda_21
+#&gt;  838.3012  834.7292        <- sobre la cruda gana el ARMA(2,1)
+c(sqrt_ar2 = aicc(ar2s, 100),
+  sqrt_21  = aicc(arima(sqrt(manchas), order = c(2,0,1), method = "ML"), 100))
+#&gt;  sqrt_ar2   sqrt_21
+#&gt;  323.9970  325.4128        <- sobre la raiz gana el AR(2)
+
+## ---- Caso 2: log-retornos de la TRM -----------------------------------
+# trm: serie mensual del Capitulo 2 (promedio mensual, SFC via datos.gov.co).
+# Se reconstruye aqui para que el bloque sea autonomo.
+url &lt;- paste0("https://www.datos.gov.co/resource/32sa-8pi3.json",
+              "?$select=vigenciadesde,valor&amp;$limit=50000")
+crudo &lt;- jsonlite::fromJSON(url)
+diario &lt;- data.frame(fecha = as.Date(substr(crudo$vigenciadesde, 1, 10)),
+                     valor = as.numeric(crudo$valor))
+# Dos pasos: order() devuelve INDICES, no un vector logico, y combinarlo con
+# & mediante  order(...) & fecha >= ...  no ordena nada (todo indice != 0 se
+# coacciona a TRUE). Filtrar y ordenar son operaciones distintas.
+diario &lt;- diario[diario$fecha &gt;= as.Date("2015-01-01"), ]
+diario &lt;- diario[order(diario$fecha), ]
+mes &lt;- format(diario$fecha, "%Y-%m")
+prom &lt;- tapply(diario$valor, mes, mean)
+prom &lt;- prom[names(prom) &lt;= "2026-06"]
+trm &lt;- ts(as.numeric(prom), start = c(2015, 1), frequency = 12)
+
+ret &lt;- diff(log(trm)) * 100
+length(ret)
+#&gt; [1] 137
+
+round(1.96 / sqrt(length(ret)), 4)      # banda
+#&gt; [1] 0.1675
+round(acf(ret, lag.max = 6, plot = FALSE)$acf[-1], 3)
+#&gt; [1]  0.105 -0.077 -0.078  0.006  0.193  0.123
+
+sapply(c(6, 12, 20), function(h)
+  round(Box.test(ret, lag = h, type = "Ljung-Box")$p.value, 4))
+#&gt; [1] 0.0931 0.0601 0.0599
+
+ma1 &lt;- arima(ret, order = c(0, 0, 1), method = "ML")
+round(c(theta = coef(ma1)[["ma1"]], ee = sqrt(ma1$var.coef[1, 1])), 4)
+#&gt;  theta     ee
+#&gt; 0.1262 0.0912
+
+# Comparacion JUSTA: los dos sin media
+c(ma1_sin_media   = aicc(arima(ret, order = c(0,0,1), include.mean = FALSE,
+                               method = "ML"), 137),
+  ruido_sin_media = aicc(arima(ret, order = c(0,0,0), include.mean = FALSE,
+                               method = "ML"), 137))
+#&gt;   ma1_sin_media ruido_sin_media
+#&gt;        722.6530        722.6632
+
+# Volatilidad: estructura en los cuadrados?
+round(Box.test(ret^2, lag = 12, type = "Ljung-Box")$p.value, 4)
+#&gt; [1] 0.9166             <- tampoco</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" hidden>
+          <pre><code class="language-python">import numpy as np
+import pandas as pd
+import statsmodels.api as sm
+from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.stats.diagnostic import acorr_ljungbox
+from statsmodels.tsa.stattools import acf
+from scipy import stats
+
+## ---- Caso 1: manchas solares en raiz cuadrada -------------------------
+datos = sm.datasets.sunspots.load_pandas().data
+manchas = datos.loc[(datos.YEAR &gt;= 1770) &amp; (datos.YEAR &lt;= 1869), "SUNACTIVITY"].values
+
+print(manchas.min(), (manchas == 0).sum())   # 0.0  1   -> log imposible
+
+ar2s = ARIMA(np.sqrt(manchas), order=(2, 0, 0), trend="c").fit()
+print(np.round(ar2s.arparams, 4))            # [ 1.4027 -0.6853]
+
+lb = acorr_ljungbox(ar2s.resid, lags=[12], model_df=2)
+print(round(float(lb["lb_pvalue"].iloc[0]), 4))   # 0.1780
+# R daba 0.1644, por la inicializacion de residuales del Modulo 8.
+# Descartando los 2 primeros, los dos programas dan 0.1682.
+
+phi = ar2s.arparams
+raices = np.roots(np.r_[1, -phi][::-1])
+print(round(2 * np.pi / np.angle(raices[0]), 4))  # 11.2178
+
+## ---- Caso 2: log-retornos de la TRM -----------------------------------
+url = ("https://www.datos.gov.co/resource/32sa-8pi3.json"
+       "?$select=vigenciadesde,valor&amp;$limit=50000")
+crudo = pd.read_json(url)
+crudo["fecha"] = pd.to_datetime(crudo["vigenciadesde"]).dt.tz_localize(None)
+crudo = crudo[crudo["fecha"] &gt;= "2015-01-01"].sort_values("fecha")
+trm = (crudo.set_index("fecha")["valor"].resample("MS").mean()
+            .loc[:"2026-06-01"])
+
+ret = 100 * np.diff(np.log(trm.values))
+print(len(ret), round(1.96 / np.sqrt(len(ret)), 4))    # 137 0.1675
+print(np.round(acf(ret, nlags=6, fft=False)[1:], 3))
+# [ 0.105 -0.077 -0.078  0.006  0.193  0.123]
+
+print(np.round(acorr_ljungbox(ret, lags=[6, 12, 20])["lb_pvalue"].values, 4))
+# [0.0931 0.0601 0.0599]
+
+ma1 = ARIMA(ret, order=(0, 0, 1), trend="n").fit()
+rb  = ARIMA(ret, order=(0, 0, 0), trend="n").fit()
+print(round(ma1.aicc, 4), round(rb.aicc, 4))   # practicamente iguales
+
+print(round(float(acorr_ljungbox(ret**2, lags=[12])["lb_pvalue"].iloc[0]), 4))
+# 0.9166</code></pre>
+        </div>
+      </div>
+    </div>
+  </template>
+  <!-- ============================================================ -->
+  <!-- MÓDULO 10 · Cierre: ciencia de datos, resumen y evaluación    -->
+  <!-- ============================================================ -->
+  <template id="module-10">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 10</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">3.10 Autorregresión, redes
+          neuronales y cierre <span class="text-gray-400 font-normal text-2xl">/ Autoregression &amp; sequence
+            models</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Situar el AR como el antepasado directo de los métodos
+              secuenciales del aprendizaje profundo, y saber cuándo el modelo pequeño sigue siendo la mejor opción.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>El AR es la idea original</h3>
+
+      <p>Escribe un AR($p$) sin el ruido y verás algo familiar:</p>
+
+      <div class="formula">
+        $$\hat y_t = \phi_1 y_{t-1} + \phi_2 y_{t-2} + \cdots + \phi_p y_{t-p} + c$$
+      </div>
+
+      <p>Es exactamente una <strong>neurona lineal</strong> con una ventana de $p$ entradas: los $\phi_j$ son los
+        pesos y $c$ es el sesgo. Todo lo que hicieron los métodos secuenciales modernos fue relajar, uno por uno, los
+        supuestos que hay detrás de esa expresión.</p>
+
+      <table>
+        <caption class="sr-only">Del modelo AR a los modelos secuenciales modernos</caption>
+        <thead>
+          <tr>
+            <th scope="col">Modelo</th>
+            <th scope="col">Qué relaja respecto al AR</th>
+            <th scope="col">Coste</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>AR($p$)</strong></td>
+            <td>—</td>
+            <td>Ventana fija, relación lineal</td>
+          </tr>
+          <tr>
+            <td><strong>Red densa con ventana</strong></td>
+            <td>La <strong>linealidad</strong>: capas ocultas y activaciones no lineales</td>
+            <td>Muchos más parámetros; sin interpretación directa</td>
+          </tr>
+          <tr>
+            <td><strong>RNN / LSTM / GRU</strong></td>
+            <td>La <strong>ventana fija</strong>: un estado oculto acumula el pasado y la red aprende cuánto
+              recordar y cuánto olvidar</td>
+            <td>Entrenamiento secuencial y costoso; necesita muchos datos</td>
+          </tr>
+          <tr>
+            <td><strong>Transformers temporales</strong></td>
+            <td>El <strong>decaimiento con la distancia</strong>: la atención puede pesar igual el rezago 1 que el
+              rezago 500</td>
+            <td>Coste cuadrático en la longitud; aún más datos</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <p><strong>Un puente concreto.</strong> El estado oculto de una RNN sin activación no lineal y con una sola
+          unidad <em>es</em> un AR(1): $h_t = w\,h_{t-1} + u\,x_t$. La condición de estabilidad del entrenamiento
+          ($|w| < 1$, para que el gradiente no explote ni se desvanezca) es la <strong>misma condición de
+            estacionariedad</strong> del Módulo 1. El problema del gradiente que se desvanece en las RNN y el
+          desvanecimiento de $\phi^k$ que vimos al desarrollar el AR(1) hacia atrás son el mismo fenómeno
+          matemático.</p>
+      </div>
+
+      <h3>Cuándo el modelo pequeño sigue ganando</h3>
+
+      <div class="definition">
+        <h4><i class="fas fa-scale-balanced mr-2" aria-hidden="true"></i>Razones para quedarse con un ARMA</h4>
+        <ul style="margin-bottom:0;">
+          <li><strong>Pocos datos.</strong> El caso de este capítulo tiene $n = 100$. Una LSTM con miles de parámetros
+            sobre cien observaciones memoriza la muestra; el AR(2) tiene tres.</li>
+          <li><strong>Intervalos de pronóstico calibrados.</strong> Un ARMA da intervalos con una teoría detrás (los
+            pesos $\psi$ del Módulo 4). Cuantificar bien la incertidumbre en una red exige trabajo adicional que a
+            menudo no se hace.</li>
+          <li><strong>Interpretabilidad con contenido físico.</strong> El $11.22$ del Módulo 9 no es un peso opaco:
+            es un <strong>periodo en años</strong> que se puede contrastar con la astronomía. Ninguna capa oculta
+            entrega eso.</li>
+          <li><strong>Referencia obligatoria.</strong> Aunque vayas a usar una red, el ARMA es el <em>benchmark</em>
+            que hay que batir. Un modelo complejo que no supera a un AR(2) no es un modelo complejo: es un modelo
+            complejo mal ajustado.</li>
+        </ul>
+      </div>
+
+      <div class="warning">
+        <p><strong>Uso crítico de los asistentes de IA.</strong> Un asistente te dará en segundos el código de un
+          <code>arima()</code> y una interpretación convincente de la salida. Este capítulo contiene al menos cuatro
+          puntos en los que esa interpretación suele estar mal y <strong>tú tienes que verificarlos</strong>: (1) el
+          <code>intercept</code> de <code>arima()</code> es la media $\hat\mu$, no la constante $c$; (2) sin
+          <code>fitdf = p+q</code>, Ljung–Box aprueba modelos insuficientes —aquí el $p$-valor pasaba de $0.046$ a
+          $0.100$—; (3) el AICc no compara modelos con distinto $d$ ni con y sin media; (4) un ARMA que gana por AICc
+          puede estar parcheando una escala equivocada. La regla del curso: <strong>el asistente propone, tú
+            diagnosticas</strong>.</p>
+      </div>
+
+      <h3>Resumen del capítulo</h3>
+
+      <div class="diagram">
+        <ol>
+          <li>El <strong>operador de rezago</strong> $B$ convierte recursiones en polinomios. Un proceso es
+            estacionario si las raíces de $\phi(B)$ caen <strong>fuera</strong> del círculo unitario, e invertible si
+            lo hacen las de $\theta(B)$.</li>
+          <li>Un <strong>AR($p$)</strong> tiene <strong>PACF que se corta</strong> en $p$ y ACF que decae. Un
+            <strong>MA($q$)</strong>, al revés: <strong>ACF que se corta</strong> en $q$. Un <strong>ARMA</strong>
+            decae en las dos, y por eso los correlogramas no bastan para fijar sus órdenes.</li>
+          <li>Un AR(2) con $\phi_1^2 + 4\phi_2 < 0$ tiene raíces complejas y produce un <strong>pseudo-ciclo</strong>
+            de periodo $2\pi/\arccos\!\big(\phi_1/(2\sqrt{-\phi_2})\big)$.</li>
+          <li>Todo ARMA estacionario e invertible se puede escribir como MA($\infty$) (pesos $\psi$, respuesta al
+            impulso) o como AR($\infty$) (pesos $\pi$). Los $\psi$ darán la forma de abanico a los intervalos del
+            Capítulo 6.</li>
+          <li>La estimación se hace por <strong>Yule–Walker</strong>, <strong>CSS</strong> o <strong>máxima
+              verosimilitud</strong>. No dan lo mismo: en las manchas solares, YW y ML se separaron $1.26$ y $1.10$
+            errores estándar. CSS y ML coincidieron.</li>
+          <li>Se elige con <strong>AICc</strong> o <strong>BIC</strong> —solo entre modelos ajustados a los mismos
+            datos— y se valida con <strong>Ljung–Box sobre los residuales</strong>, siempre con
+            <code>fitdf = p + q</code>.</li>
+          <li>Un criterio de información no distingue "falta dinámica" de "sobra un problema de escala". En las
+            manchas solares, el término MA que ganaba sobre la serie cruda <strong>desapareció</strong> al pasar a la
+            raíz cuadrada, y el pseudo-periodo se acercó al ciclo solar real.</li>
+          <li>A veces la respuesta correcta es que <strong>no hay nada que modelar</strong>: los log-retornos
+            mensuales de la TRM son indistinguibles del ruido blanco.</li>
+        </ol>
+      </div>
+
+      <h3>Autoevaluación</h3>
+
+      <p>Ocho preguntas sobre todo el capítulo. Al primer fallo verás una pista y podrás reintentar; al segundo se
+        revela la respuesta y se explica. Al terminar, el resumen te dice qué módulos conviene repasar.</p>
+
+      <div class="quiz" data-quiz="cap3">
+        <h4><i class="fas fa-circle-question" aria-hidden="true"></i> Autoevaluación</h4>
+        <p class="text-sm" style="margin-bottom:0;">Ocho preguntas de los cuatro tipos: opción única, selección
+          múltiple, respuesta numérica y diagnóstico de un gráfico. Cada opción trae su explicación, también las
+          incorrectas.</p>
+        <div class="quiz-progreso" role="presentation"><div class="quiz-progreso-barra"></div></div>
+        <div class="quiz-preguntas"></div>
+        <div class="quiz-resumen" role="status" hidden></div>
+        <div class="quiz-marcador">
+          <span class="quiz-conteo"></span>
+          <button type="button" class="quiz-reiniciar">Reiniciar</button>
+        </div>
+      </div>
+
+      <h3>Ejercicios propuestos</h3>
+
+      <p>Tres ejercicios con pista y solución comentada. Las cifras de las soluciones están calculadas en R con el
+        script <code>precalculo/genera_soluciones.R</code>: ninguna está escrita de memoria, y puedes contrastar las
+        tuyas contra ellas.</p>
+
+      <div class="ejercicio-guiado">
+        <p class="ejercicio-enunciado"><span class="ejercicio-numero">1.</span>Toma la serie <code>lh</code> de R
+          (48 mediciones de hormona luteinizante, una cada 10 minutos). Identifica $(p,q)$ con ACF y PACF, ajusta los
+          candidatos razonables y elige uno. ¿Coinciden el AICc y el BIC? Diagnostica el modelo que elijas.</p>
+        <div class="ejercicio-acciones">
+          <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c3e1-pista">
+            <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c3e1-sol">
+            <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="ejercicio-panel pista" id="c3e1-pista" hidden>
+          <p style="margin:0;">Con $n = 48$ la banda es ancha: $\pm 0.283$. Fíjate en cuántas barras se salen de
+            verdad, y no te fíes de las que están justo en el borde. Y no esperes que los dos criterios te den la
+            misma respuesta: <strong>aquí no lo hacen</strong>, y esa discrepancia es el ejercicio. Antes de elegir,
+            comprueba si los dos candidatos pasan Ljung–Box.</p>
+        </div>
+        <div class="ejercicio-panel solucion" id="c3e1-sol" hidden>
+          <p><strong>Respuesta: el AICc elige MA(2) y el BIC elige AR(1), por muy poco, y los dos son
+              defendibles.</strong></p>
+          <pre><code class="language-r">aicc &lt;- function(f, n) { k &lt;- length(f$coef) + 1; f$aic + 2*k*(k+1)/(n-k-1) }
+n &lt;- length(lh)   # 48
+
+round(1.96 / sqrt(n), 4)
+#&gt; [1] 0.2829                       banda ancha: solo el rezago 1 se sale
+
+round(acf(lh,  lag.max = 6, plot = FALSE)$acf[-1], 4)
+#&gt; [1]  0.5755  0.1818 -0.1448 -0.1748 -0.1497 -0.0210
+# pacf()$acf devuelve un array de tres dimensiones y se imprime como tal:
+# as.numeric() lo aplana para poder leerlo de un vistazo
+round(as.numeric(pacf(lh, lag.max = 6, plot = FALSE)$acf), 4)
+#&gt; [1]  0.5755 -0.2234 -0.2269  0.1028 -0.0759  0.0676
+
+# Las dos se cortan aparentemente en el rezago 1: candidatos AR(1) y MA(1),
+# y conviene probar algo mas por si acaso.
+for (pq in list(c(1,0), c(2,0), c(3,0), c(0,1), c(0,2), c(1,1))) {
+  f &lt;- arima(lh, order = c(pq[1], 0, pq[2]), method = "ML")
+  cat(sprintf("ARMA(%d,%d)  AICc=%7.3f  BIC=%7.3f  LB(10) p=%.4f\n",
+      pq[1], pq[2], aicc(f, n), BIC(f),
+      Box.test(residuals(f), lag = 10, type = "Ljung-Box",
+               fitdf = sum(pq))$p.value))
+}
+#&gt; ARMA(1,0)  AICc= 65.304  BIC= 70.372  LB(10) p=0.4050
+#&gt; ARMA(2,0)  AICc= 65.434  BIC= 71.989  LB(10) p=0.4185
+#&gt; ARMA(3,0)  AICc= 65.613  BIC= 73.541  LB(10) p=0.7958
+#&gt; ARMA(0,1)  AICc= 68.649  BIC= 73.717  LB(10) p=0.1962
+#&gt; ARMA(0,2)  AICc= 63.991  BIC= 70.545  LB(10) p=0.8492   <- min AICc
+#&gt; ARMA(1,1)  AICc= 66.454  BIC= 73.009  LB(10) p=0.3927
+
+# El BIC prefiere el AR(1): 70.372 frente a 70.545. Diferencia de 0.17,
+# practicamente un empate.
+ar1 &lt;- arima(lh, order = c(1, 0, 0), method = "ML")
+round(c(phi = coef(ar1)[["ar1"]], ee = sqrt(ar1$var.coef[1,1]),
+        media = coef(ar1)[["intercept"]]), 4)
+#&gt;    phi     ee  media
+#&gt; 0.5739 0.1161 2.4133
+
+shapiro.test(residuals(ar1))$p.value
+#&gt; [1] 0.008348901   <- la normalidad SI se rechaza</code></pre>
+          <p><strong>Discusión.</strong> Los dos modelos pasan Ljung–Box con holgura, así que ninguno es
+            inadmisible. El AICc prefiere el MA(2) ($63.99$ frente a $65.30$) y el BIC prefiere el AR(1) ($70.37$
+            frente a $70.55$, una diferencia de $0.17$ que no distingue nada). Con $n=48$ esta indeterminación es lo
+            normal, y la salida razonable es <strong>quedarse con el AR(1)</strong> por parsimonia: un parámetro en
+            vez de dos, interpretación directa ($\hat\phi = 0.574$: cada medición conserva el 57 % de la anterior) y
+            el mismo comportamiento en el diagnóstico. Si el objetivo fuera pronosticar, valdría la pena comparar los
+            dos por validación de origen móvil, que es lo que hará el Capítulo 6. Nota final: la normalidad de los
+            residuales se rechaza ($p = 0.0083$), un aviso para los intervalos de pronóstico.</p>
+        </div>
+      </div>
+
+      <div class="ejercicio-guiado">
+        <p class="ejercicio-enunciado"><span class="ejercicio-numero">2.</span>Considera el proceso
+          MA(2) con $\theta = (0.6,\ 0.4)$. ¿Es invertible? Calcula su ACF teórica a mano y compárala con
+          <code>ARMAacf</code>. ¿Se cumple aquí la cota $|\rho_1| \le 0.5$ del Módulo 3?</p>
+        <div class="ejercicio-acciones">
+          <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c3e2-pista">
+            <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c3e2-sol">
+            <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="ejercicio-panel pista" id="c3e2-pista" hidden>
+          <p style="margin:0;">Usa la fórmula general de la ACF de un MA($q$) con el convenio $\theta_0 = 1$:
+            el numerador de $\rho_k$ es $\sum_{j=0}^{q-k}\theta_j\theta_{j+k}$. Para $k=1$ eso son <em>dos</em>
+            sumandos, no uno. Y sobre la última pregunta: relee de dónde salía la cota del Módulo 3 —¿se dedujo para
+            un MA cualquiera, o para uno concreto?</p>
+        </div>
+        <div class="ejercicio-panel solucion" id="c3e2-sol" hidden>
+          <p><strong>Respuesta: sí es invertible, $\rho_1 = 0.5526$ y $\rho_2 = 0.2632$, y la cota
+              <em>no</em> se cumple porque no era aplicable.</strong></p>
+          <pre><code class="language-r">theta &lt;- c(0.6, 0.4)
+
+# Invertibilidad: raices de theta(B) = 1 + 0.6B + 0.4B^2
+raices &lt;- polyroot(c(1, theta))
+round(raices, 4)
+#&gt; [1] -0.75+1.3919i -0.75-1.3919i
+round(Mod(raices), 4)
+#&gt; [1] 1.5811 1.5811        &gt; 1  ->  INVERTIBLE
+
+# ACF a mano, con theta_0 = 1
+denominador &lt;- 1 + sum(theta^2)                       # 1 + 0.36 + 0.16 = 1.52
+rho1 &lt;- (1 * theta[1] + theta[1] * theta[2]) / denominador   # (0.6 + 0.24)/1.52
+rho2 &lt;- (1 * theta[2]) / denominador                          # 0.4/1.52
+round(c(rho1 = rho1, rho2 = rho2), 4)
+#&gt;   rho1   rho2
+#&gt; 0.5526 0.2632
+
+# Contra ARMAacf
+round(ARMAacf(ma = theta, lag.max = 4)[-1], 4)
+#&gt; [1] 0.5526 0.2632 0.0000 0.0000    <- coinciden, y se corta en q = 2
+
+# Pesos pi: el MA(2) invertible se escribe como AR(infinito) convergente
+round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
+#&gt; [1] -0.6000 -0.0400  0.2640 -0.1424 -0.0202  0.0691 -0.0334 -0.0076
+# oscilan y se desvanecen: es la firma de la invertibilidad</code></pre>
+          <p><strong>Sobre la cota.</strong> $\rho_1 = 0.5526 > 0.5$. No hay contradicción: la cota
+            $|\rho_1|\le 0.5$ se dedujo <strong>solo para el MA(1)</strong>, maximizando $\theta/(1+\theta^2)$. Con
+            $q = 2$ el numerador de $\rho_1$ gana el término extra $\theta_1\theta_2$ y el techo sube. Es un buen
+            recordatorio de que una cota vale exactamente en el modelo del que se dedujo: ver $r_1 = 0.55$ descarta
+            un MA(1), <strong>no</strong> descarta un MA(2).</p>
+        </div>
+      </div>
+
+      <div class="ejercicio-guiado">
+        <p class="ejercicio-enunciado"><span class="ejercicio-numero">3.</span>El Módulo 9 ajustó un AR(2) a
+          $\sqrt{\text{manchas}}$ sobre la ventana 1770–1869. Repite el ajuste sobre la serie completa
+          (1700–1988) y sobre 1900–1988. ¿Son estables los coeficientes? ¿Y el pseudo-periodo? ¿Sigue pasando
+          el diagnóstico?</p>
+        <div class="ejercicio-acciones">
+          <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c3e3-pista">
+            <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c3e3-sol">
+            <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="ejercicio-panel pista" id="c3e3-pista" hidden>
+          <p style="margin:0;">Mira <strong>tres</strong> cosas por separado y no las confundas: los coeficientes
+            $\hat\phi$, la cantidad derivada de ellos (el periodo) y el diagnóstico. Puede pasar perfectamente que los
+            coeficientes apenas se muevan, que el periodo sí lo haga y que el diagnóstico se derrumbe. Piensa por qué
+            el Ljung–Box empeora tanto al alargar la muestra: ¿el modelo es peor, o la prueba tiene más con qué
+            detectarlo?</p>
+        </div>
+        <div class="ejercicio-panel solucion" id="c3e3-sol" hidden>
+          <p><strong>Respuesta: los coeficientes son notablemente estables, el periodo se acorta un año y el
+              diagnóstico falla en todas las ventanas salvo la de Yule.</strong></p>
+          <pre><code class="language-r">for (v in list(c(1770,1869), c(1700,1988), c(1870,1988), c(1900,1988))) {
+  x &lt;- sqrt(window(sunspot.year, v[1], v[2]))
+  f &lt;- arima(x, order = c(2, 0, 0), method = "ML")
+  r &lt;- polyroot(c(1, -coef(f)[1:2]))
+  cat(sprintf("%d-%d (n=%3d): phi=(%.4f, %.4f)  |raiz|=%.4f  periodo=%6.3f  LB12 p=%.4f\n",
+      v[1], v[2], length(x), coef(f)[1], coef(f)[2], Mod(r)[1],
+      2*pi/Arg(r[1]),
+      Box.test(residuals(f), lag = 12, type = "Ljung-Box", fitdf = 2)$p.value))
+}
+#&gt; 1770-1869 (n=100): phi=(1.4027, -0.6853)  |raiz|=1.2080  periodo=11.218  LB12 p=0.1644
+#&gt; 1700-1988 (n=289): phi=(1.4086, -0.7006)  |raiz|=1.1947  periodo=11.007  LB12 p=0.0000
+#&gt; 1870-1988 (n=119): phi=(1.4219, -0.7321)  |raiz|=1.1687  periodo=10.648  LB12 p=0.0007
+#&gt; 1900-1988 (n= 89): phi=(1.4146, -0.7556)  |raiz|=1.1504  periodo=10.129  LB12 p=0.0010</code></pre>
+          <p><strong>Discusión.</strong> Hay tres lecturas y conviene separarlas:</p>
+          <ul>
+            <li><strong>Los coeficientes son estables.</strong> $\hat\phi_1$ se mueve entre $1.403$ y $1.422$ y
+              $\hat\phi_2$ entre $-0.685$ y $-0.756$, siempre dentro de un error estándar o dos. El AR(2) captura una
+              estructura real y persistente, no un artefacto de la ventana de Yule.</li>
+            <li><strong>El periodo sí se mueve:</strong> de $11.22$ años (1770–1869) a $10.13$ (1900–1988). Como
+              depende de los $\phi$ a través de un arcocoseno, cambios pequeños en $\hat\phi_2$ se amplifican. Es un
+              buen ejemplo de que una cantidad derivada puede ser mucho más sensible que los parámetros de los que
+              procede. Sobre la serie completa da $11.007$, notablemente cerca del ciclo documentado.</li>
+            <li><strong>El diagnóstico se derrumba</strong> en cuanto se sale de la ventana de Yule ($p &lt; 0.001$ en
+              las tres). Y la causa no es que el modelo empeore —los coeficientes casi no cambian— sino que
+              <strong>la prueba gana potencia</strong>: con $n = 289$ en vez de $100$, Ljung–Box detecta
+              autocorrelaciones residuales pequeñas que con cien observaciones quedaban dentro del ruido. La asimetría
+              no lineal que el Módulo 9 señalaba sigue ahí; simplemente, ahora hay datos suficientes para probarlo.</li>
+          </ul>
+          <p style="margin-bottom:0;">Moraleja: que un modelo "pase" el diagnóstico depende de cuántos datos tengas
+            para desmentirlo. No rechazar $H_0$ nunca es lo mismo que aceptarla.</p>
+        </div>
+      </div>
+
+      <h3>Lecturas</h3>
+
+      <div class="exercise">
+        <h4><i class="fas fa-book-open mr-2" aria-hidden="true"></i>Para este capítulo</h4>
+        <ul style="margin-bottom:0;">
+          <li><strong>Hyndman &amp; Athanasopoulos, <em>FPP3</em></strong> — secciones <strong>9.3</strong>
+            (modelos autorregresivos), <strong>9.4</strong> (modelos de medias móviles) y <strong>5.4</strong>
+            (diagnóstico de residuales). Acceso abierto en
+            <a href="https://otexts.com/fpp3/" class="text-primary underline" target="_blank"
+              rel="noopener">otexts.com/fpp3</a>.</li>
+          <li><strong>Shumway &amp; Stoffer, <em>Time Series Analysis and Its Applications</em></strong> —
+            capítulo <strong>3</strong>, secciones 3.1 a 3.5: es el tratamiento formal de ARMA, causalidad,
+            invertibilidad y estimación, con las manchas solares entre sus ejemplos.</li>
+          <li><strong>Box, Jenkins, Reinsel &amp; Ljung</strong> — capítulos 3 y 6, la fuente original de la
+            metodología de identificación y de la prueba de Ljung–Box.</li>
+          <li><em>Opcional, para el puente con el aprendizaje profundo:</em> Hyndman &amp; Athanasopoulos, sección
+            <strong>12.4</strong> (redes neuronales autorregresivas, <code>NNETAR</code>), que es literalmente un
+            AR con una capa oculta.</li>
+        </ul>
+      </div>
+
+      <div class="note">
+        <p style="margin-bottom:0;"><strong>Lo que viene.</strong> Todo este capítulo ha supuesto que la serie ya era
+          estacionaria. En el <strong>Capítulo 4</strong> se añade la pieza que falta —la integración, el orden
+          $d$— para llegar a los modelos <strong>ARIMA</strong> y a la metodología completa de Box–Jenkins, con el
+          algoritmo de Hyndman–Khandakar que automatiza la búsqueda. Y allí volverá, ahora con consecuencias, la
+          advertencia sobre comparar criterios de información entre modelos con distinto $d$.</p>
+      </div>
+    </div>
+  </template>
+
