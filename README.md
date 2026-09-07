@@ -21,19 +21,22 @@ simuladores** interactivos, autoevaluación con retroalimentación por opción y
 La portada [`index.html`](index.html) enlaza los seis capítulos. En total: **61 módulos, 65
 simuladores, 49 preguntas de autoevaluación y 20 ejercicios guiados con solución comentada.**
 
-## Taller y preparcial
+## Talleres y preparcial
 
 | # | Taller | Cubre | Módulos | Tareas |
 |---|--------|-------|:---:|:---:|
 | 1 | [Módulo I · Componentes y estacionariedad](taller-1-modulo-1.html) | Capítulos 1 y 2 · Corte I, semana 4 | 8 | 5 |
+| 2 | [Módulo II · Modelos AR, MA y ARMA](taller-2-modulo-2.html) | Capítulo 3 · Corte II, semanas 6 a 10 | 8 | 5 |
 
-El taller es **individual y por variante**: cada estudiante recibe su propia serie no estacionaria
-y su propia serie estacional, asignadas por los tres últimos dígitos de su documento a partir de
-1000 variantes precalculadas en R. El navegador no calcula nada — busca la fila. El enunciado
-incluye la rúbrica y el banco de preguntas de la defensa, y la plantilla de entrega en LaTeX está
-en [`entrega/`](entrega/).
+Los talleres son **individuales y por variante**: cada estudiante recibe sus propias series,
+asignadas por los tres últimos dígitos de su documento a partir de 1000 variantes precalculadas
+en R —dos series en el Taller 1, tres en el Taller 2—. El navegador no calcula nada — busca la
+fila. Cada enunciado incluye la rúbrica y el banco de preguntas de la defensa, y su plantilla de
+entrega en LaTeX está en [`entrega/`](entrega/). En el Taller 2 las salidas que se auditan —una
+rejilla de nueve modelos, un ARMA(3,3) que pasa el diagnóstico, un AR(2) que también lo pasa— vienen
+ya calculadas en R: se evalúa decidir con ellas, no producirlas.
 
-Lo que **no** viaja en este repositorio mientras el taller esté abierto: el generador de las
+Lo que **no** viaja en este repositorio mientras un taller esté abierto: el generador de las
 series, los auditores y el ensamblador. Se versionan después de calificar.
 
 | # | Preparcial | Cubre | Módulos | Ítems |
