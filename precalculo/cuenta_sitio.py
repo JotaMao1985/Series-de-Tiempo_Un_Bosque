@@ -47,6 +47,7 @@ CAPITULOS = [
 ]
 TALLERES = [
     ("taller-1-modulo-1.html", "Taller 1 · Módulo I"),
+    ("taller-2-modulo-2.html", "Taller 2 · Módulo II"),
     ("preparcial-corte-1.html", "Preparcial · Corte I"),
 ]
 

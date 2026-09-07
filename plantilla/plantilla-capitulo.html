@@ -141,6 +141,15 @@
       }
     }
 
+    /* Por debajo de 768 px la barra lateral está en display:none, pero el botón
+       flotante que la pliega seguía dibujándose sobre el texto —un círculo fijo a
+       media altura que tapa la prosa— y declaraba aria-expanded sobre algo que no
+       existe. Se oculta donde no controla nada. En móvil la navegación son
+       los botones Anterior / Siguiente del pie de cada módulo. */
+    @media (max-width: 767.98px) {
+      #sidebarToggle { display: none; }
+    }
+
     .sidebar-inner {
       position: sticky;
       top: 9rem;
