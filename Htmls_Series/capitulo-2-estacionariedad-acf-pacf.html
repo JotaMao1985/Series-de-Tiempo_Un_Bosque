@@ -3265,6 +3265,101 @@ print(round(est, 4), p)            # 2.2427, p = 0.01 (tope de la tabla)
           ruido.</p>
       </div>
 
+      <h3>El precio de cada diferencia</h3>
+
+      <p>Conviene detenerse en esa última frase, porque el costo no es un detalle contable. Una diferencia no
+        transforma cada dato por separado: <strong>necesita dos observaciones para producir una</strong>. Los primeros
+        datos de la serie no tienen con quién restarse y simplemente desaparecen. Cuánto se pierde lo fija exactamente
+        el rezago al que se mira —$\nabla_m$ deja $T-m$ observaciones—, de modo que el rezago <em>es</em> el precio.</p>
+
+      <p>La serie <code>AirPassengers</code> lo muestra sin ambigüedad: son $T = 144$ meses, de enero de 1949 a
+        diciembre de 1960. Calcular $\nabla y_t$ en enero de 1949 exigiría diciembre de 1948, que no está en la serie;
+        calcular $\nabla_{12} y_t$ en ese mismo mes exigiría enero de 1948, y con él todo un año que tampoco está.</p>
+
+      <table>
+        <caption class="sr-only">Diferencia regular y diferencia estacional de AirPassengers en los primeros meses,
+          señalando con una raya las observaciones que no pueden calcularse</caption>
+        <thead>
+          <tr>
+            <th scope="col">Mes</th>
+            <th scope="col">$y_t$</th>
+            <th scope="col">$\nabla y_t = y_t - y_{t-1}$</th>
+            <th scope="col">$y_{t-12}$</th>
+            <th scope="col">$\nabla_{12} y_t = y_t - y_{t-12}$</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1949-01</td>
+            <td>112</td>
+            <td>— <em class="text-gray-400">falta 1948-12</em></td>
+            <td>— <em class="text-gray-400">falta 1948-01</em></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>1949-02</td>
+            <td>118</td>
+            <td>$118 - 112 = 6$</td>
+            <td>—</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>1949-03</td>
+            <td>132</td>
+            <td>$132 - 118 = 14$</td>
+            <td>—</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>⋮</td>
+            <td>⋮</td>
+            <td>⋮</td>
+            <td>⋮</td>
+            <td>⋮</td>
+          </tr>
+          <tr>
+            <td>1949-12</td>
+            <td>118</td>
+            <td>$118 - 104 = 14$</td>
+            <td>—</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>1950-01</td>
+            <td>115</td>
+            <td>$115 - 118 = -3$</td>
+            <td>112</td>
+            <td>$115 - 112 = 3$</td>
+          </tr>
+          <tr>
+            <td>1950-02</td>
+            <td>126</td>
+            <td>$126 - 115 = 11$</td>
+            <td>118</td>
+            <td>$126 - 118 = 8$</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>La cuenta sale sola. La diferencia regular pierde un dato y deja 143; la estacional pierde un año entero
+        —las doce filas de 1949— y deja 132; y aplicar las dos, $\nabla\nabla_{12}$, suma los dos costos y deja
+        $144 - 12 - 1 = 131$. Es exactamente la cifra que devuelve <code>length()</code> sobre la serie doblemente
+        diferenciada en el código de más abajo. Su primer valor calculable es el de febrero de 1950: $8 - 3 = 5$.</p>
+
+      <div class="note">
+        <p><strong>El costo es absoluto, no proporcional.</strong> Esas trece observaciones perdidas pesan lo mismo en
+          una serie larga que en una corta, y por eso duelen de forma muy distinta:</p>
+        <ul>
+          <li>144 meses (12 años) $\rightarrow$ quedan 131: se va el 9 %.</li>
+          <li>60 meses (5 años) $\rightarrow$ quedan 47: se va el 22 %.</li>
+          <li>36 meses (3 años) $\rightarrow$ quedan 23: se va el 36 %.</li>
+        </ul>
+        <p style="margin-bottom:0;">Con series cortas y estacionalidad mensual, una sola diferencia estacional puede
+          llevarse un tercio de la muestra, y todo lo que venga después —correlograma, estimación, pruebas— se calcula
+          sobre lo que queda. Ese es el argumento cuantitativo detrás de la advertencia anterior, y también el motivo
+          por el que sobrediferenciar no solo añade ruido: además achica la evidencia con la que se decide.</p>
+      </div>
+
       <h3>¿Cuántas diferencias?</h3>
 
       <p>Hay tres señales que conviene mirar juntas, y en los casos normales las tres apuntan al mismo número.</p>
