@@ -2441,6 +2441,87 @@
           forma en que se escribe cada modelo. La consecuencia práctica es que <strong>R y Python usan este mismo
             convenio</strong>, pero algunos textos —y algún paquete— invierten el signo de $\theta$. Si un $\theta$
           estimado te sale con el signo contrario al que esperabas, comprueba el convenio antes de dudar de tus datos.</p>
+        <p>Conviene ver las dos escrituras enfrentadas, porque el desacuerdo es solo sobre la parte MA. El convenio de
+          <strong>suma</strong> —el de este capítulo, el de R y el de <code>statsmodels</code>— escribe un MA(1) así:</p>
+        $$y_t = \varepsilon_t + \theta_1\varepsilon_{t-1}$$
+        <p>y el convenio de <strong>resta</strong> —el del Box–Jenkins clásico y el de S-PLUS— lo escribe así:</p>
+        $$y_t = \varepsilon_t - \theta_1\varepsilon_{t-1}$$
+        <p style="margin-bottom:0;">Es <strong>el mismo modelo</strong>, no dos modelos rivales. Ajustado a los mismos
+          datos da la misma verosimilitud, los mismos residuales y los mismos pronósticos; lo único que cambia es la
+          etiqueta impresa. Un $\hat\theta = 0.69$ en un convenio es $\hat\theta = -0.69$ en el otro.</p>
+      </div>
+
+      <p>Comprobar cuál usa un paquete no requiere leer su documentación: basta ajustar una serie simulada con un
+        $\theta$ conocido y mirar el signo que devuelve. Aquí la serie se genera una sola vez en R y se ajusta en los
+        dos lenguajes, para que la comparación sea sobre los mismos números.</p>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Comprobar el convenio de signos">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel" data-lang="r">
+          <pre><code class="language-r"># ARMA(1,1) con phi = 0.6 y theta = 0.7, ambos POSITIVOS
+set.seed(2026)
+x &lt;- arima.sim(model = list(ar = 0.6, ma = 0.7), n = 600)
+write.csv(data.frame(x = as.numeric(x)), "serie.csv", row.names = FALSE)
+
+arima(x, order = c(1, 0, 1), include.mean = FALSE)
+#&gt; Coefficients:
+#&gt;          ar1     ma1
+#&gt;       0.5999  0.6925
+#&gt; s.e.  0.0364  0.0355
+#&gt;
+#&gt; sigma^2 estimated as 0.9992:  log likelihood = -852.03,  aic = 1710.05
+
+# ma1 sale POSITIVO: convenio de suma, el mismo del capitulo.
+# La ayuda de ?arima imprime la ecuacion con signos + en la parte MA y
+# advierte que por eso sus coeficientes tienen el signo contrario a los
+# de la documentacion de S-PLUS.
+
+# En R no hay asimetria: arima.sim() y arima() hablan el mismo idioma,
+# el de los COEFICIENTES del modelo. Lo que se pone es lo que sale.</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" hidden>
+          <pre><code class="language-python">import numpy as np, pandas as pd
+from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.tsa.arima_process import ArmaProcess
+
+x = pd.read_csv("serie.csv")["x"].to_numpy()          # LA MISMA serie de R
+fit = ARIMA(x, order=(1, 0, 1), trend="n").fit()
+
+print(fit.param_names, fit.params.round(4))
+# ['ar.L1', 'ma.L1', 'sigma2'] [0.5999 0.6925 0.9992]
+# Identico a R hasta el cuarto decimal, y con el mismo signo positivo.
+
+print(fit.polynomial_ar)     # [ 1.  -0.5999]  ->  phi(B)   = 1 - 0.5999 B
+print(fit.polynomial_ma)     # [ 1.   0.6925]  ->  theta(B) = 1 + 0.6925 B
+
+# PERO al SIMULAR, statsmodels no pide los coeficientes del modelo sino
+# los del POLINOMIO. Como phi(B) = 1 - phi1*B, el AR va NEGADO:
+bien = ArmaProcess(ar=np.array([1, -0.6]), ma=np.array([1, 0.7]))
+mal  = ArmaProcess(ar=np.array([1,  0.6]), ma=np.array([1, 0.7]))
+
+print(bien.arcoefs, np.round(bien.acf(5)[1:], 4))
+# [0.6]  [0.7923 0.4754 0.2852 0.1711]    &lt;- lo que se queria
+print(mal.arcoefs,  np.round(mal.acf(5)[1:], 4))
+# [-0.6] [ 0.0892 -0.0535  0.0321 -0.0193]  &lt;- otro modelo, sin avisar</code></pre>
+        </div>
+      </div>
+
+      <div class="note">
+        <p><strong>La regla que ahorra la tarde.</strong> En R los coeficientes son coeficientes en todas partes. En
+          Python son coeficientes al <em>estimar</em> y coeficientes del <em>polinomio</em> al <em>simular</em>, de
+          modo que la parte AR cambia de signo al pasar de <code>ARIMA(...)</code> a <code>ArmaProcess(...)</code>.
+          Escribir <code>ar=[1, 0.6]</code> en vez de <code>ar=[1, -0.6]</code> no produce ningún error: produce
+          calladamente un proceso con $\phi = -0.6$, cuya ACF oscila alrededor de cero en lugar de decaer desde 0.79.
+          Es el mismo tipo de fallo silencioso que reaparece unas líneas más abajo con el orden de los coeficientes en
+          <code>polyroot()</code> y <code>np.roots()</code>.</p>
+        <p style="margin-bottom:0;">Y si el paquete es desconocido y no hay documentación a mano, queda el
+          correlograma como árbitro: en un MA(1) bajo el convenio de suma se cumple
+          $\rho_1 = \theta/(1+\theta^2)$, así que $r_1$ y $\hat\theta$ <strong>tienen que salir con el mismo
+            signo</strong>. Si el ajuste devuelve $\hat\theta = -0.70$ sobre una serie cuyo $r_1$ vale $+0.50$, no hay
+          nada roto en los datos: es el convenio de resta.</p>
       </div>
 
       <h3>Las raíces son la respuesta</h3>
