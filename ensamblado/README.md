@@ -6,7 +6,7 @@ aquí se editan directamente.
 
 | Script | Qué hizo |
 |---|---|
-| `ensambla_cap3.py` | Construyó el capítulo 3 **partiendo del capítulo 2** y sustituyendo regiones delimitadas (metadatos, CSS, plantillas de módulo, `courseData`, datos precalculados, JavaScript propio). |
+| `ensambla_cap3.py` | Construyó el capítulo 3 **partiendo del capítulo 2** y sustituyendo regiones delimitadas (metadatos, CSS, plantillas de módulo, `courseData`, datos precalculados, JavaScript propio), e **instala el componente `.tabla-ranking` entero** —CSS, motor y llamada de arranque—, porque el capítulo 2 no lo tiene. Expande el marcador `<!--RANKING:...-->` con su constructor de `componentes/`. A diferencia de los otros, **verifica por defecto y solo escribe con `--escribir`**. Es **reejecutable** y reproduce el archivo byte a byte (ver Advertencia: dejó de serlo con `retropropaga_ranking.py` y se reparó el 2026-09-09). |
 | `retropropaga.py` | Injertó el componente `.derivacion` y la opción `barrasExtra` en los capítulos 1 y 2, y añadió una caja de derivación en cada uno. |
 | `instala_ciclo.py` | Instaló el componente `.ciclo` en la plantilla y en los capítulos 1, 2 y 3, con una instancia en cada uno. El capítulo 4 **no** aparece: se ensambla desde el 3 y lo hereda por construcción. |
 | `ensambla_cap5.py` | Construyó el capítulo 5 **partiendo del capítulo 4**, y además **instaló el componente nuevo `.mapa-estacional`** en la región compartida (CSS, JavaScript y la llamada de `loadModule`). Expande tres marcadores de plantilla —`<!--MAPA:...-->`, `<!--RANKING:...-->` y `<!--CICLO:...-->`— con sus constructores de `componentes/`, para que el marcado sea idéntico al de las otras instancias. Es **reejecutable** y reproduce el archivo byte a byte (ver Advertencia: dejó de serlo con `retropropaga_ranking.py` y se reparó el 2026-08-05). |
@@ -26,11 +26,15 @@ aquí se editan directamente.
   no encuentra diferencias. **Si se corrige un componente, se corrige aquí**: las
   correcciones de espaciado del capítulo 5 se hicieron en estas fuentes y el
   reensamblado las reprodujo sin tocar el HTML publicado.
-- `cap4/`, `cap5/`, `cap6/` — plantillas de módulo y JavaScript de cada capítulo.
+- `cap3/`, `cap4/`, `cap5/`, `cap6/` — plantillas de módulo y JavaScript de cada
+  capítulo.
   **Son la fuente** para su `ensambla_capN.py`: si se edita el capítulo publicado a
   mano —o si una retropropagación le injerta algo—, hay que reflejarlo aquí o el
   siguiente ensamblado lo perderá. Es exactamente lo que pasó con `.tabla-ranking`
-  (ver Advertencia).
+  en los capítulos 3, 4 y 5 (ver Advertencia). Lo que es del componente y no del
+  capítulo se lee de `componentes/`: `cap3/` llegó a tener su propia copia de
+  `tabla_ranking.css` y `.js` —y la del `.js` arrastraba pegada una copia de
+  `iniciarDerivaciones()`—, así que se borraron al reparar el capítulo 3.
 
 ## Por qué por sustitución y no por concatenación
 
@@ -56,18 +60,27 @@ contenedor `.quiz` le falta `.quiz-preguntas`.
 
 ## Advertencia
 
-`ensambla_cap3.py` e `instala_ciclo.py` están escritos contra el estado de los
-archivos **anterior** a su propia ejecución. Volver a ejecutarlos hoy abortaría,
-que es exactamente lo que deben hacer (`instala_ciclo.py` lo comprueba de forma
-explícita: si el archivo ya tiene `.ciclo`, para). `ensambla_cap3.py` además
-apunta a una ruta temporal de la sesión en que se escribió, que ya no existe:
-hoy falla al abrir `derivacion.css` antes de tocar nada.
+`instala_ciclo.py` está escrito contra el estado de los archivos **anterior** a
+su propia ejecución. Volver a ejecutarlo hoy abortaría, que es exactamente lo que
+debe hacer: lo comprueba de forma explícita, y si el archivo ya tiene `.ciclo`,
+para.
 
-> ⚠️ **`retropropaga_ranking.py` rompió los ensamblados del 4 y del 5.**
-> Corregido el 2026-08-05; se deja escrito porque son dos formas distintas de
-> quedarse por detrás de una retropropagación, y la segunda no da la cara.
+`ensambla_cap3.py` estuvo en esa misma categoría —apuntaba a un scratchpad de
+sesión que ya no existe, y fallaba al abrir `derivacion.css` antes de tocar
+nada—, pero dejó de estarlo: sus fuentes viven en `cap3/` desde el 2026-09-02 y
+el componente que le faltaba se instaló el 2026-09-09. Hoy es reejecutable como
+los demás, con una diferencia deliberada: **verifica por defecto**. Sin
+argumentos ensambla en memoria, compara con el archivo en disco y no escribe
+nada; para sobrescribir hay que pedirlo con `--escribir`.
+
+> ⚠️ **`retropropaga_ranking.py` rompió los ensamblados del 3, del 4 y del 5.**
+> El 4 y el 5, corregidos el 2026-08-05; el 3, cinco semanas más tarde, el
+> 2026-09-09. Se deja escrito porque son **tres** formas distintas de quedarse
+> por detrás de una retropropagación, y ninguna de las tres avisa por sí sola: al
+> 4 lo delató un respaldo, al 5 un `ABORTA` que tapaba algo peor, y al 3 el modo
+> verificación.
 >
-> Al injertar `.tabla-ranking` en los capítulos 3, 4 y 5, sus dos ensamblados
+> Al injertar `.tabla-ranking` en los capítulos 3, 4 y 5, sus tres ensamblados
 > quedaron desfasados respecto al HTML publicado:
 >
 > - **`ensambla_cap4.py` era destructivo.** El capítulo 4 recibió una instancia
@@ -82,19 +95,48 @@ hoy falla al abrir `derivacion.css` antes de tocar nada.
 >   extremos, así que la cadena completa dejó de existir. **Debajo escondía el
 >   mismo fallo destructivo que el 4**: al arreglar el ancla, el script perdía la
 >   instancia `comparativa`. Un `ABORTA` puede estar tapando algo peor.
+> - **`ensambla_cap3.py` era destructivo, y tardó cinco semanas más en verse.**
+>   Perdía mucho más que una instancia: **el componente entero**. Aquí no se
+>   hereda de nadie —el capítulo 2 no lo tiene, porque no tiene ninguna tabla
+>   comparativa de modelos que ordenar—, y el motor vive precisamente en la
+>   región que este script hereda del 2. El ensamblado solo aprendió el CSS.
+>   Reejecutar con `--escribir` borraba **179 líneas**: las 178 del motor
+>   (`TABLAS_RANKING`, `distanciaRanking()`, `pintarTablaRanking()` e
+>   `iniciarTablasRanking()`) y la línea `iniciarTablasRanking();` de
+>   `loadModule()`. No llegó a ocurrir, y no por suerte: este script **verifica
+>   por defecto**, y eso es exactamente lo que el modo verificación existe para
+>   frenar.
 >
-> La reparación, en las dos, fue la misma y es la que toca repetir la próxima vez:
-> **reflejar el componente en las fuentes de `capN/`** —marcador
+> La reparación, en las tres, fue la misma y es la que toca repetir la próxima
+> vez: **reflejar el componente en las fuentes de `capN/`** —marcador
 > `<!--RANKING:...-->` en la plantilla y el registro en `chapter.js`— y **añadir
 > una aserción final que lo exija**, siguiendo el patrón de `ensambla_cap6.py`.
-> El CSS y los ayudantes compartidos no hacían falta: se heredan del capítulo
-> anterior y sobreviven por construcción. Lo que se pierde es siempre lo que vive
-> en una región que el script sustituye.
+>
+> En el 4 y el 5, el CSS y los ayudantes compartidos no hacían falta: se heredan
+> del capítulo anterior y sobreviven por construcción. En el 3 sí, y ahí está el
+> matiz que conviene retener. La regla no es «lo que se pierde es lo que vive en
+> una región que el script sustituye», sino su versión completa: **lo que vive en
+> una región sustituida y no llega del capítulo del que se parte**. Para el 4 y
+> el 5 el componente llegaba del anterior; para el 3 no llega de nadie, así que
+> hay que instalarlo entero —CSS, motor y llamada de arranque— con los mismos
+> anclajes que usó la retropropagación.
 >
 > Un tercer detalle del capítulo 5, del mismo origen: la llamada
 > `iniciarMapasEstacionales()` se anclaba a `iniciarCiclos();`, y como el 4 ya
 > traía `iniciarTablasRanking()` justo detrás, el mapa se colaba por delante y
 > cambiaba el orden. Ahora se ancla al **final** del bloque de inicializadores.
+>
+> Y un último detalle, del capítulo 3, que es más una lección sobre los comentarios
+> que sobre el código: **su propio docstring daba el arreglo por imposible** y
+> llevaba cinco semanas diciéndolo. «En el capítulo 2 el orden de esos
+> componentes es otro, así que no hay un marcador único donde anclarlo sin
+> reordenar el capítulo 2». Era falso. En los dos capítulos el motor va entre
+> `iniciarCiclos()` y `iniciarDerivaciones()`, y el ancla
+> `    function iniciarDerivaciones(` —la misma que ya usaban
+> `retropropaga_ranking.py` y `ensambla_cap6.py`— aparece exactamente una vez en
+> el capítulo 2. Lo que cambia de orden son las **llamadas**, no las
+> definiciones. Un «no se puede» heredado se comprueba antes de darlo por bueno,
+> sobre todo cuando es lo único que sostiene una diferencia conocida.
 >
 > Regla general que esto confirma: **haz una copia del capítulo antes de
 > reejecutar su ensamblado y compara byte a byte**. Si difiere, el script está
@@ -105,8 +147,9 @@ para tolerar que el capítulo del que parte ya traiga el componente: es lo que
 permite que siga reproduciendo el archivo byte a byte después de la
 retropropagación. Ese es el patrón a copiar si algún día hay un capítulo 7.
 
-Hoy los **tres** (`ensambla_cap4.py`, `ensambla_cap5.py`, `ensambla_cap6.py`) son
-reejecutables y reproducen su capítulo byte a byte, encadenados 4 → 5 → 6.
+Hoy los **cuatro** (`ensambla_cap3.py`, `ensambla_cap4.py`, `ensambla_cap5.py`,
+`ensambla_cap6.py`) son reejecutables y reproducen su capítulo byte a byte,
+encadenados 3 → 4 → 5 → 6.
 
 ## Dos aserciones que se aprendieron por las malas
 
@@ -139,15 +182,18 @@ python3 ensamblado/ensambla_cap5.py
 diff /tmp/antes.html Htmls_Series/capitulo-5-sarima.html && echo "sin pérdidas"
 ```
 
-Los tres ensamblados se encadenan (el 5 parte del 4 y el 6 del 5), así que la
-comprobación completa es correrlos en orden y comparar los tres. Con el respaldo
-hecho **antes** de tocar nada, porque el fallo que busca esta prueba es
-precisamente que un script escriba de menos:
+Los cuatro ensamblados se encadenan (el 4 parte del 3, el 5 del 4 y el 6 del 5),
+así que la comprobación completa es correrlos en orden y comparar los cuatro. Con
+el respaldo hecho **antes** de tocar nada, porque el fallo que busca esta prueba
+es precisamente que un script escriba de menos. El del capítulo 3 va sin
+`--escribir`: en modo verificación ya dice si reproduce el archivo byte a byte, y
+así no hay nada que restaurar si no lo hace.
 
 ```bash
-mkdir -p /tmp/antes && cp Htmls_Series/capitulo-[456]-*.html /tmp/antes/
+mkdir -p /tmp/antes && cp Htmls_Series/capitulo-[3456]-*.html /tmp/antes/
+python3 ensamblado/ensambla_cap3.py
 for n in 4 5 6; do python3 ensamblado/ensambla_cap$n.py || break; done
-for f in Htmls_Series/capitulo-[456]-*.html; do diff -q "/tmp/antes/$(basename $f)" "$f"; done && echo "sin pérdidas"
+for f in Htmls_Series/capitulo-[3456]-*.html; do diff -q "/tmp/antes/$(basename $f)" "$f"; done && echo "sin pérdidas"
 ```
 
 Y la prueba que cierra el círculo de verdad: **rompe la fuente a propósito y
@@ -155,3 +201,10 @@ comprueba que el script aborta**. Una aserción que nunca ha fallado no está
 demostrada. Renombrar la clave de `TABLAS_RANKING` en `capN/chapter.js`, o el
 marcador `<!--RANKING:...-->` en su plantilla, tiene que dar `ABORTA` y dejar el
 capítulo intacto; si lo escribe igual, la aserción no sirve.
+
+En el capítulo 3 esas tres pruebas están hechas y pasan (2026-09-09): renombrar
+la clave en `cap3/cap3_js.js`, renombrar el marcador en `cap3/cap3_modulos.html`
+y desactivar la instalación del motor en el propio script dan los tres `exit 1`
+con `--escribir` y dejan el HTML publicado sin tocar. La tercera es la que
+importa: reproduce el fallo original, el que durante cinco semanas habría
+escrito en silencio.

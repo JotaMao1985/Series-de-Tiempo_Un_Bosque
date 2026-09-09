@@ -22,26 +22,46 @@ La razón es histórica y concreta: el capítulo 3 acumuló correcciones hechas
 sobre el HTML (auditorías de contenido) que este script no conocía, y una
 reejecución distraída las habría borrado en silencio.
 
-ESTADO CONOCIDO (2026-09-02), medido, no supuesto
--------------------------------------------------
+QUÉ SE HEREDA Y QUÉ SE INSTALA
+------------------------------
 El capítulo 2 ha seguido evolucionando y ya trae por su cuenta tres cosas que
 este script insertaba —el CSS y el JS del componente .derivacion, y el
 `barrasExtra` de crearGraficoBarras—, de modo que esas secciones ya no
-insertan: COMPRUEBAN que estén. El CSS de .tabla-ranking sí se inserta (2b).
+insertan: COMPRUEBAN que estén.
 
-Con eso, la verificación deja una sola diferencia, y conocida:
+El componente `.tabla-ranking` es el caso contrario. Llegó al capítulo 3 con
+`retropropaga_ranking.py`, que no tocó el capítulo 2 —no tiene ninguna tabla
+comparativa de modelos que ordenar—, así que aquí hay que instalarlo entero:
+CSS, motor de JavaScript y llamada de arranque, con los mismos anclajes que
+usó la retropropagación, más su instancia expandida desde el marcador de la
+plantilla.
 
-  ~179 líneas que están en el capítulo 3 y no en lo ensamblado
-      El motor JS de .tabla-ranking (iniciarTablasRanking y su bloque). Está
-      guardado en cap3/tabla_ranking.js, pero NO se inserta: en el capítulo 3
-      va después de iniciarCiclos(), y en el capítulo 2 el orden de esos
-      componentes es otro, así que no hay un marcador único donde anclarlo
-      sin reordenar el capítulo 2.
+REPARACIÓN DEL 2026-09-09
+-------------------------
+Hasta esa fecha este script solo insertaba el CSS del `.tabla-ranking`, y
+reejecutarlo con --escribir BORRABA 179 líneas del capítulo publicado: el
+motor entero (`TABLAS_RANKING`, `distanciaRanking()`, `pintarTablaRanking()` e
+`iniciarTablasRanking()`, 178 líneas) y la llamada `iniciarTablasRanking();`
+dentro de loadModule(). El motor vive justo antes de `iniciarDerivaciones()`,
+en la región que este script hereda del capítulo 2, y el capítulo 2 no lo
+tiene: lo que no se instala, se pierde.
 
-La segunda diferencia que aquí se documentaba —las ~31 líneas de
-moduloDelHash(), presentes en el capítulo 2 y ausentes del 3— quedó CERRADA el
-2026-09-02. El capítulo 3 ignoraba los enlaces con ancla y abría siempre por el
-módulo 1. El bloque se copió del capítulo 2 sin tocar una coma (el comentario,
+Es exactamente el fallo que `ensambla_cap4.py` y `ensambla_cap5.py` tuvieron
+por la misma retropropagación y que se reparó el 2026-08-05; este se quedó
+atrás. La reparación es la que documenta el README y que copia de
+`ensambla_cap6.py`: las fuentes compartidas se leen de `componentes/`, la
+instancia se expande desde el marcador `<!--RANKING:...-->` de
+`cap3/cap3_modulos.html`, y al final hay aserciones que EXIGEN las tres
+piezas, contándolas en vez de solo mirar si están.
+
+Una aserción que nunca ha fallado no está demostrada: renombrar la clave de
+`TABLAS_RANKING` en `cap3/cap3_js.js`, o el marcador de la plantilla, tiene
+que dar ABORTA y dejar el capítulo intacto.
+
+La otra diferencia que aquí se documentaba —las ~31 líneas de moduloDelHash(),
+presentes en el capítulo 2 y ausentes del 3— quedó CERRADA el 2026-09-02. El
+capítulo 3 ignoraba los enlaces con ancla y abría siempre por el módulo 1. El
+bloque se copió del capítulo 2 sin tocar una coma (el comentario,
 moduloDelHash(), fijarHashDelModulo() y el oyente de hashchange), junto con las
 dos líneas que lo activan: loadModule(moduloDelHash()) al arrancar y
 fijarHashDelModulo(id) dentro de loadModule(). Se copió verbatim, y no
@@ -51,23 +71,28 @@ capítulo—, de modo que cualquier retoque de redacción habría reabierto la
 diferencia. Comprobado por HTTP, no por file://: #modulo-6 abre el módulo 6;
 #modulo-99 y la URL sin ancla abren el 1.
 
-La diferencia que queda tiene la raíz de siempre: el modelo "derivar el
-capítulo 3 parcheando el 2" se agotó, porque los dos capítulos evolucionaron
-por separado y sus motores JS ya no están en el mismo orden. Reconstruir byte a
-byte exigiría reordenar el capítulo 2, que es una tarea distinta y con su
-propio riesgo. Por eso este script verifica y avisa en vez de escribir.
+Cerradas las dos, el script vuelve a reproducir el capítulo BYTE A BYTE y
+--escribir deja de ser destructivo.
 
-FUENTES: ensamblado/cap3/ (dentro del repositorio). Antes vivían en un
-scratchpad de sesión que se borró; se recuperaron del HTML ya corregido, así
-que incorporan las correcciones de las auditorías.
+FUENTES: ensamblado/cap3/ (las plantillas de los diez módulos y el JavaScript
+propio del capítulo) y ensamblado/componentes/ (los componentes compartidos,
+que es donde se corrigen). Antes vivían en un scratchpad de sesión que se
+borró; se recuperaron del HTML ya corregido, así que incorporan las
+correcciones de las auditorías.
 """
 import json
 import pathlib
 import re
 import sys
 
-BASE = pathlib.Path("/Users/javiermauriciosierra/Documents/Trabajo 2026/Bosque 2026/Series de tiempo")
-FUENTES = BASE / "ensamblado" / "cap3"
+AQUI = pathlib.Path(__file__).resolve().parent
+BASE = AQUI.parent
+FUENTES = AQUI / "cap3"
+COMPONENTES = AQUI / "componentes"
+
+sys.path.insert(0, str(COMPONENTES))
+from tabla_ranking_html import (tabla_ranking_html,                     # noqa: E402
+                                comprueba_tabla_ranking)
 
 ORIGEN = BASE / "Htmls_Series" / "capitulo-2-estacionariedad-acf-pacf.html"
 DESTINO = BASE / "Htmls_Series" / "capitulo-3-modelos-ar-ma-arma.html"
@@ -155,16 +180,48 @@ for marca in (".derivacion-boton {", ".derivacion-pasos > li::before {"):
                  "Hay que volver a insertarlo aquí.")
 
 # ---------------------------------------------------------------------------
-# 2b. CSS del componente .tabla-ranking (propio del capítulo 3)
+# 2b. El componente .tabla-ranking entero (propio del capítulo 3)
 # ---------------------------------------------------------------------------
-# Este sí hay que insertarlo: el capítulo 2 no lo tiene. Va al final del
-# <style>, que es donde lo dejó la ronda que creó el componente.
-css_ranking = (FUENTES / "tabla_ranking.css").read_text(encoding="utf-8")
-html = reemplazar(
-    html,
-    "      }\n    }\n  </style>",
-    "      }\n    }\n\n" + css_ranking.rstrip("\n") + "\n  </style>",
-    "CSS de .tabla-ranking")
+# Este hay que instalarlo, no solo comprobarlo: el capítulo 2 no lo tiene.
+# Las tres piezas van con los mismos anclajes que usó `retropropaga_ranking.py`
+# —CSS al final del <style>, motor justo antes de `iniciarDerivaciones()`, y la
+# llamada detrás de `iniciarCiclos();`— para que el resultado salga byte a byte
+# igual al capítulo publicado. Hasta el 2026-09-09 solo se insertaba el CSS y
+# reejecutar borraba el motor y su llamada; ver la reparación en el docstring.
+#
+# Las fuentes se leen de `componentes/`, que es donde se corrigen los
+# componentes compartidos, y no de una copia propia del capítulo.
+#
+# La guarda es la de `ensambla_cap6.py`: si algún día el `.tabla-ranking` se
+# retro-porta también al capítulo 2, este script lo hereda en vez de
+# duplicarlo, y entonces solo comprueba que llegue completo.
+if ".tabla-ranking {" in html:
+    for marca in ("function iniciarTablasRanking()", "        iniciarTablasRanking();"):
+        if marca not in html:
+            sys.exit(f"ABORTA: el capítulo 2 trae el CSS de .tabla-ranking pero le "
+                     f"falta {marca!r}. El componente está a medias allí; se arregla "
+                     "en el capítulo 2, no aquí.")
+else:
+    css_ranking = (COMPONENTES / "tabla_ranking.css").read_text(encoding="utf-8")
+    html = reemplazar(
+        html,
+        "      }\n    }\n  </style>",
+        "      }\n    }\n" + css_ranking.rstrip("\n") + "\n  </style>",
+        "CSS de .tabla-ranking")
+
+    js_ranking = (COMPONENTES / "tabla_ranking.js").read_text(encoding="utf-8")
+    ancla_js = "    function iniciarDerivaciones("
+    html = reemplazar(
+        html,
+        ancla_js,
+        js_ranking.rstrip("\n") + "\n\n" + ancla_js,
+        "motor de .tabla-ranking")
+
+    html = reemplazar(
+        html,
+        "        iniciarCiclos();\n",
+        "        iniciarCiclos();\n        iniciarTablasRanking();\n",
+        "llamada de arranque de .tabla-ranking")
 
 # ---------------------------------------------------------------------------
 # 3. crearGraficoBarras: barras adicionales (teórica frente a muestral)
@@ -182,6 +239,24 @@ if "barrasExtra" not in html:
 # contenido (rejilla de once candidatos, cifras de Guerrero, ACF residual,
 # derivación de Ljung-Box, etc.).
 plantillas = (FUENTES / "cap3_modulos.html").read_text(encoding="utf-8")
+
+# Los componentes se generan con su constructor, no a mano: así el marcado es
+# idéntico al de las otras instancias del proyecto y la comparación de
+# selectores CSS no encuentra diferencias. Esta instancia llegó al capítulo 3
+# con `retropropaga_ranking.py` y vive dentro de una plantilla de módulo, que
+# es justo una de las regiones que este script sustituye: sin el marcador, el
+# reensamblado la borraría en silencio (lo que le pasó al capítulo 4).
+RANKINGS = {
+    "criterios": ("Los criterios de información sobre las manchas solares", ""),
+}
+for clave, (titulo, pie) in RANKINGS.items():
+    marca = f"<!--RANKING:{clave}|{titulo}|{pie}-->"
+    if plantillas.count(marca) != 1:
+        sys.exit(f"ABORTA [ranking {clave}]: el marcador aparece "
+                 f"{plantillas.count(marca)} veces, se esperaba 1")
+    plantillas = plantillas.replace(
+        "      " + marca,
+        tabla_ranking_html(clave, titulo, pie, sangria="      ").rstrip("\n"), 1)
 
 html = recortar(
     html,
@@ -280,6 +355,16 @@ obligatorios = {
         "function iniciarDerivaciones()", "iniciarDerivaciones();",
         'class="derivacion-boton"',
     ],
+    # El .tabla-ranking no se hereda del capítulo 2: lo instala la sección 2b y
+    # su instancia sale de la plantilla. Sin estas comprobaciones, reejecutar
+    # el script borraba las 179 líneas del componente sin decir nada.
+    "componente .tabla-ranking": [
+        ".tabla-ranking {", ".tabla-ranking-marco {",
+        "const TABLAS_RANKING", "function distanciaRanking(",
+        "function pintarTablaRanking(", "function iniciarTablasRanking()",
+        "        iniciarTablasRanking();",
+        "TABLAS_RANKING['criterios']", 'data-ranking="criterios"',
+    ],
     "datos precalculados": ["const DATOS_CAP3 =", "genera_cap3.R"],
     "helpers nuevos": ["barrasExtra", "function pesosPsi(", "function pesosPi(",
                        "function acfTeorica(", "function analizarAR(", "function esInvertible("],
@@ -295,6 +380,34 @@ for grupo, marcadores in obligatorios.items():
     for m in marcadores:
         if m not in html:
             fallos.append(f"{grupo}: falta {m!r}")
+
+# El andamiaje interno de la tabla, no solo el contenedor: pintarTablaRanking()
+# sale sin hacer nada si falta el marco, y el componente se vería vacío sin
+# lanzar ningún error.
+fallos += comprueba_tabla_ranking(html, "criterios")
+
+# Aquí se CUENTA, no solo se mira si está, porque el fallo que se quiere atrapar
+# es doble: perder el componente (lo que hacía este script) e instalarlo dos
+# veces (lo que pasaría si el capítulo 2 lo recibiera y la guarda de 2b fallara).
+# `.tabla-ranking table`, `-boton` y `-puesto` salen más de una vez a propósito:
+# los sobreescriben la media query de móvil y la fila ganadora.
+for pieza, esperadas in [
+        (".tabla-ranking {", 1), (".tabla-ranking table {", 2),
+        (".tabla-ranking-marco {", 1), (".tabla-ranking-boton {", 3),
+        (".tabla-ranking-puesto {", 2), (".tabla-ranking-pie {", 1),
+        (".tabla-ranking-estado {", 1),
+        ("const TABLAS_RANKING", 1), ("function distanciaRanking", 1),
+        ("function pintarTablaRanking", 1), ("function iniciarTablasRanking", 1),
+        ("        iniciarTablasRanking();", 1),
+        # El TÍTULO de la instancia y la CLAVE del registro, no la cadena
+        # `TABLAS_RANKING` a secas: el motor documenta el componente con un
+        # ejemplo (`TABLAS_RANKING['id'] = {`) dentro de un comentario.
+        ("TABLAS_RANKING['criterios']", 1),
+        ('<p class="tabla-ranking-titulo">Los criterios de información '
+         'sobre las manchas solares</p>', 1)]:
+    if html.count(pieza) != esperadas:
+        fallos.append(f"tabla de ranking: '{pieza[:60]}' aparece {html.count(pieza)} "
+                      f"veces, se esperaban {esperadas}")
 
 prohibidos = ["DATOS_CAP2", "SERIES_CAP2", "AUTOEVALUACIONES['cap2']",
               "Capítulo 2 • UnBosque", "genera_cap2.R"]
@@ -346,6 +459,9 @@ DESTINO.write_text(html, encoding="utf-8")
 n_plantillas = html.count('<template id="module-')
 n_sim = html.count("SIMULADORES['")
 n_deriv = html.count('class="derivacion-boton"')
+# Se cuenta el TÍTULO y no el contenedor: el motor documenta el componente con
+# un ejemplo dentro de un comentario, y contar la clase daría uno de más.
+n_rank = html.count('<p class="tabla-ranking-titulo">')
 n_r = html.count('class="language-r"')
 n_py = html.count('class="language-python"')
 
@@ -356,6 +472,7 @@ print(f"  tamaño capítulo 3       : {len(html):,} bytes")
 print(f"  plantillas de módulo    : {n_plantillas}")
 print(f"  simuladores registrados : {n_sim}")
 print(f"  cajas de derivación     : {n_deriv}")
+print(f"  tablas de ranking       : {n_rank}")
 print(f"  bloques R               : {n_r}")
 print(f"  bloques Python          : {n_py}")
 print("  todas las comprobaciones de integridad: OK")
