@@ -700,7 +700,8 @@ print(np.max(np.abs(th / (1 + th**2))))   # 0.5
       <div class="simulador" data-simulador="dualidad-psi-pi">
         <h4><i class="fas fa-sliders-h" aria-hidden="true"></i> Pesos $\psi$ y $\pi$ de un ARMA(1,1)</h4>
         <p class="simulador-intro">Mueve $\phi$ y $\theta$ y observa las dos representaciones. Con $\phi = 0.8$ y
-          $\theta = 0$ tienes el AR(1): los $\psi$ son las potencias $0.8^j$ y solo hay <strong>un</strong> peso $\pi$.
+          $\theta = 0$ tienes el AR(1): los $\psi$ son las potencias $0.8^j$ y el AR($\infty$) se corta enseguida,
+          porque solo sobreviven $\pi_0 = 1$ y $\pi_1 = -0.8$.
           Lleva ahora $\theta$ más allá de $1$ —el MA deja de ser invertible— y mira lo que les pasa a los $\pi$.</p>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">Pesos $\psi_j$ — representación MA($\infty$)</p>
@@ -745,6 +746,9 @@ print(np.max(np.abs(th / (1 + th**2))))   # 0.5
               <p>Igualando coeficiente a coeficiente sale una <strong>recursión</strong>, que es lo que implementan el
                 simulador de esta página y el precálculo en R:</p>
               $$\psi_j = \theta_j + \sum_{i=1}^{p}\phi_i\,\psi_{j-i}, \qquad \psi_0 = 1,\;\; \theta_j = 0 \text{ si } j>q$$
+              <p style="margin-bottom:0;">En los primeros rezagos la suma se sale por abajo del rango: se entiende
+                $\psi_j = 0$ para $j &lt; 0$, y lo mismo para los $\pi$ del paso siguiente. Es la guarda
+                <code>if (j - i &gt;= 0)</code> que aparece en las dos implementaciones.</p>
             </li>
             <li>
               <p>Para los $\pi$ el razonamiento es idéntico sobre $\theta(B)\pi(B) = \phi(B)$, e intercambia los
@@ -758,7 +762,7 @@ print(np.max(np.abs(th / (1 + th**2))))   # 0.5
             </li>
           </ol>
           <p class="derivacion-resultado">Esta última fórmula es la que usa el <strong>laboratorio del Módulo 5</strong>
-            para dibujar la ACF teórica en el navegador: trunca la serie en 2000 términos y divide entre $\gamma_0$.
+            para dibujar la ACF teórica en el navegador: trunca la serie en 600 términos y divide entre $\gamma_0$.
             Contrastada contra <code>ARMAacf()</code> de R sobre los ocho procesos del capítulo, el error máximo es de
             $6.7\times10^{-16}$, o sea, el redondeo de la aritmética de punto flotante.</p>
         </div>
@@ -817,7 +821,8 @@ psi = proceso.arma2ma(lags=9)
 print(np.round(psi, 4))
 # [1.     1.2    0.84   0.588  0.4116 0.2881 0.2017 0.1412 0.0988]
 
-# Pesos pi: aqui tampoco hay que invertir nada, arma2ar aplica el convenio
+# Pesos pi: a diferencia de R, aqui no hay que intercambiar los polinomios,
+# arma2ar ya aplica el convenio
 pi_w = proceso.arma2ar(lags=9)
 print(np.round(pi_w, 4))
 # [ 1.     -1.2     0.6    -0.3     0.15   -0.075   0.0375 -0.0188  0.0094]
@@ -834,9 +839,11 @@ print(np.round(arma_acf(np.r_[1, -0.7], np.r_[1, 0.5], lags=6)[1:], 4))
       </div>
 
       <div class="warning">
-        <p><strong>Dos convenios distintos para $\psi_0$.</strong> <code>ARMAtoMA()</code> de R empieza en $\psi_1$ y
-          <code>arma2ma()</code> de statsmodels empieza en $\psi_0 = 1$. Al comparar salidas o al programar la fórmula
-          de la varianza del pronóstico, un desplazamiento de un índice cambia el resultado sin dar ningún error.</p>
+        <p><strong>Dos convenios distintos para el término $j = 0$.</strong> <code>ARMAtoMA()</code> de R empieza en
+          $\psi_1$ y <code>arma2ma()</code> de statsmodels empieza en $\psi_0 = 1$; con los $\pi$ ocurre exactamente lo
+          mismo. Se ve en las salidas de arriba: las de R traen ocho valores y las de Python, nueve. Al compararlas o al
+          programar la fórmula de la varianza del pronóstico, un desplazamiento de un índice cambia el resultado sin
+          dar ningún error.</p>
       </div>
     </div>
   </template>
