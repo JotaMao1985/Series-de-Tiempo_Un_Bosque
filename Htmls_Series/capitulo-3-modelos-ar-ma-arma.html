@@ -3059,7 +3059,7 @@ print(np.max(np.abs(th / (1 + th**2))))   # 0.5
           <div>
             <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
             <p class="text-gray-600 text-sm" style="margin:0;">Ver que AR y MA son dos formas de escribir lo mismo, y
-              manejar los pesos $\psi$ y $\pi$, que reaparecerán en los intervalos de pronóstico del Capítulo 6.</p>
+              manejar los pesos $\psi$ y $\pi$, que desde el Capítulo 4 sostienen los intervalos de pronóstico.</p>
           </div>
         </div>
       </div>
@@ -3070,17 +3070,33 @@ print(np.max(np.abs(th / (1 + th**2))))   # 0.5
 
       <div class="definition">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Las dos representaciones</h4>
-        <p>Todo proceso ARMA estacionario e invertible admite dos escrituras equivalentes:</p>
-        $$\underbrace{y_t = \sum_{j=0}^{\infty}\psi_j\,\varepsilon_{t-j}}_{\text{MA}(\infty)\;:\;\psi(B)=\theta(B)/\phi(B)}
-          \qquad\qquad
-          \underbrace{\varepsilon_t = \sum_{j=0}^{\infty}\pi_j\,y_{t-j}}_{\text{AR}(\infty)\;:\;\pi(B)=\phi(B)/\theta(B)}$$
-        <p style="margin-bottom:0;">con $\psi_0 = \pi_0 = 1$.</p>
+        <p>Un proceso ARMA admite dos escrituras, y cada una necesita una condición distinta:</p>
+        $$\begin{gathered}
+          \underbrace{y_t = \sum_{j=0}^{\infty}\psi_j\,\varepsilon_{t-j}}_{\text{MA}(\infty)\;:\;\psi(B)=\theta(B)/\phi(B)}
+          \\[1.2em]
+          \underbrace{\varepsilon_t = \sum_{j=0}^{\infty}\pi_j\,y_{t-j}}_{\text{AR}(\infty)\;:\;\pi(B)=\phi(B)/\theta(B)}
+        \end{gathered}$$
+        <p style="margin-bottom:0;">con $\psi_0 = \pi_0 = 1$. La escritura MA($\infty$) existe si el proceso es
+          <strong>estacionario</strong>, con las raíces de $\phi(B)$ fuera del círculo unitario; la AR($\infty$), si es
+          <strong>invertible</strong>, con las de $\theta(B)$ fuera. Cada polinomio responde por su escritura, y cuando
+          se cumplen las dos condiciones las dos escrituras son equivalentes.</p>
       </div>
 
       <p>Cada una responde a una pregunta distinta. Los <strong>pesos $\psi$</strong> dicen cuánto de un choque
         ocurrido hace $j$ periodos sigue presente hoy: son la <em>función de respuesta al impulso</em>. Los
         <strong>pesos $\pi$</strong> dicen cuánto pesa la observación de hace $j$ periodos al reconstruir el choque
-        actual: son la base de la predicción.</p>
+        actual, y de ahí sale el pronóstico a un paso. Basta despejar $y_t$ en la escritura AR($\infty$), separando el
+        término $j = 0$:</p>
+
+      $$\begin{gathered}
+        y_t = -\sum_{j=1}^{\infty}\pi_j\,y_{t-j} + \varepsilon_t \\
+        \Longrightarrow\quad \hat y_{t\mid t-1} = -\sum_{j=1}^{\infty}\pi_j\,y_{t-j}
+      \end{gathered}$$
+
+      <p>El choque $\varepsilon_t$ es incorrelado con todo el pasado, así que nada de ese pasado lo anticipa: el mejor
+        pronóstico lineal se queda con la suma, y su error a un paso es exactamente $\varepsilon_t$. El signo menos
+        viene del convenio $\pi_0 = 1$. En el ARMA(1,1) de los códigos de más abajo, $\pi_1 = -1.2$ significa que la
+        última observación entra en el pronóstico con peso $+1.2$.</p>
 
       <div class="simulador" data-simulador="dualidad-psi-pi">
         <h4><i class="fas fa-sliders-h" aria-hidden="true"></i> Pesos $\psi$ y $\pi$ de un ARMA(1,1)</h4>
@@ -3154,11 +3170,24 @@ print(np.max(np.abs(th / (1 + th**2))))   # 0.5
       </div>
 
       <div class="note">
-        <p><strong>Por qué esto reaparece en el Capítulo 6.</strong> La varianza del error de pronóstico a $h$ pasos
-          de un ARMA es</p>
+        <p><strong>Por qué esto reaparece en los capítulos 4, 5 y 6.</strong> La varianza del error de pronóstico a
+          $h$ pasos de un ARMA es</p>
         $$\operatorname{Var}(e_{T+h}) = \sigma^2\sum_{j=0}^{h-1}\psi_j^2$$
         <p style="margin-bottom:0;">Los pesos $\psi$ son, literalmente, lo que da su forma de abanico a las bandas de
-          un pronóstico. Cuanto más lentamente decaen, más rápido se abre la incertidumbre.</p>
+          un pronóstico. Cuanto más lentamente decaen, más rápido se abre la incertidumbre. El Capítulo 4 deduce de
+          aquí los intervalos de pronóstico, el 5 los usa para dibujar el abanico del modelo <em>airline</em> y el 6
+          comprueba si esos intervalos cubren de verdad lo que prometen.</p>
+      </div>
+
+      <div class="note">
+        <p><strong>¿Y si $\phi(B)$ tiene una raíz unitaria?</strong> El proceso deja de ser estacionario y la suma
+          MA($\infty$) ya no converge, pero la recursión de los $\psi$ no lo nota: sigue produciendo números. En el
+          paseo aleatorio, $\phi(B) = 1 - B$, salen todos iguales, $\psi_j = 1$, porque ningún choque se desvanece
+          nunca.</p>
+        <p style="margin-bottom:0;">Lo que se pierde es lo que depende de la suma infinita: $\sum_j \psi_j^2$ diverge y
+          $\gamma_k$ deja de existir. La varianza del pronóstico, en cambio, solo suma $h$ términos y sigue valiendo:
+          en el paseo aleatorio da $\sigma^2 h$, un abanico que se abre sin límite. Así es como el Capítulo 4 usará
+          estos pesos con los modelos ARIMA.</p>
       </div>
 
       <div class="code-tabs">
@@ -3230,6 +3259,21 @@ print(np.round(arma_acf(np.r_[1, -0.7], np.r_[1, 0.5], lags=6)[1:], 4))
           programar la fórmula de la varianza del pronóstico, un desplazamiento de un índice cambia el resultado sin
           dar ningún error.</p>
       </div>
+
+      <h3>Dos ideas que hereda el Módulo 5</h3>
+
+      <p>La dualidad deja preparadas las dos ideas con las que el Módulo 5 presenta los modelos mixtos: por qué
+        conviene mezclar AR y MA, y la trampa en la que se cae al hacerlo mal.</p>
+
+      <p>La primera es la <strong>parsimonia</strong>. Un ARMA(1,1) es un AR($\infty$) cuyos pesos decaen como
+        $|\theta|^j$. En el de los códigos de arriba, con $\phi = 0.7$ y $\theta = 0.5$, los $|\pi_j|$ no bajan de
+        $0.01$ hasta $j = 8$: imitarlo con un AR puro obliga a conservar siete coeficientes para que el primer peso
+        descartado quede por debajo de ese umbral, y el ARMA lo consigue con dos.</p>
+
+      <p>La segunda es la <strong>redundancia</strong>. Si $\phi(B)$ y $\theta(B)$ comparten un factor, el cociente
+        $\psi(B) = \theta(B)/\phi(B)$ lo cancela. Basta llevar el simulador de arriba a $\phi = 0.5$ y
+        $\theta = -0.5$: las dos gráficas se reducen a la barra de $j = 0$, porque $(1 - 0.5B)/(1 - 0.5B) = 1$, y lo
+        que parecía un ARMA(1,1) es ruido blanco.</p>
     </div>
   </template>
 
@@ -4666,9 +4710,9 @@ print(round(float(acorr_ljungbox(ret**2, lags=[12])["lb_pvalue"].iloc[0]), 4))
             decae en las dos, y por eso los correlogramas no bastan para fijar sus órdenes.</li>
           <li>Un AR(2) con $\phi_1^2 + 4\phi_2 < 0$ tiene raíces complejas y produce un <strong>pseudo-ciclo</strong>
             de periodo $2\pi/\arccos\!\big(\phi_1/(2\sqrt{-\phi_2})\big)$.</li>
-          <li>Todo ARMA estacionario e invertible se puede escribir como MA($\infty$) (pesos $\psi$, respuesta al
-            impulso) o como AR($\infty$) (pesos $\pi$). Los $\psi$ darán la forma de abanico a los intervalos del
-            Capítulo 6.</li>
+          <li>Un ARMA estacionario se puede escribir como MA($\infty$) (pesos $\psi$, respuesta al impulso), y uno
+            invertible como AR($\infty$) (pesos $\pi$). Los $\psi$ darán su forma de abanico a los intervalos de
+            pronóstico a partir del Capítulo 4.</li>
           <li>La estimación se hace por <strong>Yule–Walker</strong>, <strong>CSS</strong> o <strong>máxima
               verosimilitud</strong>. No dan lo mismo: en las manchas solares, YW y ML se separaron $1.26$ y $1.10$
             errores estándar. CSS y ML coincidieron.</li>
