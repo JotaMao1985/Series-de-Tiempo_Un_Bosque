@@ -2870,7 +2870,7 @@ print(proceso.isstationary)   # True</code></pre>
           <div>
             <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
             <p class="text-gray-600 text-sm" style="margin:0;">Reconocer un MA($q$) por su firma —<strong>ACF que se
-                corta</strong> en el rezago $q$— y entender qué es la invertibilidad y por qué el software la impone.</p>
+                corta</strong> tras el rezago $q$— y entender qué es la invertibilidad y por qué el software la impone.</p>
           </div>
         </div>
       </div>
@@ -2898,9 +2898,11 @@ print(proceso.isstationary)   # True</code></pre>
 
       <div class="formula">
         <p>Varianza y autocorrelaciones de un MA($q$):</p>
-        $$\gamma_0 = \sigma^2\left(1 + \sum_{j=1}^{q}\theta_j^2\right), \qquad
-          \rho_k = \frac{\sum_{j=0}^{q-k}\theta_j\theta_{j+k}}{1+\sum_{j=1}^{q}\theta_j^2}
-          \;\; (k \le q), \qquad \rho_k = 0 \;\; (k > q)$$
+        $$\begin{gathered}
+          \gamma_0 = \sigma^2\left(1 + \sum_{j=1}^{q}\theta_j^2\right) \\[0.8em]
+          \rho_k = \frac{\sum_{j=0}^{q-k}\theta_j\theta_{j+k}}{1+\sum_{j=1}^{q}\theta_j^2} \quad (k \le q) \\[0.8em]
+          \rho_k = 0 \quad (k > q)
+        \end{gathered}$$
         <p style="margin-bottom:0;">con el convenio $\theta_0 = 1$.</p>
       </div>
 
@@ -2931,11 +2933,17 @@ print(proceso.isstationary)   # True</code></pre>
         $\rho_1 = \theta/(1+\theta^2)$. Pon $\theta = 0.5$ y $\theta = 2$:</p>
 
       <div class="formula">
-        $$\rho_1(0.5) = \frac{0.5}{1.25} = 0.4, \qquad \rho_1(2) = \frac{2}{5} = 0.4$$
+        $$\begin{gathered}
+          \rho_1(0.5) = \frac{0.5}{1.25} = 0.4 \\[0.6em]
+          \rho_1(2) = \frac{2}{5} = 0.4
+        \end{gathered}$$
       </div>
 
-      <p>Los dos procesos tienen <strong>exactamente la misma ACF</strong>, y por tanto la misma estructura de
-        autocorrelación observable. Ningún dato podría distinguirlos. Si no se impone una regla, el modelo no está
+      <p>Los dos procesos tienen <strong>exactamente la misma ACF</strong>. No la misma varianza, si comparten
+        $\sigma^2$: $\gamma_0 = \sigma^2(1+\theta^2)$ vale $1.25\,\sigma^2$ en uno y $5\,\sigma^2$ en el otro. Pero
+        basta reescalar el ruido para igualarla. En general, $(\theta,\ \sigma^2)$ y $(1/\theta,\ \theta^2\sigma^2)$
+        producen exactamente las mismas autocovarianzas —y, con ruido gaussiano, la misma distribución—, y como
+        $\sigma^2$ también se estima, ningún dato puede separarlos. Si no se impone una regla, el modelo no está
         identificado.</p>
 
       <div class="derivacion">
@@ -2948,28 +2956,37 @@ print(proceso.isstationary)   # True</code></pre>
           <ol class="derivacion-pasos">
             <li>
               <p>Calcula la varianza del MA(1) $y_t = \varepsilon_t + \theta\varepsilon_{t-1}$. Los dos choques son
-                independientes, así que las varianzas se suman:</p>
-              $$\gamma_0 = \operatorname{Var}(\varepsilon_t) + \theta^2\operatorname{Var}(\varepsilon_{t-1})
-                = \sigma^2(1+\theta^2)$$
+                incorrelados —es todo lo que exige el ruido blanco—, así que las varianzas se suman:</p>
+              $$\begin{aligned}
+                \gamma_0 &= \operatorname{Var}(\varepsilon_t) + \theta^2\operatorname{Var}(\varepsilon_{t-1}) \\
+                &= \sigma^2(1+\theta^2)
+              \end{aligned}$$
             </li>
             <li>
               <p>La autocovarianza de orden 1: $y_t$ e $y_{t-1}$ comparten un único choque, $\varepsilon_{t-1}$.</p>
-              $$\gamma_1 = E[(\varepsilon_t + \theta\varepsilon_{t-1})(\varepsilon_{t-1} + \theta\varepsilon_{t-2})]
-                = \theta\sigma^2$$
+              $$\begin{aligned}
+                \gamma_1 &= E[(\varepsilon_t + \theta\varepsilon_{t-1})(\varepsilon_{t-1} + \theta\varepsilon_{t-2})] \\
+                &= \theta\sigma^2
+              \end{aligned}$$
               <p>Para $k \ge 2$ no comparten ninguno, luego $\gamma_k = 0$.</p>
             </li>
             <li>
               <p>Por tanto</p>
               $$\rho_1 = \frac{\theta}{1+\theta^2}$$
               <p>y esta función es <strong>invariante bajo $\theta \mapsto 1/\theta$</strong>: sustituyendo,
-                $\dfrac{1/\theta}{1+1/\theta^2} = \dfrac{\theta}{\theta^2+1}$, que es lo mismo.</p>
+                $\dfrac{1/\theta}{1+1/\theta^2} = \dfrac{\theta}{\theta^2+1}$, que es lo mismo. Las autocovarianzas
+                coinciden también si a la vez se cambia $\sigma^2$ por $\theta^2\sigma^2$: con $1/\theta$ y
+                $\theta^2\sigma^2$ salen $\gamma_0 = \theta^2\sigma^2(1+1/\theta^2) = \sigma^2(1+\theta^2)$ y
+                $\gamma_1 = (1/\theta)\,\theta^2\sigma^2 = \theta\sigma^2$, las mismas de los pasos 1 y 2.</p>
             </li>
             <li>
-              <p>De paso, $\rho_1$ tiene un máximo. Derivando, se alcanza en $\theta = 1$, donde $\rho_1$ vale
-                exactamente $1/2$; de ahí la cota</p>
+              <p>De paso, $\rho_1$ está acotada. Su derivada, $(1-\theta^2)/(1+\theta^2)^2$, se anula en
+                $\theta = \pm 1$: el máximo es $1/2$ en $\theta = 1$ y, como $\rho_1$ es impar en $\theta$, el mínimo
+                es $-1/2$ en $\theta = -1$. De ahí la cota</p>
               $$|\rho_1| \le \frac{1}{2}$$
               <p>Un MA(1) <strong>no puede</strong> producir una autocorrelación de primer orden mayor que $0.5$ en
-                valor absoluto.</p>
+                valor absoluto. Y los dos extremos caen en $|\theta| = 1$, justo en la frontera de la invertibilidad:
+                un MA(1) invertible se queda siempre estrictamente por debajo.</p>
             </li>
           </ol>
           <p class="derivacion-resultado">De los dos valores $\theta$ y $1/\theta$ se elige por convenio el que cumple
@@ -2987,8 +3004,10 @@ print(proceso.isstationary)   # True</code></pre>
 
       <div class="note">
         <p><strong>El límite $|\rho_1| \le 0.5$ es una herramienta de diagnóstico.</strong> Si en un correlograma
-          muestral ves $r_1 = 0.8$ y quisieras ajustar un MA(1), no hay ningún $\theta$ que lo produzca. Esa
-          autocorrelación pide un AR, o al menos un componente autorregresivo. Sirve para descartar modelos sin
+          muestral ves $r_1 = 0.8$ y quisieras ajustar un MA(1), no hay ningún $\theta$ que lo produzca. Pero la cota
+          es propia del MA(1): en un MA($q$) el techo de $\rho_1$ es $\cos\big(\pi/(q+2)\big)$, que vale $0.707$ con
+          $q = 2$ y $0.809$ con $q = 3$. Así que $r_1 = 0.8$ descarta también el MA(2), y un MA(3) solo llegaría
+          rozando su techo; lo razonable es buscar un componente autorregresivo. Sirve para descartar modelos sin
           ajustar nada.</p>
       </div>
 
@@ -3017,10 +3036,13 @@ max(abs(th / (1 + th^2)))
 
 # arima() devuelve siempre la version invertible
 set.seed(1)
-y &lt;- arima.sim(n = 500, list(ma = 2.0))   # se le pide theta = 2...
-coef(arima(y, order = c(0, 0, 1)))["ma1"] # ...y devuelve ~1/2
+y &lt;- arima.sim(n = 500, list(ma = 2.0))   # se le pide theta = 2 con sigma2 = 1...
+m &lt;- arima(y, order = c(0, 0, 1))
+coef(m)["ma1"]                             # ...y devuelve theta ~ 1/2
 #&gt;       ma1
-#&gt; 0.4794171</code></pre>
+#&gt; 0.4794171
+m$sigma2                                   # ...con sigma2 ~ 2^2 = 4: el mismo proceso
+#&gt; [1] 4.081804</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np
