@@ -3514,11 +3514,11 @@ print(np.round(arma_acf(np.r_[1, -0.7], np.r_[1, 0.5], lags=6)[1:], 4))
           </div>
           <div class="ciclo-campo">
             <span class="ciclo-etiqueta">Con qué</span>
-            <p><code>acf(y, lag.max = 20)</code>; en Python, <code>plot_acf(y)</code>. La banda $\pm 1.96/\sqrt{n}$ marca qué es ruido.</p>
+            <p><code>acf(y, lag.max = 20)</code>; en Python, <code>plot_acf(y, bartlett_confint=False)</code>. La banda $\pm 1.96/\sqrt{n}$ marca qué es ruido. Sin ese argumento, statsmodels dibuja la banda de Bartlett, que se ensancha con el rezago.</p>
           </div>
           <div class="ciclo-campo ciclo-vuelta">
             <span class="ciclo-etiqueta">Qué te devuelve atrás</span>
-            <p>Si la ACF no decae en absoluto, la serie no es estacionaria: esto no es un problema de identificación sino del Capítulo 2.</p>
+            <p>Si la ACF decae despacio y casi en línea recta, la serie no es estacionaria: esto no es un problema de identificación sino del Capítulo 2.</p>
           </div>
         </div>
         <div class="ciclo-panel" id="ciclo-identificacion-arma-pacf" role="tabpanel" hidden>
@@ -3568,16 +3568,19 @@ print(np.round(arma_acf(np.r_[1, -0.7], np.r_[1, 0.5], lags=6)[1:], 4))
       <div class="definition">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: proceso ARMA($p,q$)</h4>
         <p>Combina las dos partes anteriores en un solo modelo:</p>
-        $$y_t = c + \phi_1 y_{t-1} + \cdots + \phi_p y_{t-p}
-          + \varepsilon_t + \theta_1\varepsilon_{t-1} + \cdots + \theta_q\varepsilon_{t-q}$$
+        $$\begin{aligned}
+          y_t = c &+ \phi_1 y_{t-1} + \cdots + \phi_p y_{t-p} \\
+          &+ \varepsilon_t + \theta_1\varepsilon_{t-1} + \cdots + \theta_q\varepsilon_{t-q}
+        \end{aligned}$$
         <p style="margin-bottom:0;">o, en forma compacta, $\;\phi(B)\,y_t = c + \theta(B)\,\varepsilon_t$. Es
           <strong>estacionario</strong> si las raíces de $\phi(B)$ están fuera del círculo unitario, e
           <strong>invertible</strong> si lo están las de $\theta(B)$: cada polinomio responde por lo suyo.</p>
       </div>
 
-      <p>¿Para qué mezclarlos? Por <strong>parsimonia</strong>. Un proceso que necesitaría un AR(8) para describirse
-        bien puede quedar capturado por un ARMA(1,1) con dos parámetros. Menos parámetros significa estimaciones más
-        precisas y pronósticos más estables, que es de lo que se trata.</p>
+      <p>¿Para qué mezclarlos? Por <strong>parsimonia</strong>. El ARMA(1,1) del Módulo 4, con $\phi = 0.7$ y
+        $\theta = 0.5$, es un AR($\infty$): un AR puro necesitaría siete coeficientes solo para que el primer peso que
+        descarta bajara de $0.01$, y el ARMA lo describe con dos. Menos parámetros significa estimaciones más precisas
+        y pronósticos más estables, que es de lo que se trata.</p>
 
       <h3>La tabla de identificación</h3>
 
@@ -3608,8 +3611,8 @@ print(np.round(arma_acf(np.r_[1, -0.7], np.r_[1, 0.5], lags=6)[1:], 4))
           </tr>
           <tr>
             <td>Ruido blanco</td>
-            <td>Todo dentro de la banda</td>
-            <td>Todo dentro de la banda</td>
+            <td>Dentro de la banda, salvo un 5 % de rezagos por azar</td>
+            <td>Dentro de la banda, salvo un 5 % de rezagos por azar</td>
           </tr>
         </tbody>
       </table>
@@ -3646,7 +3649,7 @@ print(np.round(arma_acf(np.r_[1, -0.7], np.r_[1, 0.5], lags=6)[1:], 4))
       <div class="note">
         <p><strong>Lo que enseña el deslizador de $T$.</strong> La ACF muestral es un <em>estimador</em>, y uno con
           bastante varianza. Con $T = 60$, la banda vale $\pm 0.253$: cualquier autocorrelación teórica menor que eso
-          es indistinguible de cero. Con $T = 1000$ baja a $\pm 0.062$. Cuando en el Módulo 9 veas un correlograma
+          en valor absoluto es prácticamente indistinguible de cero. Con $T = 1000$ baja a $\pm 0.062$. Cuando en el Módulo 9 veas un correlograma
           real que no encaja en ninguna fila de la tabla, recuerda este simulador: casi nunca es que el modelo no
           exista, es que la muestra es corta.</p>
       </div>
@@ -3658,7 +3661,10 @@ print(np.round(arma_acf(np.r_[1, -0.7], np.r_[1, 0.5], lags=6)[1:], 4))
 
       <div class="formula">
         <p>Tomemos el ARMA(1,1) con $\phi_1 = 0.5$ y $\theta_1 = -0.5$:</p>
-        $$(1-0.5B)\,y_t = (1-0.5B)\,\varepsilon_t \;\Longrightarrow\; y_t = \varepsilon_t$$
+        $$\begin{gathered}
+          (1-0.5B)\,y_t = (1-0.5B)\,\varepsilon_t \\
+          \Longrightarrow\quad y_t = \varepsilon_t
+        \end{gathered}$$
         <p style="margin-bottom:0;">Es <strong>ruido blanco</strong> escrito con dos parámetros de más.</p>
       </div>
 
@@ -3728,7 +3734,13 @@ proceso = ArmaProcess(np.r_[1, -0.5], np.r_[1, -0.45])
 y = proceso.generate_sample(nsample=200, distrvs=np.random.default_rng(11).standard_normal)
 res = ARIMA(y, order=(1, 0, 1)).fit()
 print(res.summary().tables[1])
+#   ar.L1  -0.0798   std err 1.534
+#   ma.L1   0.1254   std err 1.531
 print("suma ar1 + ma1 =", round(res.arparams[0] + res.maparams[0], 4))
+# suma ar1 + ma1 = 0.0457
+
+# R estimo (0.83, -0.80) y Python (-0.08, 0.13): dos parejas muy distintas
+# con casi la misma suma. Es la verosimilitud plana de la que habla el aviso.
 </code></pre>
         </div>
       </div>
@@ -6563,7 +6575,9 @@ round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
       const r = Math.sqrt(disc);
       const modulo = Math.min(Math.abs((-phi1 + r) / (2 * phi2)),
         Math.abs((-phi1 - r) / (2 * phi2)));
-      return { estacionario: modulo > 1, modulo: modulo, complejas: false };
+      // Tolerancia: en el borde del triángulo la raíz unitaria sale como
+      // 1.0000000000000002 y, sin ella, un proceso con raíz unitaria pasaba por estacionario.
+      return { estacionario: modulo > 1 + 1e-9, modulo: modulo, complejas: false };
     }
 
     // Invertibilidad de theta(B) = 1 + t1 B + t2 B^2. Mismo razonamiento que
@@ -6575,7 +6589,7 @@ round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
       if (disc < 0) return t2 < 1;
       const r = Math.sqrt(disc);
       return Math.min(Math.abs((-t1 + r) / (2 * t2)),
-        Math.abs((-t1 - r) / (2 * t2))) > 1;
+        Math.abs((-t1 - r) / (2 * t2))) > 1 + 1e-9;   // misma tolerancia que analizarAR
     }
 
     // Simula un ARMA con ruido de semilla fija, descartando un tramo de

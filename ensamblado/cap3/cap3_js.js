@@ -89,7 +89,9 @@
       const r = Math.sqrt(disc);
       const modulo = Math.min(Math.abs((-phi1 + r) / (2 * phi2)),
         Math.abs((-phi1 - r) / (2 * phi2)));
-      return { estacionario: modulo > 1, modulo: modulo, complejas: false };
+      // Tolerancia: en el borde del triángulo la raíz unitaria sale como
+      // 1.0000000000000002 y, sin ella, un proceso con raíz unitaria pasaba por estacionario.
+      return { estacionario: modulo > 1 + 1e-9, modulo: modulo, complejas: false };
     }
 
     // Invertibilidad de theta(B) = 1 + t1 B + t2 B^2. Mismo razonamiento que
@@ -101,7 +103,7 @@
       if (disc < 0) return t2 < 1;
       const r = Math.sqrt(disc);
       return Math.min(Math.abs((-t1 + r) / (2 * t2)),
-        Math.abs((-t1 - r) / (2 * t2))) > 1;
+        Math.abs((-t1 - r) / (2 * t2))) > 1 + 1e-9;   // misma tolerancia que analizarAR
     }
 
     // Simula un ARMA con ruido de semilla fija, descartando un tramo de
