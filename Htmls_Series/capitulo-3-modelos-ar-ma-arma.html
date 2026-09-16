@@ -2875,6 +2875,12 @@ print(proceso.isstationary)   # True</code></pre>
         </div>
       </div>
 
+      <p>El Módulo 2 construyó cada valor de la serie con su propio pasado: en un AR, $y_t$ depende de
+        $y_{t-1}, \ldots, y_{t-p}$, y por eso un choque nunca se olvida del todo; su efecto se desvanece, pero sigue
+        ahí. Hay otra manera de dar memoria a una serie, que es hacerla depender del pasado de los
+        <strong>choques</strong> en lugar del de la serie. Lo que sale se comporta al revés que el AR: olvida por
+        completo lo ocurrido hace más de $q$ periodos, y eso deja una firma igual de nítida, pero en la otra función.</p>
+
       <div class="definition">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: proceso MA($q$)</h4>
         <p>Un proceso de <strong>medias móviles de orden $q$</strong> expresa el valor actual como una combinación
@@ -3002,6 +3008,28 @@ print(proceso.isstationary)   # True</code></pre>
           polinomio.</p>
       </div>
 
+      <h3>El triángulo de invertibilidad del MA(2)</h3>
+
+      <p>Para $q = 1$ la condición es $|\theta| < 1$. Para $q = 2$ no hace falta resolver nada:
+        $\theta(B) = 1 + \theta_1 B + \theta_2 B^2$ es el $\phi(B) = 1 - \phi_1 B - \phi_2 B^2$ del AR(2) con
+        $\phi_1 = -\theta_1$ y $\phi_2 = -\theta_2$, así que basta llevar el triángulo del Módulo 2 a los $\theta$
+        cambiando los signos.</p>
+
+      <div class="formula">
+        <p>Un MA(2) es invertible si y solo si el par $(\theta_1,\theta_2)$ cumple las tres condiciones:</p>
+        $$\begin{gathered}
+          \theta_1 + \theta_2 > -1 \\
+          \theta_2 - \theta_1 > -1 \\
+          -1 < \theta_2 < 1
+        \end{gathered}$$
+      </div>
+
+      <p>El triángulo desmiente dos intuiciones. Un coeficiente mayor que 1 no condena el modelo:
+        $\theta = (1.5,\ 0.6)$ cumple las tres condiciones y es invertible, con sus dos raíces de módulo $1.291$. Y
+        unos coeficientes pequeños no lo salvan: en $\theta = (0.5,\ -0.6)$ los dos están por debajo de 1 en valor
+        absoluto, pero $\theta_2 - \theta_1 = -1.1$ incumple la segunda condición, y una de sus raíces tiene módulo
+        $0.940$.</p>
+
       <div class="note">
         <p><strong>El límite $|\rho_1| \le 0.5$ es una herramienta de diagnóstico.</strong> Si en un correlograma
           muestral ves $r_1 = 0.8$ y quisieras ajustar un MA(1), no hay ningún $\theta$ que lo produzca. Pero la cota
@@ -3029,6 +3057,12 @@ Mod(polyroot(c(1, 0.5)))   # theta = 0.5  -> raiz en -2
 Mod(polyroot(c(1, 2.0)))   # theta = 2    -> raiz en -0.5
 #&gt; [1] 0.5              <- DENTRO del circulo: NO invertible
 
+# MA(2): el triangulo, contra las raices de 1 + theta1*B + theta2*B^2
+Mod(polyroot(c(1, 1.5, 0.6)))    # theta1 = 1.5 &gt; 1...
+#&gt; [1] 1.290994 1.290994     <- ...y aun asi invertible
+Mod(polyroot(c(1, 0.5, -0.6)))   # coeficientes pequenos...
+#&gt; [1] 0.9399017 1.7732350   <- ...y NO invertible
+
 # El maximo de |rho_1| de un MA(1) esta en theta = 1
 th &lt;- seq(-3, 3, by = 0.01)
 max(abs(th / (1 + th^2)))
@@ -3047,6 +3081,7 @@ m$sigma2                                   # ...con sigma2 ~ 2^2 = 4: el mismo p
         <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np
 from statsmodels.tsa.arima_process import ArmaProcess, arma_acf
+from statsmodels.tsa.arima.model import ARIMA
 
 # Dos MA(1) con la misma ACF
 for theta in (0.5, 2.0):
@@ -3056,12 +3091,51 @@ for theta in (0.5, 2.0):
 # theta=0.5: acf=[0.4 0.  0. ]  invertible=True
 # theta=2.0: acf=[0.4 0.  0. ]  invertible=False
 
+# MA(2): el triangulo, contra las raices
+for th1, th2 in ((1.5, 0.6), (0.5, -0.6)):
+    proc = ArmaProcess(np.r_[1], np.r_[1, th1, th2])
+    print(f"theta=({th1}, {th2}): |raices|={np.round(np.abs(proc.maroots), 4)}  invertible={proc.isinvertible}")
+# theta=(1.5, 0.6): |raices|=[1.291 1.291]  invertible=True
+# theta=(0.5, -0.6): |raices|=[0.9399 1.7732]  invertible=False
+
 # El maximo de |rho_1| de un MA(1)
 th = np.arange(-3, 3, 0.01)
 print(np.max(np.abs(th / (1 + th**2))))   # 0.5
+
+# statsmodels tambien devuelve la version invertible, con sigma2 reescalado
+y = ArmaProcess(np.r_[1], np.r_[1, 2.0]).generate_sample(   # theta = 2, sigma2 = 1
+    nsample=1000, distrvs=np.random.default_rng(1).standard_normal)
+res = ARIMA(y, order=(0, 0, 1)).fit()
+print(np.round(res.maparams, 4), np.round(res.params[-1], 4))
+# [0.5051] 3.8888     &lt;- theta ~ 1/2 y sigma2 ~ 2^2 = 4: el mismo proceso
 </code></pre>
         </div>
       </div>
+
+      <h3>Por qué la PACF de un MA no se corta</h3>
+
+      <p>Queda sin justificar una afirmación del simulador: la PACF de un MA decae sin cortarse nunca. La PACF en el
+        rezago $k$ es la correlación entre $y_t$ e $y_{t-k}$ una vez descontados los rezagos intermedios, o, lo que es
+        lo mismo, el último coeficiente de la regresión de $y_t$ sobre sus $k$ valores anteriores. En un AR($p$) esa
+        regresión ya contiene todo lo que importa cuando $k = p$, y por eso más allá de $p$ la PACF vale cero.</p>
+
+      <p>Un MA invertible también puede escribirse como una regresión sobre su propio pasado, solo que infinita. En
+        el MA(1) basta despejar el choque, $\varepsilon_{t-1} = y_{t-1} - \theta\varepsilon_{t-2}$, y sustituir hacia
+        atrás una y otra vez:</p>
+
+      $$\begin{aligned}
+        y_t &= \varepsilon_t + \theta\varepsilon_{t-1} \\
+        &= \theta y_{t-1} - \theta^2 y_{t-2} + \theta^3 y_{t-3} - \cdots + \varepsilon_t
+      \end{aligned}$$
+
+      <p>Es un AR de orden <strong>infinito</strong>: no hay un último rezago con el que la regresión quede completa,
+        y cada observación pasada sigue aportando algo, cada vez menos. Por eso la PACF decae como $|\theta|^k$,
+        alternando el signo si $\theta > 0$ y siempre negativa si $\theta < 0$. Es lo que dibuja el simulador:
+        $0.4878,\ -0.3123,\ 0.2215,\ -0.1652$ con $\theta = 0.8$, y con $\theta = -0.8$ las mismas magnitudes, todas
+        negativas. La suma solo converge si $|\theta| < 1$, que es otra manera de decir invertible. Y como $\theta$ y
+        $1/\theta$ comparten ACF, comparten también PACF: la versión no invertible dibuja el mismo patrón.</p>
+
+      <p>El Módulo 4 generaliza esta reescritura a cualquier ARMA, y la recorre también en el sentido contrario.</p>
     </div>
   </template>
 
@@ -3087,8 +3161,10 @@ print(np.max(np.abs(th / (1 + th**2))))   # 0.5
       </div>
 
       <p>En el Módulo 1, al desarrollar el AR(1) hacia atrás, apareció sin buscarlo la expresión
-        $y_t = \sum_j \phi^j \varepsilon_{t-j}$: un AR(1) escrito como un MA de orden infinito. No es una casualidad
-        del caso particular, sino un hecho general y una de las ideas más útiles del capítulo.</p>
+        $y_t = \sum_j \phi^j \varepsilon_{t-j}$: un AR(1) escrito como un MA de orden infinito. El Módulo 3 terminó con
+        el camino inverso, un MA(1) invertible escrito como un AR de orden infinito, y con él explicó por qué su PACF
+        no se corta. Ninguna de las dos reescrituras es una casualidad del caso particular: son un hecho general y una
+        de las ideas más útiles del capítulo.</p>
 
       <div class="definition">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Las dos representaciones</h4>
