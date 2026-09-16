@@ -365,6 +365,135 @@
     };
 
     // ================================================================
+    // M3 · rho_1 de un MA(1) en función de theta: theta y 1/theta
+    // ================================================================
+    SIMULADORES['rho1-theta-ma1'] = function (raiz) {
+      const c = raiz.querySelectorAll('canvas');
+      const lectura = raiz.querySelector('.simulador-lectura');
+      // Valor inicial: el theta = 2 que simula el código de R del módulo
+      const params = { theta: 2 };
+      const X_MAX = 5;
+      const ROJO = '#dc2626';
+      const rho1 = t => t / (1 + t * t);
+
+      const curva = [];
+      for (let x = -X_MAX; x <= X_MAX + 1e-9; x += 0.02) {
+        curva.push({ x: +x.toFixed(2), y: rho1(+x.toFixed(2)) });
+      }
+      const linea = y => [{ x: -X_MAX, y: y }, { x: X_MAX, y: y }];
+
+      const gCurva = new Chart(c[0], {
+        type: 'scatter',
+        data: {
+          datasets: [
+            {
+              label: 'ρ₁ = θ / (1 + θ²)',
+              data: curva, showLine: true, fill: false, pointStyle: 'line',
+              borderColor: COLORES_GRAFICO.primario, borderWidth: 2, pointRadius: 0, order: 5
+            },
+            {
+              label: 'Cota |ρ₁| = 0.5',
+              data: linea(0.5), showLine: true, pointStyle: 'line',
+              borderColor: COLORES_GRAFICO.gris, borderDash: [5, 4], borderWidth: 1.5, pointRadius: 0, order: 6
+            },
+            {
+              label: '',
+              data: linea(-0.5), showLine: true, pointStyle: 'line',
+              borderColor: COLORES_GRAFICO.gris, borderDash: [5, 4], borderWidth: 1.5, pointRadius: 0, order: 6
+            },
+            {
+              // Segmento entre theta y 1/theta: la «misma altura» hecha visible
+              label: '',
+              data: [], showLine: true,
+              borderColor: COLORES_GRAFICO.secundario, borderDash: [3, 3], borderWidth: 1.5, pointRadius: 0, order: 4
+            },
+            {
+              label: 'θ',
+              data: [], pointStyle: 'circle',
+              borderColor: '#ffffff', borderWidth: 2, pointRadius: 8, pointHoverRadius: 9, order: 1
+            },
+            {
+              label: '1/θ',
+              data: [], pointStyle: 'rectRot',
+              borderColor: '#ffffff', borderWidth: 2, pointRadius: 9, pointHoverRadius: 10, order: 2
+            }
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false, animation: false,
+          scales: {
+            x: {
+              min: -X_MAX, max: X_MAX,
+              title: { display: true, text: 'θ', font: { family: 'Montserrat', size: 12 } },
+              ticks: { font: { family: 'Fira Code', size: 11 } },
+              grid: { color: 'rgba(148, 163, 184, 0.2)' }
+            },
+            y: {
+              min: -0.7, max: 0.7,
+              title: { display: true, text: 'ρ₁', font: { family: 'Montserrat', size: 12 } },
+              ticks: { font: { family: 'Fira Code', size: 11 } },
+              grid: { color: 'rgba(148, 163, 184, 0.2)' }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: {
+                font: { family: 'Montserrat', size: 11 }, boxWidth: 20, usePointStyle: true,
+                filter: item => item.text !== ''
+              }
+            },
+            tooltip: { backgroundColor: '#012820', bodyFont: { family: 'Fira Code' } }
+          }
+        }
+      });
+
+      function pintar() {
+        const t = params.theta;
+        const r = rho1(t);
+        const cero = Math.abs(t) < 1e-9;
+        const frontera = Math.abs(Math.abs(t) - 1) < 1e-9;
+        const invertible = Math.abs(t) < 1 && !frontera;
+        const inv = cero ? null : 1 / t;
+        // En la frontera |theta| = 1 los dos puntos coinciden y ninguno es invertible
+        const colorT = frontera ? COLORES_GRAFICO.secundario : (invertible ? COLORES_GRAFICO.terciario : ROJO);
+        const colorInv = frontera ? COLORES_GRAFICO.secundario : (invertible ? ROJO : COLORES_GRAFICO.terciario);
+
+        gCurva.data.datasets[3].data = cero ? [] : [{ x: t, y: r }, { x: inv, y: r }];
+        gCurva.data.datasets[4].data = [{ x: t, y: r }];
+        gCurva.data.datasets[4].backgroundColor = colorT;
+        gCurva.data.datasets[5].data = cero ? [] : [{ x: inv, y: r }];
+        gCurva.data.datasets[5].backgroundColor = colorInv;
+        gCurva.update('none');
+
+        const filas = [
+          { etiqueta: 'ρ₁ =', valor: r.toFixed(4) },
+          { etiqueta: 'Invertible (|θ| < 1):', valor: frontera ? 'NO — frontera, |θ| = 1' : (invertible ? 'SÍ' : 'NO') }
+        ];
+        if (cero) {
+          filas.push({ etiqueta: '1/θ:', valor: 'no existe; con θ = 0 el proceso es ruido blanco' });
+        } else {
+          filas.push({
+            etiqueta: '1/θ =',
+            valor: inv.toFixed(4) + (Math.abs(inv) > X_MAX ? ' (fuera de la gráfica)' : '')
+          });
+          filas.push({ etiqueta: 'ρ₁ con 1/θ =', valor: rho1(inv).toFixed(4) });
+          filas.push({
+            etiqueta: 'Mismo proceso:',
+            valor: `θ = ${t.toFixed(2)} con σ², o θ = ${inv.toFixed(4)} con ${(t * t).toFixed(4)}·σ²`
+          });
+        }
+        actualizarLectura(lectura, filas);
+      }
+
+      crearControles(raiz.querySelector('.simulador-controles'), [
+        { clave: 'theta', etiqueta: 'θ = ', min: -X_MAX, max: X_MAX, paso: 0.05 }
+      ], params, pintar);
+
+      pintar();
+      return [gCurva];
+    };
+
+    // ================================================================
     // M4 · Pesos psi y pi de un ARMA(1,1)
     // ================================================================
     SIMULADORES['dualidad-psi-pi'] = function (raiz) {
@@ -854,7 +983,7 @@
       },
       {
         tipo: 'multiple',
-        modulo: 4,
+        modulo: 3,
         pregunta: 'Marca <strong>todas</strong> las afirmaciones correctas sobre la invertibilidad de un MA.',
         pista: 'Son tres. Piensa en: qué les pasa a los pesos $\\pi$, si los datos pueden distinguir el modelo, y qué hace el software cuando le pides ajustar un MA.',
         opciones: [

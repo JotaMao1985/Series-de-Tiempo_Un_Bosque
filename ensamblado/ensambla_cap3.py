@@ -331,15 +331,17 @@ html = recortar(
 # ---------------------------------------------------------------------------
 obligatorios = {
     "10 plantillas de módulo": [f'<template id="module-{k}">' for k in range(1, 11)],
-    "9 simuladores registrados": [
+    "11 simuladores registrados": [
         f"SIMULADORES['{s}']" for s in (
-            "panel-ar-teorico", "triangulo-ar2", "panel-ma-teorico", "dualidad-psi-pi",
+            "panel-ar-teorico", "triangulo-ar2", "panel-ma-teorico", "rho1-theta-ma1",
+            "dualidad-psi-pi",
             "laboratorio-arma", "teorica-vs-muestral", "manchas-identificacion",
             "diagnostico-residuales", "manchas-transformada", "trm-retornos")
     ],
     "contenedores de simulador": [
         f'data-simulador="{s}"' for s in (
-            "panel-ar-teorico", "triangulo-ar2", "panel-ma-teorico", "dualidad-psi-pi",
+            "panel-ar-teorico", "triangulo-ar2", "panel-ma-teorico", "rho1-theta-ma1",
+            "dualidad-psi-pi",
             "laboratorio-arma", "teorica-vs-muestral", "manchas-identificacion",
             "diagnostico-residuales", "manchas-transformada", "trm-retornos")
     ],

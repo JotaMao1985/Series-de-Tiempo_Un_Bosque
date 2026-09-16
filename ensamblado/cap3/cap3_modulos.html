@@ -567,6 +567,22 @@ print(proceso.isstationary)   # True</code></pre>
         $\sigma^2$ también se estima, ningún dato puede separarlos. Si no se impone una regla, el modelo no está
         identificado.</p>
 
+      <div class="simulador" data-simulador="rho1-theta-ma1">
+        <h4><i class="fas fa-sliders-h" aria-hidden="true"></i> $\theta$ y $1/\theta$ sobre la curva de $\rho_1$</h4>
+        <p class="simulador-intro">La curva es $\rho_1 = \theta/(1+\theta^2)$. El círculo marca el $\theta$ que elijas y
+          el rombo su recíproco, $1/\theta$, que queda siempre <strong>a la misma altura</strong>: los dos dan la misma
+          ACF. Ninguno sobrepasa las líneas de $\pm 0.5$, y de cada pareja solo es invertible el que cae en
+          $|\theta| < 1$; el otro va en rojo, y la lectura da el $\sigma^2$ con el que describe el mismo proceso.
+          Empieza en $\theta = 2$, el caso que simula el código de R de más abajo, y prueba $\theta = 1$, donde la
+          pareja se funde en un solo punto sobre la cota.</p>
+        <div class="simulador-controles"></div>
+        <p class="grafico-etiqueta">$\rho_1$ frente a $\theta$ en un MA(1)</p>
+        <div class="grafico-wrapper" style="height:260px;">
+          <canvas aria-label="Curva de la autocorrelación de primer orden de un MA(1) en función de theta, con theta y uno sobre theta marcados a la misma altura" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
       <div class="derivacion">
         <button type="button" class="derivacion-boton" aria-expanded="false" aria-controls="der-ma1-invertible">
           <i class="fas fa-square-root-variable" aria-hidden="true"></i>
