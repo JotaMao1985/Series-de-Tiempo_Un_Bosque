@@ -718,7 +718,9 @@ print(np.max(np.abs(th / (1 + th**2))))   # 0.5
         <p class="simulador-intro">Mueve $\phi$ y $\theta$ y observa las dos representaciones. Con $\phi = 0.8$ y
           $\theta = 0$ tienes el AR(1): los $\psi$ son las potencias $0.8^j$ y el AR($\infty$) se corta enseguida,
           porque solo sobreviven $\pi_0 = 1$ y $\pi_1 = -0.8$.
-          Lleva ahora $\theta$ más allá de $1$ —el MA deja de ser invertible— y mira lo que les pasa a los $\pi$.</p>
+          Lleva ahora $\theta$ más allá de $1$ —el MA deja de ser invertible— y mira lo que les pasa a los $\pi$.
+          El control $h$ pinta en color los pesos $\psi_0, \ldots, \psi_{h-1}$, que son los que entran en la varianza
+          del pronóstico a $h$ pasos, y la lectura da su suma de cuadrados junto al límite al que tiende.</p>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">Pesos $\psi_j$ — representación MA($\infty$)</p>
         <div class="grafico-wrapper" style="height:190px;">
@@ -784,12 +786,69 @@ print(np.max(np.abs(th / (1 + th**2))))   # 0.5
         </div>
       </div>
 
+      <h3>Un ejemplo a mano: el ARMA(1,1)</h3>
+
+      <p>Con $p = q = 1$ cada recursión tiene un solo término en la suma. Para el proceso de los códigos de más
+        abajo, con $\phi = 0.7$ y $\theta = 0.5$, quedan</p>
+
+      $$\begin{gathered}
+        \psi_j = \theta_j + 0.7\,\psi_{j-1} \\
+        \pi_j = -\phi_j - 0.5\,\pi_{j-1}
+      \end{gathered}$$
+
+      <p>donde $\theta_j$ vale $0.5$ en $j = 1$ y cero después, y $\phi_j$ vale $0.7$ en $j = 1$ y cero después. Los
+        primeros pesos salen así:</p>
+
+      <table>
+        <caption class="sr-only">Pesos psi y pi del ARMA(1,1) con phi = 0.7 y theta = 0.5, calculados con la recursión</caption>
+        <thead>
+          <tr>
+            <th scope="col">$j$</th>
+            <th scope="col">$\psi_j$</th>
+            <th scope="col">Cálculo</th>
+            <th scope="col">$\pi_j$</th>
+            <th scope="col">Cálculo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>$0$</td><td>$1$</td><td>convenio</td><td>$1$</td><td>convenio</td>
+          </tr>
+          <tr>
+            <td>$1$</td><td>$1.2$</td><td>$0.5 + 0.7 \times 1$</td><td>$-1.2$</td><td>$-0.7 - 0.5 \times 1$</td>
+          </tr>
+          <tr>
+            <td>$2$</td><td>$0.84$</td><td>$0.7 \times 1.2$</td><td>$0.6$</td><td>$-0.5 \times (-1.2)$</td>
+          </tr>
+          <tr>
+            <td>$3$</td><td>$0.588$</td><td>$0.7 \times 0.84$</td><td>$-0.3$</td><td>$-0.5 \times 0.6$</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Son las cifras que imprimen los códigos de más abajo. Desde $j = 2$ cada paso es una sola multiplicación
+        —por $\phi$ en los $\psi$, por $-\theta$ en los $\pi$—, así que las dos sucesiones son geométricas y tienen
+        forma cerrada para $j \ge 1$:</p>
+
+      $$\begin{gathered}
+        \psi_j = (\phi+\theta)\,\phi^{\,j-1} \\
+        \pi_j = -(\phi+\theta)\,(-\theta)^{\,j-1}
+      \end{gathered}$$
+
+      <p>Las dos fórmulas resumen lo que enseña el simulador. Los $\psi$ se apagan como $\phi^j$ y necesitan
+        $|\phi| < 1$: es la estacionariedad. Los $\pi$ se apagan como $(-\theta)^j$ y necesitan $|\theta| < 1$: es la
+        invertibilidad, y también la razón por la que alternan de signo cuando $\theta > 0$. Y si $\phi + \theta = 0$,
+        todos los pesos desde $j = 1$ se anulan a la vez, que es la redundancia con la que se cierra el módulo.</p>
+
       <div class="note">
         <p><strong>Por qué esto reaparece en los capítulos 4, 5 y 6.</strong> La varianza del error de pronóstico a
           $h$ pasos de un ARMA es</p>
         $$\operatorname{Var}(e_{T+h}) = \sigma^2\sum_{j=0}^{h-1}\psi_j^2$$
         <p style="margin-bottom:0;">Los pesos $\psi$ son, literalmente, lo que da su forma de abanico a las bandas de
-          un pronóstico. Cuanto más lentamente decaen, más rápido se abre la incertidumbre. El Capítulo 4 deduce de
+          un pronóstico. Cuanto más lentamente decaen, más rápido se abre la incertidumbre. En un proceso estacionario,
+          sin embargo, el abanico no crece sin fin: la suma tiende a $\sum_j \psi_j^2 = \gamma_0/\sigma^2$, así que la
+          varianza del pronóstico se acerca a la del propio proceso. El control $h$ del simulador de arriba recorre esa
+          suma. El Capítulo 4 deduce de
           aquí los intervalos de pronóstico, el 5 los usa para dibujar el abanico del modelo <em>airline</em> y el 6
           comprueba si esos intervalos cubren de verdad lo que prometen.</p>
       </div>
@@ -2339,12 +2398,12 @@ print(round(float(acorr_ljungbox(ret**2, lags=[12])["lb_pvalue"].iloc[0]), 4))
 
       <h3>Autoevaluación</h3>
 
-      <p>Ocho preguntas sobre todo el capítulo. Al primer fallo verás una pista y podrás reintentar; al segundo se
+      <p>Nueve preguntas sobre todo el capítulo. Al primer fallo verás una pista y podrás reintentar; al segundo se
         revela la respuesta y se explica. Al terminar, el resumen te dice qué módulos conviene repasar.</p>
 
       <div class="quiz" data-quiz="cap3">
         <h4><i class="fas fa-circle-question" aria-hidden="true"></i> Autoevaluación</h4>
-        <p class="text-sm" style="margin-bottom:0;">Ocho preguntas de los cuatro tipos: opción única, selección
+        <p class="text-sm" style="margin-bottom:0;">Nueve preguntas de los cuatro tipos: opción única, selección
           múltiple, respuesta numérica y diagnóstico de un gráfico. Cada opción trae su explicación, también las
           incorrectas.</p>
         <div class="quiz-progreso" role="presentation"><div class="quiz-progreso-barra"></div></div>

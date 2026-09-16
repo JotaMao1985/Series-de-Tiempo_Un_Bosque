@@ -370,9 +370,15 @@
     SIMULADORES['dualidad-psi-pi'] = function (raiz) {
       const c = raiz.querySelectorAll('canvas');
       const lectura = raiz.querySelector('.simulador-lectura');
-      const params = { phi: 0.8, theta: 0 };
+      const params = { phi: 0.8, theta: 0, h: 4 };
       const N = 12;
+      // Términos para el límite sum psi_j^2 = gamma_0 / sigma^2. Con |phi| <= 0.95
+      // la cola que queda fuera de 600 términos no llega a la decimosexta cifra.
+      const N_LIMITE = 600;
       const etiquetas = Array.from({ length: N + 1 }, (_, j) => String(j));
+      // Los psi que entran en la varianza del pronóstico a h pasos (j < h) van en
+      // el color principal; el resto, en gris.
+      const coloresPsi = h => etiquetas.map((_, j) => j < h ? COLORES_GRAFICO.primario : COLORES_GRAFICO.gris);
 
       const gPsi = crearGraficoBarras(c[0], etiquetas, pesosPsi([params.phi], [params.theta], N),
         { etiqueta: 'ψⱼ', color: COLORES_GRAFICO.primario, tituloX: 'j' });
@@ -384,8 +390,12 @@
         const psi = pesosPsi(ar, ma, N);
         const pi = pesosPi(ar, ma, N);
         const invertible = Math.abs(params.theta) < 1;
+        const h = Math.round(params.h);
+        const varH = psi.slice(0, h).reduce((s, v) => s + v * v, 0);
+        const varLimite = pesosPsi(ar, ma, N_LIMITE).reduce((s, v) => s + v * v, 0);
 
         gPsi.data.datasets[0].data = psi;
+        gPsi.data.datasets[0].backgroundColor = coloresPsi(h);
         gPsi.update('none');
         gPi.data.datasets[0].data = pi;
         gPi.data.datasets[0].backgroundColor = invertible ? COLORES_GRAFICO.terciario : '#dc2626';
@@ -404,13 +414,16 @@
           {
             etiqueta: 'máx |πⱼ| =',
             valor: maxPi.toFixed(4) + (invertible ? '' : ' — los pesos crecen: no invertible')
-          }
+          },
+          { etiqueta: 'Var(e) a h pasos ÷ σ² = Σ ψⱼ², j < h:', valor: varH.toFixed(4) },
+          { etiqueta: 'Límite, h → ∞ (γ₀/σ²):', valor: varLimite.toFixed(4) }
         ]);
       }
 
       crearControles(raiz.querySelector('.simulador-controles'), [
         { clave: 'phi', etiqueta: 'φ = ', min: -0.95, max: 0.95, paso: 0.05 },
-        { clave: 'theta', etiqueta: 'θ = ', min: -2, max: 2, paso: 0.05 }
+        { clave: 'theta', etiqueta: 'θ = ', min: -2, max: 2, paso: 0.05 },
+        { clave: 'h', etiqueta: 'h = ', min: 1, max: 12, paso: 1, decimales: 0 }
       ], params, pintar);
 
       pintar();
@@ -828,6 +841,16 @@
             retro: 'Es una ACF <strong>teórica</strong>, calculada con <code>ARMAacf()</code>: no hay azar ni atípicos en ella. Y el ruido blanco tendría todas las autocorrelaciones nulas, incluidas las dos primeras.'
           }
         ]
+      },
+      {
+        tipo: 'numerica',
+        modulo: 4,
+        pregunta: 'Un ARMA(1,1) tiene $\\phi = 0.7$, $\\theta = 0.5$ y $\\sigma^2 = 2$. ¿Cuánto vale la varianza del error de pronóstico a dos pasos, $\\operatorname{Var}(e_{T+2})$? Da dos decimales.',
+        pista: 'La fórmula es $\\sigma^2\\sum_{j=0}^{h-1}\\psi_j^2$. Con $h = 2$ la suma tiene solo dos términos: $\\psi_0$, que siempre vale $1$, y $\\psi_1$, que sale del primer paso de la recursión. Y no te olvides del factor $\\sigma^2$.',
+        respuesta: 4.88,
+        tolerancia: 0.006,
+        retroAcierto: '$\\psi_1 = \\theta + \\phi = 1.2$, así que $\\operatorname{Var}(e_{T+2}) = 2\\,(1 + 1.2^2) = 2 \\times 2.44 = 4.88$. A un paso sería solo $\\sigma^2 = 2$: el pronóstico a dos pasos arrastra además el choque de $T+1$, amplificado por $\\psi_1$.',
+        retroFallo: 'Es $\\sigma^2(\\psi_0^2 + \\psi_1^2) = 2\\,(1 + 1.2^2) = 4.88$, con $\\psi_1 = \\theta + \\phi = 1.2$. Cada tropiezo habitual deja una cifra distinta: $2.44$ es olvidar $\\sigma^2$; $2.88$, olvidar $\\psi_0 = 1$; $2.98$, tomar $\\psi_1 = \\phi$ como si fuera un AR(1); $4.40$, sumar los $\\psi$ sin elevarlos al cuadrado; y $6.29$, sumar hasta $j = h$ en vez de hasta $h - 1$.'
       },
       {
         tipo: 'multiple',
