@@ -899,7 +899,7 @@
           {
             texto: 'Nada todavía: en niveles la tendencia infla <em>todos</em> los $\\hat\\rho_k$, así que el diagnóstico hay que hacerlo sobre la serie ya diferenciada.',
             correcta: true,
-            retro: 'Exacto. En esa misma serie $\\hat\\rho_1 = 0.964$ y $\\hat\\rho_{36} = 0.225$: es el decaimiento lento típico de una tendencia, no un pico estacional. Sobre $\\nabla$TRM los tres múltiplos de $12$ valen $-0.0025$, $-0.067$ y $0.071$, todos dentro de la banda.'
+            retro: 'En esa misma serie $\\hat\\rho_1 = 0.964$ y $\\hat\\rho_{36} = 0.225$: es el decaimiento lento típico de una tendencia, no un pico estacional. Sobre $\\nabla$TRM los tres múltiplos de $12$ valen $-0.0025$, $-0.067$ y $0.071$, todos dentro de la banda.'
           }
         ]
       },
@@ -951,7 +951,7 @@
           {
             texto: 'Que la estacionalidad domina la varianza y tapa la tendencia, así que $D$ se decide antes que $d$.',
             correcta: true,
-            retro: 'Eso es. Los <em>operadores</em> conmutan —la serie $\\nabla\\nabla_{12}y$ es idéntica en cualquier orden, diferencia máxima medida $0$—, pero las <em>pruebas</em> no: aplicadas a la serie cruda, la varianza estacional impide ver la raíz unitaria regular. En Python pasa igual: KPSS sobre $\\nabla_{12}y$ da $0.8672$ y rechaza.'
+            retro: 'Los <em>operadores</em> conmutan —la serie $\\nabla\\nabla_{12}y$ es idéntica en cualquier orden, diferencia máxima medida $0$—, pero las <em>pruebas</em> no: aplicadas a la serie cruda, la varianza estacional impide ver la raíz unitaria regular. En Python pasa igual: KPSS sobre $\\nabla_{12}y$ da $0.8672$ y rechaza.'
           },
           {
             texto: 'Que <code>ndiffs()</code> tiene un error, porque el resultado debería ser el mismo.',
@@ -1054,7 +1054,7 @@
           {
             texto: 'Una sola partición mide el comportamiento en <em>un</em> tramo concreto; con $24$ puntos, qué tramo toque pesa más que la diferencia entre métodos.',
             correcta: true,
-            retro: 'Eso es. 1959–1960 tuvieron un crecimiento especialmente regular y ahí una estacionalidad determinista extrapola mejor. Promediando sobre $61$ orígenes el efecto del tramo se diluye y el SARIMA le gana a cada rival en más del $85\\,\\%$ de ellos. Construir esa evaluación es el contenido del Capítulo 6.'
+            retro: 'Los años 1959–1960 tuvieron un crecimiento especialmente regular y ahí una estacionalidad determinista extrapola mejor. Promediando sobre $61$ orígenes el efecto del tramo se diluye y el SARIMA le gana a cada rival en más del $85\\,\\%$ de ellos. Construir esa evaluación es el contenido del Capítulo 6.'
           },
           {
             texto: 'Que el RMSE no sirve para comparar métodos y hay que usar MAPE.',
