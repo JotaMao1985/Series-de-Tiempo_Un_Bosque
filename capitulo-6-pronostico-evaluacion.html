@@ -7581,7 +7581,7 @@ c(arima = anchos(function(tr,h,nv) forecast(Arima(tr, order=c(1,1,1)), h=h, leve
           {
             texto: 'Que ese número son residuales y no dice nada sobre pronóstico: evaluado fuera de muestra, el mismo modelo da $18.92$.',
             correcta: true,
-            retro: 'Exacto. <code>accuracy()</code> con un solo argumento devuelve la fila <code>Training set</code>, calculada sobre datos que el modelo usó para estimarse. La razón entre los dos números es $1.86$ en este caso, y depende del tramo: en los once cortes medidos va de $0.85$ a $4.07$.'
+            retro: '<code>accuracy()</code> con un solo argumento devuelve la fila <code>Training set</code>, calculada sobre datos que el modelo usó para estimarse. La razón entre los dos números es $1.86$ en este caso, y depende del tramo: en los once cortes medidos va de $0.85$ a $4.07$.'
           },
           {
             texto: 'Que hay que comprobar antes que los residuales pasen Ljung–Box.',
@@ -7653,7 +7653,7 @@ c(arima = anchos(function(tr,h,nv) forecast(Arima(tr, order=c(1,1,1)), h=h, leve
           {
             texto: 'Que en este montaje concreto el $k$-fold aleatorio no sobrestimó el desempeño: se quedó corto, que es el lado seguro.',
             correcta: true,
-            retro: 'Exacto, y es la parte del eslogan que conviene matizar. Con rezagos como únicos predictores, el reparto al azar no regala información porque los rezagos ya contienen a los vecinos. El optimismo aparece cuando el modelo <em>interpola en el tiempo</em>: con $3$ vecinos más cercanos sube al $58\\,\\%$ y con un polinomio de grado $8$ al $99\\,\\%$.'
+            retro: 'Es la parte del eslogan que conviene matizar. Con rezagos como únicos predictores, el reparto al azar no regala información porque los rezagos ya contienen a los vecinos. El optimismo aparece cuando el modelo <em>interpola en el tiempo</em>: con $3$ vecinos más cercanos sube al $58\\,\\%$ y con un polinomio de grado $8$ al $99\\,\\%$.'
           }
         ]
       },
@@ -7682,7 +7682,7 @@ c(arima = anchos(function(tr,h,nv) forecast(Arima(tr, order=c(1,1,1)), h=h, leve
           {
             texto: 'El pronóstico está <strong>sesgado</strong>: su centro está desplazado casi una desviación típica, así que la banda estrecha se queda del lado equivocado y la ancha todavía alcanza.',
             correcta: true,
-            retro: 'Eso es. El sesgo medio del naïve estacional en estos orígenes es $+38.68$ frente a un RMSE de $42.55$: una razón de $0.909$. La banda de $\\pm 1.28\\sigma$ no llega y la de $\\pm 1.96\\sigma$ sí. Comprobar solo el $95\\,\\%$ habría dado el intervalo por bueno.'
+            retro: 'El sesgo medio del naïve estacional en estos orígenes es $+38.68$ frente a un RMSE de $42.55$: una razón de $0.909$. La banda de $\\pm 1.28\\sigma$ no llega y la de $\\pm 1.96\\sigma$ sí. Comprobar solo el $95\\,\\%$ habría dado el intervalo por bueno.'
           },
           {
             texto: 'Los residuales no son normales y por eso los cuantiles están mal.',
@@ -7760,7 +7760,7 @@ c(arima = anchos(function(tr,h,nv) forecast(Arima(tr, order=c(1,1,1)), h=h, leve
           {
             texto: 'Que la partición mide el comportamiento en <em>un</em> tramo, y ese tramo empieza justo después del escalón de 1899, donde una recta descendente parece razonable.',
             correcta: true,
-            retro: 'Eso es. Con $20$ observaciones de un solo tramo, qué tramo toque pesa más que la diferencia entre métodos. Promediando sobre $36$ orígenes el efecto se diluye y aparece lo que el Capítulo 4 ya había concluido por otras vías: la caída del caudal fue un cambio de nivel, no una pendiente.'
+            retro: 'Con $20$ observaciones de un solo tramo, qué tramo toque pesa más que la diferencia entre métodos. Promediando sobre $36$ orígenes el efecto se diluye y aparece lo que el Capítulo 4 ya había concluido por otras vías: la caída del caudal fue un cambio de nivel, no una pendiente.'
           },
           {
             texto: 'Que hay un error en una de las dos evaluaciones, porque el mismo código no puede dar órdenes opuestos.',

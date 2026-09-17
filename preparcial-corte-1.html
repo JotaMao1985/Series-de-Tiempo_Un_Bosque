@@ -5140,7 +5140,7 @@
           { texto: 'Que el atípico es estacional, porque afecta a un mes concreto.', correcta: false,
             retro: 'Afectar a un mes no es ser estacional. La estacionalidad es un patrón que <em>se repite</em> cada periodo: tendría que aparecer en ese mismo mes todos los años. Aquí ocurrió una vez, y por eso el componente estacional apenas se mueve (0.040).' },
           { texto: 'Que el residuo es el componente donde cae lo que no es sistemático — y por eso es el único que no se modela: se estima por diferencia.', correcta: true,
-            retro: 'Exacto. La tendencia y la estacionalidad se estiman imponiendo una estructura (suave la una, periódica la otra); un pico de un solo mes no cabe en ninguna de las dos, así que va a parar al residuo casi entero. El residuo no es «el error»: es todo lo que las reglas no capturaron.' },
+            retro: 'La tendencia y la estacionalidad se estiman imponiendo una estructura (suave la una, periódica la otra); un pico de un solo mes no cabe en ninguna de las dos, así que va a parar al residuo casi entero. El residuo no es «el error»: es todo lo que las reglas no capturaron.' },
           { texto: 'Que la descomposición está mal hecha, porque un residuo tan grande indica un mal ajuste.', correcta: false,
             retro: 'Al revés: un residuo grande en el punto anómalo es señal de que la descomposición hizo lo correcto — aisló la anomalía en vez de repartirla. Preocupante sería que la tendencia se hubiera doblado para perseguir ese punto.' },
           { texto: 'Que hay que quitar ese dato antes de descomponer.', correcta: false,
@@ -5155,7 +5155,7 @@
           { texto: '<code>demanda</code>: la media sube de 36.5 a 65.3.', correcta: false,
             retro: 'La media sube, sí, pero la varianza también: de 28.9 a 103.4, casi cuatro veces. Viola las dos primeras condiciones, no solo la primera. Por eso <code>demanda</code> pide una transformación antes que una diferencia.' },
           { texto: '<code>linea</code>: la media sube de 24.8 a 45.6, pero la varianza se queda alrededor de 14.', correcta: true,
-            retro: 'Eso es. La media depende de $t$ —falla la condición (1)— y la varianza no —se sostiene la (2)—. Es el caso de una tendencia determinista: estacionaria alrededor de una recta, no alrededor de una constante. Y es exactamente la serie que hace discrepar al ADF y al KPSS de nivel.' },
+            retro: 'La media depende de $t$ —falla la condición (1)— y la varianza no —se sostiene la (2)—. Es el caso de una tendencia determinista: estacionaria alrededor de una recta, no alrededor de una constante. Y es exactamente la serie que hace discrepar al ADF y al KPSS de nivel.' },
           { texto: '<code>residuo_blanco</code>: las medias no son exactamente iguales.', correcta: false,
             retro: 'Ninguna media muestral sale exactamente igual: 0.03, −0.06 y −0.16 son variación de muestreo con varianza cercana a 0.86 y unas 67 observaciones por tramo. La condición es sobre la media <em>teórica</em>, no sobre las tres cifras que salieron.' },
           { texto: 'Ninguna: las tres violan al menos dos condiciones.', correcta: false,
@@ -5202,7 +5202,7 @@
           { texto: 'Ataca la media constante, porque el logaritmo reduce los valores grandes más que los pequeños.', correcta: false,
             retro: 'Reduce más los valores grandes, sí, y por eso estabiliza la <em>varianza</em>. Pero la media transformada sigue dependiendo de $t$: mira las tres cifras del enunciado.' },
           { texto: 'Ataca la varianza constante (condición 2) y no toca la media constante (condición 1): sigue haciendo falta diferenciar.', correcta: true,
-            retro: 'Eso es. Después del logaritmo la varianza por tramos es prácticamente la misma (0.022, 0.020, 0.024) y la media sigue creciendo. La transformación y la diferencia resuelven problemas distintos y por eso van en ese orden: primero estabilizar la varianza, después quitar la tendencia.' },
+            retro: 'Después del logaritmo la varianza por tramos es prácticamente la misma (0.022, 0.020, 0.024) y la media sigue creciendo. La transformación y la diferencia resuelven problemas distintos y por eso van en ese orden: primero estabilizar la varianza, después quitar la tendencia.' },
           { texto: 'Ninguna de las dos: solo cambia las unidades y la conclusión sobre estacionariedad no varía.', correcta: false,
             retro: 'A veces es así —tomar logaritmos de una serie con varianza ya constante es solo un cambio de unidades—, pero no aquí. Pasar de una razón de varianzas de 3.6 a una de 1.2 es un cambio real en la condición (2).' }
         ]
@@ -5311,7 +5311,7 @@
         pista: 'Una media de un solo lado resume el pasado. ¿A qué instante corresponde de verdad el número que produce?',
         opciones: [
           { texto: 'Va desfasada trimestre y medio: el valor que asigna al trimestre $t$ resume en realidad el intervalo centrado en $t - 1.5$.', correcta: true,
-            retro: 'Eso es. Una media de orden 4 de un solo lado promedia $t, t-1, t-2, t-3$, cuyo centro está en $t-1.5$. Etiquetarla como $t$ la retrasa trimestre y medio, y en una serie con tendencia eso sesga la estimación de forma sistemática. El doble paso de la 2×4 existe justamente para devolver el promedio a un punto de la rejilla.' },
+            retro: 'Una media de orden 4 de un solo lado promedia $t, t-1, t-2, t-3$, cuyo centro está en $t-1.5$. Etiquetarla como $t$ la retrasa trimestre y medio, y en una serie con tendencia eso sesga la estimación de forma sistemática. El doble paso de la 2×4 existe justamente para devolver el promedio a un punto de la rejilla.' },
           { texto: 'Es más ruidosa, porque usa menos observaciones.', correcta: false,
             retro: 'Usa las mismas cuatro. Lo que cambia no es cuántas, sino dónde caen respecto al punto que etiqueta: todas por detrás en vez de repartidas alrededor.' },
           { texto: 'No le pasa nada: las dos series de números son casi iguales.', correcta: false,
@@ -5330,7 +5330,7 @@
           { texto: 'Nada relevante: las tres opciones dan resultados equivalentes dentro del margen de error.', correcta: false,
             retro: 'Con banda ±0.179, un valor de −0.599 está más de tres veces fuera. Las otras dos (−0.148 y −0.127) sí están dentro. La ventana pequeña es la única que rompe.' },
           { texto: 'Con <code>s.window = 5</code> el componente estacional se ajusta tan deprisa que absorbe ruido; el residuo queda con estructura de signo contrario en el periodo. Es sobreajuste, no falta de ajuste.', correcta: true,
-            retro: 'Exacto, y el signo es la clave. Si el estacional se hubiera quedado corto, quedaría autocorrelación <em>positiva</em> en el rezago 12: la parte de estacionalidad no capturada. Lo que hay es −0.599, muy fuera de banda hacia abajo: el estacional se llevó por delante variación que era ruido, y el residuo lo compensa. Un <code>s.window</code> pequeño es tan malo como uno grande.' },
+            retro: 'El signo es la clave. Si el estacional se hubiera quedado corto, quedaría autocorrelación <em>positiva</em> en el rezago 12: la parte de estacionalidad no capturada. Lo que hay es −0.599, muy fuera de banda hacia abajo: el estacional se llevó por delante variación que era ruido, y el residuo lo compensa. Un <code>s.window</code> pequeño es tan malo como uno grande.' },
           { texto: 'Que <code>"periodic"</code> es siempre la mejor opción, porque da el residuo más limpio.', correcta: false,
             retro: '«Periodic» fija el estacional idéntico todos los años, y aquí funciona porque la serie se simuló así. En una serie cuya estacionalidad cambia de verdad, esa rigidez es un defecto y la diferencia se le carga al residuo. La conclusión correcta no es «usa periodic», es «mira el residuo».' }
         ]
@@ -5362,7 +5362,7 @@
           { texto: 'No se puede saber: el ADF con $p = 0.63$ no rechaza, pero eso no prueba nada.', correcta: false,
             retro: 'La cautela es correcta en general —no rechazar nunca prueba la nula— pero aquí no estás solo con el $p$-valor: tienes la varianza creciendo por tramos y el ADF rechazando tras diferenciar. Tres piezas que apuntan al mismo sitio sí permiten decidir.' },
           { texto: 'Una caminata aleatoria: $y_t = \\sum_{i \\le t} \\varepsilon_i$, así que $\\operatorname{Var}(y_t) = t\\sigma^2$ crece sin límite. Diferenciar recupera los choques, que sí son estacionarios.', correcta: true,
-            retro: 'Eso es, y las tres varianzas lo confirman: crecen de forma aproximadamente lineal con el tramo. La consecuencia conceptual es la que importa en el parcial: en una caminata un choque <strong>no se olvida nunca</strong> —entra en el nivel y se queda—, y por eso no hay una media a la que volver.' }
+            retro: 'Las tres varianzas lo confirman: crecen de forma aproximadamente lineal con el tramo. La consecuencia conceptual es la que importa en el parcial: en una caminata un choque <strong>no se olvida nunca</strong> —entra en el nivel y se queda—, y por eso no hay una media a la que volver.' }
         ]
       },
       {
@@ -5390,7 +5390,7 @@
           { texto: 'Sí, pero solo porque el rezago 1 se estima con casi toda la muestra y el error es pequeño.', correcta: false,
             retro: 'No es una cuestión de precisión: la diferencia es exactamente cero, no pequeña. Con $n$ pequeño seguirían coincidiendo, porque es una identidad algebraica y no una aproximación.' },
           { texto: 'No: $\\phi_{11} = r_1$ siempre, por definición. La PACF descuenta el efecto de los rezagos intermedios, y entre $t$ y $t-1$ no hay ninguno.', correcta: true,
-            retro: 'Exacto, y no es un detalle de trivia: fija qué es la PACF. En el rezago 2 hay un intermedio que descontar y por eso $\\phi_{22} \\neq r_2$; en el rezago 1 no hay nada que descontar y las dos funciones coinciden por construcción, sea cual sea la serie. Si alguna vez te salen distintas, hay un error de cálculo.' },
+            retro: 'No es un detalle de trivia: fija qué es la PACF. En el rezago 2 hay un intermedio que descontar y por eso $\\phi_{22} \\neq r_2$; en el rezago 1 no hay nada que descontar y las dos funciones coinciden por construcción, sea cual sea la serie. Si alguna vez te salen distintas, hay un error de cálculo.' },
           { texto: 'No, y además pasa lo mismo en el rezago 2 por la misma razón.', correcta: false,
             retro: 'En el rezago 2 ya no: ahí sí hay un intermedio. Sobre <code>ocupacion</code>, $r_2 = -0.3766$ y $\\phi_{22} = -0.4257$. La coincidencia es exclusiva del primer rezago.' }
         ]
@@ -5403,7 +5403,7 @@
           { texto: 'Que con más datos la serie se volvió estacionaria.', correcta: false,
             retro: 'Una serie no se vuelve estacionaria por observarla más tiempo: la estacionariedad es una propiedad del proceso, no de la muestra. Lo que cambia con $n$ es la capacidad de la prueba para detectarla.' },
           { texto: 'La <strong>potencia</strong> de la prueba. Con 40 observaciones el ADF no distingue $\\phi = 0.82$ de $\\phi = 1$; con 200 sí. La conclusión fiable es la de la muestra grande.', correcta: true,
-            retro: 'Eso es. El proceso es estacionario en los dos casos —$|\\phi| &lt; 1$—, así que con $n=40$ la prueba se equivocó al no rechazar: un falso negativo. Y esto tiene una consecuencia práctica dura: <strong>«no rechazo» en una serie corta no es evidencia de raíz unitaria, es ausencia de evidencia</strong>. Diferenciar por ese motivo es sobrediferenciar.' },
+            retro: 'El proceso es estacionario en los dos casos —$|\\phi| &lt; 1$—, así que con $n=40$ la prueba se equivocó al no rechazar: un falso negativo. Y esto tiene una consecuencia práctica dura: <strong>«no rechazo» en una serie corta no es evidencia de raíz unitaria, es ausencia de evidencia</strong>. Diferenciar por ese motivo es sobrediferenciar.' },
           { texto: 'Que el estadístico cambió de signo o de escala al cambiar el número de rezagos.', correcta: false,
             retro: 'Los rezagos pasan de 3 a 5, sí, pero el estadístico no cambia de signo: pasa de $-2.63$ a $-4.28$, más negativo. Lo que decide es que el valor crítico se cruza, y eso ocurre porque el estimador de $\\phi$ es mucho más preciso con 200 datos.' },
           { texto: 'Nada relevante: los dos $p$-valores son compatibles y la conclusión es la misma.', correcta: false,
@@ -5431,7 +5431,7 @@
         pista: 'Que dos operaciones conmuten entre sí no dice nada de una tercera.',
         opciones: [
           { texto: 'Que las dos diferencias conmutan, así que el orden entre ellas da igual. Pero no conmutan con el logaritmo: ese va antes, y no por convenio.', correcta: true,
-            retro: 'Exacto. Diferenciar es aplicar $(1-B)$ y $(1-B^{12})$, y el producto de polinomios en $B$ es conmutativo: por eso el cero es exacto y no aproximado. El logaritmo, en cambio, no es lineal, y además necesita valores positivos — que una serie diferenciada no tiene. De ahí el orden del pipeline: transformar, después diferenciar.' },
+            retro: 'Diferenciar es aplicar $(1-B)$ y $(1-B^{12})$, y el producto de polinomios en $B$ es conmutativo: por eso el cero es exacto y no aproximado. El logaritmo, en cambio, no es lineal, y además necesita valores positivos — que una serie diferenciada no tiene. De ahí el orden del pipeline: transformar, después diferenciar.' },
           { texto: 'Que las tres operaciones conmutan y el orden del pipeline es una convención.', correcta: false,
             retro: 'Prueba a tomar el logaritmo de una serie diferenciada y verás que no: la mitad de los valores son negativos. En <code>saldo</code>, 37 de 79. El orden del pipeline no es convención, es una restricción del dominio.' },
           { texto: 'Que se perdieron 13 observaciones, lo que confirma que las diferencias se acumulan.', correcta: false,
@@ -5657,7 +5657,7 @@
           { texto: 'Que las dos versiones son equivalentes: las curvas se superponen prácticamente en todo el año.', correcta: false,
             retro: 'Se superponen en once meses de doce, y esa es justamente la trampa. La diferencia está concentrada en el mes del atípico, que es el único donde importa. Un defecto local no deja de serlo por ser local: distorsiona el índice de marzo de todos los años.' },
           { texto: 'Sin robustez, el atípico se cuela en el componente estacional de <em>su</em> mes: marzo sube de 0.012 a 0.033. La versión robusta lo deja fuera y lo manda al residuo.', correcta: true,
-            retro: 'Exacto, y fíjate en la magnitud relativa: la diferencia en marzo es 0.021, unas cuatro veces mayor que en cualquier otro mes. Eso es lo que significa «robusto» en STL: pondera a la baja las observaciones que no encajan, para que un dato raro de un año no contamine el patrón anual de los diez. Sin esa protección, el modelo se cree que marzo es sistemáticamente alto — y lo era una sola vez.' },
+            retro: 'Fíjate en la magnitud relativa: la diferencia en marzo es 0.021, unas cuatro veces mayor que en cualquier otro mes. Eso es lo que significa «robusto» en STL: pondera a la baja las observaciones que no encajan, para que un dato raro de un año no contamine el patrón anual de los diez. Sin esa protección, el modelo se cree que marzo es sistemáticamente alto — y lo era una sola vez.' },
           { texto: 'Que la versión robusta subestima la estacionalidad de marzo.', correcta: false,
             retro: 'Al revés: la robusta es la que estima bien. El valor de marzo sin atípico está en torno a 0.012, y la no robusta lo infla a 0.033 arrastrada por un único año. La robusta no subestima, se resiste a que un dato la mueva.' },
           { texto: 'Que hay que quitar el atípico antes de descomponer, porque STL no sabe manejarlo.', correcta: false,
@@ -5693,7 +5693,7 @@
           { texto: 'No hay periodo: seis barras de 36 fuera de banda son las esperables por azar.', correcta: false,
             retro: 'Por azar se esperan 1.8, no 6 — y sobre todo, no en posiciones regulares. Que caigan exactamente en los múltiplos de 6 es lo que descarta el azar: el azar no ordena las barras.' },
           { texto: 'Doce meses: los rezagos 12, 24 y 36 son los múltiplos del periodo; los de 6, 18 y 30 son los semiperiodos, con el signo contrario.', correcta: true,
-            retro: 'Eso es. En una serie mensual con estacionalidad anual, la ACF marca los múltiplos de 12 con correlación positiva y los puntos intermedios —6, 18, 30— con correlación negativa: medio año después, la serie está sistemáticamente en el otro extremo del ciclo. El patrón alternante confirma el periodo mucho mejor que un pico suelto.' },
+            retro: 'En una serie mensual con estacionalidad anual, la ACF marca los múltiplos de 12 con correlación positiva y los puntos intermedios —6, 18, 30— con correlación negativa: medio año después, la serie está sistemáticamente en el otro extremo del ciclo. El patrón alternante confirma el periodo mucho mejor que un pico suelto.' },
           { texto: 'Treinta y seis, porque es el rezago más alto con un pico.', correcta: false,
             retro: 'El 36 es simplemente el último rezago que se pintó; con 48 habría un pico ahí también. El periodo es la <em>distancia entre</em> picos, no el mayor de ellos.' }
         ]
@@ -5729,7 +5729,7 @@
           { texto: 'Que la relación es no lineal, porque los puntos no caen sobre una recta perfecta.', correcta: false,
             retro: 'La dispersión alrededor de la recta es ruido, no curvatura: no hay ningún patrón sistemático que se desvíe. Con $r_4 = 0.848$ la relación lineal explica la mayor parte de la variación.' },
           { texto: 'Que cada trimestre se parece mucho al mismo trimestre del año anterior ($r_4 = 0.848$) y bastante poco al trimestre inmediatamente anterior ($r_1 = 0.186$): eso es estacionalidad, no inercia.', correcta: true,
-            retro: 'Exacto, y la comparación entre las dos cifras es todo el diagnóstico. Si la serie tuviera inercia —cada valor parecido al anterior— $r_1$ sería alto. Lo que hay es lo contrario: el vecino inmediato informa poco y el de hace un año informa mucho. En una serie trimestral eso solo lo produce un patrón que se repite cada cuatro trimestres.' }
+            retro: 'La comparación entre las dos cifras es todo el diagnóstico. Si la serie tuviera inercia —cada valor parecido al anterior— $r_1$ sería alto. Lo que hay es lo contrario: el vecino inmediato informa poco y el de hace un año informa mucho. En una serie trimestral eso solo lo produce un patrón que se repite cada cuatro trimestres.' }
         ]
       },
       {
@@ -5834,7 +5834,7 @@
         pista: 'Un coeficiente resume la nube en un número. Mira si la nube cabe en ese resumen: sigue la recta con la vista de izquierda a derecha y fíjate de qué lado le quedan los puntos.',
         opciones: [
           { texto: 'Que hay relación, pero no es lineal: la nube se curva y la recta se equivoca en un sentido distinto según el tramo.', correcta: true,
-            retro: 'Eso es. Con los números: el residuo medio vale <strong>+10.66</strong> en el tercio más frío, <strong>-20.06</strong> en el templado y <strong>+8.63</strong> en el más caluroso. La recta se queda corta en los dos extremos y se pasa en el centro, que es una U vista desde la recta. Hay dos mecanismos —calefacción cuando hace frío, aire acondicionado cuando hace calor— y una sola recta no puede describir los dos.' },
+            retro: 'Con los números: el residuo medio vale <strong>+10.66</strong> en el tercio más frío, <strong>-20.06</strong> en el templado y <strong>+8.63</strong> en el más caluroso. La recta se queda corta en los dos extremos y se pasa en el centro, que es una U vista desde la recta. Hay dos mecanismos —calefacción cuando hace frío, aire acondicionado cuando hace calor— y una sola recta no puede describir los dos.' },
           { texto: 'Que la relación es lineal y fuerte: con una correlación de 0.786 la recta es un buen resumen.', correcta: false,
             retro: 'La correlación mide cuánto se parece la nube a <em>una</em> recta, no si esa recta es el resumen correcto. Aquí sale alta porque la rama de calor domina y arrastra el conjunto, y aun así la recta falla de forma sistemática en los dos extremos. Un coeficiente alto no certifica la forma.' },
           { texto: 'Que la temperatura causa la demanda eléctrica.', correcta: false,
@@ -5856,7 +5856,7 @@
           { texto: 'Que la primera sirve para predecir la segunda.', correcta: false,
             retro: 'Ni siquiera eso. Si ajustas la regresión con la primera mitad y predices la segunda —regalándole los valores reales de la tienda del norte, que es el mejor caso imaginable—, pierdes contra un método que ignora el norte por completo y se limita a prolongar la tendencia del sur. Lo que la correlación recogió es que ambas suben, no que una informe sobre la otra.' },
           { texto: 'Casi nada: las dos series tienen tendencia, y dos series con tendencia se correlacionan aunque no tengan ninguna relación.', correcta: true,
-            retro: 'Eso es, y tiene nombre: <strong>regresión espuria</strong>. El delator está en las diferencias: la correlación entre los cambios diarios de una y otra es <strong>0.007</strong>, es decir, ninguna. Lo que compartían era la tendencia, no el comportamiento. Por eso una correlación entre dos series de tiempo no se lee nunca sin mirar antes qué hace cada una por su cuenta.' },
+            retro: 'El fenómeno tiene nombre: <strong>regresión espuria</strong>. El delator está en las diferencias: la correlación entre los cambios diarios de una y otra es <strong>0.007</strong>, es decir, ninguna. Lo que compartían era la tendencia, no el comportamiento. Por eso una correlación entre dos series de tiempo no se lee nunca sin mirar antes qué hace cada una por su cuenta.' },
           { texto: 'Que hacen falta más días para estar seguros de la correlación.', correcta: false,
             retro: 'Más días no arreglan esto. Con caminatas <em>con deriva</em> como estas, alargar la serie hasta <em>aumenta</em> la correlación espuria; y con caminatas sin deriva no aumenta, pero tampoco desaparece: se queda donde está por muchos datos que añadas. El problema no es el tamaño de la muestra sino que se está correlacionando el nivel de dos series que suben.' }
         ]
@@ -5891,7 +5891,7 @@
             { texto: 'Que la descomposición de <code>demanda_atipico</code> está peor hecha: un buen ajuste no deja residuos tan dispersos.', correcta: false,
               retro: 'Al revés. Que el residuo se mueva es señal de que la descomposición aisló la anomalía en vez de repartirla. Preocupante sería que la desviación típica del residuo no cambiara — querría decir que el salto se ha ido a la tendencia o al estacional.' },
             { texto: 'Que un solo dato de 120 sube la dispersión del residuo cerca de un tercio: el residuo recoge lo que no cabe en la tendencia ni en la estacionalidad, así que se lleva el atípico entero — y su desviación típica deja de describir el ruido de fondo.', correcta: true,
-              retro: 'Eso es, y tiene una consecuencia práctica: cualquier banda o prueba que se apoye en la desviación típica del residuo queda inflada por un único mes. Antes de usarla hay que mirar si el residuo tiene un pico, no solo su resumen.' },
+              retro: 'Esa subida tiene una consecuencia práctica: cualquier banda o prueba que se apoye en la desviación típica del residuo queda inflada por un único mes. Antes de usarla hay que mirar si el residuo tiene un pico, no solo su resumen.' },
             { texto: 'Que el atípico se repartió entre los cuatro componentes, y por eso la subida es pequeña.', correcta: false,
               retro: 'La subida no es pequeña —de 0.0362 a 0.0480 es un tercio más— y el reparto no ocurrió: el salto entra casi entero en el residuo. Que la tendencia y el estacional apenas se muevan es justamente lo que se quería comprobar.' },
             { texto: 'Que <code>demanda_atipico</code> tiene más varianza, y eso se corrige tomando logaritmos antes de descomponer.', correcta: false,
@@ -5909,7 +5909,7 @@
             { texto: 'Porque la robusta descarta el dato y estima el estacional con una observación menos, y con menos datos el residuo sale mayor.', correcta: false,
               retro: 'No lo descarta: lo pondera. La observación sigue en la serie y sigue teniendo su residuo — que es precisamente el 0.381. Y el tamaño del residuo aquí no viene de estimar con menos datos, viene de no haber absorbido el salto.' },
             { texto: 'Porque la robusta se niega a que el atípico entre en el componente estacional: lo deja fuera, y «fuera» es el residuo. La no robusta deja menos residuo porque parte del salto se lo ha llevado el estacional de ese mes, que queda contaminado para todos los años.', correcta: true,
-              retro: 'Exacto, y por eso el residuo mayor es la buena noticia. Lo que se compara no son los dos residuos entre sí, sino lo que le pasa al componente estacional: el de marzo pasa de 0.0118 a 0.0329 cuando se le deja absorber el atípico. Un residuo grande en un punto anómalo es la señal de que la descomposición hizo su trabajo.' }
+              retro: 'Por eso el residuo mayor es la buena noticia. Lo que se compara no son los dos residuos entre sí, sino lo que le pasa al componente estacional: el de marzo pasa de 0.0118 a 0.0329 cuando se le deja absorber el atípico. Un residuo grande en un punto anómalo es la señal de que la descomposición hizo su trabajo.' }
           ]
         },
         {
@@ -5971,7 +5971,7 @@
             { texto: 'Solo lo primero: la transformación sí admite negativos mientras $\\lambda$ sea un entero.', correcta: false,
               retro: 'Con $\\lambda$ entero la potencia se puede calcular, sí, pero eso no la hace aplicable: el criterio de Guerrero y la interpretación de Box–Cox se apoyan en que la serie sea positiva. La familia se define para $y > 0$.' },
             { texto: 'Las dos cosas a la vez: la varianza ya es constante, así que no hay nada que estabilizar, y la transformación no está definida sobre valores negativos. Box–Cox se aplica cuando la dispersión crece con el nivel, no por rutina.', correcta: true,
-              retro: 'Exacto, y el orden importa: primero se comprueba si hay un problema, y solo después si la herramienta es aplicable. Con 0.860, 0.864 y 0.819 no hay ni siquiera el primero. Compáralo con <code>demanda</code>, donde la varianza por tramos va de 28.9 a 103.4: ahí sí hay algo que estabilizar, y ahí la serie es positiva.' }
+              retro: 'El orden importa: primero se comprueba si hay un problema, y solo después si la herramienta es aplicable. Con 0.860, 0.864 y 0.819 no hay ni siquiera el primero. Compáralo con <code>demanda</code>, donde la varianza por tramos va de 28.9 a 103.4: ahí sí hay algo que estabilizar, y ahí la serie es positiva.' }
           ]
         }
       ]
