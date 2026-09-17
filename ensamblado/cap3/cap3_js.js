@@ -570,8 +570,12 @@
       const params = { phi1: 0.7, phi2: 0, theta1: 0.5, theta2: 0, T: 200 };
       const MAX = 16;
       const etiquetas = etiquetasRezago(MAX);
+      // La realización 1 usa la semilla de siempre; «Otra realización» avanza de
+      // uno en uno. mulberry32 da secuencias independientes para semillas vecinas.
+      const SEMILLA_BASE = 987654321;
+      let realizacion = 1;
 
-      const gSerie = serieSimple(c[0], simularARMA([0.7, 0], [0.5, 0], 200, 987654321),
+      const gSerie = serieSimple(c[0], simularARMA([0.7, 0], [0.5, 0], 200, SEMILLA_BASE),
         'Realización simulada', COLORES_GRAFICO.primario);
       const gAcf = correlogramaDoble(c[1], etiquetas, new Array(MAX).fill(0),
         new Array(MAX).fill(0), 200, 'ACF', COLORES_GRAFICO.primario);
@@ -585,7 +589,7 @@
         const invertible = esInvertible(params.theta1, params.theta2);
         const T = Math.round(params.T);
 
-        const y = simularARMA(ar, ma, T, 987654321);
+        const y = simularARMA(ar, ma, T, SEMILLA_BASE + realizacion - 1);
         const acfM = calcularACF(y, MAX);
         const pacfM = calcularPACF(acfM, MAX);
         // Si el proceso no es estacionario la ACF teórica sencillamente no
@@ -614,6 +618,7 @@
           { etiqueta: 'Estacionario:', valor: a.estacionario ? 'SÍ' : 'NO — la ACF teórica no existe' },
           { etiqueta: 'Invertible:', valor: invertible ? 'SÍ' : 'NO' },
           { etiqueta: 'banda =', valor: `±${banda(T).toFixed(4)}` },
+          { etiqueta: 'Realización:', valor: `n.º ${realizacion}` },
           {
             etiqueta: 'distancia media |teórica − muestral|:',
             valor: a.estacionario ? dif.toFixed(4) : '—'
@@ -628,6 +633,22 @@
         { clave: 'theta2', etiqueta: 'θ₂ = ', min: -0.95, max: 0.95, paso: 0.05 },
         { clave: 'T', etiqueta: 'T = ', min: 60, max: 1000, paso: 20, decimales: 0 }
       ], params, pintar);
+
+      // Misma teoría, otra muestra: la varianza del estimador de la que habla la
+      // nota. Usa el estilo del botón de la autoevaluación para no añadir CSS,
+      // que en este capítulo se hereda del capítulo 2 al reensamblar.
+      const accion = document.createElement('div');
+      accion.style.alignSelf = 'end';
+      const botonRealizacion = document.createElement('button');
+      botonRealizacion.type = 'button';
+      botonRealizacion.className = 'quiz-comprobar';
+      botonRealizacion.textContent = 'Otra realización';
+      botonRealizacion.addEventListener('click', () => {
+        realizacion += 1;
+        pintar();
+      });
+      accion.appendChild(botonRealizacion);
+      raiz.querySelector('.simulador-controles').appendChild(accion);
 
       pintar();
       return [gSerie, gAcf, gPacf];
@@ -942,7 +963,7 @@
       },
       {
         tipo: 'grafico',
-        modulo: 3,
+        modulo: 5,
         alto: 200,
         descripcionGrafico: 'Función de autocorrelación teórica que vale 0.5526 y 0.2632 y después es exactamente cero',
         pregunta: 'Esta es la ACF <strong>teórica</strong> de un proceso, y su PACF (no mostrada) decae sin cortarse. ¿De qué proceso se trata?',
@@ -997,6 +1018,34 @@
         ],
         retroAcierto: 'Las tres describen el mismo hecho desde tres ángulos: la representación AR($\\infty$) diverge, el modelo no queda identificado, y por eso el software impone el convenio $|\\theta| < 1$. Puedes verlo en el simulador del Módulo 4 llevando $\\theta$ más allá de 1.',
         retroFallo: 'Las tres correctas son las que hablan de los pesos de la representación AR($\\infty$), de la identificación del modelo y del convenio que impone el software. Las dos falsas confunden los dos polinomios: un MA($q$) es <strong>siempre estacionario</strong> —es una suma finita de ruido blanco, sin condición alguna— y la invertibilidad se lee en las raíces de $\\theta(B)$, no de $\\phi(B)$. Cada polinomio responde por lo suyo.'
+      },
+      {
+        tipo: 'opcion',
+        modulo: 5,
+        pregunta: 'Ajustas un ARMA(1,1) y <code>arima()</code> devuelve $\\hat\\phi_1 = -0.64$ (error estándar $0.38$) y $\\hat\\theta_1 = 0.69$ (error estándar $0.36$), con un aviso de posible problema de convergencia. ¿Qué haces?',
+        pista: 'Mira la relación entre los dos coeficientes y el tamaño de sus errores estándar. ¿Qué les pasa a $\\phi(B) = 1 - \\phi_1 B$ y a $\\theta(B) = 1 + \\theta_1 B$ cuando $\\phi_1 \\approx -\\theta_1$?',
+        opciones: [
+          {
+            texto: 'Me quedo con el ARMA(1,1): los dos coeficientes son grandes en valor absoluto, así que los dos importan.',
+            correcta: false,
+            retro: 'El tamaño no basta. Con esos errores estándar ninguno de los dos es significativo al 5 % ($0.64/0.38 = 1.68$ y $0.69/0.36 = 1.92$, ambos por debajo de $1.96$), y lo que el ajuste fija de verdad es su suma, $0.05$, no cada coeficiente. Dos parámetros que se cancelan no describen estructura: la esconden.'
+          },
+          {
+            texto: 'Paso a un ARMA(2,2): si el optimizador no converge, es que el modelo se queda corto.',
+            correcta: false,
+            retro: 'Es justo al revés. El aviso de convergencia aparece porque sobra un factor, no porque falte: la verosimilitud es casi plana en la dirección $\\phi_1 \\approx -\\theta_1$. Añadir parámetros abre la puerta a más factores casi comunes y la vuelve todavía más plana.'
+          },
+          {
+            texto: 'Diferencio la serie: unos coeficientes tan inestables indican que no es estacionaria.',
+            correcta: false,
+            retro: 'Nada apunta a una raíz unitaria: $|\\hat\\phi_1| = 0.64$ está lejos de 1. La inestabilidad no es de la serie sino de la parametrización, porque muchas parejas $(\\phi_1, \\theta_1)$ con $\\phi_1 \\approx -\\theta_1$ dan casi la misma verosimilitud.'
+          },
+          {
+            texto: 'Pruebo AR(1), MA(1) y ruido blanco, y los comparo por AICc antes de interpretar nada.',
+            correcta: true,
+            retro: '$\\phi(B) = 1 + 0.64B$ y $\\theta(B) = 1 + 0.69B$ casi coinciden, así que el factor casi se cancela y el modelo es más pequeño de lo que aparenta. Es la situación del ejemplo de R del Módulo 5, donde el ARMA(1,1) salía con coeficientes lejos de los verdaderos y el ruido blanco ganaba por AICc.'
+          }
+        ]
       },
       {
         tipo: 'numerica',

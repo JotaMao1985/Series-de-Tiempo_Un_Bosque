@@ -1333,7 +1333,10 @@ print(np.round(0.5 * r[1:5] + 0.3 * r[0:4], 4))   # phi1 rho_{k-1} + phi2 rho_{k
         <p class="simulador-intro">Mueve los cuatro parámetros y compara la ACF/PACF <strong>teórica</strong> (barras
           sólidas) con la <strong>muestral</strong> de una realización de longitud $T$ (barras claras). Cambia $T$ y
           verás lo que de verdad ocurre al identificar: con $T = 60$ el patrón teórico casi no se reconoce, y con
-          $T = 1000$ emerge limpio. La banda punteada es $\pm 1.96/\sqrt{T}$.</p>
+          $T = 1000$ emerge limpio. La banda punteada es $\pm 1.96/\sqrt{T}$. Pulsa <strong>Otra realización</strong> sin
+          tocar nada más: la teoría no cambia, pero cada muestra dibuja su propio correlograma. Y prueba la redundancia
+          del final del módulo: con $\phi_1 = 0.5$ y $\theta_1 = -0.5$ la ACF teórica es cero en todos los rezagos, y
+          con $\theta_1 = -0.45$ casi.</p>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">Realización simulada</p>
         <div class="grafico-wrapper" style="height:170px;">
@@ -1352,7 +1355,7 @@ print(np.round(0.5 * r[1:5] + 0.3 * r[0:4], 4))   # phi1 rho_{k-1} + phi2 rho_{k
 
       <div class="note">
         <p><strong>Lo que enseña el deslizador de $T$.</strong> La ACF muestral es un <em>estimador</em>, y uno con
-          bastante varianza. Con $T = 60$, la banda vale $\pm 0.253$: cualquier autocorrelación teórica menor que eso
+          bastante varianza, y el botón <strong>Otra realización</strong> la deja ver sin cambiar nada más. Con $T = 60$, la banda vale $\pm 0.253$: cualquier autocorrelación teórica menor que eso
           en valor absoluto es prácticamente indistinguible de cero. Con $T = 1000$ baja a $\pm 0.062$. Cuando en el Módulo 9 veas un correlograma
           real que no encaja en ninguna fila de la tabla, recuerda este simulador: casi nunca es que el modelo no
           exista, es que la muestra es corta.</p>
@@ -2615,12 +2618,12 @@ print(round(float(acorr_ljungbox(ret**2, lags=[12])["lb_pvalue"].iloc[0]), 4))
 
       <h3>Autoevaluación</h3>
 
-      <p>Nueve preguntas sobre todo el capítulo. Al primer fallo verás una pista y podrás reintentar; al segundo se
+      <p>Diez preguntas sobre todo el capítulo. Al primer fallo verás una pista y podrás reintentar; al segundo se
         revela la respuesta y se explica. Al terminar, el resumen te dice qué módulos conviene repasar.</p>
 
       <div class="quiz" data-quiz="cap3">
         <h4><i class="fas fa-circle-question" aria-hidden="true"></i> Autoevaluación</h4>
-        <p class="text-sm" style="margin-bottom:0;">Nueve preguntas de los cuatro tipos: opción única, selección
+        <p class="text-sm" style="margin-bottom:0;">Diez preguntas de los cuatro tipos: opción única, selección
           múltiple, respuesta numérica y diagnóstico de un gráfico. Cada opción trae su explicación, también las
           incorrectas.</p>
         <div class="quiz-progreso" role="presentation"><div class="quiz-progreso-barra"></div></div>
