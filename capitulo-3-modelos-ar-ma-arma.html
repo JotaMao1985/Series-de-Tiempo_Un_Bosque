@@ -3471,6 +3471,32 @@ print(np.round(arma_acf(np.r_[1, -0.7], np.r_[1, 0.5], lags=6)[1:], 4))
         </div>
       </div>
 
+      <p>Los módulos 2 y 3 dejaron dos familias con firmas opuestas: el AR corta la PACF y el MA corta la ACF. El
+        Módulo 4 mostró que cada una puede escribirse como la otra en versión infinita, y cerró con dos ideas para
+        este módulo: mezclar las dos partes ahorra parámetros, y, si sus polinomios comparten un factor, ese factor se
+        cancela. Aquí se juntan en un solo modelo, y aparece la pregunta práctica que recorre el resto del capítulo:
+        dada una serie, qué órdenes proponer.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: proceso ARMA($p,q$)</h4>
+        <p>Combina las dos partes anteriores en un solo modelo:</p>
+        $$\begin{aligned}
+          y_t = c &+ \phi_1 y_{t-1} + \cdots + \phi_p y_{t-p} \\
+          &+ \varepsilon_t + \theta_1\varepsilon_{t-1} + \cdots + \theta_q\varepsilon_{t-q}
+        \end{aligned}$$
+        <p style="margin-bottom:0;">o, en forma compacta, $\;\phi(B)\,y_t = c + \theta(B)\,\varepsilon_t$. Es
+          <strong>estacionario</strong> si las raíces de $\phi(B)$ están fuera del círculo unitario, e
+          <strong>invertible</strong> si lo están las de $\theta(B)$: cada polinomio responde por lo suyo.</p>
+      </div>
+
+      <p>¿Para qué mezclarlos? Por <strong>parsimonia</strong>. El ARMA(1,1) del Módulo 4, con $\phi = 0.7$ y
+        $\theta = 0.5$, es un AR($\infty$): un AR puro necesitaría siete coeficientes solo para que el primer peso que
+        descarta bajara de $0.01$, y el ARMA lo describe con dos. Menos parámetros significa estimaciones más precisas
+        y pronósticos más estables, que es de lo que se trata.</p>
+
+      <p>Con dos partes mezcladas, identificar deja de ser leer una fila de una tabla. Es un ciclo de cuatro pasos que se
+        repite hasta que el diagnóstico queda limpio, y la tabla solo interviene en el tercero:</p>
+
       <div class="ciclo" data-ciclo="identificacion-arma">
         <ol class="ciclo-etapas" role="tablist" aria-label="Etapas del ciclo">
           <li class="ciclo-etapa" role="presentation">
@@ -3565,23 +3591,6 @@ print(np.round(arma_acf(np.r_[1, -0.7], np.r_[1, 0.5], lags=6)[1:], 4))
         </div>
       </div>
 
-      <div class="definition">
-        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: proceso ARMA($p,q$)</h4>
-        <p>Combina las dos partes anteriores en un solo modelo:</p>
-        $$\begin{aligned}
-          y_t = c &+ \phi_1 y_{t-1} + \cdots + \phi_p y_{t-p} \\
-          &+ \varepsilon_t + \theta_1\varepsilon_{t-1} + \cdots + \theta_q\varepsilon_{t-q}
-        \end{aligned}$$
-        <p style="margin-bottom:0;">o, en forma compacta, $\;\phi(B)\,y_t = c + \theta(B)\,\varepsilon_t$. Es
-          <strong>estacionario</strong> si las raíces de $\phi(B)$ están fuera del círculo unitario, e
-          <strong>invertible</strong> si lo están las de $\theta(B)$: cada polinomio responde por lo suyo.</p>
-      </div>
-
-      <p>¿Para qué mezclarlos? Por <strong>parsimonia</strong>. El ARMA(1,1) del Módulo 4, con $\phi = 0.7$ y
-        $\theta = 0.5$, es un AR($\infty$): un AR puro necesitaría siete coeficientes solo para que el primer peso que
-        descarta bajara de $0.01$, y el ARMA lo describe con dos. Menos parámetros significa estimaciones más precisas
-        y pronósticos más estables, que es de lo que se trata.</p>
-
       <h3>La tabla de identificación</h3>
 
       <table>
@@ -3606,7 +3615,7 @@ print(np.round(arma_acf(np.r_[1, -0.7], np.r_[1, 0.5], lags=6)[1:], 4))
           </tr>
           <tr>
             <td><strong>ARMA($p,q$)</strong></td>
-            <td>Decae tras el rezago $q$</td>
+            <td>Decae tras el rezago $q$, al ritmo de un AR($p$)</td>
             <td>Decae tras el rezago $p$</td>
           </tr>
           <tr>
@@ -3622,6 +3631,86 @@ print(np.round(arma_acf(np.r_[1, -0.7], np.r_[1, 0.5], lags=6)[1:], 4))
           correlograma ni el correlograma parcial identifican los órdenes de un ARMA mixto. En la práctica se propone
           un modelo pequeño, se diagnostica y se compara por criterios de información (Módulo 8). La tabla sirve para
           <strong>arrancar</strong>, no para decidir.</p>
+      </div>
+
+      <h3>Por qué la tabla no da los órdenes de un ARMA</h3>
+
+      <p>La fila del ARMA esconde un resultado exacto. Para $k > q$, la observación $y_{t-k}$ solo depende de choques
+        anteriores a $t - q$, y ninguno de los $\varepsilon_t, \ldots, \varepsilon_{t-q}$ de la parte MA está
+        correlacionado con ella. Al calcular la autocovarianza esa parte desaparece, y la ACF cumple la misma
+        recursión que la de un AR($p$):</p>
+
+      <div class="formula">
+        $$\rho_k = \phi_1\rho_{k-1} + \cdots + \phi_p\rho_{k-p}$$
+      </div>
+
+      <p>En el ARMA(1,1) eso deja un único valor por calcular. El primero sale de la fórmula</p>
+
+      <div class="formula">
+        $$\rho_1 = \frac{(1+\phi\theta)(\phi+\theta)}{1+2\phi\theta+\theta^2}$$
+      </div>
+
+      <p>y desde ahí cada rezago es el anterior multiplicado por $\phi$: $\rho_k = \phi^{\,k-1}\rho_1$. Con el proceso
+        del Módulo 4, $\phi = 0.7$ y $\theta = 0.5$, queda $\rho_1 = 1.35 \times 1.2 / 1.95 = 0.8308$, y después $0.5815$,
+        $0.4071$ y $0.2850$: las mismas cifras que el Módulo 4 obtuvo sumando pesos $\psi$.</p>
+
+      <p>Ahí está la razón de que la tabla no dé los órdenes. El ritmo del decaimiento lo pone la parte AR —en el
+        ARMA(1,1), el factor $\phi$—, y la parte MA solo decide con qué valor arranca. Un AR(1) con $\phi = 0.7$ decae
+        exactamente al mismo ritmo, desde $\rho_1 = 0.7$: dos ACF geométricas con la misma razón, que a simple vista se
+        confunden y que con una muestra corta cuesta mucho separar.</p>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="ACF de un ARMA">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel" data-lang="r">
+          <pre><code class="language-r"># ACF de un ARMA(1,1): rho_1 por la formula y despues rho_k = phi * rho_{k-1}
+phi &lt;- 0.7; theta &lt;- 0.5
+rho1 &lt;- (1 + phi * theta) * (phi + theta) / (1 + 2 * phi * theta + theta^2)
+round(rho1 * phi^(0:4), 4)
+#&gt; [1] 0.8308 0.5815 0.4071 0.2850 0.1995
+round(ARMAacf(ar = phi, ma = theta, lag.max = 5)[-1], 4)
+#&gt;      1      2      3      4      5
+#&gt; 0.8308 0.5815 0.4071 0.2850 0.1995    <- coinciden
+
+# Un AR(1) con el mismo phi decae al mismo ritmo, desde otro arranque
+round(ARMAacf(ar = phi, lag.max = 5)[-1], 4)
+#&gt;      1      2      3      4      5
+#&gt; 0.7000 0.4900 0.3430 0.2401 0.1681
+
+# Para k &gt; q la recursion del AR vale en cualquier ARMA: un ARMA(2,1)
+r &lt;- ARMAacf(ar = c(0.5, 0.3), ma = 0.4, lag.max = 5)
+round(r[3:6], 4)                                  # rho_2 a rho_5
+#&gt;      2      3      4      5
+#&gt; 0.7307 0.6238 0.5311 0.4527
+round(unname(0.5 * r[2:5] + 0.3 * r[1:4]), 4)    # phi1 rho_{k-1} + phi2 rho_{k-2}
+#&gt; [1] 0.7307 0.6238 0.5311 0.4527</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" hidden>
+          <pre><code class="language-python">import numpy as np
+from statsmodels.tsa.arima_process import arma_acf
+
+# ACF de un ARMA(1,1): rho_1 por la formula y despues rho_k = phi * rho_{k-1}
+phi, theta = 0.7, 0.5
+rho1 = (1 + phi * theta) * (phi + theta) / (1 + 2 * phi * theta + theta**2)
+print(np.round(rho1 * phi ** np.arange(5), 4))
+# [0.8308 0.5815 0.4071 0.285  0.1995]
+print(np.round(arma_acf(np.r_[1, -phi], np.r_[1, theta], lags=6)[1:], 4))
+# [0.8308 0.5815 0.4071 0.285  0.1995]    &lt;- coinciden
+
+# Un AR(1) con el mismo phi decae al mismo ritmo, desde otro arranque
+print(np.round(arma_acf(np.r_[1, -phi], np.r_[1], lags=6)[1:], 4))
+# [0.7    0.49   0.343  0.2401 0.1681]
+
+# Para k &gt; q la recursion del AR vale en cualquier ARMA: un ARMA(2,1)
+r = arma_acf(np.r_[1, -0.5, -0.3], np.r_[1, 0.4], lags=6)
+print(np.round(r[2:6], 4))                        # rho_2 a rho_5
+# [0.7307 0.6238 0.5311 0.4527]
+print(np.round(0.5 * r[1:5] + 0.3 * r[0:4], 4))   # phi1 rho_{k-1} + phi2 rho_{k-2}
+# [0.7307 0.6238 0.5311 0.4527]
+</code></pre>
+        </div>
       </div>
 
       <div class="simulador" data-simulador="laboratorio-arma">
@@ -3657,7 +3746,9 @@ print(np.round(arma_acf(np.r_[1, -0.7], np.r_[1, 0.5], lags=6)[1:], 4))
       <h3>Redundancia de parámetros: cuando sobra un factor</h3>
 
       <p>Hay una trampa específica de los modelos mixtos. Si $\phi(B)$ y $\theta(B)$ comparten un factor, ese factor se
-        cancela y el modelo es en realidad más pequeño de lo que aparenta.</p>
+        cancela y el modelo es en realidad más pequeño de lo que aparenta. El Módulo 4 ya lo dejó ver con los mismos
+        números que siguen: en su simulador, $\phi = 0.5$ y $\theta = -0.5$ reducen los pesos $\psi$ y $\pi$ a la barra
+        de $j = 0$.</p>
 
       <div class="formula">
         <p>Tomemos el ARMA(1,1) con $\phi_1 = 0.5$ y $\theta_1 = -0.5$:</p>
