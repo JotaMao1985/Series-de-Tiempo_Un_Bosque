@@ -7598,7 +7598,7 @@ c(arima = anchos(function(tr,h,nv) forecast(Arima(tr, order=c(1,1,1)), h=h, leve
         pista: 'El MASE es el MAE del método dividido por la escala $Q$, que se calcula sobre el entrenamiento y no sobre la prueba.',
         respuesta: 0.8,
         tolerancia: 0.01,
-        retroAcierto: 'Correcto: $20/25 = 0.8$. Al ser menor que $1$, el modelo comete menos error pronosticando que el naïve estacional prediciendo un paso dentro del entrenamiento. Es la única de las métricas del capítulo cuyo valor se puede leer sin saber nada de las unidades de la serie.',
+        retroAcierto: '$20/25 = 0.8$. Al ser menor que $1$, el modelo comete menos error pronosticando que el naïve estacional prediciendo un paso dentro del entrenamiento. Es la única de las métricas del capítulo cuyo valor se puede leer sin saber nada de las unidades de la serie.',
         retroFallo: 'El MASE es $\\text{MAE}/Q = 20/25 = 0.8$. Cuidado con invertir la división: $25/20 = 1.25$ diría lo contrario. Y cuidado también con calcular $Q$ sobre el conjunto de prueba, que es el error que hace que el MASE deje de ser comparable entre particiones.'
       },
       {
@@ -7625,7 +7625,7 @@ c(arima = anchos(function(tr,h,nv) forecast(Arima(tr, order=c(1,1,1)), h=h, leve
           {
             texto: 'El MASE $< 1$ indica que el pronóstico le gana al método de referencia.',
             correcta: true,
-            retro: 'Correcto, y es la conclusión útil: la misma predicción que el MAPE declara catastrófica es mejor que la referencia.'
+            retro: 'Es la conclusión útil: la misma predicción que el MAPE declara catastrófica es mejor que la referencia.'
           }
         ]
       },
@@ -7665,7 +7665,7 @@ c(arima = anchos(function(tr,h,nv) forecast(Arima(tr, order=c(1,1,1)), h=h, leve
         pista: 'El último origen válido es aquel al que todavía le quedan $h$ observaciones por delante.',
         respuesta: 61,
         tolerancia: 0.5,
-        retroAcierto: 'Correcto: los orígenes van de $T_0 = 72$ a $n - h = 132$, es decir $132 - 72 + 1 = 61$, y producen $61 \\times 12 = 732$ errores de pronóstico frente a los $24$ de una partición única.',
+        retroAcierto: 'Los orígenes van de $T_0 = 72$ a $n - h = 132$, es decir $132 - 72 + 1 = 61$, y producen $61 \\times 12 = 732$ errores de pronóstico frente a los $24$ de una partición única.',
         retroFallo: 'Los orígenes van de $T_0$ a $n - h$, ambos incluidos: $132 - 72 + 1 = 61$. Si te salió $60$, probablemente olvidaste incluir uno de los extremos —es el mismo desfase por el que <code>tsCV</code> con <code>initial = 72</code> empieza en el origen $73$ y con <code>window = 72</code> empieza en el $72$—.'
       },
       {
@@ -7722,7 +7722,7 @@ c(arima = anchos(function(tr,h,nv) forecast(Arima(tr, order=c(1,1,1)), h=h, leve
           {
             texto: 'Que los dos son indistinguibles, y entonces se elige por otro criterio: aquí, que uno tarda $0.44$ s y el otro $118.61$.',
             correcta: true,
-            retro: 'Correcto. La diferencia de $1.71$ en el RMSE agregado cabe dentro del ruido, y de hecho <code>auto.arima</code> gana en más orígenes de los que pierde. Cuando dos métodos empatan estadísticamente, deciden el costo, la simplicidad y la interpretabilidad.'
+            retro: 'La diferencia de $1.71$ en el RMSE agregado cabe dentro del ruido, y de hecho <code>auto.arima</code> gana en más orígenes de los que pierde. Cuando dos métodos empatan estadísticamente, deciden el costo, la simplicidad y la interpretabilidad.'
           },
           {
             texto: 'Que el SARIMA es mejor, porque su RMSE es menor sobre los mismos 61 orígenes.',

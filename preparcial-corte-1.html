@@ -5174,7 +5174,7 @@
           { texto: 'No se puede saber sin aplicar una prueba de raíz unitaria.', correcta: false,
             retro: 'La definición se comprueba con la definición. Además, ADF y KPSS no prueban esto: el ADF busca una raíz unitaria y el KPSS mira la constancia del nivel. Ninguno de los dos detecta que la dependencia cambie a lo largo de la serie.' },
           { texto: 'No: la tercera condición pide que $\\operatorname{Cov}(y_t, y_{t+h})$ dependa solo de $h$, y aquí depende también de dónde estés en la serie.', correcta: true,
-            retro: 'Correcto. Las tres condiciones son media constante, varianza constante y autocovarianza función solo del rezago. Aquí las dos primeras se cumplen y la tercera no: el mismo rezago 1 da 10.9 al principio y 35.8 al final. Es la condición que casi nadie mira, y la que hace que el correlograma muestral no signifique nada — porque promedia estructuras distintas.' }
+            retro: 'Las tres condiciones son media constante, varianza constante y autocovarianza función solo del rezago. Aquí las dos primeras se cumplen y la tercera no: el mismo rezago 1 da 10.9 al principio y 35.8 al final. Es la condición que casi nadie mira, y la que hace que el correlograma muestral no signifique nada — porque promedia estructuras distintas.' }
         ]
       },
       {
@@ -5341,7 +5341,7 @@
         pista: 'Las dos fuerzas se leen por separado. Y ojo con lo que <em>no</em> dicen.',
         opciones: [
           { texto: 'Que la tendencia manda en las dos por igual, pero solo la segunda tiene estacionalidad que merezca la pena tratar aparte: desestacionalizarla cambia el panorama, y en la primera casi no.', correcta: true,
-            retro: 'Correcto. $F_T$ prácticamente idéntica (difieren en 0.003) y $F_S$ que se separa por 0.65. Y el matiz que hay que llevar al parcial: la fuerza mide qué proporción de la variación explica cada componente <em>dentro de la muestra</em>. No dice que el pronóstico vaya a ser bueno, ni que el modelo esté bien especificado.' },
+            retro: '$F_T$ es prácticamente idéntica (difieren en 0.003) y $F_S$ se separa por 0.65. Y el matiz que hay que llevar al parcial: la fuerza mide qué proporción de la variación explica cada componente <em>dentro de la muestra</em>. No dice que el pronóstico vaya a ser bueno, ni que el modelo esté bien especificado.' },
           { texto: 'Que la segunda serie se pronosticará mejor, porque tiene más estructura explicada.', correcta: false,
             retro: 'No se sigue. $F_T$ y $F_S$ son descriptivas y se calculan sobre los datos que ya tienes: una serie muy estacional puede ser difícil de pronosticar si la estacionalidad cambia. La calidad del pronóstico se mide fuera de muestra, no con estas dos cifras.' },
           { texto: 'Que la primera serie no tiene estacionalidad.', correcta: false,
@@ -5422,7 +5422,7 @@
           { texto: 'Que la serie tiene raíz unitaria, porque una de las dos pruebas no rechaza.', correcta: false,
             retro: '<code>linea</code> es una recta más ruido: por construcción no tiene raíz unitaria. Que una especificación mal elegida no rechace es un defecto de la especificación, no una propiedad de la serie. Quedarse con el resultado que no rechaza es exactamente el error que el ítem señala.' },
           { texto: 'Con <code>"trend"</code> se rechaza sin discusión y con <code>"drift"</code> no se rechaza. Elegir <code>"drift"</code> habría llevado a diferenciar una serie que no tiene raíz unitaria.', correcta: true,
-            retro: 'Correcto. Sin el término de tendencia en la regresión, la subida sistemática de la serie no tiene dónde ir y la prueba la confunde con persistencia: $-1.09$ ni se acerca al crítico. Con el término puesto, $-7.44$ lo cruza con holgura. La regla práctica: si el gráfico muestra una tendencia clara, la especificación tiene que incluirla, y decidirlo <em>antes</em> de ver el $p$-valor.' }
+            retro: 'Sin el término de tendencia en la regresión, la subida sistemática de la serie no tiene dónde ir y la prueba la confunde con persistencia: $-1.09$ ni se acerca al crítico. Con el término puesto, $-7.44$ lo cruza con holgura. La regla práctica: si el gráfico muestra una tendencia clara, la especificación tiene que incluirla, y decidirlo <em>antes</em> de ver el $p$-valor.' }
         ]
       },
       {
@@ -5674,7 +5674,7 @@
           { texto: 'El de ruido blanco: solo se sale una barra de 36, que es aproximadamente lo esperado por azar.', correcta: false,
             retro: 'El recuento encaja, pero el recuento no basta. La barra que se sale es la del rezago 1, que es exactamente donde un proceso con dependencia deja su huella. En el correlograma del ruido blanco de verdad la que se sale es la del rezago 17.' },
           { texto: 'El de dependencia débil: la barra que se sale es la del rezago 1 (0.259), y que sea justo la primera es lo que delata la estructura, no que se salga alguna.', correcta: true,
-            retro: 'Correcto, y la distinción es la que hay que llevar al parcial. En ruido blanco puro también se salen barras —se esperan 1.8 de cada 36— pero caen en rezagos <em>cualesquiera</em>: en <code>residuo_blanco</code> la única que se sale es la del rezago 17, que no significa nada. Aquí es la del 1, y la del 1 es la que tiene sentido mecánico: cada valor depende del anterior. La posición importa más que el recuento.' },
+            retro: 'Esta distinción es la que hay que llevar al parcial. En ruido blanco puro también se salen barras —se esperan 1.8 de cada 36— pero caen en rezagos <em>cualesquiera</em>: en <code>residuo_blanco</code> la única que se sale es la del rezago 17, que no significa nada. Aquí es la del 1, y la del 1 es la que tiene sentido mecánico: cada valor depende del anterior. La posición importa más que el recuento.' },
           { texto: 'No se puede decidir sin ver el otro correlograma.', correcta: false,
             retro: 'Sí se puede, y es lo que se te va a pedir en el parcial: leer un correlograma solo. La banda ya te da el punto de comparación con la hipótesis de ruido blanco; no hace falta un segundo gráfico.' },
           { texto: 'El de dependencia débil, porque las barras decaen de forma visible hacia cero.', correcta: false,
@@ -5948,7 +5948,7 @@
             { texto: 'Que la dependencia es negativa, porque la nube desciende de izquierda a derecha.', correcta: false,
               retro: 'No desciende: se reparte. Una dependencia negativa se vería como una nube inclinada de forma sistemática hacia abajo, y aquí no hay inclinación en ningún sentido.' },
             { texto: 'Que el trimestre inmediatamente anterior informa poco: la nube no se alinea. Y en una serie trimestral eso no significa que no haya dependencia — significa que no está en el rezago 1.', correcta: true,
-              retro: 'Correcto, y esa es la lectura que hay que llevar al parcial: un gráfico de rezagos responde por <em>un</em> rezago. La conclusión completa necesita mirar el que corresponde al periodo, que en trimestral es el 4. Un rezago 1 plano y un rezago 4 alineado es la firma de la estacionalidad, y lo contrario —el 1 alineado— sería inercia.' },
+              retro: 'Esa es la lectura que hay que llevar al parcial: un gráfico de rezagos responde por <em>un</em> rezago. La conclusión completa necesita mirar el que corresponde al periodo, que en trimestral es el 4. Un rezago 1 plano y un rezago 4 alineado es la firma de la estacionalidad, y lo contrario —el 1 alineado— sería inercia.' },
             { texto: 'Que la serie no tiene tendencia, porque los puntos no se desplazan hacia arriba.', correcta: false,
               retro: 'Un gráfico de rezagos no es el sitio donde se lee la tendencia: los ejes son la serie contra sí misma, no contra el tiempo. Para la tendencia hay que mirar la serie, o su descomposición.' }
           ]

@@ -7312,7 +7312,7 @@ round(c(armonico_K4 = 180.200, n_armonico = 467,
           {
             texto: 'Tiene $2$ parámetros libres.',
             correcta: true,
-            retro: 'Correcto: $\\phi$ y $\\Phi$. El coeficiente del rezago $13$ es su producto, no un tercer parámetro.'
+            retro: 'Son $\\phi$ y $\\Phi$. El coeficiente del rezago $13$ es su producto, no un tercer parámetro.'
           },
           {
             texto: 'Su ACF teórica es cero en los rezagos $2$ a $11$.',
@@ -7322,7 +7322,7 @@ round(c(armonico_K4 = 180.200, n_armonico = 467,
           {
             texto: 'Escrito como AR no estacional, es un AR($13$).',
             correcta: true,
-            retro: 'Correcto: el polinomio completo tiene grado $13$, con solo tres coeficientes no nulos ($1$, $12$ y $13$).'
+            retro: 'El polinomio completo tiene grado $13$, con solo tres coeficientes no nulos ($1$, $12$ y $13$).'
           }
         ]
       },
@@ -7334,7 +7334,7 @@ round(c(armonico_K4 = 180.200, n_armonico = 467,
         pista: 'La diferencia regular cuesta $d = 1$ observación; la estacional cuesta $D \\times m$, no $D$.',
         respuesta: 83,
         tolerancia: 0.5,
-        retroAcierto: 'Correcto: $96 - d - D\\,m = 96 - 1 - 12 = 83$. Ese es el $n$ efectivo con el que se evalúa la verosimilitud, y por eso el AICc de un modelo con $D=1$ no se puede comparar con el de uno con $D=0$, que tendría $95$.',
+        retroAcierto: '$96 - d - D\\,m = 96 - 1 - 12 = 83$. Ese es el $n$ efectivo con el que se evalúa la verosimilitud, y por eso el AICc de un modelo con $D=1$ no se puede comparar con el de uno con $D=0$, que tendría $95$.',
         retroFallo: 'La diferencia estacional cuesta $m = 12$ observaciones, no una: $96 - 1 - 12 = 83$. Si respondiste $94$, restaste $d + D = 2$; si respondiste $84$, olvidaste la diferencia regular. Esa cuenta es justamente la que hace incomparables los AICc entre distintos $D$.'
       },
       {
@@ -7392,7 +7392,7 @@ round(c(armonico_K4 = 180.200, n_armonico = 467,
           {
             texto: 'Un SAR($1$)$_{12}$ con $\\Phi > 0$: los picos decaen geométricamente ($0.70$, $0.49$, $0.34$).',
             correcta: true,
-            retro: 'Correcto. Los tres picos son $\\Phi$, $\\Phi^2$ y $\\Phi^3$ con $\\Phi = 0.7$, y todos los rezagos intermedios valen exactamente cero porque no hay parte regular. La PACF de este proceso se cortaría tras el rezago $12$.'
+            retro: 'Los tres picos son $\\Phi$, $\\Phi^2$ y $\\Phi^3$ con $\\Phi = 0.7$, y todos los rezagos intermedios valen exactamente cero porque no hay parte regular. La PACF de este proceso se cortaría tras el rezago $12$.'
           },
           {
             texto: 'Un AR($1$)$\\times$SAR($1$): se ven los satélites alrededor de los picos.',
@@ -7415,7 +7415,7 @@ round(c(armonico_K4 = 180.200, n_armonico = 467,
           {
             texto: 'Ninguno con esa información: los AICc no son comparables porque se calculan sobre $143$ y $131$ observaciones.',
             correcta: true,
-            retro: 'Correcto, y es la lección central del Módulo 10. Es la misma trampa que el Capítulo 4 documentó con $d$, agravada porque cada $D$ cuesta $m = 12$ observaciones en vez de una. Entre familias solo se puede comparar fuera de muestra.'
+            retro: 'Es la lección central del Módulo 10: la misma trampa que el Capítulo 4 documentó con $d$, agravada porque cada $D$ cuesta $m = 12$ observaciones en vez de una. Entre familias solo se puede comparar fuera de muestra.'
           },
           {
             texto: 'El <em>airline</em>, porque tiene $2$ parámetros frente a $16$ y la parsimonia desempata.',
