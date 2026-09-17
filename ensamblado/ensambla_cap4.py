@@ -273,7 +273,8 @@ for fn in ["function crearGraficoBarras", "function calcularPACF", "function cre
 # Nada del capítulo anterior debe sobrevivir
 for resto in ["DATOS_CAP3", "SERIES_CAP3", "AUTOEVALUACIONES['cap3']", "PROCESOS",
               "MANCHAS", "RETORNOS", "manchas solares", "Capítulo 3 —",
-              "genera_cap3.R", "capitulo-3"]:
+              "genera_cap3.R", "capitulo-3",
+              "AUTOEVALUACIONES['parcial2']", 'data-quiz="parcial2"']:
     if resto in html:
         fallos.append(f"queda material del capítulo 3: '{resto}'")
 

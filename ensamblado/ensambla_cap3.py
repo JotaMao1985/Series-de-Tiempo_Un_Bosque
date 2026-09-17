@@ -411,6 +411,18 @@ for pieza, esperadas in [
         fallos.append(f"tabla de ranking: '{pieza[:60]}' aparece {html.count(pieza)} "
                       f"veces, se esperaban {esperadas}")
 
+# La actividad preparatoria del Parcial 2, al final del Módulo 10, vive en las
+# dos fuentes de `cap3/`: el contenedor en la plantilla y el registro al final
+# de `cap3_js.js`, entre dos marcadores. El registro lo escribe
+# `exporta_actividad.py`, fuera del repositorio, desde el banco del que salen
+# sus cifras. Se CUENTA, para atrapar tanto perderla como instalarla dos veces.
+for pieza in ['<div class="quiz" data-quiz="parcial2">', "AUTOEVALUACIONES['parcial2']",
+              "    // [inicio · actividad preparatoria del Parcial 2]",
+              "    // [fin · actividad preparatoria del Parcial 2]"]:
+    if html.count(pieza) != 1:
+        fallos.append(f"actividad preparatoria del Parcial 2: '{pieza}' aparece "
+                      f"{html.count(pieza)} veces, se esperaba 1")
+
 prohibidos = ["DATOS_CAP2", "SERIES_CAP2", "AUTOEVALUACIONES['cap2']",
               "Capítulo 2 • UnBosque", "genera_cap2.R"]
 for p in prohibidos:

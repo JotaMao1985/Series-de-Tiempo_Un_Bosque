@@ -5233,6 +5233,32 @@ round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
         </ul>
       </div>
 
+      <h3>Actividad preparatoria · Parcial 2</h3>
+
+      <p>Diez preguntas para preparar el Parcial 2 por tu cuenta, sobre el <a
+          href="capitulo-2-estacionariedad-acf-pacf.html" class="text-primary underline">capítulo 2</a> y los cuatro
+        primeros módulos de este: estacionariedad débil, caminata con deriva, ADF y KPSS, sobrediferenciación, operador
+        de rezago, el triángulo del AR(2), el <code>intercept</code> de <code>arima()</code>, la invertibilidad del
+        MA(1), los pesos $\psi$ y Yule–Walker. No tienen nota ni se entregan. Los módulos 3.5 a 3.10 no entran aquí: para
+        ellos están la autoevaluación y los ejercicios de más arriba.</p>
+
+      <p>Para que sirvan de ensayo, intenta resolverlas con lápiz y calculadora antes de abrir R o el material. Al primer
+        fallo verás una pista y podrás reintentar; al segundo se revela la respuesta. Cada opción trae su explicación,
+        también las incorrectas, y cita el módulo al que conviene volver: (2.6) es el módulo 6 del capítulo 2, y (3.2),
+        el módulo 2 de este.</p>
+
+      <div class="quiz" data-quiz="parcial2">
+        <h4><i class="fas fa-clipboard-check" aria-hidden="true"></i> Actividad preparatoria · Parcial 2</h4>
+        <p class="text-sm" style="margin-bottom:0;">Nueve preguntas de opción única y una de varias respuestas, la
+          primera. Al terminar no hay resumen por módulos: cada explicación dice a cuál volver.</p>
+        <div class="quiz-progreso" role="presentation"><div class="quiz-progreso-barra"></div></div>
+        <div class="quiz-preguntas"></div>
+        <div class="quiz-marcador">
+          <span class="quiz-conteo"></span>
+          <button type="button" class="quiz-reiniciar">Reiniciar</button>
+        </div>
+      </div>
+
       <div class="note">
         <p style="margin-bottom:0;"><strong>Lo que viene.</strong> Todo este capítulo ha supuesto que la serie ya era
           estacionaria. En el <strong>Capítulo 4</strong> se añade la pieza que falta —la integración, el orden
@@ -7716,6 +7742,300 @@ round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
         retroFallo: 'Las tres correctas son las que hablan de Yule–Walker, de lo que ignora CSS y del <code>"CSS-ML"</code> por defecto. Las dos falsas son justo lo que el módulo desmiente con números: los métodos <strong>no</strong> coinciden —YW quedó a más de un error estándar de ML— y sus $\\hat\\sigma^2$ no miden lo mismo, así que mezclar salidas de <code>ar()</code> y <code>arima()</code> para comparar criterios de información no tiene sentido.'
       }
     ];
+
+    // [inicio · actividad preparatoria del Parcial 2]
+    // ================================================================
+    // Actividad preparatoria del Parcial 2 (final del Módulo 10)
+    //
+    // Diez preguntas sobre el capítulo 2 y los módulos 3.1-3.4. NO SE EDITA A
+    // MANO: lo escribe exporta_actividad.py, fuera del repositorio, desde un
+    // banco cuyas cifras calcula R y rehace statsmodels. Para cambiar una
+    // pregunta se cambia allí y se vuelve a instalar.
+    //
+    // Las preguntas no declaran `modulo` y su contenedor no tiene
+    // `.quiz-resumen`, a propósito: el resumen final nombra módulos de ESTE
+    // capítulo, y varias preguntas son del capítulo 2. Cada retroalimentación
+    // cita su módulo, p. ej. (2.6) o (3.2).
+    // ================================================================
+    AUTOEVALUACIONES['parcial2'] = [
+      {
+        tipo: 'multiple',
+        pregunta: 'Sea $\\{\\varepsilon_t\\}$ una sucesión i.i.d. $\\mathrm{N}(0,\\sigma^2)$ definida para todo entero $t$. Cada proceso se observa en $t = 1, 2, \\ldots$; en los autorregresivos sin valor inicial, $y_t$ depende solo de los choques hasta $t$ y la serie lleva mucho tiempo en marcha.<br>Marca <strong>todos</strong> los procesos que son débilmente estacionarios.',
+        pista: 'Comprueba en cada proceso las tres condiciones —media constante, varianza constante y covarianza que solo depende del rezago— sin fiarte de si $t$ aparece o no en la fórmula. Y no mezcles estacionariedad con invertibilidad: son dos propiedades distintas.',
+        opciones: [
+          {
+            texto: '$y_t = \\cos(\\pi t)\\,\\varepsilon_t$.',
+            correcta: true,
+            retro: 'Sí. Para $t$ entero, $\\cos(\\pi t) = (-1)^t$ solo vale $\\pm 1$: media 0, varianza $\\sigma^2$ y $\\operatorname{Cov}(y_t, y_{t+k}) = \\cos(\\pi t)\\cos(\\pi(t+k))\\,E[\\varepsilon_t\\varepsilon_{t+k}] = 0$ para $k \\ne 0$. Es ruido blanco aunque $t$ aparezca en la fórmula (2.1, 2.2).'
+          },
+          {
+            texto: '$y_t = 1.05\\,y_{t-1} + \\varepsilon_t$.',
+            correcta: false,
+            retro: 'No. Con $|\\phi| = 1.05 \\gt  1$ la raíz $B = 1/\\phi$ cae dentro del círculo unitario: si la serie depende solo de los choques pasados, cada choque se amplifica y la varianza crece sin límite (2.5, 3.1).'
+          },
+          {
+            texto: '$y_t = \\varepsilon_t + 1.6\\,\\varepsilon_{t-1}$.',
+            correcta: true,
+            retro: 'Sí. Un MA finito es estacionario para cualquier $\\theta$: media 0, varianza $\\sigma^2(1+\\theta^2)$ y una autocovarianza que solo depende del rezago. Con $|\\theta| = 1.6 \\gt  1$ no es invertible, pero la invertibilidad es otra propiedad: la estacionariedad no la exige (3.3).'
+          },
+          {
+            texto: '$y_t = \\sqrt{t}\\;\\varepsilon_t$.',
+            correcta: false,
+            retro: 'No. La media es 0 y las covarianzas son nulas, pero $\\operatorname{Var}(y_t) = t\\sigma^2$ crece con $t$: falla la segunda condición. Mirar solo las autocorrelaciones no lo delataría (2.1, 2.3).'
+          },
+          {
+            texto: '$y_t = y_{t-1} + \\varepsilon_t$.',
+            correcta: false,
+            retro: 'No. Si fuera estacionaria, $\\operatorname{Var}(y_t) = \\operatorname{Var}(y_{t-1}) + \\sigma^2$ obligaría a $\\sigma^2 = 0$: la varianza crece un $\\sigma^2$ en cada periodo. Es la caminata aleatoria, con raíz unitaria $B = 1$ (2.5, 3.1).'
+          }
+        ],
+        retroFallo: 'Son dos: $y_t = \\cos(\\pi t)\\,\\varepsilon_t$ y $y_t = \\varepsilon_t + 1.6\\,\\varepsilon_{t-1}$. Debajo, la explicación de cada opción en la que fallaste.'
+      },
+      {
+        tipo: 'opcion',
+        pregunta: 'Una serie mensual de $T = 96$ observaciones tiene tendencia creciente y un patrón anual muy regular. Estas son cuatro salidas de R sobre ella, recortadas; <code>sa</code> es la serie sin su componente estacional, estimado con STL:<pre style="font-weight:400;font-size:0.78rem;line-height:1.45;margin:0.6rem 0;max-height:none;padding:0.8rem 1rem !important;">&gt; adf.test(y)\nDickey-Fuller = -5.65, p-value = 0.01\nWarning message:\nIn adf.test(y) : p-value smaller than printed p-value\n\n&gt; adf.test(y, k = 12)\nDickey-Fuller = -2.22, p-value = 0.49\n\n&gt; adf.test(sa)\nDickey-Fuller = -2.73, p-value = 0.27\n\n&gt; kpss.test(sa, null = "Trend")\nKPSS Trend = 0.230, p-value = 0.01\nWarning message:\nIn kpss.test(sa, null = "Trend") : p-value smaller than printed p-value</pre>¿Qué se concluye, y por qué?',
+        pista: 'Escribe primero la $H_0$ de cada prueba: la del ADF y la del KPSS son contrarias. Después compara los rezagos que usa el primer ADF con el periodo de la serie, y mira qué dicen las dos pruebas cuando ya no está el patrón anual.',
+        opciones: [
+          {
+            texto: 'Es estacionaria. El primer ADF, con sus $k = \\lfloor (T-1)^{1/3} \\rfloor = 4$ rezagos, es el fiable: con 12 rezagos, o sin el patrón anual, la prueba pierde potencia y ya no puede rechazar.',
+            correcta: false,
+            retro: 'Es cierto que con 12 rezagos y $T = 96$ el ADF tiene poca potencia, así que su «no rechaza» solo no probaría nada. Pero la potencia no explica la cuarta salida: el KPSS, cuya hipótesis nula es la estacionariedad, la rechaza sobre la serie sin estacionalidad ($p \\lt 0.01$). Con la estacionalidad fuera, las dos pruebas coinciden en la raíz unitaria. Y sobre la serie sin estacionalidad el ADF usa los mismos $4$ rezagos que el primero, así que no ha perdido potencia: si la serie fuera estacionaria, lo esperable sería que rechazara. El rechazo con $4 \\lt 12$ rezagos es el artefacto que describe el 2.6.'
+          },
+          {
+            texto: 'Hay raíz unitaria. El primer ADF no vale: su p-valor quedó fuera de la tabla, como avisa R, y un p-valor que no se conoce con exactitud no permite rechazar.',
+            correcta: false,
+            retro: 'La conclusión es la correcta, pero la razón no. El aviso dice que el p-valor real es todavía menor que 0.01: refuerza el rechazo, no lo invalida (2.6). Lo que invalida el primer ADF es que usa $k = 4$ rezagos, menos que el periodo 12, sobre una serie estacional.'
+          },
+          {
+            texto: 'Es estacionaria. El KPSS sobre la serie sin estacionalidad da un p-valor pequeño, y eso respalda la estacionariedad que ya había encontrado el primer ADF.',
+            correcta: false,
+            retro: 'Es el error más común del capítulo: leer el KPSS como el ADF. La hipótesis nula del KPSS es la estacionariedad, así que un p-valor pequeño la <em>rechaza</em> (2.6). Sobre la serie sin estacionalidad, ADF y KPSS coinciden en que hay raíz unitaria; el rechazo del primer ADF es un artefacto de usar $4 \\lt 12$ rezagos.'
+          },
+          {
+            texto: 'Hay raíz unitaria. El primer ADF usa $k = \\lfloor (T-1)^{1/3} \\rfloor = 4$ rezagos, menos que el periodo 12, y toma la oscilación anual por reversión a la media.',
+            correcta: true,
+            retro: '$(96-1)^{1/3} \\approx 4.56$, así que $k = 4$: la oscilación anual, que revierte a su media todo el tiempo, hace rechazar la raíz unitaria en falso. Con 12 rezagos el ADF ya no rechaza, aunque ese resultado solo, con poca potencia, no bastaría. Lo que decide es la serie sin estacionalidad: el ADF no rechaza ($p = 0.27$) y el KPSS, con la hipótesis nula contraria, rechaza la estacionariedad ($p \\lt 0.01$). Las dos coinciden. Es la regla del 2.6: tratar primero la estacionalidad.'
+          }
+        ]
+      },
+      {
+        tipo: 'opcion',
+        pregunta: 'Los residuales de un modelo ya son ruido blanco: $\\varepsilon_t \\sim \\text{RB}(0,\\,\\sigma^2)$ con $\\sigma^2 = 0.25$. Por error se les aplica una diferencia regular, $w_t = \\nabla\\varepsilon_t = \\varepsilon_t - \\varepsilon_{t-1}$.<br>¿Cuál de estas descripciones de $w_t$ es correcta?',
+        pista: 'Escribe $w_t$ y $w_{t-1}$ en función de los $\\varepsilon$: ¿qué choque comparten, y con qué signo entra en cada una? Para la invertibilidad, mira dónde cae la raíz de $1 - B$ respecto al círculo unitario.',
+        opciones: [
+          {
+            texto: 'Un MA(1) con $\\theta = -1$: $\\operatorname{Var}(w_t) = 0.5$, $\\rho_1 = -0.5$, y no es invertible: la raíz de $1 - B$ es $B = 1$, sobre el círculo.',
+            correcta: true,
+            retro: '$\\operatorname{Var}(w_t) = \\sigma^2(1+\\theta^2) = 2\\sigma^2 = 0.5$ y $\\rho_1 = \\theta/(1+\\theta^2) = -0.5$, justo la cota del MA(1). Es el rastro de la sobrediferenciación (2.7) visto con las herramientas de 3.1 y 3.3: se fabricó un MA que no estaba en los datos, y además no invertible.'
+          },
+          {
+            texto: 'Un MA(1) con $\\theta = -1$: $\\operatorname{Var}(w_t) = 0.25$, $\\rho_1 = -0.5$, y es invertible, porque $|\\theta| = 1$ no pasa de 1.',
+            correcta: false,
+            retro: 'Dos errores. La varianza sí cambia: $\\varepsilon_t$ y $\\varepsilon_{t-1}$ son incorrelados, así que sus varianzas se suman, $2\\sigma^2 = 0.5$; que suba es una de las señales de sobrediferenciación (2.7). Y la condición de invertibilidad es estricta: las raíces de $\\theta(B)$ tienen que estar fuera del círculo, y con $|\\theta| = 1$ la raíz $B = 1$ queda sobre él, no fuera (3.3).'
+          },
+          {
+            texto: 'Ruido blanco, con $\\operatorname{Var}(w_t) = 0.5$ y $\\rho_1 = 0$: si los $\\varepsilon_t$ son incorrelados entre sí, sus diferencias también lo son.',
+            correcta: false,
+            retro: '$w_t = \\varepsilon_t - \\varepsilon_{t-1}$ y $w_{t-1} = \\varepsilon_{t-1} - \\varepsilon_{t-2}$ comparten un único choque, $\\varepsilon_{t-1}$, que entra en cada una con signo opuesto: $\\operatorname{Cov}(w_t, w_{t-1}) = (+1)(-1)\\sigma^2 = -\\sigma^2$, y $\\rho_1 = -0.5$. Diferenciar ruido blanco fabrica autocorrelación (2.7, 3.3).'
+          },
+          {
+            texto: 'Ruido blanco, con la misma $\\operatorname{Var}(w_t) = 0.25$ y $\\rho_1 = 0$: restar el valor anterior no añade ni varianza ni autocorrelación.',
+            correcta: false,
+            retro: 'Dos errores. La varianza se duplica: $\\varepsilon_t$ y $\\varepsilon_{t-1}$ son incorrelados y sus varianzas se suman, $\\sigma^2 + \\sigma^2 = 0.5$. Y aparece autocorrelación: $w_t$ y $w_{t-1}$ comparten $\\varepsilon_{t-1}$ con signos opuestos, $\\rho_1 = -0.5$ (2.7, 3.3).'
+          }
+        ]
+      },
+      {
+        tipo: 'opcion',
+        pregunta: 'Una serie sigue una caminata aleatoria con deriva, $y_t = c + y_{t-1} + \\varepsilon_t$, con $c = 0.5$, $y_0 = 100$ y $\\varepsilon_t \\sim \\text{RB}(0,\\,\\sigma^2)$, $\\sigma = 2$.<br>¿Cuánto valen $E[y_{36}]$ y $\\operatorname{Var}(y_{36})$, y qué tratamiento necesita la serie para ser estacionaria, si necesita alguno?',
+        pista: 'Desarrolla $y_t$ desde $y_0$: la deriva se suma una vez por periodo y los choques se van acumulando. Mira por separado qué le pasa a la media y qué a la varianza, y decide si la tendencia es determinista o estocástica antes de elegir el tratamiento.',
+        opciones: [
+          {
+            texto: '$E[y_{36}] = 118$, $\\operatorname{Var}(y_{36}) = 4$. Se vuelve estacionaria restando la recta: $y_t - (y_0 + ct)$.',
+            correcta: false,
+            retro: 'La media está bien, pero $y_{36}$ acumula los choques $\\varepsilon_1, \\ldots, \\varepsilon_{36}$, incorrelados, y sus varianzas se suman: $36\\sigma^2 = 144$, no $\\sigma^2$. Por eso restar la recta no basta: deja $\\sum_{i=1}^{t}\\varepsilon_i$, una caminata cuya varianza sigue creciendo. A una serie con tendencia determinista se le resta la recta; a una con tendencia estocástica se la diferencia (2.5).'
+          },
+          {
+            texto: '$E[y_{36}] = 118$, $\\operatorname{Var}(y_{36}) = 144$. Se vuelve estacionaria diferenciando: $\\nabla y_t = c + \\varepsilon_t$.',
+            correcta: true,
+            retro: '$y_{36} = y_0 + 36c + \\sum_{i=1}^{36}\\varepsilon_i$: la deriva se acumula en la media, y los choques $\\varepsilon_1, \\ldots, \\varepsilon_{36}$ en la varianza, $36\\sigma^2 = 144$. La tendencia es estocástica, y por eso se diferencia (2.5).'
+          },
+          {
+            texto: '$E[y_{36}] = 100$, $\\operatorname{Var}(y_{36}) = 144$. Se vuelve estacionaria diferenciando: $\\nabla y_t = c + \\varepsilon_t$.',
+            correcta: false,
+            retro: 'La varianza y el tratamiento están bien, pero la media no. Los choques tienen media cero; la deriva $c$, no: se suma una vez por periodo, y en $36$ periodos desplaza la media en $36c$. $E[y_{36}] = y_0 + 36c = 118$ (2.5).'
+          },
+          {
+            texto: '$E[y_{36}] = 100$, $\\operatorname{Var}(y_{36}) = 4$. Ya es estacionaria: no hace falta transformarla.',
+            correcta: false,
+            retro: 'Ninguna de las dos cifras: la deriva desplaza la media, $E[y_{36}] = y_0 + 36c = 118$, y los choques acumulados hacen crecer la varianza, $36\\sigma^2 = 144$. Una caminata con deriva no es estacionaria: hay que diferenciarla (2.5).'
+          }
+        ]
+      },
+      {
+        tipo: 'opcion',
+        pregunta: 'El modelo $(1 - 0.3B)(1 - B)\\,y_t = \\varepsilon_t$ puede escribirse como un AR(2), $y_t = \\phi_1 y_{t-1} + \\phi_2 y_{t-2} + \\varepsilon_t$.<br>¿Cuánto valen $\\phi_1$ y $\\phi_2$, y es estacionario?',
+        pista: 'Multiplica los dos factores y pasa al otro lado todo lo que no sea $y_t$: los signos cambian. Para la estacionariedad, mira la raíz de cada factor por separado; basta una que no caiga fuera del círculo unitario.',
+        opciones: [
+          {
+            texto: '$\\phi_1 = 1.3$, $\\phi_2 = -0.3$. Es estacionario, porque la raíz de $(1 - 0.3B)$ es $B \\approx 3.33$, fuera del círculo unitario.',
+            correcta: false,
+            retro: 'Los coeficientes están bien; el veredicto, no. Las raíces de un producto son las de todos sus factores: la de $(1 - 0.3B)$ está fuera del círculo, pero la de $(1 - B)$, $B = 1$, está sobre el círculo, y basta una raíz con $|B| \\le 1$ para perder la estacionariedad (3.1).'
+          },
+          {
+            texto: '$\\phi_1 = 0.7$, $\\phi_2 = 0.3$. No es estacionario: $\\phi_1 + \\phi_2 = 1 \\ge 1$.',
+            correcta: false,
+            retro: 'El veredicto está bien; los coeficientes, no. Esos son los de $(1 + 0.3B)(1 - B)$: se cambió el signo de $\\phi$ dentro del factor. Con $(1 - 0.3B)(1 - B) = 1 - 1.3B + 0.3B^2$ salen $\\phi_1 = 1.3$ y $\\phi_2 = -0.3$. El veredicto coincide porque los dos modelos llevan el factor $(1 - B)$ (3.1).'
+          },
+          {
+            texto: '$\\phi_1 = 1.3$, $\\phi_2 = -0.3$. No es estacionario: $\\phi_1 + \\phi_2 = 1 \\ge 1$.',
+            correcta: true,
+            retro: '$(1 - 0.3B)(1 - B) = 1 - 1.3B + 0.3B^2$, y al despejar $y_t$ los coeficientes cambian de signo. El factor $(1 - B)$ aporta la raíz $B = 1$, sobre el círculo: $\\nabla y_t$ sigue un AR(1) con $\\phi = 0.3$, y la serie $y_t$ no es estacionaria (3.1; el triángulo, en 3.2; la diferenciación, en 2.7).'
+          },
+          {
+            texto: '$\\phi_1 = 0.7$, $\\phi_2 = 0.3$. Es estacionario, porque la raíz de $(1 - 0.3B)$ es $B \\approx 3.33$, fuera del círculo unitario.',
+            correcta: false,
+            retro: 'Dos errores. Esos coeficientes son los de $(1 + 0.3B)(1 - B)$ —se cambió el signo de $\\phi$ dentro del factor—; con $(1 - 0.3B)(1 - B) = 1 - 1.3B + 0.3B^2$ salen $\\phi_1 = 1.3$ y $\\phi_2 = -0.3$. Y la raíz de $(1 - 0.3B)$ no decide sola: la de $(1 - B)$, $B = 1$, está sobre el círculo, y con ella el modelo no es estacionario (3.1).'
+          }
+        ]
+      },
+      {
+        tipo: 'opcion',
+        pregunta: 'Un AR(2), $y_t = \\phi_1 y_{t-1} + \\phi_2 y_{t-2} + \\varepsilon_t$, tiene $\\phi_1 = 1$ y $\\phi_2 = -0.5$.<br>¿Es estacionario, y cómo son las raíces de su polinomio autorregresivo $\\phi(B)$?',
+        pista: '$|\\phi| \\lt 1$ es la condición del AR(1), no la del AR(2). Comprueba las tres desigualdades del triángulo, y deja que el signo de $\\phi_1^2 + 4\\phi_2$ decida el tipo de raíces.',
+        opciones: [
+          {
+            texto: 'Estacionario, con raíces reales.',
+            correcta: false,
+            retro: 'El veredicto es correcto, pero no el tipo de raíz. El tipo de raíz lo decide $\\phi_1^2 + 4\\phi_2 = -1$, negativo: raíces complejas. Como además es estacionario, la ACF oscila con un pseudo-ciclo de unos $8$ periodos (3.1, 3.2).'
+          },
+          {
+            texto: 'Estacionario, con raíces complejas.',
+            correcta: true,
+            retro: 'Las tres condiciones del triángulo: $\\phi_1 + \\phi_2 = 0.5 \\lt 1$, $\\phi_2 - \\phi_1 = -1.5 \\lt 1$ y $|\\phi_2| = 0.5 \\lt 1$. Se cumplen las tres: es estacionario. Que $|\\phi_1| = 1$ no sea menor que 1 no lo impide: $|\\phi| \\lt 1$ es la condición del AR(1), y la del AR(2) es el triángulo. Las raíces, conjugadas, tienen módulo $1.4142$: las dos fuera del círculo. El tipo de raíz lo decide $\\phi_1^2 + 4\\phi_2 = -1$, negativo: raíces complejas. Como además es estacionario, la ACF oscila con un pseudo-ciclo de unos $8$ periodos (3.1, 3.2).'
+          },
+          {
+            texto: 'No estacionario, con raíces reales.',
+            correcta: false,
+            retro: 'Fallan las dos cosas. Las tres condiciones del triángulo: $\\phi_1 + \\phi_2 = 0.5 \\lt 1$, $\\phi_2 - \\phi_1 = -1.5 \\lt 1$ y $|\\phi_2| = 0.5 \\lt 1$. Se cumplen las tres: es estacionario. Que $|\\phi_1| = 1$ no sea menor que 1 no lo impide: $|\\phi| \\lt 1$ es la condición del AR(1), y la del AR(2) es el triángulo. Las raíces, conjugadas, tienen módulo $1.4142$: las dos fuera del círculo. El tipo de raíz lo decide $\\phi_1^2 + 4\\phi_2 = -1$, negativo: raíces complejas. Como además es estacionario, la ACF oscila con un pseudo-ciclo de unos $8$ periodos (3.1, 3.2).'
+          },
+          {
+            texto: 'No estacionario, con raíces complejas.',
+            correcta: false,
+            retro: 'El tipo de raíz es el correcto, pero no el veredicto. Las tres condiciones del triángulo: $\\phi_1 + \\phi_2 = 0.5 \\lt 1$, $\\phi_2 - \\phi_1 = -1.5 \\lt 1$ y $|\\phi_2| = 0.5 \\lt 1$. Se cumplen las tres: es estacionario. Que $|\\phi_1| = 1$ no sea menor que 1 no lo impide: $|\\phi| \\lt 1$ es la condición del AR(1), y la del AR(2) es el triángulo. Las raíces, conjugadas, tienen módulo $1.4142$: las dos fuera del círculo (3.1, 3.2).'
+          }
+        ]
+      },
+      {
+        tipo: 'opcion',
+        pregunta: 'Se ajusta un AR(2) en R sobre una serie de 150 observaciones:<pre style="font-weight:400;font-size:0.78rem;line-height:1.45;margin:0.6rem 0;max-height:none;padding:0.8rem 1rem !important;">&gt; arima(y, order = c(2, 0, 0))\n\nCall:\narima(x = y, order = c(2, 0, 0))\n\nCoefficients:\n         ar1     ar2  intercept\n      0.6256  0.1666    50.5900\ns.e.  0.0801  0.0827     0.8088\n\nsigma^2 estimated as 4.495:  log likelihood = -326.01,  aic = 660.02</pre>¿Cuánto vale la constante $c$ del modelo $y_t = c + \\phi_1 y_{t-1} + \\phi_2 y_{t-2} + \\varepsilon_t$?',
+        pista: 'El <code>intercept</code> que imprime <code>arima()</code> no es la constante del modelo. Toma esperanzas a los dos lados de la ecuación del AR(2) y despeja $c$ en función de la media.',
+        opciones: [
+          {
+            texto: '$c = 10.51$',
+            correcta: true,
+            retro: 'El <code>intercept</code> que imprime <code>arima()</code> es la media $\\mu$, no $c$. Tomando esperanzas en el modelo, $\\mu = c + (\\phi_1 + \\phi_2)\\mu$, de donde $c = \\mu(1 - \\phi_1 - \\phi_2) = 50.5900\\,(1 - 0.6256 - 0.1666) = 10.51$ (3.2).'
+          },
+          {
+            texto: '$c = 50.59$',
+            correcta: false,
+            retro: 'Es la confusión que advierte el módulo 3.2: <code>intercept</code> es $\\hat\\mu$, no $\\hat c$. Usarlo como constante la sobrestima en $\\mu(\\phi_1 + \\phi_2) = 40.08$, y el pronóstico a un paso quedaría desplazado en esa misma cantidad. La relación es $c = \\mu(1 - \\phi_1 - \\phi_2) = 50.5900\\,(1 - 0.6256 - 0.1666) = 10.51$.'
+          },
+          {
+            texto: '$c = 18.94$',
+            correcta: false,
+            retro: 'Faltó $\\phi_2$: esa cifra es $\\mu(1 - \\phi_1)$, la relación del AR(1). La media de un AR(2) descuenta los dos coeficientes, $\\mu = c/(1 - \\phi_1 - \\phi_2)$, así que $c = \\mu(1 - \\phi_1 - \\phi_2) = 50.5900\\,(1 - 0.6256 - 0.1666) = 10.51$ (3.2).'
+          },
+          {
+            texto: '$c = 243.46$',
+            correcta: false,
+            retro: 'Esa cifra es $\\mu/(1 - \\phi_1 - \\phi_2)$, que invierte la relación. Tomando esperanzas, $\\mu = c + (\\phi_1 + \\phi_2)\\mu$, de donde $c = \\mu(1 - \\phi_1 - \\phi_2) = 50.5900\\,(1 - 0.6256 - 0.1666) = 10.51$: con $\\phi_1 + \\phi_2 \\gt  0$ la constante es menor que la media, no mayor (3.2).'
+          }
+        ]
+      },
+      {
+        tipo: 'opcion',
+        pregunta: 'Se quiere describir con un MA(1), $y_t = \\varepsilon_t + \\theta\\,\\varepsilon_{t-1}$ (el convenio de R), un proceso cuya autocorrelación de orden 1 es $\\rho_1 = 0.38$.<br>¿Cuál de estas afirmaciones sobre $\\theta$ es correcta?',
+        pista: 'Plantea $\\theta/(1+\\theta^2) = \\rho_1$: es una ecuación de segundo grado, así que tiene dos soluciones. ¿Qué relación hay entre ellas, y cuál de las dos toma el convenio?',
+        opciones: [
+          {
+            texto: '$\\theta = 2.1710$. También $\\theta = 0.4606$ da $\\rho_1 = 0.38$, pero se toma la de mayor $|\\theta|$, que da más dependencia.',
+            correcta: false,
+            retro: 'Las dos soluciones generan exactamente la misma dependencia: $\\rho_1(\\theta) = \\rho_1(1/\\theta)$. Ningún dato las distingue, y por eso se impone un convenio: la invertible. Con $\\theta = 2.1710$ la raíz de $1 + \\theta B$ es $B = -0.4606$, dentro del círculo unitario (3.3).'
+          },
+          {
+            texto: '$\\theta = 0.4606$. También $\\theta = 2.1710$ da $\\rho_1 = 0.38$, pero se toma la solución invertible, la de $|\\theta| \\lt 1$.',
+            correcta: true,
+            retro: '$\\theta/(1+\\theta^2) = 0.38$ tiene dos soluciones, $\\theta = 0.4606$ y $\\theta = 2.1710$, con la misma ACF. La raíz de $1 + \\theta B$ es $B = -1/\\theta$: con $\\theta = 0.4606$ vale $B = -2.1710$, fuera del círculo, y con $\\theta = 2.1710$ vale $B = -0.4606$, dentro. Se toma la invertible, que es la que devuelve el software (3.3).'
+          },
+          {
+            texto: '$\\theta = 0.3800$, porque en un MA(1) el coeficiente coincide con la autocorrelación de orden 1.',
+            correcta: false,
+            retro: 'Eso vale para el AR(1), donde $\\rho_1 = \\phi$. En el MA(1), $\\rho_1 = \\theta/(1+\\theta^2)$: con $\\theta = 0.3800$ sale $\\rho_1 = 0.3321$, no $0.38$ (3.3).'
+          },
+          {
+            texto: 'Ningún valor de $\\theta$: como $\\theta$ y $1/\\theta$ dan la misma ACF, no hay forma de elegir entre ellos, y el MA(1) no sirve para este proceso.',
+            correcta: false,
+            retro: 'Que $\\theta$ y $1/\\theta$ den la misma ACF es cierto, pero no descarta el MA(1): se elige con un convenio, la solución invertible, $|\\theta| \\lt 1$. Aquí es $\\theta = 0.4606$ (3.3).'
+          }
+        ]
+      },
+      {
+        tipo: 'opcion',
+        pregunta: 'Un ARMA(1,1), $(1 - 0.65B)\\,y_t = (1 + 0.4B)\\,\\varepsilon_t$, tiene $\\sigma^2 = 1$.<br>¿Cuánto vale la varianza del error de pronóstico a tres pasos, $\\operatorname{Var}(e_{T+3})$?',
+        pista: 'Lee $\\phi$ y $\\theta$ con cuidado con el signo de cada polinomio. A tres pasos, la suma $\\sigma^2\\sum_{j=0}^{h-1}\\psi_j^2$ tiene tres términos, y el primero es $\\psi_0 = 1$.',
+        opciones: [
+          {
+            texto: '$\\operatorname{Var}(e_{T+3}) = 1.7651$',
+            correcta: false,
+            retro: 'Esa cifra es $\\sigma^2(\\psi_1^2 + \\psi_2^2 + \\psi_3^2)$, con $\\psi_3 = 0.4436$: la suma se corrió un índice. $\\operatorname{Var}(e_{T+h}) = \\sigma^2\\sum_{j=0}^{h-1}\\psi_j^2$ arranca en $\\psi_0 = 1$, así que le falta el término $\\sigma^2\\psi_0^2 = \\sigma^2$ —el error a un paso— y le sobra $\\sigma^2\\psi_3^2$, que solo entra a partir de cuatro pasos. Es el desfase que advierte el módulo 3.4: <code>ARMAtoMA()</code> no devuelve $\\psi_0$.'
+          },
+          {
+            texto: '$\\operatorname{Var}(e_{T+3}) = 1.0889$',
+            correcta: false,
+            retro: 'Hubo un signo leído al revés en uno de los dos polinomios. Leer la parte MA como $(1 - 0.4B)$ (el convenio de resta) o la parte AR como $(1 + 0.65B)$ lleva a la misma varianza, porque los $\\psi_j^2$ coinciden. Pero la parte AR es $(1 - 0.65B)$, así que $\\phi = 0.65$; la MA es $(1 + 0.4B)$, así que $\\theta = 0.4$; y $\\psi_1 = \\phi + \\theta = 1.05$ (3.1, 3.4).'
+          },
+          {
+            texto: '$\\operatorname{Var}(e_{T+3}) = 2.5683$',
+            correcta: true,
+            retro: 'La parte AR es $(1 - 0.65B)$ y la MA, $(1 + 0.4B)$, así que $\\phi = 0.65$ y $\\theta = 0.4$. Entonces $\\psi_1 = \\phi + \\theta = 1.05$ y $\\psi_2 = \\phi\\,\\psi_1 = 0.6825$. La varianza a tres pasos suma los tres primeros pesos al cuadrado, empezando en $\\psi_0 = 1$: $\\sigma^2(1 + \\psi_1^2 + \\psi_2^2) = 2.5683$ (3.4).'
+          },
+          {
+            texto: '$\\operatorname{Var}(e_{T+3}) = 1.6010$',
+            correcta: false,
+            retro: 'Esa cifra usa los pesos del AR(1) solo, las potencias de $\\phi$ ($\\psi_1 = 0.65$, $\\psi_2 = 0.4225$): faltó la parte MA. En el ARMA(1,1), $\\psi_1 = \\phi + \\theta = 1.05$, y a partir de ahí cada peso es $\\phi$ veces el anterior (3.4).'
+          }
+        ]
+      },
+      {
+        tipo: 'opcion',
+        pregunta: 'Un AR(2) estacionario, $y_t = \\phi_1 y_{t-1} + \\phi_2 y_{t-2} + \\varepsilon_t$, tiene $\\phi_1 = 0.6$ y $\\phi_2 = 0.2$.<br>¿Cuánto valen sus autocorrelaciones teóricas $\\rho_1$ y $\\rho_2$, y sus autocorrelaciones parciales $\\phi_{22}$ y $\\phi_{33}$?',
+        pista: 'En la ecuación de Yule–Walker para $k = 1$ aparece $\\rho_{-1}$: ¿cuánto vale? Y para la PACF, piensa en qué rezago se corta la de un AR(2).',
+        opciones: [
+          {
+            texto: '$\\rho_1 = 0.7500$, $\\rho_2 = 0.6500$; $\\phi_{22} = 0.6500$, $\\phi_{33} = 0.5400$',
+            correcta: false,
+            retro: 'Las autocorrelaciones están bien, pero la PACF no es la ACF: descuenta los rezagos intermedios. En un AR(2), $\\phi_{22} = \\phi_2 = 0.2000$ y $\\phi_{kk} = 0$ para $k \\gt  2$: es la firma que identifica el orden (2.4, 3.2).'
+          },
+          {
+            texto: '$\\rho_1 = 0.8000$, $\\rho_2 = 0.6800$; $\\phi_{22} = 0.2000$, $\\phi_{33} = 0.0000$',
+            correcta: false,
+            retro: 'La PACF está bien, pero la ACF no. En la ecuación de Yule–Walker para $k = 1$, $\\rho_1 = \\phi_1\\rho_0 + \\phi_2\\rho_{-1}$, se tomó $\\rho_{-1} = 1$; pero $\\rho_{-1} = \\rho_1$, así que $\\rho_1 = \\phi_1 + \\phi_2\\rho_1$ y $\\rho_1 = \\phi_1/(1 - \\phi_2) = 0.7500$ (3.2).'
+          },
+          {
+            texto: '$\\rho_1 = 0.8000$, $\\rho_2 = 0.6800$; $\\phi_{22} = 0.6800$, $\\phi_{33} = 0.5680$',
+            correcta: false,
+            retro: 'Dos errores. En Yule–Walker se tomó $\\rho_{-1} = 1$ en vez de $\\rho_{-1} = \\rho_1$, y lo correcto es $\\rho_1 = \\phi_1/(1 - \\phi_2) = 0.7500$ (3.2). Y la PACF se confundió con la ACF: en un AR(2), $\\phi_{22} = \\phi_2$ y $\\phi_{33} = 0$ (2.4).'
+          },
+          {
+            texto: '$\\rho_1 = 0.7500$, $\\rho_2 = 0.6500$; $\\phi_{22} = 0.2000$, $\\phi_{33} = 0.0000$',
+            correcta: true,
+            retro: 'De Yule–Walker, $\\rho_1 = \\phi_1 + \\phi_2\\rho_1$, de donde $\\rho_1 = \\phi_1/(1 - \\phi_2)$, y $\\rho_2 = \\phi_1\\rho_1 + \\phi_2$ (3.2). La PACF de un AR(2) vale $\\phi_{22} = (\\rho_2 - \\rho_1^2)/(1 - \\rho_1^2) = \\phi_2$ y exactamente 0 desde el rezago 3 (2.4, 3.2).'
+          }
+        ]
+      }
+    ];
+    // [fin · actividad preparatoria del Parcial 2]
   </script>
 
 </body>
