@@ -947,7 +947,7 @@
           {
             texto: 'Sí, porque el módulo es mayor que 1: las raíces caen fuera del círculo unitario.',
             correcta: true,
-            retro: 'Correcto. La condición es $|B_i| > 1$ para todas las raíces. $1.054 > 1$, aunque por poco: es un proceso muy persistente, cerca de la frontera de la no estacionariedad.'
+            retro: 'La condición es $|B_i| > 1$ para todas las raíces. $1.054 > 1$, aunque por poco: es un proceso muy persistente, cerca de la frontera de la no estacionariedad.'
           }
         ]
       },
@@ -1077,7 +1077,7 @@
           {
             texto: 'Falta <code>fitdf = 3</code>: sin él la prueba usa demasiados grados de libertad y se vuelve demasiado indulgente.',
             correcta: true,
-            retro: 'Correcto. Con $p+q = 3$ parámetros estimados, el estadístico se distribuye $\\chi^2_{12-3}$, no $\\chi^2_{12}$. El caso más elocuente es el AR(2) de las manchas, donde $p+q = 2$: omitir <code>fitdf</code> cambia su $p$-valor de $0.0461$ (se rechaza) a $0.0996$ (no se rechaza). La conclusión se invierte por omitir un argumento.'
+            retro: 'Con $p+q = 3$ parámetros estimados, el estadístico se distribuye $\\chi^2_{12-3}$, no $\\chi^2_{12}$. El caso más elocuente es el AR(2) de las manchas, donde $p+q = 2$: omitir <code>fitdf</code> cambia su $p$-valor de $0.0461$ (se rechaza) a $0.0996$ (no se rechaza). La conclusión se invierte por omitir un argumento.'
           },
           {
             texto: 'El rezago 12 es demasiado alto para una serie anual.',
@@ -1101,7 +1101,7 @@
           {
             texto: 'Rechazo el modelo: quedan autocorrelaciones grandes, hay que aumentar el orden.',
             correcta: true,
-            retro: 'Correcto. $r_1 = 0.556$ frente a una banda de $\\pm 0.196$, y no está sola: eso no es azar, es estructura sin modelar. Ljung–Box da $p < 0.0001$. Subiendo a AR(2), esas autocorrelaciones bajan a $0.1297$ y $-0.1477$.'
+            retro: '$r_1 = 0.556$ frente a una banda de $\\pm 0.196$, y no está sola: eso no es azar, es estructura sin modelar. Ljung–Box da $p < 0.0001$. Subiendo a AR(2), esas autocorrelaciones bajan a $0.1297$ y $-0.1477$.'
           },
           {
             texto: 'Lo acepto: uno o dos picos fuera de la banda son normales con 20 rezagos.',
