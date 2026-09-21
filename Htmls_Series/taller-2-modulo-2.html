@@ -2355,6 +2355,18 @@
     .taller2-datos > summary { cursor: pointer; font-family: 'Montserrat', sans-serif; font-size: 0.82rem;
       color: #012820; margin-bottom: 0.4rem; }
     .taller2-gana { background: #fff7ed; font-weight: 700; }
+    /* La plantilla de entrega vivía como texto en línea en el tercer párrafo de «Cómo se
+       entrega». Es lo único que hay que hacer ANTES de escribir nada, así que sale a la
+       superficie con su propio botón en vez de quedarse entre la prosa. */
+    .taller2-descarga { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.9rem;
+      margin: 0.9rem 0; padding: 0.75rem 0.9rem; background: #f8fafc; border: 1px solid #e2e8f0;
+      border-left: 4px solid #FF6600; border-radius: 0.6rem; }
+    .taller2-descarga-cta { display: inline-flex; align-items: center; gap: 0.5rem; background: #012820;
+      color: #fff; text-decoration: none; font-family: 'Montserrat', sans-serif; font-size: 0.85rem;
+      font-weight: 700; padding: 0.55rem 1rem; border-radius: 0.4rem; min-height: 44px; box-sizing: border-box; }
+    .taller2-descarga-cta:hover, .taller2-descarga-cta:focus { background: #FF6600; color: #fff; }
+    .taller2-descarga-cta:focus-visible { outline: 3px solid #012820; outline-offset: 2px; }
+    .taller2-descarga-alt { font-family: 'Montserrat', sans-serif; font-size: 0.8rem; color: #012820; }
     .banco { margin: 0.6rem 0 1.6rem; padding: 0.9rem 1.1rem; background: #f8fafc; border: 1px solid #e2e8f0;
       border-radius: 0.6rem; }
     .banco-etiqueta { display: inline-block; font-family: 'Fira Code', monospace; font-size: 0.68rem; color: #012820;
@@ -2803,13 +2815,16 @@
           ese mismo día recibes por Brightspace la retroalimentación de tu variante: lo que entregues es
           lo que se te preguntará en clase, y lo que se corrige es lo que queda entre este taller y el
           Parcial 2.</p>
-        <p style="margin-bottom:0;"><strong>La plantilla:</strong>
-          <a href="entrega/plantilla_taller2.tex" download target="_blank" rel="noopener">descargar la
-          plantilla (<code>.tex</code>)</a> ·
-          <a href="entrega/plantilla_taller2.pdf" target="_blank" rel="noopener">ver el PDF compilado</a>.
-          Si no tienes LaTeX instalado, sube el <code>.tex</code> a Overleaf y compila allí. Trae una
-          <strong>hoja de cifras</strong> con todo lo que se te pide calcular; rellénala <em>antes</em> de
-          escribir prosa.</p>
+        <p class="taller2-descarga">
+          <a class="taller2-descarga-cta" href="entrega/plantilla_taller2.tex" download target="_blank"
+            rel="noopener"><i class="fas fa-download" aria-hidden="true"></i> Descargar la plantilla
+            (.tex)</a>
+          <a class="taller2-descarga-alt" href="entrega/plantilla_taller2.pdf" target="_blank"
+            rel="noopener">o ver antes el PDF compilado</a>
+        </p>
+        <p style="margin-bottom:0;">Si no tienes LaTeX instalado, sube el <code>.tex</code> a Overleaf y
+          compila allí: no necesitas instalar nada. La plantilla trae una <strong>hoja de cifras</strong>
+          con todo lo que se te pide calcular; rellénala <em>antes</em> de escribir prosa.</p>
       </div>
 
       <p>Lo primero es resolver tu variante. Te asigna <strong>tres series</strong> —A, B y C— y cada tarea
