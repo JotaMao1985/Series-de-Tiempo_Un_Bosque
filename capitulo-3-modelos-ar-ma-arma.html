@@ -4839,6 +4839,164 @@ for p, q in [(2, 0), (2, 1), (2, 2)]:
           potencia moderada hace el mismo trabajo. Eso es señal de que el hallazgo es robusto y no un artefacto.</p>
       </div>
 
+      <h3>El AR(2) final, escrito con los polinomios del Módulo 1</h3>
+
+      <p>Esa ecuación está escrita como recursión, que es la forma en que se estima. Escrita con el operador de
+        rezago es la forma en que se <em>interroga</em>, y de paso contesta a casi todo lo que el capítulo lleva
+        preguntado desde la primera página:</p>
+
+      <div class="formula">
+        $$\hat\phi(B)\,\big(\sqrt{y_t} - 6.3317\big) = \hat\theta(B)\,\varepsilon_t$$
+        $$\hat\phi(B) = 1 - 1.4027\,B + 0.6853\,B^2, \qquad \hat\theta(B) = 1$$
+      </div>
+
+      <div class="warning">
+        <p><strong>El signo del segundo coeficiente.</strong> El ajuste devuelve $\hat\phi_2 = -0.6853$ y el
+          polinomio lleva $+0.6853\,B^2$. No es una errata: el convenio del Módulo 1 es
+          $\phi(B) = 1 - \phi_1 B - \phi_2 B^2$, así que los $\phi$ entran restando y un coeficiente negativo
+          aparece sumando. Escribir $1 - 1.4027\,B - 0.6853\,B^2$ no produce ningún aviso: produce <strong>otro
+          proceso</strong>, cuyas raíces son $0.5598$ y $-2.6066$. La primera cae <em>dentro</em> del círculo
+          unitario, de modo que ese otro proceso ni siquiera es estacionario. Es la misma clase de fallo silencioso
+          que el orden de los coeficientes en <code>polyroot()</code>.</p>
+      </div>
+
+      <p>Con el polinomio delante, la pregunta del Módulo 1 se contesta sola. Las raíces de $\hat\phi(B) = 0$ son
+        complejas conjugadas:</p>
+
+      <div class="formula">
+        $$B_{1,2} = 1.0234 \pm 0.6418\,i, \qquad |B_{1,2}| = 1.2080 > 1$$
+      </div>
+
+      <p>El módulo mayor que uno es el veredicto de estacionariedad. Pero una raíz compleja trae <em>dos</em>
+        números, y el segundo no se ha usado todavía: su argumento, $\omega = 0.5601$ radianes. Y resulta que</p>
+
+      <div class="formula">
+        $$\frac{2\pi}{\omega} = \frac{2\pi}{0.5601} = 11.22\ \text{años}$$
+      </div>
+
+      <p>Es decir: el $11.22$ que hace un momento se leía como «el ciclo solar» <strong>es el ángulo de la raíz del
+        polinomio</strong>, y no un número que salga de una fórmula aparte. La expresión del Módulo 2,
+        $2\pi/\arccos\!\big(\phi_1/(2\sqrt{-\phi_2})\big)$, es esta misma cuenta escrita sin números complejos. El
+        módulo dice <em>cuánto se amortigua</em> la oscilación; el ángulo, <em>cada cuánto</em> oscila.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>La invertibilidad, que aquí sale gratis</h4>
+        <p>$\hat\theta(B) = 1$ es un polinomio constante: no tiene raíces, de manera que la condición del Módulo 3
+          se cumple sin nada que comprobar. <strong>Todo AR puro es invertible</strong>, y la consecuencia es la del
+          Módulo 4: la representación AR($\infty$) de este modelo es <em>finita</em>.</p>
+        <p style="margin-bottom:0;">$$\pi_0 = 1, \quad \pi_1 = -1.4027, \quad \pi_2 = 0.6853$$
+          $$\pi_j = 0 \quad \text{para } j \ge 3$$</p>
+      </div>
+
+      <p>Que los $\pi$ se acaben en el rezago 2 no es una curiosidad de notación. El pronóstico a un paso del
+        Módulo 4 es $\hat y_{t\mid t-1} = -\sum_{j \ge 1}\pi_j\,y_{t-j}$, una suma infinita que en un MA o en un
+        ARMA hay que truncar; aquí se reduce a la propia ecuación del modelo y le bastan dos años de historia.</p>
+
+      <div class="note">
+        <p><strong>¿Y el ARMA(2,1) que sobraba? Estaba impecable.</strong> Conviene comprobarlo, porque la
+          tentación es suponer que un parámetro que sobra tiene que delatarse en algo. Su
+          $\hat\theta(B) = 1 + 0.3732\,B$ tiene raíz $-2.6795$, de módulo $2.68 > 1$: <strong>invertible</strong>.
+          Sus raíces AR son $1.0920 \pm 0.7661\,i$, de módulo $1.3339$, y no se parecen en nada a $-2.68$, así que
+          tampoco hay rastro de la <strong>redundancia de parámetros</strong> del Módulo 5: no hay factor común que
+          cancelar. El modelo estaba bien construido y bien estimado. Ni la invertibilidad ni el factor común lo
+          habrían descartado, y por eso hizo falta volver a la escala.</p>
+      </div>
+
+      <h3>Los pesos $\psi$: qué deja un choque solar</h3>
+
+      <p>Con los dos polinomios escritos ya se puede recorrer el Módulo 4 sobre el modelo ajustado. La recursión
+        $\psi_j = \theta_j + \sum_i \phi_i\,\psi_{j-i}$, con todos los $\theta_j$ nulos, queda</p>
+
+      <div class="formula">
+        $$\psi_j = 1.4027\,\psi_{j-1} - 0.6853\,\psi_{j-2}, \qquad \psi_0 = 1$$
+      </div>
+
+      <p>y en un AR(2) con raíces complejas tiene forma cerrada, que es donde se ve de dónde sale cada pieza:</p>
+
+      <div class="formula">
+        $$\psi_j = R^{\,j}\,\frac{\sin\big((j+1)\,\omega\big)}{\sin\omega}$$
+        $$R = \sqrt{-\hat\phi_2} = \frac{1}{|B_{1,2}|} = 0.8278, \qquad \omega = 0.5601$$
+      </div>
+
+      <p>Las dos piezas de la raíz reaparecen, ahora haciendo cosas distintas: el módulo manda en la amplitud —el
+        envolvente $0.8278^{\,j}$ se reduce a la mitad cada $3.67$ años— y el ángulo, en la oscilación. Traducido a
+        manchas: un año con más manchas de las que el modelo esperaba deja $1.40$ de exceso al año siguiente,
+        todavía $0.84$ tres años después, y hacia el quinto o el sexto <strong>ha cambiado de signo</strong>. Los
+        cruces por cero caen en $j = 4.61$ y $j = 10.22$: medio ciclo y un ciclo de los $11.22$ años. La respuesta
+        al impulso late con el mismo periodo que la serie, y eso es lo que significa «pseudo-periodo»: no hay una
+        periodicidad impuesta desde fuera, hay choques que se propagan oscilando y apagándose.</p>
+
+      <p>Y aquí los $\psi$ dejan de ser álgebra. La varianza del error de pronóstico del Módulo 4, con
+        $\hat\sigma^2 = 1.3410$, se obtiene sumando sus cuadrados:</p>
+
+      <div class="formula">
+        $$\operatorname{Var}(e_{T+h}) = \hat\sigma^2\sum_{j=0}^{h-1}\psi_j^2$$
+      </div>
+
+      <table>
+        <caption class="sr-only">Pesos psi del AR(2) ajustado sobre la raíz cuadrada y bandas de pronóstico que producen</caption>
+        <thead>
+          <tr>
+            <th scope="col">$j$</th><th scope="col">$\psi_j$</th>
+            <th scope="col">$h = j+1$</th><th scope="col">$\sum_{i &lt; h}\psi_i^2$</th>
+            <th scope="col">Error estándar</th><th scope="col">Semiancho al 95 %</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>$0$</td><td>$1.0000$</td><td>$1$</td><td>$1.0000$</td><td>$1.16$</td><td>$\pm 2.27$</td></tr>
+          <tr><td>$1$</td><td>$1.4027$</td><td>$2$</td><td>$2.9675$</td><td>$1.99$</td><td>$\pm 3.91$</td></tr>
+          <tr><td>$2$</td><td>$1.2822$</td><td>$3$</td><td>$4.6115$</td><td>$2.49$</td><td>$\pm 4.87$</td></tr>
+          <tr><td>$3$</td><td>$0.8372$</td><td>$4$</td><td>$5.3124$</td><td>$2.67$</td><td>$\pm 5.23$</td></tr>
+          <tr><td>$4$</td><td>$0.2957$</td><td>$5$</td><td>$5.3998$</td><td>$2.69$</td><td>$\pm 5.27$</td></tr>
+          <tr><td>$5$</td><td>$-0.1590$</td><td>$6$</td><td>$5.4251$</td><td>$2.70$</td><td>$\pm 5.29$</td></tr>
+          <tr><td>$6$</td><td>$-0.4257$</td><td>$7$</td><td>$5.6063$</td><td>$2.74$</td><td>$\pm 5.37$</td></tr>
+          <tr><td>$7$</td><td>$-0.4881$</td><td>$8$</td><td>$5.8446$</td><td>$2.80$</td><td>$\pm 5.49$</td></tr>
+          <tr><td>$8$</td><td>$-0.3929$</td><td>$9$</td><td>$5.9990$</td><td>$2.84$</td><td>$\pm 5.56$</td></tr>
+          <tr><td>$9$</td><td>$-0.2167$</td><td>$10$</td><td>$6.0459$</td><td>$2.85$</td><td>$\pm 5.58$</td></tr>
+          <tr><td>$10$</td><td>$-0.0346$</td><td>$11$</td><td>$6.0471$</td><td>$2.85$</td><td>$\pm 5.58$</td></tr>
+          <tr><td>$11$</td><td>$0.0999$</td><td>$12$</td><td>$6.0571$</td><td>$2.85$</td><td>$\pm 5.59$</td></tr>
+        </tbody>
+      </table>
+
+      <div class="definition">
+        <h4><i class="fas fa-lightbulb mr-2" aria-hidden="true"></i>El abanico se abre, y se para</h4>
+        <p>Las dos últimas columnas no son un ejercicio paralelo: son, hasta el cuarto decimal, lo que imprime
+          <code>forecast(ar2s, h = 6)</code>. Y enseñan algo que el Capítulo 4 va a contrastar. La suma
+          $\sum_j \psi_j^2$ <strong>converge</strong>, a $6.136$, así que la varianza del pronóstico no puede pasar
+          de $1.3410 \times 6.136 = 8.23$ —que es $\hat\gamma_0$, la varianza del propio proceso: la varianza
+          muestral de $\sqrt{\text{manchas}}$ vale $8.15$—.</p>
+        <p style="margin-bottom:0;">El semiancho, por tanto, se detiene en $\pm 5.62$, y a los seis años ya ha
+          recorrido el $94\,\%$ de ese camino. Pasado medio ciclo solar, el modelo no sabe decir mucho más que «la
+          media». Esa es la firma de un proceso <strong>estacionario</strong>; en el Capítulo 4, con una raíz
+          unitaria, la suma diverge y el abanico se abre sin techo.</p>
+      </div>
+
+      <div class="simulador" data-simulador="manchas-impulso">
+        <h4><i class="fas fa-chart-column" aria-hidden="true"></i> La respuesta al impulso del AR(2) ajustado</h4>
+        <p class="simulador-intro">Los pesos $\psi_j$ de la tabla, con el envolvente $\pm 0.8278^{\,j}$ que los
+          amortigua: el choque de un año no se agota, se propaga oscilando. Mueve $h$ para colorear los pesos que
+          entran en la varianza del pronóstico a $h$ años —son los $j &lt; h$— y ver dónde queda ese horizonte en el
+          segundo gráfico, que dibuja el semiancho del intervalo frente al techo al que tiende.</p>
+        <div class="simulador-controles"></div>
+        <p class="grafico-etiqueta">Pesos $\psi_j$ y envolvente</p>
+        <div class="grafico-wrapper" style="height:200px;">
+          <canvas aria-label="Pesos psi de la representación MA infinita con su envolvente exponencial" role="img"></canvas>
+        </div>
+        <p class="grafico-etiqueta">Semiancho del intervalo del 95 % según el horizonte</p>
+        <div class="grafico-wrapper" style="height:190px;">
+          <canvas aria-label="Semiancho del intervalo de pronóstico del 95 por ciento frente al horizonte" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="warning">
+        <p><strong>Estas bandas están en la escala de la raíz.</strong> Volver a las manchas es elevar al cuadrado
+          los extremos: la transformación es monótona, así que respeta los cuantiles y el $95\,\%$ sigue siendo el
+          $95\,\%$. El <em>centro</em>, en cambio, no se transforma igual: el cuadrado del pronóstico es la
+          <strong>mediana</strong> de las manchas, no su media. Es el mismo asunto que el $\exp$ del modelo airline
+          en el Capítulo 5.</p>
+      </div>
+
       <div class="warning">
         <p><strong>Lo que sigue sin estar bien.</strong> La normalidad de los residuales mejora pero no llega: la
           asimetría baja de $0.791$ a $0.573$ y el $p$-valor de Shapiro–Wilk sube de $0.0007$ a $0.0470$, que sigue
@@ -4846,6 +5004,46 @@ for p, q in [(2, 0), (2, 1), (2, 2)]:
           <strong>no linealidad</strong> que ningún modelo lineal ARMA puede capturar. Los intervalos de pronóstico del
           Capítulo 6, que suponen normalidad, quedarán algo mal calibrados. Decirlo es parte del trabajo.</p>
       </div>
+
+      <h3>El capítulo entero, sobre una sola serie</h3>
+
+      <p>Conviene mirar atrás y contar cuánto del capítulo ha hecho falta para cerrar cien observaciones anuales:</p>
+
+      <table>
+        <caption class="sr-only">Qué aportó cada módulo del capítulo al caso de las manchas solares</caption>
+        <thead>
+          <tr><th scope="col">Módulo</th><th scope="col">Qué puso en este caso</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>3.1 · Operador de rezago</td>
+            <td>El modelo escrito como $\hat\phi(B)(\sqrt{y_t}-6.33) = \varepsilon_t$, y las raíces
+              $1.0234 \pm 0.6418\,i$, de módulo $1.208$, que lo declaran estacionario.</td></tr>
+          <tr><td>3.2 · Procesos AR</td>
+            <td>La PACF que se corta en el rezago 2 y propone el orden; el ángulo de las raíces complejas, que da
+              los $11.22$ años.</td></tr>
+          <tr><td>3.3 · Procesos MA</td>
+            <td>La invertibilidad: trivial en el AR(2) final, comprobada en el ARMA(2,1) de la serie cruda —que la
+              cumplía—.</td></tr>
+          <tr><td>3.4 · Dualidad AR ↔ MA</td>
+            <td>Los $\pi$, que aquí se acaban en dos términos, y los $\psi$, que producen las bandas del pronóstico
+              y su techo.</td></tr>
+          <tr><td>3.5 · ARMA e identificación</td>
+            <td>La tabla para leer los correlogramas, y la comprobación de que entre $\hat\phi(B)$ y $\hat\theta(B)$
+              no había factor común que cancelar.</td></tr>
+          <tr><td>3.6 · Simular y reconocer</td>
+            <td>El único que no entra en ninguna cuenta, y hace falta igual: enseñó cuánto se aleja de la teoría una
+              muestra de $100$ datos, que es la prudencia con la que hay que leer esa PACF.</td></tr>
+          <tr><td>3.7 · Estimación</td>
+            <td>Los $\hat\phi$ por máxima verosimilitud, con errores estándar $0.0727$ y $0.0724$.</td></tr>
+          <tr><td>3.8 · Criterios y diagnóstico</td>
+            <td>La rejilla ordenada por AICc y BIC, y el Ljung–Box que primero rechazó y después pasó.</td></tr>
+        </tbody>
+      </table>
+
+      <p>Y falta una novena pieza, que no es de ningún módulo: el <strong>orden</strong> en que se usan, y la
+        disposición a volver atrás. El AICc premiaba un parámetro que solo estaba tapando una escala equivocada, y
+        ningún criterio de este capítulo lo dice. Lo dijeron un diagnóstico que fallaba y una pregunta del
+        Capítulo 1 —¿crece la variabilidad con el nivel?— hecha cuando el modelo ya parecía terminado.</p>
 
       <h3>Caso 2 · Log-retornos de la TRM: cuando no hay nada que modelar</h3>
 
@@ -4940,6 +5138,45 @@ phi &lt;- coef(ar2s)[1:2]
 round(2 * pi / Arg(polyroot(c(1, -phi))[1]), 4)
 #&gt; [1] 11.2178            anios; el ciclo solar documentado es ~11
 
+# --- El modelo como polinomio: modulo Y angulo de la raiz --------------
+raices &lt;- polyroot(c(1, -phi))     # phi(B) = 1 - 1.4027 B + 0.6853 B^2
+round(raices, 4)
+#&gt; [1] 1.0234+0.6418i 1.0234-0.6418i
+round(c(modulo = Mod(raices)[1], angulo = Arg(raices)[1]), 4)
+#&gt; modulo angulo
+#&gt; 1.2080 0.5601            modulo &gt; 1: estacionario; 2*pi/angulo = 11.2178
+
+# Los pesos psi del Modulo 4, sobre los coeficientes ESTIMADOS.
+# ARMAtoMA() devuelve psi_1 en adelante; psi_0 = 1 va por convenio.
+psi &lt;- c(1, ARMAtoMA(ar = phi, ma = numeric(0), lag.max = 11))
+round(psi, 4)
+#&gt;  [1]  1.0000  1.4027  1.2822  0.8372  0.2957 -0.1590 -0.4257 -0.4881 -0.3929
+#&gt; [10] -0.2167 -0.0346  0.0999      cambian de signo entre el 4 y el 5
+# Forma cerrada del AR(2) con raices complejas: envolvente x oscilacion
+Rmod &lt;- unname(sqrt(-phi[2])); w &lt;- Arg(raices)[1]
+round(Rmod^(0:11) * sin((0:11 + 1) * w) / sin(w), 4)
+#&gt;  [1]  1.0000  1.4027  1.2822  0.8372  0.2957 -0.1590 -0.4257 -0.4881 -0.3929
+#&gt; [10] -0.2167 -0.0346  0.0999      identica a la recursion
+# theta(B) = 1 no tiene raices: un AR puro es invertible y sus pi se acaban
+round(c(pi1 = -phi[[1]], pi2 = -phi[[2]]), 4)
+#&gt;     pi1     pi2
+#&gt; -1.4027  0.6853
+
+# De los psi salen las bandas del pronostico, que es lo que hace forecast()
+ee &lt;- sqrt(ar2s$sigma2 * cumsum(psi^2))
+round(qnorm(0.975) * ee[1:6], 4)
+#&gt; [1] 2.2697 3.9098 4.8739 5.2312 5.2741 5.2864
+f &lt;- forecast(ar2s, h = 6, level = 95)
+round(as.numeric((f$upper - f$lower) / 2), 4)
+#&gt; [1] 2.2697 3.9098 4.8739 5.2312 5.2741 5.2864   <- lo mismo
+
+# El techo: en un proceso ESTACIONARIO la suma de psi^2 converge
+psi_largo &lt;- c(1, ARMAtoMA(ar = phi, ma = numeric(0), lag.max = 600))
+round(c(suma = sum(psi_largo^2), gamma0 = ar2s$sigma2 * sum(psi_largo^2),
+        var_muestral = var(sqrt(manchas))), 4)
+#&gt;         suma       gamma0 var_muestral
+#&gt;       6.1360       8.2283       8.1490   el abanico no pasa de gamma0
+
 # Comparacion directa con la serie cruda
 aicc &lt;- function(f, n) { k &lt;- length(f$coef) + 1; f$aic + 2*k*(k+1)/(n-k-1) }
 c(cruda_ar2 = aicc(arima(manchas, order = c(2,0,0), method = "ML"), 100),
@@ -5006,6 +5243,7 @@ import statsmodels.api as sm
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.stats.diagnostic import acorr_ljungbox
 from statsmodels.tsa.stattools import acf
+from statsmodels.tsa.arima_process import arma2ma
 from scipy import stats
 
 ## ---- Caso 1: manchas solares en raiz cuadrada -------------------------
@@ -5025,6 +5263,27 @@ print(round(float(lb["lb_pvalue"].iloc[0]), 4))   # 0.1780
 phi = ar2s.arparams
 raices = np.roots(np.r_[1, -phi][::-1])
 print(round(2 * np.pi / np.angle(raices[0]), 4))  # 11.2178
+
+print(np.round(ar2s.polynomial_ar, 4))       # [ 1.     -1.4027  0.6853]
+print(round(abs(raices[0]), 4), round(float(np.angle(raices[0])), 4))
+# 1.208 0.5601        modulo y angulo: estacionariedad y pseudo-periodo
+
+# arma2ma es la misma recursion del Modulo 4, pero pide los coeficientes
+# del POLINOMIO: el AR va negado, igual que en ArmaProcess (Modulo 1).
+psi = arma2ma(np.r_[1, -phi], np.r_[1], lags=12)
+print(np.round(psi, 4))
+# [ 1.      1.4027  1.2822  0.8372  0.2957 -0.159  -0.4256 -0.4881 -0.3929
+#  -0.2167 -0.0346  0.0999]
+# El septimo peso sale -0.4256 y en R -0.4257: los dos optimizadores no dan
+# exactamente el mismo phi. Es diferencia de estimacion, no de formula.
+
+s2 = ar2s.params[-1]                  # ['const', 'ar.L1', 'ar.L2', 'sigma2']
+ee = np.sqrt(s2 * np.cumsum(psi**2))
+print(np.round(1.959964 * ee[:6], 4))
+# [2.2697 3.9098 4.8739 5.2312 5.2741 5.2864]
+ci = np.asarray(ar2s.get_forecast(6).conf_int(alpha=0.05))
+print(np.round((ci[:, 1] - ci[:, 0]) / 2, 4))
+# [2.2697 3.9098 4.8739 5.2312 5.2741 5.2864]   <- lo mismo
 
 ## ---- Caso 2: log-retornos de la TRM -----------------------------------
 url = ("https://www.datos.gov.co/resource/32sa-8pi3.json"
@@ -5535,7 +5794,7 @@ round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
         { id: 6, title: "Simular y reconocer procesos", shortTitle: "Simulación", duration: "10 min" },
         { id: 7, title: "Estimación de parámetros", shortTitle: "Estimación", duration: "14 min" },
         { id: 8, title: "Criterios de información y diagnóstico", shortTitle: "Diagnóstico", duration: "14 min" },
-        { id: 9, title: "Dos casos reales", shortTitle: "Casos reales", duration: "16 min" },
+        { id: 9, title: "Dos casos reales", shortTitle: "Casos reales", duration: "19 min" },
         { id: 10, title: "Cierre, resumen y autoevaluación", shortTitle: "Cierre", duration: "12 min" },
         { id: 11, title: "Simulacro del quiz", shortTitle: "Simulacro", duration: "30 min" }
       ]
@@ -7718,6 +7977,95 @@ round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
 
       pintar();
       return [gSerie, gPacf];
+    };
+
+    // ================================================================
+    // M9 · Respuesta al impulso del AR(2) ajustado sobre la raíz
+    // ================================================================
+    // Aquí no hay nada precalculado: con phi1, phi2 y sigma^2 del ajuste, el
+    // navegador vuelve a recorrer la recursión del Módulo 4 y reconstruye las
+    // bandas que imprime forecast(). Los psi salen de pesosPsi(), la misma
+    // función que usan el simulador de la dualidad y la ACF teórica.
+    SIMULADORES['manchas-impulso'] = function (raiz) {
+      const c = raiz.querySelectorAll('canvas');
+      const lectura = raiz.querySelector('.simulador-lectura');
+      const params = { h: 6 };
+      const N = 24;                       // rezagos de la respuesta al impulso
+      const H = 24;                       // horizonte del abanico
+      const ar = [TRANSF.sqrt.phi1, TRANSF.sqrt.phi2];
+      const sigma2 = TRANSF.sqrt.sigma2;
+      const z = 1.959964;                 // qnorm(0.975)
+      const psi = pesosPsi(ar, [], N);
+      // R = sqrt(-phi2) es el inverso del módulo de la raíz: el envolvente que
+      // amortigua la oscilación. Módulo 1.
+      const R = Math.sqrt(-TRANSF.sqrt.phi2);
+      const etiquetas = Array.from({ length: N + 1 }, (_, j) => String(j));
+      const envolvente = etiquetas.map((_, j) => Math.pow(R, j));
+
+      // Cola larga para el límite sum psi_j^2 = gamma_0 / sigma^2: con |B| =
+      // 1.21 lo que queda fuera de 600 términos no llega a la decimosexta cifra.
+      const psiLargo = pesosPsi(ar, [], 600);
+      const sumaLimite = psiLargo.reduce((s, v) => s + v * v, 0);
+      const semiTecho = z * Math.sqrt(sigma2 * sumaLimite);
+      const sumaHasta = h => psiLargo.slice(0, h).reduce((s, v) => s + v * v, 0);
+      const horizontes = Array.from({ length: H }, (_, k) => String(k + 1));
+      const semianchos = horizontes.map((_, k) => z * Math.sqrt(sigma2 * sumaHasta(k + 1)));
+
+      const gPsi = crearGraficoBarras(c[0], etiquetas, psi, {
+        etiqueta: 'ψⱼ', color: COLORES_GRAFICO.primario, tituloX: 'j (años desde el choque)'
+      });
+      // El envolvente no es una recta, así que no cabe en la opción `lineas`
+      // de crearGraficoBarras: se añade como dos datasets de línea. El negativo
+      // va sin etiqueta para que no salga dos veces en la leyenda.
+      [['±(0.83)ʲ — envolvente', envolvente], ['', envolvente.map(v => -v)]].forEach(
+        ([etiqueta, datos]) => gPsi.data.datasets.push({
+          type: 'line', label: etiqueta, data: datos,
+          borderColor: COLORES_GRAFICO.secundario, borderDash: [5, 4], borderWidth: 1.5,
+          pointRadius: 0, fill: false, order: 1
+        }));
+      gPsi.update('none');
+
+      const gAbanico = crearGraficoBarras(c[1], horizontes, semianchos, {
+        etiqueta: 'Semiancho del 95 %', color: COLORES_GRAFICO.terciario,
+        tituloX: 'h (años de pronóstico)', min: 0, max: 6,
+        lineas: [{ valor: semiTecho, etiqueta: 'Techo del abanico' }]
+      });
+
+      function pintar() {
+        const h = Math.round(params.h);
+        // En negro los psi que entran en la varianza a h pasos (j < h).
+        gPsi.data.datasets[0].backgroundColor = etiquetas.map(
+          (_, j) => j < h ? COLORES_GRAFICO.primario : COLORES_GRAFICO.gris);
+        gPsi.update('none');
+        gAbanico.data.datasets[0].backgroundColor = horizontes.map(
+          (_, k) => k + 1 === h ? COLORES_GRAFICO.secundario : COLORES_GRAFICO.terciario);
+        gAbanico.update('none');
+
+        const ee = Math.sqrt(sigma2 * sumaHasta(h));
+        actualizarLectura(lectura, [
+          {
+            etiqueta: 'Envolvente √(−φ₂) =',
+            valor: `${R.toFixed(4)} — se reduce a la mitad cada ${(Math.log(0.5) / Math.log(R)).toFixed(2)} años`
+          },
+          {
+            etiqueta: 'Periodo de la oscilación:',
+            valor: `${TRANSF.sqrt.periodo.toFixed(2)} años — el mismo pseudo-periodo de la serie`
+          },
+          { etiqueta: `Error estándar del pronóstico a ${h} año(s):`, valor: ee.toFixed(2) },
+          { etiqueta: 'Semiancho del intervalo del 95 %:', valor: `±${(z * ee).toFixed(2)}` },
+          {
+            etiqueta: 'Techo, h → ∞:',
+            valor: `±${semiTecho.toFixed(2)} — el ${(100 * z * ee / semiTecho).toFixed(0)} % ya está recorrido`
+          }
+        ]);
+      }
+
+      crearControles(raiz.querySelector('.simulador-controles'), [
+        { clave: 'h', etiqueta: 'h = ', min: 1, max: 24, paso: 1, decimales: 0 }
+      ], params, pintar);
+
+      pintar();
+      return [gPsi, gAbanico];
     };
 
     // ================================================================
