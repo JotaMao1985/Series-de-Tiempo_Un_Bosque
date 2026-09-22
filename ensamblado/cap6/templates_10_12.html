@@ -49,15 +49,15 @@
       <div class="diagram">
         <table>
           <thead>
-            <tr><th>Método</th><th>RMSE</th><th>MAE</th><th>MASE</th><th>Cobertura al $95\,\%$</th></tr>
+            <tr><th>Método</th><th>RMSE</th><th>MAE</th><th>MASE</th><th>Cobertura al $95\,\%$</th><th>Winkler $95\,\%$</th></tr>
           </thead>
           <tbody>
-            <tr><td><strong>Naïve</strong></td><td>$\mathbf{379.30}$</td><td>$\mathbf{303.19}$</td><td>$\mathbf{1.173}$</td><td>$89.6\,\%$</td></tr>
-            <tr><td>ETS</td><td>$382.86$</td><td>$307.10$</td><td>$1.188$</td><td>$97.1\,\%$</td></tr>
-            <tr><td><code>auto.arima</code></td><td>$444.53$</td><td>$340.21$</td><td>$1.316$</td><td>$82.4\,\%$</td></tr>
-            <tr><td>Deriva</td><td>$456.81$</td><td>$354.25$</td><td>$1.371$</td><td>$82.7\,\%$</td></tr>
-            <tr><td>Naïve estacional</td><td>$534.66$</td><td>$449.44$</td><td>$1.739$</td><td>$79.1\,\%$</td></tr>
-            <tr><td>Media</td><td>$792.46$</td><td>$718.74$</td><td>$2.781$</td><td>$84.5\,\%$</td></tr>
+            <tr><td><strong>Naïve</strong></td><td>$\mathbf{379.30}$</td><td>$\mathbf{303.19}$</td><td>$\mathbf{1.173}$</td><td>$89.6\,\%$</td><td>$1708.57$</td></tr>
+            <tr><td>ETS</td><td>$382.86$</td><td>$307.10$</td><td>$1.188$</td><td>$97.1\,\%$</td><td>$\mathbf{1693.42}$</td></tr>
+            <tr><td><code>auto.arima</code></td><td>$444.53$</td><td>$340.21$</td><td>$1.316$</td><td>$82.4\,\%$</td><td>$2587.86$</td></tr>
+            <tr><td>Deriva</td><td>$456.81$</td><td>$354.25$</td><td>$1.371$</td><td>$82.7\,\%$</td><td>$2351.24$</td></tr>
+            <tr><td>Naïve estacional</td><td>$534.66$</td><td>$449.44$</td><td>$1.739$</td><td>$79.1\,\%$</td><td>$2601.44$</td></tr>
+            <tr><td>Media</td><td>$792.46$</td><td>$718.74$</td><td>$2.781$</td><td>$84.5\,\%$</td><td>$4777.54$</td></tr>
           </tbody>
         </table>
       </div>
@@ -66,6 +66,52 @@
         busca entre decenas de modelos, queda un $17\,\%$ por detrás del método que no estima nada. La lectura no es
         que los modelos sean inútiles: es que <strong>sobre esta serie no hay estructura que explotar</strong>, y todo
         lo que se estime es varianza añadida sin sesgo que reducir.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-scale-balanced mr-2" aria-hidden="true"></i>¿Y es real esa ventaja?</h4>
+        <p>Una diferencia del $0.9\,\%$ entre dos RMSE no es un resultado hasta que se contrasta, y para eso está
+          el Módulo 8. Enfrentando el naïve a cada rival con Diebold–Mariano sobre los <em>mismos</em> $37$
+          orígenes y con la corrección de Harvey–Leybourne–Newbold, los $p$-valores son:</p>
+        <table>
+          <caption class="sr-only">Valores p de Diebold–Mariano del naïve contra cada rival sobre la TRM</caption>
+          <thead>
+            <tr><th scope="col">Rival</th><th scope="col">$h = 1$</th><th scope="col">$h = 6$</th>
+              <th scope="col">$h = 12$</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Media</td><td>$&lt;0.0001$ ✓</td><td>$0.0500$</td><td>$0.2112$</td></tr>
+            <tr><td>Naïve estacional</td><td>$&lt;0.0001$ ✓</td><td>$0.0899$</td><td>—</td></tr>
+            <tr><td>Deriva</td><td>$0.7210$</td><td>$0.3158$</td><td>$0.1083$</td></tr>
+            <tr><td>ETS</td><td>$0.3243$</td><td>$0.3091$</td><td>$0.2026$</td></tr>
+            <tr><td><code>auto.arima</code></td><td>$0.2223$</td><td>$0.3468$</td><td>$0.2381$</td></tr>
+          </tbody>
+        </table>
+        <p style="margin-bottom:0;">El titular se sostiene, pero hay que leerlo en los dos sentidos. El naïve solo
+          gana <strong>de forma significativa</strong> a la media y al naïve estacional, y solo a un mes vista.
+          Frente a los tres que de verdad compiten —deriva, ETS y <code>auto.arima</code>— ninguna diferencia es
+          distinguible de cero a ningún horizonte. Nadie vence al naïve <em>y el naïve tampoco vence a nadie</em>:
+          ordenar por RMSE seis métodos que empatan es justo lo que este capítulo enseña a no confundir con un
+          resultado.</p>
+      </div>
+
+      <div class="note">
+        <p><strong>El hueco de la tabla no es un olvido.</strong> Con $37$ orígenes y $h = 12$, la varianza estimada
+          de la diferencia de pérdidas entre el naïve y el naïve estacional sale <em>negativa</em> con el estimador
+          por defecto y exactamente <em>cero</em> con el de Bartlett: la prueba no se puede calcular y
+          <code>dm.test()</code> devuelve error. Con pocos orígenes y horizontes largos, Diebold–Mariano también se
+          queda sin datos, y eso se reporta en vez de rellenarse.</p>
+      </div>
+
+      <div class="warning">
+        <p><strong>Y la banda cuenta otra historia.</strong> La columna de cobertura es exactamente la que el
+          Módulo 9 avisó de no leer sola, porque premia al intervalo ancho. Aquí se ve: el ETS cubre el
+          $97.1\,\%$ frente al $89.6\,\%$ del naïve, y su puntaje de Winkler —que paga el ancho <em>y</em> el
+          fallo— es <strong>mejor</strong>, $1693.42$ contra $1708.57$. Es el mismo $0.9\,\%$ con el que el naïve
+          le ganaba en RMSE, invertido. El titular del caso vale para el pronóstico puntual; en el intervalo, el
+          método que estima parámetros recupera lo que había perdido. Los dos que cubren de menos
+          —<code>auto.arima</code> al $82.4\,\%$ y el naïve estacional al $79.1\,\%$— lo pagan en Winkler con
+          creces.</p>
+      </div>
 
       <div class="note">
         <p><strong>Los MASE de esta tabla son todos mayores que $1$, y no es una contradicción.</strong> El MASE
@@ -89,6 +135,37 @@
         el escalón de 1899 describe mejor la serie que una tendencia lineal, porque la caída del caudal fue un cambio
         de nivel y no una pendiente. La partición de veinte años empezaba justo después del escalón, en un tramo en el
         que una recta descendente parecía razonable.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-scale-balanced mr-2" aria-hidden="true"></i>La inversión, contrastada</h4>
+        <p>Un cambio de orden tampoco es un resultado hasta que se contrasta. Diebold–Mariano sobre los mismos
+          $36$ orígenes, enfrentando el ARIMA$(1,1,1)$ a cada rival:</p>
+        <table>
+          <caption class="sr-only">Valores p de Diebold–Mariano del ARIMA(1,1,1) contra cada rival sobre el Nilo</caption>
+          <thead>
+            <tr><th scope="col">Rival</th><th scope="col">$h = 1$</th><th scope="col">$h = 3$</th>
+              <th scope="col">$h = 5$</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Deriva</td><td>$0.0176$ ✓</td><td>$0.0278$ ✓</td><td>$0.0013$ ✓</td></tr>
+            <tr><td>Naïve</td><td>$0.0214$ ✓</td><td>$0.0395$ ✓</td><td>$0.0043$ ✓</td></tr>
+            <tr><td>Media</td><td>$0.2222$</td><td>$0.4338$</td><td>$0.5744$</td></tr>
+            <tr><td><code>auto.arima</code></td><td>$0.2083$</td><td>$0.3245$</td><td>$0.3815$</td></tr>
+          </tbody>
+        </table>
+        <p style="margin-bottom:0;">El ARIMA le gana a la deriva y al naïve <strong>de forma significativa a los
+          tres horizontes</strong>, y la ventaja se agranda al alejarse. Frente a la media y a
+          <code>auto.arima</code> —que acaba eligiendo un modelo muy parecido— no hay diferencia apreciable. Así que
+          esto no es un cambio de orden cualquiera: el método que la partición única coronaba es, con treinta y seis
+          orígenes, <strong>significativamente peor</strong>. Compárese con el caso de la TRM, donde ninguna
+          diferencia entre los rivales serios resistió la misma prueba: aquí la hay, y allí no.</p>
+      </div>
+
+      <p>La tabla trae además la columna de Winkler, y conviene leerla junto a la de cobertura. Los cinco métodos
+        cubren el $100\,\%$: con $h = 5$ y bandas anchas, la cobertura no distingue absolutamente nada, que es lo
+        que el Módulo 9 avisaba. Winkler sí los separa —de $629.64$ a $1171.24$— y los ordena igual que el RMSE,
+        salvo los dos primeros, que se intercambian por un $0.2\,\%$. El intervalo de la deriva no es peor por
+        fallar: es peor por ser innecesariamente ancho sobre un pronóstico que apunta en la dirección equivocada.</p>
 
       <div class="warning">
         <p><strong>Qué habría pasado si el Capítulo 4 hubiera decidido con su partición.</strong> Habría concluido que
@@ -132,7 +209,17 @@ round(sort(movil), 4)
 c(puesto_particion = which(names(sort(una)) == "deriva"),
   puesto_movil     = which(names(sort(movil)) == "deriva"))
 #&gt; puesto_particion     puesto_movil
-#&gt;                1                4</code></pre>
+#&gt;                1                4
+
+# ¿Y la inversion resiste un contraste? Diebold-Mariano sobre los MISMOS
+# origenes, con la correccion de Harvey-Leybourne-Newbold que dm.test aplica
+# con el argumento h.
+err &lt;- function(f) completos(tsCV(Nile, f, h = 5, initial = 59))
+ea &lt;- err(function(x, h) forecast(Arima(x, order = c(1,1,1)), h = h))
+eb &lt;- err(function(x, h) rwf(x, h = h, drift = TRUE))
+sapply(c(1, 3, 5), function(h)
+  round(dm.test(ea[, h], eb[, h], h = h, power = 2)$p.value, 4))
+#&gt; [1] 0.0176 0.0278 0.0013     significativo a los tres horizontes</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" role="tabpanel">
           <pre><code class="language-python">import numpy as np, json
@@ -167,6 +254,29 @@ def movil_rmse(f, T0=60, h=5):
 movil = {k: movil_rmse(f) for k, f in metodos.items()}
 print({k: round(v, 4) for k, v in sorted(movil.items(), key=lambda z: z[1])})
 #&gt; {'arima111': 121.3307, 'media': 132.5134, 'naive': 157.6873, 'deriva': 161.27}
+
+# Diebold-Mariano a mano: statsmodels no lo trae. Las dos normalizaciones
+# son lo que hay que acertar: la autocovarianza divide entre n y NO entre
+# n - k, y encima va la correccion de Harvey-Leybourne-Newbold.
+from scipy import stats
+
+def errores(f, T0=60, h=5):
+    return np.array([nilo[T:T + h] - np.asarray(f(nilo[:T], h), dtype=float)
+                     for T in range(T0, len(nilo) - h + 1)])
+
+def dm(ea, eb, h):
+    d = ea ** 2 - eb ** 2; n = len(d); dbar = d.mean()
+    g = [np.sum((d[k:] - dbar) * (d[:n - k] - dbar)) / n for k in range(h)]
+    est = dbar / np.sqrt((g[0] + 2 * sum(g[1:])) / n)
+    est *= np.sqrt((n + 1 - 2 * h + h * (h - 1) / n) / n)
+    return 2 * stats.t.cdf(-abs(est), df=n - 1)
+
+ea, eb = errores(arima111), errores(deriva)
+print([round(float(dm(ea[:, h - 1], eb[:, h - 1], h)), 4) for h in (1, 3, 5)])
+#&gt; [0.0176, 0.0279, 0.0013]
+# R da 0.0278 en el segundo: la diferencia esta en el ajuste del ARIMA, no
+# en la prueba. Con la autocovarianza dividida entre n - k, h = 5 daria
+# 0.0011 en vez de 0.0013.
 
 # El veredicto se invierte con el mismo codigo y los mismos datos.
 print("deriva: puesto", 1, "->", 4)

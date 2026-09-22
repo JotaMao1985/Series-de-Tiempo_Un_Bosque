@@ -1020,12 +1020,15 @@
           { clave: 'particion', titulo: 'RMSE partición', tituloLargo: 'RMSE con una sola partición', decimales: 2, mejor: 'menor' },
           { clave: 'movil', titulo: 'RMSE origen móvil', tituloLargo: 'RMSE por origen móvil', decimales: 2, mejor: 'menor' },
           { clave: 'mase', titulo: 'MASE móvil', decimales: 3, mejor: 'menor' },
-          { clave: 'cob95', titulo: 'Cob. 95 %', decimales: 1, sufijo: ' %', mejor: 'cerca', objetivo: 95 }
+          { clave: 'cob95', titulo: 'Cob. 95 %', decimales: 1, sufijo: ' %', mejor: 'cerca', objetivo: 95 },
+          // La cobertura sola no distingue nada aquí —los cinco métodos cubren
+          // el 100 %—, y esa es justamente la razón de ser del Módulo 9.
+          { clave: 'winkler95', titulo: 'Winkler 95 %', decimales: 2, mejor: 'menor' }
         ],
         filas: CASOS.nilo.tabla.map(f => ({
           metodo: f.metodo,
           particion: P[f.id] ? P[f.id].rmse : null,
-          movil: f.rmse, mase: f.mase, cob95: f.cob95
+          movil: f.rmse, mase: f.mase, cob95: f.cob95, winkler95: f.winkler95
         })),
         inicial: 'particion',
         destacada: 'Deriva',

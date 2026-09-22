@@ -286,7 +286,7 @@ course_nuevo = """    const courseData = {
         { id: 7, title: "Validación de origen móvil", shortTitle: "Origen móvil", duration: "18 min" },
         { id: 8, title: "Backtesting y Diebold–Mariano", shortTitle: "Backtesting", duration: "18 min" },
         { id: 9, title: "Evaluar el intervalo: cobertura y Winkler", shortTitle: "Cobertura", duration: "16 min" },
-        { id: 10, title: "Tres casos, tres desenlaces", shortTitle: "Tres casos", duration: "16 min" },
+        { id: 10, title: "Tres casos, tres desenlaces", shortTitle: "Tres casos", duration: "20 min" },
         { id: 11, title: "Taller: auditar un análisis asistido por IA", shortTitle: "Auditar IA", duration: "16 min" },
         { id: 12, title: "El proyecto y cierre del curso", shortTitle: "Cierre", duration: "20 min" }
       ]

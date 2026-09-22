@@ -700,8 +700,8 @@ ordenes <- list(
 # Se compara el SARIMA con cada rival usando los errores del MISMO horizonte
 # sobre los MISMOS orígenes. h > 1 exige la corrección de Harvey-Leybourne-Newbold,
 # que dm.test aplica con el argumento h.
-dm_de <- function(id_a, id_b, h) {
-  ea <- oms[[id_a]]$error[, h]; eb <- oms[[id_b]]$error[, h]
+dm_de <- function(id_a, id_b, h, fuente = oms) {
+  ea <- fuente[[id_a]]$error[, h]; eb <- fuente[[id_b]]$error[, h]
   ok <- !is.na(ea) & !is.na(eb)
   # El estimador de varianza por defecto ("acf") puede salir NEGATIVO cuando la
   # autocovarianza muestral de la diferencia de pérdidas lo es; dm.test avisa y
@@ -855,12 +855,27 @@ metodos_trm <- list(
   list(id = "ets",    nombre = "ETS",              f = m_ets_n),
   list(id = "auto",   nombre = "auto.arima",       f = m_auto_n)
 )
+oms_trm <- list()
 tabla_trm <- lapply(metodos_trm, function(mt) {
   om <- origen_movil(trm, mt$f, T0 = T0_TRM)
+  oms_trm[[mt$id]] <<- om
   c(list(id = mt$id, metodo = mt$nombre), resume_om(om, trm, T0_TRM, M))
 })
 orden_trm <- sapply(tabla_trm, function(z) z$id)[order(sapply(tabla_trm, function(z) z$rmse))]
 cat("   TRM, orden por RMSE:", paste(orden_trm, collapse = " > "), "\n")
+
+# El titular del caso es «nadie vence al naive», y esa es una afirmación de
+# significancia: el Módulo 8 existe para no dejarla en la diferencia de RMSE.
+# Se contrasta el naive contra cada rival, con el mismo protocolo del backtest.
+dm_trm <- list()
+for (id in setdiff(sapply(metodos_trm, function(z) z$id), "naive")) {
+  for (h in c(1, 6, 12)) {
+    z <- dm_de("naive", id, h, fuente = oms_trm)
+    if (!is.null(z)) dm_trm[[length(dm_trm) + 1]] <- z
+  }
+}
+cat("   TRM, Diebold-Mariano:", sum(sapply(dm_trm, function(z) z$significativo)),
+    "de", length(dm_trm), "significativas\n")
 
 # --- I2. Nilo: la partición única corona al naive; el origen móvil no ------
 # Se replica EXACTAMENTE la partición del capítulo 4 (corte en 1950, 80 de
@@ -884,6 +899,7 @@ nilo_particion <- lapply(list(
 })
 
 T0_NILO <- 60; H_NILO <- 5
+oms_nilo <- list()
 tabla_nilo <- lapply(list(
   list(id = "arima111", nombre = "ARIMA(1,1,1)", f = m_arima_n),
   list(id = "naive",    nombre = "Naive",        f = m_naive),
@@ -892,6 +908,7 @@ tabla_nilo <- lapply(list(
   list(id = "auto",     nombre = "auto.arima",   f = m_auto_n)
 ), function(mt) {
   om <- origen_movil(nilo, mt$f, T0 = T0_NILO, h = H_NILO)
+  oms_nilo[[mt$id]] <<- om
   e <- as.numeric(om$error); r <- as.numeric(om$reales); ok <- !is.na(e)
   entrena <- subset(nilo, start = 1, end = T0_NILO)
   list(id = mt$id, metodo = mt$nombre,
@@ -904,6 +921,19 @@ tabla_nilo <- lapply(list(
        rmse_h = r4(sqrt(colMeans(om$error^2, na.rm = TRUE))))
 })
 orden_nilo <- sapply(tabla_nilo, function(z) z$id)[order(sapply(tabla_nilo, function(z) z$rmse))]
+
+# El caso 3 invierte el orden de la partición única del capítulo 4, y la
+# pregunta que sigue es si esa inversión es distinguible del azar. Aquí el
+# horizonte es 5, así que se contrasta en 1, 3 y 5.
+dm_nilo <- list()
+for (id in c("naive", "media", "deriva", "auto")) {
+  for (h in c(1, 3, 5)) {
+    z <- dm_de("arima111", id, h, fuente = oms_nilo)
+    if (!is.null(z)) dm_nilo[[length(dm_nilo) + 1]] <- z
+  }
+}
+cat("   Nilo, Diebold-Mariano:", sum(sapply(dm_nilo, function(z) z$significativo)),
+    "de", length(dm_nilo), "significativas\n")
 cat("   Nilo (partición) RMSE:",
     paste(sapply(nilo_particion, function(z) sprintf("%s=%.2f", z$id, z$rmse)), collapse = " | "), "\n")
 cat("   Nilo (origen móvil) orden:", paste(orden_nilo, collapse = " > "), "\n")
@@ -1020,9 +1050,10 @@ datos <- list(
   winkler_demo = winkler_demo,
   casos = list(
     trm = list(T0 = T0_TRM, primer_origen = etiqueta_fecha(trm, T0_TRM),
-               tabla = tabla_trm, orden = orden_trm),
+               tabla = tabla_trm, orden = orden_trm, dm = dm_trm),
     nilo = list(particion = nilo_particion, h_particion = h_nilo,
-                T0 = T0_NILO, h = H_NILO, tabla = tabla_nilo, orden = orden_nilo)
+                T0 = T0_NILO, h = H_NILO, tabla = tabla_nilo, orden = orden_nilo,
+                dm = dm_nilo)
   ),
   auditoria_ia = auditoria_ia
 )
