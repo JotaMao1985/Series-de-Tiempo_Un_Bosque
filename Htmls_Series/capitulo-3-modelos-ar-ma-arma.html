@@ -3742,8 +3742,9 @@ print(np.round(arma_acf(np.r_[1, -0.7], np.r_[1, 0.5], lags=6)[1:], 4))
           <span class="text-xl">🎯</span>
           <div>
             <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
-            <p class="text-gray-600 text-sm" style="margin:0;">Usar la tabla ACF/PACF para proponer $(p,q)$ — y
-              descubrir de primera mano por qué esa tabla funciona mucho mejor en la teoría que con datos reales.</p>
+            <p class="text-gray-600 text-sm" style="margin:0;">Escribir los momentos de un ARMA($p,q$) y usar la tabla
+              ACF/PACF para proponer $(p,q)$ — descubriendo de primera mano por qué esa tabla funciona mucho mejor en
+              la teoría que con datos reales.</p>
           </div>
         </div>
       </div>
@@ -3910,6 +3911,99 @@ print(np.round(arma_acf(np.r_[1, -0.7], np.r_[1, 0.5], lags=6)[1:], 4))
           <strong>arrancar</strong>, no para decidir.</p>
       </div>
 
+
+      <h3>Media, varianza y autocorrelación</h3>
+
+      <p>Antes de mirar qué le pasa a la ACF conviene escribir los momentos del proceso, como se hizo con el AR en el
+        Módulo 2 y con el MA en el Módulo 3. El ARMA los tiene los tres, pero uno de ellos deja de escribirse en
+        función de los parámetros: hay que pasar por los pesos $\psi$.</p>
+
+      <div class="formula">
+        <p>Media y autocovarianzas de un ARMA($p,q$) estacionario:</p>
+        $$\begin{gathered}
+          \mu = \frac{c}{1-\phi_1-\cdots-\phi_p} \\[0.8em]
+          \gamma_k = \sigma^2 \sum_{j=0}^{\infty} \psi_j\,\psi_{j+k}, \qquad k \ge 0 \\[0.8em]
+          \gamma_0 = \operatorname{Var}(y_t) = \sigma^2 \sum_{j=0}^{\infty} \psi_j^{\,2}
+        \end{gathered}$$
+        <p style="margin-bottom:0;">con los pesos $\psi_j$ de la representación MA($\infty$) del Módulo 4.</p>
+      </div>
+
+      <p>La media es la del AR y nada más: la parte MA es una suma de choques de media cero, así que no la mueve. Lo
+        que cambia es la varianza. En el AR($p$) se escribía con los $\phi$ y las $\rho_k$, y en el MA($q$) con los
+        $\theta$ en una suma de $q+1$ términos; aquí, para $p \ge 1$, no hay forma corta en función de los
+        parámetros y hay que sumar la serie de los $\psi$. Es el precio de mezclar, y es la misma razón por la que el
+        Módulo 4 insistía en que los $\psi$ no son un adorno algebraico.</p>
+
+      <div class="note">
+        <p style="margin-bottom:0;"><strong>Las fórmulas de los módulos 2 y 3 son casos de esta.</strong> Con $q = 0$
+          los pesos son $\psi_j = \phi^{\,j}$ y la suma geométrica devuelve $\gamma_0 = \sigma^2/(1-\phi^2)$. Con
+          $p = 0$ solo hay $q+1$ pesos no nulos —$1, \theta_1, \ldots, \theta_q$— y sale
+          $\gamma_0 = \sigma^2(1+\sum\theta_j^2)$. Y para $k > q$ <strong>todos</strong> los productos
+          $\psi_j\psi_{j+k}$ de la suma llevan un factor nulo: ahí está, escrito como una suma vacía, el corte exacto
+          de la ACF de un MA.</p>
+      </div>
+
+      <p>Para el modelo mixto más pequeño, que es el que este capítulo usa una y otra vez, sí hay forma cerrada.</p>
+
+      <div class="formula">
+        <p><strong>ARMA(1,1)</strong>, $y_t = c + \phi y_{t-1} + \varepsilon_t + \theta\varepsilon_{t-1}$:</p>
+        $$\gamma_0 = \sigma^2\,\frac{1+2\phi\theta+\theta^2}{1-\phi^2}, \qquad
+          \gamma_1 = \sigma^2\,\frac{(1+\phi\theta)(\phi+\theta)}{1-\phi^2}$$
+      </div>
+
+      <p>Las dos comparten denominador, así que al dividir una entre otra el $1-\phi^2$ se cancela y queda la
+        $\rho_1$ que usa la sección siguiente. Conviene verlo antes de encontrársela: ese $1+2\phi\theta+\theta^2$
+        que allí aparece como un denominador sin explicación <strong>es la varianza del proceso</strong>, salvo el
+        factor $\sigma^2/(1-\phi^2)$. Con $\phi = 0.7$ y $\theta = 0.5$ vale $1.95$, y la varianza,
+        $1.95/0.51 = 3.8235\,\sigma^2$.</p>
+
+      <div class="derivacion">
+        <button type="button" class="derivacion-boton" aria-expanded="false" aria-controls="der-momentos-arma">
+          <i class="fas fa-square-root-variable" aria-hidden="true"></i>
+          <span class="derivacion-texto">Ver el desarrollo paso a paso</span>
+          <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="derivacion-panel" id="der-momentos-arma" hidden>
+          <ol class="derivacion-pasos">
+            <li>
+              <p>Parte de la representación MA($\infty$) del Módulo 4, que existe para todo ARMA estacionario. Con el
+                proceso centrado:</p>
+              $$y_t - \mu = \sum_{j=0}^{\infty} \psi_j\,\varepsilon_{t-j}$$
+            </li>
+            <li>
+              <p>Multiplica por $y_{t-k}-\mu$ y toma esperanzas. Quedan productos de dos choques, y como el ruido
+                blanco es incorrelado <strong>solo sobreviven los que emparejan el mismo choque</strong>: los términos
+                $\psi_j\varepsilon_{t-j}$ y $\psi_i\varepsilon_{t-k-i}$ se encuentran cuando $j = i+k$. Cada
+                encuentro aporta $E[\varepsilon^2] = \sigma^2$.</p>
+              $$\gamma_k = \sigma^2 \sum_{i=0}^{\infty} \psi_i\,\psi_{i+k}$$
+            </li>
+            <li>
+              <p>Con $k = 0$ los índices coinciden y la suma es de cuadrados:
+                $\gamma_0 = \sigma^2\sum_j \psi_j^{\,2}$. Es la cantidad que el Módulo 4 llamaba el
+                <em>techo</em> del abanico de pronóstico, ahora con nombre: la varianza del proceso.</p>
+            </li>
+            <li>
+              <p>Para el ARMA(1,1) los pesos son $\psi_0 = 1$ y $\psi_j = (\phi+\theta)\phi^{\,j-1}$. Separando
+                el primero, lo que queda es una geométrica de razón $\phi^2$:</p>
+              $$\gamma_0 = \sigma^2\left[1 + (\phi+\theta)^2\sum_{j\ge1}\phi^{\,2(j-1)}\right]
+                = \sigma^2\left[1 + \frac{(\phi+\theta)^2}{1-\phi^2}\right]$$
+              <p style="margin-bottom:0;">y al juntar en una sola fracción, $1-\phi^2+(\phi+\theta)^2$ se simplifica
+                a $1+2\phi\theta+\theta^2$.</p>
+            </li>
+            <li>
+              <p>Lo mismo con $k = 1$, ahora emparejando $\psi_j$ con $\psi_{j+1}$:</p>
+              $$\gamma_1 = \sigma^2\left[(\phi+\theta) + (\phi+\theta)^2\phi\sum_{j\ge1}\phi^{\,2(j-1)}\right]
+                = \sigma^2\,\frac{(\phi+\theta)(1+\phi\theta)}{1-\phi^2}$$
+            </li>
+          </ol>
+          <p class="derivacion-resultado">Dividiendo $\gamma_1$ entre $\gamma_0$ desaparece el denominador común y
+            sale exactamente la $\rho_1$ de la sección siguiente. Compruébalo con $\phi = 0.7$ y $\theta = 0.5$:
+            $\gamma_0 = 3.8235\,\sigma^2$, $\gamma_1 = 3.1765\,\sigma^2$ y su cociente,
+            $\rho_1 = 0.8308$ — la primera de las cuatro cifras que el Módulo 4 había obtenido sumando pesos
+            $\psi$.</p>
+        </div>
+      </div>
+
       <h3>Por qué la tabla no da los órdenes de un ARMA</h3>
 
       <p>La fila del ARMA esconde un resultado exacto. Para $k > q$, la observación $y_{t-k}$ solo depende de choques
@@ -3918,8 +4012,13 @@ print(np.round(arma_acf(np.r_[1, -0.7], np.r_[1, 0.5], lags=6)[1:], 4))
         recursión que la de un AR($p$):</p>
 
       <div class="formula">
-        $$\rho_k = \phi_1\rho_{k-1} + \cdots + \phi_p\rho_{k-p}$$
+        $$\rho_k = \phi_1\rho_{k-1} + \cdots + \phi_p\rho_{k-p}, \qquad k > q$$
       </div>
+
+      <p>La condición $k > q$ no es adorno. En el ARMA(2,1) de $\phi = (0.5,\,0.3)$ y $\theta = 0.4$ la recursión
+        acierta desde $\rho_2$ —$0.7307$, $0.6238$, $0.5311$—, pero aplicada a $\rho_1$ daría $0.8$ cuando el valor
+        verdadero es $0.8614$. Los primeros $q$ rezagos son justamente los que la parte MA todavía toca, y para esos
+        hay que volver a la suma de $\psi$ de la sección anterior.</p>
 
       <p>En el ARMA(1,1) eso deja un único valor por calcular. El primero sale de la fórmula</p>
 
@@ -3962,7 +4061,30 @@ round(r[3:6], 4)                                  # rho_2 a rho_5
 #&gt;      2      3      4      5
 #&gt; 0.7307 0.6238 0.5311 0.4527
 round(unname(0.5 * r[2:5] + 0.3 * r[1:4]), 4)    # phi1 rho_{k-1} + phi2 rho_{k-2}
-#&gt; [1] 0.7307 0.6238 0.5311 0.4527</code></pre>
+#&gt; [1] 0.7307 0.6238 0.5311 0.4527
+
+# ...pero NO para k = q: aqui q = 1 y la recursion se equivoca
+round(unname(0.5 * r[1] + 0.3 * r[1]), 4)        # lo que daria la recursion
+#&gt; [1] 0.8
+round(unname(r[2]), 4)                            # rho_1 verdadero
+#&gt; [1] 0.8614
+
+# VARIANZA del proceso: gamma_k = s2 * sum(psi_j * psi_{j+k})
+sigma2 &lt;- 1
+psi    &lt;- c(1, ARMAtoMA(ar = 0.7, ma = 0.5, lag.max = 4000))
+round(sigma2 * sum(psi^2), 4)                     # gamma_0
+#&gt; [1] 3.8235
+
+# La misma, por la formula cerrada del ARMA(1,1)
+phi &lt;- 0.7; theta &lt;- 0.5
+round(sigma2 * (1 + 2*phi*theta + theta^2) / (1 - phi^2), 4)
+#&gt; [1] 3.8235
+
+# Y gamma_1 / gamma_0 devuelve la rho_1 de la formula de arriba
+g1 &lt;- sigma2 * sum(psi[-length(psi)] * psi[-1])
+round(c(gamma1 = g1, rho1 = g1 / (sigma2 * sum(psi^2))), 4)
+#&gt;  gamma1    rho1
+#&gt;  3.1765  0.8308</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np
@@ -3986,6 +4108,26 @@ print(np.round(r[2:6], 4))                        # rho_2 a rho_5
 # [0.7307 0.6238 0.5311 0.4527]
 print(np.round(0.5 * r[1:5] + 0.3 * r[0:4], 4))   # phi1 rho_{k-1} + phi2 rho_{k-2}
 # [0.7307 0.6238 0.5311 0.4527]
+
+# ...pero NO para k = q: aqui q = 1 y la recursion se equivoca
+print(round(0.5 * r[0] + 0.3 * r[0], 4), "frente a", round(r[1], 4))
+# 0.8 frente a 0.8614
+
+# VARIANZA del proceso: gamma_k = s2 * sum(psi_j * psi_{j+k})
+from statsmodels.tsa.arima_process import arma2ma
+sigma2 = 1.0
+psi = arma2ma(np.r_[1, -0.7], np.r_[1, 0.5], lags=4001)
+print(round(sigma2 * (psi**2).sum(), 4))          # gamma_0 -> 3.8235
+
+# La misma, por la formula cerrada del ARMA(1,1)
+phi, theta = 0.7, 0.5
+print(round(sigma2 * (1 + 2*phi*theta + theta**2) / (1 - phi**2), 4))
+# 3.8235
+
+# Y gamma_1 / gamma_0 devuelve la rho_1 de la formula de arriba
+g1 = sigma2 * (psi[:-1] * psi[1:]).sum()
+print(round(g1, 4), round(g1 / (sigma2 * (psi**2).sum()), 4))
+# 3.1765 0.8308
 </code></pre>
         </div>
       </div>
