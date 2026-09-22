@@ -2843,7 +2843,8 @@ print(proceso.arroots, proceso.isstationary)</code></pre>
           <div>
             <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
             <p class="text-gray-600 text-sm" style="margin:0;">Reconocer un AR($p$) por su firma: <strong>PACF que se
-                corta</strong> en el rezago $p$ y ACF que decae. Y saber cuándo es estacionario.</p>
+                corta</strong> en el rezago $p$ y ACF que decae. Saber cuándo es estacionario y calcular sus
+              momentos: media, varianza y autocorrelaciones.</p>
           </div>
         </div>
       </div>
@@ -2944,10 +2945,69 @@ print(proceso.arroots, proceso.isstationary)</code></pre>
           modela así y una estacionalidad mensual no.</p>
       </div>
 
+
+      <h3>Media, varianza y autocorrelación</h3>
+
+      <p>Hasta aquí el AR($p$) se ha descrito por su forma y por su firma, pero no se han escrito sus momentos. Son
+        tres y los tres hacen falta más adelante: la media para leer la columna <code>intercept</code> de una salida,
+        la varianza para los intervalos de pronóstico del Capítulo 6, y las autocorrelaciones para identificar el
+        orden.</p>
+
+      <div class="formula">
+        <p>Media, varianza y autocorrelaciones de un AR($p$) estacionario:</p>
+        $$\begin{gathered}
+          \mu = \frac{c}{1-\phi_1-\phi_2-\cdots-\phi_p} \\[0.8em]
+          \gamma_0 = \operatorname{Var}(y_t)
+            = \frac{\sigma^2}{1 - \phi_1\rho_1 - \phi_2\rho_2 - \cdots - \phi_p\rho_p} \\[0.8em]
+          \rho_k = \phi_1\rho_{k-1} + \phi_2\rho_{k-2} + \cdots + \phi_p\rho_{k-p}, \qquad k \ge 1
+        \end{gathered}$$
+        <p style="margin-bottom:0;">con $\rho_0 = 1$ y $\rho_{-k} = \rho_k$.</p>
+      </div>
+
+      <p>Conviene notar la diferencia con el MA del módulo siguiente, donde la varianza se escribe de una vez en
+        función de los $\theta$. Aquí no: la varianza del AR está escrita en función de las propias
+        autocorrelaciones, así que el orden de cálculo es obligatorio —primero la recursión, que se resuelve sola a
+        partir de $\rho_0 = 1$, y con sus soluciones la varianza—. Para los dos órdenes que se usan en la práctica
+        ese trabajo ya está hecho.</p>
+
+      <div class="formula">
+        <p><strong>AR(1)</strong>, con $|\phi| < 1$:</p>
+        $$\rho_k = \phi^{\,k}, \qquad \gamma_0 = \frac{\sigma^2}{1-\phi^2}$$
+        <p><strong>AR(2)</strong>, con $(\phi_1,\phi_2)$ dentro del triángulo:</p>
+        $$\begin{gathered}
+          \rho_1 = \frac{\phi_1}{1-\phi_2}, \qquad \rho_2 = \phi_2 + \frac{\phi_1^2}{1-\phi_2} \\[0.6em]
+          \rho_k = \phi_1\rho_{k-1} + \phi_2\rho_{k-2} \quad (k \ge 3)
+        \end{gathered}$$
+        $$\begin{aligned}
+          \gamma_0 &= \frac{(1-\phi_2)\,\sigma^2}{(1+\phi_2)\bigl[(1-\phi_2)^2 - \phi_1^2\bigr]} \\[0.6em]
+            &= \frac{(1-\phi_2)\,\sigma^2}{(1+\phi_2)(1-\phi_1-\phi_2)(1+\phi_1-\phi_2)}
+        \end{aligned}$$
+      </div>
+
+      <p>La fórmula del AR(1) es la que explica las cifras del primer simulador: $\rho_k = \phi^k$ es literalmente
+        «las potencias de $\phi$», positivas y decrecientes cuando $\phi &gt; 0$ ($0.800,\,0.640,\,0.512,\ldots$) y
+        alternando de signo cuando $\phi &lt; 0$ ($-0.700,\,0.490,\,-0.343,\ldots$). Y explica también por qué la ACF
+        de un AR no se corta nunca: una potencia de un número menor que uno en valor absoluto se acerca a cero, pero
+        no llega. Ese contraste con el $\rho_k = 0$ exacto de la PACF es toda la firma del AR.</p>
+
+      <p>La varianza dice algo más. Con $\sigma^2$ fijo, $\gamma_0 = \sigma^2/(1-\phi^2)$ crece sin límite a
+        medida que $\phi$ se acerca a $1$: un proceso muy persistente amplifica el mismo ruido hasta una serie que
+        se aleja mucho más de su media. Es la versión cuantitativa de lo que se ve al mover el deslizador hacia el
+        borde del triángulo.</p>
+
+      <div class="note">
+        <p style="margin-bottom:0;"><strong>El denominador es el triángulo.</strong> Los tres factores de la varianza
+          del AR(2) son, uno por uno, las tres desigualdades de la sección anterior: $1-\phi_1-\phi_2$,
+          $1+\phi_1-\phi_2$ y $1+\phi_2$. Dentro del triángulo los tres son positivos y $\gamma_0$ es finita;
+          sobre cualquiera de los tres lados alguno se anula y la varianza estalla. La región de estacionariedad no
+          es entonces una convención algebraica sobre unas raíces: es exactamente el conjunto de parámetros con los
+          que el proceso tiene varianza finita.</p>
+      </div>
+
       <h3>Las ecuaciones de Yule–Walker</h3>
 
-      <p>¿De dónde sale la ACF teórica que dibuja el simulador? De un sistema de ecuaciones que relaciona los
-        $\phi$ con las autocorrelaciones, y que además será nuestro primer método de estimación en el Módulo 7.</p>
+      <p>¿De dónde salen esas fórmulas? De un mismo sistema de ecuaciones que relaciona los $\phi$ con las
+        autocovarianzas del proceso, y que además será nuestro primer método de estimación en el Módulo 7.</p>
 
       <div class="derivacion">
         <button type="button" class="derivacion-boton" aria-expanded="false" aria-controls="der-yule-walker">
@@ -2980,12 +3040,25 @@ print(proceso.arroots, proceso.isstationary)</code></pre>
               <p>que se resuelve en</p>
               $$\rho_1 = \frac{\phi_1}{1-\phi_2}, \qquad \rho_2 = \phi_2 + \frac{\phi_1^2}{1-\phi_2}$$
             </li>
+            <li>
+              <p>Falta la varianza, y sale de la misma cuenta con $k = 0$. La única diferencia es que ahora el término
+                del ruido <strong>no</strong> se anula: $y_t$ sí contiene a $\varepsilon_t$, y como el choque es
+                incorrelado con todo el pasado queda $E[\varepsilon_t y_t] = E[\varepsilon_t^2] = \sigma^2$.</p>
+              $$\gamma_0 = \phi_1\gamma_1 + \phi_2\gamma_2 + \cdots + \phi_p\gamma_p + \sigma^2$$
+              <p>Sustituyendo $\gamma_k = \rho_k\,\gamma_0$ y despejando se llega a la varianza del proceso:</p>
+              $$\gamma_0 = \frac{\sigma^2}{1 - \phi_1\rho_1 - \phi_2\rho_2 - \cdots - \phi_p\rho_p}$$
+              <p style="margin-bottom:0;">Para el AR(1) basta con $\rho_1 = \phi$ para recuperar
+                $\gamma_0 = \sigma^2/(1-\phi^2)$, que en el Módulo 1 había salido por otro camino, sumando la serie
+                geométrica de la representación MA($\infty$).</p>
+            </li>
           </ol>
           <p class="derivacion-resultado">El sistema se puede leer en las dos direcciones. De los $\phi$ a las $\rho$
             da la <strong>ACF teórica</strong> (lo que dibuja el simulador). De las $\rho$ muestrales a los $\phi$ da el
             <strong>estimador de Yule–Walker</strong> del Módulo 7. Compruébalo con el AR(2) de
             $\phi = (0.5,\,0.3)$: $\rho_1 = 0.5/0.7 = 0.714$ y $\rho_2 = 0.3 + 0.25/0.7 = 0.657$, exactamente las
-            cifras del simulador.</p>
+            cifras del simulador. Y con esas dos, la varianza:
+            $\gamma_0 = \sigma^2/(1 - 0.5(0.714) - 0.3(0.657)) = 2.244\,\sigma^2$, más del doble de la del ruido
+            que lo alimenta.</p>
         </div>
       </div>
 
@@ -3011,6 +3084,17 @@ rho2 &lt;- phi[2] + phi[1]^2 / (1 - phi[2])
 round(c(rho1, rho2), 4)
 #&gt; [1] 0.7143 0.6571
 
+# Varianza del proceso: ecuacion de Yule-Walker con k = 0
+sigma2 &lt;- 1
+rho    &lt;- ARMAacf(ar = phi, lag.max = 2)[-1]
+round(sigma2 / (1 - sum(phi * rho)), 4)
+#&gt; [1] 2.2436
+
+# La misma, por la formula cerrada del AR(2)
+round(sigma2 * (1 - phi[2]) /
+        ((1 + phi[2]) * ((1 - phi[2])^2 - phi[1]^2)), 4)
+#&gt; [1] 2.2436
+
 # Estacionariedad
 all(Mod(polyroot(c(1, -phi))) &gt; 1)
 #&gt; [1] TRUE</code></pre>
@@ -3030,6 +3114,15 @@ print(np.round(arma_pacf(ar, ma, lags=6)[1:], 4))
 # [ 0.7143  0.3    -0.      0.     -0.    ]
 #   los "-0." son ceros con signo negativo del punto flotante: la PACF
 #   se corta igual de exactamente que en R
+
+# Varianza del proceso: ecuacion de Yule-Walker con k = 0
+sigma2 = 1.0
+rho = arma_acf(ar, ma, lags=3)[1:]
+print(round(sigma2 / (1 - phi @ rho), 4))          # 2.2436
+
+# La misma, por la formula cerrada del AR(2)
+print(round(sigma2 * (1 - phi[1]) /
+            ((1 + phi[1]) * ((1 - phi[1])**2 - phi[0]**2)), 4))   # 2.2436
 
 proceso = ArmaProcess(ar, ma)
 print(proceso.isstationary)   # True</code></pre>
