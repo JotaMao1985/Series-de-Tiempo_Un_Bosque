@@ -172,7 +172,7 @@ course_nuevo = """    const courseData = {
         { id: 7, title: "Dentro de auto.arima", shortTitle: "auto.arima", duration: "14 min" },
         { id: 8, title: "Diagnóstico y errores comunes", shortTitle: "Diagnóstico", duration: "16 min" },
         { id: 9, title: "Pronóstico: forma e intervalos", shortTitle: "Pronóstico", duration: "16 min" },
-        { id: 10, title: "Caso TRM, puente y cierre", shortTitle: "Cierre", duration: "18 min" }
+        { id: 10, title: "Caso TRM, puente y cierre", shortTitle: "Cierre", duration: "21 min" }
       ]
     };"""
 html = una_vez(html, course_viejo, course_nuevo, "courseData")
@@ -220,7 +220,7 @@ SIMULADORES = [
     "nilo-y-diferencia", "escalon-vs-raiz", "identificacion-nilo",
     "explorador-modelos", "traza-auto-arima", "sobrediferenciacion",
     "forma-pronostico", "pesos-psi-sigma", "trm-identificacion",
-    "puente-estacional",
+    "trm-abanico", "puente-estacional",
 ]
 
 for n in range(1, 11):

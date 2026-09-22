@@ -89,6 +89,77 @@
           reaparece con otro nombre —el método <em>naïve</em>— y como <strong>referencia que hay que batir</strong>.</p>
       </div>
 
+      <p>Queda una etapa, y en esta serie es la más instructiva de todas. El Módulo 9 dedujo que el ancho del
+        intervalo sale de los pesos $\psi$, $\sigma_h^2 = \sigma^2\sum_{j&lt;h}\psi_j^2$, y que la caminata aleatoria
+        es el caso de referencia porque <strong>todos sus $\psi$ valen $1$</strong>: la integración no amortigua
+        nada, así que ningún choque se olvida nunca. Aquí no hay que aplicar la fórmula, hay que leerla:</p>
+
+      <div class="formula">
+        $$\sigma_h = \hat\sigma\sqrt{h} = 121.48\,\sqrt{h}, \qquad
+          \text{semiancho al }95\,\% = 238.09\,\sqrt{h}$$
+      </div>
+
+      <p>Con el último dato observado —junio de 2026, $3497.09$ pesos— y un pronóstico que es esa misma cifra
+        para siempre, el intervalo queda así:</p>
+
+      <table>
+        <caption class="sr-only">Intervalos de pronóstico de la TRM bajo el modelo de caminata aleatoria</caption>
+        <thead>
+          <tr>
+            <th scope="col">$h$</th><th scope="col">Mes</th>
+            <th scope="col">$\sigma_h$</th><th scope="col">Semiancho al 95 %</th>
+            <th scope="col">Intervalo (COP/USD)</th><th scope="col">Sobre el nivel</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>$1$</td><td>jul 2026</td><td>$121.48$</td><td>$\pm 238.09$</td>
+            <td>$[3259.00,\ 3735.18]$</td><td>$6.8\,\%$</td></tr>
+          <tr><td>$3$</td><td>sep 2026</td><td>$210.40$</td><td>$\pm 412.38$</td>
+            <td>$[3084.71,\ 3909.47]$</td><td>$11.8\,\%$</td></tr>
+          <tr><td>$6$</td><td>dic 2026</td><td>$297.55$</td><td>$\pm 583.19$</td>
+            <td>$[2913.90,\ 4080.28]$</td><td>$16.7\,\%$</td></tr>
+          <tr><td>$12$</td><td>jun 2027</td><td>$420.80$</td><td>$\pm 824.76$</td>
+            <td>$[2672.33,\ 4321.85]$</td><td>$23.6\,\%$</td></tr>
+          <tr><td>$24$</td><td>jun 2028</td><td>$595.11$</td><td>$\pm 1166.39$</td>
+            <td>$[2330.70,\ 4663.48]$</td><td>$33.4\,\%$</td></tr>
+        </tbody>
+      </table>
+
+      <div class="simulador" data-simulador="trm-abanico">
+        <h4><i class="fas fa-chart-area" aria-hidden="true"></i> Etapa 4 · El pronóstico y su abanico</h4>
+        <p class="simulador-intro">El deslizador mueve el horizonte. El pronóstico es una recta horizontal
+          —ARIMA($0,1,0$) sin deriva— y lo único que ocurre al alejarse es que el abanico se abre, como
+          $\sqrt{h}$ y sin llegar nunca a un techo. Las bandas se calculan aquí mismo a partir de
+          $\hat\sigma^2 = 14756.38$, no están precalculadas.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper" style="height:260px;">
+          <canvas aria-label="TRM observada y pronóstico de caminata aleatoria con sus intervalos" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="definition">
+        <h4><i class="fas fa-lightbulb mr-2" aria-hidden="true"></i>Un abanico sin techo, y qué significa</h4>
+        <p>Conviene comparar las tres series del curso, porque la fórmula es la misma y el resultado no se
+          parece en nada:</p>
+        <ul>
+          <li><strong>La TRM</strong>, ARIMA($0,1,0$): $\psi_j = 1$ para todo $j$, la suma $\sum_{j&lt;h}\psi_j^2$
+            vale exactamente $h$, y $\sigma_{24}/\sigma_1 = \sqrt{24} = 4.90$.</li>
+          <li><strong>El Nilo</strong>, ARIMA($1,1,1$): los $\psi$ caen hasta
+            $\psi_\infty = (1+\theta)/(1-\phi) = 0.1688$, así que la suma crece mucho más despacio y
+            $\sigma_{30}/\sigma_1 = 1.404$, frente al $\sqrt{30} = 5.48$ de una caminata. La incertidumbre crece
+            casi <strong>cuatro veces menos</strong>.</li>
+          <li><strong>El caso del Capítulo 3</strong>, una serie estacionaria: ahí $\sum_j \psi_j^2$
+            <em>converge</em>, y el abanico deja de abrirse. Esa es la frontera exacta que marca la raíz unitaria:
+            con ella, la suma diverge y no hay techo.</li>
+        </ul>
+        <p style="margin-bottom:0;">Y el resultado es incómodo de leer, que es justamente por lo que hay que
+          leerlo. A dos años vista el intervalo del $95\,\%$ abarca <strong>un tercio del nivel de la serie</strong>.
+          El modelo no está fallando: está informando de que a ese horizonte no hay nada que decir. Un pronóstico
+          honesto puede ser inútil, y confundir las dos cosas es el error que el Capítulo 6 enseña a evitar
+          midiendo si ese $95\,\%$ se cumple de verdad.</p>
+      </div>
+
       <p>Un detalle más, por si tienta pensar que en la TRM no hay nada que estudiar: aplicando Ljung–Box a los
         residuales <strong>al cuadrado</strong> se obtiene $p = 0.857$, así que tampoco hay agrupamiento de
         volatilidad detectable a este nivel de agregación. Lo que sí hay es no-normalidad clara ($p = 0.0006$), es

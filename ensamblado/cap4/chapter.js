@@ -712,6 +712,108 @@
     };
 
     // ================================================================
+    // Módulo 10 · El abanico de la caminata aleatoria
+    // ================================================================
+    // Aquí no hay nada precalculado: con sigma^2 del ajuste y el último valor
+    // observado, las bandas salen de la fórmula del Módulo 9 con psi_j = 1,
+    // que es lo que hace que se reduzca a sigma*sqrt(h) EXACTAMENTE.
+    SIMULADORES['trm-abanico'] = function (raiz) {
+      const serie = SERIES_CAP4.trm.valores;
+      const inicio = SERIES_CAP4.trm.inicio;
+      const sigma = Math.sqrt(TRM.caminata.sigma2);
+      const ultimo = serie[serie.length - 1];
+      const VISIBLES = 48;                 // meses de historia a la vista
+      const H_MAX = 36;
+      const Z80 = 1.281552, Z95 = 1.959964;
+      const params = { h: 24 };
+      const lectura = raiz.querySelector('.simulador-lectura');
+      const canvas = raiz.querySelector('canvas');
+      let grafico = null;
+
+      const historia = serie.slice(-VISIBLES);
+      // El primer mes visible, para que las etiquetas cuadren con el recorte.
+      const saltados = serie.length - historia.length;
+      const mesInicial = inicio[1] + saltados;
+
+      function pintar() {
+        const H = Math.round(params.h);
+        if (grafico) grafico.destroy();
+        const etiquetas = mesesDesde(inicio[0], mesInicial, historia.length + H);
+        // El pronóstico arranca enganchado al último observado, para que la
+        // línea no salga flotando: por eso el relleno empieza en ese punto.
+        const previos = historia.map(() => null);
+        previos[previos.length - 1] = ultimo;
+        const banda = z => previos.concat(
+          Array.from({ length: H }, (_, j) => ultimo + z * sigma * Math.sqrt(j + 1)));
+
+        const datasets = [
+          {
+            label: 'TRM observada',
+            data: historia.concat(Array(H).fill(null)),
+            borderColor: COLORES_GRAFICO.primario,
+            borderWidth: 1.6, pointRadius: 0, fill: false
+          },
+          {
+            label: 'Intervalo 95 %', data: banda(Z95),
+            borderColor: 'rgba(255, 102, 0, 0.28)', backgroundColor: 'rgba(255, 102, 0, 0.10)',
+            borderWidth: 1, pointRadius: 0, fill: '+3'
+          },
+          {
+            label: 'Intervalo 80 %', data: banda(Z80),
+            borderColor: 'rgba(255, 102, 0, 0.45)', backgroundColor: 'rgba(255, 102, 0, 0.18)',
+            borderWidth: 1, pointRadius: 0, fill: '+1'
+          },
+          {
+            label: '', data: banda(-Z80),
+            borderColor: 'rgba(255, 102, 0, 0.45)', borderWidth: 1, pointRadius: 0, fill: false
+          },
+          {
+            label: '', data: banda(-Z95),
+            borderColor: 'rgba(255, 102, 0, 0.28)', borderWidth: 1, pointRadius: 0, fill: false
+          },
+          {
+            label: 'Pronóstico', data: banda(0),
+            borderColor: COLORES_GRAFICO.secundario,
+            borderWidth: 2.4, pointRadius: 0, fill: false
+          }
+        ];
+
+        grafico = crearGraficoLinea(canvas, etiquetas, datasets, {
+          plugins: {
+            legend: { labels: { font: { family: 'Montserrat', size: 12 }, boxWidth: 24,
+                                filter: item => item.text !== '' } },
+            tooltip: { backgroundColor: '#012820', titleFont: { family: 'Montserrat' },
+                       bodyFont: { family: 'Fira Code' },
+                       filter: item => item.dataset.label !== '' }
+          },
+          scales: {
+            x: { ticks: { font: { family: 'Montserrat', size: 11 }, maxTicksLimit: 10, maxRotation: 0 },
+                 grid: { display: false } },
+            y: { ticks: { font: { family: 'Fira Code', size: 11 } },
+                 grid: { color: 'rgba(148, 163, 184, 0.2)' } }
+          }
+        });
+
+        const semi = Z95 * sigma * Math.sqrt(H);
+        actualizarLectura(lectura, [
+          { etiqueta: 'σ̂', valor: fmt(sigma) },
+          { etiqueta: 'Pronóstico', valor: `${fmt(ultimo)} — el último observado, a cualquier horizonte` },
+          { etiqueta: `σ a ${H} meses`, valor: `${fmt(sigma * Math.sqrt(H))} = σ̂·√${H}` },
+          { etiqueta: 'Intervalo 95 %', valor: `[${fmt(ultimo - semi)}, ${fmt(ultimo + semi)}]` },
+          { etiqueta: 'Semiancho sobre el nivel', valor: `±${fmt(100 * semi / ultimo, 1)} %` },
+          { etiqueta: 'Frente al horizonte a un mes', valor: `×${fmt(Math.sqrt(H), 2)} — y sin techo` }
+        ]);
+      }
+
+      crearControles(raiz.querySelector('.simulador-controles'), [
+        { clave: 'h', etiqueta: 'h = ', min: 1, max: H_MAX, paso: 1, decimales: 0 }
+      ], params, pintar);
+
+      pintar();
+      return [manejador(() => grafico)];
+    };
+
+    // ================================================================
     // Módulo 10 · El puente al Capítulo 5
     // ================================================================
     SIMULADORES['puente-estacional'] = function (raiz) {
