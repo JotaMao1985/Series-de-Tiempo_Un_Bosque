@@ -308,7 +308,7 @@ html = recortar(
         { id: 6, title: "Simular y reconocer procesos", shortTitle: "Simulación", duration: "10 min" },
         { id: 7, title: "Estimación de parámetros", shortTitle: "Estimación", duration: "14 min" },
         { id: 8, title: "Criterios de información y diagnóstico", shortTitle: "Diagnóstico", duration: "14 min" },
-        { id: 9, title: "Dos casos reales", shortTitle: "Casos reales", duration: "16 min" },
+        { id: 9, title: "Dos casos reales", shortTitle: "Casos reales", duration: "19 min" },
         { id: 10, title: "Cierre, resumen y autoevaluación", shortTitle: "Cierre", duration: "12 min" },
         { id: 11, title: "Simulacro del quiz", shortTitle: "Simulacro", duration: "30 min" }
 """,
@@ -356,21 +356,21 @@ html = recortar(
 # ---------------------------------------------------------------------------
 obligatorios = {
     "11 plantillas de módulo": [f'<template id="module-{k}">' for k in range(1, 12)],
-    "12 simuladores registrados": [
+    "13 simuladores registrados": [
         f"SIMULADORES['{s}']" for s in (
             "panel-ar-teorico", "triangulo-ar2", "panel-ma-teorico", "rho1-theta-ma1",
             "dualidad-psi-pi",
             "laboratorio-arma", "teorica-vs-muestral", "manchas-identificacion",
-            "diagnostico-residuales", "manchas-transformada", "trm-retornos",
-            "cap3-simulacro")
+            "diagnostico-residuales", "manchas-transformada", "manchas-impulso",
+            "trm-retornos", "cap3-simulacro")
     ],
     "contenedores de simulador": [
         f'data-simulador="{s}"' for s in (
             "panel-ar-teorico", "triangulo-ar2", "panel-ma-teorico", "rho1-theta-ma1",
             "dualidad-psi-pi",
             "laboratorio-arma", "teorica-vs-muestral", "manchas-identificacion",
-            "diagnostico-residuales", "manchas-transformada", "trm-retornos",
-            "cap3-simulacro")
+            "diagnostico-residuales", "manchas-transformada", "manchas-impulso",
+            "trm-retornos", "cap3-simulacro")
     ],
     # El andamiaje interno del .quiz no es decorativo: renderAutoevaluacion()
     # escribe sobre estos nodos y revienta si falta cualquiera de ellos.

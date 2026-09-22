@@ -863,6 +863,95 @@
     };
 
     // ================================================================
+    // M9 · Respuesta al impulso del AR(2) ajustado sobre la raíz
+    // ================================================================
+    // Aquí no hay nada precalculado: con phi1, phi2 y sigma^2 del ajuste, el
+    // navegador vuelve a recorrer la recursión del Módulo 4 y reconstruye las
+    // bandas que imprime forecast(). Los psi salen de pesosPsi(), la misma
+    // función que usan el simulador de la dualidad y la ACF teórica.
+    SIMULADORES['manchas-impulso'] = function (raiz) {
+      const c = raiz.querySelectorAll('canvas');
+      const lectura = raiz.querySelector('.simulador-lectura');
+      const params = { h: 6 };
+      const N = 24;                       // rezagos de la respuesta al impulso
+      const H = 24;                       // horizonte del abanico
+      const ar = [TRANSF.sqrt.phi1, TRANSF.sqrt.phi2];
+      const sigma2 = TRANSF.sqrt.sigma2;
+      const z = 1.959964;                 // qnorm(0.975)
+      const psi = pesosPsi(ar, [], N);
+      // R = sqrt(-phi2) es el inverso del módulo de la raíz: el envolvente que
+      // amortigua la oscilación. Módulo 1.
+      const R = Math.sqrt(-TRANSF.sqrt.phi2);
+      const etiquetas = Array.from({ length: N + 1 }, (_, j) => String(j));
+      const envolvente = etiquetas.map((_, j) => Math.pow(R, j));
+
+      // Cola larga para el límite sum psi_j^2 = gamma_0 / sigma^2: con |B| =
+      // 1.21 lo que queda fuera de 600 términos no llega a la decimosexta cifra.
+      const psiLargo = pesosPsi(ar, [], 600);
+      const sumaLimite = psiLargo.reduce((s, v) => s + v * v, 0);
+      const semiTecho = z * Math.sqrt(sigma2 * sumaLimite);
+      const sumaHasta = h => psiLargo.slice(0, h).reduce((s, v) => s + v * v, 0);
+      const horizontes = Array.from({ length: H }, (_, k) => String(k + 1));
+      const semianchos = horizontes.map((_, k) => z * Math.sqrt(sigma2 * sumaHasta(k + 1)));
+
+      const gPsi = crearGraficoBarras(c[0], etiquetas, psi, {
+        etiqueta: 'ψⱼ', color: COLORES_GRAFICO.primario, tituloX: 'j (años desde el choque)'
+      });
+      // El envolvente no es una recta, así que no cabe en la opción `lineas`
+      // de crearGraficoBarras: se añade como dos datasets de línea. El negativo
+      // va sin etiqueta para que no salga dos veces en la leyenda.
+      [['±(0.83)ʲ — envolvente', envolvente], ['', envolvente.map(v => -v)]].forEach(
+        ([etiqueta, datos]) => gPsi.data.datasets.push({
+          type: 'line', label: etiqueta, data: datos,
+          borderColor: COLORES_GRAFICO.secundario, borderDash: [5, 4], borderWidth: 1.5,
+          pointRadius: 0, fill: false, order: 1
+        }));
+      gPsi.update('none');
+
+      const gAbanico = crearGraficoBarras(c[1], horizontes, semianchos, {
+        etiqueta: 'Semiancho del 95 %', color: COLORES_GRAFICO.terciario,
+        tituloX: 'h (años de pronóstico)', min: 0, max: 6,
+        lineas: [{ valor: semiTecho, etiqueta: 'Techo del abanico' }]
+      });
+
+      function pintar() {
+        const h = Math.round(params.h);
+        // En negro los psi que entran en la varianza a h pasos (j < h).
+        gPsi.data.datasets[0].backgroundColor = etiquetas.map(
+          (_, j) => j < h ? COLORES_GRAFICO.primario : COLORES_GRAFICO.gris);
+        gPsi.update('none');
+        gAbanico.data.datasets[0].backgroundColor = horizontes.map(
+          (_, k) => k + 1 === h ? COLORES_GRAFICO.secundario : COLORES_GRAFICO.terciario);
+        gAbanico.update('none');
+
+        const ee = Math.sqrt(sigma2 * sumaHasta(h));
+        actualizarLectura(lectura, [
+          {
+            etiqueta: 'Envolvente √(−φ₂) =',
+            valor: `${R.toFixed(4)} — se reduce a la mitad cada ${(Math.log(0.5) / Math.log(R)).toFixed(2)} años`
+          },
+          {
+            etiqueta: 'Periodo de la oscilación:',
+            valor: `${TRANSF.sqrt.periodo.toFixed(2)} años — el mismo pseudo-periodo de la serie`
+          },
+          { etiqueta: `Error estándar del pronóstico a ${h} año(s):`, valor: ee.toFixed(2) },
+          { etiqueta: 'Semiancho del intervalo del 95 %:', valor: `±${(z * ee).toFixed(2)}` },
+          {
+            etiqueta: 'Techo, h → ∞:',
+            valor: `±${semiTecho.toFixed(2)} — el ${(100 * z * ee / semiTecho).toFixed(0)} % ya está recorrido`
+          }
+        ]);
+      }
+
+      crearControles(raiz.querySelector('.simulador-controles'), [
+        { clave: 'h', etiqueta: 'h = ', min: 1, max: 24, paso: 1, decimales: 0 }
+      ], params, pintar);
+
+      pintar();
+      return [gPsi, gAbanico];
+    };
+
+    // ================================================================
     // M9 · Log-retornos de la TRM
     // ================================================================
     SIMULADORES['trm-retornos'] = function (raiz) {
