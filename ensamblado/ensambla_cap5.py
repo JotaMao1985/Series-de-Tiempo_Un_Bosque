@@ -316,7 +316,7 @@ course_nuevo = """    const courseData = {
         { id: 4, title: "Identificar los órdenes estacionales", shortTitle: "Identificar P,Q", duration: "16 min" },
         { id: 5, title: "El modelo airline", shortTitle: "Airline", duration: "14 min" },
         { id: 6, title: "Estimar, comparar y diagnosticar", shortTitle: "Explorador", duration: "16 min" },
-        { id: 7, title: "Caso completo: AirPassengers", shortTitle: "Caso completo", duration: "18 min" },
+        { id: 7, title: "Caso completo: AirPassengers", shortTitle: "Caso completo", duration: "21 min" },
         { id: 8, title: "Segundo caso y contraejemplo", shortTitle: "Contraejemplo", duration: "16 min" },
         { id: 9, title: "Regresores de calendario y SARIMAX", shortTitle: "Calendario", duration: "14 min" },
         { id: 10, title: "Cuando m es grande: Fourier y STL", shortTitle: "Fourier y STL", duration: "16 min" },

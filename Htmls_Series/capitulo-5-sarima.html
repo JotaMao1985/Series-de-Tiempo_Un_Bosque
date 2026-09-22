@@ -3696,8 +3696,42 @@ print(acorr_ljungbox(fit.resid[13:], lags=[24], model_df=2)["lb_pvalue"].round(4
 
       <p>Sobre $\nabla\nabla_{12}\log(y_t)$, la ACF tiene $\hat\rho_1 = -0.341$ y $\hat\rho_{12} = -0.387$, las dos
         negativas y fuera de la banda $\pm 0.171$ —que aquí se calcula con las $131$ observaciones que quedan
-        <em>después</em> de diferenciar, no con las $144$ originales—, y prácticamente nada más. Un pico negativo aislado en el rezago $1$
+        <em>después</em> de diferenciar, no con las $144$ originales—. Un pico negativo aislado en el rezago $1$
         pide $q=1$; un pico negativo aislado en el $12$ pide $Q=1$. La tabla del Módulo 4, leída dos veces.</p>
+
+      <p>Pero la tabla no es todo lo que hay que mirar, y lo que falta es la comprobación que el Módulo 2 dejó
+        anunciada y que el Módulo 4 llamó <em>el error de conteo más frecuente</em>: <strong>los
+        satélites</strong>. Si la parte regular y la estacional se multiplican en vez de sumarse, el correlograma
+        tiene que enseñar algo en $12 \pm 1$ sin que nadie lo haya pedido. Y lo enseña:</p>
+
+      <table>
+        <caption class="sr-only">Autocorrelaciones muestrales en el rezago estacional y sus dos satélites</caption>
+        <thead>
+          <tr><th scope="col">Rezago</th><th scope="col">$\hat\rho_k$</th><th scope="col">Lectura</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>$11$</td><td>$0.064$</td><td>Satélite de la izquierda, dentro de la banda</td></tr>
+          <tr><td>$12$</td><td>$-0.387$</td><td>El pico estacional: pide $Q = 1$</td></tr>
+          <tr><td>$13$</td><td>$0.152$</td><td>Satélite de la derecha; el mayor de los rezagos sin pico</td></tr>
+        </tbody>
+      </table>
+
+      <p>Los dos satélites son <strong>positivos</strong> —el signo que produce el producto de dos coeficientes
+        negativos— y los dos caen dentro de la banda. Ahí está la decisión que importa: <strong>no piden
+        parámetros</strong>. Subir $q$ hasta $13$ para «cubrir» el rezago $13$ añadiría once términos con tal de
+        reproducir un número que un modelo de dos parámetros predice solo. El Paso 3 lo comprueba con las
+        estimaciones en la mano.</p>
+
+      <div class="note">
+        <p><strong>Y los rezagos que sobran.</strong> Entre los primeros $24$ hay tres barras más fuera de la
+          banda: el $3$ ($-0.202$), el $9$ ($0.176$) y el $23$ ($0.223$). Ninguna forma patrón —ni son múltiplos de
+          $12$ ni satélites de nada— y con $24$ rezagos al $95\,\%$ se espera algo más de una por puro azar. El
+          Paso 3 despacha dos de las tres: en los residuales del modelo ajustado el $3$ queda en $-0.125$ y el $9$
+          en $0.117$, dentro de $\pm 0.163$. <strong>El $23$ sobrevive</strong>, en $0.220$, y aun así
+          Ljung–Box($24$) no rechaza: una barra aislada entre veinticuatro no mueve un estadístico conjunto. Un
+          rezago $23$ sin interpretación posible es lo que produce el azar, y perseguirlo con parámetros es
+          exactamente lo que este capítulo enseña a no hacer.</p>
+      </div>
 
       <h3>Paso 3 · Estimación y diagnóstico</h3>
 
@@ -3721,6 +3755,32 @@ print(acorr_ljungbox(fit.resid[13:], lags=[24], model_df=2)["lb_pvalue"].round(4
             <tr><td>Raíces MA</td><td>Módulo inverso máximo $0.9524$</td><td>Invertible, aunque justo</td></tr>
           </tbody>
         </table>
+      </div>
+
+      <div class="definition">
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Los satélites, comprobados</h4>
+        <p>Con $\hat\theta$ y $\hat\Theta$ estimados ya se puede volver al Paso 2 y cerrar la comprobación. En un
+          modelo <em>airline</em> —MA regular multiplicado por MA estacional— la ACF teórica de los satélites no es
+          una aproximación: es <strong>exactamente</strong> el producto de las otras dos autocorrelaciones.</p>
+        $$\rho_{11} = \rho_{13} = \frac{\theta\,\Theta}{(1+\theta^2)(1+\Theta^2)} = \rho_1 \cdot \rho_{12}$$
+        <table>
+          <caption class="sr-only">ACF teórica del airline ajustado frente a la muestral</caption>
+          <thead>
+            <tr><th scope="col">Rezago</th><th scope="col">Teórica del modelo ajustado</th>
+              <th scope="col">Muestral</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>$1$</td><td>$\theta/(1+\theta^2) = -0.3460$</td><td>$-0.341$</td></tr>
+            <tr><td>$12$</td><td>$\Theta/(1+\Theta^2) = -0.4251$</td><td>$-0.387$</td></tr>
+            <tr><td>$11$ y $13$</td><td>$\rho_1\rho_{12} = 0.1471$</td><td>$0.064$ y $0.152$</td></tr>
+          </tbody>
+        </table>
+        <p style="margin-bottom:0;">El rezago $13$ cae a cinco milésimas de lo que el modelo predice y el $11$ se
+          queda corto; con $n = 131$ el error típico de una autocorrelación ronda $1/\sqrt{n} = 0.087$, así que los
+          dos son compatibles con el mismo $0.1471$. Y lo que confirma la tabla no es un ajuste fino, sino algo
+          más básico: <strong>que la estructura es multiplicativa</strong>. Un modelo aditivo —términos sueltos en
+          $1$ y en $12$, y nada en el $13$— no produce esos satélites, y son dos parámetros los que están
+          explicando cuatro autocorrelaciones.</p>
       </div>
 
       <div class="note">
@@ -3776,6 +3836,12 @@ round(c(n = length(w), r1 = a[2], r12 = a[13], banda = 1.96/sqrt(length(w))), 4)
 #&gt;        n      r1     r12   banda
 #&gt; 131.0000 -0.3411 -0.3866  0.1712
 
+# Los SATELITES del Modulo 2: tienen que asomar en 12 +/- 1 sin pedirlos.
+# a[1] es el rezago 0, asi que a[12] y a[14] son los rezagos 11 y 13.
+round(c(r11 = a[12], r13 = a[14]), 4)
+#&gt;    r11    r13
+#&gt; 0.0644 0.1516      positivos, y dentro de la banda: NO piden parametros
+
 # --- Paso 3: estimacion y diagnostico --------------------------------------
 fit &lt;- Arima(ap, order = c(0,1,1), seasonal = list(order = c(0,1,1), period = 12))
 round(c(coef(fit), sigma2 = fit$sigma2, aicc = fit$aicc), 6)
@@ -3784,6 +3850,18 @@ round(c(coef(fit), sigma2 = fit$sigma2, aicc = fit$aicc), 6)
 checkresiduals(fit, lag = 24)     # grafico + Ljung-Box en una sola llamada
 #&gt; Ljung-Box test
 #&gt; Q* = 26.446, df = 22, p-value = 0.233
+
+# Lo que el modelo AJUSTADO predice para los satelites. En un airline
+# (MA x SMA) el termino cruzado del rezago 13 vale theta*Theta, y la ACF
+# teorica de los satelites sale EXACTAMENTE rho_1 * rho_12.
+th &lt;- coef(fit)[["ma1"]]; TH &lt;- coef(fit)[["sma1"]]
+ma &lt;- rep(0, 13); ma[1] &lt;- th; ma[12] &lt;- TH; ma[13] &lt;- th * TH
+rt &lt;- unname(ARMAacf(ma = ma, lag.max = 13)[-1])
+round(c(rho1 = rt[1], rho11 = rt[11], rho12 = rt[12], rho13 = rt[13]), 4)
+#&gt;    rho1   rho11   rho12   rho13
+#&gt; -0.3460  0.1471 -0.4251  0.1471
+round(rt[1] * rt[12], 4)          # el producto, sin aproximar
+#&gt; [1] 0.1471
 
 # --- Paso 4: pronostico -----------------------------------------------------
 p &lt;- forecast(fit, h = 24, level = c(80, 95))
@@ -3828,6 +3906,16 @@ print(np.round(np.exp([f.predicted_mean.iloc[-1], ci.iloc[-1,0], ci.iloc[-1,1]])
 #&gt; [525.46 400.62 689.21]
 # R da 525.46, 399.66 y 690.85: el pronostico puntual coincide y el intervalo
 # es un 1 % mas estrecho, porque sigma^2 sale 0.001348 en vez de 0.001371.
+
+# Los satelites, con arma_acf: el polinomio MA lleva el termino cruzado
+# th*TH en el rezago 13, y de ahi sale rho_11 = rho_13 = rho_1 * rho_12.
+from statsmodels.tsa.arima_process import arma_acf
+th, TH = -0.4018, -0.5569
+ma = np.zeros(14); ma[0] = 1; ma[1] = th; ma[12] = TH; ma[13] = th * TH
+r = arma_acf(np.r_[1.0], ma, lags=14)[1:]
+print(np.round(r[[0, 10, 11, 12]], 4), round(float(r[0] * r[11]), 4))
+#&gt; [-0.3459  0.1471 -0.4251  0.1471] 0.1471
+# rho_1 sale -0.3459 y en R -0.3460: es el redondeo de -0.34595.
 
 # exp() del pronostico es la MEDIANA. Si se quiere la MEDIA:
 sigma_h = (ci.iloc[-1,1] - f.predicted_mean.iloc[-1]) / 1.959964
@@ -4927,7 +5015,7 @@ round(c(armonico_K4 = 180.200, n_armonico = 467,
         { id: 4, title: "Identificar los órdenes estacionales", shortTitle: "Identificar P,Q", duration: "16 min" },
         { id: 5, title: "El modelo airline", shortTitle: "Airline", duration: "14 min" },
         { id: 6, title: "Estimar, comparar y diagnosticar", shortTitle: "Explorador", duration: "16 min" },
-        { id: 7, title: "Caso completo: AirPassengers", shortTitle: "Caso completo", duration: "18 min" },
+        { id: 7, title: "Caso completo: AirPassengers", shortTitle: "Caso completo", duration: "21 min" },
         { id: 8, title: "Segundo caso y contraejemplo", shortTitle: "Contraejemplo", duration: "16 min" },
         { id: 9, title: "Regresores de calendario y SARIMAX", shortTitle: "Calendario", duration: "14 min" },
         { id: 10, title: "Cuando m es grande: Fourier y STL", shortTitle: "Fourier y STL", duration: "16 min" },
