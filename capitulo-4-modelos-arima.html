@@ -4289,6 +4289,77 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3))
           reaparece con otro nombre —el método <em>naïve</em>— y como <strong>referencia que hay que batir</strong>.</p>
       </div>
 
+      <p>Queda una etapa, y en esta serie es la más instructiva de todas. El Módulo 9 dedujo que el ancho del
+        intervalo sale de los pesos $\psi$, $\sigma_h^2 = \sigma^2\sum_{j&lt;h}\psi_j^2$, y que la caminata aleatoria
+        es el caso de referencia porque <strong>todos sus $\psi$ valen $1$</strong>: la integración no amortigua
+        nada, así que ningún choque se olvida nunca. Aquí no hay que aplicar la fórmula, hay que leerla:</p>
+
+      <div class="formula">
+        $$\sigma_h = \hat\sigma\sqrt{h} = 121.48\,\sqrt{h}, \qquad
+          \text{semiancho al }95\,\% = 238.09\,\sqrt{h}$$
+      </div>
+
+      <p>Con el último dato observado —junio de 2026, $3497.09$ pesos— y un pronóstico que es esa misma cifra
+        para siempre, el intervalo queda así:</p>
+
+      <table>
+        <caption class="sr-only">Intervalos de pronóstico de la TRM bajo el modelo de caminata aleatoria</caption>
+        <thead>
+          <tr>
+            <th scope="col">$h$</th><th scope="col">Mes</th>
+            <th scope="col">$\sigma_h$</th><th scope="col">Semiancho al 95 %</th>
+            <th scope="col">Intervalo (COP/USD)</th><th scope="col">Sobre el nivel</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>$1$</td><td>jul 2026</td><td>$121.48$</td><td>$\pm 238.09$</td>
+            <td>$[3259.00,\ 3735.18]$</td><td>$6.8\,\%$</td></tr>
+          <tr><td>$3$</td><td>sep 2026</td><td>$210.40$</td><td>$\pm 412.38$</td>
+            <td>$[3084.71,\ 3909.47]$</td><td>$11.8\,\%$</td></tr>
+          <tr><td>$6$</td><td>dic 2026</td><td>$297.55$</td><td>$\pm 583.19$</td>
+            <td>$[2913.90,\ 4080.28]$</td><td>$16.7\,\%$</td></tr>
+          <tr><td>$12$</td><td>jun 2027</td><td>$420.80$</td><td>$\pm 824.76$</td>
+            <td>$[2672.33,\ 4321.85]$</td><td>$23.6\,\%$</td></tr>
+          <tr><td>$24$</td><td>jun 2028</td><td>$595.11$</td><td>$\pm 1166.39$</td>
+            <td>$[2330.70,\ 4663.48]$</td><td>$33.4\,\%$</td></tr>
+        </tbody>
+      </table>
+
+      <div class="simulador" data-simulador="trm-abanico">
+        <h4><i class="fas fa-chart-area" aria-hidden="true"></i> Etapa 4 · El pronóstico y su abanico</h4>
+        <p class="simulador-intro">El deslizador mueve el horizonte. El pronóstico es una recta horizontal
+          —ARIMA($0,1,0$) sin deriva— y lo único que ocurre al alejarse es que el abanico se abre, como
+          $\sqrt{h}$ y sin llegar nunca a un techo. Las bandas se calculan aquí mismo a partir de
+          $\hat\sigma^2 = 14756.38$, no están precalculadas.</p>
+        <div class="simulador-controles"></div>
+        <div class="grafico-wrapper" style="height:260px;">
+          <canvas aria-label="TRM observada y pronóstico de caminata aleatoria con sus intervalos" role="img"></canvas>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="definition">
+        <h4><i class="fas fa-lightbulb mr-2" aria-hidden="true"></i>Un abanico sin techo, y qué significa</h4>
+        <p>Conviene comparar las tres series del curso, porque la fórmula es la misma y el resultado no se
+          parece en nada:</p>
+        <ul>
+          <li><strong>La TRM</strong>, ARIMA($0,1,0$): $\psi_j = 1$ para todo $j$, la suma $\sum_{j&lt;h}\psi_j^2$
+            vale exactamente $h$, y $\sigma_{24}/\sigma_1 = \sqrt{24} = 4.90$.</li>
+          <li><strong>El Nilo</strong>, ARIMA($1,1,1$): los $\psi$ caen hasta
+            $\psi_\infty = (1+\theta)/(1-\phi) = 0.1688$, así que la suma crece mucho más despacio y
+            $\sigma_{30}/\sigma_1 = 1.404$, frente al $\sqrt{30} = 5.48$ de una caminata. La incertidumbre crece
+            casi <strong>cuatro veces menos</strong>.</li>
+          <li><strong>El caso del Capítulo 3</strong>, una serie estacionaria: ahí $\sum_j \psi_j^2$
+            <em>converge</em>, y el abanico deja de abrirse. Esa es la frontera exacta que marca la raíz unitaria:
+            con ella, la suma diverge y no hay techo.</li>
+        </ul>
+        <p style="margin-bottom:0;">Y el resultado es incómodo de leer, que es justamente por lo que hay que
+          leerlo. A dos años vista el intervalo del $95\,\%$ abarca <strong>un tercio del nivel de la serie</strong>.
+          El modelo no está fallando: está informando de que a ese horizonte no hay nada que decir. Un pronóstico
+          honesto puede ser inútil, y confundir las dos cosas es el error que el Capítulo 6 enseña a evitar
+          midiendo si ese $95\,\%$ se cumple de verdad.</p>
+      </div>
+
       <p>Un detalle más, por si tienta pensar que en la TRM no hay nada que estudiar: aplicando Ljung–Box a los
         residuales <strong>al cuadrado</strong> se obtiene $p = 0.857$, así que tampoco hay agrupamiento de
         volatilidad detectable a este nivel de agregación. Lo que sí hay es no-normalidad clara ($p = 0.0006$), es
@@ -4676,7 +4747,7 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
         { id: 7, title: "Dentro de auto.arima", shortTitle: "auto.arima", duration: "14 min" },
         { id: 8, title: "Diagnóstico y errores comunes", shortTitle: "Diagnóstico", duration: "16 min" },
         { id: 9, title: "Pronóstico: forma e intervalos", shortTitle: "Pronóstico", duration: "16 min" },
-        { id: 10, title: "Caso TRM, puente y cierre", shortTitle: "Cierre", duration: "18 min" }
+        { id: 10, title: "Caso TRM, puente y cierre", shortTitle: "Cierre", duration: "21 min" }
       ]
     };
 
@@ -6708,6 +6779,108 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
 
       pintar();
       return [manejador(() => gSerie), manejador(() => gAcf)];
+    };
+
+    // ================================================================
+    // Módulo 10 · El abanico de la caminata aleatoria
+    // ================================================================
+    // Aquí no hay nada precalculado: con sigma^2 del ajuste y el último valor
+    // observado, las bandas salen de la fórmula del Módulo 9 con psi_j = 1,
+    // que es lo que hace que se reduzca a sigma*sqrt(h) EXACTAMENTE.
+    SIMULADORES['trm-abanico'] = function (raiz) {
+      const serie = SERIES_CAP4.trm.valores;
+      const inicio = SERIES_CAP4.trm.inicio;
+      const sigma = Math.sqrt(TRM.caminata.sigma2);
+      const ultimo = serie[serie.length - 1];
+      const VISIBLES = 48;                 // meses de historia a la vista
+      const H_MAX = 36;
+      const Z80 = 1.281552, Z95 = 1.959964;
+      const params = { h: 24 };
+      const lectura = raiz.querySelector('.simulador-lectura');
+      const canvas = raiz.querySelector('canvas');
+      let grafico = null;
+
+      const historia = serie.slice(-VISIBLES);
+      // El primer mes visible, para que las etiquetas cuadren con el recorte.
+      const saltados = serie.length - historia.length;
+      const mesInicial = inicio[1] + saltados;
+
+      function pintar() {
+        const H = Math.round(params.h);
+        if (grafico) grafico.destroy();
+        const etiquetas = mesesDesde(inicio[0], mesInicial, historia.length + H);
+        // El pronóstico arranca enganchado al último observado, para que la
+        // línea no salga flotando: por eso el relleno empieza en ese punto.
+        const previos = historia.map(() => null);
+        previos[previos.length - 1] = ultimo;
+        const banda = z => previos.concat(
+          Array.from({ length: H }, (_, j) => ultimo + z * sigma * Math.sqrt(j + 1)));
+
+        const datasets = [
+          {
+            label: 'TRM observada',
+            data: historia.concat(Array(H).fill(null)),
+            borderColor: COLORES_GRAFICO.primario,
+            borderWidth: 1.6, pointRadius: 0, fill: false
+          },
+          {
+            label: 'Intervalo 95 %', data: banda(Z95),
+            borderColor: 'rgba(255, 102, 0, 0.28)', backgroundColor: 'rgba(255, 102, 0, 0.10)',
+            borderWidth: 1, pointRadius: 0, fill: '+3'
+          },
+          {
+            label: 'Intervalo 80 %', data: banda(Z80),
+            borderColor: 'rgba(255, 102, 0, 0.45)', backgroundColor: 'rgba(255, 102, 0, 0.18)',
+            borderWidth: 1, pointRadius: 0, fill: '+1'
+          },
+          {
+            label: '', data: banda(-Z80),
+            borderColor: 'rgba(255, 102, 0, 0.45)', borderWidth: 1, pointRadius: 0, fill: false
+          },
+          {
+            label: '', data: banda(-Z95),
+            borderColor: 'rgba(255, 102, 0, 0.28)', borderWidth: 1, pointRadius: 0, fill: false
+          },
+          {
+            label: 'Pronóstico', data: banda(0),
+            borderColor: COLORES_GRAFICO.secundario,
+            borderWidth: 2.4, pointRadius: 0, fill: false
+          }
+        ];
+
+        grafico = crearGraficoLinea(canvas, etiquetas, datasets, {
+          plugins: {
+            legend: { labels: { font: { family: 'Montserrat', size: 12 }, boxWidth: 24,
+                                filter: item => item.text !== '' } },
+            tooltip: { backgroundColor: '#012820', titleFont: { family: 'Montserrat' },
+                       bodyFont: { family: 'Fira Code' },
+                       filter: item => item.dataset.label !== '' }
+          },
+          scales: {
+            x: { ticks: { font: { family: 'Montserrat', size: 11 }, maxTicksLimit: 10, maxRotation: 0 },
+                 grid: { display: false } },
+            y: { ticks: { font: { family: 'Fira Code', size: 11 } },
+                 grid: { color: 'rgba(148, 163, 184, 0.2)' } }
+          }
+        });
+
+        const semi = Z95 * sigma * Math.sqrt(H);
+        actualizarLectura(lectura, [
+          { etiqueta: 'σ̂', valor: fmt(sigma) },
+          { etiqueta: 'Pronóstico', valor: `${fmt(ultimo)} — el último observado, a cualquier horizonte` },
+          { etiqueta: `σ a ${H} meses`, valor: `${fmt(sigma * Math.sqrt(H))} = σ̂·√${H}` },
+          { etiqueta: 'Intervalo 95 %', valor: `[${fmt(ultimo - semi)}, ${fmt(ultimo + semi)}]` },
+          { etiqueta: 'Semiancho sobre el nivel', valor: `±${fmt(100 * semi / ultimo, 1)} %` },
+          { etiqueta: 'Frente al horizonte a un mes', valor: `×${fmt(Math.sqrt(H), 2)} — y sin techo` }
+        ]);
+      }
+
+      crearControles(raiz.querySelector('.simulador-controles'), [
+        { clave: 'h', etiqueta: 'h = ', min: 1, max: H_MAX, paso: 1, decimales: 0 }
+      ], params, pintar);
+
+      pintar();
+      return [manejador(() => grafico)];
     };
 
     // ================================================================
