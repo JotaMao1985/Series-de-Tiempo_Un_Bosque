@@ -109,6 +109,23 @@ html = una_vez(
     "subtítulo de la cabecera")
 
 # ---------------------------------------------------------------------------
+# 1b. Fuera el CSS del .simulacro, que es del Módulo 11 del capítulo 3
+# ---------------------------------------------------------------------------
+# El simulacro del quiz vive solo allí. Su motor de JavaScript y su plantilla
+# desaparecen solos —las dos regiones se rehacen enteras más abajo—, pero el
+# <style> se hereda, y sin esto los capítulos 4, 5 y 6 arrastrarían 180 líneas
+# de CSS que nadie usa. El rótulo de cierre está en el propio componente,
+# `ensamblado/componentes/simulacro.css`, puesto para que este recorte sepa
+# dónde acaba.
+css_simulacro = entre(
+    html,
+    "    /* ------------------------------------------------------------------\n"
+    "       Simulacro: un examen de práctica que se marca y se cronometra, pero\n",
+    "    /* ------------------- fin del componente .simulacro ------------------- */\n",
+    "CSS del .simulacro")
+html = una_vez(html, css_simulacro, "", "recorte del CSS del .simulacro")
+
+# ---------------------------------------------------------------------------
 # 2. Las diez plantillas de módulo
 # ---------------------------------------------------------------------------
 plantillas_viejas = entre(html, '  <template id="module-1">',
@@ -274,7 +291,11 @@ for fn in ["function crearGraficoBarras", "function calcularPACF", "function cre
 for resto in ["DATOS_CAP3", "SERIES_CAP3", "AUTOEVALUACIONES['cap3']", "PROCESOS",
               "MANCHAS", "RETORNOS", "manchas solares", "Capítulo 3 —",
               "genera_cap3.R", "capitulo-3",
-              "AUTOEVALUACIONES['parcial2']", 'data-quiz="parcial2"']:
+              "AUTOEVALUACIONES['parcial2']", 'data-quiz="parcial2"',
+              # El simulacro del Módulo 11: plantilla, motor, registro y CSS.
+              '<template id="module-11">', "cap3-simulacro", "SIMULACROS",
+              "pintarSimulacro", "ESTADO_SIMULACRO", ".simulacro {",
+              ".simulacro-opcion {", "simulacro-preguntas"]:
     if resto in html:
         fallos.append(f"queda material del capítulo 3: '{resto}'")
 

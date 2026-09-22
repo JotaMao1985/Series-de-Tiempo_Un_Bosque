@@ -1,0 +1,184 @@
+    /* ------------------------------------------------------------------
+       Simulacro: un examen de práctica que se marca y se cronometra, pero
+       NO se corrige. Publica las preguntas de un quiz cuya clave no puede
+       viajar en la página, porque el capítulo es público.
+
+       Injertado del Módulo 13 del capítulo 4 de Estadística Espacial
+       (2026-09-18), sin tocar una declaración: los dos cursos comparten
+       paleta. Se instala SOLO en el capítulo 3 —lo usa su Módulo 11— y
+       `ensambla_cap4.py` lo retira, para que los capítulos 4, 5 y 6 no
+       hereden CSS muerto. Por eso el bloque va entre estos dos rótulos: el
+       de abajo es el que busca el recorte.
+       ------------------------------------------------------------------ */
+    .simulacro {
+      background-color: #f8fafc;
+      border: 1px solid #cbd5e1;
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .simulacro h4 {
+      color: #012820;
+      margin-top: 0;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .simulacro > h4 + p {
+      margin-top: 0.6rem;
+    }
+
+    .simulacro-mandos {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 1rem 0 0.5rem;
+      padding-bottom: 0.9rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .simulacro-empezar,
+    .simulacro-borrar {
+      font-family: inherit;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      border-radius: 50px;
+      padding: 0.4rem 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .simulacro-empezar {
+      color: white;
+      background: #012820;
+      border: none;
+    }
+
+    .simulacro-empezar:hover {
+      background: #FF6600;
+    }
+
+    .simulacro-borrar {
+      color: #012820;
+      background: white;
+      border: 1px solid rgba(1, 40, 32, 0.25);
+    }
+
+    .simulacro-borrar:hover {
+      background: #f1f5f9;
+    }
+
+    .simulacro-reloj {
+      font-family: 'Fira Code', monospace;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #012820;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .simulacro-reloj.acabado {
+      color: #b91c1c;
+    }
+
+    .simulacro-conteo {
+      font-size: 0.8125rem;
+      color: #475569;
+    }
+
+    .simulacro-pregunta {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      padding: 1.1rem 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .simulacro-etiqueta {
+      display: inline-block;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #475569;
+      background: #f1f5f9;
+      border-radius: 50px;
+      padding: 0.15rem 0.6rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .simulacro-enunciado {
+      color: #1f2937;
+    }
+
+    .simulacro-enunciado table {
+      border-collapse: collapse;
+    }
+
+    .simulacro-opciones {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 0.9rem;
+    }
+
+    .simulacro-opcion {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      width: 100%;
+      text-align: left;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      color: #1f2937;
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 0.5rem;
+      padding: 0.6rem 0.8rem;
+      cursor: pointer;
+      transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    .simulacro-opcion:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+    }
+
+    .simulacro-opcion:focus-visible {
+      outline: 2px solid #FF6600;
+      outline-offset: 1px;
+    }
+
+    .simulacro-opcion.marcada {
+      border-color: #012820;
+      background: #ecfdf5;
+    }
+
+    .simulacro-letra {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: #475569;
+      flex: none;
+    }
+
+    .simulacro-opcion.marcada .simulacro-letra {
+      color: #012820;
+    }
+
+    .simulacro-resumen {
+      font-size: 0.8125rem;
+      color: #475569;
+      margin-top: 1rem;
+    }
+
+    .simulacro-resumen b {
+      font-family: 'Fira Code', monospace;
+      color: #012820;
+    }
+    /* ------------------- fin del componente .simulacro ------------------- */

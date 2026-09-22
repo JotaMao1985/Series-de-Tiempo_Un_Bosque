@@ -224,6 +224,30 @@ else:
         "llamada de arranque de .tabla-ranking")
 
 # ---------------------------------------------------------------------------
+# 2c. El CSS del componente .simulacro (Módulo 11)
+# ---------------------------------------------------------------------------
+# El simulacro del quiz es propio del capítulo 3 y de nadie más: el capítulo 4
+# lo retira, para no heredar CSS muerto en los capítulos 4, 5 y 6. Por eso el
+# archivo de `componentes/` lleva un rótulo de cierre, que es lo que busca el
+# recorte de `ensambla_cap4.py`.
+#
+# Va DESPUÉS del .tabla-ranking a propósito: aquel se ancla en las últimas
+# llaves del <style> heredado, y meter algo antes le movería el marcador.
+#
+# El motor de JavaScript no se instala aquí: vive en `cap3/cap3_js.js`, que es
+# la región que el capítulo 4 rehace entera. Así el simulacro no llega allí ni
+# hay que quitarlo.
+css_simulacro = (COMPONENTES / "simulacro.css").read_text(encoding="utf-8")
+if ".simulacro {" in html:
+    sys.exit("ABORTA: el capítulo 2 ya trae el CSS de .simulacro. "
+             "Si se retro-portó allí, aquí hay que heredarlo, no instalarlo.")
+html = reemplazar(
+    html,
+    "  </style>",
+    css_simulacro.rstrip("\n") + "\n  </style>",
+    "CSS de .simulacro")
+
+# ---------------------------------------------------------------------------
 # 3. crearGraficoBarras: barras adicionales (teórica frente a muestral)
 # ---------------------------------------------------------------------------
 # Igual que el CSS de .derivacion: el capítulo 2 ya lo trae. Se comprueba.
@@ -285,7 +309,8 @@ html = recortar(
         { id: 7, title: "Estimación de parámetros", shortTitle: "Estimación", duration: "14 min" },
         { id: 8, title: "Criterios de información y diagnóstico", shortTitle: "Diagnóstico", duration: "14 min" },
         { id: 9, title: "Dos casos reales", shortTitle: "Casos reales", duration: "16 min" },
-        { id: 10, title: "Cierre, resumen y autoevaluación", shortTitle: "Cierre", duration: "12 min" }
+        { id: 10, title: "Cierre, resumen y autoevaluación", shortTitle: "Cierre", duration: "12 min" },
+        { id: 11, title: "Simulacro del quiz", shortTitle: "Simulacro", duration: "30 min" }
 """,
     "courseData.modules")
 
@@ -330,20 +355,22 @@ html = recortar(
 # 9. Comprobaciones finales: nada de lo que debe estar puede faltar
 # ---------------------------------------------------------------------------
 obligatorios = {
-    "10 plantillas de módulo": [f'<template id="module-{k}">' for k in range(1, 11)],
-    "11 simuladores registrados": [
+    "11 plantillas de módulo": [f'<template id="module-{k}">' for k in range(1, 12)],
+    "12 simuladores registrados": [
         f"SIMULADORES['{s}']" for s in (
             "panel-ar-teorico", "triangulo-ar2", "panel-ma-teorico", "rho1-theta-ma1",
             "dualidad-psi-pi",
             "laboratorio-arma", "teorica-vs-muestral", "manchas-identificacion",
-            "diagnostico-residuales", "manchas-transformada", "trm-retornos")
+            "diagnostico-residuales", "manchas-transformada", "trm-retornos",
+            "cap3-simulacro")
     ],
     "contenedores de simulador": [
         f'data-simulador="{s}"' for s in (
             "panel-ar-teorico", "triangulo-ar2", "panel-ma-teorico", "rho1-theta-ma1",
             "dualidad-psi-pi",
             "laboratorio-arma", "teorica-vs-muestral", "manchas-identificacion",
-            "diagnostico-residuales", "manchas-transformada", "trm-retornos")
+            "diagnostico-residuales", "manchas-transformada", "trm-retornos",
+            "cap3-simulacro")
     ],
     # El andamiaje interno del .quiz no es decorativo: renderAutoevaluacion()
     # escribe sobre estos nodos y revienta si falta cualquiera de ellos.
@@ -422,6 +449,34 @@ for pieza in ['<div class="quiz" data-quiz="parcial2">', "AUTOEVALUACIONES['parc
     if html.count(pieza) != 1:
         fallos.append(f"actividad preparatoria del Parcial 2: '{pieza}' aparece "
                       f"{html.count(pieza)} veces, se esperaba 1")
+
+# El simulacro del Módulo 11: una variante entera del quiz, SIN CLAVE. El
+# contenedor y la prosa están en la plantilla; el motor y el registro, en
+# `cap3_js.js` —el registro entre marcadores, escrito por `exporta_simulacro.py`
+# fuera del repositorio—. Se cuenta cada pieza: perderla dejaría el módulo vacío
+# y duplicarla pintaría dos relojes sobre el mismo estado.
+for pieza in ['<div class="simulacro" data-simulador="cap3-simulacro">',
+              "SIMULACROS['cap3-simulacro']", "const SIMULACROS = {};",
+              "function pintarSimulacro(", ".simulacro {", ".simulacro-opcion {",
+              "    // [inicio · simulacro del quiz]",
+              "    // [fin · simulacro del quiz]",
+              '<div class="simulacro-preguntas"></div>',
+              'class="simulacro-empezar"', 'class="simulacro-reloj"',
+              'class="simulacro-conteo"', 'class="simulacro-borrar"',
+              'class="simulacro-resumen"']:
+    if html.count(pieza) != 1:
+        fallos.append(f"simulacro del quiz: '{pieza}' aparece {html.count(pieza)} "
+                      f"veces, se esperaba 1")
+
+# Y lo que NO puede llevar: la clave. El registro del simulacro publica
+# enunciados y opciones; si alguna vez alguien pega ahí la salida del banco con
+# retroalimentación, esto lo para antes de que el capítulo se publique.
+if "SIMULACROS['cap3-simulacro']" in html:
+    registro = html[html.index("    // [inicio · simulacro del quiz]"):
+                    html.index("    // [fin · simulacro del quiz]")]
+    for pista in ("correcta:", "retro:", "Correcto.", "retroFallo", "retroAcierto"):
+        if pista in registro:
+            fallos.append(f"el simulacro publica «{pista}»: eso es la clave")
 
 prohibidos = ["DATOS_CAP2", "SERIES_CAP2", "AUTOEVALUACIONES['cap2']",
               "Capítulo 2 • UnBosque", "genera_cap2.R"]

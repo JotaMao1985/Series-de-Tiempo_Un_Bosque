@@ -19,7 +19,10 @@ error:
 
   · módulo      — un `<template id="module-N">` en el marcado
   · simulador   — un `data-simulador` DISTINTO en el marcado (los repetidos,
-                  como la tira de variante del taller, cuentan una vez)
+                  como la tira de variante del taller, cuentan una vez). El
+                  simulacro del quiz queda fuera: se engancha al mismo registro
+                  por comodidad, pero lo que anuncia la portada son simuladores
+                  para mover, y aquello es un examen de práctica
   · pregunta    — una clave `pregunta:` en los arrays de autoevaluación
   · ejercicio   — un `<div class="ejercicio-guiado">`
 
@@ -59,12 +62,16 @@ TALLERES = [
 PREPARCIAL = "preparcial-corte-1.html"
 
 
+# Se enganchan al registro de simuladores, pero no lo son: no hay nada que mover.
+NO_SIMULADOR = {"cap3-simulacro"}
+
+
 def cuenta(ruta: pathlib.Path) -> dict:
     t = ruta.read_text(encoding="utf-8")
     marcado = t[:t.rindex("\n  <script>")] if "\n  <script>" in t else t
     return {
         "modulos": len(re.findall(r'<template id="module-\d+">', marcado)),
-        "simuladores": len(set(re.findall(r'data-simulador="([^"]+)"', marcado))),
+        "simuladores": len(set(re.findall(r'data-simulador="([^"]+)"', marcado)) - NO_SIMULADOR),
         "preguntas": len(re.findall(r"^\s*pregunta:\s*", t, re.M)),
         "ejercicios": marcado.count('<div class="ejercicio-guiado">'),
         "kb": round(len(t.encode("utf-8")) / 1024),

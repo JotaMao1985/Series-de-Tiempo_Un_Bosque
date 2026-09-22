@@ -1430,3 +1430,316 @@
       }
     ];
     // [fin · actividad preparatoria del Parcial 2]
+
+    // ================================================================
+    // Simulacro del quiz (Módulo 11)
+    //
+    // Se marca y se cronometra, pero NO se corrige: en la página no hay
+    // clave, ni retroalimentación, ni nada de donde deducirlas. Es lo que
+    // lo distingue de la autoevaluación, que sí las lleva: un examen de
+    // práctica cuyas preguntas se van a aplicar no puede publicar su clave,
+    // porque viajaría en el HTML de un capítulo público.
+    //
+    // Injertado del Módulo 13 del capítulo 4 de Estadística Espacial
+    // (2026-09-18), con dos cambios:
+    //   · se engancha al registro SIMULADORES, que loadModule() ya recorre,
+    //     en vez de pedir una llamada propia en el arranque de cada módulo.
+    //     Así el andamiaje heredado del capítulo 2 no se toca, y el capítulo
+    //     4 —que rehace esta región entera— no arrastra nada de esto;
+    //   · lo marcado y el reloj viven en ESTADO_SIMULACRO, fuera del
+    //     renderizado, para que salir al Módulo 9 y volver no borre veinte
+    //     minutos de trabajo. El reloj sigue corriendo mientras tanto: se
+    //     guarda la hora de final, no los segundos que quedan, igual que el
+    //     reloj del salón no se para porque nadie lo mire.
+    //
+    // El CSS gemelo está en ensamblado/componentes/simulacro.css, y lo
+    // instala ensambla_cap3.py.
+    //
+    // SIMULACROS['id'] = { minutos, variante, preguntas: [{ n, etiqueta,
+    // tipo, enunciado, opciones }] } lo escribe exporta_simulacro.py desde
+    // el banco del quiz, fuera del repositorio. `tipo` es 'opcion' (una
+    // marca) o 'multiple' (varias).
+    // ================================================================
+    const SIMULACROS = {};
+    const ESTADO_SIMULACRO = {};
+
+    SIMULADORES['cap3-simulacro'] = function (raiz) {
+      const id = raiz.dataset.simulador;
+      const sim = SIMULACROS[id];
+      if (!sim) {
+        console.warn(`Simulacro no registrado: ${id}`);
+        return [];
+      }
+      if (!ESTADO_SIMULACRO[id]) {
+        ESTADO_SIMULACRO[id] = {
+          marcadas: sim.preguntas.map(() => []),
+          finAt: null,
+          restante: sim.minutos * 60
+        };
+      }
+      return pintarSimulacro(raiz, sim, ESTADO_SIMULACRO[id]);
+    };
+
+    function pintarSimulacro(raiz, sim, estado) {
+      const contenedor = raiz.querySelector('.simulacro-preguntas');
+      const conteo = raiz.querySelector('.simulacro-conteo');
+      const resumen = raiz.querySelector('.simulacro-resumen');
+      const reloj = raiz.querySelector('.simulacro-reloj');
+      const empezar = raiz.querySelector('.simulacro-empezar');
+      const borrar = raiz.querySelector('.simulacro-borrar');
+      const listas = [];
+      contenedor.innerHTML = '';
+
+      sim.preguntas.forEach((pr, i) => {
+        const caja = document.createElement('div');
+        caja.className = 'simulacro-pregunta';
+        const varias = pr.tipo === 'multiple';
+        caja.innerHTML = `<span class="simulacro-etiqueta">${pr.n}. ${pr.etiqueta}` +
+          `${varias ? ' · varias respuestas' : ''}</span>` +
+          `<div class="simulacro-enunciado">${pr.enunciado}</div>` +
+          `<div class="simulacro-opciones" role="group" ` +
+          `aria-label="Opciones de la pregunta ${pr.n}"></div>`;
+        const lista = caja.querySelector('.simulacro-opciones');
+        listas.push(lista);
+        pr.opciones.forEach((texto, j) => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'simulacro-opcion';
+          b.innerHTML = `<span class="simulacro-letra">${LETRAS[j]})</span><span>${texto}</span>`;
+          b.onclick = () => {
+            const puesta = estado.marcadas[i].includes(j);
+            if (varias) {
+              estado.marcadas[i] = puesta
+                ? estado.marcadas[i].filter(x => x !== j)
+                : estado.marcadas[i].concat(j).sort((a, b) => a - b);
+            } else {
+              estado.marcadas[i] = puesta ? [] : [j];
+            }
+            pintaOpciones(i);
+            pintaMarcador();
+          };
+          lista.appendChild(b);
+        });
+        contenedor.appendChild(caja);
+        pintaOpciones(i);
+      });
+
+      function pintaOpciones(i) {
+        listas[i].querySelectorAll('.simulacro-opcion').forEach((o, j) => {
+          const marcada = estado.marcadas[i].includes(j);
+          o.classList.toggle('marcada', marcada);
+          o.setAttribute('aria-pressed', marcada ? 'true' : 'false');
+        });
+      }
+
+      function pintaMarcador() {
+        const hechas = estado.marcadas.filter(m => m.length > 0).length;
+        conteo.textContent = `${hechas} de ${sim.preguntas.length} marcadas`;
+        resumen.innerHTML = 'Tus respuestas: ' + sim.preguntas.map((pr, i) => {
+          const letras = estado.marcadas[i].map(j => LETRAS[j]).join('');
+          return `<b>${pr.n}${letras || '—'}</b>`;
+        }).join(' · ') + '. No se corrigen aquí.';
+      }
+
+      // El reloj: `finAt` es la hora en que se acaba y manda mientras corre;
+      // `restante` solo guarda los segundos cuando está pausado.
+      let tic = null;
+      function para() {
+        if (tic !== null) { clearInterval(tic); tic = null; }
+      }
+      function segundos() {
+        return estado.finAt === null
+          ? estado.restante
+          : Math.max(0, Math.round((estado.finAt - Date.now()) / 1000));
+      }
+      function pintaReloj() {
+        const s = segundos();
+        reloj.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+        reloj.classList.toggle('acabado', s === 0);
+        empezar.textContent = estado.finAt !== null ? 'Pausar'
+          : (s === sim.minutos * 60 ? `Empezar los ${sim.minutos} minutos` : 'Seguir');
+      }
+      function arranca() {
+        para();
+        tic = setInterval(() => {
+          if (segundos() === 0) {
+            estado.finAt = null;
+            estado.restante = 0;
+            para();
+          }
+          pintaReloj();
+        }, 250);
+      }
+      empezar.onclick = () => {
+        if (estado.finAt !== null) {          // corriendo: se pausa
+          estado.restante = segundos();
+          estado.finAt = null;
+          para();
+        } else {
+          if (estado.restante === 0) estado.restante = sim.minutos * 60;
+          estado.finAt = Date.now() + estado.restante * 1000;
+          arranca();
+        }
+        pintaReloj();
+      };
+      borrar.onclick = () => {
+        para();
+        estado.marcadas = sim.preguntas.map(() => []);
+        estado.finAt = null;
+        estado.restante = sim.minutos * 60;
+        sim.preguntas.forEach((_, i) => pintaOpciones(i));
+        pintaMarcador();
+        pintaReloj();
+      };
+
+      if (estado.finAt !== null) arranca();
+      pintaReloj();
+      pintaMarcador();
+      // Lo que devuelve un simulador son los objetos que destruirSimuladores()
+      // apaga al cambiar de módulo. Aquí no hay gráficos: lo que hay que apagar
+      // es el intervalo, que si no seguiría pintando sobre nodos que ya no
+      // están en el documento.
+      return [{ destroy: para }];
+    }
+
+    // [inicio · simulacro del quiz]
+    // ================================================================
+    // Simulacro del quiz (Módulo 11) · variante 9, SIN CLAVE
+    //
+    // NO SE EDITA A MANO: lo escribe exporta_simulacro.py, fuera del
+    // repositorio, desde el mismo banco que arma los paquetes de
+    // Brightspace. Aquí solo viajan enunciados y opciones: la clave y la
+    // retroalimentación se quedan fuera, porque este capítulo es público.
+    //
+    // La variante 9 no entra en el banco, a propósito: publicar una de las
+    // ocho le daría a uno de cada ocho estudiantes las preguntas que va a
+    // ver en el quiz, con tiempo ilimitado para estudiarlas.
+    // ================================================================
+    SIMULACROS['cap3-simulacro'] = {
+      minutos: 30,
+      variante: 9,
+      preguntas: [
+        {
+          n: 1,
+          etiqueta: 'cap. 2-3 · mód. 2.1-2.5 y 3.1-3.3 · estacionariedad débil',
+          tipo: 'multiple',
+          enunciado: '<p>Sea \\(\\{\\varepsilon_t\\}\\) una sucesión i.i.d. \\(\\mathrm{N}(0,\\sigma^2)\\) definida para todo entero \\(t\\). Cada proceso se observa en \\(t = 1, 2, \\ldots\\); en los autorregresivos sin valor inicial, \\(y_t\\) depende solo de los choques hasta \\(t\\) y la serie lleva mucho tiempo en marcha.</p><p>Marca <strong>todos</strong> los procesos que son débilmente estacionarios.</p>',
+          opciones: [
+            '\\(y_t = 1.25\\,y_{t-1} + \\varepsilon_t\\)',
+            '\\(y_t = (-1)^t\\,\\varepsilon_t\\)',
+            '\\(y_t = 10\\cos(2\\pi t/12) + \\varepsilon_t\\)',
+            '\\(y_t = y_{t-1} + \\varepsilon_t\\)',
+            '\\(y_t = 5 + 0.92\\,y_{t-1} + \\varepsilon_t\\)'
+          ]
+        },
+        {
+          n: 2,
+          etiqueta: 'cap. 2 · mód. 2.6 · ADF, KPSS y estacionalidad',
+          tipo: 'opcion',
+          enunciado: '<p>Una serie mensual de \\(T = 116\\) observaciones tiene tendencia creciente y un patrón anual muy regular. Estas son cuatro salidas de R sobre ella, recortadas; <code>sa</code> es la serie sin su componente estacional, estimado con STL:</p><pre style="font-weight:400;font-size:0.78rem;line-height:1.45;margin:0.6rem 0;max-height:none;padding:0.8rem 1rem !important;">&gt; adf.test(y)\nDickey-Fuller = -6.78, p-value = 0.01\nWarning message:\nIn adf.test(y) : p-value smaller than printed p-value\n\n&gt; adf.test(y, k = 12)\nDickey-Fuller = -1.84, p-value = 0.64\n\n&gt; adf.test(sa)\nDickey-Fuller = -2.61, p-value = 0.32\n\n&gt; kpss.test(sa, null = "Trend")\nKPSS Trend = 0.215, p-value = 0.010</pre><p>¿Qué se concluye, y por qué?</p>',
+          opciones: [
+            'Hay raíz unitaria. El primer ADF usa \\(k = \\lfloor (T-1)^{1/3} \\rfloor = 4\\) rezagos, menos que el periodo 12, y toma la oscilación anual por reversión a la media.',
+            'Es estacionaria. El primer ADF, con sus \\(k = \\lfloor (T-1)^{1/3} \\rfloor = 4\\) rezagos, es el fiable: con 12 rezagos, o sin el patrón anual, la prueba pierde potencia y ya no puede rechazar.',
+            'Hay raíz unitaria. El primer ADF no vale: su p-valor quedó fuera de la tabla, como avisa R, y un p-valor que no se conoce con exactitud no permite rechazar.',
+            'Es estacionaria. El KPSS sobre la serie sin estacionalidad da un p-valor pequeño, y eso respalda la estacionariedad que ya había encontrado el primer ADF.'
+          ]
+        },
+        {
+          n: 3,
+          etiqueta: 'cap. 2-3 · mód. 2.7 y 3.3 · sobrediferenciación',
+          tipo: 'opcion',
+          enunciado: '<p>Los residuales de un modelo ya son ruido blanco: \\(\\varepsilon_t \\sim \\text{RB}(0,\\,\\sigma^2)\\) con \\(\\sigma^2 = 0.81\\). Por error se les aplica una diferencia regular, \\(w_t = \\nabla\\varepsilon_t = \\varepsilon_t - \\varepsilon_{t-1}\\).</p><p>¿Cuál de estas descripciones de \\(w_t\\) es correcta?</p>',
+          opciones: [
+            'Un MA(1) con \\(\\theta = -1\\): \\(\\operatorname{Var}(w_t) = 0.81\\), \\(\\rho_1 = -0.5\\), y es invertible, porque \\(|\\theta| = 1\\) no pasa de 1.',
+            'Un MA(1) con \\(\\theta = -1\\): \\(\\operatorname{Var}(w_t) = 1.62\\), \\(\\rho_1 = -0.5\\), y no es invertible: la raíz de \\(1 - B\\) es \\(B = 1\\), sobre el círculo.',
+            'Ruido blanco, con \\(\\operatorname{Var}(w_t) = 1.62\\) y \\(\\rho_1 = 0\\): si los \\(\\varepsilon_t\\) son incorrelados entre sí, sus diferencias también lo son.',
+            'Ruido blanco, con la misma \\(\\operatorname{Var}(w_t) = 0.81\\) y \\(\\rho_1 = 0\\): restar el valor anterior no añade ni varianza ni autocorrelación.'
+          ]
+        },
+        {
+          n: 4,
+          etiqueta: 'cap. 2 · mód. 2.5 · caminata con deriva',
+          tipo: 'opcion',
+          enunciado: '<p>Una serie sigue una caminata aleatoria con deriva, \\(y_t = c + y_{t-1} + \\varepsilon_t\\), con \\(c = 1.1\\), \\(y_0 = 120\\) y \\(\\varepsilon_t \\sim \\text{RB}(0,\\,\\sigma^2)\\), \\(\\sigma = 2.2\\).</p><p>¿Cuánto valen \\(E[y_{40}]\\) y \\(\\operatorname{Var}(y_{40})\\), y qué tratamiento necesita la serie para ser estacionaria, si necesita alguno?</p>',
+          opciones: [
+            '\\(E[y_{40}] = 164\\), \\(\\operatorname{Var}(y_{40}) = 4.84\\). Se vuelve estacionaria restando la recta: \\(y_t - (y_0 + ct)\\).',
+            '\\(E[y_{40}] = 120\\), \\(\\operatorname{Var}(y_{40}) = 193.6\\). Se vuelve estacionaria diferenciando: \\(\\nabla y_t = c + \\varepsilon_t\\).',
+            '\\(E[y_{40}] = 164\\), \\(\\operatorname{Var}(y_{40}) = 193.6\\). Se vuelve estacionaria diferenciando: \\(\\nabla y_t = c + \\varepsilon_t\\).',
+            '\\(E[y_{40}] = 120\\), \\(\\operatorname{Var}(y_{40}) = 4.84\\). Ya es estacionaria: no hace falta transformarla.'
+          ]
+        },
+        {
+          n: 5,
+          etiqueta: 'cap. 3 · mód. 3.1 · operador de rezago',
+          tipo: 'opcion',
+          enunciado: '<p>El modelo \\((1 + 0.6B)(1 - B)\\,y_t = \\varepsilon_t\\) puede escribirse como un AR(2), \\(y_t = \\phi_1 y_{t-1} + \\phi_2 y_{t-2} + \\varepsilon_t\\).</p><p>¿Cuánto valen \\(\\phi_1\\) y \\(\\phi_2\\), y es estacionario?</p>',
+          opciones: [
+            '\\(\\phi_1 = 0.4\\), \\(\\phi_2 = 0.6\\). Es estacionario, porque la raíz de \\((1 + 0.6B)\\) es \\(B \\approx -1.67\\), fuera del círculo unitario.',
+            '\\(\\phi_1 = 1.6\\), \\(\\phi_2 = -0.6\\). No es estacionario: \\(\\phi_1 + \\phi_2 = 1 \\ge 1\\).',
+            '\\(\\phi_1 = 1.6\\), \\(\\phi_2 = -0.6\\). Es estacionario, porque la raíz de \\((1 + 0.6B)\\) es \\(B \\approx -1.67\\), fuera del círculo unitario.',
+            '\\(\\phi_1 = 0.4\\), \\(\\phi_2 = 0.6\\). No es estacionario: \\(\\phi_1 + \\phi_2 = 1 \\ge 1\\).'
+          ]
+        },
+        {
+          n: 6,
+          etiqueta: 'cap. 3 · mód. 3.1-3.2 · triángulo del AR(2)',
+          tipo: 'opcion',
+          enunciado: '<p>Un AR(2), \\(y_t = \\phi_1 y_{t-1} + \\phi_2 y_{t-2} + \\varepsilon_t\\), tiene \\(\\phi_1 = 1.4\\) y \\(\\phi_2 = -0.45\\).</p><p>¿Es estacionario, y cómo son las raíces de su polinomio autorregresivo \\(\\phi(B)\\)?</p>',
+          opciones: [
+            'Estacionario, con raíces reales.',
+            'Estacionario, con raíces complejas.',
+            'No estacionario, con raíces reales.',
+            'No estacionario, con raíces complejas.'
+          ]
+        },
+        {
+          n: 7,
+          etiqueta: 'cap. 3 · mód. 3.2 · intercept y constante',
+          tipo: 'opcion',
+          enunciado: '<p>Se ajusta un AR(2) en R sobre una serie de 150 observaciones:</p><pre style="font-weight:400;font-size:0.78rem;line-height:1.45;margin:0.6rem 0;max-height:none;padding:0.8rem 1rem !important;">&gt; arima(y, order = c(2, 0, 0))\n\nCall:\narima(x = y, order = c(2, 0, 0))\n\nCoefficients:\n         ar1      ar2  intercept\n      0.7579  -0.2327    59.9161\ns.e.  0.0797   0.0797     0.1879\n\nsigma^2 estimated as 1.203:  log likelihood = -226.99,  aic = 461.98</pre><p>¿Cuánto vale la constante \\(c\\) del modelo \\(y_t = c + \\phi_1 y_{t-1} + \\phi_2 y_{t-2} + \\varepsilon_t\\)?</p>',
+          opciones: [
+            '\\(c = 59.92\\)',
+            '\\(c = 28.45\\)',
+            '\\(c = 14.51\\)',
+            '\\(c = 126.19\\)'
+          ]
+        },
+        {
+          n: 8,
+          etiqueta: 'cap. 3 · mód. 3.3 · MA(1) e invertibilidad',
+          tipo: 'opcion',
+          enunciado: '<p>Se quiere describir con un MA(1), \\(y_t = \\varepsilon_t + \\theta\\,\\varepsilon_{t-1}\\) (el convenio de R), un proceso cuya autocorrelación de orden 1 es \\(\\rho_1 = 0.44\\).</p><p>¿Cuál de estas afirmaciones sobre \\(\\theta\\) es correcta?</p>',
+          opciones: [
+            '\\(\\theta = 1.6761\\). También \\(\\theta = 0.5966\\) da \\(\\rho_1 = 0.44\\), pero se toma la de mayor \\(|\\theta|\\), que da más dependencia.',
+            '\\(\\theta = 0.4400\\), porque en un MA(1) el coeficiente coincide con la autocorrelación de orden 1.',
+            '\\(\\theta = 0.5966\\). También \\(\\theta = 1.6761\\) da \\(\\rho_1 = 0.44\\), pero se toma la solución invertible, la de \\(|\\theta| \\lt 1\\).',
+            'Ningún valor de \\(\\theta\\): como \\(\\theta\\) y \\(1/\\theta\\) dan la misma ACF, no hay forma de elegir entre ellos, y el MA(1) no sirve para este proceso.'
+          ]
+        },
+        {
+          n: 9,
+          etiqueta: 'cap. 3 · mód. 3.4 · pesos psi y varianza del pronóstico',
+          tipo: 'opcion',
+          enunciado: '<p>Un ARMA(1,1), \\((1 - 0.93B)\\,y_t = (1 - 0.12B)\\,\\varepsilon_t\\), tiene \\(\\sigma^2 = 2.2\\).</p><p>¿Cuánto vale la varianza del error de pronóstico a tres pasos, \\(\\operatorname{Var}(e_{T+3})\\)?</p>',
+          opciones: [
+            '\\(\\operatorname{Var}(e_{T+3}) = 3.7716\\)',
+            '\\(\\operatorname{Var}(e_{T+3}) = 6.7233\\)',
+            '\\(\\operatorname{Var}(e_{T+3}) = 5.7485\\)',
+            '\\(\\operatorname{Var}(e_{T+3}) = 4.8918\\)'
+          ]
+        },
+        {
+          n: 10,
+          etiqueta: 'cap. 3 · mód. 3.2 y 2.4 · Yule-Walker y PACF',
+          tipo: 'opcion',
+          enunciado: '<p>Un AR(2) estacionario, \\(y_t = \\phi_1 y_{t-1} + \\phi_2 y_{t-2} + \\varepsilon_t\\), tiene \\(\\phi_1 = 0.5\\) y \\(\\phi_2 = 0.3\\).</p><p>¿Cuánto valen sus autocorrelaciones teóricas \\(\\rho_1\\) y \\(\\rho_2\\), y sus autocorrelaciones parciales \\(\\phi_{22}\\) y \\(\\phi_{33}\\)?</p>',
+          opciones: [
+            '\\(\\rho_1 = 0.7143\\), \\(\\rho_2 = 0.6571\\); \\(\\phi_{22} = 0.3000\\), \\(\\phi_{33} = 0.0000\\)',
+            '\\(\\rho_1 = 0.7143\\), \\(\\rho_2 = 0.6571\\); \\(\\phi_{22} = 0.6571\\), \\(\\phi_{33} = 0.5429\\)',
+            '\\(\\rho_1 = 0.8000\\), \\(\\rho_2 = 0.7000\\); \\(\\phi_{22} = 0.3000\\), \\(\\phi_{33} = 0.0000\\)',
+            '\\(\\rho_1 = 0.8000\\), \\(\\rho_2 = 0.7000\\); \\(\\phi_{22} = 0.7000\\), \\(\\phi_{33} = 0.5900\\)'
+          ]
+        }
+      ]
+    };
+    // [fin · simulacro del quiz]
