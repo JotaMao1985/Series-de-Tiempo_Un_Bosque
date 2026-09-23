@@ -309,7 +309,7 @@ html = recortar(
         { id: 7, title: "Estimación de parámetros", shortTitle: "Estimación", duration: "14 min" },
         { id: 8, title: "Criterios de información y diagnóstico", shortTitle: "Diagnóstico", duration: "14 min" },
         { id: 9, title: "Dos casos reales", shortTitle: "Casos reales", duration: "19 min" },
-        { id: 10, title: "Cierre, resumen y autoevaluación", shortTitle: "Cierre", duration: "12 min" },
+        { id: 10, title: "Cierre, resumen y autoevaluación", shortTitle: "Cierre", duration: "14 min" },
         { id: 11, title: "Simulacro del quiz", shortTitle: "Simulacro", duration: "30 min" }
 """,
     "courseData.modules")

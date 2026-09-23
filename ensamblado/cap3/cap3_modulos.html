@@ -3110,6 +3110,91 @@ print(round(float(acorr_ljungbox(ret**2, lags=[12])["lb_pvalue"].iloc[0]), 4))
         </ol>
       </div>
 
+      <h3>Elegir el modelo y fijar sus órdenes</h3>
+
+      <p>El Módulo 5 dio la tabla de identificación: qué forma tienen la ACF y la PACF de cada familia. Esta la
+        completa con lo que viene después, que es donde se decide el capítulo — de dónde sale el número, y qué hacer
+        cuando la lectura de los correlogramas no lo da.</p>
+
+      <table>
+        <caption class="sr-only">Criterios para elegir entre AR, MA y ARMA y para fijar los órdenes p y q</caption>
+        <thead>
+          <tr>
+            <th scope="col">Modelo</th>
+            <th scope="col">ACF</th>
+            <th scope="col">PACF</th>
+            <th scope="col">De dónde sale el orden</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="white-space:nowrap;">AR($p$)</strong></td>
+            <td>Decae sin cortar: geométrica si las raíces son reales, <strong>en ondas</strong> si son complejas</td>
+            <td><strong>Se corta</strong> en $p$. La teórica no es «pequeña» desde $p+1$: vale <strong>cero
+              exacto</strong></td>
+            <td>$p$ es el rezago tras el cual la PACF entra en $\pm 1.96/\sqrt{n}$ <em>y se queda</em>. Esa última
+              barra además <strong>estima $\phi_p$</strong>: en el AR(2) del Módulo 9 la PACF teórica en $2$ vale
+              $-0.6853$, el coeficiente mismo</td>
+          </tr>
+          <tr>
+            <td><strong style="white-space:nowrap;">MA($q$)</strong></td>
+            <td><strong>Se corta</strong> en $q$, también con cero exacto desde $q+1$</td>
+            <td>Decae sin cortar, a menudo alternando el signo</td>
+            <td>$q$ es el rezago tras el cual la ACF entra en la banda y se queda. Aquí no hay lectura del
+              coeficiente: <strong>ninguna barra de la PACF estima un $\theta_j$</strong></td>
+          </tr>
+          <tr>
+            <td><strong style="white-space:nowrap;">ARMA($p,q$)</strong></td>
+            <td>Decae; desde el rezago $q+1$, al ritmo de un <span style="white-space:nowrap;">AR($p$)</span></td>
+            <td>Decae; desde el rezago $p+1$</td>
+            <td><strong>La lectura no los da.</strong> Los correlogramas solo dicen por dónde empezar: se propone una
+              rejilla de candidatos vecinos y deciden el AICc o el BIC del Módulo 8</td>
+          </tr>
+          <tr>
+            <td>Ruido blanco</td>
+            <td>Dentro de la banda, salvo un $5\,\%$ de rezagos por azar</td>
+            <td>Dentro de la banda, con la misma salvedad</td>
+            <td>$p = q = 0$, y la conclusión es que <strong>no hay nada que modelar</strong>: es el caso de los
+              log-retornos de la TRM</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="warning">
+        <p><strong>Las dos primeras filas describen la teoría, no un correlograma.</strong> El corte exacto es una
+          propiedad del proceso; lo que se ve es una muestra, y con $n$ moderado las barras posteriores al corte no
+          caen a cero sino que revolotean dentro de la banda. Por eso la columna de la derecha dice «entra y
+          <em>se queda</em>»: con veinte rezagos se espera que uno se salga por puro azar, y perseguirlo con
+          parámetros es el error que este capítulo repite en tres módulos distintos.</p>
+      </div>
+
+      <div class="definition">
+        <h4><i class="fas fa-clipboard-check mr-2" aria-hidden="true"></i>Qué confirma el orden elegido</h4>
+        <ul style="margin-bottom:0;">
+          <li><strong>El coeficiente de mayor orden.</strong> Si $\hat\phi_p$ o $\hat\theta_q$ no es significativo,
+            sobra. En el AR(2) final de las manchas, $t = 19.29$ y $t = -9.47$; el $\hat\theta_1$ del ARMA(2,1) sobre
+            la serie cruda se sostenía con $t = 2.78$, y desapareció al corregir la escala.</li>
+          <li><strong>Ljung–Box sobre los residuales</strong>, con <code>fitdf = p + q</code> y evaluado en
+            $h > p+q$. Es la prueba que ve lo que el correlograma barra por barra no ve: ninguna de las veinte
+            autocorrelaciones residuales del AR(2) crudo salía de $\pm 0.196$ y aun así la prueba lo rechazaba.</li>
+          <li><strong>AICc o BIC</strong>, y solo entre modelos ajustados a los <strong>mismos datos</strong>. AICc si
+            el objetivo es pronosticar, BIC si es identificar el proceso.</li>
+          <li><strong>Parsimonia ante el empate.</strong> Añadir un parámetro casi siempre mejora la verosimilitud;
+            que la mejore no significa que haga falta.</li>
+        </ul>
+      </div>
+
+      <div class="warning">
+        <p><strong>Y una advertencia sobre la rejilla.</strong> Un <span style="white-space:nowrap;">ARMA($2,2$)</span> con $\phi = (1.1,\,-0.28)$ y
+          $\theta = (0.1,\,-0.20)$ tiene <strong>exactamente</strong> la misma ACF que el <span style="white-space:nowrap;">ARMA($1,1$)</span> de
+          $\phi = 0.7$ y $\theta = 0.5$ —coinciden hasta el último decimal—, porque el factor $(1-0.4B)$ está en los
+          dos polinomios y se cancela, como advertía el Módulo 4. El daño no lo recibe el criterio de información,
+          que penaliza al grande y suele acertar, sino la <strong>estimación</strong>: los cuatro coeficientes del
+          modelo grande no quedan identificados, sus errores estándar se disparan y ninguno parece significativo. Si
+          una rejilla devuelve un modelo cuyos coeficientes son todos insignificantes a la vez, el sospechoso número
+          uno es un factor común.</p>
+      </div>
+
       <h3>Autoevaluación</h3>
 
       <p>Diez preguntas sobre todo el capítulo. Al primer fallo verás una pista y podrás reintentar; al segundo se
