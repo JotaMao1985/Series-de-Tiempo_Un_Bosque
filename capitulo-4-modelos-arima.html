@@ -2416,9 +2416,11 @@
         <p>Con el operador de diferencia $\nabla \equiv 1 - B$, $y_t$ sigue un ARIMA($p,d,q$) si su $d$-ésima
           diferencia $w_t = \nabla^d y_t = (1-B)^d y_t$ sigue un ARMA($p,q$) estacionario e invertible. En una sola
           línea con el operador de rezago:</p>
-        $$\underbrace{\phi(B)}_{\text{AR}(p)}\ \underbrace{(1-B)^d}_{\text{integración}}\ y_t
-          = c + \underbrace{\theta(B)}_{\text{MA}(q)}\ \varepsilon_t,
-          \qquad \varepsilon_t \sim \text{RB}(0,\sigma^2)$$
+        $$\begin{gathered}
+          \underbrace{\phi(B)}_{\text{AR}(p)}\ \underbrace{(1-B)^d}_{\text{integración}}\ y_t
+          = c + \underbrace{\theta(B)}_{\text{MA}(q)}\ \varepsilon_t, \\[0.3em]
+          \varepsilon_t \sim \text{RB}(0,\sigma^2)
+        \end{gathered}$$
         <p style="margin-bottom:0;">donde $\phi(B) = 1 - \phi_1 B - \cdots - \phi_p B^p$ y
           $\theta(B) = 1 + \theta_1 B + \cdots + \theta_q B^q$, exactamente los del capítulo anterior. La letra
           <strong>I</strong> es de <em>integrated</em>: para volver de $w_t$ a $y_t$ hay que sumar
@@ -2445,11 +2447,18 @@
             </li>
             <li>
               <p>Se multiplican los dos factores del lado izquierdo:</p>
-              $$(1 - \phi B)(1 - B) = 1 - B - \phi B + \phi B^2 = 1 - (1+\phi)B + \phi B^2$$
+              $$\begin{aligned}
+                &(1 - \phi B)(1 - B) \\
+                &\quad = 1 - B - \phi B + \phi B^2 \\
+                &\quad = 1 - (1+\phi)B + \phi B^2
+              \end{aligned}$$
             </li>
             <li>
               <p>Es decir, el mismo modelo escrito sobre la serie <strong>sin diferenciar</strong> es un ARMA($2,1$):</p>
-              $$y_t = (1+\phi)\,y_{t-1} - \phi\, y_{t-2} + \varepsilon_t + \theta\,\varepsilon_{t-1}$$
+              $$\begin{aligned}
+                y_t = {}&(1+\phi)\,y_{t-1} - \phi\, y_{t-2} \\
+                &+ \varepsilon_t + \theta\,\varepsilon_{t-1}
+              \end{aligned}$$
               <p>con coeficientes autorregresivos $\phi_1^{*} = 1+\phi$ y $\phi_2^{*} = -\phi$.</p>
             </li>
             <li>
@@ -2468,7 +2477,7 @@
       <h3>Casos particulares ya conocidos</h3>
 
       <div class="diagram">
-        <table>
+        <table style="position:relative;">
           <thead>
             <tr><th>Modelo</th><th>Nombre</th><th>Qué dice</th></tr>
           </thead>
@@ -2860,7 +2869,7 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
         ángulos distintos.</p>
 
       <div class="diagram">
-        <table>
+        <table style="position:relative;">
           <thead>
             <tr><th>Evidencia</th><th>Qué mirar</th><th>Qué dice sobre el Nilo</th></tr>
           </thead>
@@ -2905,9 +2914,11 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
           misma serie</h4>
         <p>La función <code>ndiffs()</code> devuelve el $d$ recomendado, pero <strong>depende de la prueba que se
           le pida</strong>, y sobre el Nilo las tres no coinciden:</p>
-        $$\texttt{ndiffs(Nile, test = "kpss")} = 1, \qquad
-          \texttt{ndiffs(Nile, test = "adf")} = 0, \qquad
-          \texttt{ndiffs(Nile, test = "pp")} = 0$$
+        $$\begin{aligned}
+          {\footnotesize\texttt{ndiffs(Nile, test = "kpss")}} &= 1 \\
+          {\footnotesize\texttt{ndiffs(Nile, test = "adf")}} &= 0 \\
+          {\footnotesize\texttt{ndiffs(Nile, test = "pp")}} &= 0
+        \end{aligned}$$
         <p style="margin-bottom:0;">Dos de las tres dicen que <strong>no</strong> hay que diferenciar. Y el valor por
           defecto de <code>ndiffs()</code> —y por tanto el que usa <code>auto.arima()</code>— es KPSS, la única que
           dice que sí. Hay además un matiz: el ADF de <code>ndiffs()</code> no es el de <code>adf.test()</code> de la tabla.
@@ -2977,8 +2988,10 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
             <li>
               <p>El estadístico KPSS se construye sobre las <strong>sumas parciales</strong> de los residuales de
                 regresar la serie contra una constante, $e_t = y_t - \bar{y}$:</p>
-              $$S_t = \sum_{i=1}^{t} e_i, \qquad
-                \mathrm{KPSS} = \frac{1}{n^2\hat\sigma_{LP}^2}\sum_{t=1}^{n} S_t^2$$
+              $$\begin{aligned}
+                S_t &= \sum_{i=1}^{t} e_i, \\
+                \mathrm{KPSS} &= \frac{1}{n^2\hat\sigma_{LP}^2}\sum_{t=1}^{n} S_t^2
+              \end{aligned}$$
               <p>donde $\hat\sigma_{LP}^2$ es una estimación de la varianza de largo plazo.</p>
             </li>
             <li>
@@ -2998,7 +3011,10 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
               $$\Longrightarrow\quad \max_t |S_t| \approx \tau(1-\tau)\, n\,|\beta|$$
               <p>Los $e_t$ <strong>no se compensan localmente</strong>: todos los de un mismo tramo tienen el mismo
                 signo. $S_t$ crece linealmente hasta el salto y decrece linealmente después, de modo que</p>
-              $$\sum_t S_t^2 \sim n^3\beta^2 \quad\Longrightarrow\quad \mathrm{KPSS} \sim \frac{n\,\beta^2}{\hat\sigma_{LP}^2}$$
+              $$\begin{gathered}
+                \sum_t S_t^2 \sim n^3\beta^2 \\
+                \Longrightarrow\quad \mathrm{KPSS} \sim \frac{n\,\beta^2}{\hat\sigma_{LP}^2}
+              \end{gathered}$$
             </li>
             <li>
               <p>El estadístico crece con $n$ y con $\beta^2$. Con datos suficientes, <strong>cualquier</strong>
@@ -3194,7 +3210,7 @@ print(simula(0.0), simula(-247.78))
       <h3>La tabla, aplicada a $\nabla$Nilo</h3>
 
       <div class="diagram">
-        <table>
+        <table style="position:relative;">
           <thead>
             <tr><th></th><th>ACF</th><th>PACF</th><th>Sugiere</th></tr>
           </thead>
@@ -3348,7 +3364,7 @@ print(round(float(acorr_ljungbox(ma1.resid[1:], lags=[20], model_df=1)["lb_pvalu
       <div class="warning">
         <h4><i class="fas fa-triangle-exclamation mr-2" aria-hidden="true"></i>Los valores por defecto no son los
           mismos en cada función</h4>
-        <table>
+        <table style="position:relative;">
           <thead>
             <tr><th>Función</th><th>Argumento</th><th>Por defecto</th></tr>
           </thead>
@@ -3563,7 +3579,7 @@ print(f2.param_names)
       <h3>Los mejores de cada $d$</h3>
 
       <div class="diagram">
-        <table>
+        <table style="position:relative;">
           <thead>
             <tr><th>$d$</th><th>$n^{*}$</th><th>Mejor por AICc</th><th>Mejor por BIC</th><th>Comentario</th></tr>
           </thead>
@@ -3750,16 +3766,19 @@ print(tabla.loc[tabla.groupby("d")["aicc"].idxmin(), ["d","modelo","nobs","n_ef"
       <p>La búsqueda escalonada evaluó $18$ modelos; la exhaustiva, $42$. Las dos llegan al mismo sitio:</p>
 
       <div class="formula">
-        $$\text{escalonada: ARIMA}(1,1,1),\ \mathrm{AICc} = 1267.507
-          \qquad
-          \text{exhaustiva: ARIMA}(1,1,1),\ \mathrm{AICc} = 1267.507$$
+        $$\begin{aligned}
+          \text{escalonada: }&\text{ARIMA}(1,1,1), \\
+          &\mathrm{AICc} = 1267.507 \\[0.5em]
+          \text{exhaustiva: }&\text{ARIMA}(1,1,1), \\
+          &\mathrm{AICc} = 1267.507
+        \end{aligned}$$
       </div>
 
       <p>Que coincidan es lo habitual, pero no está garantizado. Lo que sí revela la búsqueda completa es
         <strong>cuán apretado está el podio</strong>:</p>
 
       <div class="diagram">
-        <table>
+        <table style="position:relative;">
           <thead>
             <tr><th>Puesto</th><th>Modelo</th><th>AICc</th><th>Diferencia con el primero</th></tr>
           </thead>
@@ -3936,7 +3955,7 @@ print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
       </div>
 
       <div class="diagram">
-        <table>
+        <table style="position:relative;">
           <thead>
             <tr><th>$d$</th><th>$\operatorname{Var}(\nabla^d y)$</th><th>$\rho_1$</th><th>$\hat\theta$ de un MA(1)</th><th>Lectura</th></tr>
           </thead>
@@ -4005,7 +4024,7 @@ print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
         <p><strong>Y ahora la parte incómoda.</strong> Todo lo anterior es evidencia dentro de muestra. Comparar el
           escalón contra el ARIMA($1,1,1$) por AICc <strong>no se puede</strong>: uno tiene $d=0$ y el otro $d=1$.
           La comparación válida es fuera de muestra. Entrenando hasta 1950 y pronosticando los 20 años siguientes:</p>
-        <table>
+        <table style="position:relative;">
           <thead><tr><th>Modelo</th><th>RMSE</th><th>MAE</th></tr></thead>
           <tbody>
             <tr><td>Naïve (el último valor)</td><td>$123.06$</td><td>$101.95$</td></tr>
@@ -4155,7 +4174,7 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
       </div>
 
       <div class="diagram">
-        <table>
+        <table style="position:relative;">
           <thead>
             <tr><th>Modelo</th><th>Forma a largo plazo</th><th>Medido: $\nabla\hat y$ y $\nabla^2\hat y$ en $h=30$</th><th>Ancho 95 %: $h=1 \to h=30$</th></tr>
           </thead>
@@ -4193,9 +4212,10 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
         \varepsilon_{T+h-j}$, entonces el error de pronóstico a $h$ pasos tiene varianza:</p>
 
       <div class="formula">
-        $$\sigma_h^2 = \sigma^2 \sum_{j=0}^{h-1} \psi_j^2,
-          \qquad
-          \hat{y}_{T+h|T} \pm z_{1-\alpha/2}\,\sigma_h$$
+        $$\begin{gathered}
+          \sigma_h^2 = \sigma^2 \sum_{j=0}^{h-1} \psi_j^2, \\[0.3em]
+          \hat{y}_{T+h|T} \pm z_{1-\alpha/2}\,\sigma_h
+        \end{gathered}$$
       </div>
 
       <p>Como $\psi_0 = 1$ siempre, $\sigma_1 = \sigma$: <strong>a un paso, el intervalo lo determina solo la
@@ -4269,7 +4289,10 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
             </li>
             <li>
               <p>El error de pronóstico es exactamente lo que se descartó — los $h$ primeros términos:</p>
-              $$e_{T+h} = y_{T+h} - \hat{y}_{T+h|T} = \sum_{j=0}^{h-1}\psi_j\,\varepsilon_{T+h-j}$$
+              $$\begin{aligned}
+                e_{T+h} &= y_{T+h} - \hat{y}_{T+h|T} \\
+                &= \sum_{j=0}^{h-1}\psi_j\,\varepsilon_{T+h-j}
+              \end{aligned}$$
             </li>
             <li>
               <p>Como los $\varepsilon_t$ son incorrelados y de varianza $\sigma^2$, la varianza de esa suma es la
@@ -4436,7 +4459,7 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3))
       </div>
 
       <div class="diagram">
-        <table>
+        <table style="position:relative;">
           <thead><tr><th>Etapa</th><th>Qué sale</th></tr></thead>
           <tbody>
             <tr><td><strong>1. Identificación de $d$</strong></td>
@@ -4514,7 +4537,7 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3))
       <p>Con el último dato observado —junio de 2026, $3497.09$ pesos— y un pronóstico que es esa misma cifra
         para siempre, el intervalo es $3497.09 \pm 238.09\sqrt{h}$:</p>
 
-      <table>
+      <table style="position:relative;">
         <caption class="sr-only">Intervalos de pronóstico de la TRM bajo el modelo de caminata aleatoria</caption>
         <thead>
           <tr>
