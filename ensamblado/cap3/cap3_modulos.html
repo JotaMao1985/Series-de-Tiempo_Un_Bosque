@@ -40,8 +40,11 @@
         <p><strong>Un ejemplo de lo que compra la notación.</strong> La diferencia estacional de orden $m$ aplicada
           después de una diferencia regular es $\nabla_m \nabla y_t$. Con polinomios, eso es
           $(1-B^m)(1-B)y_t$, y basta multiplicar para saber exactamente qué combinación de rezagos interviene:</p>
-        $$(1-B^m)(1-B) = 1 - B - B^m + B^{m+1}
-          \;\Longrightarrow\; y_t - y_{t-1} - y_{t-m} + y_{t-m-1}$$
+        $$\begin{aligned}
+          &(1-B^m)(1-B) \\
+          &\quad = 1 - B - B^m + B^{m+1} \\
+          &\quad \Rightarrow\; y_t - y_{t-1} - y_{t-m} + y_{t-m-1}
+        \end{aligned}$$
         <p style="margin-bottom:0;">Ese es exactamente el preprocesamiento del modelo <em>airline</em> que verás en el
           Capítulo 5, obtenido sin escribir una sola recursión.</p>
       </div>
@@ -54,8 +57,8 @@
       <div class="formula">
         <p>Polinomio <strong>autorregresivo</strong> de orden $p$ y polinomio de <strong>medias móviles</strong> de
           orden $q$:</p>
-        $$\phi(B) = 1 - \phi_1 B - \phi_2 B^2 - \cdots - \phi_p B^p$$
-        $$\theta(B) = 1 + \theta_1 B + \theta_2 B^2 + \cdots + \theta_q B^q$$
+        $$\phi(B) = 1 - \phi_1 B - \cdots - \phi_p B^p$$
+        $$\theta(B) = 1 + \theta_1 B + \cdots + \theta_q B^q$$
       </div>
 
       <div class="warning">
@@ -175,8 +178,11 @@ print(mal.arcoefs,  np.round(mal.acf(5)[1:], 4))
           <ol class="derivacion-pasos">
             <li>
               <p>Parte del AR(1) y sustituye $y_{t-1}$ por su propia definición, una y otra vez:</p>
-              $$y_t = \phi y_{t-1} + \varepsilon_t = \phi(\phi y_{t-2} + \varepsilon_{t-1}) + \varepsilon_t
-                = \varepsilon_t + \phi\varepsilon_{t-1} + \phi^2 y_{t-2}$$
+              $$\begin{aligned}
+                y_t &= \phi y_{t-1} + \varepsilon_t \\
+                &= \phi(\phi y_{t-2} + \varepsilon_{t-1}) + \varepsilon_t \\
+                &= \varepsilon_t + \phi\varepsilon_{t-1} + \phi^2 y_{t-2}
+              \end{aligned}$$
             </li>
             <li>
               <p>Tras $k$ sustituciones queda una suma de choques más un resto que arrastra el pasado lejano:</p>
@@ -190,8 +196,10 @@ print(mal.arcoefs,  np.round(mal.acf(5)[1:], 4))
             </li>
             <li>
               <p>La varianza de esa suma es una serie geométrica, y solo converge bajo la misma condición:</p>
-              $$\operatorname{Var}(y_t) = \sigma^2\sum_{j=0}^{\infty}\phi^{2j} = \frac{\sigma^2}{1-\phi^2},
-                \qquad |\phi| < 1$$
+              $$\begin{gathered}
+                \operatorname{Var}(y_t) = \sigma^2\sum_{j=0}^{\infty}\phi^{2j} = \frac{\sigma^2}{1-\phi^2} \\
+                \text{si } |\phi| < 1
+              \end{gathered}$$
             </li>
           </ol>
           <p class="derivacion-resultado">La condición $|\phi| < 1$ es exactamente $|1/\phi| > 1$: la raíz de
@@ -284,8 +292,11 @@ print(proceso.arroots, proceso.isstationary)</code></pre>
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: proceso AR($p$)</h4>
         <p>Un proceso <strong>autorregresivo de orden $p$</strong> explica el valor actual como una combinación lineal
           de sus $p$ valores anteriores más un choque de ruido blanco:</p>
-        $$y_t = c + \phi_1 y_{t-1} + \phi_2 y_{t-2} + \cdots + \phi_p y_{t-p} + \varepsilon_t,
-          \qquad \varepsilon_t \sim \text{RB}(0,\sigma^2)$$
+        $$\begin{aligned}
+          y_t &= c + \phi_1 y_{t-1} + \phi_2 y_{t-2} + \cdots \\
+          &\quad + \phi_p y_{t-p} + \varepsilon_t
+        \end{aligned}$$
+        $$\varepsilon_t \sim \text{RB}(0,\sigma^2)$$
         <p style="margin-bottom:0;">En forma compacta, $\phi(B)\, y_t = c + \varepsilon_t$.</p>
       </div>
 
@@ -345,7 +356,11 @@ print(proceso.arroots, proceso.isstationary)</code></pre>
 
       <div class="formula">
         <p>Un AR(2) es estacionario si y solo si el par $(\phi_1,\phi_2)$ cumple las tres condiciones:</p>
-        $$\phi_1 + \phi_2 < 1, \qquad \phi_2 - \phi_1 < 1, \qquad -1 < \phi_2 < 1$$
+        $$\begin{gathered}
+          \phi_1 + \phi_2 < 1 \\
+          \phi_2 - \phi_1 < 1 \\
+          -1 < \phi_2 < 1
+        \end{gathered}$$
       </div>
 
       <div class="simulador" data-simulador="triangulo-ar2">
@@ -386,13 +401,13 @@ print(proceso.arroots, proceso.isstationary)</code></pre>
 
       <div class="formula">
         <p>Media, varianza y autocorrelaciones de un AR($p$) estacionario:</p>
-        $$\begin{gathered}
-          \mu = \frac{c}{1-\phi_1-\phi_2-\cdots-\phi_p} \\[0.8em]
-          \gamma_0 = \operatorname{Var}(y_t)
-            = \frac{\sigma^2}{1 - \phi_1\rho_1 - \phi_2\rho_2 - \cdots - \phi_p\rho_p} \\[0.8em]
-          \rho_k = \phi_1\rho_{k-1} + \phi_2\rho_{k-2} + \cdots + \phi_p\rho_{k-p}, \qquad k \ge 1
-        \end{gathered}$$
-        <p style="margin-bottom:0;">con $\rho_0 = 1$ y $\rho_{-k} = \rho_k$.</p>
+        $$\begin{aligned}
+          \mu &= \frac{c}{1-\phi_1-\phi_2-\cdots-\phi_p} \\[0.8em]
+          \gamma_0 &= \operatorname{Var}(y_t) \\[0.3em]
+          &= \frac{\sigma^2}{1 - \phi_1\rho_1 - \phi_2\rho_2 - \cdots - \phi_p\rho_p} \\[0.8em]
+          \rho_k &= \phi_1\rho_{k-1} + \cdots + \phi_p\rho_{k-p}
+        \end{aligned}$$
+        <p style="margin-bottom:0;">La recursión vale para $k \ge 1$, con $\rho_0 = 1$ y $\rho_{-k} = \rho_k$.</p>
       </div>
 
       <p>Conviene notar la diferencia con el MA del módulo siguiente, donde la varianza se escribe de una vez en
@@ -406,12 +421,12 @@ print(proceso.arroots, proceso.isstationary)</code></pre>
         $$\rho_k = \phi^{\,k}, \qquad \gamma_0 = \frac{\sigma^2}{1-\phi^2}$$
         <p><strong>AR(2)</strong>, con $(\phi_1,\phi_2)$ dentro del triángulo:</p>
         $$\begin{gathered}
-          \rho_1 = \frac{\phi_1}{1-\phi_2}, \qquad \rho_2 = \phi_2 + \frac{\phi_1^2}{1-\phi_2} \\[0.6em]
+          \rho_1 = \frac{\phi_1}{1-\phi_2}, \quad \rho_2 = \phi_2 + \frac{\phi_1^2}{1-\phi_2} \\[0.6em]
           \rho_k = \phi_1\rho_{k-1} + \phi_2\rho_{k-2} \quad (k \ge 3)
         \end{gathered}$$
         $$\begin{aligned}
           \gamma_0 &= \frac{(1-\phi_2)\,\sigma^2}{(1+\phi_2)\bigl[(1-\phi_2)^2 - \phi_1^2\bigr]} \\[0.6em]
-            &= \frac{(1-\phi_2)\,\sigma^2}{(1+\phi_2)(1-\phi_1-\phi_2)(1+\phi_1-\phi_2)}
+            &= \frac{(1-\phi_2)\,\sigma^2}{\begin{gathered}(1+\phi_2)(1-\phi_1-\phi_2) \\ \cdot\,(1+\phi_1-\phi_2)\end{gathered}}
         \end{aligned}$$
       </div>
 
@@ -451,33 +466,45 @@ print(proceso.arroots, proceso.isstationary)</code></pre>
             <li>
               <p>Escribe el AR($p$) centrado (sin pérdida de generalidad, con $\mu = 0$) y multiplica los dos lados por
                 $y_{t-k}$, con $k \ge 1$:</p>
-              $$y_t\, y_{t-k} = \phi_1 y_{t-1}y_{t-k} + \cdots + \phi_p y_{t-p}y_{t-k} + \varepsilon_t y_{t-k}$$
+              $$\begin{aligned}
+                y_t\, y_{t-k} &= \phi_1 y_{t-1}y_{t-k} + \cdots \\
+                &\quad + \phi_p y_{t-p}y_{t-k} + \varepsilon_t y_{t-k}
+              \end{aligned}$$
             </li>
             <li>
               <p>Toma esperanzas. Cada término $E[y_{t-i}y_{t-k}]$ es una autocovarianza $\gamma_{k-i}$. El término del
                 ruido <strong>se anula</strong>: $\varepsilon_t$ es independiente de todo lo anterior a $t$, y
                 $k \ge 1$ garantiza que $y_{t-k}$ pertenece al pasado.</p>
-              $$\gamma_k = \phi_1\gamma_{k-1} + \phi_2\gamma_{k-2} + \cdots + \phi_p\gamma_{k-p}$$
+              $$\gamma_k = \phi_1\gamma_{k-1} + \cdots + \phi_p\gamma_{k-p}$$
             </li>
             <li>
               <p>Divide todo entre $\gamma_0$. Como $\rho_k = \gamma_k/\gamma_0$, la misma recursión vale para las
                 autocorrelaciones — y esta es la forma en que se usa:</p>
-              $$\rho_k = \phi_1\rho_{k-1} + \phi_2\rho_{k-2} + \cdots + \phi_p\rho_{k-p}, \qquad k \ge 1$$
+              $$\begin{gathered}
+                \rho_k = \phi_1\rho_{k-1} + \cdots + \phi_p\rho_{k-p} \\
+                \text{para } k \ge 1
+              \end{gathered}$$
             </li>
             <li>
               <p>Escribiendo esa relación para $k = 1,\ldots,p$ y usando $\rho_{-k} = \rho_k$ queda un sistema lineal
                 de $p$ ecuaciones con $p$ incógnitas. Para el AR(2):</p>
-              $$\rho_1 = \phi_1 + \phi_2\rho_1, \qquad \rho_2 = \phi_1\rho_1 + \phi_2$$
+              $$\begin{aligned}
+                \rho_1 &= \phi_1 + \phi_2\rho_1 \\
+                \rho_2 &= \phi_1\rho_1 + \phi_2
+              \end{aligned}$$
               <p>que se resuelve en</p>
-              $$\rho_1 = \frac{\phi_1}{1-\phi_2}, \qquad \rho_2 = \phi_2 + \frac{\phi_1^2}{1-\phi_2}$$
+              $$\begin{aligned}
+                \rho_1 &= \frac{\phi_1}{1-\phi_2} \\[0.4em]
+                \rho_2 &= \phi_2 + \frac{\phi_1^2}{1-\phi_2}
+              \end{aligned}$$
             </li>
             <li>
               <p>Falta la varianza, y sale de la misma cuenta con $k = 0$. La única diferencia es que ahora el término
                 del ruido <strong>no</strong> se anula: $y_t$ sí contiene a $\varepsilon_t$, y como el choque es
                 incorrelado con todo el pasado queda $E[\varepsilon_t y_t] = E[\varepsilon_t^2] = \sigma^2$.</p>
-              $$\gamma_0 = \phi_1\gamma_1 + \phi_2\gamma_2 + \cdots + \phi_p\gamma_p + \sigma^2$$
+              $$\gamma_0 = \phi_1\gamma_1 + \cdots + \phi_p\gamma_p + \sigma^2$$
               <p>Sustituyendo $\gamma_k = \rho_k\,\gamma_0$ y despejando se llega a la varianza del proceso:</p>
-              $$\gamma_0 = \frac{\sigma^2}{1 - \phi_1\rho_1 - \phi_2\rho_2 - \cdots - \phi_p\rho_p}$$
+              $$\gamma_0 = \frac{\sigma^2}{1 - \phi_1\rho_1 - \cdots - \phi_p\rho_p}$$
               <p style="margin-bottom:0;">Para el AR(1) basta con $\rho_1 = \phi$ para recuperar
                 $\gamma_0 = \sigma^2/(1-\phi^2)$, que en el Módulo 1 había salido por otro camino, sumando la serie
                 geométrica de la representación MA($\infty$).</p>
@@ -593,7 +620,10 @@ print(proceso.isstationary)   # True</code></pre>
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: proceso MA($q$)</h4>
         <p>Un proceso de <strong>medias móviles de orden $q$</strong> expresa el valor actual como una combinación
           lineal del choque presente y de los $q$ choques anteriores:</p>
-        $$y_t = \mu + \varepsilon_t + \theta_1\varepsilon_{t-1} + \cdots + \theta_q\varepsilon_{t-q}$$
+        $$\begin{aligned}
+          y_t &= \mu + \varepsilon_t + \theta_1\varepsilon_{t-1} + \cdots \\
+          &\quad + \theta_q\varepsilon_{t-q}
+        \end{aligned}$$
         <p style="margin-bottom:0;">En forma compacta, $y_t = \mu + \theta(B)\,\varepsilon_t$.</p>
       </div>
 
@@ -960,7 +990,10 @@ print(np.round(res.maparams, 4), np.round(res.params[-1], 4))
           <ol class="derivacion-pasos">
             <li>
               <p>Parte de la identidad que define los $\psi$ y quítate la división multiplicando por $\phi(B)$:</p>
-              $$\psi(B) = \frac{\theta(B)}{\phi(B)} \;\Longleftrightarrow\; \phi(B)\,\psi(B) = \theta(B)$$
+              $$\begin{gathered}
+                \psi(B) = \frac{\theta(B)}{\phi(B)} \\
+                \Longleftrightarrow\; \phi(B)\,\psi(B) = \theta(B)
+              \end{gathered}$$
             </li>
             <li>
               <p>Desarrolla el producto y agrupa por potencias de $B$. El coeficiente de $B^j$ del lado izquierdo es
@@ -970,7 +1003,10 @@ print(np.round(res.maparams, 4), np.round(res.params[-1], 4))
             <li>
               <p>Igualando coeficiente a coeficiente sale una <strong>recursión</strong>, que es lo que implementan el
                 simulador de esta página y el precálculo en R:</p>
-              $$\psi_j = \theta_j + \sum_{i=1}^{p}\phi_i\,\psi_{j-i}, \qquad \psi_0 = 1,\;\; \theta_j = 0 \text{ si } j>q$$
+              $$\begin{gathered}
+                \psi_j = \theta_j + \sum_{i=1}^{p}\phi_i\,\psi_{j-i} \\
+                \psi_0 = 1,\quad \theta_j = 0 \text{ si } j>q
+              \end{gathered}$$
               <p style="margin-bottom:0;">En los primeros rezagos la suma se sale por abajo del rango: se entiende
                 $\psi_j = 0$ para $j &lt; 0$, y lo mismo para los $\pi$ del paso siguiente. Es la guarda
                 <code>if (j - i &gt;= 0)</code> que aparece en las dos implementaciones.</p>
@@ -978,7 +1014,10 @@ print(np.round(res.maparams, 4), np.round(res.params[-1], 4))
             <li>
               <p>Para los $\pi$ el razonamiento es idéntico sobre $\theta(B)\pi(B) = \phi(B)$, e intercambia los
                 papeles:</p>
-              $$\pi_j = -\phi_j - \sum_{i=1}^{q}\theta_i\,\pi_{j-i}, \qquad \pi_0 = 1,\;\; \phi_j = 0 \text{ si } j>p$$
+              $$\begin{gathered}
+                \pi_j = -\phi_j - \sum_{i=1}^{q}\theta_i\,\pi_{j-i} \\
+                \pi_0 = 1,\quad \phi_j = 0 \text{ si } j>p
+              \end{gathered}$$
             </li>
             <li>
               <p>Con los $\psi$ se obtiene además la autocovarianza sin resolver ningún sistema, porque los
@@ -1006,7 +1045,7 @@ print(np.round(res.maparams, 4), np.round(res.params[-1], 4))
       <p>donde $\theta_j$ vale $0.5$ en $j = 1$ y cero después, y $\phi_j$ vale $0.7$ en $j = 1$ y cero después. Los
         primeros pesos salen así:</p>
 
-      <table>
+      <table style="position:relative;">
         <caption class="sr-only">Pesos psi y pi del ARMA(1,1) con phi = 0.7 y theta = 0.5, calculados con la recursión</caption>
         <thead>
           <tr>
@@ -1191,7 +1230,8 @@ print(np.round(arma_acf(np.r_[1, -0.7], np.r_[1, 0.5], lags=6)[1:], 4))
         <p>Combina las dos partes anteriores en un solo modelo:</p>
         $$\begin{aligned}
           y_t = c &+ \phi_1 y_{t-1} + \cdots + \phi_p y_{t-p} \\
-          &+ \varepsilon_t + \theta_1\varepsilon_{t-1} + \cdots + \theta_q\varepsilon_{t-q}
+          &+ \varepsilon_t \\
+          &+ \theta_1\varepsilon_{t-1} + \cdots + \theta_q\varepsilon_{t-q}
         \end{aligned}$$
         <p style="margin-bottom:0;">o, en forma compacta, $\;\phi(B)\,y_t = c + \theta(B)\,\varepsilon_t$. Es
           <strong>estacionario</strong> si las raíces de $\phi(B)$ están fuera del círculo unitario, e
@@ -1302,7 +1342,7 @@ print(np.round(arma_acf(np.r_[1, -0.7], np.r_[1, 0.5], lags=6)[1:], 4))
 
       <h3>La tabla de identificación</h3>
 
-      <table>
+      <table style="position:relative;">
         <caption class="sr-only">Reglas de identificación según los patrones de ACF y PACF</caption>
         <thead>
           <tr>
@@ -1378,8 +1418,10 @@ print(np.round(arma_acf(np.r_[1, -0.7], np.r_[1, 0.5], lags=6)[1:], 4))
 
       <div class="formula">
         <p><strong>ARMA(1,1)</strong>, $y_t = c + \phi y_{t-1} + \varepsilon_t + \theta\varepsilon_{t-1}$:</p>
-        $$\gamma_0 = \sigma^2\,\frac{1+2\phi\theta+\theta^2}{1-\phi^2}, \qquad
-          \gamma_1 = \sigma^2\,\frac{(1+\phi\theta)(\phi+\theta)}{1-\phi^2}$$
+        $$\begin{aligned}
+          \gamma_0 &= \sigma^2\,\frac{1+2\phi\theta+\theta^2}{1-\phi^2} \\[0.6em]
+          \gamma_1 &= \sigma^2\,\frac{(1+\phi\theta)(\phi+\theta)}{1-\phi^2}
+        \end{aligned}$$
       </div>
 
       <p>Las dos comparten denominador, así que al dividir una entre otra el $1-\phi^2$ se cancela y queda la
@@ -1416,15 +1458,21 @@ print(np.round(arma_acf(np.r_[1, -0.7], np.r_[1, 0.5], lags=6)[1:], 4))
             <li>
               <p>Para el ARMA(1,1) los pesos son $\psi_0 = 1$ y $\psi_j = (\phi+\theta)\phi^{\,j-1}$. Separando
                 el primero, lo que queda es una geométrica de razón $\phi^2$:</p>
-              $$\gamma_0 = \sigma^2\left[1 + (\phi+\theta)^2\sum_{j\ge1}\phi^{\,2(j-1)}\right]
-                = \sigma^2\left[1 + \frac{(\phi+\theta)^2}{1-\phi^2}\right]$$
+              $$\begin{aligned}
+                \gamma_0 &= \sigma^2\biggl[1 \\
+                &\qquad + (\phi+\theta)^2\sum_{j\ge1}\phi^{\,2(j-1)}\biggr] \\
+                &= \sigma^2\left[1 + \frac{(\phi+\theta)^2}{1-\phi^2}\right]
+              \end{aligned}$$
               <p style="margin-bottom:0;">y al juntar en una sola fracción, $1-\phi^2+(\phi+\theta)^2$ se simplifica
                 a $1+2\phi\theta+\theta^2$.</p>
             </li>
             <li>
               <p>Lo mismo con $k = 1$, ahora emparejando $\psi_j$ con $\psi_{j+1}$:</p>
-              $$\gamma_1 = \sigma^2\left[(\phi+\theta) + (\phi+\theta)^2\phi\sum_{j\ge1}\phi^{\,2(j-1)}\right]
-                = \sigma^2\,\frac{(\phi+\theta)(1+\phi\theta)}{1-\phi^2}$$
+              $$\begin{aligned}
+                \gamma_1 &= \sigma^2\biggl[(\phi+\theta) \\
+                &\qquad + (\phi+\theta)^2\phi\sum_{j\ge1}\phi^{\,2(j-1)}\biggr] \\
+                &= \sigma^2\,\frac{(\phi+\theta)(1+\phi\theta)}{1-\phi^2}
+              \end{aligned}$$
             </li>
           </ol>
           <p class="derivacion-resultado">Dividiendo $\gamma_1$ entre $\gamma_0$ desaparece el denominador común y
@@ -1443,7 +1491,10 @@ print(np.round(arma_acf(np.r_[1, -0.7], np.r_[1, 0.5], lags=6)[1:], 4))
         recursión que la de un AR($p$):</p>
 
       <div class="formula">
-        $$\rho_k = \phi_1\rho_{k-1} + \cdots + \phi_p\rho_{k-p}, \qquad k > q$$
+        $$\begin{gathered}
+          \rho_k = \phi_1\rho_{k-1} + \cdots + \phi_p\rho_{k-p} \\
+          \text{para } k > q
+        \end{gathered}$$
       </div>
 
       <p>La condición $k > q$ no es adorno. En el ARMA(2,1) de $\phi = (0.5,\,0.3)$ y $\theta = 0.4$ la recursión
@@ -1892,13 +1943,19 @@ x = procesos["ar1"].generate_sample(nsample=200, burnin=100,
             <li>
               <p>Supón ruido gaussiano y escribe la densidad conjunta de la muestra factorizándola en condicionales,
                 que es lo natural en una serie de tiempo:</p>
-              $$f(y_1,\ldots,y_T) = f(y_1)\prod_{t=2}^{T} f(y_t \mid y_{t-1},\ldots,y_1)$$
+              $$\begin{aligned}
+                &f(y_1,\ldots,y_T) \\
+                &\quad = f(y_1)\prod_{t=2}^{T} f(y_t \mid y_{t-1},\ldots,y_1)
+              \end{aligned}$$
             </li>
             <li>
               <p>Para un AR(1), la condicional es inmediata: dado $y_{t-1}$, el único término aleatorio es
                 $\varepsilon_t$, luego $y_t \mid y_{t-1} \sim N(\phi y_{t-1},\, \sigma^2)$. Tomando logaritmos, la
                 parte condicional de la log-verosimilitud es</p>
-              $$-\frac{T-1}{2}\log(2\pi\sigma^2) - \frac{1}{2\sigma^2}\sum_{t=2}^{T}(y_t - \phi y_{t-1})^2$$
+              $$\begin{aligned}
+                &-\frac{T-1}{2}\log(2\pi\sigma^2) \\
+                &-\frac{1}{2\sigma^2}\sum_{t=2}^{T}(y_t - \phi y_{t-1})^2
+              \end{aligned}$$
             </li>
             <li>
               <p>Maximizar eso equivale a <strong>minimizar la suma de cuadrados</strong>
@@ -1926,7 +1983,7 @@ x = procesos["ar1"].generate_sample(nsample=200, burnin=100,
       <p>Apliquemos los tres a las manchas solares. Las cifras de la tabla salen de ejecutar el código de abajo, no de
         ninguna otra parte.</p>
 
-      <table>
+      <table style="position:relative;">
         <caption class="sr-only">AR(2) sobre las manchas solares estimado por tres métodos</caption>
         <thead>
           <tr>
@@ -2093,9 +2150,11 @@ print(round(2 * np.pi / np.angle(raices[0]), 4))   # 10.7365
         penalización por complejidad, y se elige el modelo con el <strong>menor</strong> valor.</p>
 
       <div class="formula">
-        $$\text{AIC} = -2\log L + 2k, \qquad
-          \text{AICc} = \text{AIC} + \frac{2k(k+1)}{n-k-1}, \qquad
-          \text{BIC} = -2\log L + k\log n$$
+        $$\begin{aligned}
+          \text{AIC} &= -2\log L + 2k \\[0.3em]
+          \text{AICc} &= \text{AIC} + \frac{2k(k+1)}{n-k-1} \\[0.3em]
+          \text{BIC} &= -2\log L + k\log n
+        \end{aligned}$$
         <p style="margin-bottom:0;">donde $k$ es el número de parámetros estimados —incluido $\sigma^2$— y $n$ el
           número de observaciones.</p>
       </div>
@@ -2123,8 +2182,10 @@ print(round(2 * np.pi / np.angle(raices[0]), 4))   # 10.7365
       <div class="definition">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Prueba de Ljung–Box</h4>
         <p>Contrasta si las primeras $h$ autocorrelaciones de los residuales son <strong>conjuntamente</strong> nulas:</p>
-        $$Q(h) = T(T+2)\sum_{k=1}^{h}\frac{\hat r_k^2}{T-k}
-          \;\;\sim\;\; \chi^2_{\,h-p-q} \quad\text{bajo } H_0$$
+        $$\begin{gathered}
+          Q(h) = T(T+2)\sum_{k=1}^{h}\frac{\hat r_k^2}{T-k} \\[0.4em]
+          Q(h) \;\sim\; \chi^2_{\,h-p-q} \quad\text{bajo } H_0
+        \end{gathered}$$
         <p style="margin-bottom:0;">$H_0$ es "los residuales son ruido blanco". Un $p$-valor <strong>pequeño</strong>
           significa que <strong>queda estructura sin modelar</strong>: el modelo no basta.</p>
       </div>
@@ -2199,7 +2260,7 @@ print(round(2 * np.pi / np.angle(raices[0]), 4))   # 10.7365
         candidatos tienen $d=0$, así que la comparación es legítima. La tabla recoge los siete de los once que la
         discusión necesita; la tabla ordenable de arriba los tiene todos.</p>
 
-      <table>
+      <table style="position:relative;">
         <caption class="sr-only">Rejilla de modelos ARMA sobre las manchas solares crudas</caption>
         <thead>
           <tr>
@@ -2403,7 +2464,7 @@ for p, q in [(2, 0), (2, 1), (2, 2)]:
         elasticidad amplitud–nivel (la pendiente de $\log(\text{desviación})$ contra $\log(\text{media})$ por bloques,
         el mismo diagnóstico del Capítulo 1):</p>
 
-      <table>
+      <table style="position:relative;">
         <caption class="sr-only">Elasticidad amplitud-nivel de las manchas solares según el tamaño de bloque</caption>
         <thead>
           <tr>
@@ -2449,7 +2510,7 @@ for p, q in [(2, 0), (2, 1), (2, 2)]:
 
       <p>Y ahora el resultado. Repitiendo exactamente la misma rejilla del Módulo 8 sobre $\sqrt{\text{manchas}}$:</p>
 
-      <table>
+      <table style="position:relative;">
         <caption class="sr-only">Comparación de la rejilla de modelos sobre la serie cruda y sobre la raíz cuadrada</caption>
         <thead>
           <tr>
@@ -2481,7 +2542,11 @@ for p, q in [(2, 0), (2, 1), (2, 2)]:
       <p>El modelo final es, entonces:</p>
 
       <div class="formula">
-        $$\sqrt{y_t} - 6.33 = 1.4027\,(\sqrt{y_{t-1}} - 6.33) - 0.6853\,(\sqrt{y_{t-2}} - 6.33) + \varepsilon_t$$
+        $$\begin{aligned}
+          &\sqrt{y_t} - 6.33 \\
+          &\quad = 1.4027\,(\sqrt{y_{t-1}} - 6.33) \\
+          &\qquad - 0.6853\,(\sqrt{y_{t-2}} - 6.33) + \varepsilon_t
+        \end{aligned}$$
         <p style="margin-bottom:0;">con errores estándar $0.0727$ y $0.0724$; raíces complejas de módulo $1.208$.</p>
       </div>
 
@@ -2508,7 +2573,10 @@ for p, q in [(2, 0), (2, 1), (2, 2)]:
 
       <div class="formula">
         $$\hat\phi(B)\,\big(\sqrt{y_t} - 6.3317\big) = \hat\theta(B)\,\varepsilon_t$$
-        $$\hat\phi(B) = 1 - 1.4027\,B + 0.6853\,B^2, \qquad \hat\theta(B) = 1$$
+        $$\begin{aligned}
+          \hat\phi(B) &= 1 - 1.4027\,B + 0.6853\,B^2 \\
+          \hat\theta(B) &= 1
+        \end{aligned}$$
       </div>
 
       <div class="warning">
@@ -2525,7 +2593,10 @@ for p, q in [(2, 0), (2, 1), (2, 2)]:
         complejas conjugadas:</p>
 
       <div class="formula">
-        $$B_{1,2} = 1.0234 \pm 0.6418\,i, \qquad |B_{1,2}| = 1.2080 > 1$$
+        $$\begin{aligned}
+          B_{1,2} &= 1.0234 \pm 0.6418\,i \\
+          |B_{1,2}| &= 1.2080 > 1
+        \end{aligned}$$
       </div>
 
       <p>El módulo mayor que uno es el veredicto de estacionariedad. Pero una raíz compleja trae <em>dos</em>
@@ -2545,8 +2616,12 @@ for p, q in [(2, 0), (2, 1), (2, 2)]:
         <p>$\hat\theta(B) = 1$ es un polinomio constante: no tiene raíces, de manera que la condición del Módulo 3
           se cumple sin nada que comprobar. <strong>Todo AR puro es invertible</strong>, y la consecuencia es la del
           Módulo 4: la representación AR($\infty$) de este modelo es <em>finita</em>.</p>
-        <p style="margin-bottom:0;">$$\pi_0 = 1, \quad \pi_1 = -1.4027, \quad \pi_2 = 0.6853$$
-          $$\pi_j = 0 \quad \text{para } j \ge 3$$</p>
+        <p style="margin-bottom:0;">$$\begin{aligned}
+            \pi_0 &= 1 \\
+            \pi_1 &= -1.4027 \\
+            \pi_2 &= 0.6853 \\
+            \pi_j &= 0 \quad \text{para } j \ge 3
+          \end{aligned}$$</p>
       </div>
 
       <p>Que los $\pi$ se acaben en el rezago 2 no es una curiosidad de notación. El pronóstico a un paso del
@@ -2569,14 +2644,20 @@ for p, q in [(2, 0), (2, 1), (2, 2)]:
         $\psi_j = \theta_j + \sum_i \phi_i\,\psi_{j-i}$, con todos los $\theta_j$ nulos, queda</p>
 
       <div class="formula">
-        $$\psi_j = 1.4027\,\psi_{j-1} - 0.6853\,\psi_{j-2}, \qquad \psi_0 = 1$$
+        $$\begin{aligned}
+          \psi_j &= 1.4027\,\psi_{j-1} - 0.6853\,\psi_{j-2} \\
+          \psi_0 &= 1
+        \end{aligned}$$
       </div>
 
       <p>y en un AR(2) con raíces complejas tiene forma cerrada, que es donde se ve de dónde sale cada pieza:</p>
 
       <div class="formula">
         $$\psi_j = R^{\,j}\,\frac{\sin\big((j+1)\,\omega\big)}{\sin\omega}$$
-        $$R = \sqrt{-\hat\phi_2} = \frac{1}{|B_{1,2}|} = 0.8278, \qquad \omega = 0.5601$$
+        $$\begin{aligned}
+          R &= \sqrt{-\hat\phi_2} = \frac{1}{|B_{1,2}|} = 0.8278 \\[0.3em]
+          \omega &= 0.5601
+        \end{aligned}$$
       </div>
 
       <p>Las dos piezas de la raíz reaparecen, ahora haciendo cosas distintas: el módulo manda en la amplitud —el
@@ -2594,7 +2675,7 @@ for p, q in [(2, 0), (2, 1), (2, 2)]:
         $$\operatorname{Var}(e_{T+h}) = \hat\sigma^2\sum_{j=0}^{h-1}\psi_j^2$$
       </div>
 
-      <table>
+      <table style="position:relative;">
         <caption class="sr-only">Pesos psi del AR(2) ajustado sobre la raíz cuadrada y bandas de pronóstico que producen</caption>
         <thead>
           <tr>
@@ -2670,7 +2751,7 @@ for p, q in [(2, 0), (2, 1), (2, 2)]:
 
       <p>Conviene mirar atrás y contar cuánto del capítulo ha hecho falta para cerrar cien observaciones anuales:</p>
 
-      <table>
+      <table style="position:relative;">
         <caption class="sr-only">Qué aportó cada módulo del capítulo al caso de las manchas solares</caption>
         <thead>
           <tr><th scope="col">Módulo</th><th scope="col">Qué puso en este caso</th></tr>
@@ -2739,7 +2820,7 @@ for p, q in [(2, 0), (2, 1), (2, 2)]:
         que sugiere <code>auto.arima</code>:</p>
 
       <div class="formula">
-        $$\hat\theta_1 = 0.1262 \quad (\text{e.e. } 0.0912,\ t = 1.38)$$
+        $$\hat\theta_1 = 0.1262 \;\; (\text{e.e. } 0.0912,\; t = 1.38)$$
         <p style="margin-bottom:0;">Comparado en igualdad de condiciones con el ruido blanco puro, el MA(1) da un AICc
           de $722.653$ frente a $722.663$: una diferencia de <strong>una centésima</strong>. Son indistinguibles.</p>
       </div>
@@ -3000,14 +3081,14 @@ print(round(float(acorr_ljungbox(ret**2, lags=[12])["lb_pvalue"].iloc[0]), 4))
       <p>Escribe un AR($p$) sin el ruido y verás algo familiar:</p>
 
       <div class="formula">
-        $$\hat y_t = \phi_1 y_{t-1} + \phi_2 y_{t-2} + \cdots + \phi_p y_{t-p} + c$$
+        $$\hat y_t = \phi_1 y_{t-1} + \cdots + \phi_p y_{t-p} + c$$
       </div>
 
       <p>Es exactamente una <strong>neurona lineal</strong> con una ventana de $p$ entradas: los $\phi_j$ son los
         pesos y $c$ es el sesgo. Todo lo que hicieron los métodos secuenciales modernos fue relajar, uno por uno, los
         supuestos que hay detrás de esa expresión.</p>
 
-      <table>
+      <table style="position:relative;">
         <caption class="sr-only">Del modelo AR a los modelos secuenciales modernos</caption>
         <thead>
           <tr>
@@ -3116,7 +3197,7 @@ print(round(float(acorr_ljungbox(ret**2, lags=[12])["lb_pvalue"].iloc[0]), 4))
         completa con lo que viene después, que es donde se decide el capítulo — de dónde sale el número, y qué hacer
         cuando la lectura de los correlogramas no lo da.</p>
 
-      <table>
+      <table style="position:relative;">
         <caption class="sr-only">Criterios para elegir entre AR, MA y ARMA y para fijar los órdenes p y q</caption>
         <thead>
           <tr>
