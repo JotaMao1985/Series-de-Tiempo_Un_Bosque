@@ -28,9 +28,11 @@
         <p>Con el operador de diferencia $\nabla \equiv 1 - B$, $y_t$ sigue un ARIMA($p,d,q$) si su $d$-ésima
           diferencia $w_t = \nabla^d y_t = (1-B)^d y_t$ sigue un ARMA($p,q$) estacionario e invertible. En una sola
           línea con el operador de rezago:</p>
-        $$\underbrace{\phi(B)}_{\text{AR}(p)}\ \underbrace{(1-B)^d}_{\text{integración}}\ y_t
-          = c + \underbrace{\theta(B)}_{\text{MA}(q)}\ \varepsilon_t,
-          \qquad \varepsilon_t \sim \text{RB}(0,\sigma^2)$$
+        $$\begin{gathered}
+          \underbrace{\phi(B)}_{\text{AR}(p)}\ \underbrace{(1-B)^d}_{\text{integración}}\ y_t
+          = c + \underbrace{\theta(B)}_{\text{MA}(q)}\ \varepsilon_t, \\[0.3em]
+          \varepsilon_t \sim \text{RB}(0,\sigma^2)
+        \end{gathered}$$
         <p style="margin-bottom:0;">donde $\phi(B) = 1 - \phi_1 B - \cdots - \phi_p B^p$ y
           $\theta(B) = 1 + \theta_1 B + \cdots + \theta_q B^q$, exactamente los del capítulo anterior. La letra
           <strong>I</strong> es de <em>integrated</em>: para volver de $w_t$ a $y_t$ hay que sumar
@@ -57,11 +59,18 @@
             </li>
             <li>
               <p>Se multiplican los dos factores del lado izquierdo:</p>
-              $$(1 - \phi B)(1 - B) = 1 - B - \phi B + \phi B^2 = 1 - (1+\phi)B + \phi B^2$$
+              $$\begin{aligned}
+                &(1 - \phi B)(1 - B) \\
+                &\quad = 1 - B - \phi B + \phi B^2 \\
+                &\quad = 1 - (1+\phi)B + \phi B^2
+              \end{aligned}$$
             </li>
             <li>
               <p>Es decir, el mismo modelo escrito sobre la serie <strong>sin diferenciar</strong> es un ARMA($2,1$):</p>
-              $$y_t = (1+\phi)\,y_{t-1} - \phi\, y_{t-2} + \varepsilon_t + \theta\,\varepsilon_{t-1}$$
+              $$\begin{aligned}
+                y_t = {}&(1+\phi)\,y_{t-1} - \phi\, y_{t-2} \\
+                &+ \varepsilon_t + \theta\,\varepsilon_{t-1}
+              \end{aligned}$$
               <p>con coeficientes autorregresivos $\phi_1^{*} = 1+\phi$ y $\phi_2^{*} = -\phi$.</p>
             </li>
             <li>
@@ -80,7 +89,7 @@
       <h3>Casos particulares ya conocidos</h3>
 
       <div class="diagram">
-        <table>
+        <table style="position:relative;">
           <thead>
             <tr><th>Modelo</th><th>Nombre</th><th>Qué dice</th></tr>
           </thead>
@@ -472,7 +481,7 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
         ángulos distintos.</p>
 
       <div class="diagram">
-        <table>
+        <table style="position:relative;">
           <thead>
             <tr><th>Evidencia</th><th>Qué mirar</th><th>Qué dice sobre el Nilo</th></tr>
           </thead>
@@ -517,9 +526,11 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
           misma serie</h4>
         <p>La función <code>ndiffs()</code> devuelve el $d$ recomendado, pero <strong>depende de la prueba que se
           le pida</strong>, y sobre el Nilo las tres no coinciden:</p>
-        $$\texttt{ndiffs(Nile, test = "kpss")} = 1, \qquad
-          \texttt{ndiffs(Nile, test = "adf")} = 0, \qquad
-          \texttt{ndiffs(Nile, test = "pp")} = 0$$
+        $$\begin{aligned}
+          {\footnotesize\texttt{ndiffs(Nile, test = "kpss")}} &= 1 \\
+          {\footnotesize\texttt{ndiffs(Nile, test = "adf")}} &= 0 \\
+          {\footnotesize\texttt{ndiffs(Nile, test = "pp")}} &= 0
+        \end{aligned}$$
         <p style="margin-bottom:0;">Dos de las tres dicen que <strong>no</strong> hay que diferenciar. Y el valor por
           defecto de <code>ndiffs()</code> —y por tanto el que usa <code>auto.arima()</code>— es KPSS, la única que
           dice que sí. Hay además un matiz: el ADF de <code>ndiffs()</code> no es el de <code>adf.test()</code> de la tabla.
@@ -589,8 +600,10 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
             <li>
               <p>El estadístico KPSS se construye sobre las <strong>sumas parciales</strong> de los residuales de
                 regresar la serie contra una constante, $e_t = y_t - \bar{y}$:</p>
-              $$S_t = \sum_{i=1}^{t} e_i, \qquad
-                \mathrm{KPSS} = \frac{1}{n^2\hat\sigma_{LP}^2}\sum_{t=1}^{n} S_t^2$$
+              $$\begin{aligned}
+                S_t &= \sum_{i=1}^{t} e_i, \\
+                \mathrm{KPSS} &= \frac{1}{n^2\hat\sigma_{LP}^2}\sum_{t=1}^{n} S_t^2
+              \end{aligned}$$
               <p>donde $\hat\sigma_{LP}^2$ es una estimación de la varianza de largo plazo.</p>
             </li>
             <li>
@@ -610,7 +623,10 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
               $$\Longrightarrow\quad \max_t |S_t| \approx \tau(1-\tau)\, n\,|\beta|$$
               <p>Los $e_t$ <strong>no se compensan localmente</strong>: todos los de un mismo tramo tienen el mismo
                 signo. $S_t$ crece linealmente hasta el salto y decrece linealmente después, de modo que</p>
-              $$\sum_t S_t^2 \sim n^3\beta^2 \quad\Longrightarrow\quad \mathrm{KPSS} \sim \frac{n\,\beta^2}{\hat\sigma_{LP}^2}$$
+              $$\begin{gathered}
+                \sum_t S_t^2 \sim n^3\beta^2 \\
+                \Longrightarrow\quad \mathrm{KPSS} \sim \frac{n\,\beta^2}{\hat\sigma_{LP}^2}
+              \end{gathered}$$
             </li>
             <li>
               <p>El estadístico crece con $n$ y con $\beta^2$. Con datos suficientes, <strong>cualquier</strong>

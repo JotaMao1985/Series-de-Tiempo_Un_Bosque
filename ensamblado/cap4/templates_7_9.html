@@ -75,16 +75,19 @@
       <p>La búsqueda escalonada evaluó $18$ modelos; la exhaustiva, $42$. Las dos llegan al mismo sitio:</p>
 
       <div class="formula">
-        $$\text{escalonada: ARIMA}(1,1,1),\ \mathrm{AICc} = 1267.507
-          \qquad
-          \text{exhaustiva: ARIMA}(1,1,1),\ \mathrm{AICc} = 1267.507$$
+        $$\begin{aligned}
+          \text{escalonada: }&\text{ARIMA}(1,1,1), \\
+          &\mathrm{AICc} = 1267.507 \\[0.5em]
+          \text{exhaustiva: }&\text{ARIMA}(1,1,1), \\
+          &\mathrm{AICc} = 1267.507
+        \end{aligned}$$
       </div>
 
       <p>Que coincidan es lo habitual, pero no está garantizado. Lo que sí revela la búsqueda completa es
         <strong>cuán apretado está el podio</strong>:</p>
 
       <div class="diagram">
-        <table>
+        <table style="position:relative;">
           <thead>
             <tr><th>Puesto</th><th>Modelo</th><th>AICc</th><th>Diferencia con el primero</th></tr>
           </thead>
@@ -261,7 +264,7 @@ print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
       </div>
 
       <div class="diagram">
-        <table>
+        <table style="position:relative;">
           <thead>
             <tr><th>$d$</th><th>$\operatorname{Var}(\nabla^d y)$</th><th>$\rho_1$</th><th>$\hat\theta$ de un MA(1)</th><th>Lectura</th></tr>
           </thead>
@@ -330,7 +333,7 @@ print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
         <p><strong>Y ahora la parte incómoda.</strong> Todo lo anterior es evidencia dentro de muestra. Comparar el
           escalón contra el ARIMA($1,1,1$) por AICc <strong>no se puede</strong>: uno tiene $d=0$ y el otro $d=1$.
           La comparación válida es fuera de muestra. Entrenando hasta 1950 y pronosticando los 20 años siguientes:</p>
-        <table>
+        <table style="position:relative;">
           <thead><tr><th>Modelo</th><th>RMSE</th><th>MAE</th></tr></thead>
           <tbody>
             <tr><td>Naïve (el último valor)</td><td>$123.06$</td><td>$101.95$</td></tr>
@@ -480,7 +483,7 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
       </div>
 
       <div class="diagram">
-        <table>
+        <table style="position:relative;">
           <thead>
             <tr><th>Modelo</th><th>Forma a largo plazo</th><th>Medido: $\nabla\hat y$ y $\nabla^2\hat y$ en $h=30$</th><th>Ancho 95 %: $h=1 \to h=30$</th></tr>
           </thead>
@@ -518,9 +521,10 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
         \varepsilon_{T+h-j}$, entonces el error de pronóstico a $h$ pasos tiene varianza:</p>
 
       <div class="formula">
-        $$\sigma_h^2 = \sigma^2 \sum_{j=0}^{h-1} \psi_j^2,
-          \qquad
-          \hat{y}_{T+h|T} \pm z_{1-\alpha/2}\,\sigma_h$$
+        $$\begin{gathered}
+          \sigma_h^2 = \sigma^2 \sum_{j=0}^{h-1} \psi_j^2, \\[0.3em]
+          \hat{y}_{T+h|T} \pm z_{1-\alpha/2}\,\sigma_h
+        \end{gathered}$$
       </div>
 
       <p>Como $\psi_0 = 1$ siempre, $\sigma_1 = \sigma$: <strong>a un paso, el intervalo lo determina solo la
@@ -594,7 +598,10 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
             </li>
             <li>
               <p>El error de pronóstico es exactamente lo que se descartó — los $h$ primeros términos:</p>
-              $$e_{T+h} = y_{T+h} - \hat{y}_{T+h|T} = \sum_{j=0}^{h-1}\psi_j\,\varepsilon_{T+h-j}$$
+              $$\begin{aligned}
+                e_{T+h} &= y_{T+h} - \hat{y}_{T+h|T} \\
+                &= \sum_{j=0}^{h-1}\psi_j\,\varepsilon_{T+h-j}
+              \end{aligned}$$
             </li>
             <li>
               <p>Como los $\varepsilon_t$ son incorrelados y de varianza $\sigma^2$, la varianza de esa suma es la
