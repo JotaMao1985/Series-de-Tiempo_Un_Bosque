@@ -2717,9 +2717,11 @@ print(round(1.96 / np.sqrt(len(ap)), 4))
       <div class="definition">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: proceso SARIMA($p,d,q$)($P,D,Q$)$_m$</h4>
         <p>Con $B$ el operador de rezago ($B y_t = y_{t-1}$):</p>
-        $$\underbrace{\Phi_P(B^m)}_{\text{AR estacional}}\ \underbrace{\phi_p(B)}_{\text{AR regular}}\
-          \underbrace{(1-B^m)^D}_{\substack{\text{integración}\\ \text{estacional}}}\ \underbrace{(1-B)^d}_{\substack{\text{integración}\\ \text{regular}}}\ y_t
-          = c + \underbrace{\Theta_Q(B^m)}_{\text{MA estacional}}\ \underbrace{\theta_q(B)}_{\text{MA regular}}\ \varepsilon_t$$
+        $$\begin{aligned}
+          &\underbrace{\Phi_P(B^m)}_{\text{AR estacional}}\ \underbrace{\phi_p(B)}_{\text{AR regular}} \\[0.3em]
+          &\quad \cdot\ \underbrace{(1-B^m)^D}_{\substack{\text{integración}\\ \text{estacional}}}\ \underbrace{(1-B)^d}_{\substack{\text{integración}\\ \text{regular}}}\ y_t \\[0.3em]
+          &= c + \underbrace{\Theta_Q(B^m)}_{\text{MA estacional}}\ \underbrace{\theta_q(B)}_{\text{MA regular}}\ \varepsilon_t
+        \end{aligned}$$
         <p style="margin-bottom:0;">donde
           $\phi_p(B) = 1 - \phi_1 B - \cdots - \phi_p B^p$,
           $\Phi_P(B^m) = 1 - \Phi_1 B^m - \cdots - \Phi_P B^{Pm}$,
@@ -2751,11 +2753,17 @@ print(round(1.96 / np.sqrt(len(ap)), 4))
             </li>
             <li>
               <p>Multiplicamos los dos factores:</p>
-              $$(1 - \Phi B^{12})(1 - \phi B) = 1 - \phi B - \Phi B^{12} + \phi\Phi B^{13}$$
+              $$\begin{aligned}
+                &(1 - \Phi B^{12})(1 - \phi B) \\
+                &\quad = 1 - \phi B - \Phi B^{12} + \phi\Phi B^{13}
+              \end{aligned}$$
             </li>
             <li>
               <p>Escrito como ecuación en diferencias, el modelo es</p>
-              $$y_t = \phi\, y_{t-1} + \Phi\, y_{t-12} - \phi\Phi\, y_{t-13} + \varepsilon_t$$
+              $$\begin{aligned}
+                y_t &= \phi\, y_{t-1} + \Phi\, y_{t-12} \\
+                &\quad - \phi\Phi\, y_{t-13} + \varepsilon_t
+              \end{aligned}$$
               <p>Un AR($13$) con <strong>dos</strong> parámetros libres. Los rezagos $2$ a $11$ tienen coeficiente
                 cero y el rezago $13$ tiene coeficiente $-\phi\Phi$, atado a los otros dos.</p>
             </li>
@@ -2801,12 +2809,12 @@ print(round(1.96 / np.sqrt(len(ap)), 4))
       </div>
 
       <div class="formula">
-        $$\begin{gathered}
-          \mu = \frac{c}{\phi_p(1)\,\Phi_P(1)}
-               = \frac{c}{(1-\phi_1-\cdots-\phi_p)(1-\Phi_1-\cdots-\Phi_P)} \\[0.8em]
-          \gamma_k = \sigma^2 \sum_{j=0}^{\infty} \psi_j\,\psi_{j+k}, \qquad
-          \gamma_0 = \operatorname{Var}(w_t) = \sigma^2 \sum_{j=0}^{\infty} \psi_j^{\,2}
-        \end{gathered}$$
+        $$\begin{aligned}
+          \mu &= \frac{c}{\phi_p(1)\,\Phi_P(1)} \\[0.5em]
+          &= \frac{c}{\begin{gathered}(1-\phi_1-\cdots-\phi_p) \\ \cdot\,(1-\Phi_1-\cdots-\Phi_P)\end{gathered}} \\[0.8em]
+          \gamma_k &= \sigma^2 \sum_{j=0}^{\infty} \psi_j\,\psi_{j+k} \\[0.5em]
+          \gamma_0 &= \operatorname{Var}(w_t) = \sigma^2 \sum_{j=0}^{\infty} \psi_j^{\,2}
+        \end{aligned}$$
       </div>
 
       <p>Son las fórmulas del Módulo 5 del Capítulo 3, aplicadas a los $\psi_j$ del polinomio ya multiplicado. La
@@ -2820,10 +2828,11 @@ print(round(1.96 / np.sqrt(len(ap)), 4))
         $q &lt; m$, la varianza <strong>se factoriza exactamente</strong>, y con ella toda la ACF:</p>
 
       <div class="formula">
-        $$\gamma_0 = \sigma^2\Bigl(\textstyle\sum_{i=0}^{q}\theta_i^2\Bigr)
-                      \Bigl(\textstyle\sum_{j=0}^{Q}\Theta_j^2\Bigr), \qquad
-          \rho_{i+jm} = \rho^{\text{reg}}_i \cdot \rho^{\text{est}}_j
-          \qquad (\theta_0 = \Theta_0 = 1)$$
+        $$\begin{gathered}
+          \gamma_0 = \sigma^2\Bigl(\textstyle\sum_{i=0}^{q}\theta_i^2\Bigr)\Bigl(\textstyle\sum_{j=0}^{Q}\Theta_j^2\Bigr) \\[0.5em]
+          \rho_{i+jm} = \rho^{\text{reg}}_i \cdot \rho^{\text{est}}_j \\[0.3em]
+          (\theta_0 = \Theta_0 = 1)
+        \end{gathered}$$
       </div>
 
       <p>La razón es de contabilidad, no de álgebra fina: un MA tiene <strong>un número finito</strong> de pesos, en
@@ -2856,7 +2865,7 @@ print(round(1.96 / np.sqrt(len(ap)), 4))
         se queda muy por debajo de la varianza verdadera. Con $\Phi = 0.7$ fijo:</p>
 
       <div class="diagram">
-        <table>
+        <table style="position:relative;">
           <thead>
             <tr><th>$\phi$</th><th>$\phi^{12}$</th><th>$\gamma_0/\sigma^2$ exacta</th><th>Factorizada</th><th>Error</th></tr>
           </thead>
