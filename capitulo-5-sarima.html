@@ -2702,8 +2702,9 @@ print(round(1.96 / np.sqrt(len(ap)), 4))
           <span class="text-xl">🎯</span>
           <div>
             <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
-            <p class="text-gray-600 text-sm" style="margin:0;">Leer y escribir un SARIMA($p,d,q$)($P,D,Q$)$_m$, y
-              entender que la parte estacional <strong>multiplica</strong> a la regular en vez de sumarse.</p>
+            <p class="text-gray-600 text-sm" style="margin:0;">Leer y escribir un SARIMA($p,d,q$)($P,D,Q$)$_m$,
+              entender que la parte estacional <strong>multiplica</strong> a la regular en vez de sumarse, y calcular
+              los momentos del proceso que resulta.</p>
           </div>
         </div>
       </div>
@@ -2781,6 +2782,162 @@ print(round(1.96 / np.sqrt(len(ap)), 4))
         <p class="grafico-etiqueta">Coeficientes del polinomio autorregresivo completo, rezago a rezago</p>
         <div class="grafico-wrapper" style="height:210px;">
           <canvas aria-label="Coeficientes del polinomio AR completo por rezago" role="img"></canvas>
+        </div>
+      </div>
+
+      <h3>Media, varianza y autocorrelación</h3>
+
+      <p>El polinomio ya multiplicado es un ARMA corriente, así que todo el Capítulo 3 sigue valiendo sin cambios:
+        basta leerlo con los órdenes completos en vez de con los cuatro órdenes que se escriben. Lo que sí cambia es
+        <strong>qué se puede simplificar</strong>, y ahí la estructura multiplicativa da un regalo en la parte MA y
+        cobra un peaje en la AR.</p>
+
+      <div class="warning">
+        <p><strong>Solo con $d = D = 0$.</strong> Un modelo con diferencias <em>no tiene</em> varianza finita, así que
+          preguntar por $\gamma_0$ del <em>airline</em> tal como se escribe no significa nada. La serie que tiene
+          momentos es la ya diferenciada, $w_t = \nabla^d \nabla_m^D y_t$, y es a ella —no a $y_t$— a la que se
+          refiere todo lo que sigue.</p>
+      </div>
+
+      <div class="formula">
+        $$\begin{gathered}
+          \mu = \frac{c}{\phi_p(1)\,\Phi_P(1)}
+               = \frac{c}{(1-\phi_1-\cdots-\phi_p)(1-\Phi_1-\cdots-\Phi_P)} \\[0.8em]
+          \gamma_k = \sigma^2 \sum_{j=0}^{\infty} \psi_j\,\psi_{j+k}, \qquad
+          \gamma_0 = \operatorname{Var}(w_t) = \sigma^2 \sum_{j=0}^{\infty} \psi_j^{\,2}
+        \end{gathered}$$
+      </div>
+
+      <p>Son las fórmulas del Módulo 5 del Capítulo 3, aplicadas a los $\psi_j$ del polinomio ya multiplicado. La
+        media hereda la estructura del producto: el denominador se factoriza porque evaluar un producto de polinomios
+        en $B = 1$ es multiplicar sus valores. Y la suma de los $\psi_j^2$ no es material nuevo: es exactamente la que
+        el Capítulo 4 usa para los intervalos de pronóstico, $\sigma_h^2 = \sigma^2\sum_{j&lt;h}\psi_j^2$, llevada
+        al infinito en vez de cortada en el horizonte $h$. La varianza del proceso es el límite de la incertidumbre de
+        pronóstico cuando el horizonte deja de importar.</p>
+
+      <p><strong>El regalo.</strong> Si el modelo es solo MA —regular y estacional, sin parte autorregresiva— y
+        $q &lt; m$, la varianza <strong>se factoriza exactamente</strong>, y con ella toda la ACF:</p>
+
+      <div class="formula">
+        $$\gamma_0 = \sigma^2\Bigl(\textstyle\sum_{i=0}^{q}\theta_i^2\Bigr)
+                      \Bigl(\textstyle\sum_{j=0}^{Q}\Theta_j^2\Bigr), \qquad
+          \rho_{i+jm} = \rho^{\text{reg}}_i \cdot \rho^{\text{est}}_j
+          \qquad (\theta_0 = \Theta_0 = 1)$$
+      </div>
+
+      <p>La razón es de contabilidad, no de álgebra fina: un MA tiene <strong>un número finito</strong> de pesos, en
+        los rezagos $i + jm$ con $i \le q$ y $j \le Q$. Si $q &lt; m$, cada par $(i,j)$ cae en un rezago distinto y
+        ningún término se suma con otro, de modo que el cuadrado de la suma se separa. En cuanto $q$ alcanza a $m$ la
+        igualdad se rompe, y no por poco: con $\theta_{12} = 0.5$ y $\Theta = 0.6$ la varianza vale $2.300\,\sigma^2$
+        y la factorización daría $1.700\,\sigma^2$.</p>
+
+      <div class="note">
+        <p><strong>El <em>airline</em> es el caso exacto.</strong> Con $q = Q = 1$ y $m = 12$ los pesos están en los
+          rezagos $0, 1, 12, 13$ y nunca chocan, así que
+          $\gamma_0 = \sigma^2(1+\theta^2)(1+\Theta^2) = 1.5217\,\sigma^2$, sin aproximación ninguna. Con el
+          $\hat\sigma^2 = 0.001371$ del modelo ajustado eso da $\gamma_0 = 0.002087$ para
+          $\nabla\nabla_{12}\log y_t$, frente a una varianza muestral de $0.002102$ en las $131$ observaciones que
+          quedan. Hay más: en $\rho_1 = \theta/(1+\theta^2)$ el factor estacional <strong>se cancela</strong>, de
+          modo que la autocorrelación en un rezago regular no depende de $\Theta$ en absoluto.</p>
+      </div>
+
+      <p><strong>El peaje.</strong> Con parte autorregresiva no hay factorización, ni siquiera aproximada cuando
+        $\phi$ es grande. Un AR no tiene un número finito de pesos, sino infinitos, así que los choques son
+        inevitables: en el AR($1$)$\times$SAR($1$) del desarrollo de arriba, el rezago $12$ recibe
+        <strong>dos caminos</strong> —doce pasos regulares, o uno estacional— y su peso es la suma de ambos,</p>
+
+      <div class="formula">
+        $$\psi_{12} = \phi^{12} + \Phi$$
+      </div>
+
+      <p>El término de colisión es $\phi^{m}$, y de ahí sale todo el comportamiento: con $\phi$ moderado es
+        despreciable y la factorización engaña bien; con $\phi$ cerca de $1$ domina, y $\sigma^2/[(1-\phi^2)(1-\Phi^2)]$
+        se queda muy por debajo de la varianza verdadera. Con $\Phi = 0.7$ fijo:</p>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th>$\phi$</th><th>$\phi^{12}$</th><th>$\gamma_0/\sigma^2$ exacta</th><th>Factorizada</th><th>Error</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>$0.6$</td><td>$0.002$</td><td>$3.073$</td><td>$3.064$</td><td>$-0.3\,\%$</td></tr>
+            <tr><td>$0.8$</td><td>$0.069$</td><td>$5.997$</td><td>$5.447$</td><td>$-9.2\,\%$</td></tr>
+            <tr><td>$0.9$</td><td>$0.282$</td><td>$15.406$</td><td>$10.320$</td><td>$\mathbf{-33.0\,\%}$</td></tr>
+            <tr><td>$0.95$</td><td>$0.540$</td><td>$44.580$</td><td>$20.111$</td><td>$\mathbf{-54.9\,\%}$</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>La lectura práctica es que la varianza de un SARIMA con parte AR hay que <strong>calcularla</strong>,
+        expandiendo el polinomio y sumando los $\psi_j^2$, y no estimarla multiplicando las dos varianzas por
+        separado. El Módulo 4 vuelve sobre esta misma frontera desde el lado de la ACF, que es donde se identifica.</p>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Momentos de un SARIMA">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r">
+          <pre><code class="language-r">library(forecast)
+ap &lt;- log(AirPassengers)
+fit &lt;- Arima(ap, order = c(0, 1, 1), seasonal = list(order = c(0, 1, 1), period = 12))
+th &lt;- coef(fit)["ma1"]; Th &lt;- coef(fit)["sma1"]; s2 &lt;- fit$sigma2
+
+# gamma_0 de la serie YA diferenciada, que es la estacionaria. El modelo con
+# d = D = 1 no tiene varianza finita y preguntar por la suya no significa nada.
+round(unname(s2 * (1 + th^2) * (1 + Th^2)), 6)
+#&gt; 0.002087
+round(var(diff(diff(ap), lag = 12)), 6)
+#&gt; 0.002102
+
+# La ACF tambien se factoriza: rho_11 = rho_13 = rho_1 * rho_12, EXACTO.
+r &lt;- ARMAacf(ma = c(th, rep(0, 10), Th, th * Th), lag.max = 13)
+round(unname(r[c("1", "11", "12", "13")]), 4)
+#&gt; -0.3460  0.1471 -0.4251  0.1471
+c(r["13"], r["1"] * r["12"])
+#&gt; 0.1470662  0.1470662     <- iguales a precision de maquina
+
+# El AR NO se factoriza: psi_12 recibe dos caminos y se suman.
+phi &lt;- 0.9; Phi &lt;- 0.7
+psi &lt;- c(1, ARMAtoMA(ar = c(phi, rep(0, 10), Phi, -phi * Phi), lag.max = 20000))
+round(c(exacta = sum(psi^2), factorizada = 1 / ((1 - phi^2) * (1 - Phi^2))), 3)
+#&gt;      exacta factorizada
+#&gt;      15.406      10.320
+round(c(psi_12 = psi[13], phi12_mas_Phi = phi^12 + Phi), 5)
+#&gt;        psi_12 phi12_mas_Phi
+#&gt;       0.98243       0.98243</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python">
+          <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+
+ap = np.log(sm.datasets.get_rdataset("AirPassengers").data["value"].values)
+s = pd.Series(ap, index=pd.date_range("1949-01", periods=len(ap), freq="MS"))
+fit = SARIMAX(s, order=(0, 1, 1), seasonal_order=(0, 1, 1, 12),
+              trend="n", simple_differencing=True).fit(disp=False)
+th, Th, s2 = fit.params["ma.L1"], fit.params["ma.S.L12"], fit.params["sigma2"]
+
+print(round(s2 * (1 + th**2) * (1 + Th**2), 6))
+#&gt; 0.002051
+d1 = np.diff(ap); w = d1[12:] - d1[:-12]
+print(round(w.var(ddof=1), 6))
+#&gt; 0.002102
+
+# OJO al divisor: statsmodels informa el sigma2 de maxima verosimilitud
+# (0.001348) y forecast::Arima lo corrige por los parametros estimados,
+# SSR/(n-2) = 0.001371. De ahi que R diga 0.002087 y Python 0.002051 para la
+# MISMA varianza teorica. No es un error de ninguno de los dos: es el mismo
+# reparto de grados de libertad que el Modulo 6 discute para el AIC.
+
+# El AR no se factoriza: psi_12 = phi^12 + Phi.
+from statsmodels.tsa.arima_process import ArmaProcess
+phi, Phi = 0.9, 0.7
+ar = np.r_[1, -np.r_[phi, np.zeros(10), Phi, -phi * Phi]]
+psi = ArmaProcess(ar, np.r_[1]).arma2ma(lags=20000)
+print(round(float((psi**2).sum()), 3), round(1 / ((1 - phi**2) * (1 - Phi**2)), 3))
+#&gt; 15.406 10.32
+print(round(float(psi[12]), 5), round(phi**12 + Phi, 5))
+#&gt; 0.98243 0.98243</code></pre>
         </div>
       </div>
 
@@ -3154,10 +3311,25 @@ print(round(kpss(diferenciar(uad, 1, 1), regression="c", nlags=4)[0], 4))
         </table>
       </div>
 
-      <p>En las tres últimas filas, $\rho_{11}$ y $\rho_{13}$ son <strong>casi idénticos entre sí</strong> y
-        aproximadamente iguales a $\rho_1 \cdot \rho_{12}$: en la del <em>airline</em>,
-        $(-0.346)\times(-0.425) = 0.147$, que es exactamente lo que aparece. Esa simetría alrededor del pico estacional
-        es la marca del modelo multiplicativo, y verla ahorra dos parámetros.</p>
+      <p>En las tres últimas filas, $\rho_{11}$ y $\rho_{13}$ son casi idénticos entre sí y aproximadamente
+        iguales a $\rho_1 \cdot \rho_{12}$. Esa simetría alrededor del pico estacional es la marca del modelo
+        multiplicativo, y verla ahorra dos parámetros.</p>
+
+      <p>Conviene saber <strong>cuándo ese «aproximadamente» es literal</strong>, porque no siempre lo es. La fila del
+        <em>airline</em> es solo MA, y el Módulo 2 mostró que ahí la factorización es <strong>exacta</strong>:
+        $\rho_{11} = \rho_{13} = \rho_1\cdot\rho_{12} = 0.14705$, las tres iguales hasta el último decimal que
+        guarda la máquina. Las otras dos filas llevan parte autorregresiva y solo se parecen: en el
+        AR($1$)$\times$SAR($1$), $\rho_{11} = 0.42298$ y $\rho_{13} = 0.42180$ difieren en la tercera cifra, y
+        ninguno coincide con el producto. La diferencia no es una curiosidad aritmética: un MA tiene un número finito
+        de pesos que nunca se pisan, y un AR los tiene infinitos y sí se pisan.</p>
+
+      <div class="warning">
+        <p><strong>Para identificar, da igual; para calcular, no.</strong> Sobre un correlograma estimado —con su
+          banda de $\pm 2/\sqrt{n}$— la distinción entre $0.42298$ y $0.42180$ es invisible, y por eso la regla del
+          producto sirve igual para leer los dos casos. Donde sí importa es al calcular: la varianza de un proceso con
+          parte AR <strong>no</strong> es el producto de las dos varianzas, y el error llega al $33\,\%$ con
+          $\phi = 0.9$. El Módulo 2 lo tabula.</p>
+      </div>
 
       <div class="simulador" data-simulador="firma-teorica">
         <h4><i class="fas fa-wave-square" aria-hidden="true"></i> Laboratorio de firmas estacionales</h4>
@@ -4372,7 +4544,7 @@ print(round(float((f2.params["x1"] - 1) / f2.bse["x1"]), 4))
       <div class="definition">
         <h4><i class="fas fa-wave-square mr-2" aria-hidden="true"></i>Definición: términos de Fourier</h4>
         $$y_t = \beta_0 + \sum_{k=1}^{K}\left[\alpha_k \sin\!\left(\frac{2\pi k t}{m}\right)
-          + \gamma_k \cos\!\left(\frac{2\pi k t}{m}\right)\right] + n_t$$
+          + \delta_k \cos\!\left(\frac{2\pi k t}{m}\right)\right] + n_t$$
         <p style="margin-bottom:0;">con $n_t$ un ARIMA <strong>no estacional</strong>. Cuesta $2K$ parámetros
           <em>independientemente de $m$</em>, y $K$ controla la suavidad: $K=1$ da una sinusoide pura, y $K$ mayor
           admite formas más quebradas. El máximo útil es $K = m/2$; ahí los términos son tantos como meses y
