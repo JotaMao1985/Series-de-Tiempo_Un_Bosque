@@ -11,23 +11,28 @@
           <div>
             <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
             <p class="text-gray-600 text-sm" style="margin:0;">Recorrer el ciclo completo sobre una serie
-              colombiana, aceptar un resultado incómodo, y ver por qué hace falta el Capítulo 5.</p>
+              colombiana, aceptar un resultado incómodo y ver por qué hace falta el Capítulo 5.</p>
           </div>
         </div>
       </div>
 
+      <p>Nueve módulos han desmontado el ciclo de Box–Jenkins pieza a pieza, casi siempre sobre el Nilo. Falta
+        verlo entero, de un tirón, sobre una serie que no se eligió por dócil, y con la etapa que el Módulo 9 dejó
+        preparada: usar el modelo para pronosticar y leer el ancho de su intervalo.</p>
+
       <h3>Caso: la tasa representativa del mercado</h3>
 
       <p>La TRM mensual (promedio del mes, Superintendencia Financiera vía datos.gov.co) entre enero de 2015 y junio
-        de 2026: $n = 138$ observaciones en pesos por dólar. En el Capítulo 3 vimos que sus log-retornos son
-        prácticamente ruido blanco. Ahora la tratamos en <strong>niveles</strong>, aplicando el ciclo de principio a
-        fin.</p>
+        de 2026: $n = 138$ observaciones en pesos por dólar. El Capítulo 3 mostró que sus log-retornos son, a
+        efectos prácticos, ruido blanco. Aquí se trata en <strong>niveles</strong> y se recorre el ciclo de
+        principio a fin.</p>
 
       <div class="simulador" data-simulador="trm-identificacion">
-        <h4><i class="fas fa-dollar-sign" aria-hidden="true"></i> Etapa 1: la TRM y su diferencia</h4>
+        <h4><i class="fas fa-dollar-sign" aria-hidden="true"></i> Etapa 1 · La TRM y su diferencia</h4>
         <p class="simulador-intro">La ACF de la serie en niveles arranca en $0.964$ y decae lentísimo: el retrato
-          de un proceso no estacionario. Tras una diferencia, <strong>todas</strong> las autocorrelaciones caen
-          dentro de la banda.</p>
+          de un proceso no estacionario. Tras una diferencia solo una barra de veinte se sale, y por poco:
+          $\hat\rho_8 = -0.190$ frente a $\pm 0.167$, que es lo que el azar da al $5\,\%$. Cambia de serie y
+          compara.</p>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">Serie</p>
         <div class="grafico-wrapper" style="height:190px;">
@@ -50,8 +55,9 @@
                 cuatro pruebas coinciden: <strong>$d = 1$</strong>. Y <code>nsdiffs</code> $= 0$: sin
                 estacionalidad.</td></tr>
             <tr><td><strong>1. Identificación de $p,q$</strong></td>
-              <td>La ACF de $\nabla$TRM tiene su valor máximo en $0.088$, con banda $\pm 0.168$:
-                <strong>ninguna</strong> se sale. Es ruido blanco. La tabla propone $p = q = 0$.</td></tr>
+              <td>La ACF de $\nabla$TRM tiene $\hat\rho_1 = 0.088$ y una sola barra fuera de la banda
+                $\pm 0.167$, aislada y sin patrón ($\hat\rho_8 = -0.190$). Es ruido blanco. La tabla de
+                identificación del Capítulo 3 propone $p = q = 0$.</td></tr>
             <tr><td><strong>2. Estimación</strong></td>
               <td>El mínimo de AICc de la rejilla es el ARIMA($2,1,2$) con $1703.38$; el mínimo de BIC es el
                 ARIMA($0,1,0$) con $1708.83$. <code>auto.arima</code> con búsqueda exhaustiva sobre $192$ modelos
@@ -59,29 +65,40 @@
             <tr><td><strong>3. Diagnóstico</strong></td>
               <td>Ljung–Box(20) $p = 0.189$ y Ljung–Box(12) $p = 0.206$: pasa. Shapiro–Wilk $p = 0.0006$: los
                 residuales <strong>no</strong> son normales.</td></tr>
+            <tr><td><strong>4. Uso (pronóstico)</strong></td>
+              <td>Una recta horizontal en $3497.09$ y un semiancho al $95\,\%$ de $\pm 238.09\sqrt{h}$. Se
+                desarrolla más abajo.</td></tr>
           </tbody>
         </table>
       </div>
 
       <div class="warning">
         <h4><i class="fas fa-triangle-exclamation mr-2" aria-hidden="true"></i>El mínimo de AICc es un modelo que
-          hay que tirar</h4>
+          hay que descartar</h4>
         <p>El ARIMA($2,1,2$) gana la rejilla por $2.56$ puntos de AICc. Y sin embargo <code>auto.arima</code> lo
-          descarta. ¿Por capricho? Miremos sus raíces:</p>
-        $$|\text{raíces AR}| = 1.0042,\ 1.0042 \qquad |\text{raíces MA}| = 1.000,\ 1.000$$
-        <p style="margin-bottom:0;">Las raíces del polinomio MA caen <strong>exactamente sobre el círculo
-          unitario</strong>: el modelo no es invertible, en el sentido preciso del Capítulo 3. Y las del AR quedan
-          en $1.0042$, prácticamente encima. Un ajuste así es numéricamente degenerado: los factores AR y MA se están
-          cancelando entre sí, los coeficientes no están identificados y el AICc premia un espejismo.
-          <code>auto.arima</code> descarta por diseño los modelos con raíces demasiado próximas al círculo, y aquí
-          acierta. <strong>Comprobar las raíces no es opcional.</strong></p>
+          descarta. No es un capricho: basta escribir el modelo ajustado y mirar sus raíces.</p>
+        $$\begin{aligned}
+          &(1 - 0.661B + 0.992B^2)\,\nabla y_t \\
+          &\quad = (1 - 0.623B + 1.000B^2)\,\varepsilon_t
+        \end{aligned}$$
+        $$\begin{aligned}
+          |\text{raíces AR}| &= 1.0042,\ 1.0042 \\
+          |\text{raíces MA}| &= 1.0000,\ 1.0000
+        \end{aligned}$$
+        <p style="margin-bottom:0;">Los dos polinomios son casi el mismo, y las raíces del MA caen
+          <strong>exactamente sobre el círculo unitario</strong>: el modelo no es invertible, en el sentido preciso
+          del Capítulo 3. Las del AR quedan en $1.0042$, prácticamente encima. Un ajuste así es numéricamente
+          degenerado: los factores AR y MA se cancelan entre sí, los coeficientes no están identificados y el AICc
+          premia un espejismo. <code>auto.arima</code> descarta por diseño los modelos con alguna raíz de módulo
+          menor que $1.01$, y aquí acierta. <strong>Comprobar las raíces no es opcional.</strong></p>
       </div>
 
       <div class="note">
         <p><strong>El resultado, aceptado tal cual: la TRM es una caminata aleatoria.</strong> ARIMA($0,1,0$)
           significa $y_t = y_{t-1} + \varepsilon_t$. El mejor pronóstico para el próximo mes es el valor de este mes,
-          y para dentro de un año, también. La deriva estimada es $8.00$ pesos/mes con error estándar $10.36$
-          ($t = 0.77$): no significativa, así que ni siquiera hay una tendencia que extrapolar.</p>
+          y para dentro de un año, también. Con deriva, $y_t = \delta + y_{t-1} + \varepsilon_t$, la estimación da
+          $\hat\delta = 8.00$ pesos/mes con error estándar $10.36$ ($t = 0.77$): no significativa, así que ni
+          siquiera hay una tendencia que extrapolar.</p>
         <p style="margin-bottom:0;">Es un resultado que decepciona y que conviene no maquillar. Coincide con lo que
           predice la teoría financiera —si el tipo de cambio fuera predecible, alguien ya habría arbitrado la
           diferencia— y con lo que encontró el Capítulo 3 sobre sus log-retornos. Un modelo que dice
@@ -90,17 +107,22 @@
       </div>
 
       <p>Queda una etapa, y en esta serie es la más instructiva de todas. El Módulo 9 dedujo que el ancho del
-        intervalo sale de los pesos $\psi$, $\sigma_h^2 = \sigma^2\sum_{j&lt;h}\psi_j^2$, y que la caminata aleatoria
-        es el caso de referencia porque <strong>todos sus $\psi$ valen $1$</strong>: la integración no amortigua
-        nada, así que ningún choque se olvida nunca. Aquí no hay que aplicar la fórmula, hay que leerla:</p>
+        intervalo sale de los pesos $\psi$, $\sigma_h^2 = \sigma^2\sum_{j=0}^{h-1}\psi_j^2$, y que la caminata
+        aleatoria es el caso de referencia porque <strong>todos sus $\psi$ valen $1$</strong>: la integración no
+        amortigua nada, así que ningún choque se olvida nunca. Aquí no hay que aplicar la fórmula, hay que leerla.
+        A $h$ pasos, el error es la suma de los $h$ choques que aún no han ocurrido:</p>
 
       <div class="formula">
-        $$\sigma_h = \hat\sigma\sqrt{h} = 121.48\,\sqrt{h}, \qquad
-          \text{semiancho al }95\,\% = 238.09\,\sqrt{h}$$
+        $$y_{T+h} - y_T = \sum_{j=1}^{h}\varepsilon_{T+j}$$
+        $$\Longrightarrow\quad \hat y_{T+h|T} = y_T, \qquad \sigma_h^2 = h\,\sigma^2$$
+        $$\begin{aligned}
+          \sigma_h &= \hat\sigma\sqrt{h} = 121.48\,\sqrt{h} \\
+          z_{0.975}\,\sigma_h &= 1.96\,\sigma_h = 238.09\,\sqrt{h}
+        \end{aligned}$$
       </div>
 
       <p>Con el último dato observado —junio de 2026, $3497.09$ pesos— y un pronóstico que es esa misma cifra
-        para siempre, el intervalo queda así:</p>
+        para siempre, el intervalo es $3497.09 \pm 238.09\sqrt{h}$:</p>
 
       <table>
         <caption class="sr-only">Intervalos de pronóstico de la TRM bajo el modelo de caminata aleatoria</caption>
@@ -143,35 +165,40 @@
         <p>Conviene comparar las tres series del curso, porque la fórmula es la misma y el resultado no se
           parece en nada:</p>
         <ul>
-          <li><strong>La TRM</strong>, ARIMA($0,1,0$): $\psi_j = 1$ para todo $j$, la suma $\sum_{j&lt;h}\psi_j^2$
-            vale exactamente $h$, y $\sigma_{24}/\sigma_1 = \sqrt{24} = 4.90$.</li>
+          <li><strong>La TRM</strong>, ARIMA($0,1,0$): $\psi_j = 1$ para todo $j$, la suma
+            $\sum_{j=0}^{h-1}\psi_j^2$ vale exactamente $h$, y $\sigma_{24}/\sigma_1 = \sqrt{24} = 4.90$.</li>
           <li><strong>El Nilo</strong>, ARIMA($1,1,1$): los $\psi$ caen hasta
-            $\psi_\infty = (1+\theta)/(1-\phi) = 0.1688$, así que la suma crece mucho más despacio y
-            $\sigma_{30}/\sigma_1 = 1.404$, frente al $\sqrt{30} = 5.48$ de una caminata. La incertidumbre crece
-            casi <strong>cuatro veces menos</strong>.</li>
-          <li><strong>El caso del Capítulo 3</strong>, una serie estacionaria: ahí $\sum_j \psi_j^2$
-            <em>converge</em>, y el abanico deja de abrirse. Esa es la frontera exacta que marca la raíz unitaria:
-            con ella, la suma diverge y no hay techo.</li>
+            $\psi_\infty = (1+\theta)/(1-\phi) = 0.1688$, así que $\sigma_h \approx \sigma\,\psi_\infty\sqrt{h}$
+            crece mucho más despacio y $\sigma_{30}/\sigma_1 = 1.404$, frente al $\sqrt{30} = 5.48$ de una
+            caminata. La incertidumbre crece casi <strong>cuatro veces menos</strong>.</li>
+          <li><strong>Cualquier ARMA estacionario del Capítulo 3</strong> ($d = 0$): ahí
+            $\sum_{j=0}^{\infty}\psi_j^2$ <em>converge</em> y $\sigma_h^2$ se estabiliza en la varianza del
+            propio proceso, $\sigma^2\sum_{j=0}^{\infty}\psi_j^2 = \gamma_0$: el abanico tiene techo. Esa es la
+            frontera exacta que marca la raíz unitaria: con ella, la suma diverge y no hay techo.</li>
         </ul>
         <p style="margin-bottom:0;">Y el resultado es incómodo de leer, que es justamente por lo que hay que
-          leerlo. A dos años vista el intervalo del $95\,\%$ abarca <strong>un tercio del nivel de la serie</strong>.
-          El modelo no está fallando: está informando de que a ese horizonte no hay nada que decir. Un pronóstico
-          honesto puede ser inútil, y confundir las dos cosas es el error que el Capítulo 6 enseña a evitar
-          midiendo si ese $95\,\%$ se cumple de verdad.</p>
+          leerlo. A dos años vista el intervalo del $95\,\%$ se extiende <strong>un tercio del nivel hacia cada
+          lado</strong>: de $2330.70$ a $4663.48$ pesos. El modelo no está fallando: está informando de que a ese
+          horizonte no hay nada que decir. Un pronóstico honesto puede ser inútil, y confundir las dos cosas es el
+          error que el Capítulo 6 enseña a evitar midiendo si ese $95\,\%$ se cumple de verdad.</p>
       </div>
 
       <p>Un detalle más, por si tienta pensar que en la TRM no hay nada que estudiar: aplicando Ljung–Box a los
         residuales <strong>al cuadrado</strong> se obtiene $p = 0.857$, así que tampoco hay agrupamiento de
-        volatilidad detectable a este nivel de agregación. Lo que sí hay es no-normalidad clara ($p = 0.0006$), es
-        decir, colas pesadas: saltos grandes más frecuentes de lo que la normal admite. Eso no lo captura ningún
-        ARIMA, y es la puerta de entrada a los modelos GARCH, fuera del alcance de este curso.</p>
+        volatilidad detectable a este nivel de agregación. Lo que sí hay es no normalidad clara ($p = 0.0006$):
+        curtosis de $5.1$ y asimetría de $0.76$, es decir, saltos grandes más frecuentes de lo que la normal admite,
+        y los mayores, de devaluación (marzo de 2020, julio de 2022). Tiene una consecuencia inmediata: el abanico
+        de arriba supone normalidad, así que su $95\,\%$ nominal <strong>cubre menos</strong> de lo que promete,
+        como advirtió el Módulo 9. Modelarlo pide innovaciones de colas pesadas o modelos con saltos, fuera del
+        alcance de este curso; ningún ARIMA lo captura.</p>
 
       <h3>El puente al Capítulo 5</h3>
 
-      <p>Terminemos con un experimento que muestra por qué el capítulo siguiente es necesario. Tomemos
-        $\log(\text{AirPassengers})$ —una serie mensual con estacionalidad evidente— y pidamos a
-        <code>auto.arima</code> el mejor modelo <strong>no estacional</strong> con búsqueda exhaustiva. Devuelve un
-        ARIMA($0,1,5$): cinco términos MA intentando cubrir un patrón de período 12.</p>
+      <p>La TRM no tenía estacionalidad; la mayoría de las series mensuales sí. El capítulo termina con un
+        experimento que muestra por qué hace falta el siguiente. Se toma $\log(\text{AirPassengers})$ —una serie
+        mensual con estacionalidad evidente— y se pide a <code>auto.arima</code> el mejor modelo
+        <strong>no estacional</strong> con búsqueda exhaustiva. Devuelve un ARIMA($0,1,5$): cinco términos MA
+        intentando cubrir un patrón de período 12.</p>
 
       <div class="simulador" data-simulador="puente-estacional">
         <h4><i class="fas fa-calendar-days" aria-hidden="true"></i> Lo que el diagnóstico revela</h4>
@@ -186,8 +213,8 @@
       </div>
 
       <div class="formula">
-        $$\hat\rho_{12} = 0.7245, \qquad \hat\rho_{24} = 0.6727, \qquad
-          \text{banda} = \pm 0.1633$$
+        $$\hat\rho_{12} = 0.7245, \qquad \hat\rho_{24} = 0.6727$$
+        $$\text{banda} = \pm 0.1633$$
         $$Q_{LB}(24) = 222.4, \qquad p &lt; 10^{-6}$$
       </div>
 
@@ -195,9 +222,20 @@
         cuatro veces la banda. El diagnóstico está haciendo exactamente lo que debe — <strong>rechazar</strong> — y
         además está diciendo <em>por qué</em>: el patrón sobrante está en los múltiplos de 12. Subir $p$ o $q$ no lo
         arregla; haría falta un $q = 24$ para llegar hasta ahí, con dos docenas de parámetros. La solución es
-        introducir la estacionalidad <em>en la estructura</em> del modelo, y eso es SARIMA. Como avance: el modelo
-        ARIMA($0,1,1$)($0,1,1$)$_{12}$ deja $\hat\rho_{12} = -0.0515$ y Ljung–Box(24) con $p = 0.233$, con solo dos
-        parámetros.</p>
+        introducir la estacionalidad <em>en la estructura</em> del modelo, y eso es SARIMA. Como avance, el modelo
+        <em>airline</em> ARIMA($0,1,1$)($0,1,1$)$_{12}$ diferencia también en el rezago 12 y multiplica dos
+        factores MA de un parámetro cada uno:</p>
+
+      <div class="formula">
+        $$\begin{aligned}
+          &(1-B)(1-B^{12})\log y_t \\
+          &\quad = (1+\theta B)(1+\Theta B^{12})\,\varepsilon_t \\
+          &\quad = (1 + \theta B + \Theta B^{12} + \theta\Theta B^{13})\,\varepsilon_t
+        \end{aligned}$$
+      </div>
+
+      <p>Con solo esos dos parámetros alcanza los rezagos 1, 12 y 13, deja $\hat\rho_{12} = -0.0515$ y pasa
+        Ljung–Box(24) con $p = 0.233$.</p>
 
       <div class="warning">
         <p><strong>Y una advertencia sobre esa comparación.</strong> Sería tentador enfrentar los AICc de los dos
@@ -212,25 +250,33 @@
       <div class="definition">
         <h4><i class="fas fa-list-check mr-2" aria-hidden="true"></i>Lo que hay que llevarse</h4>
         <ul style="margin-bottom:0;">
-          <li>Un <strong>ARIMA($p,d,q$)</strong> es un ARMA($p+d,q$) con $d$ raíces impuestas sobre el círculo
-            unitario. La diferenciación es parte del modelo, no un preprocesamiento.</li>
+          <li>Un <strong>ARIMA($p,d,q$)</strong>, $\phi(B)(1-B)^d\,y_t = \theta(B)\,\varepsilon_t$, es un
+            ARMA($p+d,q$) con $d$ raíces unitarias ($B = 1$) en su polinomio AR. La diferenciación es parte del
+            modelo, no un preprocesamiento.</li>
           <li>El ciclo de <strong>Box–Jenkins</strong> es iterativo: identificar → estimar → diagnosticar, y volver
             atrás cuando el diagnóstico lo pida.</li>
           <li>$d$ se elige con <strong>tres evidencias</strong> —gráfico, varianza y pruebas— y las pruebas pueden
-            engañarte: KPSS confunde un cambio de nivel con una raíz unitaria el $100\,\%$ de las veces.</li>
+            engañar: con un escalón como el del Nilo, KPSS confunde el cambio de nivel con una raíz unitaria el
+            $100\,\%$ de las veces.</li>
           <li>$p$ y $q$ se leen en la ACF/PACF de la serie <strong>ya diferenciada</strong>, y se proponen varios
             candidatos, no uno.</li>
           <li>La constante significa <strong>media</strong> si $d=0$ y <strong>deriva</strong> si $d=1$; con
             $d \ge 2$ el software se niega a ajustarla, y hace bien.</li>
-          <li>El <strong>AICc no es comparable entre distintos $d$</strong>, porque $n^{*} = n - d$ cambia. Agrupa
-            siempre por $d$.</li>
+          <li>El <strong>AICc no es comparable entre distintos $d$</strong>, porque $n^{*} = n - d$ cambia. Hay que
+            agrupar siempre por $d$.</li>
           <li><code>auto.arima</code> es un algoritmo con reglas, no un oráculo: elige $d$ con KPSS, busca en un
             vecindario y no mira el gráfico. <code>trace = TRUE</code> lo abre.</li>
           <li>La <strong>sobrediferenciación</strong> tiene una firma exacta: $\hat\theta \to -1$ y una raíz MA sobre
             el círculo unitario. La regla de la varianza es solo un primer aviso.</li>
+          <li>El <strong>diagnóstico</strong> manda sobre el criterio: Ljung–Box con <code>fitdf = p + q</code>, la ACF
+            residual barra por barra y las raíces. Un mínimo de AICc con raíces sobre el círculo —el ARIMA($2,1,2$)
+            de la TRM— se descarta.</li>
           <li>$d$ y la constante deciden la <strong>forma</strong> del pronóstico a largo plazo; el intervalo sale de
-            $\sigma_h^2 = \sigma^2\sum_{j&lt;h}\psi_j^2$ y supone normalidad.</li>
+            $\sigma_h^2 = \sigma^2\sum_{j=0}^{h-1}\psi_j^2$ y supone normalidad. Con $d = 1$ y $\psi_j = 1$ crece
+            como $\sqrt{h}$, sin techo.</li>
           <li>Un modelo que dice "no hay señal" —la TRM— es un resultado legítimo, y la referencia del Capítulo 6.</li>
+          <li>Si lo que sobra en los residuales está en los rezagos $12, 24, \dots$, subir $q$ no es la salida: la
+            estacionalidad tiene que entrar en la estructura del modelo. Es el Capítulo 5.</li>
         </ul>
       </div>
 
@@ -282,7 +328,7 @@ n &lt;- length(BJsales)   # 150
 # --- Etapa 1: d ---------------------------------------------------------
 round(sapply(0:3, function(d) var(if (d == 0) BJsales else diff(BJsales, differences = d))), 4)
 #&gt; [1] 461.3769   2.0851   2.8823   8.5626      minimo en d = 1
-c(adf = adf.test(BJsales)$p.value, ndiffs = ndiffs(BJsales))
+round(c(adf = adf.test(BJsales)$p.value, ndiffs = ndiffs(BJsales)), 4)
 #&gt;    adf ndiffs
 #&gt; 0.5302 1.0000
 
@@ -356,7 +402,9 @@ round(min(Mod(polyroot(c(1, coef(f122)[grepl("^ma", names(coef(f122)))])))), 4)
         <div class="ejercicio-panel pista" id="c4e2-pista" hidden>
           <p style="margin:0;">Cuidado: aquí el criterio de la varianza <strong>te va a mentir</strong>. Diferenciar
             reduce la varianza, que es justo lo contrario de la señal de alarma que aprendiste. Cuando eso pase,
-            ajusta un modelo con $d = 1$ que incluya parte MA y mira el módulo de la raíz de $\theta(B)$. Un ciclo
+            ajusta un modelo con $d = 1$ que tenga parte AR suficiente para el ciclo <em>y</em> parte MA —por
+            ejemplo un ARIMA($2,1,1$)— y mira el módulo de la raíz de $\theta(B)$. Sin la parte AR, el MA se
+            ocupa del ciclo y la raíz no delata nada. Un ciclo
             no es una tendencia: una serie que sube y baja regularmente <em>sí</em> vuelve a su media.</p>
         </div>
         <div class="ejercicio-panel solucion" id="c4e2-sol" hidden>
@@ -374,9 +422,10 @@ c(kpss_p = kpss.test(ly)$p.value, adf_p = adf.test(ly)$p.value)
 #&gt;   0.10   0.01     KPSS no rechaza estacionariedad; ADF rechaza raiz unitaria
 
 # --- El criterio de la varianza: AQUI FALLA ------------------------------
-round(sapply(0:2, function(d) var(if (d == 0) ly else diff(ly, differences = d))), 4)
-#&gt; [1] 1.6532 0.6871 0.6026
-# la varianza BAJA al diferenciar (-58 %): la regla no dispara ninguna alarma
+round(sapply(0:3, function(d) var(if (d == 0) ly else diff(ly, differences = d))), 4)
+#&gt; [1] 1.6532 0.6871 0.6026 1.1532
+# la varianza BAJA al diferenciar (-58 %) y su minimo esta en d = 2:
+# la regla no solo no avisa, sino que propone diferenciar DOS veces
 
 # --- Las raices sí lo detectan -------------------------------------------
 for (o in list(c(2,1,0), c(2,1,1), c(0,1,1))) {
@@ -403,7 +452,8 @@ as.character(auto.arima(ly, stepwise = FALSE, approximation = FALSE, seasonal = 
           <p><strong>Discusión.</strong> Las dos pruebas coinciden en $d = 0$: la serie es estacionaria, y tiene
             sentido, porque un ciclo regular <em>sí</em> vuelve a su media. Lo interesante es que
             <strong>la regla de la varianza no avisa</strong>: diferenciar la reduce un $58\,\%$, así que quien se
-            guíe solo por ella diferenciará tranquilamente. La razón es que en una serie con oscilación fuerte la
+            guíe solo por ella diferenciará tranquilamente, y hasta <strong>dos veces</strong>, porque el mínimo
+            ($0.6026$) está en $d = 2$. La razón es que en una serie con oscilación fuerte la
             diferencia primera atenúa las oscilaciones lentas, y eso baja la varianza aunque sobre. Lo que sí lo
             detecta sin ambigüedad es la <strong>raíz</strong>: el ARIMA($2,1,1$) coloca $|\text{raíz MA}| = 1.000$,
             es decir, el término MA reconstruye el factor $(1-B)$ que acabas de imponer. Nota honesta: el AR(2) de
@@ -485,7 +535,7 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
             compara: $\sigma\sqrt{h}$ no es "el caso de errores independientes" sino <strong>el de una caminata
             aleatoria</strong>, donde $\psi_j = 1$ para todo $j$ y la fórmula se reduce exactamente a eso. Aquí
             $\sigma_{12}$ es $1.96$ veces la de una caminata, porque los $\psi_j$ no decaen a cero sino que tienden
-            a $(1+\theta)/(1-\phi) = 2.99$; a $h = 12$ van por $2.56$, todavía subiendo, porque $\phi = 0.88$ hace
+            a $(1+\theta)/(1-\phi) = 2.99$; a $h = 12$ van por $2.56$, todavía subiendo, porque $\hat\phi = 0.88$ hace
             la convergencia lenta. <strong>Cada nuevo choque se acumula con casi tres veces su peso.</strong> Es el
             contraste exacto del Nilo, donde $\psi_\infty = 0.169$ y la incertidumbre crece cuatro veces
             <em>menos</em> que la de una caminata. Sobre la deriva: $\hat\delta = 0.400$ con $t = 1.56$ no es significativa y empeora el
@@ -504,11 +554,13 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
             ARIMA no estacionales), <strong>9.6</strong> (estimación y selección de orden), <strong>9.7</strong>
             (ARIMA en la práctica, con el algoritmo de Hyndman–Khandakar) y <strong>9.8</strong> (pronóstico).
             Acceso abierto en <a href="https://otexts.com/fpp3/" class="text-primary underline" target="_blank"
-              rel="noopener">otexts.com/fpp3</a>.</li>
-          <li><strong>Shumway &amp; Stoffer, <em>Time Series Analysis and Its Applications</em></strong> — capítulo
-            <strong>3</strong>, secciones 3.6 a 3.8: integración, construcción de modelos ARIMA y pronóstico con su
-            error cuadrático medio.</li>
-          <li><strong>Box, Jenkins, Reinsel &amp; Ljung</strong> — capítulos 4, 6 y 7: la fuente original de la
+              rel="noopener">otexts.com/fpp3</a>. FPP3 usa el paquete <code>fable</code>; la edición anterior,
+            FPP2 (capítulo 8), usa el mismo <code>auto.arima</code> de <code>forecast</code> que este curso.</li>
+          <li><strong>Shumway &amp; Stoffer, <em>Time Series Analysis and Its Applications</em></strong> (4.ª ed.,
+            2017) — capítulo <strong>3</strong>: sección 3.4 (pronóstico y su error cuadrático medio) y secciones
+            3.6 y 3.7 (modelos integrados y construcción de modelos ARIMA).</li>
+          <li><strong>Box, Jenkins, Reinsel &amp; Ljung</strong> (5.ª ed., Wiley, 2015) — capítulos 4 a 8: modelos no
+            estacionarios, pronóstico, identificación, estimación y diagnóstico. La fuente original de la
             metodología, con la Serie M (<code>BJsales</code>) del ejercicio 1.</li>
           <li><strong>Hyndman &amp; Khandakar (2008)</strong>, <em>Automatic time series forecasting: the forecast
             package for R</em>, <em>Journal of Statistical Software</em> <strong>27</strong>(3). Las cuatro páginas
@@ -523,10 +575,11 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
         <p><strong>Y en el Capítulo 5…</strong> el diagnóstico de este módulo dejó el trabajo a medias: hay
           estructura en los rezagos múltiplos de 12 que ningún ARIMA no estacional puede recoger con un número
           razonable de parámetros. El <strong>SARIMA</strong> $(p,d,q)(P,D,Q)_m$ añade un segundo juego de
-          polinomios que opera sobre el rezago estacional, y con él la serie de pasajeros aéreos —y la TRM, y
-          cualquier serie mensual— entran por fin en el marco. Todo lo de este capítulo sigue valiendo: el ciclo, los
-          criterios agrupados por diferenciación, las raíces, la firma de la sobrediferenciación. Solo se duplica el
-          álgebra.</p>
+          polinomios que opera sobre el rezago estacional, y con él la serie de pasajeros aéreos, y cualquier serie
+          con un patrón de calendario, entra por fin en el marco. La TRM no lo necesita, y el Capítulo 5 enseña
+          también a comprobarlo. Todo lo de este capítulo sigue valiendo: el ciclo, los criterios agrupados por
+          diferenciación, las raíces, la firma de la sobrediferenciación, el abanico que sale de los $\psi$. Solo se
+          duplica el álgebra.</p>
       </div>
     </div>
   </template>

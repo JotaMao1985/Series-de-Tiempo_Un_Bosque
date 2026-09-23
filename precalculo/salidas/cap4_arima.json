@@ -1,6 +1,6 @@
 {
-  "descripcion": "Prec<c3><a1>lculos del Cap<c3><ad>tulo 4 (modelos ARIMA y metodolog<c3><ad>a Box-Jenkins). Ajustes con stats::arima y forecast::Arima por m<c3><a1>xima verosimilitud. AICc = AIC + 2k(k+1)/(n-k-1) con k = n<c2><ba> de coeficientes + 1 y n EFECTIVO = n - d. El AICc solo se compara dentro de un mismo d. Ljung-Box con fitdf = p + q. Trazas de auto.arima capturadas con trace = TRUE (criterio AICc).",
-  "generado": "2026-07-26 21:10:25 -05",
+  "descripcion": "Precálculos del Capítulo 4 (modelos ARIMA y metodología Box-Jenkins). Ajustes con stats::arima y forecast::Arima por máxima verosimilitud. AICc = AIC + 2k(k+1)/(n-k-1) con k = nº de coeficientes + 1 y n EFECTIVO = n - d. El AICc solo se compara dentro de un mismo d. Ljung-Box con fitdf = p + q. Trazas de auto.arima capturadas con trace = TRUE (criterio AICc).",
+  "generado": "2026-09-23 12:12:47 -05",
   "max_rezago": 20,
   "horizonte": 30,
   "nilo": {
@@ -1331,7 +1331,7 @@
     },
     "cambio_nivel": {
       "anio": 1899,
-      "fuente": "Cobb (1978); el descenso coincide con la construcci<c3><b3>n de la presa baja de Asu<c3><a1>n",
+      "fuente": "Cobb (1978); el descenso coincide con la construcción de la presa baja de Asuán",
       "media_antes": 1097.75,
       "media_despues": 849.97,
       "escalon": {
@@ -1361,17 +1361,17 @@
             "mae": 106.16
           },
           {
-            "etiqueta": "Escal<c3><b3>n 1899 (d = 0)",
+            "etiqueta": "Escalón 1899 (d = 0)",
             "rmse": 127.99,
             "mae": 106.99
           },
           {
-            "etiqueta": "Escal<c3><b3>n 1899 + AR(1)",
+            "etiqueta": "Escalón 1899 + AR(1)",
             "rmse": 128.31,
             "mae": 107.4
           },
           {
-            "etiqueta": "Na<c3><af>ve (<c3><ba>ltimo valor)",
+            "etiqueta": "Naïve (último valor)",
             "rmse": 123.06,
             "mae": 101.95
           },
@@ -1381,7 +1381,7 @@
             "mae": 108.01
           }
         ],
-        "nota": "<c3><9a>nica comparaci<c3><b3>n v<c3><a1>lida entre modelos con distinto d. La media de toda la muestra es un mal referente aqu<c3><ad> porque mezcla los dos reg<c3><ad>menes; el na<c3><af>ve y el escal<c3><b3>n coinciden casi en todo porque ambos pronostican una constante cercana al nivel posterior a 1899."
+        "nota": "Única comparación válida entre modelos con distinto d. La media de toda la muestra es un mal referente aquí porque mezcla los dos regímenes; el naïve y el escalón coinciden casi en todo porque ambos pronostican una constante cercana al nivel posterior a 1899."
       },
       "monte_carlo": {
         "n_replicas": 1000,
@@ -1391,11 +1391,13 @@
         "posicion_escalon": 29,
         "sin_escalon": {
           "kpss_rechaza": 0.048,
+          "adf_test_no_rechaza": 0.054,
           "ndiffs_kpss_1_o_mas": 0.052,
           "ndiffs_adf_1_o_mas": 0
         },
         "con_escalon": {
           "kpss_rechaza": 1,
+          "adf_test_no_rechaza": 0.864,
           "ndiffs_kpss_1_o_mas": 1,
           "ndiffs_adf_1_o_mas": 0.005
         }
@@ -1412,6 +1414,7 @@
             "delta": 0,
             "kpss_medio": 0.1728,
             "kpss_rechaza": 0.045,
+            "kpss_rechaza_l12": 0.035,
             "ndiffs_medio": 0.0475,
             "salto_en_sigmas": 0
           },
@@ -1419,6 +1422,7 @@
             "delta": 25,
             "kpss_medio": 0.215,
             "kpss_rechaza": 0.095,
+            "kpss_rechaza_l12": 0.0625,
             "ndiffs_medio": 0.1,
             "salto_en_sigmas": 0.197
           },
@@ -1426,6 +1430,7 @@
             "delta": 50,
             "kpss_medio": 0.3232,
             "kpss_rechaza": 0.2275,
+            "kpss_rechaza_l12": 0.1475,
             "ndiffs_medio": 0.25,
             "salto_en_sigmas": 0.394
           },
@@ -1433,6 +1438,7 @@
             "delta": 75,
             "kpss_medio": 0.4686,
             "kpss_rechaza": 0.4825,
+            "kpss_rechaza_l12": 0.27,
             "ndiffs_medio": 0.535,
             "salto_en_sigmas": 0.59
           },
@@ -1440,6 +1446,7 @@
             "delta": 100,
             "kpss_medio": 0.636,
             "kpss_rechaza": 0.7075,
+            "kpss_rechaza_l12": 0.445,
             "ndiffs_medio": 0.7775,
             "salto_en_sigmas": 0.787
           },
@@ -1447,6 +1454,7 @@
             "delta": 150,
             "kpss_medio": 0.8962,
             "kpss_rechaza": 0.96,
+            "kpss_rechaza_l12": 0.7275,
             "ndiffs_medio": 0.9725,
             "salto_en_sigmas": 1.181
           },
@@ -1454,6 +1462,7 @@
             "delta": 200,
             "kpss_medio": 1.0677,
             "kpss_rechaza": 1,
+            "kpss_rechaza_l12": 0.87,
             "ndiffs_medio": 1,
             "salto_en_sigmas": 1.574
           },
@@ -1461,6 +1470,7 @@
             "delta": 250,
             "kpss_medio": 1.1709,
             "kpss_rechaza": 1,
+            "kpss_rechaza_l12": 0.9425,
             "ndiffs_medio": 1,
             "salto_en_sigmas": 1.968
           },
@@ -1468,6 +1478,7 @@
             "delta": 300,
             "kpss_medio": 1.2288,
             "kpss_rechaza": 1,
+            "kpss_rechaza_l12": 0.98,
             "ndiffs_medio": 1,
             "salto_en_sigmas": 2.362
           }
@@ -2221,16 +2232,16 @@
       "forma_medida": {
         "d0": {
           "etiqueta": "ARIMA(1,0,1) con media",
-          "primera_dif_h2": 16.71,
-          "primera_dif_h30": 0.26,
-          "segunda_dif_h30": -0.03,
+          "primera_dif_h2": 16.7045,
+          "primera_dif_h30": 0.2535,
+          "segunda_dif_h30": -0.040903,
           "distancia_a_la_media_h30": 0.36,
           "ancho95_h1": 561.34,
           "ancho95_h30": 677.33
         },
         "d1": {
           "etiqueta": "ARIMA(1,1,1) sin constante",
-          "primera_dif_h2": 19.38,
+          "primera_dif_h2": 19.3783,
           "primera_dif_h30": 0,
           "segunda_dif_h30": 0,
           "distancia_a_la_media_h30": 77.18,
@@ -2239,18 +2250,18 @@
         },
         "d1_deriva": {
           "etiqueta": "ARIMA(1,1,1) con deriva",
-          "primera_dif_h2": 13.92,
-          "primera_dif_h30": -2.88,
-          "segunda_dif_h30": 0,
+          "primera_dif_h2": 13.919,
+          "primera_dif_h30": -2.8827,
+          "segunda_dif_h30": -0,
           "distancia_a_la_media_h30": 180.72,
           "ancho95_h1": 554.53,
           "ancho95_h30": 708.25
         },
         "d2": {
           "etiqueta": "ARIMA(1,2,1)",
-          "primera_dif_h2": 0.58,
-          "primera_dif_h30": -4.05,
-          "segunda_dif_h30": -0,
+          "primera_dif_h2": 0.5772,
+          "primera_dif_h30": -4.0493,
+          "segunda_dif_h30": 0,
           "distancia_a_la_media_h30": 309.3,
           "ancho95_h1": 612.78,
           "ancho95_h30": 2771.45
@@ -2259,13 +2270,13 @@
       "deriva_con_d2": {
         "se_ajusta": false,
         "aviso": "No drift term fitted as the order of difference is 2 or more.",
-        "nota": "forecast::Arima descarta la deriva cuando d >= 2. Por eso el pron<c3><b3>stico con d = 2 es una RECTA y no una par<c3><a1>bola: el caso cuadr<c3><a1>tico existe en el <c3><a1>lgebra, pero el software se niega a ajustarlo porque extrapola sin control."
+        "nota": "forecast::Arima descarta la deriva cuando d >= 2. Por eso el pronóstico con d = 2 es una RECTA y no una parábola: el caso cuadrático existe en el álgebra, pero el software se niega a ajustarlo porque extrapola sin control."
       }
     }
   },
   "trm": {
     "nombre": "TRM mensual",
-    "fuente": "Superintendencia Financiera de Colombia v<c3><ad>a datos.gov.co (consulta: 2026-07-24)",
+    "fuente": "Superintendencia Financiera de Colombia vía datos.gov.co (consulta: 2026-07-26)",
     "unidad": "COP por USD",
     "n": 138,
     "identificacion": {
@@ -2694,7 +2705,7 @@
       "raices_ar": [1.0042, 1.0042],
       "raices_ma": [1, 1],
       "degenerado": true,
-      "motivo": "Las ra<c3><ad>ces del polinomio MA tienen m<c3><b3>dulo 1.000: el modelo no es invertible. Las del AR quedan en 1.004, pr<c3><a1>cticamente encima del c<c3><ad>rculo. auto.arima lo descarta por eso, aunque sea el m<c3><ad>nimo de AICc de la rejilla."
+      "motivo": "Las raíces del polinomio MA tienen módulo 1.000: el modelo no es invertible. Las del AR quedan en 1.004, prácticamente encima del círculo. auto.arima lo descarta por eso, aunque sea el mínimo de AICc de la rejilla."
     }
   },
   "puente_estacional": {
@@ -2719,7 +2730,7 @@
       "acf_residuales": [0.0144, 0.0235, -0.1254, -0.1109, 0.0611, 0.0614, -0.0605, -0.0283, 0.1166, -0.06, 0.0033, -0.0515, 0.0112, 0.0281, 0.0568, -0.1573, 0.0472, 0.0099, -0.1008, -0.0978, -0.0309, -0.0329, 0.2196, 0.0124, -0.0353, 0.0588],
       "ljung_box_24_p": 0.233
     },
-    "advertencia_aicc": "Los dos modelos tienen la MISMA diferenciaci<c3><b3>n total (d + D*m distinta): el no estacional usa d = 1 y el airline d = 1, D = 1. Sus AICc se calculan sobre n distinto (143 vs. 131) y NO son comparables. La comparaci<c3><b3>n v<c3><a1>lida es el diagn<c3><b3>stico."
+    "advertencia_aicc": "Los dos modelos tienen la MISMA diferenciación total (d + D*m distinta): el no estacional usa d = 1 y el airline d = 1, D = 1. Sus AICc se calculan sobre n distinto (143 vs. 131) y NO son comparables. La comparación válida es el diagnóstico."
   },
   "verificacion_fase0": {
     "modelos_comparados": 27,

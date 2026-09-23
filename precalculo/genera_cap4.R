@@ -416,14 +416,22 @@ mc_escalon <- function(n_rep = 1000, n = 100, delta, sigma, pos = 29) {
   escalon_sim <- as.numeric(seq_len(n) >= pos)
   cuenta <- function(delta_usado) {
     kpss_rechaza <- 0; nd_kpss <- integer(0); nd_adf <- integer(0)
+    adf_test_no_rechaza <- 0
     for (i in seq_len(n_rep)) {
       x <- 1000 + delta_usado * escalon_sim + rnorm(n, 0, sigma)
       p <- suppressWarnings(kpss.test(x)$p.value)
       if (p <= 0.05) kpss_rechaza <- kpss_rechaza + 1
+      # El ADF de la tabla del Módulo 3 (tseries::adf.test: constante +
+      # tendencia, k = 4) NO es el de ndiffs() (constante, 1 rezago). Ninguna
+      # de las dos pruebas consume números aleatorios: añadirlas no mueve
+      # las cifras que ya existían.
+      if (suppressWarnings(adf.test(x)$p.value) > 0.05)
+        adf_test_no_rechaza <- adf_test_no_rechaza + 1
       nd_kpss <- c(nd_kpss, suppressWarnings(ndiffs(x, test = "kpss")))
       nd_adf  <- c(nd_adf,  suppressWarnings(ndiffs(x, test = "adf")))
     }
     list(kpss_rechaza = round(kpss_rechaza / n_rep, 4),
+         adf_test_no_rechaza = round(adf_test_no_rechaza / n_rep, 4),
          ndiffs_kpss_1_o_mas = round(mean(nd_kpss >= 1), 4),
          ndiffs_adf_1_o_mas  = round(mean(nd_adf  >= 1), 4))
   }
@@ -466,16 +474,22 @@ N_REP_MALLA <- 400
 
 malla_delta <- lapply(deltas, function(dl) {
   est <- numeric(N_REP_MALLA); rech <- 0; nd <- integer(N_REP_MALLA)
+  rech_l12 <- 0
   for (i in seq_len(N_REP_MALLA)) {
     x <- 1000 + dl * escalon_mc + rnorm(n_nilo, 0, sigma_mc)
     k <- suppressWarnings(kpss.test(x))
     est[i] <- as.numeric(k$statistic)
     if (k$p.value <= 0.05) rech <- rech + 1
+    # La misma prueba con la ventana larga (lshort = FALSE, 12 rezagos con
+    # n = 100): la que usa statsmodels con nlags = "legacy".
+    if (suppressWarnings(kpss.test(x, lshort = FALSE)$p.value) <= 0.05)
+      rech_l12 <- rech_l12 + 1
     nd[i] <- suppressWarnings(ndiffs(x, test = "kpss"))
   }
   list(delta = dl,
        kpss_medio = round(mean(est), 4),
        kpss_rechaza = round(rech / N_REP_MALLA, 4),
+       kpss_rechaza_l12 = round(rech_l12 / N_REP_MALLA, 4),
        ndiffs_medio = round(mean(nd), 4),
        salto_en_sigmas = round(dl / sigma_mc, 3))
 })
@@ -634,6 +648,10 @@ forma_pronostico <- function(x, orden, deriva = FALSE, h = H_PRON, etiqueta) {
     orden = as.integer(orden),
     deriva = deriva,
     media = round(as.numeric(fc$mean), 2),
+    # Sin redondear, solo para forma_medida(): la segunda diferencia del
+    # pronóstico es del orden de 1e-2 y el redondeo a 2 decimales la destroza.
+    # Se retira antes de escribir el JSON.
+    media_exacta = as.numeric(fc$mean),
     lo80 = round(as.numeric(fc$lower[, 1]), 2),
     hi80 = round(as.numeric(fc$upper[, 1]), 2),
     lo95 = round(as.numeric(fc$lower[, 2]), 2),
@@ -702,7 +720,7 @@ intervalos <- list(
 # d = 1 con deriva -> recta; d = 2 sin constante -> TAMBIÉN una recta (la
 # segunda diferencia del pronóstico se anula), no una parábola.
 forma_medida <- function(f, media_serie) {
-  m <- f$media
+  m <- f$media_exacta
   list(
     etiqueta = f$etiqueta,
     primera_dif_h2  = round(m[2] - m[1], 4),
@@ -714,6 +732,7 @@ forma_medida <- function(f, media_serie) {
   )
 }
 formas_medidas <- lapply(formas, forma_medida, media_serie = mean(nilo))
+formas <- lapply(formas, function(f) { f$media_exacta <- NULL; f })
 
 # forecast se NIEGA a fitear el caso cuadrático: con d >= 2 ignora la deriva.
 aviso_deriva_d2 <- tryCatch(

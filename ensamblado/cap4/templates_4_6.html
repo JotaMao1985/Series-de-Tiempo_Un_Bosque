@@ -16,17 +16,21 @@
         </div>
       </div>
 
-      <p>Fijado $d = 1$, el resto es el Capítulo 3 sin cambios: se leen la ACF y la PACF de $w_t = \nabla y_t$ y se
-        cruzan en la tabla de identificación. Lo único nuevo, y es importante, es <strong>sobre qué serie se
-        leen</strong>. La ACF de la serie sin diferenciar del Nilo decae despacio y sin cortar
-        ($0.498,\ 0.385,\ 0.328,\ 0.239,\dots$): esa forma no informa sobre $p$ ni sobre $q$, solo confirma que la
-        serie no es estacionaria. Leerla como si dijera "AR de orden alto" es el error de principiante más caro del
-        capítulo.</p>
+      <p>El Módulo 3 dejó $d = 1$ como decisión de trabajo para el Nilo: es el orden que minimiza la varianza y el
+        que pide KPSS, aunque la sospecha del escalón de 1899 sigue abierta y el Módulo 8 la retoma. Con ese $d$
+        provisional, el resto es el Capítulo 3 sin cambios: se leen la ACF y la PACF de
+        $w_t = \nabla y_t = y_t - y_{t-1}$ y se cruzan en la tabla de identificación. Lo único nuevo, y es
+        importante, es <strong>sobre qué serie se leen</strong>. La ACF de la serie sin diferenciar del Nilo decae
+        despacio y sin cortar ($0.498,\ 0.385,\ 0.328,\ 0.239,\dots$): es compatible con una serie no estacionaria
+        —o con el escalón de 1899— y no informa sobre $p$ ni sobre $q$. Leerla, junto con una PACF que corta en 1,
+        como la firma de un AR(1) con $\phi \approx 0.5$ es confundir la no estacionariedad con dinámica: el error
+        de principiante más caro del capítulo.</p>
 
       <div class="simulador" data-simulador="identificacion-nilo">
         <h4><i class="fas fa-magnifying-glass-chart" aria-hidden="true"></i> ACF y PACF por orden de diferenciación</h4>
         <p class="simulador-intro">Cambia el orden y compara. En $d = 0$ la ACF decae despacio, típico de una serie
-          no estacionaria. En $d = 1$ solo el rezago 1 se sale de la banda. En $d = 2$ aparece un $\rho_1 = -0.626$
+          no estacionaria. En $d = 1$ el rezago 1 destaca con claridad y el 8 ($0.231$) apenas roza la banda,
+          aislado y sin patrón. En $d = 2$ aparece un $\rho_1 = -0.626$
           muy negativo: ese valor grande y de signo contrario es la huella de haber diferenciado de más.</p>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">Serie</p>
@@ -52,28 +56,41 @@
             <tr><th></th><th>ACF</th><th>PACF</th><th>Sugiere</th></tr>
           </thead>
           <tbody>
-            <tr><td>AR($p$)</td><td>decae</td><td>corta en $p$</td><td>ARIMA($p,d,0$)</td></tr>
-            <tr><td>MA($q$)</td><td><strong>corta en $q$</strong></td><td><strong>decae</strong></td><td>ARIMA($0,d,q$)</td></tr>
-            <tr><td>ARMA($p,q$)</td><td>decae</td><td>decae</td><td>hay que probar</td></tr>
-            <tr style="background:rgba(255,102,0,0.06);"><td><strong>$\nabla$Nilo</strong></td>
-              <td>$-0.402$ y luego dentro de la banda ($\pm 0.197$)</td>
-              <td>$-0.402,\ -0.246,\ -0.119,\ -0.173,\ -0.155\dots$ decae</td>
-              <td><strong>ARIMA($0,1,1$)</strong></td></tr>
+            <tr><td style="white-space:nowrap;">AR($p$)</td><td>decae</td><td>corta en $p$</td>
+              <td style="white-space:nowrap;">ARIMA($p,d,0$)</td></tr>
+            <tr><td style="white-space:nowrap;">MA($q$)</td><td><strong>corta en $q$</strong></td>
+              <td><strong>decae</strong></td><td style="white-space:nowrap;">ARIMA($0,d,q$)</td></tr>
+            <tr><td style="white-space:nowrap;">ARMA($p,q$)</td><td>decae</td><td>decae</td>
+              <td style="white-space:nowrap;">hay que probar</td></tr>
+            <tr style="background:rgba(255,102,0,0.06);"><td style="white-space:nowrap;"><strong>$\nabla$Nilo</strong></td>
+              <td>corta en 1 ($-0.402$)</td>
+              <td>decae ($-0.402,\ -0.246,\ -0.119,\dots$)</td>
+              <td style="white-space:nowrap;"><strong>ARIMA($0,1,1$)</strong></td></tr>
           </tbody>
         </table>
       </div>
 
-      <p>La lectura es limpia: la ACF corta en el rezago 1 y la PACF decae, así que la tabla propone un
-        <strong>ARIMA($0,1,1$)</strong>. Ajustado, da $\hat\theta = -0.7329$ (e.e. $0.1143$, $t = -6.41$) con
-        Ljung–Box(20) $p = 0.674$: pasa el diagnóstico sin problemas.</p>
+      <p>La lectura es razonablemente clara: la ACF corta en el rezago 1 —el único otro que sale de la banda de
+        $\pm 0.197$ es el 8 ($0.231$), aislado y sin patrón— y la PACF decae con signo negativo, como la de un
+        MA(1) con $\theta &lt; 0$. La tabla propone, por tanto, un <strong>ARIMA($0,1,1$)</strong>. Ajustado por
+        máxima verosimilitud:</p>
+
+      <div class="formula">
+        $$(1-B)\,y_t = (1 - 0.7329\,B)\,\varepsilon_t$$
+        $$\hat\sigma^2 = 20\,599.87$$
+      </div>
+
+      <p>con $\hat\theta = -0.7329$ (e.e. $0.1143$, $t = -6.41$) y Ljung–Box(20) $p = 0.674$: pasa el
+        diagnóstico sin problemas. Es el IMA(1,1) del Módulo 1, el equivalente del suavizamiento exponencial
+        simple.</p>
 
       <div class="note">
-        <p><strong>Pero no propongas uno: propón varios.</strong> La tabla acota la búsqueda, no la resuelve. Con
-          $n = 99$ la banda es ancha ($\pm 0.197$) y un rezago justo en el borde puede ser ruido o puede ser señal.
-          La práctica sensata es llevar a la etapa de estimación el candidato de la tabla y sus vecinos inmediatos:
-          $(0,1,1)$, $(1,1,1)$, $(0,1,2)$, $(1,1,0)$. En el Módulo 6 se verá que el AICc prefiere el
-          <strong>$(1,1,1)$</strong> por $1.71$ puntos, mientras que el BIC se queda con el $(0,1,1)$ de la tabla.
-          Los dos son defendibles; que no coincidan es lo normal, no un fallo.</p>
+        <p><strong>Pero no se propone uno: se proponen varios.</strong> La tabla acota la búsqueda, no la resuelve.
+          Con $n = 99$ la banda es ancha ($\pm 0.197$) y un rezago justo en el borde —como el 8 de la ACF— puede ser
+          ruido o puede ser señal. La práctica sensata es llevar a la etapa de estimación el candidato de la tabla y
+          sus vecinos inmediatos: $(0,1,1)$, $(1,1,1)$, $(0,1,2)$, $(1,1,0)$. En el Módulo 6 se verá que el AICc
+          prefiere el <strong>$(1,1,1)$</strong> por $1.71$ puntos, mientras que el BIC se queda con el $(0,1,1)$
+          de la tabla. Los dos son defendibles; que no coincidan es frecuente, no un fallo.</p>
       </div>
 
       <div class="code-tabs">
@@ -119,7 +136,7 @@ w = np.diff(nilo)
 print(round(1.96 / np.sqrt(len(w)), 4))
 #&gt; 0.197
 
-# statsmodels divide por n igual que R, pero devuelve el rezago 0 al principio
+# statsmodels divide por n y, como R, pone el rezago 0 en la primera posicion
 print(np.round(acf(w, nlags=6)[1:], 4))
 #&gt; [-0.402  -0.0443  0.0274 -0.0879  0.0005  0.0465]
 
@@ -131,10 +148,15 @@ print(np.round(pacf(w, nlags=6, method="ldb")[1:], 4))
 ma1 = ARIMA(nilo, order=(0, 1, 1), trend="n").fit()
 print(round(ma1.params[0], 4))
 #&gt; -0.7334   (R: -0.7329)
-print(round(float(acorr_ljungbox(ma1.resid, lags=[20], model_df=1)["lb_pvalue"].iloc[0]), 4))
-#&gt; 0.7323    (R: 0.6737; misma conclusion, no rechaza)</code></pre>
+# el primer residual es y_1 = 1120 (inicializacion difusa), no un error: se descarta
+print(round(float(acorr_ljungbox(ma1.resid[1:], lags=[20], model_df=1)["lb_pvalue"].iloc[0]), 4))
+#&gt; 0.6984    (R: 0.6737; misma conclusion, no rechaza)</code></pre>
         </div>
       </div>
+
+      <p>Antes de estimar esos candidatos queda una decisión que la ACF no resuelve: si el modelo lleva
+        constante. Con $d = 1$ esa constante ya no es una media sino una pendiente, y el Módulo 5 explica por qué
+        conviene decidirlo a propósito y no dejarlo en manos del valor por defecto del programa.</p>
     </div>
   </template>
 
@@ -156,15 +178,15 @@ print(round(float(acorr_ljungbox(ma1.resid, lags=[20], model_df=1)["lb_pvalue"].
         </div>
       </div>
 
-      <p>La constante $c$ de la ecuación del Módulo 1 es el parámetro que más confusión causa de toda la familia
-        ARIMA, porque <strong>significa cosas distintas según $d$</strong> y porque cada programa la llama de una
-        manera. Merece la pena aclararlo de una vez.</p>
+      <p>La constante $c$ de la ecuación del Módulo 1, la decisión que el Módulo 4 dejó pendiente, es el
+        parámetro que más confusión causa de toda la familia ARIMA, porque <strong>significa cosas distintas según
+        $d$</strong> y porque cada programa la llama de una manera. Merece la pena aclararlo de una vez.</p>
 
       <div class="definition">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Qué es $c$ en cada caso</h4>
-        <p>Partimos de $\phi(B)(1-B)^d y_t = c + \theta(B)\varepsilon_t$ y tomamos esperanzas. Llamando
+        <p>Se parte de $\phi(B)(1-B)^d y_t = c + \theta(B)\varepsilon_t$ y se toman esperanzas. Llamando
           $w_t = (1-B)^d y_t$ y $\mu_w = \operatorname{E}[w_t]$:</p>
-        $$\mu_w = \frac{c}{1 - \phi_1 - \cdots - \phi_p}$$
+        $$\mu_w = \frac{c}{1 - \phi_1 - \cdots - \phi_p} = \frac{c}{\phi(1)}$$
         <ul>
           <li><strong>$d = 0$:</strong> $w_t = y_t$, así que $\mu_w$ es <strong>la media de la serie</strong>. R la
             llama <code>intercept</code> aunque sea una media, lo que despista.</li>
@@ -175,8 +197,9 @@ print(round(float(acorr_ljungbox(ma1.resid, lags=[20], model_df=1)["lb_pvalue"].
             <strong>cuadrática</strong>. Prácticamente nunca se quiere.</li>
         </ul>
         <p style="margin-bottom:0;">Regla mnemotécnica: <strong>cada diferencia sube en un grado el polinomio de la
-          tendencia</strong> que la constante genera. Sin constante: $d=0$ vuelve a la media, $d=1$ se queda plano,
-          $d=2$ sigue una recta. Con constante: $d=0$ vuelve a la media, $d=1$ recta, $d=2$ parábola.</p>
+          tendencia</strong> que la constante genera: a largo plazo, $\hat y_{n+h}$ crece como
+          $\mu_w\, h^d / d!$. Sin constante: $d=0$ tiende a cero, $d=1$ se queda plano, $d=2$ sigue una recta. Con
+          constante: $d=0$ vuelve a la media, $d=1$ recta, $d=2$ parábola.</p>
       </div>
 
       <div class="warning">
@@ -188,39 +211,55 @@ print(round(float(acorr_ljungbox(ma1.resid, lags=[20], model_df=1)["lb_pvalue"].
           </thead>
           <tbody>
             <tr><td><code>stats::arima</code></td><td><code>include.mean</code></td>
-              <td>Solo se usa si $d = 0$. <strong>Con $d \ge 1$ se ignora en silencio</strong>: no hay forma de pedir
-                deriva.</td></tr>
+              <td><code>TRUE</code>, pero solo se usa si $d = 0$. <strong>Con $d \ge 1$ se ignora en
+                silencio</strong>: la deriva solo entra como regresor, <code>xreg = seq_along(y)</code>, que es lo que
+                hace <code>forecast::Arima</code> por dentro.</td></tr>
             <tr><td><code>forecast::Arima</code></td><td><code>include.drift</code></td>
               <td><code>FALSE</code>. Y con $d \ge 2$ <strong>avisa y no la ajusta</strong>: <em>"No drift term
-                fitted as the order of difference is 2 or more"</em>.</td></tr>
+                fitted as the order of difference is 2 or more."</em></td></tr>
             <tr><td><code>forecast::auto.arima</code></td><td>—</td>
-              <td>Prueba con y sin deriva y elige por AICc. Por eso su traza muestra cada modelo dos veces.</td></tr>
+              <td>Con $d = 1$ prueba con y sin deriva (con $d = 0$, con y sin media) como un movimiento más de la
+                búsqueda, y elige por AICc; con $d \ge 2$ nunca la incluye. Por eso en su traza el mismo orden
+                aparece con y sin constante.</td></tr>
             <tr><td><code>statsmodels ARIMA</code></td><td><code>trend</code></td>
               <td><code>"c"</code> si $d=0$, <code>"n"</code> si $d&gt;0$. Para pedir deriva con $d=1$ hay que poner
                 <code>trend="t"</code>; con $d \ge 2$ <strong>lanza un <code>ValueError</code></strong>, porque un
                 término de orden menor que $d$ lo elimina la propia diferenciación.</td></tr>
           </tbody>
         </table>
-        <p style="margin-bottom:0;">Consecuencia práctica: si comparas un ajuste de <code>arima()</code> con uno de
-          <code>auto.arima()</code> y no coinciden, lo primero que hay que mirar no son los órdenes sino
+        <p style="margin-bottom:0;">Consecuencia práctica: si un ajuste de <code>arima()</code> y uno de
+          <code>auto.arima()</code> no coinciden, lo primero que hay que mirar no son los órdenes sino
           <strong>si uno lleva deriva y el otro no</strong>.</p>
       </div>
 
-      <h3>¿La lleva el Nilo?</h3>
+      <h3>¿Lleva deriva el Nilo?</h3>
 
-      <p>Se estima y se mira el estadístico $t$, como con cualquier otro coeficiente:</p>
+      <p>Con $d = 1$ la deriva se escribe como una pendiente explícita, que es la forma en que la estima
+        <code>forecast::Arima</code>. Para el ARIMA($1,1,1$):</p>
 
       <div class="formula">
-        $$\hat{\delta} = -2.883, \qquad \text{e.e.} = 2.017, \qquad t = -1.43$$
+        $$y_t = \delta\,t + \eta_t$$
+        $$(1-\phi_1 B)(1-B)\,\eta_t = (1+\theta_1 B)\,\varepsilon_t$$
+        $$\operatorname{E}[\nabla y_t] = \delta = \mu_w = \frac{c}{1-\phi_1}$$
       </div>
 
-      <p>No es significativa. Y el AICc lo confirma: $1268.06$ con deriva frente a $1267.51$ sin ella — añadirla
-        empeora. Tiene sentido físico: no hay ninguna razón para creer que el caudal del Nilo disminuya
-        <em>indefinidamente</em> a razón de $2.9$ unidades por año. Una deriva estimada es una tendencia que se
+      <p>Se ajusta ese modelo y se mira el estadístico $t$ de $\hat\delta$, como con cualquier otro
+        coeficiente:</p>
+
+      <div class="formula">
+        $$\begin{gathered} \hat{\delta} = -2.883 \\ \text{e.e.} = 2.017, \qquad t = -1.43 \end{gathered}$$
+      </div>
+
+      <p>No es significativa (en la ecuación del Módulo 1 equivaldría a
+        $c = \hat\delta\,(1-\hat\phi_1) = -2.883 \times (1 - 0.271) = -2.10$). Y el AICc lo confirma: $1268.06$ con deriva frente a $1267.51$ sin ella —
+        añadirla empeora. Tiene sentido físico: no hay ninguna razón para creer que el caudal del Nilo disminuya
+        <em>indefinidamente</em> a razón de $2.9 \times 10^8\ \text{m}^3$ por año. Una deriva estimada es una tendencia que se
         extrapola sin límite, y eso es una afirmación fuerte sobre el futuro que conviene no hacer a la ligera.</p>
 
       <div class="note">
-        <p><strong>El mismo cálculo en la TRM.</strong> Sobre la tasa de cambio mensual, la deriva estimada es
+        <p><strong>El mismo cálculo en la TRM.</strong> Sobre la tasa de cambio mensual, añadiendo deriva a la
+          caminata aleatoria que elige <code>auto.arima</code> —un ARIMA($0,1,0$), en el que $\hat\delta$ es
+          simplemente la media de las diferencias—, la deriva estimada es
           $8.00$ pesos/mes con error estándar $10.36$: $t = 0.77$. Tampoco es significativa, aunque a ojo la serie
           "claramente sube". Que una tendencia visible no sea estadísticamente distinguible de cero con $n = 138$
           dice más sobre la variabilidad de la serie que sobre la tendencia, y es exactamente el tipo de conclusión
@@ -259,7 +298,9 @@ round(c(con_deriva = f1b$aicc, sin_deriva = Arima(Nile, order = c(1,1,1))$aicc),
 
 # Con d = 2 forecast se NIEGA a ajustarla (y lo dice)
 f2 &lt;- Arima(Nile, order = c(1, 2, 1), include.drift = TRUE)
-#&gt; Warning: No drift term fitted as the order of difference is 2 or more
+#&gt; Warning message:
+#&gt; In Arima(Nile, order = c(1, 2, 1), include.drift = TRUE) :
+#&gt;   No drift term fitted as the order of difference is 2 or more.
 "drift" %in% names(coef(f2))
 #&gt; [1] FALSE</code></pre>
         </div>
@@ -276,7 +317,9 @@ print(f0.param_names, np.round(f0.params, 4))
 #&gt;                                        -5.17600000e-01  1.98070486e+04]
 #   919.35 es EXACTAMENTE la media muestral de la serie; R devuelve
 #   920.7037, el valor que maximiza la verosimilitud junto al resto de
-#   parametros. 0.15 % de diferencia: no cambia ninguna conclusion.
+#   parametros. statsmodels no se aleja del valor inicial porque la
+#   verosimilitud es muy plana en la media (e.e. = 46.67 en R).
+#   0.15 % de diferencia: no cambia ninguna conclusion.
 
 # d = 1 con deriva: trend="t" (un termino lineal en t)
 f1 = ARIMA(nilo, order=(1, 1, 1), trend="t").fit()
@@ -298,6 +341,10 @@ print(f2.param_names)
 #&gt; ['x1', 'ar.L1', 'ma.L1', 'sigma2']</code></pre>
         </div>
       </div>
+
+      <p>Con el orden de diferenciación, los candidatos y la constante decididos, queda estimarlos y compararlos.
+        La estimación no trae novedades; la comparación sí, porque es ahí donde el ARIMA esconde su trampa
+        principal. Es el tema del Módulo 6.</p>
     </div>
   </template>
 
@@ -319,15 +366,15 @@ print(f2.param_names)
         </div>
       </div>
 
-      <p>La estimación es la del Capítulo 3 sin novedad: máxima verosimilitud sobre la serie diferenciada. Lo que sí
-        cambia es la comparación, y cambia de una forma que se pasa por alto constantemente.</p>
+      <p>La estimación es la del Capítulo 3: máxima verosimilitud sobre la serie diferenciada. Lo que cambia es la
+        comparación, y cambia de una forma que se pasa por alto constantemente.</p>
 
       <div class="formula">
-        $$\mathrm{AIC} = -2\log L + 2k, \qquad
-          \mathrm{AICc} = \mathrm{AIC} + \frac{2k(k+1)}{n^{*} - k - 1}, \qquad
-          \mathrm{BIC} = -2\log L + k\log n^{*}$$
+        $$\mathrm{AIC} = -2\log L + 2k$$
+        $$\mathrm{AICc} = \mathrm{AIC} + \frac{2k(k+1)}{n^{*} - k - 1}$$
+        $$\mathrm{BIC} = -2\log L + k\log n^{*}$$
         <p style="margin:0.6rem 0 0 0; font-size:0.9rem;">con $k = p + q + 1$ (los coeficientes ARMA más
-          $\hat\sigma^2$; más uno si hay constante) y $n^{*} = n - d$ el <strong>número efectivo</strong> de
+          $\hat\sigma^2$; más uno si hay constante o deriva) y $n^{*} = n - d$ el <strong>número efectivo</strong> de
           observaciones.</p>
       </div>
 
@@ -336,12 +383,12 @@ print(f2.param_names)
         <p>Ese $n^{*} = n - d$ es la clave. La verosimilitud de un ARIMA con $d = 1$ se calcula sobre las $99$
           diferencias del Nilo; la de uno con $d = 2$, sobre $98$ segundas diferencias. <strong>Son datos
           distintos</strong>, y una verosimilitud solo es comparable con otra calculada sobre los mismos datos. Un
-          AICc menor con más diferencias no significa un modelo mejor: significa, en buena parte, menos
-          observaciones que explicar.</p>
-        <p style="margin-bottom:0;">Por eso toda tabla comparativa de este capítulo <strong>agrupa por $d$</strong> y
-          nunca reporta un mínimo global. Cuando de verdad haya que decidir entre distintos $d$, la única
-          comparación válida es fuera de muestra (Módulo 8) o el criterio sustantivo de qué proceso genera los
-          datos.</p>
+          AICc menor con más diferencias no significa un modelo mejor: es la verosimilitud de otros datos, con una
+          observación menos.</p>
+        <p style="margin-bottom:0;">Por eso las tablas de este capítulo <strong>agrupan por $d$</strong>; la tabla
+          ordenable de abajo mezcla los 27 modelos a propósito, para que el error quede a la vista. Cuando de verdad
+          haya que decidir entre distintos $d$, la comparación válida es fuera de muestra (Módulo 8), apoyada en
+          las pruebas de raíz unitaria y en el criterio sustantivo de qué proceso genera los datos.</p>
       </div>
 
       <!--RANKING:rejilla-nilo|Los 27 modelos del Nilo, con su n efectivo a la vista|-->
@@ -349,16 +396,17 @@ print(f2.param_names)
       <div class="simulador" data-simulador="explorador-modelos">
         <h4><i class="fas fa-table-cells-large" aria-hidden="true"></i> Explorador de la rejilla ARIMA($p,d,q$)</h4>
         <p class="simulador-intro">Los 27 modelos con $p, d, q \in \{0,1,2\}$ ajustados por máxima verosimilitud
-          sobre el Nilo (precalculados en R). Mueve los tres órdenes y observa el correlograma de los residuales.
-          Fíjate en el marcador de la izquierda: solo compara el AICc del modelo con el mejor <em>de su propio
-          $d$</em>.</p>
+          sobre el Nilo (precalculados en R). Mueve los tres órdenes y observa el correlograma de los residuales:
+          sus barras cambian de color cuando Ljung–Box(20) rechaza. Fíjate en el campo «diferencia» de la lectura
+          y en el segundo gráfico, donde el modelo elegido aparece resaltado: los dos comparan su AICc solo con el
+          mejor <em>de su propio $d$</em>.</p>
         <div class="simulador-controles"></div>
         <div class="simulador-lectura"></div>
         <p class="grafico-etiqueta">ACF de los residuales del modelo seleccionado</p>
         <div class="grafico-wrapper" style="height:210px;">
           <canvas aria-label="Autocorrelación de los residuales del modelo seleccionado" role="img"></canvas>
         </div>
-        <p class="grafico-etiqueta">AICc de todos los modelos con ese mismo $d$</p>
+        <p class="grafico-etiqueta">Exceso de AICc sobre el mejor con ese mismo $d$ ($\Delta$AICc)</p>
         <div class="grafico-wrapper" style="height:200px;">
           <canvas aria-label="AICc de los nueve modelos con el mismo orden de diferenciación" role="img"></canvas>
         </div>
@@ -384,9 +432,10 @@ print(f2.param_names)
 
       <p>Si alguien mirase solo la columna de AICc y tomara el número más pequeño de toda la tabla, elegiría el
         ARIMA($1,2,2$) con $1264.60$. Sería un error por partida doble: ese valor se calcula sobre $98$
-        observaciones y no sobre $99$, y además —como se verá en el Módulo 8— <strong>cuatro de los nueve modelos
-        con $d = 2$ tienen una raíz MA exactamente sobre el círculo unitario</strong>. La rejilla premia justo los
-        ajustes que hay que descartar.</p>
+        observaciones y no sobre $99$, y además el propio ARIMA($1,2,2$) tiene una raíz MA en $1.03$, casi sobre
+        el círculo unitario, síntoma de haber diferenciado de más. No es un caso aislado: como se verá en el
+        Módulo 8, <strong>cuatro de los nueve modelos con $d = 2$ tienen una raíz MA exactamente sobre el círculo
+        unitario</strong>. La rejilla premia justo los ajustes que hay que descartar.</p>
 
       <div class="note">
         <p><strong>AICc o BIC.</strong> El BIC penaliza cada parámetro con $\log n^{*}$ en vez de con $2$, así que
@@ -430,9 +479,9 @@ do.call(rbind, lapply(split(rejilla, rejilla$d), function(g)
 
 # La diferencia entre los dos candidatos de d = 1
 subset(rejilla, modelo %in% c("ARIMA(0,1,1)", "ARIMA(1,1,1)"))[, c("modelo","aicc","bic")]
-#&gt;         modelo    aicc     bic
-#&gt; ARIMA(0,1,1) 1269.22 1274.28
-#&gt; ARIMA(1,1,1) 1267.51 1275.04
+#&gt;          modelo    aicc     bic
+#&gt; 11 ARIMA(0,1,1) 1269.22 1274.28
+#&gt; 14 ARIMA(1,1,1) 1267.51 1275.04
 # AICc prefiere (1,1,1) por 1.71; BIC prefiere (0,1,1) por 0.76</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
@@ -441,7 +490,6 @@ from statsmodels.tsa.arima.model import ARIMA
 import warnings; warnings.filterwarnings("ignore")
 
 nilo = sm.datasets.nile.load_pandas().data["volume"].values
-n = len(nilo)
 
 filas = []
 for d in range(3):
@@ -452,23 +500,27 @@ for d in range(3):
                           trend="c" if d == 0 else "n").fit()
             except Exception:
                 continue
-            # CUIDADO: f.nobs vale 100 para TODOS los d. statsmodels no
-            # descuenta las diferencias (usa inicializacion difusa exacta),
-            # asi que sus .aic y .bic PARECEN comparables entre distintos d
-            # cuando no lo son. En R el n efectivo baja y salta a la vista.
-            k = len(f.params)
-            filas.append(dict(d=d, modelo=f"ARIMA({p},{d},{q})", nobs=f.nobs,
-                              aicc=round(f.aic + 2*k*(k+1)/(f.nobs-k-1), 2),
-                              bic=round(f.bic, 2)))
+            # CUIDADO: f.nobs vale 100 para TODOS los d, pero la verosimilitud
+            # descarta las d primeras observaciones (f.loglikelihood_burn = d,
+            # inicializacion difusa) y f.nobs_effective SI vale n - d.
+            # f.aicc y f.bic ya usan ese n efectivo; no hay que rehacerlos a mano.
+            filas.append(dict(d=d, modelo=f"ARIMA({p},{d},{q})",
+                              nobs=f.nobs, n_ef=f.nobs_effective,
+                              aicc=round(f.aicc, 2), bic=round(f.bic, 2)))
 tabla = pd.DataFrame(filas)
-print(tabla.loc[tabla.groupby("d")["aicc"].idxmin(), ["d","modelo","nobs","aicc"]]
+print(tabla.loc[tabla.groupby("d")["aicc"].idxmin(), ["d","modelo","nobs","n_ef","aicc"]]
       .to_string(index=False))
-#&gt;  d       modelo  nobs    aicc
-#&gt;  0 ARIMA(1,0,1)   100 1282.50
-#&gt;  1 ARIMA(1,1,1)   100 1267.47     &lt;- nobs = 100 tambien con d = 1
-#&gt;  2 ARIMA(1,2,2)   100 1264.66     &lt;- y con d = 2
-# Los tres ganadores coinciden con R (1282.50 / 1267.51 / 1264.60).</code></pre>
+#&gt;  d       modelo  nobs  n_ef    aicc
+#&gt;  0 ARIMA(1,0,1)   100   100 1282.50
+#&gt;  1 ARIMA(1,1,1)   100    99 1267.47     &lt;- nobs no baja; n_ef si
+#&gt;  2 ARIMA(1,2,2)   100    98 1264.67
+# Los tres ganadores coinciden con R (1282.50 / 1267.51 / 1264.60), y el
+# n efectivo es el mismo: los AICc de distinto d tampoco son comparables aqui.</code></pre>
         </div>
       </div>
+
+      <p>Recorrer 27 modelos a mano es viable con tres órdenes y una sola serie, pero no escala. La función
+        <code>auto.arima</code> automatiza esta búsqueda con reglas explícitas; el Módulo 7 muestra cuáles son y
+        dónde se equivoca.</p>
     </div>
   </template>

@@ -24,10 +24,12 @@
       return Array.from({ length: n }, (_, i) => String(inicio + perdidas + i));
     }
 
-    // Etiquetas mensuales AAAA-MM para la TRM.
+    // Etiquetas mensuales AAAA-MM para la TRM. `mes` puede pasar de 12 (el
+    // abanico arranca en el mes 1 + 90 de la serie): se normaliza a la entrada,
+    // o las etiquetas saldrían «2015-91» y todo el eje correría siete años.
     function mesesDesde(anio, mes, n) {
       const salida = [];
-      let a = anio, m = mes;
+      let a = anio + Math.floor((mes - 1) / 12), m = ((mes - 1) % 12) + 1;
       for (let i = 0; i < n; i++) {
         salida.push(`${a}-${String(m).padStart(2, '0')}`);
         m += 1;
@@ -86,6 +88,37 @@
       }], opciones);
     }
 
+    // Escalas completas de un gráfico de línea con título en el eje y.
+    // crearGraficoLinea fusiona sus opciones con Object.assign, que es
+    // superficial: quien pasa `scales` reemplaza x e y enteras, así que aquí
+    // van las dos con la tipografía de siempre.
+    function escalasLinea(tituloY, x = {}) {
+      return {
+        x: Object.assign({
+          ticks: { font: { family: 'Montserrat', size: 11 }, maxTicksLimit: 12, maxRotation: 0 },
+          grid: { display: false }
+        }, x),
+        y: {
+          title: { display: !!tituloY, text: tituloY, font: { family: 'Montserrat', size: 11 } },
+          ticks: { font: { family: 'Fira Code', size: 11 } },
+          grid: { color: 'rgba(148, 163, 184, 0.2)' }
+        }
+      };
+    }
+
+    // Título del eje y de un gráfico ya creado (crearGraficoBarras no lo admite).
+    function tituloEjeY(grafico, texto) {
+      grafico.options.scales.y.title = {
+        display: true, text: texto, font: { family: 'Montserrat', size: 11 }
+      };
+      grafico.update('none');
+    }
+
+    // ∇, ∇², ∇³: el orden como exponente, igual que en la prosa.
+    function nabla(d) { return ['', '∇', '∇²', '∇³'][d]; }
+
+    const UNIDAD_NILO = '10⁸ m³';
+
     // ================================================================
     // Módulo 1 · La serie del Nilo y sus diferencias
     // ================================================================
@@ -101,15 +134,16 @@
         const d = parseInt(params.d, 10);
         const y = diferenciarVeces(serie, d);
         const etiquetas = aniosDesde(inicio, y.length, d);
-        const titulo = d === 0 ? 'Caudal del Nilo' : `∇${d > 1 ? d : ''} Caudal del Nilo`;
+        const titulo = d === 0 ? 'Caudal del Nilo' : `${nabla(d)} caudal del Nilo`;
         if (grafico) grafico.destroy();
         grafico = lineaSimple(canvas, etiquetas, y, titulo,
-          d === 0 ? COLORES_GRAFICO.primario : COLORES_GRAFICO.secundario);
+          d === 0 ? COLORES_GRAFICO.primario : COLORES_GRAFICO.secundario,
+          { scales: escalasLinea(d === 0 ? `Caudal (${UNIDAD_NILO})` : `Diferencia (${UNIDAD_NILO})`) });
         actualizarLectura(lectura, [
           { etiqueta: 'n', valor: y.length },
           { etiqueta: 'media', valor: fmt(media(y)) },
           { etiqueta: 'varianza', valor: fmt(varianzaDe(y)) },
-          { etiqueta: 'ACF(1)', valor: fmt(calcularACF(y, 1)[0], 4) }
+          { etiqueta: 'ρ̂₁', valor: fmt(calcularACF(y, 1)[0], 4) }
         ]);
       }
 
@@ -132,8 +166,8 @@
     SIMULADORES['escalon-vs-raiz'] = function (raiz) {
       const malla = NILO.cambio_nivel.malla_delta;
       const puntos = malla.puntos;
-      const deltas = puntos.map(p => p.delta);
-      const params = { delta: 100 };
+      const betas = puntos.map(p => p.delta);
+      const params = { beta: 100 };
       const lectura = raiz.querySelector('.simulador-lectura');
       const [cSerie, cCurva] = raiz.querySelectorAll('canvas');
       let gSerie = null, gCurva = null;
@@ -144,73 +178,90 @@
       const etiquetas = aniosDesde(1871, malla.n, 0);
 
       // Interpolación lineal sobre la malla precalculada en R.
-      function interpolar(delta, campo) {
-        if (delta <= deltas[0]) return puntos[0][campo];
-        for (let i = 1; i < deltas.length; i++) {
-          if (delta <= deltas[i]) {
-            const t = (delta - deltas[i - 1]) / (deltas[i] - deltas[i - 1]);
+      function interpolar(beta, campo) {
+        if (beta <= betas[0]) return puntos[0][campo];
+        for (let i = 1; i < betas.length; i++) {
+          if (beta <= betas[i]) {
+            const t = (beta - betas[i - 1]) / (betas[i] - betas[i - 1]);
             return puntos[i - 1][campo] + t * (puntos[i][campo] - puntos[i - 1][campo]);
           }
         }
         return puntos[puntos.length - 1][campo];
       }
 
+      // La malla no es uniforme (0, 25, …, 100, 150, …, 300): el eje x tiene
+      // que ser numérico, o el tramo 100→150 ocuparía lo mismo que 0→25.
+      const curva = campo => puntos.map(p => ({ x: p.delta, y: 100 * p[campo] }));
+
       function pintar() {
-        const d = params.delta;
-        const y = ruido.map((v, i) => v - (i + 1 >= malla.posicion ? d : 0));
+        const b = params.beta;
+        const y = ruido.map((v, i) => v - (i + 1 >= malla.posicion ? b : 0));
         if (gSerie) gSerie.destroy();
         gSerie = lineaSimple(cSerie, etiquetas, y,
-          d === 0 ? 'Ruido blanco puro (sin escalón)' : `Ruido blanco + escalón de −${fmt(d, 0)}`,
-          COLORES_GRAFICO.primario);
+          b === 0 ? 'Ruido blanco puro (sin escalón)'
+                  : `Ruido blanco con un descenso de ${fmt(b, 0)} en 1899`,
+          COLORES_GRAFICO.primario, { scales: escalasLinea('Nivel simulado') });
 
-        const tasa = interpolar(d, 'kpss_rechaza');
+        const tasa = interpolar(b, 'kpss_rechaza');
+        const tasa12 = interpolar(b, 'kpss_rechaza_l12');
         if (!gCurva) {
-          gCurva = crearGraficoLinea(cCurva, deltas.map(String), [
+          gCurva = crearGraficoLinea(cCurva, [], [
             {
-              label: 'Tasa de rechazo de KPSS',
-              data: puntos.map(p => 100 * p.kpss_rechaza),
+              label: 'KPSS con ℓ = 4 (R)',
+              data: curva('kpss_rechaza'),
               borderColor: COLORES_GRAFICO.secundario,
               backgroundColor: 'rgba(255, 102, 0, 0.12)',
               borderWidth: 2, pointRadius: 3, fill: true
             },
             {
+              label: 'KPSS con ℓ = 12',
+              data: curva('kpss_rechaza_l12'),
+              borderColor: COLORES_GRAFICO.terciario,
+              borderWidth: 1.8, pointRadius: 2, fill: false
+            },
+            {
               label: 'Nivel nominal 5 %',
-              data: puntos.map(() => 5),
+              data: [{ x: 0, y: 5 }, { x: 300, y: 5 }],
               borderColor: COLORES_GRAFICO.gris,
               borderDash: [5, 4], borderWidth: 1.5, pointRadius: 0, fill: false
             },
             {
-              label: 'δ elegido',
-              data: puntos.map(() => null),
+              label: 'β elegido',
+              data: [],
               borderColor: COLORES_GRAFICO.primario,
-              borderWidth: 2, pointRadius: 0, fill: false
+              backgroundColor: COLORES_GRAFICO.primario,
+              pointRadius: 6, pointHoverRadius: 7, showLine: false
             }
           ], {
             scales: {
-              x: { title: { display: true, text: 'Tamaño del escalón δ' },
-                   ticks: { font: { family: 'Fira Code', size: 10 } }, grid: { display: false } },
-              y: { min: 0, max: 105, ticks: { font: { family: 'Fira Code', size: 11 },
-                   callback: v => v + ' %' } }
+              x: { type: 'linear', min: 0, max: 300,
+                   title: { display: true, text: 'Tamaño del escalón β' },
+                   ticks: { font: { family: 'Fira Code', size: 10 }, stepSize: 50 },
+                   grid: { display: false } },
+              y: { min: 0, max: 100,
+                   title: { display: true, text: '% de réplicas que rechazan',
+                            font: { family: 'Montserrat', size: 11 } },
+                   ticks: { font: { family: 'Fira Code', size: 11 },
+                            callback: v => v + ' %' } }
             }
           });
         }
-        // La tercera serie marca con una barra vertical el delta elegido
-        gCurva.data.datasets[2].data = deltas.map(v => (v === deltas.reduce(
-          (mejor, cand) => Math.abs(cand - d) < Math.abs(mejor - d) ? cand : mejor,
-          deltas[0]) ? 100 : null));
+        // El β elegido se marca sobre la curva de R, en su valor interpolado.
+        gCurva.data.datasets[3].data = [{ x: b, y: 100 * tasa }];
         gCurva.update('none');
 
         actualizarLectura(lectura, [
-          { etiqueta: 'escalón δ', valor: d === 0 ? 'sin escalón' : `−${fmt(d, 0)}` },
-          { etiqueta: 'en desv. típicas', valor: fmt(d / malla.sigma, 2) },
-          { etiqueta: 'KPSS medio', valor: fmt(interpolar(d, 'kpss_medio'), 3) },
-          { etiqueta: 'rechaza el', valor: `${fmt(100 * tasa, 1)} %` },
-          { etiqueta: 'ndiffs medio', valor: fmt(interpolar(d, 'ndiffs_medio'), 2) }
+          { etiqueta: 'escalón β', valor: b === 0 ? 'sin escalón' : `descenso de ${fmt(b, 0)}` },
+          { etiqueta: 'en desv. típicas', valor: fmt(b / malla.sigma, 2) },
+          { etiqueta: 'KPSS medio', valor: fmt(interpolar(b, 'kpss_medio'), 3) },
+          { etiqueta: 'rechaza (ℓ = 4)', valor: `${fmt(100 * tasa, 1)} %` },
+          { etiqueta: 'rechaza (ℓ = 12)', valor: `${fmt(100 * tasa12, 1)} %` },
+          { etiqueta: 'ndiffs medio', valor: fmt(interpolar(b, 'ndiffs_medio'), 2) }
         ]);
       }
 
       crearControles(raiz.querySelector('.simulador-controles'), [
-        { clave: 'delta', etiqueta: 'Tamaño del escalón δ ', min: 0, max: 300, paso: 5, decimales: 0 }
+        { clave: 'beta', etiqueta: 'Tamaño del escalón β ', min: 0, max: 300, paso: 5, decimales: 0 }
       ], params, pintar);
 
       pintar();
@@ -234,8 +285,9 @@
         const y = diferenciarVeces(SERIES_CAP4.nilo.valores, d);
         [gSerie, gAcf, gPacf].forEach(g => { if (g) g.destroy(); });
         gSerie = lineaSimple(cSerie, aniosDesde(SERIES_CAP4.nilo.inicio[0], y.length, d), y,
-          d === 0 ? 'Nilo' : `∇${d > 1 ? d : ''} Nilo`,
-          d === 1 ? COLORES_GRAFICO.secundario : COLORES_GRAFICO.primario);
+          `${nabla(d)}Nilo`,
+          d === 1 ? COLORES_GRAFICO.secundario : COLORES_GRAFICO.primario,
+          { scales: escalasLinea(d === 0 ? UNIDAD_NILO : `Diferencia (${UNIDAD_NILO})`) });
         gAcf = crearGraficoBarras(cAcf, REZAGOS, info.acf, {
           etiqueta: 'ACF muestral', color: COLORES_GRAFICO.primario,
           lineas: lineasBanda(info.n), tituloX: 'Rezago k'
@@ -248,7 +300,7 @@
         actualizarLectura(lectura, [
           { etiqueta: 'n', valor: info.n },
           { etiqueta: 'banda', valor: `±${fmt(info.banda, 4)}` },
-          { etiqueta: 'ρ₁', valor: fmt(info.acf[0], 4) },
+          { etiqueta: 'ρ̂₁', valor: fmt(info.acf[0], 4) },
           { etiqueta: 'ACF fuera de banda', valor: `${fuera} de ${info.acf.length}` },
           { etiqueta: 'varianza', valor: fmt(varianzaDe(y)) }
         ]);
@@ -280,8 +332,10 @@
         const clave = `${params.p}${params.d}${params.q}`;
         const m = REJILLA[clave];
         const mejor = NILO.mejor_por_d[`d${params.d}`];
+        // Ordenados por p y luego por q, para que la rejilla se lea en orden.
         const hermanos = Object.values(REJILLA)
-          .filter(x => x.d === params.d && x.convergio);
+          .filter(x => x.d === params.d && x.convergio)
+          .sort((a, b) => a.p - b.p || a.q - b.q);
 
         [gAcf, gAicc].forEach(g => { if (g) g.destroy(); });
 
@@ -303,17 +357,25 @@
         });
 
         const esteEs = clave;
+        // Con d = 2 el ARIMA(0,2,0) queda a +121 y aplastaría las diferencias
+        // de uno o dos puntos, que son las que importan: el eje se corta en 20
+        // y la barra recortada lleva su valor en la etiqueta.
+        const TOPE = 20;
+        const deltas = hermanos.map(x => x.aicc - mejor.valor_aicc);
         gAicc = crearGraficoBarras(cAicc,
-          hermanos.map(x => `(${x.p},${x.d},${x.q})`),
-          hermanos.map(x => x.aicc - mejor.valor_aicc), {
-            etiqueta: `AICc − mejor de d = ${params.d}`,
+          hermanos.map((x, i) => `(${x.p},${x.d},${x.q})${deltas[i] > TOPE ? ` ↑${fmt(deltas[i], 0)}` : ''}`),
+          deltas.map(v => Math.min(v, TOPE)), {
+            etiqueta: `ΔAICc sobre el mejor de d = ${params.d}`,
             color: COLORES_GRAFICO.gris,
-            min: 0, max: Math.max(6, ...hermanos.map(x => x.aicc - mejor.valor_aicc))
+            min: 0, max: Math.min(TOPE, Math.max(6, ...deltas))
           });
-        // Se repinta en naranja la barra del modelo seleccionado
-        gAicc.data.datasets[0].backgroundColor = hermanos.map(
-          x => `${x.p}${x.d}${x.q}` === esteEs ? COLORES_GRAFICO.secundario : COLORES_GRAFICO.gris);
-        gAicc.update('none');
+        // Naranja el seleccionado, verde oscuro el mejor de su d. El mejor está
+        // en 0 por definición: minBarLength le da una barra visible.
+        gAicc.data.datasets[0].backgroundColor = hermanos.map((x, i) =>
+          `${x.p}${x.d}${x.q}` === esteEs ? COLORES_GRAFICO.secundario
+            : deltas[i] === 0 ? COLORES_GRAFICO.primario : COLORES_GRAFICO.gris);
+        gAicc.data.datasets[0].minBarLength = 3;
+        tituloEjeY(gAicc, 'ΔAICc');
 
         const campos = [
           { etiqueta: 'Modelo', valor: m.etiqueta },
@@ -355,8 +417,10 @@
         return params.exhaustiva ? HK.exhaustiva.pasos : HK.escalonada.pasos;
       }
 
-      // La búsqueda exhaustiva no guarda la traza completa en el JSON (son 42
-      // líneas); se reconstruye el ranking, que es lo que interesa de ella.
+      // Los AICc infinitos (modelos descartados por raíces junto al círculo
+      // unitario) llegan como null y no se dibujan; se marcan aparte, con una
+      // cruz en el borde superior del gráfico.
+      const TECHO = 1302;
       function serieAicc(pasos) {
         return pasos.map(p => (p.infinito ? null : p.aicc));
       }
@@ -384,12 +448,19 @@
               data: pasos.map((p, i) => (i < hasta ? p.mejor_hasta_aqui : null)),
               borderColor: '#15803d', borderWidth: 2, pointRadius: 0,
               stepped: true, fill: false
+            },
+            {
+              label: 'AICc = ∞ (descartado)',
+              data: pasos.map((p, i) => (i < hasta && p.infinito ? TECHO : null)),
+              borderColor: '#b91c1c', backgroundColor: '#b91c1c',
+              pointStyle: 'crossRot', pointRadius: 7, pointBorderWidth: 2, showLine: false
             }
           ], {
             scales: {
               x: { title: { display: true, text: 'Orden de evaluación' },
                    ticks: { font: { family: 'Fira Code', size: 10 } }, grid: { display: false } },
-              y: { suggestedMin: 1265, suggestedMax: 1302,
+              y: { suggestedMin: 1265, max: TECHO,
+                   title: { display: true, text: 'AICc', font: { family: 'Montserrat', size: 11 } },
                    ticks: { font: { family: 'Fira Code', size: 11 } } }
             }
           });
@@ -399,7 +470,8 @@
           { etiqueta: 'Paso', valor: `${hasta} de ${pasos.length}` },
           { etiqueta: 'Modelo evaluado', valor: actual.etiqueta },
           { etiqueta: 'AICc', valor: actual.infinito ? '∞ (descartado)' : fmt(actual.aicc, 3) },
-          { etiqueta: '¿mejora?', valor: actual.mejora ? 'sí, pasa a ser el actual' : 'no' },
+          { etiqueta: '¿mejora?', valor: !actual.mejora ? 'no'
+              : params.exhaustiva ? 'sí, nuevo mejor' : 'sí, pasa a ser el actual' },
           { etiqueta: 'Mejor hasta aquí',
             valor: actual.mejor_hasta_aqui === null ? 'aún ninguno'
                                                     : fmt(actual.mejor_hasta_aqui, 3) },
@@ -452,16 +524,26 @@
 
         [gSerie, gVar].forEach(g => { if (g) g.destroy(); });
         gSerie = lineaSimple(cSerie, aniosDesde(SERIES_CAP4.nilo.inicio[0], y.length, d), y,
-          d === 0 ? 'Nilo' : `∇${d > 1 ? d : ''} Nilo`,
-          d <= 1 ? COLORES_GRAFICO.primario : '#b91c1c');
+          `${nabla(d)}Nilo`,
+          d <= 1 ? COLORES_GRAFICO.primario : '#b91c1c',
+          { scales: escalasLinea(d === 0 ? UNIDAD_NILO : `Diferencia (${UNIDAD_NILO})`) });
 
+        // La varianza real sobre un eje logarítmico: las marcas se leen en
+        // unidades de varianza y la razón entre barras es la que se ve.
         gVar = crearGraficoBarras(cVar, tabla.map(f => `d = ${f.d}`),
-          tabla.map(f => Math.log10(f.varianza)), {
-            etiqueta: 'log₁₀ de la varianza', color: COLORES_GRAFICO.gris,
-            min: 4, max: 5.6
+          tabla.map(f => f.varianza), {
+            etiqueta: 'Varianza de la serie diferenciada', color: COLORES_GRAFICO.gris
           });
         gVar.data.datasets[0].backgroundColor = tabla.map(
           f => f.d === d ? COLORES_GRAFICO.secundario : COLORES_GRAFICO.gris);
+        gVar.options.scales.y = {
+          type: 'logarithmic', min: 10000, max: 400000,
+          title: { display: true, text: 'Varianza (log)',
+                   font: { family: 'Montserrat', size: 11 } },
+          ticks: { font: { family: 'Fira Code', size: 11 },
+                   callback: v => [10000, 20000, 50000, 100000, 200000].includes(v) ? fmt(v, 0) : '' },
+          grid: { color: 'rgba(148, 163, 184, 0.2)' }
+        };
         gVar.update('none');
 
         const degenerado = Math.abs(fila.theta_ma1 + 1) < 0.005;
@@ -469,7 +551,7 @@
           { etiqueta: 'd', valor: d },
           { etiqueta: 'n', valor: fila.n },
           { etiqueta: 'varianza', valor: fmt(fila.varianza) },
-          { etiqueta: 'ρ₁', valor: fmt(fila.acf1, 4) },
+          { etiqueta: 'ρ̂₁', valor: fmt(fila.acf1, 4) },
           { etiqueta: 'θ̂ de un MA(1)', valor: fmt(fila.theta_ma1, 4) },
           { etiqueta: '|raíz MA|', valor: fmt(1 / Math.abs(fila.theta_ma1), 4) }
         ];
@@ -538,9 +620,13 @@
             });
         }
 
+        // El pronóstico arranca enganchado al último observado, como en el
+        // abanico de la TRM, para que la línea no salga flotando.
+        const enganche = nulos.slice();
+        enganche[enganche.length - 1] = serie[serie.length - 1];
         datasets.push({
           label: 'Pronóstico',
-          data: nulos.concat(f.media),
+          data: enganche.concat(f.media),
           borderColor: COLORES_GRAFICO.secundario,
           borderWidth: 2.4, pointRadius: 0, fill: false
         });
@@ -553,12 +639,8 @@
                        bodyFont: { family: 'Fira Code' },
                        filter: item => item.dataset.label !== '' }
           },
-          scales: {
-            x: { ticks: { font: { family: 'Montserrat', size: 11 }, maxTicksLimit: 10, maxRotation: 0 },
-                 grid: { display: false } },
-            y: { ticks: { font: { family: 'Fira Code', size: 11 } },
-                 grid: { color: 'rgba(148, 163, 184, 0.2)' } }
-          }
+          scales: escalasLinea(`Caudal (${UNIDAD_NILO})`,
+            { ticks: { font: { family: 'Montserrat', size: 11 }, maxTicksLimit: 10, maxRotation: 0 } })
         });
 
         const medida = NILO.intervalos.forma_medida[params.modelo];
@@ -621,33 +703,56 @@
         if (!gSigma) {
           gSigma = crearGraficoLinea(cSigma, etiquetasH, [
             {
-              label: 'σ_h del ARIMA(1,1,1)',
+              label: 'σₕ del ARIMA(1,1,1)',
               data: inter.sigma_h, borderColor: COLORES_GRAFICO.secundario,
               borderWidth: 2.2, pointRadius: 0, fill: false
             },
             {
-              label: 'σ√h — lo que daría una caminata aleatoria',
+              label: 'σ√h — caminata aleatoria con la misma σ',
               data: raizH, borderColor: COLORES_GRAFICO.terciario,
               borderDash: [6, 4], borderWidth: 1.8, pointRadius: 0, fill: false
+            },
+            {
+              // Los dos puntos del horizonte elegido: la distancia entre ellos
+              // es lo que la intro pide mirar.
+              label: '', data: [], showLine: false, pointRadius: 5,
+              borderColor: COLORES_GRAFICO.secundario, backgroundColor: COLORES_GRAFICO.secundario
+            },
+            {
+              label: '', data: [], showLine: false, pointRadius: 5,
+              borderColor: COLORES_GRAFICO.terciario, backgroundColor: COLORES_GRAFICO.terciario
             }
           ], {
+            plugins: {
+              legend: { labels: { font: { family: 'Montserrat', size: 12 }, boxWidth: 24,
+                                  filter: item => item.text !== '' } },
+              tooltip: { backgroundColor: '#012820', titleFont: { family: 'Montserrat' },
+                         bodyFont: { family: 'Fira Code' },
+                         filter: item => item.dataset.label !== '' }
+            },
             scales: {
               x: { title: { display: true, text: 'Horizonte h' },
                    ticks: { font: { family: 'Fira Code', size: 10 }, maxTicksLimit: 10 },
                    grid: { display: false } },
-              y: { ticks: { font: { family: 'Fira Code', size: 11 } } }
+              y: { min: 0,
+                   title: { display: true, text: `σ (${UNIDAD_NILO})`,
+                            font: { family: 'Montserrat', size: 11 } },
+                   ticks: { font: { family: 'Fira Code', size: 11 } } }
             }
           });
         }
+        gSigma.data.datasets[2].data = inter.sigma_h.map((v, i) => (i === h - 1 ? v : null));
+        gSigma.data.datasets[3].data = raizH.map((v, i) => (i === h - 1 ? v : null));
+        gSigma.update('none');
 
         actualizarLectura(lectura, [
           { etiqueta: 'h', valor: h },
-          { etiqueta: 'ψ_{h−1}', valor: fmt(inter.psi[h - 1], 4) },
+          { etiqueta: 'ψₕ₋₁', valor: fmt(inter.psi[h - 1], 4) },
           { etiqueta: 'σ', valor: fmt(inter.sigma, 3) },
-          { etiqueta: 'σ_h', valor: fmt(inter.sigma_h[h - 1], 3) },
+          { etiqueta: 'σₕ', valor: fmt(inter.sigma_h[h - 1], 3) },
           { etiqueta: 'σ√h', valor: fmt(inter.sigma * Math.sqrt(h), 3) },
           { etiqueta: 'semiancho 95 %', valor: fmt(inter.z95 * inter.sigma_h[h - 1], 2) },
-          { etiqueta: 'σ_h / σ', valor: fmt(inter.sigma_h[h - 1] / inter.sigma, 3) },
+          { etiqueta: 'σₕ / σ', valor: fmt(inter.sigma_h[h - 1] / inter.sigma, 3) },
           { etiqueta: 'frente a la caminata',
             valor: `×${fmt(inter.sigma_h[h - 1] / (inter.sigma * Math.sqrt(h)), 3)}` }
         ]);
@@ -680,7 +785,8 @@
         [gSerie, gAcf].forEach(g => { if (g) g.destroy(); });
         gSerie = lineaSimple(cSerie, mesesDesde(inicio[0], inicio[1] + d, y.length), y,
           d === 0 ? 'TRM mensual (COP/USD)' : '∇TRM',
-          d === 0 ? COLORES_GRAFICO.primario : COLORES_GRAFICO.secundario);
+          d === 0 ? COLORES_GRAFICO.primario : COLORES_GRAFICO.secundario,
+          { scales: escalasLinea(d === 0 ? 'COP por USD' : 'Cambio mensual (COP por USD)') });
         gAcf = crearGraficoBarras(cAcf, REZAGOS, info.acf, {
           etiqueta: 'ACF muestral', color: COLORES_GRAFICO.primario,
           lineas: lineasBanda(info.n), tituloX: 'Rezago k'
@@ -690,12 +796,17 @@
         actualizarLectura(lectura, [
           { etiqueta: 'n', valor: info.n },
           { etiqueta: 'banda', valor: `±${fmt(info.banda, 4)}` },
-          { etiqueta: 'ρ₁', valor: fmt(info.acf[0], 4) },
+          { etiqueta: 'ρ̂₁', valor: fmt(info.acf[0], 4) },
           { etiqueta: 'ACF fuera de banda', valor: `${fuera} de ${info.acf.length}` },
           { etiqueta: d === 0 ? 'ADF (nivel)' : 'ADF (∇)',
             valor: `p = ${fmt(d === 0 ? TRM.pruebas.adf_nivel.p : TRM.pruebas.adf_d1.p, 4)}` },
+          // tseries acota el p-valor de KPSS a [0.01, 0.10]: se dice como cota.
           { etiqueta: d === 0 ? 'KPSS (nivel)' : 'KPSS (∇)',
-            valor: fmt(d === 0 ? TRM.pruebas.kpss_nivel.estadistico : TRM.pruebas.kpss_d1.estadistico, 4) }
+            valor: (() => {
+              const k = d === 0 ? TRM.pruebas.kpss_nivel : TRM.pruebas.kpss_d1;
+              const pv = k.p <= 0.01 ? 'p < 0.01' : k.p >= 0.1 ? 'p > 0.10' : `p = ${fmt(k.p, 4)}`;
+              return `${fmt(k.estadistico, 4)} (${pv})`;
+            })() }
         ]);
       }
 
@@ -743,7 +854,7 @@
         // línea no salga flotando: por eso el relleno empieza en ese punto.
         const previos = historia.map(() => null);
         previos[previos.length - 1] = ultimo;
-        const banda = z => previos.concat(
+        const borde = z => previos.concat(
           Array.from({ length: H }, (_, j) => ultimo + z * sigma * Math.sqrt(j + 1)));
 
         const datasets = [
@@ -754,25 +865,25 @@
             borderWidth: 1.6, pointRadius: 0, fill: false
           },
           {
-            label: 'Intervalo 95 %', data: banda(Z95),
+            label: 'Intervalo 95 %', data: borde(Z95),
             borderColor: 'rgba(255, 102, 0, 0.28)', backgroundColor: 'rgba(255, 102, 0, 0.10)',
             borderWidth: 1, pointRadius: 0, fill: '+3'
           },
           {
-            label: 'Intervalo 80 %', data: banda(Z80),
+            label: 'Intervalo 80 %', data: borde(Z80),
             borderColor: 'rgba(255, 102, 0, 0.45)', backgroundColor: 'rgba(255, 102, 0, 0.18)',
             borderWidth: 1, pointRadius: 0, fill: '+1'
           },
           {
-            label: '', data: banda(-Z80),
+            label: '', data: borde(-Z80),
             borderColor: 'rgba(255, 102, 0, 0.45)', borderWidth: 1, pointRadius: 0, fill: false
           },
           {
-            label: '', data: banda(-Z95),
+            label: '', data: borde(-Z95),
             borderColor: 'rgba(255, 102, 0, 0.28)', borderWidth: 1, pointRadius: 0, fill: false
           },
           {
-            label: 'Pronóstico', data: banda(0),
+            label: 'Pronóstico', data: borde(0),
             borderColor: COLORES_GRAFICO.secundario,
             borderWidth: 2.4, pointRadius: 0, fill: false
           }
@@ -786,12 +897,8 @@
                        bodyFont: { family: 'Fira Code' },
                        filter: item => item.dataset.label !== '' }
           },
-          scales: {
-            x: { ticks: { font: { family: 'Montserrat', size: 11 }, maxTicksLimit: 10, maxRotation: 0 },
-                 grid: { display: false } },
-            y: { ticks: { font: { family: 'Fira Code', size: 11 } },
-                 grid: { color: 'rgba(148, 163, 184, 0.2)' } }
-          }
+          scales: escalasLinea('COP por USD',
+            { ticks: { font: { family: 'Montserrat', size: 11 }, maxTicksLimit: 10, maxRotation: 0 } })
         });
 
         const semi = Z95 * sigma * Math.sqrt(H);
@@ -806,7 +913,7 @@
       }
 
       crearControles(raiz.querySelector('.simulador-controles'), [
-        { clave: 'h', etiqueta: 'h = ', min: 1, max: H_MAX, paso: 1, decimales: 0 }
+        { clave: 'h', etiqueta: 'Horizonte h (meses) ', min: 1, max: H_MAX, paso: 1, decimales: 0 }
       ], params, pintar);
 
       pintar();
@@ -871,7 +978,7 @@
         const m = NILO.rejilla[k];
         return {
           modelo: m.etiqueta, d: m.d, n: m.n_efectivo, k: m.k,
-          aicc: m.aicc, bic: m.bic, lb: m.ljung_box_12_p
+          aicc: m.aicc, bic: m.bic, lb: m.ljung_box_p
         };
       });
       return {
@@ -883,10 +990,10 @@
           { clave: 'modelo', titulo: 'Modelo', tipo: 'texto' },
           { clave: 'd', titulo: 'd', decimales: 0, mejor: 'menor' },
           { clave: 'n', titulo: 'n efectivo', tituloLargo: 'número de observaciones efectivas', decimales: 0, mejor: 'mayor' },
-          { clave: 'k', titulo: 'Coeficientes', decimales: 0, mejor: 'menor' },
+          { clave: 'k', titulo: 'k', tituloLargo: 'parámetros estimados, incluida la varianza σ²', decimales: 0, mejor: 'menor' },
           { clave: 'aicc', titulo: 'AICc', decimales: 2, mejor: 'menor' },
           { clave: 'bic', titulo: 'BIC', decimales: 2, mejor: 'menor' },
-          { clave: 'lb', titulo: 'Ljung–Box p', tituloLargo: 'p-valor de Ljung-Box', decimales: 4, mejor: 'mayor' }
+          { clave: 'lb', titulo: 'Ljung–Box(20) p', tituloLargo: 'p-valor de Ljung–Box con 20 rezagos', decimales: 4, mejor: 'mayor' }
         ],
         filas: filas,
         inicial: 'd',
@@ -907,7 +1014,7 @@
           {
             texto: 'El ARIMA($1,2,2$), porque $1264.60 < 1267.51$.',
             correcta: false,
-            retro: 'Es la trampa central del capítulo. Un AICc menor con más diferencias no significa un modelo mejor: significa, en buena parte, <strong>menos observaciones que explicar</strong>. Y en el Nilo ese modelo concreto tiene además una raíz MA en $1.03$, casi sobre el círculo unitario.'
+            retro: 'Es la trampa central del capítulo. Un AICc menor con más diferencias no significa un modelo mejor: es la verosimilitud de <strong>otros datos</strong>, con una observación menos. Y en el Nilo ese modelo concreto tiene además una raíz MA en $1.03$, casi sobre el círculo unitario.'
           },
           {
             texto: 'Ninguno de los dos por esta comparación: no son comparables, porque tienen distinto $d$.',
@@ -984,13 +1091,13 @@
           { texto: 'Con $d \\ge 2$, <code>forecast::Arima</code> avisa y no ajusta la deriva.', correcta: true },
           { texto: 'La constante de un ARIMA($p,0,q$) es la ordenada al origen de una regresión, no la media del proceso.', correcta: false }
         ],
-        retroAcierto: 'Las tres. Y las dos falsas son justo las que el capítulo desmiente midiendo: con $d = 2$ y sin constante la segunda diferencia del pronóstico se anula ($\\Delta^2 = 0$), es decir sale una <strong>recta</strong>; y el <code>intercept</code> que devuelve R para un ARIMA($p,0,q$) <strong>es</strong> la media del proceso, $920.70$ en el Nilo, pese al nombre.',
-        retroFallo: 'Las tres correctas son las que hablan de la constante con $d = 1$, de <code>include.mean</code> con $d \\ge 1$ y de la deriva con $d \\ge 2$. Sobre las falsas: la parábola necesitaría constante <em>con</em> $d = 2$, y <code>forecast</code> se niega precisamente a eso; sin constante, el pronóstico con $d = 2$ es una recta (lo verifica el Módulo 9 midiendo $\\Delta^2 = 0$). Y el <code>intercept</code> de R en un modelo con $d = 0$ es la media, no una ordenada al origen: el nombre despista.'
+        retroAcierto: 'Las tres. Y las dos falsas son justo las que el capítulo desmiente midiendo: con $d = 2$ y sin constante la segunda diferencia del pronóstico tiende a cero ($\\nabla^2\\hat y \\to 0$), es decir a largo plazo sale una <strong>recta</strong>; y el <code>intercept</code> que devuelve R para un ARIMA($p,0,q$) <strong>es</strong> la media del proceso, $920.70$ en el Nilo, pese al nombre.',
+        retroFallo: 'Las tres correctas son las que hablan de la constante con $d = 1$, de <code>include.mean</code> con $d \\ge 1$ y de la deriva con $d \\ge 2$. Sobre las falsas: la parábola necesitaría constante <em>con</em> $d = 2$, y <code>forecast</code> se niega precisamente a eso; sin constante, el pronóstico con $d = 2$ es una recta (lo verifica el Módulo 9 midiendo $\\nabla^2\\hat y$). Y el <code>intercept</code> de R en un modelo con $d = 0$ es la media, no una ordenada al origen: el nombre despista.'
       },
       {
         tipo: 'opcion',
         modulo: 3,
-        pregunta: 'Simulas $1000$ series de ruido blanco puro y les añades a todas un escalón en la mitad. ¿Con qué frecuencia rechaza KPSS la hipótesis de estacionariedad?',
+        pregunta: 'Simulas $1000$ series de ruido blanco puro de longitud $100$ y les añades a todas un escalón en la posición $29$ (la de 1899 en el Nilo). ¿Con qué frecuencia rechaza KPSS la hipótesis de estacionariedad?',
         pista: 'Recuerda cómo se construye el estadístico: sobre las <em>sumas parciales</em> de los residuales respecto de la media global. ¿Qué le pasa a esas sumas cuando todos los residuales de un tramo tienen el mismo signo?',
         opciones: [
           {
@@ -1011,7 +1118,7 @@
           {
             texto: 'Depende del tamaño de la muestra, pero no del tamaño del escalón.',
             correcta: false,
-            retro: 'Depende de los dos, y la simulación lo muestra: con $n$ fijo en 100, la tasa de rechazo pasa del $4.5\\,\\%$ al $100\\,\\%$ solo moviendo $\\delta$. El estadístico crece aproximadamente como $n\\delta^2/\\hat\\sigma^2_{LP}$.'
+            retro: 'Depende de los dos, y la simulación lo muestra: con $n$ fijo en 100, la tasa de rechazo pasa de alrededor del $5\\,\\%$ al $100\\,\\%$ solo moviendo el tamaño del escalón $\\beta$. Mientras el escalón es pequeño, el estadístico crece aproximadamente como $n\\beta^2/\\hat\\sigma^2_{LP}$.'
           }
         ]
       },
@@ -1030,7 +1137,7 @@
           {
             texto: 'Es un AR de orden alto, porque hay muchas barras fuera de la banda.',
             correcta: false,
-            retro: 'Es el error de principiante más caro del capítulo. Un AR estacionario tiene una ACF que decae <strong>geométricamente</strong>, es decir, deprisa; ésta lleva veinte rezagos sin acercarse a cero. Lo que ves no es memoria larga del proceso: es que el nivel de la serie está vagando.'
+            retro: 'Es el error de principiante más caro del capítulo. Un AR estacionario tiene una ACF que decae <strong>geométricamente</strong> y acaba entrando en la banda; esta lleva veinte rezagos sin acercarse a cero. Lo que ves no es memoria larga del proceso: es que el nivel de la serie está vagando.'
           },
           {
             texto: 'Es un MA($q$) con $q$ igual al número de barras significativas.',
@@ -1040,12 +1147,12 @@
           {
             texto: 'Que $d = 1$, porque el primer valor es $0.498$, cercano a $0.5$.',
             correcta: false,
-            retro: 'La conclusión sobre $d$ es correcta pero el argumento no: el valor de $\\rho_1$ no determina $d$. Lo que indica no estacionariedad es la <strong>forma</strong> del decaimiento —lento y sin cortar—, no la altura de la primera barra. Un AR(1) con $\\phi = 0.5$ tendría también $\\rho_1 = 0.5$ y sería perfectamente estacionario.'
+            retro: 'La conclusión sobre $d$ es correcta pero el argumento no: el valor de $\\hat\\rho_1$ no determina $d$. Lo que indica no estacionariedad es la <strong>forma</strong> del decaimiento —lento y sin cortar—, no la altura de la primera barra. Un AR(1) con $\\phi = 0.5$ tendría también $\\rho_1 = 0.5$ y sería perfectamente estacionario.'
           },
           {
             texto: 'Nada todavía: esa forma indica no estacionariedad, y hay que diferenciar antes de leer $p$ y $q$.',
             correcta: true,
-            retro: 'Una ACF que decae despacio y no corta —aquí $0.498,\\ 0.385,\\ 0.328,\\ 0.239,\\dots$— es el retrato de una serie no estacionaria. La tabla de identificación presupone estacionariedad; aplicarla aquí no informa de nada. Tras diferenciar, la misma serie tiene una sola barra fuera de la banda.'
+            retro: 'Una ACF que decae despacio y no corta —aquí $0.498,\\ 0.385,\\ 0.328,\\ 0.239,\\dots$— es el retrato de una serie no estacionaria. La tabla de identificación presupone estacionariedad; aplicarla aquí no informa de nada. Tras diferenciar, la ACF corta: solo destacan el rezago 1 ($-0.402$) y, aislado, el 8 ($0.231$).'
           }
         ]
       },

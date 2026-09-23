@@ -19,14 +19,15 @@
       <p>El Capítulo 3 terminó con un límite explícito: los modelos ARMA solo describen series
         <strong>estacionarias</strong>. El Capítulo 2 dio la herramienta para llegar a la estacionariedad
         —diferenciar— pero la presentó como preprocesamiento, algo que se hace <em>antes</em>. La idea que organiza
-        este capítulo es que esas dos cosas son una sola: si escribes la diferenciación dentro del modelo, obtienes
-        la familia <strong>ARIMA</strong> (<em>autoregressive integrated moving average</em>), y entonces el número de
-        diferencias $d$ se estima, se discute y se equivoca igual que $p$ y que $q$.</p>
+        este capítulo es que esas dos cosas son una sola: si la diferenciación se escribe dentro del modelo, se
+        obtiene la familia <strong>ARIMA</strong> (<em>autoregressive integrated moving average</em>), y entonces el
+        número de diferencias $d$ se estima, se discute y puede elegirse mal, igual que $p$ y que $q$.</p>
 
       <div class="definition">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: proceso ARIMA($p,d,q$)</h4>
-        <p>$y_t$ sigue un ARIMA($p,d,q$) si su $d$-ésima diferencia $w_t = (1-B)^d y_t$ sigue un ARMA($p,q$)
-          estacionario e invertible. En una sola línea con el operador de rezago:</p>
+        <p>Con el operador de diferencia $\nabla \equiv 1 - B$, $y_t$ sigue un ARIMA($p,d,q$) si su $d$-ésima
+          diferencia $w_t = \nabla^d y_t = (1-B)^d y_t$ sigue un ARMA($p,q$) estacionario e invertible. En una sola
+          línea con el operador de rezago:</p>
         $$\underbrace{\phi(B)}_{\text{AR}(p)}\ \underbrace{(1-B)^d}_{\text{integración}}\ y_t
           = c + \underbrace{\theta(B)}_{\text{MA}(q)}\ \varepsilon_t,
           \qquad \varepsilon_t \sim \text{RB}(0,\sigma^2)$$
@@ -38,8 +39,8 @@
 
       <p>Lo importante de esa fórmula está en el lado izquierdo. El polinomio autorregresivo completo no es
         $\phi(B)$ sino $\phi(B)(1-B)^d$, un polinomio de grado $p+d$ con $d$ raíces colocadas <strong>exactamente
-        sobre el círculo unitario</strong>. Un ARIMA no es un ARMA cualquiera: es un ARMA al que le hemos
-        <em>impuesto</em> $d$ raíces unitarias en vez de estimarlas. Esa imposición es la decisión más consecuente
+        sobre el círculo unitario</strong>. Un ARIMA no es un ARMA cualquiera: es un ARMA al que se le
+        <em>imponen</em> $d$ raíces unitarias en vez de estimarlas. Esa imposición es la decisión más consecuente
         del capítulo, y el Módulo 3 se dedica entero a tomarla bien.</p>
 
       <div class="derivacion">
@@ -51,11 +52,11 @@
         <div class="derivacion-panel" id="der-arima-como-arma" hidden>
           <ol class="derivacion-pasos">
             <li>
-              <p>Tomamos el caso que usaremos todo el capítulo, ARIMA($1,1,1$) sin constante:</p>
+              <p>Se toma el caso que acompaña todo el capítulo, ARIMA($1,1,1$) sin constante:</p>
               $$(1 - \phi B)(1 - B)\, y_t = (1 + \theta B)\,\varepsilon_t$$
             </li>
             <li>
-              <p>Multiplicamos los dos factores del lado izquierdo:</p>
+              <p>Se multiplican los dos factores del lado izquierdo:</p>
               $$(1 - \phi B)(1 - B) = 1 - B - \phi B + \phi B^2 = 1 - (1+\phi)B + \phi B^2$$
             </li>
             <li>
@@ -76,7 +77,7 @@
         </div>
       </div>
 
-      <h3>Casos particulares que ya conoces</h3>
+      <h3>Casos particulares ya conocidos</h3>
 
       <div class="diagram">
         <table>
@@ -90,7 +91,8 @@
             <tr><td>ARIMA($0,1,0$) con $c$</td><td>Caminata con deriva</td><td>$y_t = c + y_{t-1} +
               \varepsilon_t$. Añade una tendencia lineal.</td></tr>
             <tr><td>ARIMA($0,1,1$)</td><td>IMA(1,1)</td><td>Equivale al <strong>suavizamiento exponencial
-              simple</strong>: el pronóstico es un promedio ponderado que decae hacia el pasado.</td></tr>
+              simple</strong>: $\hat y_{t+1\mid t} = \alpha\, y_t + (1-\alpha)\,\hat y_{t\mid t-1}$ con
+              $\alpha = 1 + \theta$, un promedio ponderado que decae hacia el pasado.</td></tr>
             <tr><td>ARIMA($0,2,2$)</td><td>IMA(2,2)</td><td>Equivale al método de <strong>Holt</strong> con
               tendencia.</td></tr>
           </tbody>
@@ -98,10 +100,10 @@
       </div>
 
       <div class="note">
-        <p><strong>Por qué esto importa más de lo que parece.</strong> Los métodos de suavizamiento exponencial que
-          se enseñan como recetas independientes son, casi todos, casos particulares de ARIMA. Eso significa que las
-          herramientas de este capítulo —criterios de información, diagnóstico de residuales, intervalos de
-          pronóstico— se aplican también a ellos. No hay dos teorías, hay una.</p>
+        <p><strong>Por qué esto importa más de lo que parece.</strong> Los métodos lineales de suavizamiento
+          exponencial que se enseñan como recetas independientes son casos particulares de ARIMA. Eso significa que
+          las herramientas de este capítulo —criterios de información, diagnóstico de residuales, intervalos de
+          pronóstico— se aplican también a ellos. Para esos métodos no hay dos teorías, hay una.</p>
       </div>
 
       <div class="simulador" data-simulador="nilo-y-diferencia">
@@ -201,23 +203,34 @@ print(round(razon, 3), round(razon0, 1))
         <h4><i class="fas fa-magnifying-glass mr-2" aria-hidden="true"></i>Una anomalía que vale la pena guardar</h4>
         <p>En el bloque de arriba pasa algo que no cuadra. Integrar una serie estacionaria debería disparar su
           varianza —es lo que ocurre sin el término MA, donde se multiplica por $33$— y con los coeficientes reales
-          del Nilo la deja prácticamente igual, en una razón de $1.006$. La causa está en el valor de $\theta$:</p>
-        $$\theta = -0.8741 \quad\Longrightarrow\quad (1 + \theta B) = (1 - 0.8741\,B) \approx (1 - B)$$
-        <p style="margin-bottom:0;">El polinomio MA se parece mucho al operador de diferencia, así que
-          <strong>casi cancela</strong> la integración que el propio modelo impone. Dicho de otro modo: el
-          ARIMA($1,1,1$) del Nilo diferencia con una mano y deshace la diferencia con la otra. Esto tiene un nombre y
-          un diagnóstico, y no es un tecnicismo: es la pista de que a esta serie quizá no había que diferenciarla.
-          El Módulo 3 explica por qué el software decidió que sí, y el Módulo 8 cierra el caso.</p>
+          del Nilo, en esta realización, la deja prácticamente igual: una razón de $1.006$ (el bloque de Python,
+          promediando 500 réplicas, obtiene $1.363$; sin el término MA, decenas). La causa está en el valor de
+          $\theta$. Escrito con sus raíces, el modelo del Nilo es</p>
+        $$\begin{aligned}
+          &(1 - 0.2544\,B)\,\underbrace{(1 - B)}_{\text{raíz } B=1}\, y_t \\
+          &\quad = \underbrace{(1 - 0.8741\,B)}_{\text{raíz } B=1.144}\,\varepsilon_t
+        \end{aligned}$$
+        <p style="margin-bottom:0;">El polinomio MA se parece mucho al operador de diferencia $\nabla = 1 - B$: sus
+          raíces están a un paso, así que el MA <strong>casi cancela</strong> la integración que el propio modelo
+          impone. Dicho de otro modo: el ARIMA($1,1,1$) del Nilo diferencia con una mano y deshace la diferencia con
+          la otra. Esto se llama <strong>cancelación casi exacta de raíces</strong> (factores AR y MA casi comunes),
+          y no es un tecnicismo: es un síntoma clásico de sobrediferenciación, la pista de que a esta serie quizá no
+          había que diferenciarla. El Módulo 3 explica por qué el software decidió que sí, y el Módulo 8 cierra el
+          caso.</p>
       </div>
 
       <div class="warning">
         <p><strong>El signo de $\theta$ no es el mismo en todas partes.</strong> R (<code>arima</code>,
           <code>arima.sim</code>) y <code>statsmodels</code> escriben el polinomio MA como
           $\theta(B) = 1 + \theta_1 B + \cdots$, con signo <strong>más</strong>. Buena parte de la literatura
-          —incluido Box &amp; Jenkins original y Shumway &amp; Stoffer— lo escribe con signo menos. Si copias un
-          $\theta$ de un libro a R sin mirar el convenio, obtendrás otro modelo. Ante la duda, comprueba el signo de
-          la ACF del rezago 1: para un MA(1), $\rho_1$ tiene el mismo signo que $\theta$ en el convenio de R.</p>
+          —empezando por el Box &amp; Jenkins original— lo escribe con signo menos. Copiar un $\theta$ de un libro a
+          R sin mirar el convenio produce otro modelo. Ante la duda, conviene comprobar el signo de la ACF del
+          rezago 1: para un MA(1), $\rho_1$ tiene el mismo signo que $\theta$ en el convenio de R.</p>
       </div>
+
+      <p>Con el modelo definido queda la pregunta práctica: frente a una serie concreta, ¿cómo se eligen $p$, $d$ y
+        $q$, y cómo se sabe que la elección fue buena? El módulo siguiente presenta el procedimiento que responde
+        a ambas cosas.</p>
     </div>
   </template>
 
@@ -234,19 +247,20 @@ print(round(razon, 3), round(razon0, 1))
           <div>
             <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
             <p class="text-gray-600 text-sm" style="margin:0;">Recorrer el ciclo completo y, sobre todo, saber
-              <strong>qué hallazgo te devuelve a la etapa anterior</strong>.</p>
+              <strong>qué hallazgo obliga a volver a la etapa anterior</strong>.</p>
           </div>
         </div>
       </div>
 
-      <p>En 1970 George Box y Gwilym Jenkins publicaron <em>Time Series Analysis: Forecasting and Control</em> y con
+      <p>El Módulo 1 dejó definido el modelo; falta el método para elegirlo y validarlo frente a una serie
+        concreta. En 1970 George Box y Gwilym Jenkins publicaron <em>Time Series Analysis: Forecasting and Control</em> y con
         él un procedimiento que sigue siendo el esqueleto de todo lo que se hace con modelos ARIMA. Su aportación no
         fue el modelo —la familia ya existía— sino <strong>el método</strong>: una secuencia de etapas con criterios
         explícitos para pasar de una a la siguiente, y con vueltas atrás previstas.</p>
 
       <p>La palabra clave es <em>iterativo</em>. No es una receta que se ejecuta una vez de arriba abajo: es un ciclo
-        en el que el diagnóstico puede mandarte de vuelta a la identificación tantas veces como haga falta. Pulsa
-        cada etapa para ver qué se hace en ella y qué la puede invalidar.</p>
+        en el que el diagnóstico puede obligar a volver a la identificación tantas veces como haga falta. Al pulsar
+        cada etapa se muestra qué se hace en ella y qué la puede invalidar.</p>
 
       <div class="ciclo" data-ciclo="box-jenkins">
         <ol class="ciclo-etapas" role="tablist" aria-label="Etapas del ciclo">
@@ -367,7 +381,7 @@ print(round(razon, 3), round(razon0, 1))
       </div>
 
       <div class="note">
-        <p><strong>Lo que Box–Jenkins no hace por ti.</strong> El método supone que la estructura del proceso es
+        <p><strong>Lo que Box–Jenkins no resuelve.</strong> El método supone que la estructura del proceso es
           estable en toda la muestra. No detecta cambios de régimen, ni intervenciones, ni atípicos: los
           <em>absorbe</em>, normalmente subiendo $d$ o inflando $\hat\sigma^2$. El Módulo 8 muestra un caso real de
           esto en la propia serie del Nilo, y es la razón por la que la etapa 1 empieza mirando el gráfico.</p>
@@ -395,8 +409,8 @@ res &lt;- residuals(ajuste)
 Box.test(res, lag = 20, type = "Ljung-Box", fitdf = 2)$p.value
 #&gt; [1] 0.7997371       &gt; 0.05: no hay evidencia de estructura sobrante
 
-# ---- Etapa 4: uso -------------------------------------------------------
-pron &lt;- forecast(Arima(Nile, order = c(1, 1, 1)), h = 10)
+# ---- Etapa 4: uso (con el MISMO ajuste de la etapa 2) -------------------
+pron &lt;- forecast(ajuste, h = 10)
 round(as.numeric(pron$mean[1:3]), 2)
 #&gt; [1] 816.18 835.56 840.49</code></pre>
         </div>
@@ -407,7 +421,8 @@ from statsmodels.stats.diagnostic import acorr_ljungbox
 
 nilo = sm.datasets.nile.load_pandas().data["volume"].values
 
-# Etapa 1: aqui no hay ndiffs(); se decide con las pruebas y el grafico
+# Etapa 1: statsmodels no trae ndiffs() (pmdarima si); aqui se decide
+# con las pruebas y el grafico
 w = np.diff(nilo)
 
 # Etapa 2
@@ -424,6 +439,10 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
 #&gt; [816.3  835.75 840.71]     R: 816.18 835.56 840.49</code></pre>
         </div>
       </div>
+
+      <p>El esqueleto anterior despacha la etapa 1 en una línea, <code>d &lt;- ndiffs(Nile)</code>, y ahí está la
+        decisión más consecuente de todo el ciclo: el número de diferencias. El módulo siguiente se dedica entero a
+        ella.</p>
     </div>
   </template>
 
@@ -439,16 +458,18 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
           <span class="text-xl">🎯</span>
           <div>
             <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
-            <p class="text-gray-600 text-sm" style="margin:0;">Decidir $d$ con tres evidencias independientes, y
-              descubrir con un experimento por qué las pruebas de raíz unitaria pueden mentirte.</p>
+            <p class="text-gray-600 text-sm" style="margin:0;">Decidir $d$ con tres evidencias complementarias, y
+              descubrir con un experimento por qué las pruebas de raíz unitaria pueden engañar.</p>
           </div>
         </div>
       </div>
 
-      <p>Esta es la decisión de la que cuelga todo lo demás. Un $d$ mal elegido no produce un modelo un poco peor:
+      <p>El ciclo de Box–Jenkins empieza por $d$, y esta es la decisión de la que cuelga todo lo demás. Un $d$ mal
+        elegido no produce un modelo un poco peor:
         produce un modelo cuyos criterios de información no se pueden comparar con los del $d$ correcto, cuyos
         residuales pueden pasar el diagnóstico igualmente, y cuyo pronóstico a largo plazo tiene la forma
-        equivocada. Conviene apoyarla en <strong>tres evidencias que no dependen unas de otras</strong>.</p>
+        equivocada. Conviene apoyarla en <strong>tres evidencias complementarias</strong>, que miran la serie desde
+        ángulos distintos.</p>
 
       <div class="diagram">
         <table>
@@ -457,16 +478,34 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
           </thead>
           <tbody>
             <tr><td><strong>1. El gráfico</strong></td><td>¿El nivel vaga sin volver a ningún sitio?
-              ¿Hay saltos?</td><td>Vaga, y además hay un descenso brusco alrededor de 1899.</td></tr>
+              ¿Hay saltos?</td><td>A primera vista parece vagar, pero el rasgo dominante es un descenso brusco
+              alrededor de 1899.</td></tr>
             <tr><td><strong>2. La varianza</strong></td><td>$\operatorname{Var}(\nabla^d y)$ debe
               <em>bajar</em> y luego <em>subir</em> al pasarse</td><td>$28\,638 \to 28\,268 \to 80\,055 \to
               262\,507$: el mínimo está en $d = 1$.</td></tr>
-            <tr><td><strong>3. Las pruebas</strong></td><td>ADF ($H_0$: hay raíz unitaria) y KPSS ($H_0$: es
-              estacionaria)</td><td>ADF $-3.366$ ($p = 0.064$, no rechaza); KPSS $0.965$ ($p &lt; 0.01$, rechaza la
-              estacionariedad). Las dos apuntan a diferenciar.</td></tr>
+            <tr><td><strong>3. Las pruebas</strong></td><td>ADF y PP ($H_0$: hay raíz unitaria) y KPSS ($H_0$:
+              es estacionaria)</td><td>ADF de <code>adf.test</code> (constante y tendencia, $k = 4$) $-3.366$
+              ($p = 0.064$, no rechaza); KPSS $0.965$ ($p &lt; 0.01$, rechaza la estacionariedad). Estas dos apuntan a
+              diferenciar. PP, en cambio, $Z(t_\alpha) = -6.690$ ($p &lt; 0.01$), rechaza la raíz unitaria.</td></tr>
           </tbody>
         </table>
       </div>
+
+      <p>Las pruebas no contrastan lo mismo. ADF (y PP, que corrige la autocorrelación de forma no paramétrica en
+        vez de con rezagos) parte de la raíz unitaria; KPSS invierte la hipótesis nula. ADF ajusta la regresión</p>
+      $$\begin{aligned}
+        \nabla y_t &= \alpha_0 + \alpha_1 t + \gamma\, y_{t-1} \\
+          &\quad + \sum_{j=1}^{k} a_j \nabla y_{t-j} + \varepsilon_t
+      \end{aligned}$$
+      <p>y contrasta $H_0:\ \gamma = 0$, la raíz unitaria. KPSS descompone la serie en un nivel que puede pasear y
+        un ruido estacionario,</p>
+      $$\begin{aligned}
+        y_t &= \mu + r_t + u_t, \\
+        r_t &= r_{t-1} + v_t,
+      \end{aligned}$$
+      <p>y contrasta $H_0:\ \sigma_v^2 = 0$: sin paseo, la serie es estacionaria alrededor de $\mu$.</p>
+      <p><code>adf.test()</code> incluye la constante $\alpha_0$ y la tendencia $\alpha_1 t$ con $k = 4$; como se verá
+        enseguida, no es la única especificación posible, y el resultado depende de ella.</p>
 
       <p>La caída de la varianza de $d=0$ a $d=1$ es aquí llamativamente pequeña —de $28\,638$ a $28\,268$, apenas un
         $1.3\,\%$— mientras que pasar a $d=2$ la casi triplica. Que el mínimo esté en $d=1$ pero por tan poco margen
@@ -476,33 +515,40 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
       <div class="warning">
         <h4><i class="fas fa-triangle-exclamation mr-2" aria-hidden="true"></i>Tres pruebas, tres respuestas, la
           misma serie</h4>
-        <p>La función <code>ndiffs()</code> devuelve el $d$ recomendado, pero <strong>depende de la prueba que le
-          pidas</strong>, y sobre el Nilo las tres no coinciden:</p>
+        <p>La función <code>ndiffs()</code> devuelve el $d$ recomendado, pero <strong>depende de la prueba que se
+          le pida</strong>, y sobre el Nilo las tres no coinciden:</p>
         $$\texttt{ndiffs(Nile, test = "kpss")} = 1, \qquad
           \texttt{ndiffs(Nile, test = "adf")} = 0, \qquad
           \texttt{ndiffs(Nile, test = "pp")} = 0$$
         <p style="margin-bottom:0;">Dos de las tres dicen que <strong>no</strong> hay que diferenciar. Y el valor por
           defecto de <code>ndiffs()</code> —y por tanto el que usa <code>auto.arima()</code>— es KPSS, la única que
-          dice que sí. No es un fallo de ninguna función: es que las tres prueban hipótesis distintas con potencias
-          distintas. Cuando discrepan, la respuesta no está en la prueba sino en el gráfico. Sigue leyendo: aquí hay
-          una razón concreta.</p>
+          dice que sí. Hay además un matiz: el ADF de <code>ndiffs()</code> no es el de <code>adf.test()</code> de la tabla.
+          Usa solo constante y un rezago ($\alpha_1 = 0$, $k = 1$), y con esa especificación rechaza la raíz
+          unitaria ($\tau_\mu = -4.05$, frente al valor crítico de $-2.89$ al $5\,\%$); con la de la tabla no la
+          rechaza. No es un fallo de ninguna función: KPSS invierte la hipótesis nula, y ADF y PP, que comparten la
+          de raíz unitaria, corrigen la autocorrelación de forma distinta y tienen potencias distintas. Cuando
+          discrepan, la respuesta no está en la prueba sino en el gráfico, y en esta serie hay una razón
+          concreta.</p>
       </div>
 
       <h3>Un experimento: ¿qué ve KPSS cuando hay un cambio de nivel?</h3>
 
-      <p>Sospecha razonable: el descenso de 1899 no es una raíz unitaria, es un <strong>escalón</strong>. Una serie
+      <p>Sospecha razonable: el descenso de 1899 no es una raíz unitaria, es un <strong>escalón</strong> (en lo
+        que sigue, de tamaño $\beta$). Una serie
         estacionaria alrededor de dos niveles distintos no vuelve a una media única, y eso es exactamente lo que
         KPSS está diseñado para detectar como "no estacionariedad". Si la sospecha es cierta, KPSS debería rechazar
         incluso en series que <em>por construcción</em> no tienen ninguna raíz unitaria.</p>
 
       <p>Se puede comprobar. Se generan series de ruido blanco puro de la misma longitud y desviación que los
-        residuales del Nilo ($n = 100$, $\hat\sigma = 127.0$), se les añade un escalón en la posición 29 —el año
-        1899— de tamaño $\delta$ regulable, y se cuenta cuántas veces rechaza KPSS. Mueve el deslizador:</p>
+        residuales del modelo de dos medias del Nilo —una antes y otra después de 1899— ($n = 100$,
+        $\hat\sigma = 127.0$), se les añade un escalón en la posición 29 —el año 1899— de tamaño $\beta$ regulable,
+        y se cuenta cuántas veces rechaza KPSS:</p>
 
       <div class="simulador" data-simulador="escalon-vs-raiz">
         <h4><i class="fas fa-stairs" aria-hidden="true"></i> Un escalón disfrazado de raíz unitaria</h4>
-        <p class="simulador-intro">Arriba, una realización concreta con el $\delta$ elegido. Abajo, la tasa de
-          rechazo de KPSS medida sobre 400 réplicas por cada valor de $\delta$ (precalculada en R). Recuerda que
+        <p class="simulador-intro">Mueve el deslizador. Arriba, una realización concreta con el $\beta$ elegido.
+          Abajo, la tasa de rechazo de KPSS medida en R sobre 400 réplicas en nueve valores de $\beta$; entre ellos
+          se interpola. Recuerda que
           <strong>ninguna</strong> de estas series tiene raíz unitaria: todas son ruido blanco más una constante a
           trozos.</p>
         <div class="simulador-controles"></div>
@@ -518,14 +564,18 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
       </div>
 
       <div class="note">
-        <p><strong>El resultado, en dos líneas.</strong> Sin escalón, KPSS rechaza el $4.8\,\%$ de las veces:
-          exactamente su tamaño nominal del $5\,\%$, la prueba funciona. Con el escalón que de verdad tiene el Nilo
-          ($\delta = -247.8$, que son $1.95$ desviaciones típicas), rechaza el <strong>$100\,\%$</strong> de las
-          veces, y <code>ndiffs()</code> pide diferenciar en el $100\,\%$ de las réplicas. El ADF, en cambio, solo se
-          deja engañar en el $0.5\,\%$ de los casos — que es justo por lo que <code>ndiffs(Nile, test = "adf")</code>
-          devuelve 0.</p>
-        <p style="margin-bottom:0;">Basta un escalón de $0.79$ desviaciones típicas para que la tasa de rechazo suba
-          al $70.8\,\%$. Un salto que a ojo parece modesto ya es suficiente.</p>
+        <p><strong>El resultado.</strong> Con 1000 réplicas, sin escalón KPSS rechaza el $4.8\,\%$ de las veces:
+          prácticamente su tamaño nominal del $5\,\%$, la prueba funciona (la malla de 400 réplicas del simulador y
+          del bloque de código da $4.5\,\%$). Con el escalón que de verdad tiene el Nilo ($\beta = -247.8$, que son
+          $1.95$ desviaciones típicas), rechaza el <strong>$100\,\%$</strong> de las veces, y <code>ndiffs()</code>
+          pide diferenciar en el $100\,\%$ de las réplicas.</p>
+        <p>El ADF depende de cómo se especifique. El de <code>ndiffs()</code> (solo constante, un rezago) se deja
+          engañar en el $0.5\,\%$ de los casos, y por eso <code>ndiffs(Nile, test = "adf")</code> devuelve 0. Pero
+          el de <code>adf.test()</code> (constante y tendencia, $k = 4$) <strong>no rechaza</strong> la raíz unitaria
+          en el $86.4\,\%$ de las réplicas con escalón, frente al $5.4\,\%$ sin él: el escalón también engaña al ADF
+          de la tabla, y su $p = 0.064$ sobre el Nilo es probablemente otra víctima.</p>
+        <p style="margin-bottom:0;">Basta un escalón de $0.79$ desviaciones típicas ($\beta = 100$) para que la tasa
+          de rechazo de KPSS suba al $70.8\,\%$. Un salto que a ojo parece modesto ya es suficiente.</p>
       </div>
 
       <div class="derivacion">
@@ -548,19 +598,27 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
                 pequeño: fluctúa alrededor de cero como un puente browniano. El estadístico es pequeño.</p>
             </li>
             <li>
-              <p>Si $y_t$ tiene una raíz unitaria, los $e_t$ están correlacionados y $S_t$ crece como $t$: las sumas
-                parciales se disparan y el estadístico también. Esto es lo que la prueba quiere detectar.</p>
+              <p>Si $y_t$ tiene una raíz unitaria, los $e_t$ se comportan como una caminata (crecen como
+                $\sqrt t$) y $S_t$ crece como $t^{3/2}$: las sumas parciales se disparan y el estadístico diverge.
+                Esto es lo que la prueba quiere detectar.</p>
             </li>
             <li>
-              <p>Ahora el escalón. Antes del salto, $y_t - \bar y \approx +\delta_1 &gt; 0$ de forma sistemática;
-                después, $\approx -\delta_2 &lt; 0$. Los $e_t$ <strong>no se compensan localmente</strong>: todos los
-                del primer tramo tienen el mismo signo. Entonces $S_t$ crece linealmente hasta el salto y decrece
-                linealmente después, alcanzando un máximo de orden $n\delta$.</p>
-              $$\sum_t S_t^2 \sim n^3\delta^2 \quad\Longrightarrow\quad \mathrm{KPSS} \sim \frac{n\,\delta^2}{\hat\sigma_{LP}^2}$$
+              <p>Ahora el escalón: $y_t = \mu + \beta\,\mathbf{1}\{t \ge \tau n\} + u_t$, con el salto en la
+                fracción $\tau$ de la muestra ($\tau \approx 0.28$ en el Nilo). La media muestral queda entre los
+                dos niveles, así que</p>
+              $$e_t \approx \begin{cases} -(1-\tau)\,\beta, &amp; t &lt; \tau n \\ \ \ \tau\,\beta, &amp; t \ge \tau n \end{cases}$$
+              $$\Longrightarrow\quad \max_t |S_t| \approx \tau(1-\tau)\, n\,|\beta|$$
+              <p>Los $e_t$ <strong>no se compensan localmente</strong>: todos los de un mismo tramo tienen el mismo
+                signo. $S_t$ crece linealmente hasta el salto y decrece linealmente después, de modo que</p>
+              $$\sum_t S_t^2 \sim n^3\beta^2 \quad\Longrightarrow\quad \mathrm{KPSS} \sim \frac{n\,\beta^2}{\hat\sigma_{LP}^2}$$
             </li>
             <li>
-              <p>El estadístico crece con $n$ y con $\delta^2$. Con datos suficientes, <strong>cualquier</strong>
-                escalón acaba haciéndolo rechazar. Y eso es lo que mide la curva del simulador.</p>
+              <p>El estadístico crece con $n$ y con $\beta^2$. Con datos suficientes, <strong>cualquier</strong>
+                escalón acaba haciéndolo rechazar. Y eso es lo que mide la curva del simulador. El escalón también
+                engorda $\hat\sigma^2_{LP}$, porque añade a las autocovarianzas de $e_t$ un término proporcional a
+                $\beta^2$; por eso, para escalones grandes, el estadístico medio deja de crecer y se estabiliza
+                (de $1.07$ con $\beta = 200$ a $1.23$ con $\beta = 300$), muy por encima del valor crítico de
+                $0.463$.</p>
             </li>
           </ol>
           <p class="derivacion-resultado">KPSS no distingue "hay raíz unitaria" de "hay un cambio de nivel": las dos
@@ -602,17 +660,19 @@ kpss.test(Nile)$statistic       # H0: es estacionaria
 sapply(c("kpss", "adf", "pp"), function(t) ndiffs(Nile, test = t))
 #&gt; kpss  adf   pp
 #&gt;    1    0    0            &lt;- el defecto es "kpss", y es el unico que dice 1
+# (el ADF de ndiffs es urca::ur.df(type = "drift", lags = 1): solo constante y
+#  un rezago, no la especificacion con tendencia y k = 4 de adf.test)
 
 # --- El experimento del escalon -----------------------------------------
 set.seed(2026)
 escalon &lt;- as.numeric(1:100 &gt;= 29)      # 1899 es la observacion 29
-simula &lt;- function(delta, reps = 400) {
+simula &lt;- function(beta, reps = 400) {       # beta = tamano del escalon
   mean(replicate(reps, {
-    x &lt;- 1000 + delta * escalon + rnorm(100, 0, 127.03)
+    x &lt;- 1000 + beta * escalon + rnorm(100, 0, 127.03)
     suppressWarnings(kpss.test(x)$p.value) &lt;= 0.05
   }))
 }
-c(sin_escalon = simula(0), con_el_del_Nilo = simula(247.78))
+c(sin_escalon = simula(0), con_el_del_Nilo = simula(-247.78))
 #&gt;     sin_escalon con_el_del_Nilo
 #&gt;           0.045           1.000</code></pre>
         </div>
@@ -638,19 +698,21 @@ print(round(est, 4), round(p, 4))
 #&gt;                   porque R interpola en tablas y statsmodels usa MacKinnon
 
 # CUIDADO con el truncamiento de KPSS: no es el mismo por defecto.
+print(round(kpss(nilo, regression="c")[0], 4))                   # 'auto': 5 rezagos
+#&gt; 0.8691        !=  0.9654 de R
 print(round(kpss(nilo, regression="c", nlags="legacy")[0], 4))   # 12 rezagos
-#&gt; 0.5497        !=  0.9654 de R
+#&gt; 0.5497
 print(round(kpss(nilo, regression="c", nlags=4)[0], 4))          # como R
 #&gt; 0.9654        identico
 
 # El experimento del escalon, ya con el truncamiento de R
 rng = np.random.default_rng(2026)
 escalon = (np.arange(100) &gt;= 28).astype(float)
-def simula(delta, reps=400):
-    return np.mean([kpss(1000 + delta * escalon + rng.normal(0, 127.03, 100),
+def simula(beta, reps=400):                   # beta = tamano del escalon
+    return np.mean([kpss(1000 + beta * escalon + rng.normal(0, 127.03, 100),
                          regression="c", nlags=4)[1] &lt;= 0.05
                     for _ in range(reps)])
-print(simula(0.0), simula(247.78))
+print(simula(0.0), simula(-247.78))
 #&gt; 0.035 1.0     (R: 0.045 y 1.000)</code></pre>
         </div>
       </div>
@@ -659,23 +721,34 @@ print(simula(0.0), simula(247.78))
         <h4><i class="fas fa-triangle-exclamation mr-2" aria-hidden="true"></i>R y Python no calculan el mismo KPSS
           por defecto</h4>
         <p>Sobre la misma serie del Nilo, <code>tseries::kpss.test</code> devuelve $0.9654$ y
-          <code>statsmodels.kpss</code> devuelve $0.5497$. Casi el doble. No es un error de ninguno de los dos: es el
-          <strong>truncamiento de la varianza de largo plazo</strong>, el parámetro $\ell$ que decide cuántas
-          autocovarianzas entran en $\hat\sigma_{LP}^2$:</p>
-        $$\text{R:}\ \ \ell = \left\lfloor 4\left(\tfrac{n}{100}\right)^{1/4}\right\rfloor = 4,
-          \qquad
-          \text{statsmodels (\texttt{legacy}):}\ \ \ell = \left\lfloor 12\left(\tfrac{n}{100}\right)^{1/4}\right\rfloor = 12$$
-        <p style="margin-bottom:0;">Más rezagos infla $\hat\sigma_{LP}^2$, que está en el denominador, y por eso el
-          estadístico baja. Con <code>nlags=4</code> los dos coinciden hasta el último decimal. Es la misma clase de
-          trampa que el Capítulo 2 documentó entre <code>ndiffs()</code> y <code>kpss.test()</code>: <strong>al
-          comparar salidas de dos programas, mira primero qué truncamiento usa cada uno</strong>. Y con
-          $\ell = 12$ la prueba pierde potencia: en el experimento del escalón rechaza menos.</p>
+          <code>statsmodels.kpss</code>, con su opción por defecto (<code>nlags="auto"</code>, 5 rezagos), devuelve
+          $0.8691$; con <code>nlags="legacy"</code> (12 rezagos) baja a $0.5497$, casi la mitad. No es un error de
+          ninguno de los dos: es el <strong>truncamiento de la varianza de largo plazo</strong>, el parámetro $\ell$
+          que decide cuántas autocovarianzas entran en el estimador de Bartlett</p>
+        $$\begin{aligned}
+          \hat\sigma^2_{LP} &= \hat\gamma_0 + 2\sum_{j=1}^{\ell}\Bigl(1 - \tfrac{j}{\ell+1}\Bigr)\hat\gamma_j \\
+          \ell_{\text{R}} &= \left\lfloor 4\left(\tfrac{n}{100}\right)^{1/4}\right\rfloor = 4 \\
+          \ell_{\texttt{legacy}} &= \left\lceil 12\left(\tfrac{n}{100}\right)^{1/4}\right\rceil = 12
+        \end{aligned}$$
+        <p style="margin-bottom:0;">Aquí, con autocorrelaciones positivas, más rezagos inflan $\hat\sigma_{LP}^2$,
+          que está en el denominador, y por eso el estadístico baja. Con <code>nlags=4</code> los dos coinciden hasta
+          el último decimal. Es la misma clase de trampa que el Capítulo 2 documentó entre <code>ndiffs()</code> y
+          <code>kpss.test()</code>: <strong>al comparar salidas de dos programas, conviene mirar primero qué
+          truncamiento usa cada uno</strong>. Y con $\ell = 12$ la prueba pierde potencia: en el experimento del
+          escalón, con $\beta = 100$, la tasa de rechazo baja del $70.8\,\%$ ($\ell = 4$) al $44.5\,\%$
+          ($\ell = 12$).</p>
       </div>
 
       <div class="note">
         <p><strong>La regla práctica.</strong> $d$ casi nunca pasa de 2, y en series económicas casi nunca de 1. Si
-          te encuentras necesitando $d = 3$, casi seguro el problema es otro: una transformación pendiente, un
-          atípico, o justamente un cambio de nivel. Antes de subir $d$, vuelve al gráfico.</p>
+          parece necesario $d = 3$, casi seguro el problema es otro: una transformación pendiente, un atípico, o
+          justamente un cambio de nivel. Antes de subir $d$, conviene volver al gráfico.</p>
       </div>
+
+      <p>Queda, entonces, una decisión abierta. Por ahora se sigue la de <code>auto.arima()</code> —la de KPSS—,
+        $d = 1$, a sabiendas de que es <strong>provisional</strong>: el Módulo 4 identifica $p$ y $q$ sobre
+        $\nabla$Nilo, los Módulos 5 a 7 deciden la constante, estiman y comparan candidatos hasta llegar al
+        ARIMA($1,1,1$), y el Módulo 8 lo pone a prueba contra
+        la alternativa que este módulo dejó planteada, un modelo de dos medias sin diferenciar.</p>
     </div>
   </template>

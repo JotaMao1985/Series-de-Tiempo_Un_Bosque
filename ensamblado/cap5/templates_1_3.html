@@ -17,10 +17,11 @@
       </div>
 
       <p>El Capítulo 4 terminó con un fracaso deliberado. El mejor modelo ARIMA no estacional sobre
-        $\log(\text{AirPassengers})$ era un ARIMA($0,1,1$) con AICc $=-238.64$, y sus residuales conservaban
-        $\hat\rho_{12} = 0.8106$: la octava parte de la ACF quedaba sin explicar, y toda ella concentrada en un solo
-        sitio. Este capítulo se ocupa de ese sitio. Al final del Módulo 5 el mismo modelo, con
-        <strong>un parámetro más</strong>, deja $\hat\rho_{12} = -0.0515$ y AICc $=-483.21$.</p>
+        $\log(\text{AirPassengers})$, un ARIMA($0,1,5$) elegido por búsqueda exhaustiva, dejaba en sus residuales
+        $\hat\rho_{12} = 0.7245$ y $\hat\rho_{24} = 0.6727$: cinco términos MA, y toda la estructura sobrante
+        concentrada en un solo sitio, los múltiplos de 12. Este capítulo se ocupa de ese sitio. Al final del
+        Módulo 5 el modelo <em>airline</em>, con <strong>solo dos parámetros</strong>, deja
+        $\hat\rho_{12} = -0.0515$ y pasa Ljung–Box(24) con $p = 0.233$.</p>
 
       <div class="definition">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: estacionalidad</h4>
