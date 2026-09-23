@@ -59,12 +59,47 @@
     // Devuelve un guion cuando el valor no es un numero finito. Hace falta:
     // jsonlite escribe los AICc infinitos de la traza de auto.arima como null,
     // y Number(null) es 0, que en pantalla se leeria como un AICc de 0.000.
+    //
+    // Punto decimal, como la prosa del capítulo. Los miles se agrupan con un
+    // espacio fino solo desde cinco cifras enteras (80 055.01); con cuatro van
+    // juntos (1267.51), como los escribe el texto. Con coma de miles, un
+    // intervalo de la TRM se leía «[3,797.12, 4,213.40]».
     function fmt(x, d = 2) {
       if (x === null || x === undefined || !Number.isFinite(Number(x))) return '—';
-      return Number(x).toLocaleString('es-CO', {
+      return agrupaMiles(Number(x).toLocaleString('en-US', {
         minimumFractionDigits: d, maximumFractionDigits: d
-      });
+      }));
     }
+
+    // Convierte los miles de una cifra ya formateada en en-US («28,637.95»)
+    // a la convención de fmt(). Solo toca comas entre dígitos seguidas de
+    // grupos de tres, así que «ARIMA(1,1,1)» o «(3, 5)» pasan intactos.
+    function agrupaMiles(s) {
+      return String(s).replace(/\d{1,3}(?:,\d{3})+/g,
+        m => m.replace(/,/g, m.replace(/,/g, '').length >= 5 ? '\u202F' : ''));
+    }
+
+    // Los ejes y los tooltips de Chart.js formatean con el idioma del
+    // navegador: «1,400» en uno en inglés y «1.400» en uno en español, que es
+    // mil cuatrocientos o uno coma cuatro según quién lo lea. Se fija en-US y
+    // se pasa por agrupaMiles(), para que digan lo mismo que las lecturas.
+    Chart.defaults.locale = 'en-US';
+    (function () {
+      const tickLineal = Chart.defaults.scales.linear.ticks.callback;
+      Chart.defaults.scales.linear.ticks.callback = function (valor, i, ticks) {
+        return agrupaMiles(tickLineal.call(this, valor, i, ticks));
+      };
+      const cb = Chart.defaults.plugins.tooltip.callbacks;
+      const etiqueta = cb.label, titulo = cb.title;
+      cb.label = function (item) {
+        return etiqueta.call(this, Object.assign({}, item,
+          { formattedValue: agrupaMiles(item.formattedValue) }));
+      };
+      cb.title = function (items) {
+        return titulo.call(this, items.map(it =>
+          Object.assign({}, it, { label: agrupaMiles(it.label) })));
+      };
+    })();
 
     // Varios simuladores de este capítulo DESTRUYEN y vuelven a crear sus
     // gráficos al repintar (el de pronóstico, por ejemplo, cambia el número de
@@ -996,6 +1031,7 @@
           { clave: 'lb', titulo: 'Ljung–Box(20) p', tituloLargo: 'p-valor de Ljung–Box con 20 rezagos', decimales: 4, mejor: 'mayor' }
         ],
         filas: filas,
+        formato: fmt,
         inicial: 'd',
         destacada: 'ARIMA(1,1,1)',
         pie: 'Ordena primero por <em>d</em> y compara dentro de cada grupo; solo así ' +

@@ -6453,7 +6453,8 @@ c(arima = anchos(function(tr,h,nv) forecast(Arima(tr, order=c(1,1,1)), h=h, leve
     //   filas: [ { metodo: 'SARIMA', rmse: 18.92, cob95: 98.4 }, ... ],
     //   inicial: 'rmse',            // columna por la que se ordena al abrir
     //   destacada: 'SARIMA',        // valor de la 1ª columna que va marcado
-    //   pie: 'texto bajo la tabla'
+    //   pie: 'texto bajo la tabla',
+    //   formato: (valor, decimales) => '…'   // opcional; si falta, es-CO
     // }
     //
     // El registro admite una FUNCIÓN además de un objeto, igual que
@@ -6498,6 +6499,7 @@ c(arima = anchos(function(tr,h,nv) forecast(Arima(tr, order=c(1,1,1)), h=h, leve
         if (columna.tipo === 'texto') return valor === undefined ? '' : String(valor);
         if (valor === null || valor === undefined || !Number.isFinite(Number(valor))) return '—';
         const d = columna.decimales === undefined ? 2 : columna.decimales;
+        if (typeof spec.formato === 'function') return spec.formato(valor, d) + (columna.sufijo || '');
         return Number(valor).toLocaleString('es-CO', {
           minimumFractionDigits: d, maximumFractionDigits: d
         }) + (columna.sufijo || '');
