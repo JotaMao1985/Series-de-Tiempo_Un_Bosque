@@ -4493,8 +4493,8 @@ x = procesos["ar1"].generate_sample(nsample=200, burnin=100,
             $\rho_k$ teóricas por las muestrales $r_k$ y resuelve el sistema. Solo sirve para modelos AR puros. Es
             explícito, rápido y no necesita optimización.</li>
           <li><strong>CSS</strong> (<em>conditional sum of squares</em>). Minimiza $\sum \hat\varepsilon_t^2$
-            condicionando en los primeros valores observados. Es una mínimos cuadrados no lineal: descarta la
-            información de las primeras observaciones.</li>
+            condicionando en los primeros valores observados. Es mínimos cuadrados —ordinarios en un AR puro, no
+            lineales si hay parte MA— y descarta la información que aportan las primeras observaciones.</li>
           <li><strong>Máxima verosimilitud</strong>. Maximiza la verosimilitud gaussiana <em>exacta</em>, que
             incluye la contribución de las primeras observaciones. Es el más eficiente y el que da errores estándar
             fiables.</li>
@@ -4518,8 +4518,8 @@ x = procesos["ar1"].generate_sample(nsample=200, burnin=100,
               \end{aligned}$$
             </li>
             <li>
-              <p>Para un AR(1), la condicional es inmediata: dado $y_{t-1}$, el único término aleatorio es
-                $\varepsilon_t$, luego $y_t \mid y_{t-1} \sim N(\phi y_{t-1},\, \sigma^2)$. Tomando logaritmos, la
+              <p>Para un AR(1) de media cero, la condicional es inmediata: todo el pasado se resume en $y_{t-1}$,
+                y dado ese valor el único término aleatorio es $\varepsilon_t$, luego $y_t \mid y_{t-1} \sim N(\phi y_{t-1},\, \sigma^2)$. Tomando logaritmos, la
                 parte condicional de la log-verosimilitud es</p>
               $$\begin{aligned}
                 &-\frac{T-1}{2}\log(2\pi\sigma^2) \\
@@ -4529,7 +4529,8 @@ x = procesos["ar1"].generate_sample(nsample=200, burnin=100,
             <li>
               <p>Maximizar eso equivale a <strong>minimizar la suma de cuadrados</strong>
                 $\sum_{t=2}^{T}(y_t-\phi y_{t-1})^2$. Ahí está el método <strong>CSS</strong>: es máxima
-                verosimilitud, pero <em>condicionada</em> a $y_1$, cuya densidad se ha ignorado.</p>
+                verosimilitud, pero <em>condicionada</em> a $y_1$, cuya densidad se ha ignorado. En un AR es,
+                además, una regresión ordinaria de $y_t$ sobre $y_{t-1}$.</p>
             </li>
             <li>
               <p>La verosimilitud <strong>exacta</strong> añade el término que falta. La primera observación no es
@@ -4538,12 +4539,20 @@ x = procesos["ar1"].generate_sample(nsample=200, burnin=100,
               $$-\tfrac{1}{2}\log\frac{2\pi\sigma^2}{1-\phi^2} - \frac{(1-\phi^2)\,y_1^2}{2\sigma^2}$$
             </li>
             <li>
-              <p>Ese término aporta el factor $\tfrac{1}{2}\log(1-\phi^2)$, que <strong>penaliza</strong> los valores
-                de $\phi$ cercanos a $1$. Con $T$ grande, un sumando frente a $T$ es despreciable y los dos métodos
-                convergen; con $T$ pequeño o $\phi$ cerca de la frontera, no.</p>
+              <p>Ese término aporta el sumando $\tfrac{1}{2}\log(1-\phi^2)$, que tiende a $-\infty$ cuando
+                $|\phi| \to 1$: <strong>penaliza</strong> los valores cercanos a la frontera de la región
+                estacionaria. Con $T$ grande, un único término frente a los $T-1$ de la parte condicional es
+                despreciable y los dos métodos convergen; con $T$ pequeño o $\phi$ cerca de la frontera, no.</p>
+            </li>
+            <li>
+              <p>Un ejemplo con $T = 40$ y $\phi = 0.95$, que reproduce el código R de abajo: CSS estima
+                $\hat\phi = 1.0086$, <strong>fuera</strong> de la región estacionaria, y ML se queda en $0.9808$.
+                No es lo habitual —en mil simulaciones iguales CSS pasa de $1$ en un 4&nbsp;% de los casos— pero ML
+                no lo hace en ninguna: la verosimilitud exacta cae a $-\infty$ antes de llegar a la frontera.</p>
             </li>
           </ol>
-          <p class="derivacion-resultado">De ahí la jerarquía: CSS es más barato y sirve para arrancar; ML es más
+          <p class="derivacion-resultado">En un AR($p$) el argumento es el mismo: CSS condiciona en las $p$
+            primeras observaciones y ML añade su densidad conjunta. De ahí la jerarquía: CSS es más barato y sirve para arrancar; ML es más
             preciso. Por eso <code>arima()</code> usa por defecto <code>method = "CSS-ML"</code>, que estima por CSS
             para obtener valores iniciales y termina maximizando la verosimilitud exacta.</p>
         </div>
@@ -4640,7 +4649,17 @@ round(2 * pi / Arg(raices[1]), 4)
 # La formula cerrada del AR(2) da lo mismo
 phi &lt;- coef(ml)[1:2]
 round(2 * pi / acos(phi[1] / (2 * sqrt(-phi[2]))), 4)
-#&gt; [1] 10.7369</code></pre>
+#&gt; [1] 10.7369
+
+# El paso 6 del desarrollo: CSS puede salirse de la region estacionaria
+set.seed(1)
+z &lt;- arima.sim(list(ar = 0.95), n = 40)
+round(coef(arima(z, order = c(1, 0, 0), include.mean = FALSE, method = "CSS")), 4)
+#&gt;    ar1
+#&gt; 1.0086     (&gt; 1: fuera de la region estacionaria)
+round(coef(arima(z, order = c(1, 0, 0), include.mean = FALSE, method = "ML")), 4)
+#&gt;    ar1
+#&gt; 0.9808</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np
