@@ -65,10 +65,25 @@
         </table>
       </div>
 
-      <p>En las tres últimas filas, $\rho_{11}$ y $\rho_{13}$ son <strong>casi idénticos entre sí</strong> y
-        aproximadamente iguales a $\rho_1 \cdot \rho_{12}$: en la del <em>airline</em>,
-        $(-0.346)\times(-0.425) = 0.147$, que es exactamente lo que aparece. Esa simetría alrededor del pico estacional
-        es la marca del modelo multiplicativo, y verla ahorra dos parámetros.</p>
+      <p>En las tres últimas filas, $\rho_{11}$ y $\rho_{13}$ son casi idénticos entre sí y aproximadamente
+        iguales a $\rho_1 \cdot \rho_{12}$. Esa simetría alrededor del pico estacional es la marca del modelo
+        multiplicativo, y verla ahorra dos parámetros.</p>
+
+      <p>Conviene saber <strong>cuándo ese «aproximadamente» es literal</strong>, porque no siempre lo es. La fila del
+        <em>airline</em> es solo MA, y el Módulo 2 mostró que ahí la factorización es <strong>exacta</strong>:
+        $\rho_{11} = \rho_{13} = \rho_1\cdot\rho_{12} = 0.14705$, las tres iguales hasta el último decimal que
+        guarda la máquina. Las otras dos filas llevan parte autorregresiva y solo se parecen: en el
+        AR($1$)$\times$SAR($1$), $\rho_{11} = 0.42298$ y $\rho_{13} = 0.42180$ difieren en la tercera cifra, y
+        ninguno coincide con el producto. La diferencia no es una curiosidad aritmética: un MA tiene un número finito
+        de pesos que nunca se pisan, y un AR los tiene infinitos y sí se pisan.</p>
+
+      <div class="warning">
+        <p><strong>Para identificar, da igual; para calcular, no.</strong> Sobre un correlograma estimado —con su
+          banda de $\pm 2/\sqrt{n}$— la distinción entre $0.42298$ y $0.42180$ es invisible, y por eso la regla del
+          producto sirve igual para leer los dos casos. Donde sí importa es al calcular: la varianza de un proceso con
+          parte AR <strong>no</strong> es el producto de las dos varianzas, y el error llega al $33\,\%$ con
+          $\phi = 0.9$. El Módulo 2 lo tabula.</p>
+      </div>
 
       <div class="simulador" data-simulador="firma-teorica">
         <h4><i class="fas fa-wave-square" aria-hidden="true"></i> Laboratorio de firmas estacionales</h4>
