@@ -62,7 +62,7 @@ leía `[3.797,12, 4.213,40]`.
 - **D4 · La tabla ordenable gana un `formato` opcional** en su spec. Sin él sigue en es-CO,
   así que en los capítulos 3, 5 y 6 cambian tres líneas de código y nada en pantalla. La
   plantilla de capítulo lleva el mismo cambio. Los talleres y el preparcial llevan copias
-  propias del componente y no se tocaron.
+  propias del componente y no se tocaron (después sí: §7).
 
 ## 3. La concordancia
 
@@ -83,9 +83,8 @@ Cumplidos todos. Commits `5e3dbf7` (teléfono) y `bdd4c39` (decimales y concorda
 
 ## 5. Lo que queda fuera
 
-- ~~Punto decimal en los capítulos 3, 5 y 6~~: hecho el mismo día, §6. Siguen con coma los
-  capítulos 1 y 2 (sin revisar) y los talleres y el preparcial (copias propias del
-  componente).
+- ~~Punto decimal en los capítulos 3, 5 y 6~~: hecho el mismo día, §6; los talleres y el
+  preparcial, en §7. Siguen sin revisar los capítulos 1 y 2.
 - El capítulo 5, tabla de la TRM: banda $\pm0.168 \rightarrow \pm0.167$.
 - Ningún guion de ensamblado vigila el ancho de las fórmulas.
 
@@ -104,7 +103,32 @@ Verificado por HTTP en los 34 módulos: lecturas, tablas, ejes y tooltips con pu
 cero `.katex-error`, cero errores de JS; el 4 se reensambla idéntico y el 3 sigue siendo
 reproducible. Commit `df035d0`.
 
-## 7. Enlaces
+## 7. Extensión a los talleres y el preparcial (2026-09-23)
+
+Javier pidió «pasa a punto decimal los talleres y el preparcial». El mismo bloque
+(`agrupaMiles()`, `Chart.defaults` en en-US, ticks y tooltips) entró en los tres HTML; en los
+talleres también en sus ensambladores (`precalculo/ensambla_taller{1,2}.py`, ignorados por git,
+con las barras invertidas dobladas).
+
+- **Preparcial:** la prosa ya usaba punto; cambian solo ejes y tooltips.
+- **Taller 1:** la prosa estaba con coma: la banda $\pm 1.96/\sqrt n$ (texto y leyenda),
+  «0.01 o menos» y el $0.42$ del banco. Se editó el HTML publicado a mano y el ensamblador en
+  los mismos sitios, **sin reensamblar**: el ensamblador arrastra $45$ líneas de deriva de la
+  plantilla ajenas a esto. `audita_texto_taller1.py` declara ahora `1.96` como estructural
+  (con coma lo leía como «1» y «96»).
+- **Taller 2 (ya repartido):** lo mismo más $\hat\theta = 1.25$, $\phi = -0.7$, el tope $0.5$ y el
+  $p = 0.06$ del banco. Se reensambló; `verifica_taller2.R --anclas` sigue en **4858** anclas.
+  El generador no se tocó. La retroalimentación que se entrega el 7 de octubre
+  (`Calificacion Taller 2 (20948)/plantilla.Rmd.txt` y los 18 `rmd/`) cita «1.25» y «0.8»; las
+  hojas de calificación internas siguen escribiendo «1,25» y «0,8». El Quiz 2 ya se aplicó con
+  el banco en coma.
+
+Verificado por HTTP con una variante cargada: ejes, tooltips y prosa con punto, cero
+`.katex-error`, cero errores de JS. En verde: los auditores y pruebas de los dos talleres y
+del preparcial, `verifica_taller1.R`, `verifica_preparcial.R` ($402$ comprobaciones),
+`cuenta_sitio.py` y las dos auditorías del sitio. Commit `14c5fb2`.
+
+## 8. Enlaces
 
 - Bitácora: [[2026-09-23]]
 - Nota del capítulo: [[20948-04 Modelos ARIMA y Box-Jenkins]]
