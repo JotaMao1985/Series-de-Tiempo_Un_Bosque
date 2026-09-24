@@ -84,7 +84,7 @@ Cumplidos todos. Commits `5e3dbf7` (teléfono) y `bdd4c39` (decimales y concorda
 ## 5. Lo que queda fuera
 
 - ~~Punto decimal en los capítulos 3, 5 y 6~~: hecho el mismo día, §6; los talleres y el
-  preparcial, en §7. Siguen sin revisar los capítulos 1 y 2.
+  preparcial, en §7; los capítulos 1 y 2, en §8.
 - El capítulo 5, tabla de la TRM: banda $\pm0.168 \rightarrow \pm0.167$.
 - Ningún guion de ensamblado vigila el ancho de las fórmulas.
 
@@ -128,7 +128,20 @@ Verificado por HTTP con una variante cargada: ejes, tooltips y prosa con punto, 
 del preparcial, `verifica_taller1.R`, `verifica_preparcial.R` ($402$ comprobaciones),
 `cuenta_sitio.py` y las dos auditorías del sitio. Commit `14c5fb2`.
 
-## 8. Enlaces
+## 8. Extensión a los capítulos 1 y 2 (2026-09-23)
+
+Javier pidió «pasa a punto decimal los capítulos 1 y 2». Su prosa y sus lecturas ya usaban
+punto (`toFixed()`, sin `toLocaleString`, sin tabla ordenable); lo único que dependía del
+navegador eran los ejes y tooltips de Chart.js. Entró el bloque de `agrupaMiles()` y
+`Chart.defaults` en en-US antes de `crearGraficoLinea()`, editado directo en el HTML: estos dos
+capítulos no tienen ensamblador. Donde se notaba: la TRM del M7 del capítulo 2, con el eje
+`2,000 … 5,000` y el tooltip `3,904.76`, ahora `2000 … 5000` y `3904.76`.
+
+Verificado por HTTP en los 18 módulos contra la versión anterior: ninguna cifra con coma
+decimal, cero `.katex-error`, cero errores de JS; `cuenta_sitio.py` y las dos auditorías en
+verde. Commit `a489f90`. **Con esto todo el material usa punto decimal.**
+
+## 9. Enlaces
 
 - Bitácora: [[2026-09-23]]
 - Nota del capítulo: [[20948-04 Modelos ARIMA y Box-Jenkins]]
