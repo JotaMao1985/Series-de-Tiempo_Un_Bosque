@@ -83,11 +83,26 @@ Cumplidos todos. Commits `5e3dbf7` (teléfono) y `bdd4c39` (decimales y concorda
 
 ## 5. Lo que queda fuera
 
-- **Punto decimal en los capítulos 1–3, 5 y 6**, y en los talleres y el preparcial. En el 3,
-  5 y 6 basta pasar `formato` a sus tablas ordenables y cambiar su `fmt()`; los ejes piden
-  el mismo bloque de `Chart.defaults`.
+- ~~Punto decimal en los capítulos 3, 5 y 6~~: hecho el mismo día, §7. Siguen con coma los
+  capítulos 1 y 2 (sin revisar) y los talleres y el preparcial (copias propias del
+  componente).
 - El capítulo 5, tabla de la TRM: banda $\pm0.168 \rightarrow \pm0.167$.
 - Ningún guion de ensamblado vigila el ancho de las fórmulas.
+
+## 7. Extensión a los capítulos 3, 5 y 6 (2026-09-23)
+
+Javier pidió después «pasa a punto decimal los capítulos 3, 5 y 6». Se copió el bloque del 4:
+
+- `fmt()` del 5 y del 6 con punto decimal y la misma agrupación de miles;
+- el 3 no tenía `fmt()` —sus lecturas usan `toFixed()`, que ya escribe punto— y gana uno para
+  su tabla ordenable;
+- `Chart.defaults.locale = 'en-US'` con ticks y tooltips por `agrupaMiles()` en los tres;
+- `formato: fmt` en las cuatro tablas ordenables (`criterios`, `comparativa`, `backtest` y
+  `nilo`).
+
+Verificado por HTTP en los 34 módulos: lecturas, tablas, ejes y tooltips con punto decimal,
+cero `.katex-error`, cero errores de JS; el 4 se reensambla idéntico y el 3 sigue siendo
+reproducible. Commit `df035d0`.
 
 ## 6. Enlaces
 
