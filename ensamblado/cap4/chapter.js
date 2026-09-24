@@ -228,14 +228,36 @@
       // que ser numérico, o el tramo 100→150 ocuparía lo mismo que 0→25.
       const curva = campo => puntos.map(p => ({ x: p.delta, y: 100 * p[campo] }));
 
+      // En un teléfono los lienzos miden unos 240 px de ancho: con la leyenda de
+      // escritorio, las cinco entradas de la tasa ocupaban cuatro filas y dejaban
+      // ~40 px a las curvas. Por debajo de 420 px la leyenda se compacta y el
+      // marco de la tasa crece; onResize lo reajusta si cambia el ancho.
+      const ESTRECHO = 420;
+      function compactar(grafico, ancho, altos) {
+        const chico = ancho < ESTRECHO;
+        Object.assign(grafico.options.plugins.legend.labels, {
+          font: { family: 'Montserrat', size: chico ? 10 : 12 },
+          boxWidth: chico ? 12 : 24,
+          padding: chico ? 6 : 10
+        });
+        if (altos) grafico.canvas.parentNode.style.height = chico ? altos.estrecho : altos.ancho;
+      }
+      const ALTOS_CURVA = { estrecho: '280px', ancho: '200px' };
+
       function pintar() {
         const b = params.beta;
         const y = ruido.map((v, i) => v - (i + 1 >= malla.posicion ? b : 0));
         if (gSerie) gSerie.destroy();
+        // El rótulo de encima ya dice «ruido blanco + escalón»: la leyenda solo
+        // nombra el descenso, y así cabe en un teléfono.
         gSerie = lineaSimple(cSerie, etiquetas, y,
-          b === 0 ? 'Ruido blanco puro (sin escalón)'
-                  : `Ruido blanco con un descenso de ${fmt(b, 0)} en 1899`,
-          COLORES_GRAFICO.primario, { scales: escalasLinea('Nivel simulado') });
+          b === 0 ? 'Sin escalón' : `Descenso de ${fmt(b, 0)} en 1899`,
+          COLORES_GRAFICO.primario, {
+            scales: escalasLinea('Nivel simulado'),
+            onResize: (g, t) => compactar(g, t.width)
+          });
+        compactar(gSerie, gSerie.width);
+        gSerie.update('none');
 
         const tasa = interpolar(b, 'kpss_rechaza');
         const tasa12 = interpolar(b, 'kpss_rechaza_l12');
@@ -266,11 +288,17 @@
               borderColor: COLORES_GRAFICO.primario,
               backgroundColor: COLORES_GRAFICO.primario,
               pointRadius: 6, pointHoverRadius: 7, showLine: false
+            },
+            {
+              label: `Nilo (${fmt(malla.delta_del_nilo, 1)})`,
+              data: [{ x: malla.delta_del_nilo, y: 0 }, { x: malla.delta_del_nilo, y: 100 }],
+              borderColor: COLORES_GRAFICO.primario,
+              borderDash: [2, 3], borderWidth: 1.5, pointRadius: 0, pointHitRadius: 0, fill: false
             }
           ], {
             scales: {
               x: { type: 'linear', min: 0, max: 300,
-                   title: { display: true, text: 'Tamaño del escalón β' },
+                   title: { display: true, text: 'Tamaño del descenso |β|' },
                    ticks: { font: { family: 'Fira Code', size: 10 }, stepSize: 50 },
                    grid: { display: false } },
               y: { min: 0, max: 100,
@@ -278,15 +306,21 @@
                             font: { family: 'Montserrat', size: 11 } },
                    ticks: { font: { family: 'Fira Code', size: 11 },
                             callback: v => v + ' %' } }
-            }
+            },
+            onResize: (g, t) => compactar(g, t.width, ALTOS_CURVA)
           });
+          compactar(gCurva, gCurva.width, ALTOS_CURVA);
+          // La línea del Nilo es una referencia, no una tasa: con la interacción
+          // por índice, sus dos puntos (0 y 100) saldrían en el tooltip junto a
+          // los de las curvas.
+          gCurva.options.plugins.tooltip.filter = item => item.datasetIndex !== 4;
         }
         // El β elegido se marca sobre la curva de R, en su valor interpolado.
         gCurva.data.datasets[3].data = [{ x: b, y: 100 * tasa }];
         gCurva.update('none');
 
         actualizarLectura(lectura, [
-          { etiqueta: 'escalón β', valor: b === 0 ? 'sin escalón' : `descenso de ${fmt(b, 0)}` },
+          { etiqueta: 'descenso |β|', valor: b === 0 ? 'sin escalón' : fmt(b, 0) },
           { etiqueta: 'en desv. típicas', valor: fmt(b / malla.sigma, 2) },
           { etiqueta: 'KPSS medio', valor: fmt(interpolar(b, 'kpss_medio'), 3) },
           { etiqueta: 'rechaza (ℓ = 4)', valor: `${fmt(100 * tasa, 1)} %` },
@@ -296,7 +330,7 @@
       }
 
       crearControles(raiz.querySelector('.simulador-controles'), [
-        { clave: 'beta', etiqueta: 'Tamaño del escalón β ', min: 0, max: 300, paso: 5, decimales: 0 }
+        { clave: 'beta', etiqueta: 'Tamaño del descenso |β| ', min: 0, max: 300, paso: 5, decimales: 0 }
       ], params, pintar);
 
       pintar();
