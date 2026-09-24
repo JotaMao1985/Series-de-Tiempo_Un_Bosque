@@ -511,7 +511,10 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
           $2771$, tres veces y media más ancho que el de $d = 1$.</p>
         <p style="margin-bottom:0;">Y ese ARIMA($1,2,1$) tiene $\hat\theta = -1$: es el modelo sobrediferenciado del
           Módulo 8. Su MA cancela una de las dos diferencias, así que los $\psi_j$ tienden a
-          $1/(1-\hat\phi) = 0.72$ en vez de a $0.169$, y de ahí el abanico.</p>
+          $1/(1-\hat\phi) = 0.72$ en vez de a $0.169$. Eso explica buena parte del abanico, pero no todo: con
+          esos pesos, la fórmula de abajo da un ancho de $2428$ en $h = 30$, y <code>forecast()</code> devuelve
+          $2771$. La diferencia es el precio de la no invertibilidad —con $\hat\theta = -1$ los choques pasados
+          no se recuperan de los datos—, y el desarrollo del final del módulo lo explica.</p>
       </div>
 
       <h3>De dónde sale el ancho del intervalo</h3>
@@ -595,6 +598,10 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
                 $\varepsilon_{T+1},\dots,\varepsilon_{T+h}$. El pronóstico óptimo en error cuadrático medio sustituye
                 esos $h$ errores futuros por su esperanza, cero:</p>
               $$\hat{y}_{T+h|T} = m_{T+h}$$
+              <p>Ese paso supone que el modelo es <strong>invertible</strong>: solo así los choques pasados se
+                recuperan de los datos observados. Si no lo es —un $\theta$ en $-1$—, $\varepsilon_T,
+                \varepsilon_{T-1},\dots$ no se conocen del todo, y el intervalo que calcula el software, que
+                incorpora esa incertidumbre, sale más ancho que el de la fórmula del paso 4.</p>
             </li>
             <li>
               <p>El error de pronóstico es exactamente lo que se descartó — los $h$ primeros términos:</p>
@@ -610,14 +617,18 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
             </li>
             <li>
               <p>Dos consecuencias inmediatas. Con $h = 1$ solo sobrevive $\psi_0 = 1$, luego
-                $\sigma_1 = \sigma$. Y como los $\psi_j^2$ son positivos, $\sigma_h$ <strong>crece siempre</strong>
-                con el horizonte: un intervalo de pronóstico no puede estrecharse al alejarse.</p>
+                $\sigma_1 = \sigma$. Y como los $\psi_j^2$ no son negativos, $\sigma_h$ <strong>nunca decrece</strong>
+                con el horizonte. Puede quedarse plano —en un MA($1$), desde $h = 2$—, pero un intervalo de
+                pronóstico no puede estrecharse al alejarse.</p>
             </li>
             <li>
               <p>El ritmo al que crece lo decide $d$. Si el proceso es estacionario, $\psi_j \to 0$ y la suma
-                converge: el intervalo se estabiliza. Si hay una raíz unitaria, $\psi_j$ tiende a una
-                <strong>constante</strong> —en el Nilo, $\psi_j \to 0.169$— y la suma crece sin límite, como $h$.
-                Con dos raíces unitarias, $\psi_j$ crece linealmente y $\sigma_h$ lo hace como $h^{3/2}$.</p>
+                converge: el intervalo se estabiliza. Con una raíz unitaria, $\psi_j$ tiende a una
+                <strong>constante</strong> —en el Nilo, $\psi_j \to 0.169$—, la suma crece sin límite, como $h$, y
+                $\sigma_h$ lo hace como $\sqrt{h}$. Con dos, $\psi_j$ crece linealmente y $\sigma_h$ lo hace como
+                $h^{3/2}$, <strong>salvo que la parte MA cancele una de las raíces</strong>: es lo que ocurre en el
+                ARIMA($1,2,1$) del Nilo, cuyo $\hat\theta = -1$ deja los $\psi_j$ en $0.718$ y el crecimiento en
+                $\sqrt{h}$, como con $d = 1$.</p>
             </li>
           </ol>
           <p class="derivacion-resultado">El ancho del intervalo es una consecuencia algebraica de $(p,d,q)$, no un
@@ -681,7 +692,22 @@ round(c(sigma = s, sigma_h1 = sigma_h[1], sigma_h30 = sigma_h[30],
         psi_30 = psi[31]), 3)
 #&gt;     sigma  sigma_h1 sigma_h30    psi_30
 #&gt;   142.045   142.045   199.363     0.169
-# psi tiende a una CONSTANTE, no a cero: es la raiz unitaria</code></pre>
+# psi tiende a una CONSTANTE, no a cero: es la raiz unitaria
+
+# Con d = 2 el MA estimado es theta = -1: el modelo no es invertible
+f2   &lt;- Arima(Nile, order = c(1, 2, 1))
+ph2  &lt;- coef(f2)[["ar1"]]
+psi2 &lt;- c(1, ARMAtoMA(ar = c(2 + ph2, -(1 + 2 * ph2), ph2),
+                      ma = coef(f2)[["ma1"]], lag.max = 29))
+fc2  &lt;- forecast(f2, h = 30, level = 95)
+round(c(theta     = coef(f2)[["ma1"]],
+        psi_29    = psi2[30],
+        ancho_psi = 2 * qnorm(0.975) * sqrt(f2$sigma2 * sum(psi2^2)),
+        ancho_fc  = fc2$upper[30] - fc2$lower[30]), 3)
+#&gt;     theta    psi_29 ancho_psi  ancho_fc
+#&gt;    -1.000     0.718  2427.955  2771.452
+# La formula se queda corta: con theta = -1 los choques pasados no se
+# recuperan de los datos, y forecast() suma esa incertidumbre</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, statsmodels.api as sm
