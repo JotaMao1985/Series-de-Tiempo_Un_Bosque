@@ -280,7 +280,7 @@ for clave, (titulo, nota) in MAPAS.items():
 # la instancia está en una plantilla de módulo y su registro en `chapter.js`, que
 # son justo las dos regiones que este script sustituye.
 RANKINGS = {
-    "comparativa": ("Los seis métodos sobre una sola partición", ""),
+    "comparativa": ("Los ocho métodos sobre una sola partición", ""),
 }
 for clave, (titulo, pie) in RANKINGS.items():
     marca = f"<!--RANKING:{clave}|{titulo}|{pie}-->"
@@ -415,7 +415,7 @@ fallos += comprueba_tabla_ranking(html, "comparativa")
 # ni `TABLAS_RANKING` a secas: el JavaScript heredado documenta el componente con
 # un ejemplo (`TABLAS_RANKING['id'] = {`) dentro de un comentario.
 for pieza, esperadas in [
-        ('<p class="tabla-ranking-titulo">Los seis métodos sobre una sola '
+        ('<p class="tabla-ranking-titulo">Los ocho métodos sobre una sola '
          'partición</p>', 1),
         ("TABLAS_RANKING['comparativa']", 1),
         # Maquinaria compartida, heredada del capítulo 4

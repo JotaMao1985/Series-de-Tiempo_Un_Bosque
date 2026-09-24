@@ -886,9 +886,9 @@
     TABLAS_RANKING['comparativa'] = function () {
       const claves = AP.comparativa.orden_rmse;
       return {
-        descripcion: 'Los seis métodos sobre los últimos ' + AP.comparativa.n_prueba +
-          ' meses, una sola partición. Pulsa las cabeceras: las tres métricas coinciden ' +
-          'en el orden, lo que da una falsa sensación de solidez.',
+        descripcion: 'Los ocho métodos sobre los últimos ' + AP.comparativa.n_prueba +
+          ' meses, una sola partición. Pulsa las cabeceras: por RMSE gana el ETS sobre el ' +
+          'logaritmo y por MAE y MAPE la regresión armónica, pero las tres dejan al SARIMA cuarto.',
         columnas: [
           { clave: 'modelo', titulo: 'Método', tipo: 'texto' },
           { clave: 'rmse', titulo: 'RMSE', decimales: 2, mejor: 'menor' },
@@ -903,8 +903,8 @@
         })),
         formato: fmt,
         inicial: 'rmse',
-        pie: 'Las tres columnas dan el mismo orden y aun así el orden es engañoso: ' +
-          'sobre 61 orígenes en vez de uno, el SARIMA pasa de cuarto a primero. ' +
+        pie: 'Las tres métricas coinciden en el cuarto puesto y aun así es engañoso: sobre ' +
+          '61 orígenes, midiendo los 12 meses siguientes a cada corte, el SARIMA pasa a primero. ' +
           'El Capítulo 6 construye esa evaluación.'
       };
     };
