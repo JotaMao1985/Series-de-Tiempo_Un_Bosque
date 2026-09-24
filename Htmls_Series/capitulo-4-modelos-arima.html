@@ -2698,8 +2698,9 @@ print(round(razon, 3), round(razon0, 1))
             </button>
           </li>
         </ol>
-        <p class="ciclo-retorno">Las tres primeras etapas forman un bucle: solo se sale de él cuando el diagnóstico
-          no encuentra nada que objetar.</p>
+        <p class="ciclo-retorno">Las etapas 2, 3 y 4 pueden mandar de vuelta a la identificación. Solo se llega a
+          pronosticar cuando el diagnóstico no encuentra nada que objetar, y aun entonces la forma del pronóstico
+          puede delatar un $d$ mal elegido.</p>
         <div class="ciclo-panel" id="ciclo-box-jenkins-identificacion" role="tabpanel">
           <div class="ciclo-campo">
             <span class="ciclo-etiqueta">Qué haces</span>
@@ -2735,9 +2736,11 @@ print(round(razon, 3), round(razon0, 1))
           </div>
           <div class="ciclo-campo ciclo-vuelta">
             <span class="ciclo-etiqueta">Qué te devuelve atrás</span>
-            <p>Que el ajuste <strong>no converja</strong>, que un coeficiente tenga un error estándar enorme (señal
-              de sobreparametrización) o que una raíz caiga sobre el círculo unitario. Cualquiera de las tres manda
-              de vuelta a la etapa 1 con un orden más pequeño.</p>
+            <p>Que el ajuste <strong>no converja</strong> o que un coeficiente tenga un error estándar enorme (señal
+              de sobreparametrización): de vuelta a la etapa 1 con $p$ o $q$ más pequeños. Una raíz sobre el círculo
+              unitario, o muy cerca, también devuelve, pero el arreglo depende de cuál sea: si es del MA, la serie
+              se diferenció de más y hay que <strong>bajar</strong> $d$; si es del AR, le falta una diferencia y hay
+              que <strong>subirlo</strong>.</p>
           </div>
         </div>
         <div class="ciclo-panel" id="ciclo-box-jenkins-diagnostico" role="tabpanel" hidden>
