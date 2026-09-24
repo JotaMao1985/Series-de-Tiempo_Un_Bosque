@@ -2952,11 +2952,15 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
 
       <div class="simulador" data-simulador="escalon-vs-raiz">
         <h4><i class="fas fa-stairs" aria-hidden="true"></i> Un escalón disfrazado de raíz unitaria</h4>
-        <p class="simulador-intro">Mueve el deslizador. Arriba, una realización concreta con el $\beta$ elegido.
-          Abajo, la tasa de rechazo de KPSS medida en R sobre 400 réplicas en nueve valores de $\beta$; entre ellos
-          se interpola. Recuerda que
-          <strong>ninguna</strong> de estas series tiene raíz unitaria: todas son ruido blanco más una constante a
-          trozos.</p>
+        <p class="simulador-intro">El deslizador fija el tamaño del descenso en 1899, $|\beta|$. Arriba, una
+          realización concreta; abajo, la tasa de rechazo de KPSS al $5\,\%$ medida en R sobre 400 réplicas en nueve
+          valores de $|\beta|$, interpolada entre ellos. Recuerda que <strong>ninguna</strong> de estas series tiene
+          raíz unitaria: todas son ruido blanco más una constante a trozos. Empieza en $|\beta| = 0$: KPSS rechaza
+          cerca del $5\,\%$ nominal, así que la prueba funciona. Luego sube el descenso y busca dónde cruza la curva
+          el $50\,\%$; la línea vertical marca el que de verdad tiene el Nilo, $|\beta| = 247.8$. La segunda curva
+          es la misma prueba con otro truncamiento de la varianza de largo plazo, $\ell = 12$ en vez de $4$, el de
+          <code>nlags="legacy"</code> en Python: rechaza menos, pero no deja de engañarse, solo necesita descensos
+          mayores. El recuadro «R y Python no calculan el mismo KPSS», más abajo, explica ese parámetro.</p>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">Una realización: ruido blanco + escalón</p>
         <div class="grafico-wrapper" style="height:200px;">
@@ -2980,7 +2984,7 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
           el de <code>adf.test()</code> (constante y tendencia, $k = 4$) <strong>no rechaza</strong> la raíz unitaria
           en el $86.4\,\%$ de las réplicas con escalón, frente al $5.4\,\%$ sin él: el escalón también engaña al ADF
           de la tabla, y su $p = 0.064$ sobre el Nilo es probablemente otra víctima.</p>
-        <p style="margin-bottom:0;">Basta un escalón de $0.79$ desviaciones típicas ($\beta = 100$) para que la tasa
+        <p style="margin-bottom:0;">Basta un escalón de $0.79$ desviaciones típicas ($|\beta| = 100$) para que la tasa
           de rechazo de KPSS suba al $70.8\,\%$. Un salto que a ojo parece modesto ya es suficiente.</p>
       </div>
 
@@ -3028,7 +3032,7 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
                 escalón acaba haciéndolo rechazar. Y eso es lo que mide la curva del simulador. El escalón también
                 engorda $\hat\sigma^2_{LP}$, porque añade a las autocovarianzas de $e_t$ un término proporcional a
                 $\beta^2$; por eso, para escalones grandes, el estadístico medio deja de crecer y se estabiliza
-                (de $1.07$ con $\beta = 200$ a $1.23$ con $\beta = 300$), muy por encima del valor crítico de
+                (de $1.07$ con $|\beta| = 200$ a $1.23$ con $|\beta| = 300$), muy por encima del valor crítico de
                 $0.463$.</p>
             </li>
           </ol>
@@ -3146,7 +3150,7 @@ print(simula(0.0), simula(-247.78))
           el último decimal. Es la misma clase de trampa que el Capítulo 2 documentó entre <code>ndiffs()</code> y
           <code>kpss.test()</code>: <strong>al comparar salidas de dos programas, conviene mirar primero qué
           truncamiento usa cada uno</strong>. Y con $\ell = 12$ la prueba pierde potencia: en el experimento del
-          escalón, con $\beta = 100$, la tasa de rechazo baja del $70.8\,\%$ ($\ell = 4$) al $44.5\,\%$
+          escalón, con $|\beta| = 100$, la tasa de rechazo baja del $70.8\,\%$ ($\ell = 4$) al $44.5\,\%$
           ($\ell = 12$).</p>
       </div>
 
@@ -6616,14 +6620,36 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
       // que ser numérico, o el tramo 100→150 ocuparía lo mismo que 0→25.
       const curva = campo => puntos.map(p => ({ x: p.delta, y: 100 * p[campo] }));
 
+      // En un teléfono los lienzos miden unos 240 px de ancho: con la leyenda de
+      // escritorio, las cinco entradas de la tasa ocupaban cuatro filas y dejaban
+      // ~40 px a las curvas. Por debajo de 420 px la leyenda se compacta y el
+      // marco de la tasa crece; onResize lo reajusta si cambia el ancho.
+      const ESTRECHO = 420;
+      function compactar(grafico, ancho, altos) {
+        const chico = ancho < ESTRECHO;
+        Object.assign(grafico.options.plugins.legend.labels, {
+          font: { family: 'Montserrat', size: chico ? 10 : 12 },
+          boxWidth: chico ? 12 : 24,
+          padding: chico ? 6 : 10
+        });
+        if (altos) grafico.canvas.parentNode.style.height = chico ? altos.estrecho : altos.ancho;
+      }
+      const ALTOS_CURVA = { estrecho: '280px', ancho: '200px' };
+
       function pintar() {
         const b = params.beta;
         const y = ruido.map((v, i) => v - (i + 1 >= malla.posicion ? b : 0));
         if (gSerie) gSerie.destroy();
+        // El rótulo de encima ya dice «ruido blanco + escalón»: la leyenda solo
+        // nombra el descenso, y así cabe en un teléfono.
         gSerie = lineaSimple(cSerie, etiquetas, y,
-          b === 0 ? 'Ruido blanco puro (sin escalón)'
-                  : `Ruido blanco con un descenso de ${fmt(b, 0)} en 1899`,
-          COLORES_GRAFICO.primario, { scales: escalasLinea('Nivel simulado') });
+          b === 0 ? 'Sin escalón' : `Descenso de ${fmt(b, 0)} en 1899`,
+          COLORES_GRAFICO.primario, {
+            scales: escalasLinea('Nivel simulado'),
+            onResize: (g, t) => compactar(g, t.width)
+          });
+        compactar(gSerie, gSerie.width);
+        gSerie.update('none');
 
         const tasa = interpolar(b, 'kpss_rechaza');
         const tasa12 = interpolar(b, 'kpss_rechaza_l12');
@@ -6654,11 +6680,17 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
               borderColor: COLORES_GRAFICO.primario,
               backgroundColor: COLORES_GRAFICO.primario,
               pointRadius: 6, pointHoverRadius: 7, showLine: false
+            },
+            {
+              label: `Nilo (${fmt(malla.delta_del_nilo, 1)})`,
+              data: [{ x: malla.delta_del_nilo, y: 0 }, { x: malla.delta_del_nilo, y: 100 }],
+              borderColor: COLORES_GRAFICO.primario,
+              borderDash: [2, 3], borderWidth: 1.5, pointRadius: 0, pointHitRadius: 0, fill: false
             }
           ], {
             scales: {
               x: { type: 'linear', min: 0, max: 300,
-                   title: { display: true, text: 'Tamaño del escalón β' },
+                   title: { display: true, text: 'Tamaño del descenso |β|' },
                    ticks: { font: { family: 'Fira Code', size: 10 }, stepSize: 50 },
                    grid: { display: false } },
               y: { min: 0, max: 100,
@@ -6666,15 +6698,21 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
                             font: { family: 'Montserrat', size: 11 } },
                    ticks: { font: { family: 'Fira Code', size: 11 },
                             callback: v => v + ' %' } }
-            }
+            },
+            onResize: (g, t) => compactar(g, t.width, ALTOS_CURVA)
           });
+          compactar(gCurva, gCurva.width, ALTOS_CURVA);
+          // La línea del Nilo es una referencia, no una tasa: con la interacción
+          // por índice, sus dos puntos (0 y 100) saldrían en el tooltip junto a
+          // los de las curvas.
+          gCurva.options.plugins.tooltip.filter = item => item.datasetIndex !== 4;
         }
         // El β elegido se marca sobre la curva de R, en su valor interpolado.
         gCurva.data.datasets[3].data = [{ x: b, y: 100 * tasa }];
         gCurva.update('none');
 
         actualizarLectura(lectura, [
-          { etiqueta: 'escalón β', valor: b === 0 ? 'sin escalón' : `descenso de ${fmt(b, 0)}` },
+          { etiqueta: 'descenso |β|', valor: b === 0 ? 'sin escalón' : fmt(b, 0) },
           { etiqueta: 'en desv. típicas', valor: fmt(b / malla.sigma, 2) },
           { etiqueta: 'KPSS medio', valor: fmt(interpolar(b, 'kpss_medio'), 3) },
           { etiqueta: 'rechaza (ℓ = 4)', valor: `${fmt(100 * tasa, 1)} %` },
@@ -6684,7 +6722,7 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
       }
 
       crearControles(raiz.querySelector('.simulador-controles'), [
-        { clave: 'beta', etiqueta: 'Tamaño del escalón β ', min: 0, max: 300, paso: 5, decimales: 0 }
+        { clave: 'beta', etiqueta: 'Tamaño del descenso |β| ', min: 0, max: 300, paso: 5, decimales: 0 }
       ], params, pintar);
 
       pintar();
