@@ -586,18 +586,36 @@ for (h in c(1, 6, 12)) {
 #&gt; h =  1  DM =  0.0638  p = 0.9497
 #&gt; h =  6  DM =  0.9115  p = 0.3711
 #&gt; h = 12  DM =  1.2659  p = 0.2177
+# Y a los doce horizontes: el menor p
+p12 &lt;- sapply(1:12, function(h)
+  dm.test(E$airline[, h], E$snaive[, h], h = h, power = 2)$p.value)
+c(h = unname(which.min(p12)), p = round(min(p12), 4))
+#&gt;      h      p
+#&gt; 7.0000 0.0641
 
 # El MASE de los cuatro, para leerlos en escala comparable
 Q &lt;- mean(abs(diff(as.numeric(subset(USAccDeaths, start = 1, end = 36)), lag = 12)))
 round(sort(sapply(E, function(e) mean(abs(e)) / Q)), 4)
 #&gt; snaive   auto airline  media
-#&gt; 0.4004 0.5012  0.5210 1.1517</code></pre>
+#&gt; 0.4004 0.5012  0.5210 1.1517
+round(Q, 1)                                        #&gt; [1] 659.9
+# La escala sale de 1973-1975 y absorbe la caida de 1974
+round(tapply(abs(diff(as.numeric(USAccDeaths), lag = 12)),
+             rep(1974:1978, each = 12), mean), 1)
+#&gt;  1974  1975  1976  1977  1978
+#&gt; 933.2 386.6 334.3 272.6 259.5</code></pre>
           <p><strong>Discusión.</strong> Los tres resultados cuentan la misma historia desde tres ángulos. La partición
             única elige el modelo más complejo con $12$ observaciones; el origen móvil, con $300$, lo pone tercero; y
-            el contraste dice que ni siquiera esa segunda ordenación es concluyente ($p$ entre $0.22$ y $0.95$). Con
-            una serie de seis años el <em>airline</em> no tiene datos suficientes para que sus dos parámetros paguen
-            su costo, y el naïve estacional —que no estima nada— hace el mismo trabajo. Los cuatro MASE por debajo de
-            $1$ salvo la media confirman que la estacionalidad es fuerte y que capturarla es casi todo el problema.</p>
+            el contraste dice que ni siquiera esa segunda ordenación es concluyente: $p$ entre $0.22$ y $0.95$ en los
+            tres horizontes contrastados, y ninguno por debajo de $0.05$ en los doce (el menor, $0.064$, a $h = 7$).
+            Con una serie de seis años el <em>airline</em> no tiene datos suficientes para que sus dos parámetros
+            paguen su costo, y el naïve estacional —que no estima nada— hace el mismo trabajo. Que tres de los cuatro
+            MASE queden por debajo de $1$ no dice que la estacionalidad sea fuerte: la escala, $Q = 659.9$, se
+            calculó sobre 1973–1975 y absorbe la caída de 1974, cuando la diferencia estacional media fue de $933.2$,
+            frente a entre $259.5$ y $386.6$ en los años siguientes. Con esa escala, hasta el naïve estacional sale
+            en $0.40$. Lo que sí mide la fuerza de la estacionalidad es la comparación con la media, que la ignora:
+            su MASE es casi el triple del naïve estacional ($1.15$ frente a $0.40$). Capturarla es casi todo el
+            problema.</p>
         </div>
       </div>
 
@@ -658,8 +676,9 @@ t(sapply(cands, function(fc) {
             sobre una serie difícil y este es el peor método posible sobre una serie fácil. La comparación entre
             series con MAPE no significa nada: depende de cuánto varíe cada una respecto de su nivel. El MASE lo
             resuelve porque su denominador es la dificultad <em>de esa serie</em>: $21.99$ frente a $2.4935$ dice sin
-            ambigüedad cuál de los dos trabajos está peor hecho. Nótese además que dentro de esta serie el orden es el
-            mismo con las cuatro métricas y las razones peor/mejor casi coinciden ($99.86$ con MAPE, $99.81$ con
+            ambigüedad cuál de los dos trabajos está peor hecho. Nótese además que dentro de esta serie las cuatro
+            métricas ordenan casi igual —solo el RMSE pone el naïve estacional ($2.43$) por delante de la deriva
+            ($2.48$); el MAE, el MAPE y el MASE, al revés— y que las razones peor/mejor casi coinciden ($99.86$ con MAPE, $99.81$ con
             MASE): el problema del MAPE aquí no es ordenar, es que su <em>valor absoluto</em> no se puede leer.</p>
         </div>
       </div>
@@ -729,12 +748,41 @@ anchos &lt;- function(ajusta, T0 = 60, h = 5) {
 c(arima = anchos(function(tr,h,nv) forecast(Arima(tr, order=c(1,1,1)), h=h, level=nv)),
   naive = anchos(function(tr,h,nv) naive(tr, h=h, level=nv)))
 #&gt;     arima     naive
-#&gt;  631.1552 1138.3547</code></pre>
+#&gt;  631.1552 1138.3547
+
+# 4. De donde sale el ancho: la sigma del primer paso frente al error real,
+#    y la cobertura del 50 % horizonte a horizonte
+paso1 &lt;- function(ajusta, T0 = 60, h = 5) {
+  s &lt;- e1 &lt;- c(); dentro &lt;- NULL
+  for (T in T0:(length(Nile) - h)) {
+    fc &lt;- ajusta(subset(Nile, start = 1, end = T), h, 50)
+    real &lt;- as.numeric(Nile)[(T + 1):(T + h)]
+    s  &lt;- c(s, (fc$upper[1, 1] - fc$mean[1]) / qnorm(0.75))
+    e1 &lt;- c(e1, real[1] - fc$mean[1])
+    dentro &lt;- rbind(dentro, real &gt;= fc$lower[, 1] &amp; real &lt;= fc$upper[, 1])
+  }
+  round(c(sigma = mean(s), error = sqrt(mean(e1^2)),
+          setNames(100 * colMeans(dentro), paste0("h", 1:h))), 1)
+}
+rbind(arima = paso1(function(tr, h, nv) forecast(Arima(tr, order = c(1,1,1)), h = h, level = nv)),
+      naive = paso1(function(tr, h, nv) naive(tr, h = h, level = nv)))
+#&gt;       sigma error   h1   h2   h3   h4   h5
+#&gt; arima 148.3 112.3 58.3 66.7 66.7 66.7 61.1
+#&gt; naive 173.2 136.7 55.6 77.8 86.1 91.7 86.1
+x &lt;- as.numeric(Nile)
+round(c(d_1872_1930 = sd(diff(x[1:60])), d_1931_1970 = sd(diff(x[60:100]))), 1)
+#&gt; d_1872_1930 d_1931_1970
+#&gt;       186.9       138.1</code></pre>
           <p><strong>Discusión.</strong> Los excesos son positivos en los cinco niveles y en los dos métodos, así que
-            no hay que buscar cinco explicaciones: hay una sola, el ancho. El naïve la sufre más porque su varianza
-            crece como $\sigma^2 h$ suponiendo que cada año trae un choque nuevo y permanente, y el Nilo no se comporta
-            así: su ARIMA$(1,1,1)$ tiene $\hat\theta = -0.874$, que cancela buena parte de la integración —el hallazgo
-            del Módulo 1 del Capítulo 4—, y por eso su abanico es la mitad de ancho ($631.2$ frente a $1138.4$) y su
+            no hay que buscar cinco explicaciones: hay una sola, el ancho. Y el ancho tiene dos partes. La primera
+            la comparten los dos métodos: ya a un año, la $\hat\sigma$ que estiman ($148.3$ el ARIMA y $173.2$ el
+            naïve, de media) supera el error que cometen de verdad ($112.3$ y $136.7$), porque 1931–1970 fue más
+            tranquilo que el periodo con que se entrenan: la desviación típica de los cambios anuales baja de $186.9$
+            en 1872–1930 a $138.1$. La segunda es solo del naïve, y crece con el horizonte: su varianza aumenta como
+            $\sigma^2 h$ suponiendo que cada año trae un choque nuevo y permanente, y el Nilo no se comporta así —su
+            cobertura al $50\,\%$ pasa del $55.6\,\%$ a un año al $91.7\,\%$ a cuatro—. Su ARIMA$(1,1,1)$ tiene
+            $\hat\theta = -0.874$, que cancela buena parte de la integración —el hallazgo del Módulo 1 del
+            Capítulo 4—; por eso el abanico del ARIMA mide poco más de la mitad ($631.2$ frente a $1138.4$) y su
             cobertura, aunque también excesiva, está mucho más cerca de lo prometido. Al $95\,\%$ los dos cubren el
             $100\,\%$, así que ahí no se distinguen: <strong>es el nivel del $50\,\%$ el que separa a un intervalo
             razonable de uno inservible</strong>, que es exactamente el argumento del Módulo 9 para no comprobar un
