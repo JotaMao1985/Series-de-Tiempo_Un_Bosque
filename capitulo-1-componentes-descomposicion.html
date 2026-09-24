@@ -4355,6 +4355,35 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
       return inputs;
     }
 
+    // Los ejes y los tooltips de Chart.js formatean con el idioma del
+    // navegador: «1,400» en uno en inglés y «1.400» en uno en español, y
+    // «0,5» en un eje de un navegador en español. Se fija en-US, con punto
+    // decimal como la prosa; los miles se agrupan con un espacio fino solo
+    // desde cinco cifras enteras (80 055), y con cuatro van juntos (1949).
+    // agrupaMiles() solo toca comas entre dígitos seguidas de grupos de tres,
+    // así que «(1,1)» pasa intacto.
+    function agrupaMiles(s) {
+      return String(s).replace(/\d{1,3}(?:,\d{3})+/g,
+        m => m.replace(/,/g, m.replace(/,/g, '').length >= 5 ? '\u202F' : ''));
+    }
+    Chart.defaults.locale = 'en-US';
+    (function () {
+      const tickLineal = Chart.defaults.scales.linear.ticks.callback;
+      Chart.defaults.scales.linear.ticks.callback = function (valor, i, ticks) {
+        return agrupaMiles(tickLineal.call(this, valor, i, ticks));
+      };
+      const cb = Chart.defaults.plugins.tooltip.callbacks;
+      const etiqueta = cb.label, titulo = cb.title;
+      cb.label = function (item) {
+        return etiqueta.call(this, Object.assign({}, item,
+          { formattedValue: agrupaMiles(item.formattedValue) }));
+      };
+      cb.title = function (items) {
+        return titulo.call(this, items.map(it =>
+          Object.assign({}, it, { label: agrupaMiles(it.label) })));
+      };
+    })();
+
     // Paleta y defaults de la casa para gráficos de líneas.
     const COLORES_GRAFICO = {
       primario: '#012820',
