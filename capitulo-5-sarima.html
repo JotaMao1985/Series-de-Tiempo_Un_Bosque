@@ -4739,13 +4739,15 @@ print(round(f.aic, 2))
 
       <p>Todo el capítulo ha usado criterios <em>dentro</em> de la muestra, y el Módulo 10 acaba de mostrar que entre
         familias distintas eso no vale. La alternativa evidente es partir la serie: entrenar con los primeros $120$
-        meses y medir el error en los últimos $24$. Cada método se ajusta como se usaría de verdad —ETS sobre la serie
-        cruda, donde su estacionalidad multiplicativa es la natural; la familia ARIMA sobre el logaritmo— y todas las
-        métricas se calculan en la escala original, que es la única en la que son comparables.</p>
+        meses y medir el error en los últimos $24$. La familia ARIMA se ajusta sobre el logaritmo; el ETS, en las dos
+        escalas: sobre la serie cruda, donde su estacionalidad multiplicativa es la natural, y sobre el logaritmo, la
+        misma escala que el ARIMA. Todas las métricas se calculan en la escala original, que es la única en la que son
+        comparables. La columna $k$ cuenta todo lo que se estima: en el STL + ARIMA, los $11$ valores de la
+        estacionalidad además de los $2$ parámetros del ARIMA.</p>
 
       <div class="tabla-ranking" data-ranking="comparativa">
-        <p class="tabla-ranking-titulo">Los seis métodos sobre una sola partición</p>
-        <div class="tabla-ranking-marco" aria-label="Los seis métodos sobre una sola partición"></div>
+        <p class="tabla-ranking-titulo">Los ocho métodos sobre una sola partición</p>
+        <div class="tabla-ranking-marco" aria-label="Los ocho métodos sobre una sola partición"></div>
         <p class="tabla-ranking-estado" role="status" aria-live="polite"></p>
         <p class="tabla-ranking-pie"></p>
       </div>
@@ -4770,7 +4772,7 @@ print(round(f.aic, 2))
           <tbody>
             <tr><td>ETS($M,A,M$) sobre el logaritmo</td><td>log</td><td>$16$</td><td>$\mathbf{19.43}$</td><td>$16.13$</td><td>$3.55$</td></tr>
             <tr><td>Regresión armónica $K=6$ + ARIMA</td><td>log</td><td>$16$</td><td>$19.51$</td><td>$\mathbf{14.69}$</td><td>$\mathbf{3.15}$</td></tr>
-            <tr><td>STL + ARIMA</td><td>log</td><td>$2$</td><td>$35.48$</td><td>$30.29$</td><td>$6.33$</td></tr>
+            <tr><td>STL + ARIMA</td><td>log</td><td>$2 + 11$</td><td>$35.48$</td><td>$30.29$</td><td>$6.33$</td></tr>
             <tr><td><strong>SARIMA <em>airline</em></strong></td><td>log</td><td>$2$</td><td>$43.18$</td><td>$39.45$</td><td>$8.52$</td></tr>
             <tr><td><code>auto.arima</code> (elige el <em>airline</em>)</td><td>log</td><td>$2$</td><td>$43.18$</td><td>$39.45$</td><td>$8.52$</td></tr>
             <tr><td>SARIMA <em>airline</em> + calendario</td><td>log</td><td>$4$</td><td>$45.48$</td><td>$41.45$</td><td>$8.95$</td></tr>
@@ -4785,9 +4787,11 @@ print(round(f.aic, 2))
         cerraría el capítulo concluyendo que el SARIMA no vale para esta serie.</p>
 
       <div class="warning">
-        <p><strong>Esa conclusión es falsa, y demostrarlo es la razón de ser del Capítulo 6.</strong> Repitiendo
-          exactamente la misma comparación sobre <strong>$61$ orígenes</strong> en vez de uno —avanzando el corte mes a
-          mes y midiendo siempre a $12$ meses vista— el orden <strong>se invierte por completo</strong>:</p>
+        <p><strong>Esa conclusión es falsa, y demostrarlo es la razón de ser del Capítulo 6.</strong> Repitiendo la
+          comparación sobre <strong>$61$ orígenes</strong> en vez de uno —avanzando el corte mes a mes y midiendo el
+          error de los $12$ meses siguientes a cada corte—, el SARIMA <strong>pasa de cuarto a primero</strong>. Entran
+          los seis métodos distintos: <code>auto.arima</code> elige el mismo <em>airline</em>, y el calendario queda
+          fuera.</p>
       </div>
 
       <div class="diagram">
@@ -4806,10 +4810,26 @@ print(round(f.aic, 2))
         </table>
       </div>
 
-      <p>El SARIMA no solo gana de media: le gana a cada rival en <strong>más del $85\,\%$ de los orígenes</strong>. Lo
-        que ocurría en la tabla anterior es que los años 1959–1960 tienen un crecimiento especialmente regular, y ahí
-        una estacionalidad determinista extrapola mejor que una estocástica. Con $24$ puntos de prueba, el azar de
-        <em>qué</em> $24$ pesa más que la diferencia entre los métodos.</p>
+      <p>El SARIMA no solo gana de media: a $12$ meses le gana a cada rival en <strong>más del $85\,\%$ de los
+        orígenes</strong>. El resto del orden apenas se mueve: el ETS sobre el logaritmo sigue por delante del STL y de
+        la armónica, y el ETS sobre la serie cruda y el naïve siguen últimos.</p>
+
+      <p>Lo que ocurría en la tabla anterior no tiene que ver con la estacionalidad, sino con la tendencia. El corte
+        cae en 1958-12, justo detrás del único año en que el tráfico casi no creció: el total anual de pasajeros subió
+        un $3.4\,\%$ en 1958, frente a entre $6.0$ y $19.8\,\%$ en los demás años. El <em>airline</em> ajusta su
+        pendiente a lo último que ve y pronostica un $4.6\,\%$ para 1959 y un $6.7\,\%$ para 1960; lo observado fue
+        $11.7$ y $10.6\,\%$. Por eso se queda corto en los $24$ meses: su sesgo medio ($39.45$) es igual a su MAE. El
+        ETS sobre el logaritmo ($8.9$ y $12.1\,\%$) y la regresión armónica ($10.1$ y $12.4\,\%$) arrastran menos
+        ese frenazo. De los $14$ orígenes en que el SARIMA no es el mejor de los seis, $12$ caen entre 1957-05 y
+        1959-01, alrededor de ese año. Con una sola partición, el azar de <em>dónde</em> cae el corte pesa más que la
+        diferencia entre los métodos.</p>
+
+      <p>¿Y a $24$ meses, el horizonte de la primera tabla? Con ese horizonte caben $49$ orígenes. El SARIMA sigue
+        primero de media ($26.00$, frente a $26.61$ del ETS sobre el logaritmo, $27.80$ del STL y $28.30$ de la
+        armónica), pero el ETS sobre el logaritmo le gana en el $49.0\,\%$ de los orígenes: a dos años vista, los dos
+        son indistinguibles. También cuenta qué se mide en cada origen: si se toma solo el error del mes $12$, y no el
+        RMSE de los doce meses, el SARIMA vuelve a quedar cuarto ($18.22$, frente a $15.96$ del ETS sobre el
+        logaritmo). Una comparación honesta fija el horizonte y la métrica antes de mirar los resultados.</p>
 
       <div class="note">
         <p><strong>Puente con el Capítulo 6.</strong> Lo que acaba de pasar —una conclusión que se invierte al cambiar
@@ -7554,9 +7574,9 @@ round(c(armonico_K4 = 180.200, n_armonico = 467,
     TABLAS_RANKING['comparativa'] = function () {
       const claves = AP.comparativa.orden_rmse;
       return {
-        descripcion: 'Los seis métodos sobre los últimos ' + AP.comparativa.n_prueba +
-          ' meses, una sola partición. Pulsa las cabeceras: las tres métricas coinciden ' +
-          'en el orden, lo que da una falsa sensación de solidez.',
+        descripcion: 'Los ocho métodos sobre los últimos ' + AP.comparativa.n_prueba +
+          ' meses, una sola partición. Pulsa las cabeceras: por RMSE gana el ETS sobre el ' +
+          'logaritmo y por MAE y MAPE la regresión armónica, pero las tres dejan al SARIMA cuarto.',
         columnas: [
           { clave: 'modelo', titulo: 'Método', tipo: 'texto' },
           { clave: 'rmse', titulo: 'RMSE', decimales: 2, mejor: 'menor' },
@@ -7571,8 +7591,8 @@ round(c(armonico_K4 = 180.200, n_armonico = 467,
         })),
         formato: fmt,
         inicial: 'rmse',
-        pie: 'Las tres columnas dan el mismo orden y aun así el orden es engañoso: ' +
-          'sobre 61 orígenes en vez de uno, el SARIMA pasa de cuarto a primero. ' +
+        pie: 'Las tres métricas coinciden en el cuarto puesto y aun así es engañoso: sobre ' +
+          '61 orígenes, midiendo los 12 meses siguientes a cada corte, el SARIMA pasa a primero. ' +
           'El Capítulo 6 construye esa evaluación.'
       };
     };
