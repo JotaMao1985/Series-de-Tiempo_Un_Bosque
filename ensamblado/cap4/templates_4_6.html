@@ -205,7 +205,8 @@ print(round(float(acorr_ljungbox(ma1.resid[1:], lags=[20], model_df=1)["lb_pvalu
         <p style="margin-bottom:0;">Regla mnemotécnica: <strong>cada diferencia sube en un grado el polinomio de la
           tendencia</strong> que la constante genera: a largo plazo, $\hat y_{n+h}$ crece como
           $\mu_w\, h^d / d!$. Sin constante: $d=0$ tiende a cero, $d=1$ se queda plano, $d=2$ sigue una recta. Con
-          constante: $d=0$ vuelve a la media, $d=1$ recta, $d=2$ parábola.</p>
+          constante: $d=0$ vuelve a la media, $d=1$ recta, $d=2$ parábola. El simulador «La forma del pronóstico
+          según $d$» del Módulo 9 dibuja cuatro de estos seis casos sobre el Nilo.</p>
       </div>
 
       <div class="warning">
@@ -259,7 +260,11 @@ print(round(float(acorr_ljungbox(ma1.resid[1:], lags=[20], model_df=1)["lb_pvalu
       <p>No es significativa (en la ecuación del Módulo 1 equivaldría a
         $c = \hat\delta\,(1-\hat\phi_1) = -2.883 \times (1 - 0.271) = -2.10$). Y el AICc lo confirma: $1268.06$ con deriva frente a $1267.51$ sin ella —
         añadirla empeora. Tiene sentido físico: no hay ninguna razón para creer que el caudal del Nilo disminuya
-        <em>indefinidamente</em> a razón de $2.9 \times 10^8\ \text{m}^3$ por año. Una deriva estimada es una tendencia que se
+        <em>indefinidamente</em> a razón de $2.9 \times 10^8\ \text{m}^3$ por año. Y buena parte de esa caída no fue
+        gradual. La media de las diferencias es $(y_{1970} - y_{1871})/99 = (740 - 1120)/99 = -3.84$ —la suma de
+        las diferencias es telescópica y solo sobreviven el primer año y el último—, y el descenso de $247.8$ de
+        1899 aporta por sí solo $-2.50$ de ella. Con $d = 1$, un cambio de nivel que ocurre una vez solo puede
+        entrar como un choque o repartido en pendiente; el Módulo 8 lo ajusta como escalón. Una deriva estimada es una tendencia que se
         extrapola sin límite, y eso es una afirmación fuerte sobre el futuro que conviene no hacer a la ligera.</p>
 
       <div class="note">
@@ -267,7 +272,9 @@ print(round(float(acorr_ljungbox(ma1.resid[1:], lags=[20], model_df=1)["lb_pvalu
           caminata aleatoria que elige <code>auto.arima</code> —un ARIMA($0,1,0$), en el que $\hat\delta$ es
           simplemente la media de las diferencias—, la deriva estimada es
           $8.00$ pesos/mes con error estándar $10.36$: $t = 0.77$. Tampoco es significativa, aunque a ojo la serie
-          "claramente sube". Que una tendencia visible no sea estadísticamente distinguible de cero con $n = 138$
+          "claramente sube". Como en el Nilo, esa media se reduce a $(y_n - y_1)/(n-1)$: la estimación depende
+          solo del primer mes y del último, y lo que la serie hace entre ellos solo entra en el error estándar. Que
+          una tendencia visible no sea estadísticamente distinguible de cero con $n = 138$
           dice más sobre la variabilidad de la serie que sobre la tendencia, y es exactamente el tipo de conclusión
           que un modelo obliga a hacer explícita.</p>
       </div>
