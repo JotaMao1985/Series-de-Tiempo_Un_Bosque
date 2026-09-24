@@ -642,8 +642,9 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
         <p>La fórmula $\hat{y} \pm z_{1-\alpha/2}\,\sigma_h$ usa $z_{0.975} = 1.96$ y $z_{0.90} = 1.282$, que son
           cuantiles de la normal. Las <em>estimaciones</em> de un ARIMA no necesitan que los errores sean normales;
           los <em>intervalos</em>, sí. Y no siempre lo son: en la TRM del Módulo 10 el test de Shapiro–Wilk sobre los
-          residuales da $p = 0.0006$, un rechazo rotundo. Con colas más pesadas que la normal, un intervalo nominal
-          del $95\,\%$ cubre menos del $95\,\%$.</p>
+          residuales da $p = 0.0006$, un rechazo rotundo. Con colas más pesadas que la normal, la cobertura real se
+          separa de la nominal —en la TRM, a un mes, el intervalo del $80\,\%$ cubre el $83.9\,\%$— y, si los
+          errores son asimétricos, los fallos se concentran en un lado. El Módulo 10 lo mide.</p>
         <p style="margin-bottom:0;">Hay dos advertencias más que conviene decir en voz alta: los intervalos
           <strong>no incluyen la incertidumbre de haber estimado los parámetros</strong> (los tratan como si fueran
           conocidos), ni la de <strong>haber elegido el modelo</strong>. Son, por tanto, sistemáticamente
