@@ -166,6 +166,15 @@
       if (altos) grafico.canvas.parentNode.style.height = chico ? altos.estrecho : altos.ancho;
     }
 
+    // Lo mismo para un gráfico de barras (M4, M6): crearGraficoBarras no
+    // admite onResize, así que se le añade ya creado.
+    function barrasCompactas(g, altos) {
+      g.options.onResize = (gr, t) => compactar(gr, t.width, altos);
+      compactar(g, g.width, altos);
+      g.update('none');
+      return g;
+    }
+
     // ∇, ∇², ∇³: el orden como exponente, igual que en la prosa.
     function nabla(d) { return ['', '∇', '∇²', '∇³'][d]; }
 
@@ -353,14 +362,7 @@
       let gSerie = null, gAcf = null, gPacf = null;
 
       // La ACF y la PACF crecen en el teléfono (véase compactar, arriba).
-      // crearGraficoBarras no admite onResize: se le añade ya creado.
       const ALTOS_BARRAS = { estrecho: '240px', ancho: '180px' };
-      function barrasCompactas(g) {
-        g.options.onResize = (gr, t) => compactar(gr, t.width, ALTOS_BARRAS);
-        compactar(g, g.width, ALTOS_BARRAS);
-        g.update('none');
-        return g;
-      }
 
       function pintar() {
         const d = parseInt(params.d, 10);
@@ -374,11 +376,11 @@
         gAcf = barrasCompactas(crearGraficoBarras(cAcf, REZAGOS, info.acf, {
           etiqueta: 'ACF muestral', color: COLORES_GRAFICO.primario,
           lineas: lineasBanda(info.n), tituloX: 'Rezago k'
-        }));
+        }), ALTOS_BARRAS);
         gPacf = barrasCompactas(crearGraficoBarras(cPacf, REZAGOS, info.pacf, {
           etiqueta: 'PACF muestral', color: COLORES_GRAFICO.terciario,
           lineas: lineasBanda(info.n), tituloX: 'Rezago k'
-        }));
+        }), ALTOS_BARRAS);
         // Contar solo la ACF no distingue d = 1 de d = 2 (2 de 20 en ambos); la
         // PACF sí (4 frente a 7), y en d = 0 su «1 de 20» es la trampa del AR(1).
         const fuera = r => `${r.filter(v => Math.abs(v) > info.banda).length} de ${r.length}`;
@@ -414,6 +416,10 @@
       const [cAcf, cAicc] = raiz.querySelectorAll('canvas');
       let gAcf = null, gAicc = null;
 
+      // Los dos gráficos crecen en el teléfono (véase compactar, arriba).
+      const ALTOS_RESIDUALES = { estrecho: '250px', ancho: '210px' };
+      const ALTOS_AICC = { estrecho: '240px', ancho: '200px' };
+
       function pintar() {
         const clave = `${params.p}${params.d}${params.q}`;
         const m = REJILLA[clave];
@@ -436,11 +442,11 @@
         }
 
         const nEf = m.n_efectivo;
-        gAcf = crearGraficoBarras(cAcf, REZAGOS, m.acf_residuales, {
+        gAcf = barrasCompactas(crearGraficoBarras(cAcf, REZAGOS, m.acf_residuales, {
           etiqueta: 'ACF de los residuales',
           color: m.ljung_box_p > 0.05 ? COLORES_GRAFICO.primario : '#b91c1c',
           lineas: lineasBanda(nEf), tituloX: 'Rezago k'
-        });
+        }), ALTOS_RESIDUALES);
 
         const esteEs = clave;
         // Con d = 2 el ARIMA(0,2,0) queda a +121 y aplastaría las diferencias
@@ -448,20 +454,50 @@
         // y la barra recortada lleva su valor en la etiqueta.
         const TOPE = 20;
         const deltas = hermanos.map(x => x.aicc - mejor.valor_aicc);
+        const maxEje = Math.min(TOPE, Math.max(6, ...deltas));
         gAicc = crearGraficoBarras(cAicc,
           hermanos.map((x, i) => `(${x.p},${x.d},${x.q})${deltas[i] > TOPE ? ` ↑${fmt(deltas[i], 0)}` : ''}`),
           deltas.map(v => Math.min(v, TOPE)), {
             etiqueta: `ΔAICc sobre el mejor de d = ${params.d}`,
             color: COLORES_GRAFICO.gris,
-            min: 0, max: Math.min(TOPE, Math.max(6, ...deltas))
+            min: 0, max: maxEje
           });
+        // En un teléfono los nueve rótulos no caben bajo las barras y Chart.js
+        // se saltaba siete, el tope incluido; inclinados, los de dos líneas
+        // chocaban. Por debajo de ESTRECHO las barras se tumban y los rótulos
+        // pasan al eje vertical, donde caben enteros. Si el ancho cruza el
+        // umbral (al girar el teléfono), se repinta con la otra orientación.
+        const tumbado = gAicc.width < ESTRECHO;
+        if (tumbado) {
+          gAicc.options.indexAxis = 'y';
+          gAicc.options.scales = {
+            x: { suggestedMin: 0, suggestedMax: maxEje,
+                 title: { display: true, text: 'ΔAICc', font: { family: 'Montserrat', size: 11 } },
+                 ticks: { font: { family: 'Fira Code', size: 10 } },
+                 grid: { color: 'rgba(148, 163, 184, 0.2)' } },
+            y: { ticks: { font: { family: 'Fira Code', size: 10 }, autoSkip: false },
+                 grid: { display: false } }
+          };
+        }
+        gAicc.options.onResize = (g, t) => {
+          compactar(g, t.width, ALTOS_AICC);
+          if ((t.width < ESTRECHO) !== tumbado) setTimeout(pintar);
+        };
+        compactar(gAicc, gAicc.width, ALTOS_AICC);
+        // El tooltip nombra el modelo y da el ΔAICc real: la barra del (0,2,0)
+        // mide 20 pero el modelo está a +121.
+        Object.assign(gAicc.options.plugins.tooltip.callbacks, {
+          title: items => hermanos[items[0].dataIndex].etiqueta,
+          label: item => `ΔAICc: +${fmt(deltas[item.dataIndex])}`
+        });
         // Naranja el seleccionado, verde oscuro el mejor de su d. El mejor está
         // en 0 por definición: minBarLength le da una barra visible.
         gAicc.data.datasets[0].backgroundColor = hermanos.map((x, i) =>
           `${x.p}${x.d}${x.q}` === esteEs ? COLORES_GRAFICO.secundario
             : deltas[i] === 0 ? COLORES_GRAFICO.primario : COLORES_GRAFICO.gris);
         gAicc.data.datasets[0].minBarLength = 3;
-        tituloEjeY(gAicc, 'ΔAICc');
+        if (tumbado) gAicc.update('none');
+        else tituloEjeY(gAicc, 'ΔAICc');
 
         const campos = [
           { etiqueta: 'Modelo', valor: m.etiqueta },
@@ -472,9 +508,16 @@
           { etiqueta: `mejor AICc de d = ${params.d}`, valor: fmt(mejor.valor_aicc) },
           { etiqueta: 'diferencia', valor: `+${fmt(m.aicc - mejor.valor_aicc)}` }
         ];
-        if (m.raices && m.raices.degenerado) {
-          campos.push({ etiqueta: '⚠ raíz sobre el círculo', valor: `|raíz MA| = ${fmt(m.raices.min_ma, 4)}` });
-        }
+        // Las raíces van siempre, no solo cuando caen sobre el círculo: la que lo
+        // roza es la que cuenta el d del Nilo (AR en 1.161 con d = 0, MA en 1.144
+        // con d = 1, MA en 1.032 en el mínimo de d = 2, que parecía impecable).
+        const r = m.raices || {};
+        campos.push(
+          { etiqueta: '|raíz AR| mín.', valor: r.min_ar == null ? '— (sin AR)' : fmt(r.min_ar, 3) },
+          r.degenerado
+            ? { etiqueta: '⚠ |raíz MA| mín.', valor: `${fmt(r.min_ma, 3)}, sobre el círculo` }
+            : { etiqueta: '|raíz MA| mín.', valor: r.min_ma == null ? '— (sin MA)' : fmt(r.min_ma, 3) }
+        );
         actualizarLectura(lectura, campos);
       }
 

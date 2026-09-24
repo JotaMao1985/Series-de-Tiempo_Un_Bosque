@@ -408,11 +408,17 @@ print(f2.param_names)
 
       <div class="simulador" data-simulador="explorador-modelos">
         <h4><i class="fas fa-table-cells-large" aria-hidden="true"></i> Explorador de la rejilla ARIMA($p,d,q$)</h4>
-        <p class="simulador-intro">Los 27 modelos con $p, d, q \in \{0,1,2\}$ ajustados por máxima verosimilitud
-          sobre el Nilo (precalculados en R). Mueve los tres órdenes y observa el correlograma de los residuales:
-          sus barras cambian de color cuando Ljung–Box(20) rechaza. Fíjate en el campo «diferencia» de la lectura
-          y en el segundo gráfico, donde el modelo elegido aparece resaltado: los dos comparan su AICc solo con el
-          mejor <em>de su propio $d$</em>.</p>
+        <p class="simulador-intro">Los 27 modelos con $p, d, q \in \{0,1,2\}$, ajustados por máxima verosimilitud
+          sobre el Nilo (precalculados en R). El campo «diferencia» de la lectura y el segundo gráfico, donde el
+          modelo elegido sale resaltado, comparan su AICc solo con el mejor <em>de su propio $d$</em>. Empieza en
+          $d = 1$: cuatro modelos quedan a menos de 2 puntos del mejor, y con diferencias así el AICc apenas los
+          distingue. Luego mira el correlograma de los residuales, cuyas barras se vuelven rojas cuando
+          Ljung–Box(20) rechaza: descarta ocho modelos que se quedan cortos, pero todos los que quedan cerca del
+          mejor pasan, así que filtra y no elige. Por último, mira las raíces de la
+          lectura. El mejor de $d = 0$ tiene una raíz AR en $1.161$, cerca del círculo unitario, como si pidiera
+          una diferencia; el mejor de $d = 1$, una raíz MA en $1.144$, como si quisiera deshacerla; y los buenos
+          de $d = 2$ la tienen entre $1.000$ y $1.048$. Ningún $d$ sale limpio, y el Módulo 8 explica por
+          qué.</p>
         <div class="simulador-controles"></div>
         <div class="simulador-lectura"></div>
         <p class="grafico-etiqueta">ACF de los residuales del modelo seleccionado</p>
