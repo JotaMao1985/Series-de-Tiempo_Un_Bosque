@@ -221,6 +221,25 @@ Editada en `ensamblado/cap4/templates_1_3.html` y en el HTML; `ensambla_cap4.py`
 byte a byte y los capítulos 5 y 6 reensamblados salen idénticos. Cero `.katex-error`. Commit
 `76af7c6`.
 
+### Añadido el 2026-09-24: dos frases del ciclo de Box–Jenkins (M2)
+
+Fuera del alcance de la ronda por ser texto de componente, pero con dos errores de contenido:
+
+- **La línea de retorno** decía «Las tres primeras etapas forman un bucle», y el panel de Uso
+  del mismo ciclo manda de vuelta a elegir $d$ (y remite al capítulo 6, que «puede mandarte de
+  vuelta al principio»). Ahora: las etapas 2, 3 y 4 pueden devolver a la identificación; solo se
+  llega a pronosticar cuando el diagnóstico no objeta nada, y aun entonces la forma del
+  pronóstico puede delatar un $d$ mal elegido.
+- **«Qué te devuelve atrás» de Estimación** metía una raíz sobre el círculo unitario con la
+  sobreparametrización y les daba un solo arreglo, «un orden más pequeño». Ahora se separan: no
+  converger o un error estándar enorme → $p$ o $q$ más pequeños; una raíz unitaria **o muy
+  cerca** depende de cuál sea: la del MA pide **bajar** $d$ (sobrediferenciación), la del AR,
+  **subirlo**. El «muy cerca» cubre el Nilo, cuya raíz MA está en $B = 1.144$.
+
+El resto del `.ciclo` del M2 (voz de «Qué haces», a11y) sigue pendiente. Verificado igual que
+la intro del Nilo: 4 reproducible, 5 y 6 idénticos, cero `.katex-error` con la pestaña de
+Estimación abierta. Commit `e3b63ed`.
+
 ## 9. Enlaces
 
 - Precedente: [[PLAN_Auditoria_Cap3]]
