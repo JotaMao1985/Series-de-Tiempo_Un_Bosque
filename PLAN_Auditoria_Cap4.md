@@ -270,6 +270,50 @@ líneas cambiadas, 5 y 6 idénticos; Chrome sin ventana a 1280, 768, 375 y 320 p
 el barrido de los 10 módulos, cero `.katex-error` y solo los falsos positivos conocidos del
 detector de decimales. Commit `a54eb2e`.
 
+### Añadido el 2026-09-24: el simulador de identificación (M4)
+
+`identificacion-nilo` enseñaba bien que $p$ y $q$ se leen sobre la serie ya diferenciada, pero
+no el resto. Cifras comprobadas en R:
+
+| $d$ | ACF fuera de banda | PACF fuera de banda | $\hat\rho_1$ | varianza |
+|---|---|---|---|---|
+| 0 | 11 de 20 | 1 de 20 | $+0.498$ | 28 638 |
+| 1 | 2 de 20 (1 y 8) | 4 de 20 | $-0.402$ | 28 268 |
+| 2 | 2 de 20 (1 y 8) | 7 de 20 | $-0.626$ | 80 055 |
+
+Al diferenciar ruido blanco con $n = 99$, $\hat\rho_1$ cae entre $-0.60$ y $-0.36$ el $90\,\%$ de
+las veces, y el $-0.402$ del Nilo está dentro: el pico negativo de $d = 1$ es también el que deja
+diferenciar sin necesidad. Simulando el escalón del M8 (ruido de $\sigma = 127.7$ y $\beta =
+-247.8$), el $14\,\%$ de las réplicas da un $\hat\rho_1 \ge -0.402$; el $\hat\theta = -0.733$ del
+ARIMA($0,1,1$) queda en su cola ($5\,\%$, mediana $-0.82$), así que no lo zanja.
+
+- **La etiqueta del selector**, «d = 1 — ∇Nilo (la correcta)», contradecía el primer párrafo
+  del módulo («decisión de trabajo»). Pasa a «(la de trabajo)».
+- **La introducción** no mencionaba la PACF, que es donde está la trampa de $d = 0$ (un solo
+  pico, como un AR(1) con $\phi \approx 0.5$, que la ACF desmiente: ese AR(1) daría $0.25$ y
+  $0.12$ en los rezagos 2 y 3, no $0.385$ y $0.328$). Atribuía la sobrediferenciación al signo
+  de $\rho_1$, sin gorro, cuando el signo ya cambia en $d = 1$; y decía que el rezago 8 «roza» la
+  banda, cuando se sale. La nueva, en *tú*: leer las dos funciones; la ACF de $d = 0$ como huella
+  de un nivel que se mueve, «por una raíz unitaria o por un cambio de nivel como el de 1899»; la
+  trampa de la PACF; el MA(1) de $d = 1$ y el rezago 8 como el uno de cada veinte esperable; en
+  $d = 2$, $\hat\rho_1$ por debajo de $-0.5$, como en la intro del M1; y el cierre, «La tabla elige
+  $p$ y $q$; no confirma $d$».
+- **El panel** contaba solo la ACF fuera de banda, que da 2 de 20 en $d = 1$ y en $d = 2$.
+  Añade «PACF fuera de banda»: 1, 4 y 7 de 20.
+- **Los gráficos en el teléfono**: a $375$ px la leyenda de la ACF y de la PACF ocupaba dos filas
+  y dejaba $56$ px a las barras sobre una escala de $-1$ a $1$; el cruce del rezago 8 no se
+  apreciaba. Usan la compactación del M3, que sale del cierre de `escalon-vs-raiz` a los
+  ayudantes del capítulo, con el marco de $180$ a $240$ px: $144$ px útiles a $375$ (una fila),
+  $128$ a $320$, $141$ a $768$; el escritorio sigue en $75$. `crearGraficoBarras` no admite
+  `onResize` y se le añade ya creado.
+
+Verificado: `chapter.js` y `templates_4_6.html` reensamblan el 4 con solo sus líneas cambiadas, 5
+y 6 idénticos; el M3 mide lo mismo que tras `a54eb2e` ($151$ y $125$ px); Chrome sin ventana a
+cuatro anchos sin excepciones; cero `.katex-error` en los 10 módulos. Commit `6c35e68`.
+
+Queda fuera: la tabla del M7 rotula $d = 1$ «Mínimo de varianza. Correcto.», el mismo exceso que
+tenía el selector.
+
 ## 9. Enlaces
 
 - Precedente: [[PLAN_Auditoria_Cap3]]
