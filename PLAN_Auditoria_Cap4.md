@@ -199,7 +199,30 @@ Hecho por cinco manos en paralelo: un agente por plantilla (`templates_1_3`, `4_
 - ~~Cap. 5, tabla de la TRM: banda $\pm0.168$ → $\pm0.167$ ($1.96/\sqrt{137}$)~~: hecho el
   2026-09-23, commit `6696a91`.
 
+### Añadido el 2026-09-24: la introducción del simulador del Nilo (M1)
+
+La auditoría dejó intacta la intro de `nilo-y-diferencia`, y era la lectura que el simulador
+necesitaba. Pedía mirar dos cosas del gráfico —«el nivel deja de vagar» y que la diferencia
+oscila más rápido— y no las cifras del panel, que son el porqué del simulador:
+
+| $d$ | $n$ | media | varianza | $\hat\rho_1$ |
+|---|---|---|---|---|
+| 0 | 100 | 919.35 | 28 638 | $+0.50$ |
+| 1 | 99 | $-3.84$ | 28 268 | $-0.40$ |
+| 2 | 98 | $-0.14$ | 80 055 | $-0.63$ |
+
+La nueva hace leer la media (casi cero: la serie pasa a ser su cambio anual), la varianza
+(apenas baja con $d = 1$, casi se triplica con $d = 2$) y el signo de $\hat\rho_1$ (con $d = 2$,
+por debajo del $-0.5$ de la diferencia de un ruido blanco), y cierra preguntando si hacía falta
+diferenciar: el hilo que retoman la nota de la anomalía, el M3 y el M8. «Vagar» se sustituye
+por el descenso hacia 1899, que es lo que se ve y lo que el M3 convierte en escalón.
+
+Editada en `ensamblado/cap4/templates_1_3.html` y en el HTML; `ensambla_cap4.py` la reproduce
+byte a byte y los capítulos 5 y 6 reensamblados salen idénticos. Cero `.katex-error`. Commit
+`76af7c6`.
+
 ## 9. Enlaces
 
 - Precedente: [[PLAN_Auditoria_Cap3]]
 - Caso TRM hasta el pronóstico: [[PLAN_Casos_Aplicados_456]]
+- Sesión de la intro del Nilo: [[2026-09-24]]
