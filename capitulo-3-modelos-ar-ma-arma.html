@@ -4789,15 +4789,16 @@ print(round(2 * np.pi / np.angle(raices[0]), 4))   # 10.7365
             <li>
               <p>Si una serie es ruido blanco, cada autocorrelación muestral cumple aproximadamente
                 $\hat r_k \sim N(0,\,1/T)$. Entonces $T\hat r_k^2$ es aproximadamente $\chi^2_1$, y sumando $h$
-                rezagos independientes se obtiene el estadístico de Box–Pierce:</p>
+                rezagos aproximadamente independientes se obtiene el estadístico de Box–Pierce:</p>
               $$Q^{*}(h) = T\sum_{k=1}^{h}\hat r_k^2 \;\sim\; \chi^2_h$$
             </li>
             <li>
               <p>Esa aproximación es mala con $T$ moderado, porque la varianza real de $\hat r_k$ es algo menor que
-                $1/T$, y tanto menor cuanto mayor es $k$ —quedan menos pares de observaciones separados por $k$
-                periodos con los que estimarla—: $\operatorname{Var}(\hat r_k) \approx (T-k)/\big(T(T+2)\big)$. Ljung
-                y Box (1978) reemplazaron el factor $T$ por el inverso exacto de esa varianza, que por eso
-                <em>crece</em> con el rezago:</p>
+                $1/T$, y tanto menor cuanto mayor es $k$ —el numerador de $\hat r_k$ suma solo $T-k$ productos, pero
+                el denominador sigue sumando las $T$ observaciones, y eso encoge $\hat r_k$ hacia cero—:
+                $\operatorname{Var}(\hat r_k) \approx (T-k)/\big(T(T+2)\big)$. Con el factor $T$, $Q^{*}$ sale
+                pequeño y la prueba rechaza menos de lo que debería. Ljung y Box (1978) reemplazaron ese factor por
+                el inverso de la varianza, que por eso <em>crece</em> con el rezago:</p>
               $$T \;\longrightarrow\; \frac{T(T+2)}{T-k}$$
             </li>
             <li>
@@ -4811,6 +4812,9 @@ print(round(2 * np.pi / np.angle(raices[0]), 4))   # 10.7365
               $$Q(h) \sim \chi^2_{\,h-p-q}$$
               <p>En R eso es el argumento <code>fitdf = p + q</code> de <code>Box.test()</code>, que
                 <strong>no</strong> se aplica solo. Solo tiene sentido evaluar en $h > p+q$.</p>
+              <p>El efecto es medible. Ajustando un AR(2) a $3000$ series que de verdad son AR(2), con $T = 100$ y
+                $h = 12$, la prueba al 5&nbsp;% rechaza el $4.9$&nbsp;% de las veces con <code>fitdf = 2</code> y solo
+                el $2.6$&nbsp;% sin él: la mitad de lo que debería. El código R de abajo lo reproduce.</p>
             </li>
           </ol>
           <p class="derivacion-resultado">Regla práctica: sobre los residuales de un ARMA($p,q$) hay que llamar a
@@ -4971,7 +4975,19 @@ Box.test(residuals(ar2), lag = 12, type = "Ljung-Box", fitdf = 2)$p.value
 
 # Lo que pasa si se OLVIDA fitdf: el mismo modelo "aprueba"
 Box.test(residuals(ar2), lag = 12, type = "Ljung-Box")$p.value
-#&gt; [1] 0.09957107        <- conclusion opuesta por omitir un argumento</code></pre>
+#&gt; [1] 0.09957107        <- conclusion opuesta por omitir un argumento
+
+# El paso 4 del desarrollo: sin fitdf la prueba rechaza la mitad de lo debido
+set.seed(8)
+p_valores &lt;- replicate(3000, {
+  y &lt;- arima.sim(list(ar = c(1.4, -0.7)), n = 100)
+  e &lt;- residuals(suppressWarnings(arima(y, order = c(2, 0, 0), method = "ML")))
+  c(sin_fitdf = Box.test(e, lag = 12, type = "Ljung-Box")$p.value,
+    con_fitdf = Box.test(e, lag = 12, type = "Ljung-Box", fitdf = 2)$p.value)
+})
+round(rowMeans(p_valores &lt; 0.05), 4)   # tasa de rechazo al 5%
+#&gt; sin_fitdf con_fitdf
+#&gt;    0.0257    0.0490</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np
