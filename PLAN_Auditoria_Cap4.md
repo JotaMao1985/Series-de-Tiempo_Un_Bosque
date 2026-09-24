@@ -240,6 +240,36 @@ El resto del `.ciclo` del M2 (voz de «Qué haces», a11y) sigue pendiente. Veri
 la intro del Nilo: 4 reproducible, 5 y 6 idénticos, cero `.katex-error` con la pestaña de
 Estimación abierta. Commit `e3b63ed`.
 
+### Añadido el 2026-09-24: el simulador del escalón (M3) y su leyenda en el teléfono
+
+Tres huecos de `escalon-vs-raiz` y uno de disposición:
+
+- **La introducción** no decía qué mirar. Ahora: con $|\beta| = 0$ KPSS rechaza cerca del
+  $5\,\%$ (la prueba funciona); buscar dónde cruza la curva el $50\,\%$ (hacia $|\beta| \approx 80$,
+  $0.6$ desviaciones típicas); la línea vertical es el Nilo; la segunda curva es $\ell = 12$
+  (`nlags="legacy"`), que rechaza menos pero también se engaña, y remite al recuadro de R frente
+  a Python, donde se explica $\ell$ y que antes quedaba unas 180 líneas más abajo sin aviso.
+- **El Nilo no estaba en el gráfico.** Línea vertical punteada en `malla.delta_del_nilo`
+  ($247.78$), con entrada «Nilo (247.8)» en la leyenda y **fuera del tooltip**: con la
+  interacción por índice, sus dos puntos salían como «Nilo: 100» al pasar sobre $|\beta| = 25$.
+- **El signo de $\beta$.** El deslizador (0 a 300) leía «descenso de $\beta$» y la prosa usaba
+  $\beta = -247.8$. Control, eje y lectura dicen ahora «descenso $|\beta|$»; la prosa pasa a
+  $|\beta|$ donde $\beta$ es un tamaño (100, 200, 300 en la nota, la derivación y el recuadro de
+  R frente a Python) y conserva $\beta = -247.8$, que es el valor del parámetro.
+- **La leyenda en el teléfono**, anterior a esta ronda: a $375$ px el lienzo mide $236$ px y
+  las cinco entradas ocupaban cuatro filas, con $40$ px útiles para las curvas y la última fila
+  rozando el «100 %». Por debajo de $420$ px de lienzo la leyenda se compacta (letra $10$, caja
+  $12$, separación $6$) y el marco de la tasa pasa de $200$ a $280$ px, con `onResize`: $151$ px
+  útiles a $375$, $125$ a $320$, tres y cuatro filas sin solape; el escritorio queda igual. Va en
+  el JavaScript del simulador y no en CSS porque el `<style>` del capítulo se hereda del 3. La
+  leyenda de la realización, que se cortaba, se acorta a «Descenso de $|\beta|$ en 1899» («Sin
+  escalón» en cero): el rótulo de encima ya dice «ruido blanco + escalón».
+
+Verificado: las dos fuentes (`templates_1_3.html`, `chapter.js`) reensamblan el 4 con solo sus
+líneas cambiadas, 5 y 6 idénticos; Chrome sin ventana a 1280, 768, 375 y 320 px sin excepciones;
+el barrido de los 10 módulos, cero `.katex-error` y solo los falsos positivos conocidos del
+detector de decimales. Commit `a54eb2e`.
+
 ## 9. Enlaces
 
 - Precedente: [[PLAN_Auditoria_Cap3]]
