@@ -149,6 +149,23 @@
       grafico.update('none');
     }
 
+    // En un teléfono los lienzos miden unos 240 px de ancho y la leyenda de
+    // escritorio se come el gráfico: en el M3, las cinco entradas de la tasa
+    // ocupaban cuatro filas y dejaban ~40 px a las curvas; en el M4, las dos de
+    // la ACF ocupaban dos filas y dejaban 56 px a las barras. Por debajo de
+    // 420 px la leyenda se compacta y, si se le pasan `altos`, el marco crece;
+    // onResize lo reajusta si cambia el ancho.
+    const ESTRECHO = 420;
+    function compactar(grafico, ancho, altos) {
+      const chico = ancho < ESTRECHO;
+      Object.assign(grafico.options.plugins.legend.labels, {
+        font: { family: 'Montserrat', size: chico ? 10 : 12 },
+        boxWidth: chico ? 12 : 24,
+        padding: chico ? 6 : 10
+      });
+      if (altos) grafico.canvas.parentNode.style.height = chico ? altos.estrecho : altos.ancho;
+    }
+
     // ∇, ∇², ∇³: el orden como exponente, igual que en la prosa.
     function nabla(d) { return ['', '∇', '∇²', '∇³'][d]; }
 
@@ -228,20 +245,7 @@
       // que ser numérico, o el tramo 100→150 ocuparía lo mismo que 0→25.
       const curva = campo => puntos.map(p => ({ x: p.delta, y: 100 * p[campo] }));
 
-      // En un teléfono los lienzos miden unos 240 px de ancho: con la leyenda de
-      // escritorio, las cinco entradas de la tasa ocupaban cuatro filas y dejaban
-      // ~40 px a las curvas. Por debajo de 420 px la leyenda se compacta y el
-      // marco de la tasa crece; onResize lo reajusta si cambia el ancho.
-      const ESTRECHO = 420;
-      function compactar(grafico, ancho, altos) {
-        const chico = ancho < ESTRECHO;
-        Object.assign(grafico.options.plugins.legend.labels, {
-          font: { family: 'Montserrat', size: chico ? 10 : 12 },
-          boxWidth: chico ? 12 : 24,
-          padding: chico ? 6 : 10
-        });
-        if (altos) grafico.canvas.parentNode.style.height = chico ? altos.estrecho : altos.ancho;
-      }
+      // El marco de la tasa crece en el teléfono (véase compactar, arriba).
       const ALTOS_CURVA = { estrecho: '280px', ancho: '200px' };
 
       function pintar() {
@@ -348,6 +352,16 @@
       const [cSerie, cAcf, cPacf] = raiz.querySelectorAll('canvas');
       let gSerie = null, gAcf = null, gPacf = null;
 
+      // La ACF y la PACF crecen en el teléfono (véase compactar, arriba).
+      // crearGraficoBarras no admite onResize: se le añade ya creado.
+      const ALTOS_BARRAS = { estrecho: '240px', ancho: '180px' };
+      function barrasCompactas(g) {
+        g.options.onResize = (gr, t) => compactar(gr, t.width, ALTOS_BARRAS);
+        compactar(g, g.width, ALTOS_BARRAS);
+        g.update('none');
+        return g;
+      }
+
       function pintar() {
         const d = parseInt(params.d, 10);
         const info = ident[claves[params.d]];
@@ -357,20 +371,23 @@
           `${nabla(d)}Nilo`,
           d === 1 ? COLORES_GRAFICO.secundario : COLORES_GRAFICO.primario,
           { scales: escalasLinea(d === 0 ? UNIDAD_NILO : `Diferencia (${UNIDAD_NILO})`) });
-        gAcf = crearGraficoBarras(cAcf, REZAGOS, info.acf, {
+        gAcf = barrasCompactas(crearGraficoBarras(cAcf, REZAGOS, info.acf, {
           etiqueta: 'ACF muestral', color: COLORES_GRAFICO.primario,
           lineas: lineasBanda(info.n), tituloX: 'Rezago k'
-        });
-        gPacf = crearGraficoBarras(cPacf, REZAGOS, info.pacf, {
+        }));
+        gPacf = barrasCompactas(crearGraficoBarras(cPacf, REZAGOS, info.pacf, {
           etiqueta: 'PACF muestral', color: COLORES_GRAFICO.terciario,
           lineas: lineasBanda(info.n), tituloX: 'Rezago k'
-        });
-        const fuera = info.acf.filter(v => Math.abs(v) > info.banda).length;
+        }));
+        // Contar solo la ACF no distingue d = 1 de d = 2 (2 de 20 en ambos); la
+        // PACF sí (4 frente a 7), y en d = 0 su «1 de 20» es la trampa del AR(1).
+        const fuera = r => `${r.filter(v => Math.abs(v) > info.banda).length} de ${r.length}`;
         actualizarLectura(lectura, [
           { etiqueta: 'n', valor: info.n },
           { etiqueta: 'banda', valor: `±${fmt(info.banda, 4)}` },
           { etiqueta: 'ρ̂₁', valor: fmt(info.acf[0], 4) },
-          { etiqueta: 'ACF fuera de banda', valor: `${fuera} de ${info.acf.length}` },
+          { etiqueta: 'ACF fuera de banda', valor: fuera(info.acf) },
+          { etiqueta: 'PACF fuera de banda', valor: fuera(info.pacf) },
           { etiqueta: 'varianza', valor: fmt(varianzaDe(y)) }
         ]);
       }
@@ -379,7 +396,7 @@
         clave: 'd', etiqueta: 'Serie sobre la que se lee',
         opciones: [
           { valor: '0', texto: 'd = 0 — sin diferenciar' },
-          { valor: '1', texto: 'd = 1 — ∇Nilo (la correcta)' },
+          { valor: '1', texto: 'd = 1 — ∇Nilo (la de trabajo)' },
           { valor: '2', texto: 'd = 2 — ∇²Nilo (una de más)' }
         ]
       }, params, pintar);

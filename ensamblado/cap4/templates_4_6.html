@@ -28,10 +28,16 @@
 
       <div class="simulador" data-simulador="identificacion-nilo">
         <h4><i class="fas fa-magnifying-glass-chart" aria-hidden="true"></i> ACF y PACF por orden de diferenciación</h4>
-        <p class="simulador-intro">Cambia el orden y compara. En $d = 0$ la ACF decae despacio, típico de una serie
-          no estacionaria. En $d = 1$ el rezago 1 destaca con claridad y el 8 ($0.231$) apenas roza la banda,
-          aislado y sin patrón. En $d = 2$ aparece un $\rho_1 = -0.626$
-          muy negativo: ese valor grande y de signo contrario es la huella de haber diferenciado de más.</p>
+        <p class="simulador-intro">Cambia el orden y lee las dos funciones, no solo la ACF. En $d = 0$ la ACF decae
+          despacio, que es lo que deja un nivel que se mueve —por una raíz unitaria o por un cambio de nivel como el
+          de 1899— y no dice nada de $p$ ni de $q$. La trampa está en la PACF: solo se sale el rezago 1, como en un
+          AR(1) con $\phi \approx 0.5$, pero ese AR(1) tendría la ACF dentro de la banda desde el rezago 3. En
+          $d = 1$ la ACF corta en 1 y la PACF decae con signo negativo, la firma de un MA(1). El rezago 8 de la ACF
+          ($0.231$) se sale por poco, aislado y sin patrón; con 20 rezagos al $5\,\%$, uno fuera por azar es lo
+          esperable. En $d = 2$, $\hat\rho_1 = -0.626$ cae por debajo de $-0.5$, el valor que tendría la diferencia
+          de un ruido blanco: la huella de haber diferenciado de más. Y fíjate en el $-0.402$ de $d = 1$: un pico
+          negativo en el rezago 1, no muy lejos de $-0.5$, es también lo que deja diferenciar una serie que no lo
+          necesitaba. La tabla elige $p$ y $q$; no confirma $d$.</p>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">Serie</p>
         <div class="grafico-wrapper" style="height:170px;">
