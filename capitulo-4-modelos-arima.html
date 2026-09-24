@@ -4333,8 +4333,9 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
         <p>La fórmula $\hat{y} \pm z_{1-\alpha/2}\,\sigma_h$ usa $z_{0.975} = 1.96$ y $z_{0.90} = 1.282$, que son
           cuantiles de la normal. Las <em>estimaciones</em> de un ARIMA no necesitan que los errores sean normales;
           los <em>intervalos</em>, sí. Y no siempre lo son: en la TRM del Módulo 10 el test de Shapiro–Wilk sobre los
-          residuales da $p = 0.0006$, un rechazo rotundo. Con colas más pesadas que la normal, un intervalo nominal
-          del $95\,\%$ cubre menos del $95\,\%$.</p>
+          residuales da $p = 0.0006$, un rechazo rotundo. Con colas más pesadas que la normal, la cobertura real se
+          separa de la nominal —en la TRM, a un mes, el intervalo del $80\,\%$ cubre el $83.9\,\%$— y, si los
+          errores son asimétricos, los fallos se concentran en un lado. El Módulo 10 lo mide.</p>
         <p style="margin-bottom:0;">Hay dos advertencias más que conviene decir en voz alta: los intervalos
           <strong>no incluyen la incertidumbre de haber estimado los parámetros</strong> (los tratan como si fueran
           conocidos), ni la de <strong>haber elegido el modelo</strong>. Son, por tanto, sistemáticamente
@@ -4549,14 +4550,19 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3))
         intervalo sale de los pesos $\psi$, $\sigma_h^2 = \sigma^2\sum_{j=0}^{h-1}\psi_j^2$, y que la caminata
         aleatoria es el caso de referencia porque <strong>todos sus $\psi$ valen $1$</strong>: la integración no
         amortigua nada, así que ningún choque se olvida nunca. Aquí no hay que aplicar la fórmula, hay que leerla.
-        A $h$ pasos, el error es la suma de los $h$ choques que aún no han ocurrido:</p>
+        A $h$ pasos, el cambio desde el último dato es la suma de los $h$ choques que aún no han ocurrido. Como su
+        esperanza es cero, el pronóstico es el último valor, y el error de pronóstico es esa misma suma:</p>
 
       <div class="formula">
         $$y_{T+h} - y_T = \sum_{j=1}^{h}\varepsilon_{T+j}$$
-        $$\Longrightarrow\quad \hat y_{T+h|T} = y_T, \qquad \sigma_h^2 = h\,\sigma^2$$
+        $$\Longrightarrow\quad \hat y_{T+h|T} = y_T$$
         $$\begin{aligned}
-          \sigma_h &= \hat\sigma\sqrt{h} = 121.48\,\sqrt{h} \\
-          z_{0.975}\,\sigma_h &= 1.96\,\sigma_h = 238.09\,\sqrt{h}
+          e_{T+h} &= y_{T+h} - \hat y_{T+h|T} = \sum_{j=1}^{h}\varepsilon_{T+j} \\
+          \sigma_h^2 &= \operatorname{Var}(e_{T+h}) = h\,\sigma^2
+        \end{aligned}$$
+        $$\begin{aligned}
+          \hat\sigma_h &= \hat\sigma\sqrt{h} = 121.48\,\sqrt{h} \\
+          z_{0.975}\,\hat\sigma_h &= 1.96\,\hat\sigma_h = 238.09\,\sqrt{h}
         \end{aligned}$$
       </div>
 
@@ -4568,7 +4574,7 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3))
         <thead>
           <tr>
             <th scope="col">$h$</th><th scope="col">Mes</th>
-            <th scope="col">$\sigma_h$</th><th scope="col">Semiancho al 95 %</th>
+            <th scope="col">$\hat\sigma_h$</th><th scope="col">Semiancho al 95 %</th>
             <th scope="col">Intervalo (COP/USD)</th><th scope="col">Sobre el nivel</th>
           </tr>
         </thead>
@@ -4613,7 +4619,9 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3))
           <li><strong>Cualquier ARMA estacionario del Capítulo 3</strong> ($d = 0$): ahí
             $\sum_{j=0}^{\infty}\psi_j^2$ <em>converge</em> y $\sigma_h^2$ se estabiliza en la varianza del
             propio proceso, $\sigma^2\sum_{j=0}^{\infty}\psi_j^2 = \gamma_0$: el abanico tiene techo. Esa es la
-            frontera exacta que marca la raíz unitaria: con ella, la suma diverge y no hay techo.</li>
+            frontera que marca la raíz unitaria: con ella, la suma diverge y no hay techo, salvo que la parte MA
+            la cancele —con $d = 1$, un $\theta = -1$ da $\psi_\infty = (1+\theta)/(1-\phi) = 0$—, el caso
+            límite del Módulo 9.</li>
         </ul>
         <p style="margin-bottom:0;">Y el resultado es incómodo de leer, que es justamente por lo que hay que
           leerlo. A dos años vista el intervalo del $95\,\%$ se extiende <strong>un tercio del nivel hacia cada
@@ -4626,10 +4634,19 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3))
         residuales <strong>al cuadrado</strong> se obtiene $p = 0.857$, así que tampoco hay agrupamiento de
         volatilidad detectable a este nivel de agregación. Lo que sí hay es no normalidad clara ($p = 0.0006$):
         curtosis de $5.1$ y asimetría de $0.76$, es decir, saltos grandes más frecuentes de lo que la normal admite,
-        y los mayores, de devaluación (marzo de 2020, julio de 2022). Tiene una consecuencia inmediata: el abanico
-        de arriba supone normalidad, así que su $95\,\%$ nominal <strong>cubre menos</strong> de lo que promete,
-        como advirtió el Módulo 9. Modelarlo pide innovaciones de colas pesadas o modelos con saltos, fuera del
-        alcance de este curso; ningún ARIMA lo captura.</p>
+        y los mayores, de devaluación (marzo de 2020, julio de 2022).</p>
+
+      <p>Su efecto sobre el abanico no es el que cabría suponer. A un mes, el $95\,\%$ se cumple dentro de la
+        muestra —solo $6$ de los $137$ cambios mensuales caen fuera, un $4.4\,\%$—, pero $5$ de esos $6$ caen
+        <strong>por arriba</strong>: el intervalo es simétrico y el riesgo no lo es, así que subestima la
+        devaluación y sobrestima la revaluación. A doce meses la situación se invierte. Las colas pesadas
+        desaparecen —los cambios a doce meses tienen curtosis $2.8$, casi la de una normal— y, aun así, caen fuera
+        $11$ de los $126$ cambios, un $8.7\,\%$; el Capítulo 6 lo confirma fuera de la muestra, con una cobertura
+        del $89.6\,\%$. Una parte se explica porque $\sigma_h^2 = h\,\sigma^2$ supone choques incorrelados, y con
+        $\hat\rho_1 = 0.088$ la varianza real de los cambios a $3$–$12$ meses es entre $1.07$ y $1.14$ veces esa
+        cifra: el abanico sale un poco estrecho, aunque no tanto como para explicar todo el déficit. Modelar la
+        asimetría pide innovaciones asimétricas y de colas pesadas, o modelos con saltos, fuera del alcance de este
+        curso; ningún ARIMA la captura.</p>
 
       <h3>El puente al Capítulo 5</h3>
 
