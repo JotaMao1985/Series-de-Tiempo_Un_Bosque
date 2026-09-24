@@ -311,8 +311,9 @@ Verificado: `chapter.js` y `templates_4_6.html` reensamblan el 4 con solo sus l�
 y 6 idénticos; el M3 mide lo mismo que tras `a54eb2e` ($151$ y $125$ px); Chrome sin ventana a
 cuatro anchos sin excepciones; cero `.katex-error` en los 10 módulos. Commit `6c35e68`.
 
-Queda fuera: la tabla del M7 rotula $d = 1$ «Mínimo de varianza. Correcto.», el mismo exceso que
-tenía el selector.
+Queda fuera: la tabla del M8 rotula $d = 1$ «Mínimo de varianza. Correcto.», el mismo exceso que
+tenía el selector. (Se anotó primero como del M7; la tabla y el simulador «Diferenciar de más»
+están en `module-8`. El M7 es la traza de `auto.arima`.)
 
 ### Añadido el 2026-09-24: tres conexiones del M5 (media y deriva)
 
@@ -340,6 +341,47 @@ Verificado: el 4 reensamblado con solo las líneas de `templates_4_6.html`, 5 y 
 Chrome sin ventana a 1280, 375 y 320 px, las 24 fórmulas de los tres párrafos renderizan, ningún
 `$` crudo, ninguna más ancha que la vista (la larga se parte en el «=» a $375$); cero
 `.katex-error` en los 10 módulos. Commit `d2de1cf`.
+
+### Añadido el 2026-09-24: el explorador de la rejilla (M6)
+
+`explorador-modelos` imponía bien la comparación dentro de cada $d$ («diferencia» y $\Delta$AICc
+contra el mejor de su $d$), pero su intro solo decía cómo moverlo. Cifras de la rejilla,
+contrastadas en R en seis modelos (AICc, raíces y Ljung–Box coinciden):
+
+| $d$ | Mejor por AICc | Raíz que roza el círculo | A menos de 2 puntos |
+|---|---|---|---|
+| 0 | (1,0,1) | AR en $1.161$ ($\phi = 0.86$) | (2,0,1), (1,0,2), (2,0,0) |
+| 1 | (1,1,1) | MA en $1.144$ ($\theta \approx -0.87$) | (0,1,2), (0,1,1), (2,1,1), (1,1,2) |
+| 2 | (1,2,2) | MA en $1.032$ | (0,2,2) con MA en $1.000$, (2,2,2) con $1.048$ |
+
+Ljung–Box(20) rechaza ocho modelos —(0,0,0), (0,0,1), (0,0,2), (0,1,0), (0,2,0), (0,2,1),
+(1,2,0), (2,2,0)— y todos los que quedan a menos de 4 puntos del mejor de su $d$ pasan, con $p$
+entre $0.21$ —el (1,0,0), a $3.65$— y $0.80$ ($0.47$ a $0.80$ a menos de 2 puntos); el (1,1,0)
+pasa ($p = 0.19$) a 14 puntos y con 3 rezagos fuera de banda.
+
+- **La introducción**, en *tú*: empezar en $d = 1$ (cuatro modelos a menos de 2 puntos, «el
+  AICc apenas los distingue»); Ljung–Box «filtra y no elige»; y las raíces de la lectura, la AR
+  del mejor de $d = 0$ «como si pidiera una diferencia», la MA del de $d = 1$ «como si quisiera
+  deshacerla», las de $d = 2$ entre $1.000$ y $1.048$; «Ningún $d$ sale limpio, y el Módulo 8
+  explica por qué».
+- **Las raíces**, que solo salían con `degenerado` (las cuatro MA en $1.000$): el (1,2,2), mínimo
+  global de AICc y con raíz MA en $1.03$ según la prosa del propio módulo, se veía impecable. La
+  lectura muestra siempre «|raíz AR| mín.» y «|raíz MA| mín.» (o «— (sin AR)»); el ⚠ queda para
+  las degeneradas.
+- **El gráfico de $\Delta$AICc en el teléfono** rotulaba 2 de 9 barras a $375$ y $768$ px y 1 a
+  $320$: `autoSkip` se saltaba el resto, y con ellos los «↑121» de las recortadas. Se probaron
+  rótulos «p,q» con el tope en una segunda línea (a $320$ se tocaban) e inclinados (chocaban las
+  segundas líneas). Queda: por debajo de $420$ px de lienzo, `indexAxis: 'y'` y los rótulos
+  enteros en el eje vertical; si el ancho cruza el umbral, `onResize` repinta con la otra
+  orientación (probado en los dos sentidos sin recargar). El tooltip nombra el modelo y da el
+  $\Delta$AICc real: la barra del (0,2,0) mide 20 y decía 20, el modelo está a $+121.01$.
+- **La ACF de los residuales** dejaba $86$ px útiles a $375$ con dos filas de leyenda; con la
+  compactación del M4 y el marco de $210$ a $250$ px, $154$ ($138$ a $320$). `barrasCompactas`
+  sale del cierre del M4 a los ayudantes del capítulo, con los altos como parámetro.
+
+Verificado: `chapter.js` y `templates_4_6.html` reensamblan el 4 con solo sus líneas cambiadas, 5
+y 6 idénticos; el M4 mide lo mismo que tras `6c35e68` ($144$ px a $375$); Chrome sin ventana a
+cuatro anchos sin excepciones; cero `.katex-error` en los 10 módulos. Commit `5c37d52`.
 
 ## 9. Enlaces
 
