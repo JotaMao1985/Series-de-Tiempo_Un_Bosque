@@ -83,13 +83,13 @@ Cumplidos todos. Commits `5e3dbf7` (teléfono) y `bdd4c39` (decimales y concorda
 
 ## 5. Lo que queda fuera
 
-- ~~Punto decimal en los capítulos 3, 5 y 6~~: hecho el mismo día, §7. Siguen con coma los
+- ~~Punto decimal en los capítulos 3, 5 y 6~~: hecho el mismo día, §6. Siguen con coma los
   capítulos 1 y 2 (sin revisar) y los talleres y el preparcial (copias propias del
   componente).
 - El capítulo 5, tabla de la TRM: banda $\pm0.168 \rightarrow \pm0.167$.
 - Ningún guion de ensamblado vigila el ancho de las fórmulas.
 
-## 7. Extensión a los capítulos 3, 5 y 6 (2026-09-23)
+## 6. Extensión a los capítulos 3, 5 y 6 (2026-09-23)
 
 Javier pidió después «pasa a punto decimal los capítulos 3, 5 y 6». Se copió el bloque del 4:
 
@@ -104,7 +104,7 @@ Verificado por HTTP en los 34 módulos: lecturas, tablas, ejes y tooltips con pu
 cero `.katex-error`, cero errores de JS; el 4 se reensambla idéntico y el 3 sigue siendo
 reproducible. Commit `df035d0`.
 
-## 6. Enlaces
+## 7. Enlaces
 
 - Bitácora: [[2026-09-23]]
 - Nota del capítulo: [[20948-04 Modelos ARIMA y Box-Jenkins]]
