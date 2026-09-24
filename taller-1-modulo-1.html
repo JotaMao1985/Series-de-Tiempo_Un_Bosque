@@ -3025,7 +3025,7 @@
 
       <div class="simulador" data-simulador="taller1-var-acf">
         <h4><i class="fas fa-wave-square" aria-hidden="true"></i> ACF y PACF</h4>
-        <p class="simulador-intro">Los primeros 24 rezagos, con la banda $\pm 1{,}96/\sqrt{n}$ dibujada a trazos.</p>
+        <p class="simulador-intro">Los primeros 24 rezagos, con la banda $\pm 1.96/\sqrt{n}$ dibujada a trazos.</p>
         <div class="grafico-wrapper" style="height:230px;">
           <canvas aria-label="Función de autocorrelación de tu serie por rezago, con su banda; los valores están en la tabla de debajo" role="img"></canvas>
         </div>
@@ -3123,7 +3123,7 @@
 
       <div class="simulador" data-simulador="taller1-var-residual">
         <h4><i class="fas fa-wave-square" aria-hidden="true"></i> El correlograma del residual</h4>
-        <p class="simulador-intro">La ACF del residual con su banda $\pm 1{,}96/\sqrt{n}$. Es lo que se mira después de descomponer: si el modelo se llevó lo que tenía que llevarse, aquí no debería quedar estructura.</p>
+        <p class="simulador-intro">La ACF del residual con su banda $\pm 1.96/\sqrt{n}$. Es lo que se mira después de descomponer: si el modelo se llevó lo que tenía que llevarse, aquí no debería quedar estructura.</p>
         <div class="grafico-wrapper" style="height:230px;">
           <canvas aria-label="Autocorrelación del residual de la descomposición por rezago, con su banda; los valores están en la tabla de debajo" role="img"></canvas>
         </div>
@@ -3474,7 +3474,7 @@
         <ol class="lista-literales" type="1">
           <li><span class="banco-etiqueta">cap. 2 · mód. 1</span> Define estacionariedad sin usar las palabras «media» ni «varianza», y después dime qué has perdido al hacerlo.</li>
           <li><span class="banco-etiqueta">cap. 2 · mód. 6</span> ADF y KPSS tienen hipótesis nulas contrapuestas. ¿Qué concluyes si las dos rechazan? ¿Y si ninguna rechaza?</li>
-          <li><span class="banco-etiqueta">cap. 2 · mód. 6</span> «El valor $p$ salió 0,42, así que la serie tiene raíz unitaria.» Corrige esa frase y explica qué error de razonamiento contiene.</li>
+          <li><span class="banco-etiqueta">cap. 2 · mód. 6</span> «El valor $p$ salió 0.42, así que la serie tiene raíz unitaria.» Corrige esa frase y explica qué error de razonamiento contiene.</li>
           <li><span class="banco-etiqueta">cap. 2 · mód. 7</span> ¿Por qué diferenciar de forma regular no quita la estacionalidad de una serie mensual? Dilo con lo que le pasa al dato, no con la fórmula.</li>
           <li><span class="banco-etiqueta">cap. 2 · mód. 8</span> ¿Cuándo tomar logaritmos ayuda de verdad, y cuándo es solo un cambio de unidades que no arregla nada?</li>
           <li><span class="banco-etiqueta">cap. 1 · mód. 4</span> Nombra los cuatro componentes y di cuál de ellos es el único que no se puede modelar. ¿Por qué se estima igualmente?</li>
@@ -5264,6 +5264,38 @@
       </details>`;
     }
 
+    // Punto decimal en los gráficos, como en los capítulos. Convierte los
+    // miles de una cifra ya formateada en en-US («28,637.95»): espacio fino
+    // desde cinco cifras enteras (28 637.95), juntos con cuatro (1267.51).
+    // Solo toca comas entre dígitos seguidas de grupos de tres, así que
+    // «ARIMA(1,1,1)» o «(3, 5)» pasan intactos.
+    function agrupaMiles(s) {
+      return String(s).replace(/\d{1,3}(?:,\d{3})+/g,
+        m => m.replace(/,/g, m.replace(/,/g, '').length >= 5 ? '\u202F' : ''));
+    }
+
+    // Los ejes y los tooltips de Chart.js formatean con el idioma del
+    // navegador: «1,400» en uno en inglés y «1.400» en uno en español, que es
+    // mil cuatrocientos o uno coma cuatro según quién lo lea. Se fija en-US y
+    // se pasa por agrupaMiles(), para que digan lo mismo que las lecturas.
+    Chart.defaults.locale = 'en-US';
+    (function () {
+      const tickLineal = Chart.defaults.scales.linear.ticks.callback;
+      Chart.defaults.scales.linear.ticks.callback = function (valor, i, ticks) {
+        return agrupaMiles(tickLineal.call(this, valor, i, ticks));
+      };
+      const cb = Chart.defaults.plugins.tooltip.callbacks;
+      const etiqueta = cb.label, titulo = cb.title;
+      cb.label = function (item) {
+        return etiqueta.call(this, Object.assign({}, item,
+          { formattedValue: agrupaMiles(item.formattedValue) }));
+      };
+      cb.title = function (items) {
+        return titulo.call(this, items.map(it =>
+          Object.assign({}, it, { label: agrupaMiles(it.label) })));
+      };
+    })();
+
     const T1_D4 = x => (x === null || x === undefined) ? '—' : Number(x).toFixed(4);
 
     // Escribe dentro de un bloque y vuelve a pasar KaTeX por lo escrito.
@@ -5369,7 +5401,7 @@
         const K = DATOS_T1.max_rezago;
         const rez = etiquetasRezago(K);
         const b = r.t1.banda;
-        const lineas = [{ valor: b, etiqueta: 'Banda ±1,96/√n' }, { valor: -b, etiqueta: '' }];
+        const lineas = [{ valor: b, etiqueta: 'Banda ±1.96/√n' }, { valor: -b, etiqueta: '' }];
         if (gAcf) {
           gAcf.data.datasets[0].data = r.t1.acf;
           gAcf.data.datasets[1].data = Array(K).fill(b);
@@ -5445,7 +5477,7 @@
           </div>
           <p style="margin:0.6rem 0 0; font-size:0.82rem;">Los valores $p$ que devuelven
             <code>adf.test()</code> y <code>kpss.test()</code> están <strong>recortados a la tabla
-            interna</strong> de cada prueba: cuando R escribe 0,01 quiere decir «0,01 o menos», y
+            interna</strong> de cada prueba: cuando R escribe 0.01 quiere decir «0.01 o menos», y
             avisa por consola. Por eso aquí van con el signo.</p>`);
       }
 
@@ -5565,7 +5597,7 @@
         const K = e.acf_residual.length;
         const rez = etiquetasRezago(K);
         const b = e.banda_residual;
-        const lineas = [{ valor: b, etiqueta: 'Banda ±1,96/√n' }, { valor: -b, etiqueta: '' }];
+        const lineas = [{ valor: b, etiqueta: 'Banda ±1.96/√n' }, { valor: -b, etiqueta: '' }];
         if (g) {
           g.data.datasets[0].data = e.acf_residual;
           g.data.datasets[1].data = Array(K).fill(b);
@@ -5601,7 +5633,7 @@
       const lectura = raiz.querySelector('.simulador-lectura');
 
       // Las varianzas se escriben con las cifras significativas que trae el
-      // precálculo. `toFixed(4)` dejaría 0,0057 y 0,0054 en el mismo sitio y
+      // precálculo. `toFixed(4)` dejaría 0.0057 y 0.0054 en el mismo sitio y
       // aplastaría a cero las filas más pequeñas: la comparación de
       // magnitudes entre filas ES la tarea, y redondear la borra.
       const v = x => String(x);
@@ -5770,7 +5802,7 @@
           niveles: [
             { nombre: 'Excelente', rango: '22–25', observa: 'Lee la cifra y acota explícitamente qué queda sin probar, apelando al poder de la prueba o al tamaño de muestra.' },
             { nombre: 'Aceptable', rango: '15–21', observa: 'Interpreta la cifra correctamente pero no dice qué se queda fuera.' },
-            { nombre: 'Insuficiente', rango: '8–14', observa: 'Describe la cifra —«el valor $p$ es 0,42»— sin llegar a una lectura.' },
+            { nombre: 'Insuficiente', rango: '8–14', observa: 'Describe la cifra —«el valor $p$ es 0.42»— sin llegar a una lectura.' },
             { nombre: 'No logrado', rango: '0–7', observa: 'Confunde no rechazar con aceptar, o lee la cifra al revés.' }
           ]
         },

@@ -5055,6 +5055,38 @@
     function lineasBanda(b) {
       return [{ valor: b, etiqueta: 'Banda ±1.96/√T' }, { valor: -b, etiqueta: '' }];
     }
+    // Punto decimal en los gráficos, como en los capítulos. Convierte los
+    // miles de una cifra ya formateada en en-US («28,637.95»): espacio fino
+    // desde cinco cifras enteras (28 637.95), juntos con cuatro (1267.51).
+    // Solo toca comas entre dígitos seguidas de grupos de tres, así que
+    // «ARIMA(1,1,1)» o «(3, 5)» pasan intactos.
+    function agrupaMiles(s) {
+      return String(s).replace(/\d{1,3}(?:,\d{3})+/g,
+        m => m.replace(/,/g, m.replace(/,/g, '').length >= 5 ? '\u202F' : ''));
+    }
+
+    // Los ejes y los tooltips de Chart.js formatean con el idioma del
+    // navegador: «1,400» en uno en inglés y «1.400» en uno en español, que es
+    // mil cuatrocientos o uno coma cuatro según quién lo lea. Se fija en-US y
+    // se pasa por agrupaMiles(), para que digan lo mismo que las lecturas.
+    Chart.defaults.locale = 'en-US';
+    (function () {
+      const tickLineal = Chart.defaults.scales.linear.ticks.callback;
+      Chart.defaults.scales.linear.ticks.callback = function (valor, i, ticks) {
+        return agrupaMiles(tickLineal.call(this, valor, i, ticks));
+      };
+      const cb = Chart.defaults.plugins.tooltip.callbacks;
+      const etiqueta = cb.label, titulo = cb.title;
+      cb.label = function (item) {
+        return etiqueta.call(this, Object.assign({}, item,
+          { formattedValue: agrupaMiles(item.formattedValue) }));
+      };
+      cb.title = function (items) {
+        return titulo.call(this, items.map(it =>
+          Object.assign({}, it, { label: agrupaMiles(it.label) })));
+      };
+    })();
+
     // ================================================================
     // Los 18 módulos del Módulo I
     //
