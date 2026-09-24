@@ -6723,12 +6723,46 @@ round(c(armonico_K4 = 180.200, n_armonico = 467,
 
     // Defensiva ante null: jsonlite escribe los valores infinitos como null y
     // Number(null) es 0, que en pantalla se leería como un cero legítimo.
+    //
+    // Punto decimal, como la prosa. Los miles se agrupan con un espacio fino
+    // solo desde cinco cifras enteras (80 055.01); con cuatro van juntos
+    // (1267.51), como los escribe el texto.
     function fmt(x, d = 2) {
       if (x === null || x === undefined || !Number.isFinite(Number(x))) return '—';
-      return Number(x).toLocaleString('es-CO', {
+      return agrupaMiles(Number(x).toLocaleString('en-US', {
         minimumFractionDigits: d, maximumFractionDigits: d
-      });
+      }));
     }
+
+    // Convierte los miles de una cifra ya formateada en en-US («28,637.95»)
+    // a la convención de fmt(). Solo toca comas entre dígitos seguidas de
+    // grupos de tres, así que «ARIMA(1,1,1)» o «(3, 5)» pasan intactos.
+    function agrupaMiles(s) {
+      return String(s).replace(/\d{1,3}(?:,\d{3})+/g,
+        m => m.replace(/,/g, m.replace(/,/g, '').length >= 5 ? '\u202F' : ''));
+    }
+
+    // Los ejes y los tooltips de Chart.js formatean con el idioma del
+    // navegador: «1,400» en uno en inglés y «1.400» en uno en español, que es
+    // mil cuatrocientos o uno coma cuatro según quién lo lea. Se fija en-US y
+    // se pasa por agrupaMiles(), para que digan lo mismo que las lecturas.
+    Chart.defaults.locale = 'en-US';
+    (function () {
+      const tickLineal = Chart.defaults.scales.linear.ticks.callback;
+      Chart.defaults.scales.linear.ticks.callback = function (valor, i, ticks) {
+        return agrupaMiles(tickLineal.call(this, valor, i, ticks));
+      };
+      const cb = Chart.defaults.plugins.tooltip.callbacks;
+      const etiqueta = cb.label, titulo = cb.title;
+      cb.label = function (item) {
+        return etiqueta.call(this, Object.assign({}, item,
+          { formattedValue: agrupaMiles(item.formattedValue) }));
+      };
+      cb.title = function (items) {
+        return titulo.call(this, items.map(it =>
+          Object.assign({}, it, { label: agrupaMiles(it.label) })));
+      };
+    })();
 
     // Casi todos los simuladores de este capítulo destruyen y recrean sus
     // gráficos al repintar. `graficosActivos` guarda referencias fijas, así que
@@ -7535,6 +7569,7 @@ round(c(armonico_K4 = 180.200, n_armonico = 467,
           mae: AP.comparativa.modelos[k].mae,
           mape: AP.comparativa.modelos[k].mape
         })),
+        formato: fmt,
         inicial: 'rmse',
         pie: 'Las tres columnas dan el mismo orden y aun así el orden es engañoso: ' +
           'sobre 61 orígenes en vez de uno, el SARIMA pasa de cuarto a primero. ' +
