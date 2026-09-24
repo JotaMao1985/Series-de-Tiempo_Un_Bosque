@@ -314,6 +314,33 @@ cuatro anchos sin excepciones; cero `.katex-error` en los 10 módulos. Commit `6
 Queda fuera: la tabla del M7 rotula $d = 1$ «Mínimo de varianza. Correcto.», el mismo exceso que
 tenía el selector.
 
+### Añadido el 2026-09-24: tres conexiones del M5 (media y deriva)
+
+El M5 no tiene simulador; lo interactivo son las pestañas R/Python. Lo que tiene es correcto,
+comprobado otra vez: en R, $\hat\delta = -2.8827$ (e.e. $2.0167$, $t = -1.429$) con $\hat\phi_1 =
+0.2707$, de donde $c = -2.10$; AICc $1268.063$ frente a $1267.507$; la TRM, $8.001$ con e.e.
+$10.356$ ($t = 0.773$); `arima()` con $d = 1$ devuelve solo `ar1` y `ma1` pese a
+`include.mean = TRUE`, y `Arima()` con $d = 2$ da el aviso citado. En Python (statsmodels
+0.14.6), `trend="n"` por defecto con $d > 0$, `ValueError` con `trend="t"` y $d = 2$, y la deriva
+$-2.8518$ (e.e. $2.124$) del comentario. Faltaban tres conexiones, añadidas en prosa impersonal:
+
+- **La regla del polinomio** remite al simulador «La forma del pronóstico según $d$» del M9, que
+  dibuja cuatro de sus seis casos sobre el Nilo (con media, sin constante, con deriva y $d = 2$).
+  Ninguno de los dos módulos citaba al otro.
+- **«¿Lleva deriva el Nilo?»**: la media de las diferencias es $(740 - 1120)/99 = -3.84$ —suma
+  telescópica, solo quedan los extremos— y el descenso de $247.8$ de 1899 aporta $-2.50$; con
+  $d = 1$ un cambio de nivel único solo entra como choque o repartido en pendiente, y el M8 lo
+  ajusta como escalón. Se habla de la media de $\nabla y_t$ y no de $\hat\delta$, que se estima con
+  errores ARMA y no se descompone exactamente así.
+- **La nota de la TRM**: en el ARIMA($0,1,0$), $\hat\delta = (y_n - y_1)/(n-1) = 8.001$, que
+  depende solo del primer y del último mes; lo de en medio solo entra en el error estándar (no
+  «no aporta nada»: fija la varianza de las diferencias).
+
+Verificado: el 4 reensamblado con solo las líneas de `templates_4_6.html`, 5 y 6 idénticos; en
+Chrome sin ventana a 1280, 375 y 320 px, las 24 fórmulas de los tres párrafos renderizan, ningún
+`$` crudo, ninguna más ancha que la vista (la larga se parte en el «=» a $375$); cero
+`.katex-error` en los 10 módulos. Commit `d2de1cf`.
+
 ## 9. Enlaces
 
 - Precedente: [[PLAN_Auditoria_Cap3]]
