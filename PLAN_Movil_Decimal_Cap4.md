@@ -85,7 +85,8 @@ Cumplidos todos. Commits `5e3dbf7` (teléfono) y `bdd4c39` (decimales y concorda
 
 - ~~Punto decimal en los capítulos 3, 5 y 6~~: hecho el mismo día, §6; los talleres y el
   preparcial, en §7; los capítulos 1 y 2, en §8.
-- El capítulo 5, tabla de la TRM: banda $\pm0.168 \rightarrow \pm0.167$.
+- ~~El capítulo 5, tabla de la TRM: banda $\pm0.168 \rightarrow \pm0.167$~~: hecho el
+  2026-09-23, commit `6696a91`.
 - Ningún guion de ensamblado vigila el ancho de las fórmulas.
 
 ## 6. Extensión a los capítulos 3, 5 y 6 (2026-09-23)

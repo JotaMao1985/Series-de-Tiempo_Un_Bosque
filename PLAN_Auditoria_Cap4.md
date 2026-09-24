@@ -196,7 +196,8 @@ Hecho por cinco manos en paralelo: un agente por plantilla (`templates_1_3`, `4_
   M10 (568, 500, 412, 388, 391 y 503 px). Es la misma ronda que se hizo al capítulo 3 en
   `8ceb706`: la copia MathML de KaTeX y las tablas.
 - **C40**, formato decimal de lecturas y ejes (los seis capítulos).
-- Cap. 5, tabla de la TRM: banda $\pm0.168$ → $\pm0.167$ ($1.96/\sqrt{137}$).
+- ~~Cap. 5, tabla de la TRM: banda $\pm0.168$ → $\pm0.167$ ($1.96/\sqrt{137}$)~~: hecho el
+  2026-09-23, commit `6696a91`.
 
 ## 9. Enlaces
 
