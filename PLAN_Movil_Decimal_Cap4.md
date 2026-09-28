@@ -142,6 +142,15 @@ Verificado por HTTP en los 18 módulos contra la versión anterior: ninguna cifr
 decimal, cero `.katex-error`, cero errores de JS; `cuenta_sitio.py` y las dos auditorías en
 verde. Commit `a489f90`. **Con esto todo el material usa punto decimal.**
 
+**Corrección del 2026-09-27.** «No tienen ensamblador» era cierto, pero el capítulo 2 es la
+**base** de `ensambla_cap3.py`, y el bloque cayó en la región que ese script hereda tal cual.
+Como el 3 ya traía el suyo en `cap3/cap3_js.js`, el ensamblado salía con el bloque dos veces:
+en modo verificación, «DIFIERE +29 / -0». No se publicó nada roto —el script verifica por
+defecto—, pero un `--escribir` habría duplicado el bloque en el 3 y el 4 lo habría
+heredado. Se arregló en el script (sección 7b: recorta la copia del 2; sección 9: cuenta las
+piezas); los capítulos 3, 4, 5 y 6 se reensamblan byte a byte iguales. Detalle en
+`ensamblado/README.md`.
+
 ## 9. Enlaces
 
 - Bitácora: [[2026-09-23]]

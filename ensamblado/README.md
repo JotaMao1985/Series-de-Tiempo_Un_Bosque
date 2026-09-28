@@ -153,6 +153,22 @@ Hoy los **cuatro** (`ensambla_cap3.py`, `ensambla_cap4.py`, `ensambla_cap5.py`,
 `ensambla_cap6.py`) son reejecutables y reproducen su capítulo byte a byte,
 encadenados 3 → 4 → 5 → 6.
 
+> **El capítulo 2 no tiene ensamblador, pero es la base del 3.** Editarlo a mano
+> puede romper `ensambla_cap3.py` sin tocar el capítulo 3. Pasó el 2026-09-23 con
+> el punto decimal: el bloque de `agrupaMiles()` y `Chart.defaults` en en-US entró
+> en `cap3/cap3_js.js` y en el 3 publicado (`df035d0`), y una hora después, a mano,
+> también en el 2 (`a489f90`), justo antes de la paleta de gráficos, en región
+> heredada. El modo verificación daba «DIFIERE +29 / -0»; las 29 líneas **no
+> faltaban** en el publicado, que ya tenía el bloque: eran la copia del 2, que
+> salía **repetida**. Reensamblar con `--escribir` habría publicado el duplicado y
+> `ensambla_cap4.py` lo habría arrastrado sin quejarse (comprobado: +29 / -0 en el
+> 4, dos `agrupaMiles()`), y de ahí al 5 y al 6. Se arregló el 2026-09-27 en el
+> script, no en las fuentes: la sección 7b recorta la copia del 2 —y aborta si el
+> bloque del 2 cambia de forma— y la 9 cuenta las piezas, de modo que atrapa
+> tanto dos copias como ninguna. Los cuatro capítulos salen byte a byte como
+> estaban. Tras editar el capítulo 2, pasa `ensambla_cap3.py` en modo
+> verificación.
+
 ## Dos aserciones que se aprendieron por las malas
 
 1. **Delimitar una región por dos marcadores únicos no siempre funciona.** Cierres

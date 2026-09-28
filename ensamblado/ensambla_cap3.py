@@ -36,6 +36,13 @@ CSS, motor de JavaScript y llamada de arranque, con los mismos anclajes que
 usó la retropropagación, más su instancia expandida desde el marcador de la
 plantilla.
 
+Y un tercer caso, que ni se hereda ni se instala: se QUITA. El bloque que fija
+las cifras de Chart.js en en-US (agrupaMiles() y el envoltorio de ticks y
+tooltips) vive en `cap3/cap3_js.js` desde el 2026-09-23, y esa misma noche se
+añadió a mano también al capítulo 2, en la región que aquí se hereda. Del 23
+al 27 de septiembre el modo verificación daba «DIFIERE +29 / -0»: era la copia
+del 2, que salía repetida. La sección 7b la recorta y la 9 cuenta las piezas.
+
 REPARACIÓN DEL 2026-09-09
 -------------------------
 Hasta esa fecha este script solo insertaba el CSS del `.tabla-ranking`, y
@@ -340,6 +347,48 @@ for marca in ("function iniciarDerivaciones()", "iniciarDerivaciones();"):
                  "Las derivaciones plegables del capítulo 3 no funcionarían.")
 
 # ---------------------------------------------------------------------------
+# 7b. Cifras de Chart.js en en-US: se quita la copia del capítulo 2
+# ---------------------------------------------------------------------------
+# El caso contrario al de .derivacion: aquí el capítulo 2 trae algo que el 3
+# NO debe heredar, porque ya lo trae él. El bloque —agrupaMiles(),
+# `Chart.defaults.locale = 'en-US'` y el envoltorio de los ticks lineales y los
+# tooltips— entró en `cap3_js.js` y en el publicado con df035d0 (2026-09-23),
+# junto al fmt() de la tabla ordenable, que es quien más lo usa. Una hora
+# después a489f90 metió el mismo bloque a mano en el capítulo 2, justo antes de
+# la paleta de gráficos, que es región heredada: desde entonces el ensamblado
+# salía con el bloque DOS veces (+29 líneas) y el modo verificación lo frenó.
+#
+# Se quita la copia del 2 y no la del 3 porque así el capítulo publicado queda
+# byte a byte, y el 4, el 5 y el 6 —que traen cada uno la suya en su
+# `chapter.js` y heredan del 3 la región común— no la reciben duplicada.
+#
+# El fin se busca a partir del inicio (el cierre del envoltorio), no con un
+# segundo marcador: `    })();` sale por todo el archivo. Y lo recortado se
+# comprueba: si el bloque del 2 cambia de forma, se para aquí antes que
+# arrancar de más.
+inicio_cifras = "    // Los ejes y los tooltips de Chart.js formatean con el idioma del\n"
+fin_cifras = "    })();\n\n"
+if html.count(inicio_cifras) != 1:
+    sys.exit(f"ABORTA [cifras de Chart.js del capítulo 2]: el comentario de inicio aparece "
+             f"{html.count(inicio_cifras)} veces, se esperaba 1. Si el capítulo 2 ya no "
+             "trae el bloque, esta sección sobra; si lo trae dos veces, se arregla allí.")
+i = html.index(inicio_cifras)
+j = html.index(fin_cifras, i) + len(fin_cifras)
+bloque_cap2 = html[i:j]
+for pieza in ("function agrupaMiles(", "Chart.defaults.locale = 'en-US';",
+              "Chart.defaults.scales.linear.ticks.callback =",
+              "Chart.defaults.plugins.tooltip.callbacks"):
+    if bloque_cap2.count(pieza) != 1:
+        sys.exit(f"ABORTA [cifras de Chart.js del capítulo 2]: el bloque recortado no es "
+                 f"el esperado ({pieza!r} aparece {bloque_cap2.count(pieza)} veces).")
+if bloque_cap2.count("\n") > 30:
+    sys.exit(f"ABORTA [cifras de Chart.js del capítulo 2]: el recorte tiene "
+             f"{bloque_cap2.count(chr(10))} líneas; el bloque tiene 29. Algo más se "
+             "coló entre el comentario y el cierre del envoltorio.")
+html = html[:i] + html[j:]
+sustituciones += 1
+
+# ---------------------------------------------------------------------------
 # 8. JavaScript propio del capítulo (simuladores y autoevaluación)
 # ---------------------------------------------------------------------------
 js_cap3 = (FUENTES / "cap3_js.js").read_text(encoding="utf-8")
@@ -449,6 +498,16 @@ for pieza in ['<div class="quiz" data-quiz="parcial2">', "AUTOEVALUACIONES['parc
     if html.count(pieza) != 1:
         fallos.append(f"actividad preparatoria del Parcial 2: '{pieza}' aparece "
                       f"{html.count(pieza)} veces, se esperaba 1")
+
+# El formato de cifras de Chart.js (sección 7b) se CUENTA: dos copias son lo que
+# producía este script cuando el capítulo 2 recibió el bloque, y cero es lo que
+# pasaría si alguien lo quitara de `cap3_js.js` creyendo que sobra. fmt() y los
+# ejes lo necesitan.
+for pieza in ("function agrupaMiles(", "Chart.defaults.locale = 'en-US';",
+              "Chart.defaults.scales.linear.ticks.callback =", "function fmt("):
+    if html.count(pieza) != 1:
+        fallos.append(f"cifras de Chart.js: '{pieza}' aparece {html.count(pieza)} "
+                      f"veces, se esperaba 1")
 
 # El simulacro del Módulo 11: una variante entera del quiz, SIN CLAVE. El
 # contenedor y la prosa están en la plantilla; el motor y el registro, en
