@@ -2281,6 +2281,262 @@
         padding: 0.42rem 0.4rem;
       }
     }
+    /* ------------------------------------------------------------------
+       Simulacro: un examen de práctica que se marca y se cronometra, pero
+       NO se corrige. Publica las preguntas de un quiz cuya clave no puede
+       viajar en la página, porque el capítulo es público.
+
+       Injertado del Módulo 13 del capítulo 4 de Estadística Espacial
+       (2026-09-18), sin tocar una declaración: los dos cursos comparten
+       paleta. Se instala SOLO en el capítulo 3 —lo usa su Módulo 11— y
+       `ensambla_cap4.py` lo retira, para que los capítulos 4, 5 y 6 no
+       hereden CSS muerto. Por eso el bloque va entre estos dos rótulos: el
+       de abajo es el que busca el recorte.
+       ------------------------------------------------------------------ */
+    .simulacro {
+      background-color: #f8fafc;
+      border: 1px solid #cbd5e1;
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .simulacro h4 {
+      color: #012820;
+      margin-top: 0;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .simulacro > h4 + p {
+      margin-top: 0.6rem;
+    }
+
+    .simulacro-mandos {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 1rem 0 0.5rem;
+      padding-bottom: 0.9rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .simulacro-empezar,
+    .simulacro-borrar {
+      font-family: inherit;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      border-radius: 50px;
+      padding: 0.4rem 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .simulacro-empezar {
+      color: white;
+      background: #012820;
+      border: none;
+    }
+
+    .simulacro-empezar:hover {
+      background: #FF6600;
+    }
+
+    .simulacro-borrar {
+      color: #012820;
+      background: white;
+      border: 1px solid rgba(1, 40, 32, 0.25);
+    }
+
+    .simulacro-borrar:hover {
+      background: #f1f5f9;
+    }
+
+    .simulacro-reloj {
+      font-family: 'Fira Code', monospace;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #012820;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .simulacro-reloj.acabado {
+      color: #b91c1c;
+    }
+
+    .simulacro-conteo {
+      font-size: 0.8125rem;
+      color: #475569;
+    }
+
+    .simulacro-pregunta {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      padding: 1.1rem 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .simulacro-etiqueta {
+      display: inline-block;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #475569;
+      background: #f1f5f9;
+      border-radius: 50px;
+      padding: 0.15rem 0.6rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .simulacro-enunciado {
+      color: #1f2937;
+    }
+
+    .simulacro-enunciado table {
+      border-collapse: collapse;
+    }
+
+    .simulacro-opciones {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 0.9rem;
+    }
+
+    .simulacro-opcion {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      width: 100%;
+      text-align: left;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      color: #1f2937;
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 0.5rem;
+      padding: 0.6rem 0.8rem;
+      cursor: pointer;
+      transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    .simulacro-opcion:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+    }
+
+    .simulacro-opcion:focus-visible {
+      outline: 2px solid #FF6600;
+      outline-offset: 1px;
+    }
+
+    .simulacro-opcion.marcada {
+      border-color: #012820;
+      background: #ecfdf5;
+    }
+
+    .simulacro-letra {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: #475569;
+      flex: none;
+    }
+
+    .simulacro-opcion.marcada .simulacro-letra {
+      color: #012820;
+    }
+
+    .simulacro-resumen {
+      font-size: 0.8125rem;
+      color: #475569;
+      margin-top: 1rem;
+    }
+
+    .simulacro-resumen b {
+      font-family: 'Fira Code', monospace;
+      color: #012820;
+    }
+    /* ------------------- fin del componente .simulacro ------------------- */
+
+    /* ------------------------------------------------------------------
+       Simulacro: las respuestas que no son botones de opción.
+       El quiz del capítulo 4 empareja (coincidencia), ordena y pide cifras,
+       como en Brightspace: un desplegable por fila, un puesto por elemento y
+       una casilla numérica. Complementa a simulacro.css, que es del capítulo
+       3 y no se toca; lo instala ensambla_cap4.py justo después de él, y
+       ensambla_cap5.py recorta los dos.
+       ------------------------------------------------------------------ */
+    .simulacro-filas {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 0.9rem;
+    }
+
+    .simulacro-fila {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .simulacro-fila-texto {
+      font-size: 0.9375rem;
+      color: #1f2937;
+    }
+
+    .simulacro-desplegable,
+    .simulacro-numero {
+      font-family: inherit;
+      font-size: 0.9375rem;
+      color: #1f2937;
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 0.5rem;
+      padding: 0.45rem 0.6rem;
+      max-width: 100%;
+    }
+
+    .simulacro-desplegable {
+      width: 100%;
+    }
+
+    .simulacro-desplegable:focus-visible,
+    .simulacro-numero:focus-visible {
+      outline: 2px solid #FF6600;
+      outline-offset: 1px;
+    }
+
+    /* En el ordenamiento el puesto va delante del elemento, en la misma línea */
+    .simulacro-fila-orden {
+      flex-direction: row;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .simulacro-desplegable.simulacro-puesto {
+      width: auto;
+      flex: none;
+    }
+
+    .simulacro-numero {
+      width: 12rem;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .simulacro-nota {
+      font-size: 0.8125rem;
+      color: #475569;
+      margin: 0;
+    }
+    /* -------------- fin de las respuestas del .simulacro -------------- */
   </style>
 </head>
 
@@ -5070,6 +5326,76 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
     </div>
   </template>
 
+  <template id="module-11">
+    <div class="animate-fade-in">
+      <div class="border-b border-gray-100 pb-6 mb-6">
+        <div class="flex items-center space-x-2 text-sm text-secondary font-semibold mb-2 uppercase tracking-wide">
+          <span>Módulo 11</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4" style="border:none; padding:0;">Simulacro del quiz <span
+            class="text-gray-400 font-normal text-2xl">/ Mock quiz</span></h2>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-start gap-3">
+          <span class="text-xl">🎯</span>
+          <div>
+            <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
+            <p class="text-gray-600 text-sm" style="margin:0;">Medir, con el reloj puesto, si las decisiones del
+              capítulo 3 y de los cuatro primeros módulos de este salen solas, y dejar por escrito las respuestas para
+              contrastarlas después.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Este módulo no añade contenido: es un ensayo. El quiz del <a
+          href="capitulo-3-modelos-ar-ma-arma.html" class="text-primary underline">capítulo 3</a> y los módulos 4.1 a
+        4.4 se presenta en Brightspace, dura <strong>40 minutos</strong> y se resuelve con calculadora y las fórmulas
+        escritas, sin R. Son <strong>diez preguntas</strong>, un punto cada una: seis del capítulo 3, con el peso en los
+        módulos 3.5 a 3.10, y cuatro de este. Tienen las cinco formas de Brightspace: cinco de opción, tres de ellas
+        con una sola respuesta y dos con varias, dos de emparejar, una de ordenar y dos que piden una cifra. Cada
+        estudiante recibe una variante distinta de cada pregunta, con sus propias cifras.</p>
+
+      <p>Abajo está un simulacro con esa misma forma. <strong>No son las preguntas del quiz</strong>: es una variante
+        aparte, con otros datos, que no se usa en Brightspace. Memorizar sus respuestas no sirve de nada; lo que se
+        repite de una variante a otra es la <em>decisión</em> —qué función se corta y cuál decae, qué se descuenta de
+        los grados de libertad, qué hipótesis nula tiene cada prueba de raíz unitaria— y esa es la que conviene tener
+        automatizada antes de entrar.</p>
+
+      <div class="warning">
+        <p><strong>Aquí no se corrige.</strong> El simulacro no trae la clave ni la retroalimentación, y no las trae a
+          propósito: esta página es pública, y una clave incrustada en ella la lee cualquiera desde el código fuente.
+          Responde, anota lo que respondiste —el resumen de abajo lo escribe por ti— y contrástalo con el material:
+          cada pregunta dice de qué módulos sale. La autoevaluación del <strong>Módulo 10</strong> sí lleva pista y
+          explicación de cada opción, y los ítems del quiz de Brightspace también.</p>
+      </div>
+
+      <div class="simulacro" data-simulador="cap4-simulacro">
+        <h4><i class="fas fa-stopwatch" aria-hidden="true"></i> Simulacro del quiz · capítulo 3 y módulos 4.1–4.4</h4>
+        <p class="text-sm" style="margin-bottom:0;">Diez preguntas, cuarenta minutos. Se responde y se cronometra; no se
+          corrige.</p>
+        <div class="simulacro-mandos">
+          <button type="button" class="simulacro-empezar"></button>
+          <span class="simulacro-reloj" role="timer" aria-live="off"></span>
+          <span class="simulacro-conteo"></span>
+          <button type="button" class="simulacro-borrar">Borrar</button>
+        </div>
+        <div class="simulacro-preguntas"></div>
+        <p class="simulacro-resumen" role="status"></p>
+      </div>
+
+      <div class="note">
+        <p><strong>Cómo aprovecharlo.</strong> Hazlo una vez con el reloj y sin abrir nada más que tus fórmulas: lo que
+          falle ahí es lo que hay que repasar. Después repítelo con el material delante y mira cuánto cuesta cada
+          consulta, porque en el quiz ese tiempo sale del mismo presupuesto. Las que más se demoran son las de cuenta a
+          mano —$\rho_2$ de un ARMA(1,1), Yule–Walker desde las autocovarianzas, el AICc de cuatro modelos, el
+          intervalo en la escala original— y se abrevian sabiendo de antemano qué entra en cada fórmula.</p>
+        <p>Las de emparejar y la de ordenar se responden con desplegables, como en Brightspace, y en las de emparejar
+          sobran respuestas. Las cifras se escriben con punto decimal.</p>
+        <p style="margin-bottom:0;">El reloj sigue corriendo si sales a otro módulo, igual que el del salón, y lo
+          respondido se conserva mientras no cierres la página. <strong>Borrar</strong> lo devuelve todo al
+          principio.</p>
+      </div>
+    </div>
+  </template>
+
   <script>
     // ================================================================
     // Configuración del capítulo
@@ -5086,7 +5412,8 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
         { id: 7, title: "Dentro de auto.arima", shortTitle: "auto.arima", duration: "14 min" },
         { id: 8, title: "Diagnóstico y errores comunes", shortTitle: "Diagnóstico", duration: "16 min" },
         { id: 9, title: "Pronóstico: forma e intervalos", shortTitle: "Pronóstico", duration: "16 min" },
-        { id: 10, title: "Caso TRM, puente y cierre", shortTitle: "Cierre", duration: "21 min" }
+        { id: 10, title: "Caso TRM, puente y cierre", shortTitle: "Cierre", duration: "21 min" },
+        { id: 11, title: "Simulacro del quiz", shortTitle: "Simulacro", duration: "40 min" }
       ]
     };
 
@@ -7737,6 +8064,468 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
         retroFallo: 'La raíz de $1 + \\theta B$ es $B = -1/\\theta$, y con $\\theta = -1$ da $B = 1$, módulo $1.0000$. Si respondiste $-1$, te faltó el módulo; si respondiste $0$, quizá resolviste $\\theta B = 0$. Lo importante es la lectura: módulo exactamente $1$ significa no invertible, y aquí es porque $(1+\\theta B) = (1-B)$ cancela la diferencia que acabas de imponer.'
       }
     ];
+
+    // ================================================================
+    // Simulacro del quiz (Módulo 11)
+    //
+    // Se responde y se cronometra, pero NO se corrige: en la página no hay
+    // clave, ni retroalimentación, ni nada de donde deducirlas. Es lo que
+    // lo distingue de la autoevaluación del Módulo 10, que sí las lleva: un
+    // examen de práctica cuyas preguntas se van a aplicar no puede publicar
+    // su clave, porque viajaría en el HTML de un capítulo público.
+    //
+    // Es el motor del Módulo 11 del capítulo 3 (injertado a su vez del
+    // Módulo 13 del capítulo 4 de Estadística Espacial), con una diferencia:
+    // aquel solo sabía de preguntas de opción, y el quiz de este capítulo
+    // tiene cinco formas, las mismas que en Brightspace:
+    //   · 'opcion'        una marca                 (Multiple Choice)
+    //   · 'multiple'      varias marcas             (Multi-Select)
+    //   · 'coincidencia'  un desplegable por fila   (Matching)
+    //   · 'orden'         un puesto por elemento    (Ordering)
+    //   · 'numero'        una cifra                 (Arithmetic)
+    // Cada forma sabe construir sus controles, repintarlos desde el estado y
+    // resumir lo respondido (FORMAS_SIMULACRO, abajo). Lo demás es lo del
+    // capítulo 3:
+    //   · se engancha al registro SIMULADORES, que loadModule() ya recorre;
+    //   · lo respondido y el reloj viven en ESTADO_SIMULACRO, fuera del
+    //     renderizado, para que salir a otro módulo y volver no borre veinte
+    //     minutos de trabajo. El reloj sigue corriendo mientras tanto: se
+    //     guarda la hora de final, no los segundos que quedan.
+    //
+    // El CSS gemelo está en ensamblado/componentes/simulacro.css (heredado del
+    // capítulo 3) y en simulacro_respuestas.css (los desplegables y la casilla
+    // numérica), que instala ensambla_cap4.py.
+    //
+    // SIMULACROS['id'] = { minutos, variante, preguntas: [{ n, etiqueta,
+    // tipo, enunciado, y opciones | filas y respuestas | elementos }] } lo
+    // escribe exporta_simulacro.py desde el banco del quiz, fuera del
+    // repositorio.
+    // ================================================================
+    const SIMULACROS = {};
+    const ESTADO_SIMULACRO = {};
+    const LETRAS_SIMULACRO = 'abcdefghijklmnop'.split('');
+    const LETRAS_ORDEN = 'ABCDEFGH'.split('');
+
+    function escapaSimulacro(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // Una fila con su etiqueta y su control. El id enlaza la etiqueta con el
+    // control, para el lector de pantalla y para que tocar el texto lo active.
+    function filaSimulacro(zona, clase, idControl, marca, texto) {
+      const caja = document.createElement('div');
+      caja.className = clase;
+      const etiqueta = document.createElement('label');
+      etiqueta.className = 'simulacro-fila-texto';
+      etiqueta.htmlFor = idControl;
+      if (marca) {
+        const m = document.createElement('span');
+        m.className = 'simulacro-letra';
+        m.textContent = marca;
+        etiqueta.append(m, ' ');
+      }
+      etiqueta.append(texto);
+      caja.appendChild(etiqueta);
+      zona.appendChild(caja);
+      return caja;
+    }
+
+    const FORMAS_SIMULACRO = {
+      opcion: {
+        rotulo: '',
+        vacia: () => [],
+        respondida: r => r.length > 0,
+        resumen: r => r.map(j => LETRAS_SIMULACRO[j]).join('') || '—',
+        construye(zona, pr, leer, escribir) {
+          const varias = pr.tipo === 'multiple';
+          zona.className = 'simulacro-opciones';
+          zona.setAttribute('role', 'group');
+          zona.setAttribute('aria-label', `Opciones de la pregunta ${pr.n}`);
+          const botones = pr.opciones.map((texto, j) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'simulacro-opcion';
+            b.innerHTML = `<span class="simulacro-letra">${LETRAS_SIMULACRO[j]})</span><span>${texto}</span>`;
+            b.onclick = () => {
+              const r = leer();
+              const puesta = r.includes(j);
+              escribir(varias
+                ? (puesta ? r.filter(x => x !== j) : r.concat(j).sort((a, b) => a - b))
+                : (puesta ? [] : [j]));
+            };
+            zona.appendChild(b);
+            return b;
+          });
+          return () => botones.forEach((b, j) => {
+            const marcada = leer().includes(j);
+            b.classList.toggle('marcada', marcada);
+            b.setAttribute('aria-pressed', marcada ? 'true' : 'false');
+          });
+        }
+      },
+
+      coincidencia: {
+        rotulo: ' · emparejar',
+        vacia: pr => pr.filas.map(() => null),
+        respondida: r => r.every(x => x !== null),
+        resumen: r => r.every(x => x === null) ? '—'
+          : r.map((x, f) => `${f + 1}${x === null ? '—' : LETRAS_SIMULACRO[x]}`).join(' '),
+        construye(zona, pr, leer, escribir, prefijo) {
+          zona.className = 'simulacro-filas';
+          const selectores = pr.filas.map((fila, f) => {
+            const id = `${prefijo}-${f + 1}`;
+            const caja = filaSimulacro(zona, 'simulacro-fila', id, `${f + 1}.`, fila);
+            const sel = document.createElement('select');
+            sel.id = id;
+            sel.className = 'simulacro-desplegable';
+            sel.add(new Option('— Elegir —', ''));
+            pr.respuestas.forEach((t, j) => sel.add(new Option(`${LETRAS_SIMULACRO[j]}) ${t}`, String(j))));
+            sel.onchange = () => {
+              const r = leer().slice();
+              r[f] = sel.value === '' ? null : Number(sel.value);
+              escribir(r);
+            };
+            caja.appendChild(sel);
+            return sel;
+          });
+          return () => selectores.forEach((s, f) => {
+            const x = leer()[f];
+            s.value = x === null ? '' : String(x);
+          });
+        }
+      },
+
+      orden: {
+        rotulo: ' · ordenar',
+        vacia: pr => pr.elementos.map(() => null),
+        respondida: r => r.every(x => x !== null),
+        // El orden que sale de los puestos elegidos, de arriba abajo; «?» donde
+        // un puesto está vacío o repetido.
+        resumen: r => r.every(x => x === null) ? '—' : r.map((_, p) => {
+          const en = r.map((x, e) => x === p + 1 ? e : -1).filter(e => e >= 0);
+          return en.length === 1 ? LETRAS_ORDEN[en[0]] : '?';
+        }).join(''),
+        construye(zona, pr, leer, escribir, prefijo) {
+          zona.className = 'simulacro-filas';
+          const nota = document.createElement('p');
+          nota.className = 'simulacro-nota';
+          nota.textContent = `Elige el puesto de cada uno: 1.º es el de arriba y ${pr.elementos.length}.º el de abajo.`;
+          zona.appendChild(nota);
+          const selectores = pr.elementos.map((el, e) => {
+            const id = `${prefijo}-${LETRAS_ORDEN[e]}`;
+            const caja = filaSimulacro(zona, 'simulacro-fila simulacro-fila-orden', id, `${LETRAS_ORDEN[e]}.`, el);
+            const sel = document.createElement('select');
+            sel.id = id;
+            sel.className = 'simulacro-desplegable simulacro-puesto';
+            sel.add(new Option('—', ''));
+            pr.elementos.forEach((_, p) => sel.add(new Option(`${p + 1}.º`, String(p + 1))));
+            sel.onchange = () => {
+              const r = leer().slice();
+              r[e] = sel.value === '' ? null : Number(sel.value);
+              escribir(r);
+            };
+            caja.prepend(sel);
+            return sel;
+          });
+          return () => selectores.forEach((s, e) => {
+            const x = leer()[e];
+            s.value = x === null ? '' : String(x);
+          });
+        }
+      },
+
+      numero: {
+        rotulo: ' · respuesta numérica',
+        vacia: () => '',
+        respondida: r => r.trim() !== '',
+        resumen: r => r.trim() ? escapaSimulacro(r.trim()) : '—',
+        construye(zona, pr, leer, escribir, prefijo) {
+          zona.className = 'simulacro-filas';
+          const id = `${prefijo}-cifra`;
+          const caja = filaSimulacro(zona, 'simulacro-fila simulacro-fila-numero', id, '', 'Tu respuesta');
+          const casilla = document.createElement('input');
+          casilla.type = 'text';
+          casilla.id = id;
+          casilla.className = 'simulacro-numero';
+          casilla.inputMode = 'decimal';
+          casilla.autocomplete = 'off';
+          casilla.spellcheck = false;
+          // sin repintar mientras se escribe: repintar movería el cursor
+          casilla.oninput = () => escribir(casilla.value, false);
+          caja.appendChild(casilla);
+          return () => { casilla.value = leer(); };
+        }
+      }
+    };
+    FORMAS_SIMULACRO.multiple = Object.assign({}, FORMAS_SIMULACRO.opcion, { rotulo: ' · varias respuestas' });
+
+    SIMULADORES['cap4-simulacro'] = function (raiz) {
+      const id = raiz.dataset.simulador;
+      const sim = SIMULACROS[id];
+      if (!sim) {
+        console.warn(`Simulacro no registrado: ${id}`);
+        return [];
+      }
+      if (!ESTADO_SIMULACRO[id]) {
+        ESTADO_SIMULACRO[id] = {
+          respuestas: sim.preguntas.map(pr => FORMAS_SIMULACRO[pr.tipo].vacia(pr)),
+          finAt: null,
+          restante: sim.minutos * 60
+        };
+      }
+      return pintarSimulacro(raiz, sim, ESTADO_SIMULACRO[id]);
+    };
+
+    function pintarSimulacro(raiz, sim, estado) {
+      const contenedor = raiz.querySelector('.simulacro-preguntas');
+      const conteo = raiz.querySelector('.simulacro-conteo');
+      const resumen = raiz.querySelector('.simulacro-resumen');
+      const reloj = raiz.querySelector('.simulacro-reloj');
+      const empezar = raiz.querySelector('.simulacro-empezar');
+      const borrar = raiz.querySelector('.simulacro-borrar');
+      const repintores = [];
+      contenedor.innerHTML = '';
+
+      sim.preguntas.forEach((pr, i) => {
+        const forma = FORMAS_SIMULACRO[pr.tipo];
+        const caja = document.createElement('div');
+        caja.className = 'simulacro-pregunta';
+        caja.innerHTML = `<span class="simulacro-etiqueta">${pr.n}. ${pr.etiqueta}${forma.rotulo}</span>` +
+          `<div class="simulacro-enunciado">${pr.enunciado}</div>`;
+        const zona = document.createElement('div');
+        caja.appendChild(zona);
+        contenedor.appendChild(caja);
+        const leer = () => estado.respuestas[i];
+        const escribir = (r, repintar = true) => {
+          estado.respuestas[i] = r;
+          if (repintar) repintores[i]();
+          pintaMarcador();
+        };
+        repintores.push(forma.construye(zona, pr, leer, escribir, `${raiz.dataset.simulador}-${pr.n}`));
+        repintores[i]();
+      });
+
+      function pintaMarcador() {
+        const hechas = sim.preguntas.filter((pr, i) => FORMAS_SIMULACRO[pr.tipo].respondida(estado.respuestas[i])).length;
+        conteo.textContent = `${hechas} de ${sim.preguntas.length} respondidas`;
+        resumen.innerHTML = 'Tus respuestas: ' + sim.preguntas.map((pr, i) =>
+          `<b>${pr.n}:</b> ${FORMAS_SIMULACRO[pr.tipo].resumen(estado.respuestas[i])}`
+        ).join(' · ') + '. No se corrigen aquí.';
+      }
+
+      // El reloj: `finAt` es la hora en que se acaba y manda mientras corre;
+      // `restante` solo guarda los segundos cuando está pausado.
+      let tic = null;
+      function para() {
+        if (tic !== null) { clearInterval(tic); tic = null; }
+      }
+      function segundos() {
+        return estado.finAt === null
+          ? estado.restante
+          : Math.max(0, Math.round((estado.finAt - Date.now()) / 1000));
+      }
+      function pintaReloj() {
+        const s = segundos();
+        reloj.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+        reloj.classList.toggle('acabado', s === 0);
+        empezar.textContent = estado.finAt !== null ? 'Pausar'
+          : (s === sim.minutos * 60 ? `Empezar los ${sim.minutos} minutos` : 'Seguir');
+      }
+      function arranca() {
+        para();
+        tic = setInterval(() => {
+          if (segundos() === 0) {
+            estado.finAt = null;
+            estado.restante = 0;
+            para();
+          }
+          pintaReloj();
+        }, 250);
+      }
+      empezar.onclick = () => {
+        if (estado.finAt !== null) {          // corriendo: se pausa
+          estado.restante = segundos();
+          estado.finAt = null;
+          para();
+        } else {
+          if (estado.restante === 0) estado.restante = sim.minutos * 60;
+          estado.finAt = Date.now() + estado.restante * 1000;
+          arranca();
+        }
+        pintaReloj();
+      };
+      borrar.onclick = () => {
+        para();
+        estado.respuestas = sim.preguntas.map(pr => FORMAS_SIMULACRO[pr.tipo].vacia(pr));
+        estado.finAt = null;
+        estado.restante = sim.minutos * 60;
+        repintores.forEach(r => r());
+        pintaMarcador();
+        pintaReloj();
+      };
+
+      if (estado.finAt !== null) arranca();
+      pintaReloj();
+      pintaMarcador();
+      // Lo que devuelve un simulador son los objetos que destruirSimuladores()
+      // apaga al cambiar de módulo. Aquí no hay gráficos: lo que hay que apagar
+      // es el intervalo, que si no seguiría pintando sobre nodos que ya no
+      // están en el documento.
+      return [{ destroy: para }];
+    }
+
+    // [inicio · simulacro del quiz]
+    // ================================================================
+    // Simulacro del quiz (Módulo 11) · variante 9, SIN CLAVE
+    //
+    // NO SE EDITA A MANO: lo escribe exporta_simulacro.py, fuera del
+    // repositorio, desde el mismo banco que arma los paquetes de
+    // Brightspace. Aquí solo viajan enunciados, opciones, filas y
+    // respuestas posibles: la clave y la retroalimentación se quedan
+    // fuera, porque este capítulo es público.
+    //
+    // La variante 9 no entra en el banco, a propósito: publicar una de las
+    // ocho le daría a uno de cada ocho estudiantes las preguntas que va a
+    // ver en el quiz, con tiempo ilimitado para estudiarlas.
+    // ================================================================
+    SIMULACROS['cap4-simulacro'] = {
+      minutos: 40,
+      variante: 9,
+      preguntas: [
+        {
+          n: 1,
+          etiqueta: 'cap. 3 · mód. 3.5 · autocorrelación de un ARMA(1,1)',
+          tipo: 'numero',
+          enunciado: '<p>Un proceso ARMA(1,1) estacionario e invertible sigue yₜ = 0.57 yₜ₋₁ + εₜ + 0.25 εₜ₋₁, con εₜ ruido blanco de varianza σ² (convenio de R: el θ suma). ¿Cuánto vale su autocorrelación en el rezago 2, ρ₂? Responde con cuatro decimales, escritos con punto decimal (no con coma).</p>'
+        },
+        {
+          n: 2,
+          etiqueta: 'cap. 3 · mód. 3.10 · revisar un informe de ajuste',
+          tipo: 'multiple',
+          enunciado: '<p>Un asistente de IA recibió una serie de n = 120 observaciones y entregó el informe de abajo. Revísalo paso por paso.</p><ol><li><strong>Identificación.</strong> «La ACF se corta después del rezago 2 y la PACF decae: propongo un AR(2).»</li><li><strong>Ajuste.</strong><pre style="white-space:pre;overflow-x:auto;font-weight:400;font-size:0.78rem;line-height:1.45;margin:0.6rem 0;max-height:none;padding:0.8rem 1rem !important;">&gt; fit &lt;- arima(y, order = c(2, 0, 0))\n&gt; fit\nCoefficients:\n         ar1      ar2  intercept\n      1.2254  -0.3688    67.1246\ns.e.  0.0853   0.0902     0.9829</pre></li><li><strong>Constante.</strong> «La media del proceso es el intercept que imprime arima(), \\(\\hat\\mu = 67.1246\\), y la constante es \\(c = \\hat\\mu(1 - \\hat\\phi_1 - \\hat\\phi_2) = 9.63\\).»</li><li><strong>Comparación.</strong> «Comparé con <code>arima(y, order = c(1, 1, 1))</code>: su AICc es 461.51, frente a 459.67 del AR(2). Me quedo con el AR(2).»</li><li><strong>Diagnóstico.</strong><pre style="white-space:pre;overflow-x:auto;font-weight:400;font-size:0.78rem;line-height:1.45;margin:0.6rem 0;max-height:none;padding:0.8rem 1rem !important;">&gt; Box.test(residuals(fit), lag = 10, type = &quot;Ljung-Box&quot;, fitdf = 2)$p.value\n[1] 0.8784271</pre>«p > 0.05: no hay evidencia de estructura sobrante en los residuales.»</li><li><strong>Estacionariedad.</strong><pre style="white-space:pre;overflow-x:auto;font-weight:400;font-size:0.78rem;line-height:1.45;margin:0.6rem 0;max-height:none;padding:0.8rem 1rem !important;">&gt; round(Mod(polyroot(c(67.1246, -1.2254, 0.3688))), 4)\n[1] 13.4910 13.4910</pre>«Las dos raíces quedan fuera del círculo unitario: el AR(2) estimado es estacionario.»</li></ol><p>¿Cuáles de estas afirmaciones son correctas?</p><p><em>Marca todas las que correspondan. Cada casilla bien resuelta suma y cada una mal resuelta resta, con piso en cero.</em></p>',
+          opciones: [
+            'Error en el paso 1: si la ACF se corta en 2 y la PACF decae, lo que se sugiere es un MA(2), no un AR(2).',
+            'Error en el paso 3: la media no es el intercept; faltó dividirlo por (1 − φ̂₁ − φ̂₂), porque arima() llama intercept a la constante.',
+            'Error en el paso 4: el AICc de un ARIMA(1,1,1) no se compara con el de un AR(2), porque uno se ajusta a ∇y y el otro a y.',
+            'Error en el paso 5: sobró fitdf = 2; en un AR puro no se descuenta nada de los grados de libertad.',
+            'Error en el paso 6: sobró la media; el polinomio AR que recibe polyroot() empieza en 1, no en μ̂.'
+          ]
+        },
+        {
+          n: 3,
+          etiqueta: 'cap. 3 · mód. 3.5-3.6 · correlogramas muestrales',
+          tipo: 'coincidencia',
+          enunciado: '<p>Cuatro series estacionarias de n = 300 observaciones. La tabla da sus autocorrelaciones muestrales simples (ACF) y parciales (PACF) en los rezagos 1 a 6; la banda al 95 % es ±0.113.</p><div style="overflow-x:auto; max-width:100%;"><table style="border-collapse:collapse; margin:6px 0;"><thead><tr><th style="border:1px solid #999; padding:3px 7px; text-align:center">Serie</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">Función</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">k = 1</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">k = 2</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">k = 3</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">k = 4</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">k = 5</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">k = 6</th></tr></thead><tbody><tr><td style="border:1px solid #999; padding:3px 7px; text-align:left">A</td><td style="border:1px solid #999; padding:3px 7px; text-align:left">ACF (r<sub>k</sub>)</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.286</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.412</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.184</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.207</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.069</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.097</td></tr><tr><td style="border:1px solid #999; padding:3px 7px; text-align:left"></td><td style="border:1px solid #999; padding:3px 7px; text-align:left">PACF (φ̂<sub>kk</sub>)</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.286</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.360</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.008</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.029</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−0.053</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.009</td></tr><tr><td style="border:1px solid #999; padding:3px 7px; text-align:left">B</td><td style="border:1px solid #999; padding:3px 7px; text-align:left">ACF (r<sub>k</sub>)</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.819</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.551</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.384</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.276</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.203</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.169</td></tr><tr><td style="border:1px solid #999; padding:3px 7px; text-align:left"></td><td style="border:1px solid #999; padding:3px 7px; text-align:left">PACF (φ̂<sub>kk</sub>)</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.819</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−0.363</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.234</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−0.123</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.089</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.015</td></tr><tr><td style="border:1px solid #999; padding:3px 7px; text-align:left">C</td><td style="border:1px solid #999; padding:3px 7px; text-align:left">ACF (r<sub>k</sub>)</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−0.605</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.246</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−0.011</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.022</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−0.024</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−0.017</td></tr><tr><td style="border:1px solid #999; padding:3px 7px; text-align:left"></td><td style="border:1px solid #999; padding:3px 7px; text-align:left">PACF (φ̂<sub>kk</sub>)</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−0.605</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−0.190</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.084</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.160</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.066</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−0.070</td></tr><tr><td style="border:1px solid #999; padding:3px 7px; text-align:left">D</td><td style="border:1px solid #999; padding:3px 7px; text-align:left">ACF (r<sub>k</sub>)</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.653</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.468</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.355</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.230</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.159</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.134</td></tr><tr><td style="border:1px solid #999; padding:3px 7px; text-align:left"></td><td style="border:1px solid #999; padding:3px 7px; text-align:left">PACF (φ̂<sub>kk</sub>)</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.653</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.073</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.041</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−0.058</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.007</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.041</td></tr></tbody></table></div><p>Asocia cada serie con el modelo que sugiere su correlograma (módulos 3.5 y 3.6). Sobran dos modelos.</p>',
+          filas: [
+            'Serie A',
+            'Serie B',
+            'Serie C',
+            'Serie D'
+          ],
+          respuestas: [
+            'AR(1)',
+            'AR(2)',
+            'ARMA(1,1)',
+            'MA(1)',
+            'MA(2)',
+            'Ruido blanco'
+          ]
+        },
+        {
+          n: 4,
+          etiqueta: 'cap. 3 · mód. 3.7 · Yule-Walker',
+          tipo: 'opcion',
+          enunciado: '<p>De una serie de n = 90 observaciones se obtuvieron las autocovarianzas muestrales (con divisor n, como las calcula <code>acf()</code> de R) \\(\\hat\\gamma_0 = 16.0539\\), \\(\\hat\\gamma_1 = 11.8658\\) y \\(\\hat\\gamma_2 = 4.9091\\). Se quiere un AR(2).</p><p>¿Qué estimaciones da el método de Yule–Walker?</p>',
+          opciones: [
+            '\\(\\hat\\phi_1 = 1.2692,\\ \\hat\\phi_2 = −0.5301\\)',
+            '\\(\\hat\\phi_1 = 0.9169,\\ \\hat\\phi_2 = −0.2405\\)',
+            '\\(\\hat\\phi_1 = 1.1309,\\ \\hat\\phi_2 = −0.5301\\)',
+            '\\(\\hat\\phi_1 = 0.9796,\\ \\hat\\phi_2 = −0.2405\\)'
+          ]
+        },
+        {
+          n: 5,
+          etiqueta: 'cap. 3 · mód. 3.8 · criterios de información',
+          tipo: 'orden',
+          enunciado: '<p>Se ajustaron por máxima verosimilitud, todos con media, cuatro modelos a la misma serie de n = 40 observaciones. Sus log-verosimilitudes:</p><div style="overflow-x:auto; max-width:100%;"><table style="border-collapse:collapse; margin:6px 0;"><thead><tr><th style="border:1px solid #999; padding:3px 7px; text-align:center">Modelo</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">log L</th></tr></thead><tbody><tr><td style="border:1px solid #999; padding:3px 7px; text-align:left">MA(1)</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−54.460</td></tr><tr><td style="border:1px solid #999; padding:3px 7px; text-align:left">AR(1)</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−59.190</td></tr><tr><td style="border:1px solid #999; padding:3px 7px; text-align:left">MA(2)</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−52.821</td></tr><tr><td style="border:1px solid #999; padding:3px 7px; text-align:left">ARMA(1,1)</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−53.428</td></tr></tbody></table></div><p>Ordénalos por el AICc, del mejor (arriba) al peor (módulo 3.8). Solo puntúa el orden completo.</p>',
+          elementos: [
+            'MA(1)',
+            'AR(1)',
+            'MA(2)',
+            'ARMA(1,1)'
+          ]
+        },
+        {
+          n: 6,
+          etiqueta: 'cap. 3 · mód. 3.9 · intervalo en la escala original',
+          tipo: 'numero',
+          enunciado: '<p>Una serie anual de conteos tiene una amplitud que crece con su nivel. Como en el caso de las manchas solares (módulo 3.9), se ajustó un AR(2) a xₜ = √yₜ y se obtuvo φ̂₁ = 1.22, φ̂₂ = −0.58 y σ̂² = 2.14 (la varianza de las innovaciones, en la escala de la raíz). El pronóstico puntual a dos pasos en esa escala es x̂ = 5.83. ¿Cuál es el límite superior del intervalo de predicción al 95 % para y a dos pasos, en la escala original de la serie? Usa 1.96. Responde con dos decimales, escritos con punto decimal (no con coma).</p>'
+        },
+        {
+          n: 7,
+          etiqueta: 'cap. 4 · mód. 4.1 · el modelo escrito con B',
+          tipo: 'coincidencia',
+          enunciado: '<p>Cada fila es un modelo escrito con el operador de rezago B, con el convenio de R (los θ suman: (1 + θB)εₜ). φ₁* y φ₂* son los coeficientes del modelo escrito en niveles, yₜ = φ₁* yₜ₋₁ + φ₂* yₜ₋₂ + εₜ. Asocia cada modelo con lo que es (módulo 4.1). Sobran cinco respuestas.</p>',
+          filas: [
+            '(1 − B) yₜ = (1 − 0.32B) εₜ',
+            '(1 + 0.25B)(1 − B) yₜ = (1 − 0.96B) εₜ',
+            '(1 − 0.65B)(1 − B) yₜ = εₜ',
+            '(1 − B) yₜ = 1.4 + εₜ',
+            '(1 − B)² yₜ = (1 − 1.25B + 0.45B²) εₜ'
+          ],
+          respuestas: [
+            'Un MA con raíz en B = 1.042, fuera del círculo unitario: no sobra nada',
+            'Un ruido blanco con media fija de 1.4',
+            'Un AR(2) en niveles con φ₁* = 1.65 y φ₂* = −0.65',
+            'Equivale al método de Holt con tendencia',
+            'Una caminata aleatoria con deriva 1.4',
+            'Equivale al suavizamiento exponencial simple',
+            'Equivale a una caminata aleatoria sin deriva',
+            'Un MA con raíz en B = 1.042, casi igual a (1 − B): sobra la diferencia',
+            'Un AR(2) en niveles con φ₁* = 0.35 y φ₂* = −0.65',
+            'Equivale a una recta más un ruido blanco'
+          ]
+        },
+        {
+          n: 8,
+          etiqueta: 'cap. 4 · mód. 4.2 y 3.8 · Ljung-Box y grados de libertad',
+          tipo: 'opcion',
+          enunciado: '<p>Se ajustó un ARIMA(2,1,1) por máxima verosimilitud a una serie de n = 150 observaciones y se corrió Ljung–Box sobre sus residuales, sin más argumentos (R llama X-squared al estadístico Q):</p><pre style="white-space:pre;overflow-x:auto;font-weight:400;font-size:0.78rem;line-height:1.45;margin:0.6rem 0;max-height:none;padding:0.8rem 1rem !important;">&gt; fit &lt;- arima(y, order = c(2, 1, 1), method = &quot;ML&quot;)\n&gt; Box.test(residuals(fit), lag = 16, type = &quot;Ljung-Box&quot;)\n\n    Box-Ljung test\n\ndata:  residuals(fit)\nX-squared = 23.329, df = 16, p-value = 0.1052</pre><p>Algunos cuantiles 0.95 de la distribución χ²:</p><div style="overflow-x:auto; max-width:100%;"><table style="border-collapse:collapse; margin:6px 0;"><thead><tr><th style="border:1px solid #999; padding:3px 7px; text-align:center">gl</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">6</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">7</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">8</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">9</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">10</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">11</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">12</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">13</th></tr></thead><tbody><tr><td style="border:1px solid #999; padding:3px 7px; text-align:left">χ²<sub>0.95</sub></td><td style="border:1px solid #999; padding:3px 7px; text-align:right">12.59</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">14.07</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">15.51</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">16.92</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">18.31</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">19.68</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">21.03</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">22.36</td></tr></tbody></table></div><div style="overflow-x:auto; max-width:100%;"><table style="border-collapse:collapse; margin:6px 0;"><thead><tr><th style="border:1px solid #999; padding:3px 7px; text-align:center">gl</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">14</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">15</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">16</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">17</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">18</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">19</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">20</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">21</th></tr></thead><tbody><tr><td style="border:1px solid #999; padding:3px 7px; text-align:left">χ²<sub>0.95</sub></td><td style="border:1px solid #999; padding:3px 7px; text-align:right">23.68</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">25.00</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">26.30</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">27.59</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">28.87</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">30.14</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">31.41</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">32.67</td></tr></tbody></table></div><p>¿Qué afirmación es correcta, al 5 %?</p>',
+          opciones: [
+            'Con 13 grados de libertad, Q = 23.329 supera el valor crítico: se rechaza que los residuales sean ruido blanco.',
+            'Con 12 grados de libertad, Q = 23.329 supera el valor crítico: se rechaza que los residuales sean ruido blanco.',
+            'Con 15 grados de libertad, Q = 23.329 no llega al valor crítico: no se rechaza que los residuales sean ruido blanco.',
+            'Con 16 grados de libertad, Q = 23.329 no llega al valor crítico: no se rechaza que los residuales sean ruido blanco.'
+          ]
+        },
+        {
+          n: 9,
+          etiqueta: 'cap. 4 · mód. 4.3 · ADF, PP y KPSS',
+          tipo: 'multiple',
+          enunciado: '<p>Para decidir el orden de diferenciación d de una serie de n = 120 observaciones se corrieron en R las tres pruebas del módulo 4.3 (paquete <code>tseries</code>):</p><pre style="white-space:pre;overflow-x:auto;font-weight:400;font-size:0.78rem;line-height:1.45;margin:0.6rem 0;max-height:none;padding:0.8rem 1rem !important;">&gt; adf.test(y)\n\n    Augmented Dickey-Fuller Test\n\ndata:  y\nDickey-Fuller = -2.7522, Lag order = 4, p-value = 0.2642\nalternative hypothesis: stationary\n\n\n&gt; pp.test(y)\n\n    Phillips-Perron Unit Root Test\n\ndata:  y\nDickey-Fuller Z(alpha) = -50.66, Truncation lag parameter = 4, p-value = 0.01\nalternative hypothesis: stationary\n\nWarning message:\nIn pp.test(y) : p-value smaller than printed p-value\n\n&gt; kpss.test(y)\n\n    KPSS Test for Level Stationarity\n\ndata:  y\nKPSS Level = 1.5885, Truncation lag parameter = 4, p-value = 0.01\n\nWarning message:\nIn kpss.test(y) : p-value smaller than printed p-value</pre><p>Al 5 %, ¿qué afirmaciones son correctas?</p><p><em>Marca todas las que correspondan. Cada casilla bien resuelta suma y cada una mal resuelta resta, con piso en cero.</em></p>',
+          opciones: [
+            'ADF apunta a diferenciar la serie.',
+            'KPSS apunta a no diferenciar la serie.',
+            'PP apunta a diferenciar la serie.',
+            'ADF y KPSS apuntan a la misma decisión sobre d.',
+            'PP y KPSS apuntan a decisiones opuestas sobre d.'
+          ]
+        },
+        {
+          n: 10,
+          etiqueta: 'cap. 4 · mód. 4.3-4.4 · elegir d, p y q',
+          tipo: 'opcion',
+          enunciado: '<p>Para una serie de n = 151 observaciones se calcularon, para d = 0, 1 y 2, la varianza de \\(\\nabla^d y_t\\), sus autocorrelaciones simples \\(r_k\\) (ACF) y parciales \\(\\hat\\phi_{kk}\\) (PACF) en los rezagos 1 a 4, y la banda \\(\\pm 1.96/\\sqrt{n}\\):</p><div style="overflow-x:auto; max-width:100%;"><table style="border-collapse:collapse; margin:6px 0;"><thead><tr><th style="border:1px solid #999; padding:3px 7px; text-align:center">d</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">n</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">varianza</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">banda</th><th style="border:1px solid #999; padding:3px 7px; text-align:center">r<sub>1</sub></th><th style="border:1px solid #999; padding:3px 7px; text-align:center">r<sub>2</sub></th><th style="border:1px solid #999; padding:3px 7px; text-align:center">r<sub>3</sub></th><th style="border:1px solid #999; padding:3px 7px; text-align:center">r<sub>4</sub></th><th style="border:1px solid #999; padding:3px 7px; text-align:center">φ̂<sub>11</sub></th><th style="border:1px solid #999; padding:3px 7px; text-align:center">φ̂<sub>22</sub></th><th style="border:1px solid #999; padding:3px 7px; text-align:center">φ̂<sub>33</sub></th><th style="border:1px solid #999; padding:3px 7px; text-align:center">φ̂<sub>44</sub></th></tr></thead><tbody><tr><td style="border:1px solid #999; padding:3px 7px; text-align:left">0</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">151</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">67.21</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">±0.160</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.962</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.912</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.862</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.811</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.962</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−0.169</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−0.012</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−0.043</td></tr><tr><td style="border:1px solid #999; padding:3px 7px; text-align:left">1</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">150</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">1.70</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">±0.160</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.411</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.025</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.011</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.013</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.411</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−0.172</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">0.086</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−0.028</td></tr><tr><td style="border:1px solid #999; padding:3px 7px; text-align:left">2</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">149</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">2.01</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">±0.161</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−0.172</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−0.315</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−0.015</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−0.019</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−0.172</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−0.355</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−0.177</td><td style="border:1px solid #999; padding:3px 7px; text-align:right">−0.217</td></tr></tbody></table></div><p>Siguiendo los módulos 4.3 y 4.4, ¿qué modelo se propone como punto de partida?</p>',
+          opciones: [
+            'ARIMA(1,0,0)',
+            'ARIMA(0,0,1)',
+            'ARIMA(1,1,0)',
+            'ARIMA(0,1,1)'
+          ]
+        }
+      ]
+    };
+    // [fin · simulacro del quiz]
   </script>
 
 </body>

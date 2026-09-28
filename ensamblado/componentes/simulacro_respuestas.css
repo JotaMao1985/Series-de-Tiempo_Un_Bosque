@@ -1,0 +1,71 @@
+    /* ------------------------------------------------------------------
+       Simulacro: las respuestas que no son botones de opción.
+       El quiz del capítulo 4 empareja (coincidencia), ordena y pide cifras,
+       como en Brightspace: un desplegable por fila, un puesto por elemento y
+       una casilla numérica. Complementa a simulacro.css, que es del capítulo
+       3 y no se toca; lo instala ensambla_cap4.py justo después de él, y
+       ensambla_cap5.py recorta los dos.
+       ------------------------------------------------------------------ */
+    .simulacro-filas {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 0.9rem;
+    }
+
+    .simulacro-fila {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .simulacro-fila-texto {
+      font-size: 0.9375rem;
+      color: #1f2937;
+    }
+
+    .simulacro-desplegable,
+    .simulacro-numero {
+      font-family: inherit;
+      font-size: 0.9375rem;
+      color: #1f2937;
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 0.5rem;
+      padding: 0.45rem 0.6rem;
+      max-width: 100%;
+    }
+
+    .simulacro-desplegable {
+      width: 100%;
+    }
+
+    .simulacro-desplegable:focus-visible,
+    .simulacro-numero:focus-visible {
+      outline: 2px solid #FF6600;
+      outline-offset: 1px;
+    }
+
+    /* En el ordenamiento el puesto va delante del elemento, en la misma línea */
+    .simulacro-fila-orden {
+      flex-direction: row;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .simulacro-desplegable.simulacro-puesto {
+      width: auto;
+      flex: none;
+    }
+
+    .simulacro-numero {
+      width: 12rem;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .simulacro-nota {
+      font-size: 0.8125rem;
+      color: #475569;
+      margin: 0;
+    }
+    /* -------------- fin de las respuestas del .simulacro -------------- */

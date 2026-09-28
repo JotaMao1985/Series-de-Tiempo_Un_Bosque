@@ -117,6 +117,26 @@ html = una_vez(
     "subtítulo de la cabecera")
 
 # ---------------------------------------------------------------------------
+# 1b. Fuera el CSS del .simulacro, que es del Módulo 11 del capítulo 4
+# ---------------------------------------------------------------------------
+# El simulacro del quiz vive en los capítulos 3 y 4, no aquí. Su motor de
+# JavaScript y su plantilla desaparecen solos —las dos regiones se rehacen
+# enteras más abajo—, pero el <style> se hereda, y sin esto los capítulos 5 y 6
+# arrastrarían más de 250 líneas de CSS que nadie usa: el del componente, que el
+# capítulo 4 hereda del 3, y el de sus respuestas, que el 4 le añade detrás. Los
+# dos llevan rótulo de cierre (`ensamblado/componentes/`), y el recorte va del
+# principio del primero al cierre del segundo. Este recorte lo hacía
+# `ensambla_cap4.py` hasta el 2026-09-27, cuando el capítulo 4 ganó su simulacro;
+# el capítulo 5 sale byte a byte igual que antes.
+css_simulacro = entre(
+    html,
+    "    /* ------------------------------------------------------------------\n"
+    "       Simulacro: un examen de práctica que se marca y se cronometra, pero\n",
+    "    /* -------------- fin de las respuestas del .simulacro -------------- */\n",
+    "CSS del .simulacro")
+html = una_vez(html, css_simulacro, "", "recorte del CSS del .simulacro")
+
+# ---------------------------------------------------------------------------
 # 2. Instalación del componente .mapa-estacional (CSS, JS y llamada de arranque)
 # ---------------------------------------------------------------------------
 if ".mapa-estacional {" in html:
@@ -442,7 +462,12 @@ for fn in ["function crearGraficoBarras", "function calcularPACF", "function cre
 # Nada del capítulo anterior debe sobrevivir
 for resto in ["DATOS_CAP4", "SERIES_CAP4", "AUTOEVALUACIONES['cap4']", "genera_cap4.R",
               "capitulo-4", "Capítulo 4 —", "data-ciclo=\"box-jenkins\"",
-              "SIMULADORES['nilo-y-diferencia']", "SIMULADORES['explorador-modelos']"]:
+              "SIMULADORES['nilo-y-diferencia']", "SIMULADORES['explorador-modelos']",
+              # El simulacro del Módulo 11 del capítulo 4: contenedor, registro, motor y
+              # CSS (el Módulo 11 de este capítulo es otro, así que no se busca la plantilla).
+              "cap4-simulacro", "SIMULACROS", "pintarSimulacro", "ESTADO_SIMULACRO",
+              "FORMAS_SIMULACRO", ".simulacro {", ".simulacro-opcion {", ".simulacro-filas {",
+              "simulacro-preguntas"]:
     if resto in html:
         fallos.append(f"queda material del capítulo 4: '{resto}'")
 

@@ -383,6 +383,33 @@ Verificado: `chapter.js` y `templates_4_6.html` reensamblan el 4 con solo sus l�
 y 6 idénticos; el M4 mide lo mismo que tras `6c35e68` ($144$ px a $375$); Chrome sin ventana a
 cuatro anchos sin excepciones; cero `.katex-error` en los 10 módulos. Commit `5c37d52`.
 
+### Añadido el 2026-09-27: el Módulo 11, simulacro del quiz
+
+A pedido de Javier, el capítulo gana un **Módulo 11, *Simulacro del quiz***: una variante entera
+del quiz del capítulo 3 y 4.1–4.4 (10 preguntas, 40 minutos), **sin clave ni retroalimentación**,
+con reloj. Es la **variante 9**, que nunca estuvo en el banco de Brightspace: publicar una de las
+ocho le daría a uno de cada ocho estudiantes sus propias preguntas. Mismo diseño que el Módulo 11
+del capítulo 3.
+
+- **El motor** es el del capítulo 3 ampliado a las cinco formas del quiz: opción, varias
+  respuestas, emparejar (un desplegable por fila), ordenar (un puesto por elemento) y cifra (una
+  casilla). Cada forma construye sus controles, se repinta desde el estado y resume lo
+  respondido; el estado y el reloj sobreviven a salir del módulo. Vive en `cap4/chapter.js`; el
+  del capítulo 3 no se tocó.
+- **El registro** (enunciados, opciones, filas y respuestas posibles) lo escribe
+  `exporta_simulacro.py` desde la carpeta del quiz, fuera del repo, entre marcadores. Aborta si
+  aparece la clave o un trozo de la retroalimentación, y `ensambla_cap4.py` lo vuelve a mirar.
+- **El CSS**: el del `.simulacro` llega del 3 (antes el 4 lo recortaba) más
+  `componentes/simulacro_respuestas.css`; el recorte pasó a `ensambla_cap5.py`.
+- **La portada** dice ahora «11 módulos · 12 simuladores».
+
+Verificado: el 4 se reensambla con el módulo nuevo, el 5 y el 6 idénticos byte a byte; las ocho
+variantes del banco, idénticas byte a byte (JSON, ZIP, CSV, fichas); `verifica_quiz.py` rehace la
+clave de la novena por el camino independiente y compara lo publicado con ella (2267
+comprobaciones, 16 defectos inyectados cazados, 6 de ellos del simulacro); cuatro roturas a
+propósito de las fuentes dan `ABORTA` sin escribir; por HTTP, cero errores de consola, cero
+`.katex-error`, estado y reloj conservados al salir y volver, y sin desborde a 375 px.
+
 ## 9. Enlaces
 
 - Precedente: [[PLAN_Auditoria_Cap3]]
