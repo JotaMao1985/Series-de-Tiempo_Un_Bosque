@@ -761,7 +761,7 @@ Verificación: las secciones de FPP3 y los capítulos de Shumway y Stoffer y de 
 
 <mark>[SIN VERIFICAR]</mark> (no son datos confirmados): la presa baja de Asuán; la edición de 1970 de Box y Jenkins; el signo de \(\theta\) en Box y Jenkins; el origen de la TRM en datos.gov.co; las secciones y capítulos de las lecturas.
 
-<small>Detalle cifra por cifra en `Htmls_Series/diapositivas/fuentes/verificacion/verificacion_cifras.md`. Las cifras están verificadas por un guion (`verifica_cifras_cap4.py`) que compara cada una con su fuente.</small>
+<small>Detalle cifra por cifra: [verificacion_cifras.md en GitHub](https://github.com/JotaMao1985/Series-de-Tiempo_Un_Bosque/blob/main/Htmls_Series/diapositivas/fuentes/verificacion/verificacion_cifras.md). Un guion (`verifica_cifras_cap4.py`) compara cada cifra con su fuente.</small>
 
 ???
 Cierre de transparencia. Se verificaron las cifras contra el JSON de R del repositorio y contra una reejecución propia; las definiciones y las referencias bibliográficas se toman del capítulo y no se contrastaron con los libros. Hallazgos sobre el material que no se corrigieron en silencio están en el informe de entrega y en el archivo de verificación.
