@@ -62,6 +62,19 @@ Ninguna cifra del instrumento está escrita a mano — todas salen de R — y
 `precalculo/verifica_preparcial.R` las vuelve a calcular desde los valores publicados y las
 contrasta, además de comprobar que ningún enunciado repita uno de los que el estudiante ya vio.
 
+## Presentaciones de clase
+
+Diapositivas para proyectar, generadas con la skill `diapositivas-clase` a partir del capítulo y con
+notas del presentador. No sustituyen al capítulo: cada sección remite a su módulo.
+
+| # | Capítulo | Diapositivas |
+|---|----------|:---:|
+| 4 | [Modelos ARIMA y Box–Jenkins](diapositivas/capitulo-4-modelos-arima.html) | 47 |
+
+Cada afirmación va etiquetada (dato, definición, interpretación u opinión) y cada cifra se contrasta
+con su fuente; lo que no se pudo verificar va marcado `[SIN VERIFICAR]`. Cómo se reconstruyen y se
+verifican está en [`diapositivas/README.md`](diapositivas/README.md).
+
 ## Cómo está construido
 
 - **Un archivo HTML autocontenido por capítulo.** Sin build, sin `fetch`, sin dependencias locales:
