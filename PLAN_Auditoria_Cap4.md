@@ -410,8 +410,56 @@ comprobaciones, 16 defectos inyectados cazados, 6 de ellos del simulacro); cuatr
 propósito de las fuentes dan `ABORTA` sin escribir; por HTTP, cero errores de consola, cero
 `.katex-error`, estado y reloj conservados al salir y volver, y sin desborde a 375 px.
 
+### Añadido el 2026-09-29: el Nilo reunido al abrir el M10
+
+Javier preguntó si algún ejemplo del capítulo lo desarrolla entero y bien explicado. Hay tres
+candidatos y a cada uno le falta algo:
+
+| Candidato | Qué tiene | Qué le falta |
+|---|---|---|
+| La TRM (M10) | Las cuatro etapas en orden, con cifras, y un mínimo de AICc descartado por sus raíces | Acaba en ARIMA(0,1,0): sin $p,q$ que identificar, sin $\phi$ ni $\theta$ que estimar, $\psi_j = 1$; sin código R ni Python |
+| El Nilo (M1–M9) | Todo el contenido, con un ARIMA(1,1,1) de verdad | Está repartido en nueve módulos y nunca se recorre de un tirón |
+| BJsales (ejercicios 1 y 3) | Ciclo completo con estructura real, $\psi$ e intervalo a mano | Escondido en las soluciones, código con un párrafo, salta la ACF/PACF |
+
+Se eligió reunir el Nilo. Promover BJsales a caso resuelto gastaría los ejercicios 1 y 3.
+
+- **«El Nilo, de principio a fin»**, al abrir el M10 y antes de la TRM: siete filas con la etapa,
+  el módulo y lo que salió. Las etapas son las del M2 más **«Vuelta a la etapa 1»** con el
+  escalón de 1899, para que el ciclo se vea iterativo. Debajo, el modelo en una caja `formula`
+  con $\hat\phi = 0.2544$ (e.e. $0.1194$) y $\hat\theta = -0.8741$ (e.e. $0.0605$), una nota con
+  dos lecciones (el ciclo funciona y no basta; ARIMA o escalón solo se decide fuera de muestra) y
+  una transición que invierte la situación en la TRM: allí $d$ no se discute y la duda es si
+  queda algo que modelar.
+- **Una observación que el capítulo no hacía**: el ARIMA(1,1,1) pronostica $816.18$ para 1971 y
+  se estabiliza en $842.17$, no en el último dato ($740$); el escalón pronostica $849.97$, la
+  media desde 1899. En nivel casi coinciden, y lo que los separa es la banda.
+- **Cifras**: todas estaban en el capítulo o en `cap4_arima.json`. Las del pronóstico, que el
+  capítulo no escribía, se comprobaron en R con `forecast(Arima(Nile, order = c(1,1,1)))`:
+  $816.18$, $842.17$ y semiancho al $95\,\%$ de $278.40$ a $390.74$ (se escriben $\pm 278$ y
+  $\pm 391$).
+- **Alrededor**: el objetivo y la apertura del M10 anuncian las dos pasadas, la frase final del M9
+  anuncia el cuadro y el M10 pasa de 21 a 24 min en el menú.
+- **En el teléfono**: con el menú lateral al lado, a 768 px el contenido de la caja mide unos
+  300 px. La primera versión, en dos columnas, dejaba el texto en ~100 px y el cuadro de más de
+  3000 px de alto. Por debajo de `lg` (1024 px) las dos tablas de etapas del M10 se apilan con
+  clases de Tailwind (`block lg:table-cell`…), sin CSS nuevo, y alinean a la izquierda. La de la
+  TRM, que tenía el mismo marcado, a 375 px pasa de $148$ a $278$ px de texto y de $1500$ a
+  $839$ px de alto, y deja de desbordar (a 768: de $169$ a $298$ px).
+- **El signo √** no se dibujaba dentro de ningún `.diagram`: `.diagram svg { height: auto }`
+  pisaba el `height: inherit` de KaTeX y el $\pm 238.09\sqrt{h}$ de la tabla de la TRM salía sin
+  raíz. Lo arregló otra sesión en los seis capítulos (`f9409fc`); el cuadro usa $\sqrt{30}$.
+- **De otra sesión, en el mismo archivo**: `c3239a4` corrigió el doble redondeo de dos cifras de
+  la tabla de la TRM ($p = 0.586 \to 0.585$, KPSS $0.242 \to 0.241$; exactos $0.58549$ y
+  $0.24147$).
+
+Verificado: el HTML cambia en las mismas 156 líneas que las fuentes; el 5 y el 6 salen idénticos a
+`HEAD`; Chrome sin ventana a 1280, 1024, 768, 375 y 320 px sin excepciones, sin `.katex-error` y
+sin desplazamiento horizontal; los nueve desbordes de fórmulas del M10 son los mismos que antes;
+las raíces de las dos tablas miden 21 px (18 en el teléfono). Commit `3cfd77c`.
+
 ## 9. Enlaces
 
 - Precedente: [[PLAN_Auditoria_Cap3]]
 - Caso TRM hasta el pronóstico: [[PLAN_Casos_Aplicados_456]]
 - Sesión de la intro del Nilo: [[2026-09-24]]
+- Sesión del Nilo reunido en el M10: [[2026-09-29]]
