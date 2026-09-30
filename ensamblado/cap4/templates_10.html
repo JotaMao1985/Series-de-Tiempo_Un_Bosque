@@ -10,15 +10,112 @@
           <span class="text-xl">🎯</span>
           <div>
             <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
-            <p class="text-gray-600 text-sm" style="margin:0;">Recorrer el ciclo completo sobre una serie
-              colombiana, aceptar un resultado incómodo y ver por qué hace falta el Capítulo 5.</p>
+            <p class="text-gray-600 text-sm" style="margin:0;">Reunir el caso del Nilo, recorrer el ciclo completo
+              sobre una serie colombiana, aceptar un resultado incómodo y ver por qué hace falta el Capítulo 5.</p>
           </div>
         </div>
       </div>
 
-      <p>Nueve módulos han desmontado el ciclo de Box–Jenkins pieza a pieza, casi siempre sobre el Nilo. Falta
-        verlo entero, de un tirón, sobre una serie que no se eligió por dócil, y con la etapa que el Módulo 9 dejó
+      <p>Nueve módulos han desmontado el ciclo de Box–Jenkins pieza a pieza, casi siempre sobre el Nilo. Este
+        último lo vuelve a montar dos veces: primero con las piezas del Nilo, puestas en el orden del ciclo, y
+        después de un tirón sobre una serie que no se eligió por dócil, hasta la etapa que el Módulo 9 dejó
         preparada: usar el modelo para pronosticar y leer el ancho de su intervalo.</p>
+
+      <h3>El Nilo, de principio a fin</h3>
+
+      <p>Cada módulo tomó del Nilo lo que necesitaba para su pieza. En el orden del ciclo, esas piezas cuentan una
+        sola historia, con una vuelta atrás incluida:</p>
+
+      <!-- Por debajo de lg (1024 px) la tabla se apila: con el menú lateral al lado, a 768 px el contenido
+           mide unos 330 px y dos columnas de texto largo no caben. -->
+      <div class="diagram px-3 py-4 lg:p-8">
+        <table class="block lg:table mb-0 lg:mb-8" style="position:relative; text-align:left;">
+          <thead class="hidden lg:table-header-group"><tr><th>Etapa</th><th>Qué salió en el Nilo</th></tr></thead>
+          <tbody class="block lg:table-row-group">
+            <tr class="block lg:table-row">
+              <td class="block lg:table-cell pb-1 lg:pb-4 border-b-0 lg:border-b">
+                <strong>1. Identificación de $d$</strong><br><span class="text-gray-500 text-sm">Módulos 1 y 3</span></td>
+              <td class="block lg:table-cell pt-0 lg:pt-4">
+                El gráfico muestra un descenso brusco hacia 1899. La varianza apenas baja con $d = 1$
+                ($28\,638 \to 28\,268$, un $1.3\,\%$) y casi se triplica con $d = 2$. Las pruebas no coinciden:
+                <code>adf.test</code> ($p = 0.064$) y KPSS ($p &lt; 0.01$) apuntan a diferenciar, y PP
+                ($p &lt; 0.01$) rechaza la raíz unitaria. Se sigue a KPSS, la prueba de <code>auto.arima</code>:
+                <strong>$d = 1$</strong>, a título provisional.</td></tr>
+            <tr class="block lg:table-row">
+              <td class="block lg:table-cell pb-1 lg:pb-4 border-b-0 lg:border-b">
+                <strong>1. Identificación de $p,q$</strong><br><span class="text-gray-500 text-sm">Módulo 4</span></td>
+              <td class="block lg:table-cell pt-0 lg:pt-4">
+                La ACF de $\nabla$Nilo corta en el rezago 1 ($\hat\rho_1 = -0.402$, banda $\pm 0.197$) y la PACF
+                decae con signo negativo. La tabla propone un ARIMA($0,1,1$), y a la estimación van también sus
+                vecinos: $(1,1,1)$, $(0,1,2)$ y $(1,1,0)$.</td></tr>
+            <tr class="block lg:table-row">
+              <td class="block lg:table-cell pb-1 lg:pb-4 border-b-0 lg:border-b">
+                <strong>2. Estimación: la constante</strong><br><span class="text-gray-500 text-sm">Módulo 5</span></td>
+              <td class="block lg:table-cell pt-0 lg:pt-4">
+                Con deriva, $\hat\delta = -2.883$ ($t = -1.43$) y el AICc empeora: $1268.06$ frente a $1267.51$.
+                El modelo va <strong>sin constante</strong>. De la media de las diferencias, $-3.84$, el descenso
+                de 1899 aporta por sí solo $-2.50$: no es una pendiente.</td></tr>
+            <tr class="block lg:table-row">
+              <td class="block lg:table-cell pb-1 lg:pb-4 border-b-0 lg:border-b">
+                <strong>2. Estimación: la rejilla</strong><br><span class="text-gray-500 text-sm">Módulos 6 y 7</span></td>
+              <td class="block lg:table-cell pt-0 lg:pt-4">
+                Dentro de $d = 1$, el AICc elige el <strong>ARIMA($1,1,1$)</strong> ($1267.51$) y el BIC el
+                $(0,1,1)$ de la tabla ($1274.28$). <code>auto.arima</code> llega al mismo $(1,1,1)$ por la búsqueda
+                escalonada ($18$ modelos) y por la exhaustiva ($42$), pero cinco modelos caben en $1.71$ puntos. El
+                menor AICc de toda la rejilla, el ARIMA($1,2,2$) con $1264.60$, no cuenta: se calcula sobre $98$
+                observaciones y no sobre $99$.</td></tr>
+            <tr class="block lg:table-row">
+              <td class="block lg:table-cell pb-1 lg:pb-4 border-b-0 lg:border-b">
+                <strong>3. Diagnóstico</strong><br><span class="text-gray-500 text-sm">Módulo 8</span></td>
+              <td class="block lg:table-cell pt-0 lg:pt-4">
+                Ljung–Box(20) $p = 0.800$ y Shapiro $p = 0.731$: los residuales pasan. Las raíces quedan fuera
+                del círculo (AR $3.93$, MA $1.144$), pero la del MA está cerca: con $\hat\theta = -0.874$, el MA
+                casi deshace la diferencia. Es la anomalía del Módulo 1, donde integrar la serie casi no cambiaba
+                su varianza.</td></tr>
+            <tr class="block lg:table-row">
+              <td class="block lg:table-cell pb-1 lg:pb-4 border-b-0 lg:border-b">
+                <strong>Vuelta a la etapa 1</strong><br><span class="text-gray-500 text-sm">Módulo 8</span></td>
+              <td class="block lg:table-cell pt-0 lg:pt-4">
+                Sin diferenciar y con un escalón en 1899, $\hat\beta = -247.78$ ($t = -8.80$): le saca casi $25$
+                puntos de AICc al mejor ARMA con $d = 0$, y sus residuales pasan Ljung–Box ($p = 0.812$). Contra el
+                ARIMA($1,1,1$) no se compara por AICc, porque el $d$ es otro. Fuera de muestra, en 1951–1970, el
+                ARIMA da un RMSE de $125.05$, el escalón $127.99$ y el naïve $123.06$: ninguno se impone.</td></tr>
+            <tr class="block lg:table-row">
+              <td class="block lg:table-cell pb-1 lg:pb-4 border-b-0 lg:border-b">
+                <strong>4. Uso (pronóstico)</strong><br><span class="text-gray-500 text-sm">Módulo 9</span></td>
+              <td class="block lg:table-cell pt-0 lg:pt-4">
+                Sin constante y con $d = 1$, el pronóstico se aplana: $816.18$ para 1971 y $842.17$ a los pocos
+                años, no el último dato ($740$). El semiancho al $95\,\%$ pasa de $\pm 278$ a un año a $\pm 391$ a
+                treinta: con $\psi_\infty = 0.169$, $\sigma_{30}/\sigma_1 = 1.404$, frente al
+                $\sqrt{30} = 5.48$ de una caminata aleatoria.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>El modelo que sale del ciclo es el mismo que el Módulo 1 escribió con sus raíces:</p>
+
+      <div class="formula">
+        $$\begin{aligned}
+          &(1 - 0.2544\,B)(1 - B)\,y_t \\
+          &\quad = (1 - 0.8741\,B)\,\varepsilon_t
+        \end{aligned}$$
+      </div>
+
+      <p>con $\hat\phi = 0.2544$ (e.e. $0.1194$) y $\hat\theta = -0.8741$ (e.e. $0.0605$). En nivel, su pronóstico
+        casi coincide con el de su rival: el escalón pronostica $849.97$, la media desde 1899, y el ARIMA se queda
+        en $842.17$. Lo que los separa es la banda, que en el escalón no se ensancha y en el ARIMA sí.</p>
+
+      <div class="note">
+        <p><strong>Leído de corrido, el caso deja dos lecciones.</strong> La primera: el ciclo funciona y aun así
+          no basta. El ARIMA($1,1,1$) supera cada etapa con las herramientas previstas, y la pista de que $d = 1$
+          podía sobrar asomó en casi todas —la varianza que casi no baja, las pruebas que discrepan, el
+          $\hat\theta$ cerca de $-1$—, pero solo el gráfico la explica. La segunda: la duda final, diferenciar o
+          modelar el escalón, no la resuelve ningún criterio dentro de muestra, porque los dos modelos tienen
+          distinto $d$. Hay que medirla fuera de muestra, y eso es el Capítulo 6.</p>
+      </div>
+
+      <p>En el Nilo el ciclo encontró estructura y dejó abierta la duda sobre $d$. La serie siguiente invierte la
+        situación: sobre $d$ no hay discusión, y lo que está en duda es si queda algo que modelar.</p>
 
       <h3>Caso: la tasa representativa del mercado</h3>
 
@@ -45,28 +142,44 @@
         <div class="simulador-lectura"></div>
       </div>
 
-      <div class="diagram">
-        <table style="position:relative;">
-          <thead><tr><th>Etapa</th><th>Qué sale</th></tr></thead>
-          <tbody>
-            <tr><td><strong>1. Identificación de $d$</strong></td>
-              <td>ADF $-1.978$ ($p = 0.585$: no rechaza la raíz unitaria); KPSS $2.243$ ($p &lt; 0.01$: rechaza la
+      <!-- Apilada por debajo de lg, como la del Nilo. -->
+      <div class="diagram px-3 py-4 lg:p-8">
+        <table class="block lg:table mb-0 lg:mb-8" style="position:relative; text-align:left;">
+          <thead class="hidden lg:table-header-group"><tr><th>Etapa</th><th>Qué sale</th></tr></thead>
+          <tbody class="block lg:table-row-group">
+            <tr class="block lg:table-row">
+              <td class="block lg:table-cell pb-1 lg:pb-4 border-b-0 lg:border-b">
+                <strong>1. Identificación de $d$</strong></td>
+              <td class="block lg:table-cell pt-0 lg:pt-4">
+                ADF $-1.978$ ($p = 0.585$: no rechaza la raíz unitaria); KPSS $2.243$ ($p &lt; 0.01$: rechaza la
                 estacionariedad). Tras diferenciar, ADF $-3.880$ ($p = 0.017$) y KPSS $0.241$ ($p &gt; 0.10$). Las
                 cuatro pruebas coinciden: <strong>$d = 1$</strong>. Y <code>nsdiffs</code> $= 0$: sin
                 estacionalidad.</td></tr>
-            <tr><td><strong>1. Identificación de $p,q$</strong></td>
-              <td>La ACF de $\nabla$TRM tiene $\hat\rho_1 = 0.088$ y una sola barra fuera de la banda
+            <tr class="block lg:table-row">
+              <td class="block lg:table-cell pb-1 lg:pb-4 border-b-0 lg:border-b">
+                <strong>1. Identificación de $p,q$</strong></td>
+              <td class="block lg:table-cell pt-0 lg:pt-4">
+                La ACF de $\nabla$TRM tiene $\hat\rho_1 = 0.088$ y una sola barra fuera de la banda
                 $\pm 0.167$, aislada y sin patrón ($\hat\rho_8 = -0.190$). Es ruido blanco. La tabla de
                 identificación del Capítulo 3 propone $p = q = 0$.</td></tr>
-            <tr><td><strong>2. Estimación</strong></td>
-              <td>El mínimo de AICc de la rejilla es el ARIMA($2,1,2$) con $1703.38$; el mínimo de BIC es el
+            <tr class="block lg:table-row">
+              <td class="block lg:table-cell pb-1 lg:pb-4 border-b-0 lg:border-b">
+                <strong>2. Estimación</strong></td>
+              <td class="block lg:table-cell pt-0 lg:pt-4">
+                El mínimo de AICc de la rejilla es el ARIMA($2,1,2$) con $1703.38$; el mínimo de BIC es el
                 ARIMA($0,1,0$) con $1708.83$. <code>auto.arima</code> con búsqueda exhaustiva sobre $192$ modelos
                 devuelve <strong>ARIMA($0,1,0$)</strong>.</td></tr>
-            <tr><td><strong>3. Diagnóstico</strong></td>
-              <td>Ljung–Box(20) $p = 0.189$ y Ljung–Box(12) $p = 0.206$: pasa. Shapiro–Wilk $p = 0.0006$: los
+            <tr class="block lg:table-row">
+              <td class="block lg:table-cell pb-1 lg:pb-4 border-b-0 lg:border-b">
+                <strong>3. Diagnóstico</strong></td>
+              <td class="block lg:table-cell pt-0 lg:pt-4">
+                Ljung–Box(20) $p = 0.189$ y Ljung–Box(12) $p = 0.206$: pasa. Shapiro–Wilk $p = 0.0006$: los
                 residuales <strong>no</strong> son normales.</td></tr>
-            <tr><td><strong>4. Uso (pronóstico)</strong></td>
-              <td>Una recta horizontal en $3497.09$ y un semiancho al $95\,\%$ de $\pm 238.09\sqrt{h}$. Se
+            <tr class="block lg:table-row">
+              <td class="block lg:table-cell pb-1 lg:pb-4 border-b-0 lg:border-b">
+                <strong>4. Uso (pronóstico)</strong></td>
+              <td class="block lg:table-cell pt-0 lg:pt-4">
+                Una recta horizontal en $3497.09$ y un semiancho al $95\,\%$ de $\pm 238.09\sqrt{h}$. Se
                 desarrolla más abajo.</td></tr>
           </tbody>
         </table>
