@@ -9,20 +9,22 @@ Generado por `verifica_cifras_cap4.py`. Cada fila es una cifra (o afirmación) d
 - **RD** · recálculo directo sobre los datos crudos, `verifica_directo_cap4.R` → `directo_cap4.json`.
 - **PY** · statsmodels 0.14.6, `verifica_python_cap4.py` → `directo_python_cap4.json`.
 - **DOC** · documentación de R (`?Nile`, `?BJsales`, `?lynx`, `?AirPassengers`, `?arima`, `citation("forecast")`).
+- **R46** · cifras exactas que faltaban en los JSON (p exactos de la TRM, ranking completo de la búsqueda exhaustiva, cita de AirPassengers de esta versión de R), `verifica_directo_r46_cap4.R` → `directo_r46_cap4.json`, calculadas en R version 4.6.0 (2026-04-24) (forecast 9.0.2, tseries 0.10.62).
+- **MAN** · comprobación manual contra un libro que no está en el repositorio (con página); no la ejecuta ningún guion, y por eso se cuenta aparte.
 - **CALC** · aritmética sobre las fuentes anteriores. **C** · texto del capítulo. **A** · `PLAN_Auditoria_Cap4.md`.
 - La fuente se redondea a los decimales que muestra la diapositiva, a la mitad hacia arriba.
 - Los datos crudos de la TRM son la copia congelada de `datos_series.json` (consulta 2026-07-26); **no** se cotejaron con datos.gov.co.
-- Las definiciones y equivalencias teóricas y las referencias bibliográficas se toman del capítulo; **los libros no estaban disponibles** y no se contrastaron.
+- Las definiciones y equivalencias teóricas y las referencias bibliográficas se toman del capítulo. Los libros no están en el repositorio: solo se hicieron a mano las comprobaciones marcadas `MAN` (edición de 1970 de Box y Jenkins en Shumway y Stoffer; signo de θ en Cryer y Chan y Tsay), con su página.
 
 ## Resumen
 
-- Cifras y afirmaciones registradas: **412**
-- Verificadas contra al menos una fuente: **395**
-- Definiciones o convenciones (nivel del 5 %, z = 1.96, etc.): **11**; no se miden, se enuncian
-- Marcadas `[SIN VERIFICAR]` (no se presentan como dato confirmado): **6**
+- Cifras y afirmaciones registradas: **445**
+- Verificadas contra al menos una fuente: **428** (de ellas, **3** son comprobaciones manuales contra un libro, sin guion)
+- Definiciones o convenciones (nivel del 5 %, z = 1.96, etc.): **13**; no se miden, se enuncian
+- Marcadas `[SIN VERIFICAR]` (no se presentan como dato confirmado): **4**
 - No coinciden: **0**
 
-Contrastes por tipo de fuente: A 3, C 3, CALC 80, DOC 31, J 219, PY 5, RD 180, RJ 179, RS 1.
+Contrastes por tipo de fuente: A 3, C 3, CALC 84, DOC 31, J 229, MAN 3, PY 5, R46 20, RD 179, RJ 182, RS 1.
 
 ## Código proyectado, ejecutado
 
@@ -37,26 +39,29 @@ Cada bloque `r` de la presentación se ejecutó en R version 4.3.3 (2024-02-29) 
 
 | Diapositiva | Qué | Por qué |
 |---|---|---|
+| Cada afirmación es un dato, una definición, una interpretaci | la presa baja de Asuán como causa · el signo de θ en el libro original de Box y Jenkins · el origen de la TRM en datos.gov.co · las secciones y capítulos de las lecturas | ver la lista completa en verificacion_cifras.md |
 | Tres series conducen el capítulo, y cada una enseña algo dis | origen de la TRM en datos.gov.co | no se pudo contrastar con la fuente primaria; solo con la copia congelada del repositorio |
-| Box y Jenkins aportaron el método, no el modelo: un ciclo co | 1970 (edición de Time Series Analysis: Forecasting and Control) | la documentación de R (?BJsales) cita la edición de 1976; ninguna fuente de esta sesión confirma 1970 |
-| El caso del Nilo, cerrado: un escalón en 1899 explica más qu | el descenso coincide con la construcción de la presa baja de Asuán | afirmación histórica del capítulo y del JSON (cambio_nivel.fuente); ninguna fuente de esta sesión la confirma |
-| Para seguir: tres ejercicios y las lecturas del capítulo {co | FPP3, secciones 9.5 a 9.8 | las secciones salen del capítulo; no se tuvo el libro |
-| Para seguir: tres ejercicios y las lecturas del capítulo {co | Shumway y Stoffer (2017), cap. 3 | año y capítulo salen del capítulo; no se tuvo el libro |
-| Para seguir: tres ejercicios y las lecturas del capítulo {co | Box, Jenkins, Reinsel y Ljung (2015), caps. 4 a 8 | año y capítulos salen del capítulo; no se tuvo el libro |
-| Cada cifra remite a una fuente; lo que no se pudo contrastar | la presa baja de Asuán · la edición de 1970 de Box y Jenkins · el signo de θ en Box y Jenkins · el origen de la TRM en datos.gov.co · las secciones y capítulos de las lecturas | ver la lista completa en verificacion_cifras.md |
+| El escalón de 1899 ajusta casi 25 puntos de AICc mejor que c | el descenso coincide con la construcción de la presa baja de Asuán | afirmación histórica del capítulo y del JSON (cambio_nivel.fuente); ninguna fuente de esta sesión la confirma |
+| Para seguir: tres ejercicios y el simulacro del quiz {column | FPP3, secciones 9.5 a 9.8 | las secciones salen del capítulo; no se tuvo el libro |
+| Para seguir: tres ejercicios y el simulacro del quiz {column | Shumway y Stoffer (2017), cap. 3 | año y capítulo salen del capítulo; no se tuvo el libro |
+| Para seguir: tres ejercicios y el simulacro del quiz {column | Box, Jenkins, Reinsel y Ljung (2015), caps. 4 a 8 | año y capítulos salen del capítulo; no se tuvo el libro |
 
 ## Observaciones sobre el material (no corregidas en silencio)
 
 1. `?Nile` habla de un cambio «cerca de 1898»; el capítulo usa 1899 (observación 29) como primer año del nuevo nivel. No es un error: 1898 es el último año del nivel alto y 1899 el primero del bajo. Conviene decirlo así en clase.
 2. `?BJsales` cita Box y Jenkins (1976), no 1970, y no dice «Serie M». El capítulo llama a BJsales «la Serie M del libro original de Box y Jenkins»: esa denominación no se pudo confirmar.
 3. `citation("forecast")` imprime Hyndman y Khandakar como *26*(3), pero su DOI es 10.18637/jss.v027.i03 (volumen 27). El capítulo cita 27(3), coherente con el DOI. La discrepancia está en el texto de citación que imprime R.
-4. Cobb (1978): `?Nile` da *Biometrika* 65, 243–251; el capítulo escribe 65(2). El volumen y las páginas coinciden; el número (2) no se pudo confirmar.
-5. La raíz AR del ARIMA(2,1,2) del Nilo (Módulo 7, «1.001») depende del estimador: 1.0008 sin deriva y 1.0005 con deriva (`Arima`, CSS-ML), pero 2.24 con `arima(method = "ML")`, que es lo que trae la rejilla del JSON. Es coherente con lo que el capítulo dice de `auto.arima` (usa `Arima`), pero conviene no mezclar las dos cifras.
-6. Módulo 10: «la varianza real de los cambios a 3–12 meses es entre 1.07 y 1.14 veces esa cifra» no se reproduce. El cálculo directo var(Δ_h)/(h·var(Δ₁)) da entre 1.02 y 1.20 para h = 3…12. No se usa en las diapositivas.
-7. Las coberturas 83.9 % (Módulo 9) y 89.6 % (Módulo 10) vienen del Capítulo 6 (`cap6_evaluacion.json`), no del 4. No se proyectan; si se citan, la fuente es el Capítulo 6.
-8. La tabla del Módulo 8 rotula d = 1 «Mínimo de varianza. Correcto.» aunque el mismo módulo dice que ese mínimo es por poco margen. Ya figuraba como pendiente en `PLAN_Auditoria_Cap4.md`; en las diapositivas se dejó «Mínimo de varianza».
-9. `puente_estacional.advertencia_aicc` (JSON) dice «la MISMA diferenciación total (d + D*m distinta)», que se contradice a sí misma. Es texto interno del JSON; no se muestra en el capítulo.
-10. Entre el JSON publicado (R 4.6, forecast 9.0.2) y el regenerado aquí (R 4.3.3, forecast 8.21.1) se compararon **3836** valores: **13** difieren más de 1.5 unidades del último decimal publicado, todos en modelos mal condicionados de la rejilla: ARIMA (2,1,2) de la TRM; ARIMA (2,1,2) del Nilo; ARIMA (2,2,2) del Nilo (σ², errores estándar, estadísticos t, coeficientes y raíces cercanas al círculo unitario). Ninguno se usa en las diapositivas: las cifras que sí se muestran se reproducen.
+4. Cobb (1978): `?Nile` da *Biometrika* 65(2), 243–251 (R 4.6), como el capítulo. Confirmado. El capítulo escribe el título con «conditional solutions» en plural; el de Biometrika parece ser «conditional solution», en singular (comprobarlo).
+5. Módulo 10, tabla de la TRM: ADF p = 0.586 y KPSS(∇) = 0.242 son un doble redondeo del JSON (0.5855 y 0.2415). Los valores exactos son 0.58549 y 0.24147 (0.585 y 0.241). La diapositiva usa los exactos; el capítulo decía 0.586 y 0.242 y se corrigió (commit c3239a4).
+6. Módulo 7, «Cinco modelos quedan a 1.71 puntos»: con la regla de 2 puntos, la búsqueda exhaustiva del Nilo deja siete, no cinco. Los que faltan son el ARIMA(2,1,1), a 1.81, y el ARIMA(1,1,2), a 1.84. El capítulo y su autoevaluación se detienen en el quinto. La diapositiva dice siete.
+7. La ayuda de `AirPassengers` cita «Box, Jenkins y Reinsel (1976)» en R 4.3.3 y (1994) en R 4.6. Reinsel entró como coautor en la tercera edición (1994): 1976 era un anacronismo. La diapositiva usa 1994.
+8. Módulo 1: el capítulo dice que el IMA(2,2) «equivale» al método de Holt. Con más precisión, Holt es un caso particular del IMA(2,2), con restricciones sobre los coeficientes. La diapositiva dice «incluye».
+9. La raíz AR del ARIMA(2,1,2) del Nilo (Módulo 7, «1.001») depende del estimador: 1.0008 sin deriva y 1.0005 con deriva (`Arima`, CSS-ML), pero 2.24 con `arima(method = "ML")`, que es lo que trae la rejilla del JSON. Es coherente con lo que el capítulo dice de `auto.arima` (usa `Arima`), pero conviene no mezclar las dos cifras.
+10. Módulo 10: «la varianza real de los cambios a 3–12 meses es entre 1.07 y 1.14 veces esa cifra» no se reproduce. El cálculo directo var(Δ_h)/(h·var(Δ₁)) da entre 1.02 y 1.20 para h = 3…12. No se usa en las diapositivas.
+11. Las coberturas 83.9 % (Módulo 9) y 89.6 % (Módulo 10) vienen del Capítulo 6 (`cap6_evaluacion.json`), no del 4. No se proyectan; si se citan, la fuente es el Capítulo 6.
+12. La tabla del Módulo 8 rotula d = 1 «Mínimo de varianza. Correcto.» aunque el mismo módulo dice que ese mínimo es por poco margen. Ya figuraba como pendiente en `PLAN_Auditoria_Cap4.md`; en las diapositivas se dejó «Mínimo de varianza».
+13. `puente_estacional.advertencia_aicc` (JSON) dice «la MISMA diferenciación total (d + D*m distinta)», que se contradice a sí misma. Es texto interno del JSON; no se muestra en el capítulo.
+14. Entre el JSON publicado (R 4.6, forecast 9.0.2) y el regenerado aquí (R 4.3.3, forecast 8.21.1) se compararon **3836** valores: **13** difieren más de 1.5 unidades del último decimal publicado, todos en modelos mal condicionados de la rejilla: ARIMA (2,1,2) de la TRM; ARIMA (2,1,2) del Nilo; ARIMA (2,2,2) del Nilo (σ², errores estándar, estadísticos t, coeficientes y raíces cercanas al círculo unitario). Ninguno se usa en las diapositivas: las cifras que sí se muestran se reproducen.
 
 <details><summary>Los valores que difieren</summary>
 
@@ -87,6 +92,24 @@ Cada bloque `r` de la presentación se ejecutó en R version 4.3.3 (2024-02-29) 
 |---|---|---|---|
 | `4.6` | versión | A: PLAN_Auditoria_Cap4.md contiene «R 4.6» | verificado |
 | `4.3.3` | versión | RD: directo_cap4.json › entorno.R | verificado |
+| `1970` | libro (manual) | MAN: Shumway y Stoffer, *Time Series Analysis and Its Applications* (3.ª ed.), PDF pp. 8, 15 y 75: «Box and Jenkins (1970)» (comprobado a mano, 2026-09-29) | verificado |
+| `1899` | dato | CALC: año de la observación 29 (1871 + 29 − 1) = 1899 | verificado |
+
+### La diferenciación es parte del modelo, no un preprocesamiento
+
+| Cifra o afirmación | Tipo | Fuentes y valor | Estado |
+|---|---|---|---|
+| `4.2` | libro (manual) | MAN: Cryer y Chan, *Time Series Analysis with Applications in R*, §4.2, PDF p. 70: definen el MA con signo menos y añaden «R, uses plus signs before the thetas» (comprobado a mano, 2026-09-29); Tsay, PDF p. 87, también usa el menos | verificado |
+
+### Un ARIMA(1,1,1) es un ARMA(2,1) con una raíz unitaria impuesta
+
+| Cifra o afirmación | Tipo | Fuentes y valor | Estado |
+|---|---|---|---|
+| `0.2544` | dato | J: cap4_arima.json › nilo.diagnostico.coeficientes.0.valor = 0.2544<br>RJ: regenerado (R 4.3.3) › nilo.diagnostico.coeficientes.0.valor = 0.2544 | verificado |
+| `1.2544` | dato | RD: directo_cap4.json › m1.ar_expandido.0 = 1.2544<br>CALC: 1 + φ = 1.2544 | verificado |
+| `-0.2544` | dato | RD: directo_cap4.json › m1.ar_expandido.1 = -0.2544<br>CALC: −φ = -0.2544 | verificado |
+| `1.0000` | dato | RD: directo_cap4.json › m1.raices.0 = 1 | verificado |
+| `3.93` | dato | RD: directo_cap4.json › m1.raices.1 = 3.9308<br>CALC: 1/φ = 3.930818 | verificado |
 
 ### Tres series conducen el capítulo, y cada una enseña algo distinto
 
@@ -104,20 +127,11 @@ Cada bloque `r` de la presentación se ejecutó en R version 4.3.3 (2024-02-29) 
 | `1949` | documentación | RD: directo_cap4.json › datos.ap_inicio = 1949<br>DOC: documentación de R (doc.airpassengers) contiene «1949 to 1960» | verificado |
 | `1960` | documentación | RD: directo_cap4.json › datos.ap_fin = 1960<br>DOC: documentación de R (doc.airpassengers) contiene «1949 to 1960» | verificado |
 | `144` | dato | J: cap4_arima.json › puente_estacional.n = 144<br>RD: directo_cap4.json › datos.ap_n = 144 | verificado |
-| `1976` | documentación | DOC: documentación de R (doc.airpassengers) contiene «(1976)» | verificado |
+| `1976` (lo que decía la ayuda de R 4.3.3) | documentación | DOC: documentación de R (doc.airpassengers) contiene «(1976)» | verificado |
+| `1994` | documentación | R46: directo_r46_cap4.json › doc.airpassengers (R 4.6) cita a Box, Jenkins y Reinsel (1994); la ayuda de R 4.3.3 decía 1976 | verificado |
 | `150` | documentación | RD: directo_cap4.json › datos.bjsales_n = 150<br>DOC: documentación de R (doc.bjsales) contiene «150 observations» | verificado |
 | `1821` | documentación | RD: directo_cap4.json › datos.lynx_inicio = 1821<br>DOC: documentación de R (doc.lynx) contiene «1821-1934» | verificado |
 | `1934` | documentación | RD: directo_cap4.json › datos.lynx_fin = 1934<br>DOC: documentación de R (doc.lynx) contiene «1821-1934» | verificado |
-
-### Un ARIMA(1,1,1) es un ARMA(2,1) con una raíz unitaria impuesta
-
-| Cifra o afirmación | Tipo | Fuentes y valor | Estado |
-|---|---|---|---|
-| `0.2544` | dato | J: cap4_arima.json › nilo.diagnostico.coeficientes.0.valor = 0.2544<br>RJ: regenerado (R 4.3.3) › nilo.diagnostico.coeficientes.0.valor = 0.2544 | verificado |
-| `1.2544` | dato | RD: directo_cap4.json › m1.ar_expandido.0 = 1.2544<br>CALC: 1 + φ = 1.2544 | verificado |
-| `-0.2544` | dato | RD: directo_cap4.json › m1.ar_expandido.1 = -0.2544<br>CALC: −φ = -0.2544 | verificado |
-| `1.0000` | dato | RD: directo_cap4.json › m1.raices.0 = 1 | verificado |
-| `3.9308` | dato | RD: directo_cap4.json › m1.raices.1 = 3.9308<br>CALC: 1/φ = 3.930818 | verificado |
 
 ### En el Nilo, diferenciar una vez casi no reduce la varianza
 
@@ -145,12 +159,12 @@ Cada bloque `r` de la presentación se ejecutó en R version 4.3.3 (2024-02-29) 
 | `-0.5` | definición | DEF: definición: ρ₁ de la diferencia de un ruido blanco es −1/2 | definición (no se mide) |
 | `1899` | dato | CALC: año de la observación 29 (1871 + 29 − 1) = 1899 | verificado |
 
-### Box y Jenkins aportaron el método, no el modelo: un ciclo con vueltas atrás
+### La aportación de Box y Jenkins fue el método: un ciclo con vueltas atrás
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
 | `1976` | documentación | DOC: documentación de R (doc.bjsales) contiene «Box & Jenkins (1976)» | verificado |
-| `1970` | sin verificar | — (sin fuente en esta sesión) | SIN VERIFICAR |
+| `1970` | libro (manual) | MAN: Shumway y Stoffer, *Time Series Analysis and Its Applications* (3.ª ed.), PDF pp. 8, 15 y 75: «Box and Jenkins (1970)» (comprobado a mano, 2026-09-29) | verificado |
 
 ### El ciclo completo cabe en un esqueleto corto de R {columnas=3:2}
 
@@ -178,6 +192,10 @@ Cada bloque `r` de la presentación se ejecutó en R version 4.3.3 (2024-02-29) 
 | `0.01` (cota de la tabla: R imprime «p-value smaller than printed p-value» (p < 0.01)) | dato | RD: directo_cap4.json › m3.kpss_p = 0.01<br>J: cap4_arima.json › nilo.pruebas.kpss_nivel.p = 0.01<br>RJ: regenerado (R 4.3.3) › nilo.pruebas.kpss_nivel.p = 0.01<br>RD: directo_cap4.json › m3.pp_p = 0.01<br>J: cap4_arima.json › nilo.pruebas.pp_nivel.p = 0.01<br>RJ: regenerado (R 4.3.3) › nilo.pruebas.pp_nivel.p = 0.01 | verificado |
 | `-6.690` | dato | RD: directo_cap4.json › m3.pp_stat = -6.6901<br>J: cap4_arima.json › nilo.pruebas.pp_nivel.estadistico = -6.6901<br>RJ: regenerado (R 4.3.3) › nilo.pruebas.pp_nivel.estadistico = -6.6901 | verificado |
 | `1.3` | aritmética | CALC: reducción de la varianza de d=0 a d=1, en % = 1.29063 | verificado |
+| `-0.87` (θ̂ ≈ −0.874 del ARIMA(1,1,1)) | dato | J: cap4_arima.json › nilo.diagnostico.coeficientes.1.valor = -0.8741<br>RJ: regenerado (R 4.3.3) › nilo.diagnostico.coeficientes.1.valor = -0.8741 | verificado |
+| `100` (simulación con raíz unitaria verdadera: `PP.test` rechaza el 100 % (1 000 réplicas, semilla 2026)) | dato | R46: directo_r46_cap4.json › sim_raiz_unitaria.pp_rechaza = 100 | verificado |
+| `51.3` (ídem con `adf.test` (k = 4)) | dato | R46: directo_r46_cap4.json › sim_raiz_unitaria.adf_k4_rechaza = 51.3 | verificado |
+| `1000` | dato | R46: directo_r46_cap4.json › sim_raiz_unitaria.replicas = 1000 | verificado |
 
 ### Las tres versiones de `ndiffs` no coinciden en el Nilo {columnas=1:1}
 
@@ -234,6 +252,8 @@ Cada bloque `r` de la presentación se ejecutó en R version 4.3.3 (2024-02-29) 
 | `0.25` | aritmética | RD: directo_cap4.json › m4.ar1_phi05_rezagos2y3.0 = 0.25<br>CALC: φ² con φ = 0.5 = 0.25 | verificado |
 | `0.125` | aritmética | RD: directo_cap4.json › m4.ar1_phi05_rezagos2y3.1 = 0.125<br>CALC: φ³ con φ = 0.5 = 0.125 | verificado |
 | `0.5` | aritmética | CALC: ρ̂₁ ≈ 0.5 ⇒ φ ≈ 0.5 = 0.4984 | verificado |
+| `11` (rezagos fuera de la banda) | dato | J: cap4_arima.json › nilo.identificacion.cruda.acf: 11 de los 20 rezagos (1–8 y 11–13) fuera de la banda ±0.196 | verificado |
+| `los veinte rezagos de la ACF cruda son positivos` (afirmación sin cifra) | dato | J: cap4_arima.json › nilo.identificacion.cruda.acf (20 rezagos > 0) | verificado |
 
 ### Sobre ∇Nilo la ACF corta en 1 y la PACF decae: la firma de un MA(1)
 
@@ -244,10 +264,10 @@ Cada bloque `r` de la presentación se ejecutó en R version 4.3.3 (2024-02-29) 
 | `-0.402` | dato | J: cap4_arima.json › nilo.identificacion.d1.acf.0 = -0.402<br>RJ: regenerado (R 4.3.3) › nilo.identificacion.d1.acf.0 = -0.402<br>RD: directo_cap4.json › m4.acf_1a6.0 = -0.402 | verificado |
 | `0.231` | dato | J: cap4_arima.json › nilo.identificacion.d1.acf.7 = 0.2312<br>RJ: regenerado (R 4.3.3) › nilo.identificacion.d1.acf.7 = 0.2312 | verificado |
 | `0.2312` | dato | J: cap4_arima.json › nilo.identificacion.d1.acf.7 = 0.2312<br>RJ: regenerado (R 4.3.3) › nilo.identificacion.d1.acf.7 = 0.2312 | verificado |
-| `-0.246` | dato | J: cap4_arima.json › nilo.identificacion.d1.pacf.1 = -0.2456<br>RJ: regenerado (R 4.3.3) › nilo.identificacion.d1.pacf.1 = -0.2456<br>RD: directo_cap4.json › m4.pacf_1a3.1 = -0.2456 | verificado |
-| `-0.119` | dato | J: cap4_arima.json › nilo.identificacion.d1.pacf.2 = -0.1187<br>RJ: regenerado (R 4.3.3) › nilo.identificacion.d1.pacf.2 = -0.1187<br>RD: directo_cap4.json › m4.pacf_1a3.2 = -0.1187 | verificado |
 | `20` | dato | J: cap4_arima.json › max_rezago = 20 | verificado |
 | `5` | definición | DEF: nivel nominal convencional | definición (no se mide) |
+| `10` (PACF fuera de banda: rezagos 1, 2, 7 y 10, todos negativos) | dato | J: cap4_arima.json › nilo.identificacion.d1.pacf: los rezagos fuera de la banda son 1, 2, 7 y 10<br>J: cap4_arima.json › nilo.identificacion.d1.pacf: los cuatro son negativos | verificado |
+| `0.227` | aritmética | CALC: banda de Bartlett para ρ_k, k > 1, con ρ̂₁ = −0.402 y n = 99 = 0.226596 | verificado |
 
 ### La tabla propone un ARIMA(0,1,1), pero se llevan varios candidatos, no uno
 
@@ -277,6 +297,7 @@ Cada bloque `r` de la presentación se ejecutó en R version 4.3.3 (2024-02-29) 
 | `0.14.6` | versión | PY: directo_python_cap4.json › entorno.statsmodels | verificado |
 | `4.6` | versión | A: PLAN_Auditoria_Cap4.md contiene «R 4.6» | verificado |
 | `9.0.2` | versión | A: PLAN_Auditoria_Cap4.md contiene «forecast 9.0.2» | verificado |
+| `Arima incluye la media por defecto (include.mean = TRUE) e include.drift = FALSE` | comportamiento | R46: directo_r46_cap4.json › Arima.include_mean_por_defecto, Arima.include_drift_por_defecto | verificado |
 | `arima ignora include.mean con d ≥ 1` | comportamiento | RD: directo_cap4.json › m5.arima_d1_include_mean_coef == [ar1, ma1] | verificado |
 | `Arima con d = 2 avisa y no ajusta deriva` | comportamiento | RD: directo_cap4.json › m5.d2_aviso, m5.d2_tiene_deriva | verificado |
 | `auto.arima prueba con y sin deriva si d = 1` | comportamiento | RD: directo_cap4.json › m5.auto_d1_traza_* | verificado |
@@ -306,7 +327,6 @@ Cada bloque `r` de la presentación se ejecutó en R version 4.3.3 (2024-02-29) 
 | `-247.78` | dato | RD: directo_cap4.json › m8.escalon_coef = -247.78 | verificado |
 | `-2.50` | aritmética | RD: directo_cap4.json › m5.aporte_escalon = -2.5<br>CALC: β̂/99 = -2.502828 | verificado |
 | `2.9` | aritmética | CALC: |δ̂| = 2.8827 | verificado |
-| `1899` | dato | CALC: año de la observación 29 (1871 + 29 − 1) = 1899 | verificado |
 | `10` | documentación | DOC: documentación de R (doc.nile) contiene «10^8 m^3» | verificado |
 | `138` | dato | J: cap4_arima.json › trm.n = 138 | verificado |
 | `-2.8827` | dato | RD: directo_cap4.json › m5.deriva = -2.8827 | verificado |
@@ -365,6 +385,7 @@ Cada bloque `r` de la presentación se ejecutó en R version 4.3.3 (2024-02-29) 
 | `1.001` (≈ 1.001: 1.0008 sin deriva, 1.0005 con deriva (Arima, CSS-ML); con arima(ML) sale 2.24) | dato | RD: directo_cap4.json › m7.raiz_ar_212_sin_deriva = 1.0008 | verificado |
 | `1.0008` | dato | RD: directo_cap4.json › m7.raiz_ar_212_sin_deriva = 1.0008 | verificado |
 | `1.0005` | dato | RD: directo_cap4.json › m7.raiz_ar_212_con_deriva = 1.0005 | verificado |
+| `1.0009` (en R 4.6, con y sin deriva) | dato | R46: directo_r46_cap4.json › nilo.raiz_ar_212_sin_deriva = 1.000937<br>R46: directo_r46_cap4.json › nilo.raiz_ar_212_con_deriva = 1.000875 | verificado |
 | `2.24` | dato | RD: directo_cap4.json › m7.raiz_ar_212_arima_ml = 2.2407<br>J: cap4_arima.json › nilo.rejilla.212.raices.min_ar = 2.2407 | verificado |
 | `18` | dato | J: cap4_arima.json › nilo.hyndman_khandakar.escalonada.n_modelos = 18<br>RJ: regenerado (R 4.3.3) › nilo.hyndman_khandakar.escalonada.n_modelos = 18 | verificado |
 | `42` | dato | J: cap4_arima.json › nilo.hyndman_khandakar.exhaustiva.n_modelos = 42<br>RJ: regenerado (R 4.3.3) › nilo.hyndman_khandakar.exhaustiva.n_modelos = 42 | verificado |
@@ -376,7 +397,7 @@ Cada bloque `r` de la presentación se ejecutó en R version 4.3.3 (2024-02-29) 
 | `26` (R imprime el volumen 26; el DOI corresponde al 27) | documentación | DOC: documentación de R (doc.citation_forecast) contiene «*26*(3)» | verificado |
 | `27` | documentación | DOC: documentación de R (doc.citation_forecast) contiene «v027» | verificado |
 
-### Cinco modelos quedan a 1.71 puntos de AICc: el ganador no está solo
+### Siete modelos quedan a menos de 2 puntos de AICc: el ganador no está solo
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -389,7 +410,13 @@ Cada bloque `r` de la presentación se ejecutó en R version 4.3.3 (2024-02-29) 
 | `0.70` | aritmética | CALC: AICc del puesto 3 − AICc del puesto 1 = 0.703 | verificado |
 | `1.46` | aritmética | CALC: AICc del puesto 4 − AICc del puesto 1 = 1.462 | verificado |
 | `1.71` | aritmética | CALC: AICc del puesto 5 − AICc del puesto 1 = 1.709 | verificado |
+| `1269.322` | dato | R46: directo_r46_cap4.json › nilo.exhaustiva.aicc_siete.5 = 1269.321657 | verificado |
+| `1269.348` | dato | R46: directo_r46_cap4.json › nilo.exhaustiva.aicc_siete.6 = 1269.348175 | verificado |
+| `1.81` (con todos los decimales de los AICc) | aritmética | R46: directo_r46_cap4.json › nilo.exhaustiva.delta_siete.5 = 1.814262 | verificado |
+| `1.84` (con todos los decimales de los AICc) | aritmética | R46: directo_r46_cap4.json › nilo.exhaustiva.delta_siete.6 = 1.84078 | verificado |
 | `2` | opinión | DEF: regla de referencia habitual (opinión del capítulo) | definición (no se mide) |
+| `siete modelos a menos de 2 puntos del mejor en la búsqueda exhaustiva (7 de los 42 evaluados)` (afirmación sin cifra en el título) | dato | R46: directo_r46_cap4.json › nilo.exhaustiva.a_menos_de_2 == 7 de nilo.exhaustiva.n_modelos == 42 | verificado |
+| `42` | dato | R46: directo_r46_cap4.json › nilo.exhaustiva.n_modelos = 42<br>J: cap4_arima.json › nilo.hyndman_khandakar.exhaustiva.n_modelos = 42<br>RJ: regenerado (R 4.3.3) › nilo.hyndman_khandakar.exhaustiva.n_modelos = 42 | verificado |
 
 ### Módulos 8–9 · Diagnóstico y pronóstico {seccion=modulo-8}
 
@@ -398,7 +425,7 @@ Cada bloque `r` de la presentación se ejecutó en R version 4.3.3 (2024-02-29) 
 | `0.800` | dato | J: cap4_arima.json › nilo.diagnostico.ljung_box_20.p = 0.7997<br>RD: directo_cap4.json › m2.lb20_p = 0.799737 | verificado |
 | `0.731` | dato | J: cap4_arima.json › nilo.diagnostico.shapiro_p = 0.7312<br>RJ: regenerado (R 4.3.3) › nilo.diagnostico.shapiro_p = 0.7312 | verificado |
 
-### Diferenciar de más deja una firma exacta en el MA
+### Diferenciar de más deja una firma algebraica en el MA
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -416,34 +443,10 @@ Cada bloque `r` de la presentación se ejecutó en R version 4.3.3 (2024-02-29) 
 | `-1.000` | dato | J: cap4_arima.json › nilo.sobrediferenciacion.3.theta_ma1 = -1<br>RJ: regenerado (R 4.3.3) › nilo.sobrediferenciacion.3.theta_ma1 = -1 | verificado |
 | `1.000` (los cuatro modelos degenerados con d = 2: (0,2,1), (0,2,2), (1,2,1), (2,2,1)) | dato | J: cap4_arima.json › nilo.rejilla.021.raices.min_ma = 1<br>J: cap4_arima.json › nilo.rejilla.022.raices.min_ma = 1<br>J: cap4_arima.json › nilo.rejilla.121.raices.min_ma = 1<br>J: cap4_arima.json › nilo.rejilla.221.raices.min_ma = 1<br>RJ: regenerado (R 4.3.3) › nilo.rejilla.021.raices.min_ma = 1<br>RJ: regenerado (R 4.3.3) › nilo.rejilla.022.raices.min_ma = 1<br>RJ: regenerado (R 4.3.3) › nilo.rejilla.121.raices.min_ma = 1<br>RJ: regenerado (R 4.3.3) › nilo.rejilla.221.raices.min_ma = 1 | verificado |
 | `28268.34` (σ̂² del MA(1) con d=2 = Var(∇y)) | dato | J: cap4_arima.json › nilo.sobrediferenciacion.2.sigma2_ma1 = 28268.34<br>RJ: regenerado (R 4.3.3) › nilo.sobrediferenciacion.2.sigma2_ma1 = 28268.34<br>J: cap4_arima.json › nilo.sobrediferenciacion.1.varianza = 28268.34<br>RJ: regenerado (R 4.3.3) › nilo.sobrediferenciacion.1.varianza = 28268.34 | verificado |
+| `0.5` | definición | DEF: definición: |ρ₁| ≤ 1/2 para cualquier MA(1) (el máximo de θ/(1+θ²) es 1/2) | definición (no se mide) |
 | `solo esos cuatro de los nueve modelos con d = 2 son degenerados` | dato | J: cap4_arima.json › nilo.rejilla (d = 2, degenerado)<br>RJ: regenerado › nilo.rejilla (d = 2, degenerado)<br>J: cap4_arima.json › nueve modelos con d = 2 | verificado |
 
-### La regla de la varianza es un aviso, no un teorema: en log(lynx) falla
-
-| Cifra o afirmación | Tipo | Fuentes y valor | Estado |
-|---|---|---|---|
-| `1.653` | dato | RD: directo_cap4.json › m8.lynx_var_d0a3.0 = 1.6532 | verificado |
-| `0.687` | dato | RD: directo_cap4.json › m8.lynx_var_d0a3.1 = 0.6871 | verificado |
-| `0.603` | dato | RD: directo_cap4.json › m8.lynx_var_d0a3.2 = 0.6026 | verificado |
-| `1.153` | dato | RD: directo_cap4.json › m8.lynx_var_d0a3.3 = 1.1532 | verificado |
-| `58` | dato | RD: directo_cap4.json › m8.lynx_reduccion_pct = 58.4 | verificado |
-| `1.653` | dato | RD: directo_cap4.json › m8.lynx_var_d0a3.0 = 1.6532 | verificado |
-| `0.687` | dato | RD: directo_cap4.json › m8.lynx_var_d0a3.1 = 0.6871 | verificado |
-| `0.10` | dato | RD: directo_cap4.json › m8.lynx_kpss_p = 0.1 | verificado |
-| `0.01` | dato | RD: directo_cap4.json › m8.lynx_adf_p = 0.01 | verificado |
-| `1.000` | dato | RD: directo_cap4.json › m8.lynx_211_raiz_ma = 1 | verificado |
-| `1.0000` | dato | RD: directo_cap4.json › m8.lynx_211_raiz_ma = 1 | verificado |
-| `1821` | documentación | RD: directo_cap4.json › datos.lynx_inicio = 1821<br>DOC: documentación de R (doc.lynx) contiene «1821-1934» | verificado |
-| `1934` | documentación | RD: directo_cap4.json › datos.lynx_fin = 1934<br>DOC: documentación de R (doc.lynx) contiene «1821-1934» | verificado |
-| `114` | dato | RD: directo_cap4.json › datos.lynx_n = 114 | verificado |
-| `10` (ciclo de unos 10 años: el AR(2) da un periodo de 9.78) | dato | RD: directo_cap4.json › m8.lynx_ar2.3 = 9.7839 | verificado |
-| `1991` | documentación | DOC: documentación de R (doc.lynx) contiene «Brockwell & Davis (1991)» | verificado |
-| `0.0094` | dato | RD: directo_cap4.json › m8.lynx_ar2_lb20_p = 0.009434 | verificado |
-| `9.78` | dato | RD: directo_cap4.json › m8.lynx_ar2.3 = 9.7839 | verificado |
-| `el mínimo de la varianza de log(lynx) está en d = 2; ndiffs kpss y adf dan 0` | dato | RD: directo_cap4.json › m8.lynx_var_d0a3, m8.lynx_ndiffs | verificado |
-| `el AR(2) sin diferenciar no pasa Ljung–Box y auto.arima propone un ARMA(2,3)` | dato | RD: directo_cap4.json › m8.lynx_ar2_lb20_p, m8.lynx_auto | verificado |
-
-### El caso del Nilo, cerrado: un escalón en 1899 explica más que una raíz unitaria
+### El escalón de 1899 ajusta casi 25 puntos de AICc mejor que cualquier ARMA del Nilo
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -464,6 +467,14 @@ Cada bloque `r` de la presentación se ejecutó en R version 4.3.3 (2024-02-29) 
 | `32.8` | dato | RD: directo_cap4.json › m1.razon_sin_ma = 32.8 | verificado |
 | `100` | dato | J: cap4_arima.json › nilo.cambio_nivel.monte_carlo.con_escalon.kpss_rechaza = 100 | verificado |
 | `29` | dato | RD: directo_cap4.json › m8.posicion_1899 = 29 | verificado |
+
+### El escalón gana casi 25 puntos de AICc: ¿pronostica mejor fuera de muestra? {.pregunta}
+
+| Cifra o afirmación | Tipo | Fuentes y valor | Estado |
+|---|---|---|---|
+| `25` | aritmética | CALC: 1282.50 − 1257.91 = 24.59 («casi 25») = 24.59 | verificado |
+| `80` | dato | J: cap4_arima.json › nilo.cambio_nivel.fuera_muestra.n_entrenamiento = 80<br>RJ: regenerado (R 4.3.3) › nilo.cambio_nivel.fuera_muestra.n_entrenamiento = 80 | verificado |
+| `20` | dato | J: cap4_arima.json › nilo.cambio_nivel.fuera_muestra.h = 20<br>RJ: regenerado (R 4.3.3) › nilo.cambio_nivel.fuera_muestra.h = 20 | verificado |
 
 ### Fuera de muestra el escalón no pronostica mejor: gana el naïve
 
@@ -491,7 +502,39 @@ Cada bloque `r` de la presentación se ejecutó en R version 4.3.3 (2024-02-29) 
 | `25` | aritmética | CALC: 1282.50 − 1257.91 = 24.59 = 24.59 | verificado |
 | `100` | dato | RD: directo_cap4.json › datos.nilo_n = 100 | verificado |
 
-### La forma del pronóstico a largo plazo la deciden d y la constante
+### La regla de la varianza es un aviso, no un teorema: en log(lynx) falla
+
+| Cifra o afirmación | Tipo | Fuentes y valor | Estado |
+|---|---|---|---|
+| `1.653` | dato | RD: directo_cap4.json › m8.lynx_var_d0a3.0 = 1.6532 | verificado |
+| `0.687` | dato | RD: directo_cap4.json › m8.lynx_var_d0a3.1 = 0.6871 | verificado |
+| `0.603` | dato | RD: directo_cap4.json › m8.lynx_var_d0a3.2 = 0.6026 | verificado |
+| `1.153` | dato | RD: directo_cap4.json › m8.lynx_var_d0a3.3 = 1.1532 | verificado |
+| `58` | dato | RD: directo_cap4.json › m8.lynx_reduccion_pct = 58.4 | verificado |
+| `1.653` | dato | RD: directo_cap4.json › m8.lynx_var_d0a3.0 = 1.6532 | verificado |
+| `0.687` | dato | RD: directo_cap4.json › m8.lynx_var_d0a3.1 = 0.6871 | verificado |
+| `0.10` | dato | RD: directo_cap4.json › m8.lynx_kpss_p = 0.1 | verificado |
+| `0.01` | dato | RD: directo_cap4.json › m8.lynx_adf_p = 0.01 | verificado |
+| `1.000` | dato | RD: directo_cap4.json › m8.lynx_211_raiz_ma = 1 | verificado |
+| `1.0000` | dato | RD: directo_cap4.json › m8.lynx_211_raiz_ma = 1 | verificado |
+| `1821` | documentación | RD: directo_cap4.json › datos.lynx_inicio = 1821<br>DOC: documentación de R (doc.lynx) contiene «1821-1934» | verificado |
+| `1934` | documentación | RD: directo_cap4.json › datos.lynx_fin = 1934<br>DOC: documentación de R (doc.lynx) contiene «1821-1934» | verificado |
+| `114` | dato | RD: directo_cap4.json › datos.lynx_n = 114 | verificado |
+| `10` (ciclo de unos 10 años: el AR(2) da un periodo de 9.78) | dato | RD: directo_cap4.json › m8.lynx_ar2.3 = 9.7839 | verificado |
+| `1991` | documentación | DOC: documentación de R (doc.lynx) contiene «Brockwell & Davis (1991)» | verificado |
+| `0.0094` | dato | RD: directo_cap4.json › m8.lynx_ar2_lb20_p = 0.009434 | verificado |
+| `9.78` | dato | RD: directo_cap4.json › m8.lynx_ar2.3 = 9.7839 | verificado |
+| `el mínimo de la varianza de log(lynx) está en d = 2; ndiffs kpss y adf dan 0` | dato | RD: directo_cap4.json › m8.lynx_var_d0a3, m8.lynx_ndiffs | verificado |
+| `el AR(2) sin diferenciar no pasa Ljung–Box y auto.arima propone un ARMA(2,3)` | dato | RD: directo_cap4.json › m8.lynx_ar2_lb20_p, m8.lynx_auto | verificado |
+
+### La forma del pronóstico a largo plazo la deciden \(d\) y la constante
+
+| Cifra o afirmación | Tipo | Fuentes y valor | Estado |
+|---|---|---|---|
+| `95` | definición | DEF: nivel nominal convencional | definición (no se mide) |
+| `30` | dato | J: cap4_arima.json › horizonte = 30 | verificado |
+
+### Con \(d=2\) el intervalo a 30 años es 3.5 veces más ancho, y aquí no se justifica
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -514,6 +557,9 @@ Cada bloque `r` de la presentación se ejecutó en R version 4.3.3 (2024-02-29) 
 | `781` | dato | J: cap4_arima.json › nilo.intervalos.forma_medida.d1.ancho95_h30 = 781.49<br>RJ: regenerado (R 4.3.3) › nilo.intervalos.forma_medida.d1.ancho95_h30 = 781.49 | verificado |
 | `30` | dato | J: cap4_arima.json › horizonte = 30 | verificado |
 | `-0.39` (φ̂ del ARIMA(1,2,1)) | dato | J: cap4_arima.json › nilo.formas_pronostico.d2.coeficientes.0.valor = -0.3924 | verificado |
+| `3.9` | aritmética | CALC: ancho(d=2)/ancho(d=1 con deriva) en h = 30 = 3.913096 | verificado |
+| `708` | dato | J: cap4_arima.json › nilo.intervalos.forma_medida.d1_deriva.ancho95_h30 = 708.25<br>RJ: regenerado (R 4.3.3) › nilo.intervalos.forma_medida.d1_deriva.ancho95_h30 = 708.25 | verificado |
+| `el ARIMA(1,2,1) tiene θ̂ = −1` (afirmación sin cifra) | dato | J: cap4_arima.json › nilo.rejilla.121: θ̂ (ma1) = −1 | verificado |
 
 ### El ancho del intervalo sale de los pesos ψ de la representación MA(∞)
 
@@ -523,7 +569,7 @@ Cada bloque `r` de la presentación se ejecutó en R version 4.3.3 (2024-02-29) 
 | `9.08` (9.078 × 10⁻¹¹) | dato | J: cap4_arima.json › nilo.intervalos.error_maximo_verificacion = 9.078 | verificado |
 | `error de reconstrucción del orden de 10⁻¹⁰ (< 1e-10)` | dato | J: cap4_arima.json › nilo.intervalos.error_maximo_verificacion < 1e-10 | verificado |
 
-### En el Nilo la incertidumbre crece casi cuatro veces menos que en una caminata aleatoria
+### A 30 años, la incertidumbre del Nilo es casi cuatro veces menor que la de una caminata
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -557,12 +603,16 @@ Cada bloque `r` de la presentación se ejecutó en R version 4.3.3 (2024-02-29) 
 | `138` | dato | J: cap4_arima.json › trm.n = 138<br>RD: directo_cap4.json › datos.trm_n = 138 | verificado |
 | `26` | dato | RD: datos_series.json › trm.fuente («consulta: 2026-07-26») | verificado |
 | `-1.978` | dato | J: cap4_arima.json › trm.pruebas.adf_nivel.estadistico = -1.9783<br>RJ: regenerado (R 4.3.3) › trm.pruebas.adf_nivel.estadistico = -1.9783 | verificado |
-| `0.586` | dato | J: cap4_arima.json › trm.pruebas.adf_nivel.p = 0.5855<br>RJ: regenerado (R 4.3.3) › trm.pruebas.adf_nivel.p = 0.5855 | verificado |
+| `0.585` (valor exacto 0.58549; el JSON lo guarda a 4 decimales (0.5855) y redondear otra vez daba 0.586) | dato | R46: directo_r46_cap4.json › trm.adf_nivel_p = 0.58549 | verificado |
+| `0.58549` | dato | R46: directo_r46_cap4.json › trm.adf_nivel_p = 0.58549 | verificado |
+| `0.5855` | dato | J: cap4_arima.json › trm.pruebas.adf_nivel.p = 0.5855<br>RJ: regenerado (R 4.3.3) › trm.pruebas.adf_nivel.p = 0.5855 | verificado |
 | `-3.880` | dato | J: cap4_arima.json › trm.pruebas.adf_d1.estadistico = -3.8801<br>RJ: regenerado (R 4.3.3) › trm.pruebas.adf_d1.estadistico = -3.8801 | verificado |
 | `0.017` | dato | J: cap4_arima.json › trm.pruebas.adf_d1.p = 0.0172<br>RJ: regenerado (R 4.3.3) › trm.pruebas.adf_d1.p = 0.0172 | verificado |
 | `2.243` | dato | J: cap4_arima.json › trm.pruebas.kpss_nivel.estadistico = 2.2427<br>RJ: regenerado (R 4.3.3) › trm.pruebas.kpss_nivel.estadistico = 2.2427 | verificado |
 | `0.01` (cota de la tabla (p < 0.01)) | dato | J: cap4_arima.json › trm.pruebas.kpss_nivel.p = 0.01<br>RJ: regenerado (R 4.3.3) › trm.pruebas.kpss_nivel.p = 0.01 | verificado |
-| `0.242` | dato | J: cap4_arima.json › trm.pruebas.kpss_d1.estadistico = 0.2415<br>RJ: regenerado (R 4.3.3) › trm.pruebas.kpss_d1.estadistico = 0.2415 | verificado |
+| `0.241` (valor exacto 0.24147; el JSON lo guarda a 4 decimales (0.2415) y redondear otra vez daba 0.242) | dato | R46: directo_r46_cap4.json › trm.kpss_d1_stat = 0.241468 | verificado |
+| `0.24147` | dato | R46: directo_r46_cap4.json › trm.kpss_d1_stat = 0.241468 | verificado |
+| `0.2415` | dato | J: cap4_arima.json › trm.pruebas.kpss_d1.estadistico = 0.2415<br>RJ: regenerado (R 4.3.3) › trm.pruebas.kpss_d1.estadistico = 0.2415 | verificado |
 | `0.10` (cota de la tabla (p > 0.10)) | dato | J: cap4_arima.json › trm.pruebas.kpss_d1.p = 0.1<br>RJ: regenerado (R 4.3.3) › trm.pruebas.kpss_d1.p = 0.1 | verificado |
 | `0.088` | dato | J: cap4_arima.json › trm.identificacion.d1.acf.0 = 0.0876<br>RJ: regenerado (R 4.3.3) › trm.identificacion.d1.acf.0 = 0.0876 | verificado |
 | `0.0876` | dato | J: cap4_arima.json › trm.identificacion.d1.acf.0 = 0.0876<br>RJ: regenerado (R 4.3.3) › trm.identificacion.d1.acf.0 = 0.0876<br>RD: directo_cap4.json › m10.acf_dif_rezago1 = 0.0876 | verificado |
@@ -584,7 +634,9 @@ Cada bloque `r` de la presentación se ejecutó en R version 4.3.3 (2024-02-29) 
 | `1708.83` | dato | J: cap4_arima.json › trm.rejilla.010.bic = 1708.83<br>RJ: regenerado (R 4.3.3) › trm.rejilla.010.bic = 1708.83<br>J: cap4_arima.json › trm.caminata.bic = 1708.83<br>RJ: regenerado (R 4.3.3) › trm.caminata.bic = 1708.83 | verificado |
 | `1.0042` | dato | J: cap4_arima.json › trm.minimo_degenerado.raices_ar.0 = 1.0042<br>RJ: regenerado (R 4.3.3) › trm.minimo_degenerado.raices_ar.0 = 1.0042 | verificado |
 | `1.0000` (modelo degenerado: 1 en R 4.6 y 1.0001 en R 4.3.3) | dato | J: cap4_arima.json › trm.minimo_degenerado.raices_ma.0 = 1<br>RJ: regenerado (R 4.3.3) › trm.minimo_degenerado.raices_ma.0 = 1.0001 | verificado |
-| `192` | dato | J: cap4_arima.json › trm.auto_arima.n_modelos = 192<br>RJ: regenerado (R 4.3.3) › trm.auto_arima.n_modelos = 192 | verificado |
+| `192` | dato | J: cap4_arima.json › trm.auto_arima.n_modelos = 192<br>RJ: regenerado (R 4.3.3) › trm.auto_arima.n_modelos = 192<br>R46: directo_r46_cap4.json › trm.auto.n_modelos_con_estacional = 192 | verificado |
+| `42` (búsqueda exhaustiva con seasonal = FALSE) | dato | R46: directo_r46_cap4.json › trm.auto.n_modelos_sin_estacional = 42 | verificado |
+| `150` | aritmética | CALC: 192 − 42 = 150 modelos con parte estacional = 150 | verificado |
 | `0.189` | dato | J: cap4_arima.json › trm.caminata.ljung_box_20_p = 0.189<br>RJ: regenerado (R 4.3.3) › trm.caminata.ljung_box_20_p = 0.189 | verificado |
 | `0.206` | dato | J: cap4_arima.json › trm.caminata.ljung_box_12_p = 0.2059<br>RJ: regenerado (R 4.3.3) › trm.caminata.ljung_box_12_p = 0.2059 | verificado |
 | `0.0006` | dato | J: cap4_arima.json › trm.caminata.shapiro_p = 0.0006<br>RJ: regenerado (R 4.3.3) › trm.caminata.shapiro_p = 0.0006 | verificado |
@@ -598,7 +650,7 @@ Cada bloque `r` de la presentación se ejecutó en R version 4.3.3 (2024-02-29) 
 | `1.01` | documentación | RD: directo_cap4.json › m7.regla_raiz_1_01 (myarima: minroot < 1 + 0.01) | verificado |
 | `el mínimo de AICc es el (2,1,2) y el de BIC el (0,1,0); auto.arima elige (0,1,0)` | dato | J: cap4_arima.json › trm.mejor_aicc, trm.mejor_bic, trm.auto_arima<br>RJ: regenerado › ídem | verificado |
 
-### A dos años, el intervalo del 95 % abarca un tercio del nivel
+### A dos años, el intervalo del 95 % se extiende un tercio del nivel hacia cada lado
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -633,13 +685,19 @@ Cada bloque `r` de la presentación se ejecutó en R version 4.3.3 (2024-02-29) 
 | `1.959964` | definición | CALC: cuantil 0.975 de la normal = 1.959964 | verificado |
 | `6 de 137 cambios mensuales caen fuera del 95 %, 5 de ellos por arriba` | dato | RD: directo_cap4.json › m10.fuera_1m, m10.fuera_1m_arriba | verificado |
 
-### Sin estacionalidad el diagnóstico rechaza: el puente al Capítulo 5
+### Residuales del mejor ARIMA no estacional en log(AirPassengers): ¿qué se concluye? {.pregunta}
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
 | `0.7245` | dato | J: cap4_arima.json › puente_estacional.no_estacional.acf_12 = 0.7245<br>RJ: regenerado (R 4.3.3) › puente_estacional.no_estacional.acf_12 = 0.7245 | verificado |
 | `0.6727` | dato | J: cap4_arima.json › puente_estacional.no_estacional.acf_24 = 0.6727<br>RJ: regenerado (R 4.3.3) › puente_estacional.no_estacional.acf_24 = 0.6727 | verificado |
 | `0.1633` | dato | J: cap4_arima.json › puente_estacional.no_estacional.banda = 0.1633<br>RJ: regenerado (R 4.3.3) › puente_estacional.no_estacional.banda = 0.1633 | verificado |
+| `144` | dato | J: cap4_arima.json › puente_estacional.n = 144<br>RD: directo_cap4.json › datos.ap_n = 144 | verificado |
+
+### El *airline* resuelve con dos parámetros lo que el ARIMA(0,1,5) no logra con cinco
+
+| Cifra o afirmación | Tipo | Fuentes y valor | Estado |
+|---|---|---|---|
 | `222.4` | dato | J: cap4_arima.json › puente_estacional.no_estacional.ljung_box_24.Q = 222.398<br>RJ: regenerado (R 4.3.3) › puente_estacional.no_estacional.ljung_box_24.Q = 222.398 | verificado |
 | `-0.0515` | dato | J: cap4_arima.json › puente_estacional.estacional.acf_residuales.11 = -0.0515<br>RJ: regenerado (R 4.3.3) › puente_estacional.estacional.acf_residuales.11 = -0.0515 | verificado |
 | `0.233` | dato | J: cap4_arima.json › puente_estacional.estacional.ljung_box_24_p = 0.233<br>RJ: regenerado (R 4.3.3) › puente_estacional.estacional.ljung_box_24_p = 0.233 | verificado |
@@ -648,8 +706,9 @@ Cada bloque `r` de la presentación se ejecutó en R version 4.3.3 (2024-02-29) 
 | `144` | dato | J: cap4_arima.json › puente_estacional.n = 144<br>RD: directo_cap4.json › datos.ap_n = 144 | verificado |
 | `p < 10⁻⁶ en Ljung–Box(24) del ARIMA(0,1,5)` | dato | CALC: χ²(19) con Q = 222.398: p < 1e-6 (df = 24 − 5) | verificado |
 | `el mejor no estacional es ARIMA(0,1,5) y el airline ARIMA(0,1,1)(0,1,1)[12]` | dato | J: cap4_arima.json › puente_estacional | verificado |
+| `el (0,1,5) es el mejor con p + q ≤ 5 (tope por defecto de auto.arima); con una búsqueda más amplia gana el ARIMA(8,1,3) con deriva y ρ̂₁₂ sigue siendo grande` | dato | R46: directo_r46_cap4.json › puente.mejor_por_defecto, puente.mejor_amplio, puente.mejor_amplio_rho12 | verificado |
 
-### Para seguir: tres ejercicios y las lecturas del capítulo {columnas=1:1}
+### Para seguir: tres ejercicios y el simulacro del quiz {columnas=1:1}
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -666,9 +725,3 @@ Cada bloque `r` de la presentación se ejecutó en R version 4.3.3 (2024-02-29) 
 | `9.8` | sin verificar | — (sin fuente en esta sesión) | SIN VERIFICAR |
 | `2017` | sin verificar | — (sin fuente en esta sesión) | SIN VERIFICAR |
 | `2015` | sin verificar | — (sin fuente en esta sesión) | SIN VERIFICAR |
-
-### Cada cifra remite a una fuente; lo que no se pudo contrastar queda marcado
-
-| Cifra o afirmación | Tipo | Fuentes y valor | Estado |
-|---|---|---|---|
-| `1970` | sin verificar | — (sin fuente en esta sesión) | SIN VERIFICAR |

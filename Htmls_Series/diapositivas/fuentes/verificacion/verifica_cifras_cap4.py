@@ -10,6 +10,10 @@ Qué hace
         RJ   el mismo JSON regenerado en R 4.3.3 (`regenerado_cap4_arima.json`)
         RD   `directo_cap4.json`, recalculado en R sobre los datos crudos
         PY   `directo_python_cap4.json`, recalculado con statsmodels
+        R46  `directo_r46_cap4.json`, cifras exactas que faltaban, calculadas con el R de quien ejecute
+             `verifica_directo_r46_cap4.R` (el JSON registra la versión: R 4.6.0, forecast 9.0.2)
+        MAN  comprobación MANUAL contra un libro o una fuente que no está en el repositorio (con página);
+             no la ejecuta ningún guion y el informe la cuenta aparte
         DOC  documentación de R guardada en `directo_cap4.json`
         CALC aritmética sobre las fuentes anteriores
         C    texto del capítulo (`capitulo-4-modelos-arima.html`)
@@ -53,6 +57,7 @@ J = cargar(RAIZ / "precalculo/salidas/cap4_arima.json")
 RJ = cargar(AQUI / "regenerado_cap4_arima.json")
 RD = cargar(AQUI / "directo_cap4.json")
 PY = cargar(AQUI / "directo_python_cap4.json")
+R46 = cargar(AQUI / "directo_r46_cap4.json")
 DAT = cargar(RAIZ / "precalculo/salidas/datos_series.json")
 GENERA_R = (RAIZ / "precalculo/genera_cap4.R").read_text(encoding="utf-8")
 NILE = DAT["nilo"]["valores"]
@@ -120,6 +125,15 @@ def RD_(clave, m=1):
 
 def PY_(clave, m=1):
     return Src("PY", lambda: getf(PY, clave) * m, f"directo_python_cap4.json › {clave}")
+
+
+def R46_(clave, m=1):
+    return Src("R46", lambda: getf(R46, clave) * m, f"directo_r46_cap4.json › {clave}")
+
+
+def MAN_(desc):
+    """Comprobación manual contra una fuente fuera del repositorio. Va aparte en el informe."""
+    return Src("MAN", lambda: True, desc, True)
 
 
 def CALC_(fn, desc):
@@ -222,6 +236,10 @@ VAR = lambda d: J["nilo"]["varianzas"][d]["varianza"]  # noqa: E731
 K = "Cada afirmación es un dato"
 C(K, "4.6", PLAN_("R 4.6"), kind="versión")
 C(K, "4.3.3", BOOL_("RD", lambda: "4.3.3" in RD["entorno"]["R"], "directo_cap4.json › entorno.R"), kind="versión")
+C(K, "1970", MAN_("Shumway y Stoffer, *Time Series Analysis and Its Applications* (3.ª ed.), PDF pp. 8, 15 y 75: «Box and Jenkins (1970)» (comprobado a mano, 2026-09-29)"), kind="libro (manual)")
+C(K, "1899", CALC_(lambda: 1871 + RD["m8.posicion_1899"] - 1, "año de la observación 29 (1871 + 29 − 1)"), tol=0)
+sin_verificar(K, "la presa baja de Asuán como causa · el signo de θ en el libro original de Box y Jenkins · el origen de la TRM en datos.gov.co · las secciones y capítulos de las lecturas",
+              "ver la lista completa en verificacion_cifras.md")
 
 K = "Tres series conducen"
 C(K, "1871", RD_("datos.nilo_inicio"), DOC_("doc.nile", "1871-1970"), kind="documentación")
@@ -238,19 +256,23 @@ C(K, "26", BOOL_("RD", lambda: "consulta: 2026-07-26" in DAT["trm"]["fuente"], "
 C(K, "1949", RD_("datos.ap_inicio"), DOC_("doc.airpassengers", "1949 to 1960"), kind="documentación")
 C(K, "1960", RD_("datos.ap_fin"), DOC_("doc.airpassengers", "1949 to 1960"), kind="documentación")
 C(K, "144", J_("puente_estacional.n"), RD_("datos.ap_n"))
-C(K, "1976", DOC_("doc.airpassengers", "(1976)"), kind="documentación")
+C(K, "1976", DOC_("doc.airpassengers", "(1976)"), kind="documentación", nota="lo que decía la ayuda de R 4.3.3")
+C(K, "1994", BOOL_("R46", lambda: "Reinsel GC (1994)" in R46["doc.airpassengers"], "directo_r46_cap4.json › doc.airpassengers (R 4.6) cita a Box, Jenkins y Reinsel (1994); la ayuda de R 4.3.3 decía 1976"), kind="documentación")
 C(K, "150", RD_("datos.bjsales_n"), DOC_("doc.bjsales", "150 observations"), kind="documentación")
 C(K, "1821", RD_("datos.lynx_inicio"), DOC_("doc.lynx", "1821-1934"), kind="documentación")
 C(K, "1934", RD_("datos.lynx_fin"), DOC_("doc.lynx", "1821-1934"), kind="documentación")
 sin_verificar(K, "origen de la TRM en datos.gov.co", "no se pudo contrastar con la fuente primaria; solo con la copia congelada del repositorio")
 
 # ---- M1 ---------------------------------------------------------------------------
+K = "La diferenciación es parte del modelo"
+C(K, "4.2", MAN_("Cryer y Chan, *Time Series Analysis with Applications in R*, §4.2, PDF p. 70: definen el MA con signo menos y añaden «R, uses plus signs before the thetas» (comprobado a mano, 2026-09-29); Tsay, PDF p. 87, también usa el menos"), kind="libro (manual)")
+
 K = "Un ARIMA(1,1,1) es un ARMA(2,1)"
 C(K, "0.2544", J_("nilo.diagnostico.coeficientes.0.valor"), RJ_("nilo.diagnostico.coeficientes.0.valor"))
 C(K, "1.2544", RD_("m1.ar_expandido.0"), CALC_(lambda: 1 + 0.2544, "1 + φ"))
 C(K, "-0.2544", RD_("m1.ar_expandido.1"), CALC_(lambda: -0.2544, "−φ"))
 C(K, "1.0000", RD_("m1.raices.0"))
-C(K, "3.9308", RD_("m1.raices.1"), CALC_(lambda: 1 / 0.2544, "1/φ"))
+C(K, "3.93", RD_("m1.raices.1"), CALC_(lambda: 1 / 0.2544, "1/φ"))
 
 K = "Suavizamiento exponencial"
 permite(K, "10", "ordinal de módulo (Módulo 10)")
@@ -278,11 +300,10 @@ C(K, "-1.3", CALC_(lambda: (VAR(1) / VAR(0) - 1) * 100, "variación de la varian
 C(K, "-0.5", BOOL_("DEF", lambda: True, "definición: ρ₁ de la diferencia de un ruido blanco es −1/2"), kind="definición")
 C(K, "1899", CALC_(lambda: 1871 + RD["m8.posicion_1899"] - 1, "año de la observación 29 (1871 + 29 − 1)"), tol=0)
 
-K = "Box y Jenkins aportaron"
+K = "La aportación de Box y Jenkins"
 C(K, "1976", DOC_("doc.bjsales", "Box & Jenkins (1976)"), kind="documentación")
-C(K, "1970", BOOL_("SV", lambda: False, "sin fuente en esta sesión"), kind="sin verificar")
-sin_verificar(K, "1970 (edición de Time Series Analysis: Forecasting and Control)",
-              "la documentación de R (?BJsales) cita la edición de 1976; ninguna fuente de esta sesión confirma 1970")
+C(K, "1970", MAN_("Shumway y Stoffer, *Time Series Analysis and Its Applications* (3.ª ed.), PDF pp. 8, 15 y 75: «Box and Jenkins (1970)» (comprobado a mano, 2026-09-29)"), kind="libro (manual)")
+permite(K, "15 75", "páginas 15 y 75 del PDF de Shumway y Stoffer (comprobación manual)")
 
 K = "Cada etapa tiene un hallazgo"
 permite(K, "12", "número de capítulo/parámetro estructural")
@@ -309,6 +330,10 @@ C(K, "0.01", RD_("m3.kpss_p"), JJ("nilo.pruebas.kpss_nivel.p"), RD_("m3.pp_p"), 
 C(K, "-6.690", RD_("m3.pp_stat"), JJ("nilo.pruebas.pp_nivel.estadistico"))
 C(K, "1.3", CALC_(lambda: -(VAR(1) / VAR(0) - 1) * 100, "reducción de la varianza de d=0 a d=1, en %"), kind="aritmética")
 permite(K, "4", "rezagos k = 4 del adf.test (verificado: RD m3.adf_rezagos)")
+C(K, "-0.87", JJ("nilo.diagnostico.coeficientes.1.valor"), tol=0.005, nota="θ̂ ≈ −0.874 del ARIMA(1,1,1)")
+C(K, "100", R46_("sim_raiz_unitaria.pp_rechaza", 100), kind="dato", nota="simulación con raíz unitaria verdadera: `PP.test` rechaza el 100 % (1 000 réplicas, semilla 2026)")
+C(K, "51.3", R46_("sim_raiz_unitaria.adf_k4_rechaza", 100), kind="dato", nota="ídem con `adf.test` (k = 4)")
+C(K, "1000", R46_("sim_raiz_unitaria.replicas"), kind="dato")
 
 K = "Las tres versiones de `ndiffs`"
 C(K, "-4.05", RD_("m3.urdf_tau"))
@@ -335,7 +360,7 @@ C(K, "100", J_("nilo.cambio_nivel.malla_delta.puntos.4.delta"))
 C(K, "100%", J_("nilo.cambio_nivel.monte_carlo.con_escalon.kpss_rechaza", 100), RJ_("nilo.cambio_nivel.monte_carlo.con_escalon.kpss_rechaza", 100))
 C(K, "0.79", CALC_(lambda: 100 / 127.03, "100/σ = 100/127.03"), J_("nilo.cambio_nivel.malla_delta.puntos.4.salto_en_sigmas"), kind="aritmética")
 C(K, "70.8", J_("nilo.cambio_nivel.malla_delta.puntos.4.kpss_rechaza", 100), RJ_("nilo.cambio_nivel.malla_delta.puntos.4.kpss_rechaza", 100))
-permite(K, "165", "atributo de formato {alto=165}")
+permite(K, "230", "atributo de formato {alto=230}")
 
 K = "KPSS no distingue"
 C(K, "86.4", J_("nilo.cambio_nivel.monte_carlo.con_escalon.adf_test_no_rechaza", 100), RJ_("nilo.cambio_nivel.monte_carlo.con_escalon.adf_test_no_rechaza", 100))
@@ -351,6 +376,11 @@ C(K, "0.196", JJ("nilo.identificacion.cruda.banda"))
 C(K, "0.25", RD_("m4.ar1_phi05_rezagos2y3.0"), CALC_(lambda: 0.5 ** 2, "φ² con φ = 0.5"), kind="aritmética")
 C(K, "0.125", RD_("m4.ar1_phi05_rezagos2y3.1"), CALC_(lambda: 0.5 ** 3, "φ³ con φ = 0.5"), kind="aritmética")
 C(K, "0.5", CALC_(lambda: J["nilo"]["identificacion"]["cruda"]["acf"][0], "ρ̂₁ ≈ 0.5 ⇒ φ ≈ 0.5"), tol=0.01, kind="aritmética")
+C(K, "11", BOOL_("J", lambda: sum(1 for x in J["nilo"]["identificacion"]["cruda"]["acf"][:20] if abs(x) > J["nilo"]["identificacion"]["cruda"]["banda"]) == 11,
+                 "cap4_arima.json › nilo.identificacion.cruda.acf: 11 de los 20 rezagos (1–8 y 11–13) fuera de la banda ±0.196"), nota="rezagos fuera de la banda")
+C(K, "los veinte rezagos de la ACF cruda son positivos",
+  BOOL_("J", lambda: len(J["nilo"]["identificacion"]["cruda"]["acf"]) >= 20 and all(x > 0 for x in J["nilo"]["identificacion"]["cruda"]["acf"][:20]),
+        "cap4_arima.json › nilo.identificacion.cruda.acf (20 rezagos > 0)"), nota="afirmación sin cifra")
 
 K = "Sobre ∇Nilo la ACF corta"
 C(K, "1.96", CALC_(lambda: Z975, "z de 0.975"), tol=0.001, kind="definición")
@@ -358,11 +388,15 @@ C(K, "0.197", JJ("nilo.identificacion.d1.banda"), RD_("m4.banda"))
 C(K, "-0.402", JJ("nilo.identificacion.d1.acf.0"), RD_("m4.acf_1a6.0"))
 C(K, "0.231", JJ("nilo.identificacion.d1.acf.7"))
 C(K, "0.2312", JJ("nilo.identificacion.d1.acf.7"))
-C(K, "-0.246", JJ("nilo.identificacion.d1.pacf.1"), RD_("m4.pacf_1a3.1"))
-C(K, "-0.119", JJ("nilo.identificacion.d1.pacf.2"), RD_("m4.pacf_1a3.2"))
 C(K, "20", J_("max_rezago"))
 C(K, "5", BOOL_("DEF", lambda: True, "nivel nominal convencional"), kind="definición")
-permite(K, "150", "atributo de formato {alto=150}")
+C(K, "10", BOOL_("J", lambda: [i + 1 for i, v in enumerate(J["nilo"]["identificacion"]["d1"]["pacf"]) if abs(v) > J["nilo"]["identificacion"]["d1"]["banda"]] == [1, 2, 7, 10],
+                 "cap4_arima.json › nilo.identificacion.d1.pacf: los rezagos fuera de la banda son 1, 2, 7 y 10"),
+  BOOL_("J", lambda: all(J["nilo"]["identificacion"]["d1"]["pacf"][i - 1] < 0 for i in (1, 2, 7, 10)), "cap4_arima.json › nilo.identificacion.d1.pacf: los cuatro son negativos"),
+  nota="PACF fuera de banda: rezagos 1, 2, 7 y 10, todos negativos")
+C(K, "0.227", CALC_(lambda: 1.96 / math.sqrt(99) * math.sqrt(1 + 2 * J["nilo"]["identificacion"]["d1"]["acf"][0] ** 2), "banda de Bartlett para ρ_k, k > 1, con ρ̂₁ = −0.402 y n = 99"), kind="aritmética")
+permite(K, "250", "atributo de formato {alto=250}")
+permite(K, "0.45", "recorte del eje y de la foto (±0.45) dicho en las notas; no es una cifra del análisis")
 
 K = "La tabla propone un ARIMA(0,1,1)"
 C(K, "-0.402", JJ("nilo.identificacion.d1.acf.0"))
@@ -386,6 +420,8 @@ C(K, "8.21.1", BOOL_("RD", lambda: RD["entorno"]["forecast"] == "8.21.1", "direc
 C(K, "0.14.6", BOOL_("PY", lambda: PY["entorno"]["statsmodels"] == "0.14.6", "directo_python_cap4.json › entorno.statsmodels"), kind="versión")
 C(K, "4.6", PLAN_("R 4.6"), kind="versión")
 C(K, "9.0.2", PLAN_("forecast 9.0.2"), kind="versión")
+C(K, "Arima incluye la media por defecto (include.mean = TRUE) e include.drift = FALSE",
+  BOOL_("R46", lambda: R46["Arima.include_mean_por_defecto"] is True and R46["Arima.include_drift_por_defecto"] is False, "directo_r46_cap4.json › Arima.include_mean_por_defecto, Arima.include_drift_por_defecto"), kind="comportamiento")
 C(K, "arima ignora include.mean con d ≥ 1", BOOL_("RD", lambda: RD["m5.arima_d1_include_mean_coef"] == ["ar1", "ma1"], "directo_cap4.json › m5.arima_d1_include_mean_coef == [ar1, ma1]"), kind="comportamiento")
 C(K, "Arima con d = 2 avisa y no ajusta deriva", BOOL_("RD", lambda: RD["m5.d2_aviso"].startswith("No drift term fitted") and RD["m5.d2_tiene_deriva"] is False, "directo_cap4.json › m5.d2_aviso, m5.d2_tiene_deriva"), kind="comportamiento")
 C(K, "auto.arima prueba con y sin deriva si d = 1", BOOL_("RD", lambda: RD["m5.auto_d1_traza_con_deriva"] and RD["m5.auto_d1_traza_sin_deriva"], "directo_cap4.json › m5.auto_d1_traza_*"), kind="comportamiento")
@@ -413,7 +449,6 @@ C(K, "247.78", RD_("m8.escalon_coef", -1))
 C(K, "-247.78", RD_("m8.escalon_coef"))
 C(K, "-2.50", RD_("m5.aporte_escalon"), CALC_(lambda: RD["m8.escalon_coef"] / 99, "β̂/99"), kind="aritmética")
 C(K, "2.9", CALC_(lambda: abs(RD["m5.deriva"]), "|δ̂|"), kind="aritmética")
-C(K, "1899", CALC_(lambda: 1871 + RD["m8.posicion_1899"] - 1, "año de la observación 29 (1871 + 29 − 1)"), tol=0)
 C(K, "10", DOC_("doc.nile", "10^8 m^3"), kind="documentación")
 C(K, "138", J_("trm.n"))
 C(K, "-2.8827", RD_("m5.deriva"))
@@ -467,6 +502,7 @@ C(K, "1.01", BOOL_("RD", lambda: RD["m7.regla_raiz_1_01"], "directo_cap4.json �
 C(K, "1.001", RD_("m7.raiz_ar_212_sin_deriva"), tol=0.0006, nota="≈ 1.001: 1.0008 sin deriva, 1.0005 con deriva (Arima, CSS-ML); con arima(ML) sale 2.24")
 C(K, "1.0008", RD_("m7.raiz_ar_212_sin_deriva"))
 C(K, "1.0005", RD_("m7.raiz_ar_212_con_deriva"))
+C(K, "1.0009", R46_("nilo.raiz_ar_212_sin_deriva"), R46_("nilo.raiz_ar_212_con_deriva"), nota="en R 4.6, con y sin deriva")
 C(K, "2.24", RD_("m7.raiz_ar_212_arima_ml"), J_("nilo.rejilla.212.raices.min_ar"))
 C(K, "18", JJ("nilo.hyndman_khandakar.escalonada.n_modelos"))
 C(K, "42", JJ("nilo.hyndman_khandakar.exhaustiva.n_modelos"))
@@ -478,13 +514,20 @@ C(K, "10.18637", DOC_("doc.citation_forecast", "10.18637/jss.v027.i03"), kind="d
 C(K, "26", DOC_("doc.citation_forecast", "*26*(3)"), kind="documentación", nota="R imprime el volumen 26; el DOI corresponde al 27")
 C(K, "27", DOC_("doc.citation_forecast", "v027"), kind="documentación")
 
-K = "Cinco modelos quedan"
+K = "Siete modelos quedan"
 RK = "nilo.hyndman_khandakar.exhaustiva.ranking"
 for i, v in enumerate(["1267.507", "1268.063", "1268.210", "1268.969", "1269.216"]):
     C(K, v, JJ(f"{RK}.{i}.aicc"))
 for i, v in enumerate(["0.56", "0.70", "1.46", "1.71"], start=1):
     C(K, v, CALC_(lambda i=i: J["nilo"]["hyndman_khandakar"]["exhaustiva"]["ranking"][i]["aicc"] - J["nilo"]["hyndman_khandakar"]["exhaustiva"]["ranking"][0]["aicc"], f"AICc del puesto {i+1} − AICc del puesto 1"), kind="aritmética")
+C(K, "1269.322", R46_("nilo.exhaustiva.aicc_siete.5"))
+C(K, "1269.348", R46_("nilo.exhaustiva.aicc_siete.6"))
+C(K, "1.81", R46_("nilo.exhaustiva.delta_siete.5"), kind="aritmética", nota="con todos los decimales de los AICc")
+C(K, "1.84", R46_("nilo.exhaustiva.delta_siete.6"), kind="aritmética", nota="con todos los decimales de los AICc")
 C(K, "2", BOOL_("DEF", lambda: True, "regla de referencia habitual (opinión del capítulo)"), kind="opinión")
+C(K, "siete modelos a menos de 2 puntos del mejor en la búsqueda exhaustiva (7 de los 42 evaluados)",
+  BOOL_("R46", lambda: R46["nilo.exhaustiva.a_menos_de_2"] == 7 and R46["nilo.exhaustiva.n_modelos"] == 42, "directo_r46_cap4.json › nilo.exhaustiva.a_menos_de_2 == 7 de nilo.exhaustiva.n_modelos == 42"), nota="afirmación sin cifra en el título")
+C(K, "42", R46_("nilo.exhaustiva.n_modelos"), JJ("nilo.hyndman_khandakar.exhaustiva.n_modelos"))
 
 # ---- M8 -----------------------------------------------------------------------------
 K = "Módulos 8–9 · Diagnóstico"
@@ -501,6 +544,7 @@ C(K, "1.000", J_("nilo.rejilla.021.raices.min_ma"), J_("nilo.rejilla.022.raices.
   RJ_("nilo.rejilla.021.raices.min_ma"), RJ_("nilo.rejilla.022.raices.min_ma"), RJ_("nilo.rejilla.121.raices.min_ma"), RJ_("nilo.rejilla.221.raices.min_ma"),
   nota="los cuatro modelos degenerados con d = 2: (0,2,1), (0,2,2), (1,2,1), (2,2,1)")
 C(K, "28268.34", JJ(f"{SO}.2.sigma2_ma1"), JJ(f"{SO}.1.varianza"), nota="σ̂² del MA(1) con d=2 = Var(∇y)")
+C(K, "0.5", BOOL_("DEF", lambda: True, "definición: |ρ₁| ≤ 1/2 para cualquier MA(1) (el máximo de θ/(1+θ²) es 1/2)"), kind="definición")
 C(K, "solo esos cuatro de los nueve modelos con d = 2 son degenerados",
   BOOL_("J", lambda: sorted(k for k, v in J["nilo"]["rejilla"].items() if v["d"] == 2 and v["raices"]["degenerado"]) == ["021", "022", "121", "221"], "cap4_arima.json › nilo.rejilla (d = 2, degenerado)"),
   BOOL_("RJ", lambda: sorted(k for k, v in RJ["nilo"]["rejilla"].items() if v["d"] == 2 and v["raices"]["degenerado"]) == ["021", "022", "121", "221"], "regenerado › nilo.rejilla (d = 2, degenerado)"),
@@ -528,7 +572,7 @@ C(K, "el mínimo de la varianza de log(lynx) está en d = 2; ndiffs kpss y adf d
 C(K, "el AR(2) sin diferenciar no pasa Ljung–Box y auto.arima propone un ARMA(2,3)",
   BOOL_("RD", lambda: RD["m8.lynx_ar2_lb20_p"] < 0.05 and RD["m8.lynx_auto"].startswith("ARIMA(2,0,3)"), "directo_cap4.json › m8.lynx_ar2_lb20_p, m8.lynx_auto"))
 
-K = "El caso del Nilo, cerrado"
+K = "ajusta casi 25 puntos de AICc"
 CN = "nilo.cambio_nivel"
 C(K, "1899", CALC_(lambda: 1871 + RD["m8.posicion_1899"] - 1, "año de la observación 29 (1871 + 29 − 1)"), tol=0)
 C(K, "-247.78", JJ(f"{CN}.escalon.coef"), RD_("m8.escalon_coef"))
@@ -549,6 +593,13 @@ C(K, "100", J_("nilo.cambio_nivel.monte_carlo.con_escalon.kpss_rechaza", 100))
 C(K, "29", RD_("m8.posicion_1899"))
 sin_verificar(K, "el descenso coincide con la construcción de la presa baja de Asuán",
               "afirmación histórica del capítulo y del JSON (cambio_nivel.fuente); ninguna fuente de esta sesión la confirma")
+permite(K, "1902", "año de la Presa Baja de Asuán citado en las notas como dato histórico [SIN VERIFICAR]")
+
+K = "¿pronostica mejor fuera de muestra?"
+FM = "nilo.cambio_nivel.fuera_muestra"
+C(K, "25", CALC_(lambda: J["nilo"]["cambio_nivel"]["mejor_d0_rejilla"] - J["nilo"]["cambio_nivel"]["escalon"]["aicc"], "1282.50 − 1257.91 = 24.59 («casi 25»)"), tol=0.5, kind="aritmética")
+C(K, "80", JJ(f"{FM}.n_entrenamiento"))
+C(K, "20", JJ(f"{FM}.h"))
 
 K = "Fuera de muestra"
 FM = "nilo.cambio_nivel.fuera_muestra"
@@ -571,6 +622,11 @@ C(K, "100", RD_("datos.nilo_n"))
 
 # ---- M9 -----------------------------------------------------------------------------
 K = "La forma del pronóstico"
+C(K, "95", BOOL_("DEF", lambda: True, "nivel nominal convencional"), kind="definición")
+C(K, "30", J_("horizonte"))
+permite(K, "400", "atributo de formato {alto=400}")
+
+K = "el intervalo a 30 años es 3.5 veces"
 FMD = "nilo.intervalos.forma_medida"
 C(K, "95", BOOL_("DEF", lambda: True, "nivel nominal convencional"), kind="definición")
 C(K, "0.25", JJ(f"{FMD}.d0.primera_dif_h30"))
@@ -591,6 +647,9 @@ C(K, "2771", JJ(f"{FMD}.d2.ancho95_h30"))
 C(K, "781", JJ(f"{FMD}.d1.ancho95_h30"))
 C(K, "30", J_("horizonte"))
 C(K, "-0.39", J_("nilo.formas_pronostico.d2.coeficientes.0.valor"), nota="φ̂ del ARIMA(1,2,1)")
+C(K, "3.9", CALC_(lambda: J["nilo"]["intervalos"]["forma_medida"]["d2"]["ancho95_h30"] / J["nilo"]["intervalos"]["forma_medida"]["d1_deriva"]["ancho95_h30"], "ancho(d=2)/ancho(d=1 con deriva) en h = 30"), kind="aritmética")
+C(K, "708", JJ(f"{FMD}.d1_deriva.ancho95_h30"))
+C(K, "el ARIMA(1,2,1) tiene θ̂ = −1", BOOL_("J", lambda: abs(coef(J["nilo"]["rejilla"]["121"]["coeficientes"], "ma1") + 1) < 1e-3, "cap4_arima.json › nilo.rejilla.121: θ̂ (ma1) = −1"), nota="afirmación sin cifra")
 
 K = "El ancho del intervalo"
 C(K, "0.1688", JJ("nilo.intervalos.psi_limite"))
@@ -598,7 +657,7 @@ C(K, "9.08", J_("nilo.intervalos.error_maximo_verificacion", 1e11), tol=0.005, n
 C(K, "error de reconstrucción del orden de 10⁻¹⁰ (< 1e-10)", BOOL_("J", lambda: J["nilo"]["intervalos"]["error_maximo_verificacion"] < 1e-10, "cap4_arima.json › nilo.intervalos.error_maximo_verificacion < 1e-10"))
 permite(K, "10 -10", "orden de magnitud 10⁻¹⁰ (verificado arriba)")
 
-K = "En el Nilo la incertidumbre"
+K = "30 años, la incertidumbre del Nilo"
 C(K, "0.169", JJ("nilo.intervalos.psi_limite"))
 C(K, "30", J_("horizonte"))
 C(K, "199.4", JJ("nilo.intervalos.sigma_h.29"), RD_("m9.nilo_sigma30"))
@@ -625,12 +684,17 @@ C(K, "2026", CALC_(lambda: int(RD["datos.trm_fin"].split("-")[0]), "directo_cap4
 C(K, "138", J_("trm.n"), RD_("datos.trm_n"))
 C(K, "26", BOOL_("RD", lambda: "consulta: 2026-07-26" in DAT["trm"]["fuente"], "datos_series.json › trm.fuente («consulta: 2026-07-26»)"))
 C(K, "-1.978", JJ(f"{TP}.adf_nivel.estadistico"))
-C(K, "0.586", JJ(f"{TP}.adf_nivel.p"))
+C(K, "0.585", R46_("trm.adf_nivel_p"), nota="valor exacto 0.58549; el JSON lo guarda a 4 decimales (0.5855) y redondear otra vez daba 0.586")
+C(K, "0.58549", R46_("trm.adf_nivel_p"))
+C(K, "0.5855", JJ(f"{TP}.adf_nivel.p"))
 C(K, "-3.880", JJ(f"{TP}.adf_d1.estadistico"))
 C(K, "0.017", JJ(f"{TP}.adf_d1.p"))
 C(K, "2.243", JJ(f"{TP}.kpss_nivel.estadistico"))
 C(K, "0.01", JJ(f"{TP}.kpss_nivel.p"), nota="cota de la tabla (p < 0.01)")
-C(K, "0.242", JJ(f"{TP}.kpss_d1.estadistico"))
+C(K, "0.241", R46_("trm.kpss_d1_stat"), nota="valor exacto 0.24147; el JSON lo guarda a 4 decimales (0.2415) y redondear otra vez daba 0.242")
+C(K, "0.24147", R46_("trm.kpss_d1_stat"))
+C(K, "0.2415", JJ(f"{TP}.kpss_d1.estadistico"))
+permite(K, "0.586 0.242", "cifras erróneas del capítulo (doble redondeo), citadas en las notas para señalar la corrección")
 C(K, "0.10", JJ(f"{TP}.kpss_d1.p"), nota="cota de la tabla (p > 0.10)")
 C(K, "0.088", JJ("trm.identificacion.d1.acf.0"))
 C(K, "0.0876", JJ("trm.identificacion.d1.acf.0"), RD_("m10.acf_dif_rezago1"))
@@ -653,7 +717,9 @@ C(K, "2.56", CALC_(lambda: -J["trm"]["minimo_degenerado"]["ventaja_aicc"], "−v
 C(K, "1708.83", JJ("trm.rejilla.010.bic"), JJ("trm.caminata.bic"))
 C(K, "1.0042", JJ("trm.minimo_degenerado.raices_ar.0"))
 C(K, "1.0000", JJ("trm.minimo_degenerado.raices_ma.0"), tol=0.0005, nota="modelo degenerado: 1 en R 4.6 y 1.0001 en R 4.3.3")
-C(K, "192", JJ("trm.auto_arima.n_modelos"))
+C(K, "192", JJ("trm.auto_arima.n_modelos"), R46_("trm.auto.n_modelos_con_estacional"))
+C(K, "42", R46_("trm.auto.n_modelos_sin_estacional"), nota="búsqueda exhaustiva con seasonal = FALSE")
+C(K, "150", CALC_(lambda: R46["trm.auto.n_modelos_con_estacional"] - R46["trm.auto.n_modelos_sin_estacional"], "192 − 42 = 150 modelos con parte estacional"), kind="aritmética")
 C(K, "0.189", JJ("trm.caminata.ljung_box_20_p"))
 C(K, "0.206", JJ("trm.caminata.ljung_box_12_p"))
 C(K, "0.0006", JJ("trm.caminata.shapiro_p"))
@@ -669,6 +735,9 @@ C(K, "el mínimo de AICc es el (2,1,2) y el de BIC el (0,1,0); auto.arima elige 
   BOOL_("J", lambda: J["trm"]["mejor_aicc"] == "212" and J["trm"]["mejor_bic"] == "010" and J["trm"]["auto_arima"]["resultado"] == "ARIMA(0,1,0)", "cap4_arima.json › trm.mejor_aicc, trm.mejor_bic, trm.auto_arima"),
   BOOL_("RJ", lambda: RJ["trm"]["mejor_aicc"] == "212" and RJ["trm"]["mejor_bic"] == "010" and RJ["trm"]["auto_arima"]["resultado"] == "ARIMA(0,1,0)", "regenerado › ídem"))
 permite(K, "10", "10⁸ / ordinal de módulo")
+
+K = "El diagnóstico manda sobre el criterio"
+permite(K, "10", "ordinal de módulo (Módulos 6 y 10)")
 
 K = "A dos años"
 TB = "m10.tabla"
@@ -704,11 +773,15 @@ C(K, "1.959964", CALC_(lambda: Z975, "cuantil 0.975 de la normal"), kind="defini
 C(K, "6 de 137 cambios mensuales caen fuera del 95 %, 5 de ellos por arriba", BOOL_("RD", lambda: RD["m10.fuera_1m"] == 6 and RD["m10.fuera_1m_arriba"] == 5, "directo_cap4.json › m10.fuera_1m, m10.fuera_1m_arriba"))
 permite(K, "150 12 24", "atributo {alto=150} / horizontes h = 12 y 24 (cf. claims de la tabla)")
 
-K = "Sin estacionalidad"
 PU = "puente_estacional"
+K = "Residuales del mejor ARIMA no estacional"
 C(K, "0.7245", JJ(f"{PU}.no_estacional.acf_12"))
 C(K, "0.6727", JJ(f"{PU}.no_estacional.acf_24"))
 C(K, "0.1633", JJ(f"{PU}.no_estacional.banda"))
+C(K, "144", J_("puente_estacional.n"), RD_("datos.ap_n"))
+permite(K, "230 12 24", "atributo {alto=230} / rezagos 12 y 24")
+
+K = "El *airline* resuelve"
 C(K, "222.4", JJ(f"{PU}.no_estacional.ljung_box_24.Q"))
 C(K, "-0.0515", JJ(f"{PU}.estacional.acf_residuales.11"))
 C(K, "0.233", JJ(f"{PU}.estacional.ljung_box_24_p"))
@@ -718,7 +791,9 @@ C(K, "144", J_("puente_estacional.n"), RD_("datos.ap_n"))
 C(K, "p < 10⁻⁶ en Ljung–Box(24) del ARIMA(0,1,5)", BOOL_("CALC", lambda: __import__("scipy.stats", fromlist=["chi2"]).chi2.sf(J["puente_estacional"]["no_estacional"]["ljung_box_24"]["Q"], 19) < 1e-6, "χ²(19) con Q = 222.398: p < 1e-6 (df = 24 − 5)"))
 C(K, "el mejor no estacional es ARIMA(0,1,5) y el airline ARIMA(0,1,1)(0,1,1)[12]",
   BOOL_("J", lambda: J["puente_estacional"]["no_estacional"]["resultado"] == "ARIMA(0,1,5)" and J["puente_estacional"]["estacional"]["etiqueta"] == "ARIMA(0,1,1)(0,1,1)[12]", "cap4_arima.json › puente_estacional"))
-permite(K, "150 12 24 10", "atributo {alto=150} / rezagos 12 y 24 / base de 10⁻⁶ (verificado en el claim de p < 10⁻⁶)")
+C(K, "el (0,1,5) es el mejor con p + q ≤ 5 (tope por defecto de auto.arima); con una búsqueda más amplia gana el ARIMA(8,1,3) con deriva y ρ̂₁₂ sigue siendo grande",
+  BOOL_("R46", lambda: R46["puente.mejor_por_defecto"] == "ARIMA(0,1,5)" and R46["puente.mejor_amplio"].startswith("ARIMA(8,1,3)") and R46["puente.mejor_amplio_rho12"] > 0.3, "directo_r46_cap4.json › puente.mejor_por_defecto, puente.mejor_amplio, puente.mejor_amplio_rho12"))
+permite(K, "12 24 10", "rezagos 12 y 24 / q = 24 (lo dice el capítulo; no se reprodujo) / base de 10⁻⁶ (verificado en el claim de p < 10⁻⁶)")
 
 K = "Lo que se llevan hoy"
 permite(K, "10", "ordinal de módulo")
@@ -740,9 +815,6 @@ for t in ("9.5", "9.8", "2017", "2015"):
     C(K, t, BOOL_("SV", lambda: False, "sin fuente en esta sesión"), kind="sin verificar")
 permite(K, "10", "ordinal de módulo")
 
-K = "Cada cifra remite a una fuente"
-sin_verificar(K, "la presa baja de Asuán · la edición de 1970 de Box y Jenkins · el signo de θ en Box y Jenkins · el origen de la TRM en datos.gov.co · las secciones y capítulos de las lecturas", "ver la lista completa en verificacion_cifras.md")
-C(K, "1970", BOOL_("SV", lambda: False, "sin fuente en esta sesión"), kind="sin verificar")
 
 
 # ===========================================================================
@@ -755,8 +827,16 @@ OBSERVACIONES = [
      "El capítulo llama a BJsales «la Serie M del libro original de Box y Jenkins»: esa denominación no se pudo confirmar."),
     ("`citation(\"forecast\")` imprime Hyndman y Khandakar como *26*(3), pero su DOI es 10.18637/jss.v027.i03 (volumen 27).",
      "El capítulo cita 27(3), coherente con el DOI. La discrepancia está en el texto de citación que imprime R."),
-    ("Cobb (1978): `?Nile` da *Biometrika* 65, 243–251; el capítulo escribe 65(2).",
-     "El volumen y las páginas coinciden; el número (2) no se pudo confirmar."),
+    ("Cobb (1978): `?Nile` da *Biometrika* 65(2), 243–251 (R 4.6), como el capítulo.",
+     "Confirmado. El capítulo escribe el título con «conditional solutions» en plural; el de Biometrika parece ser «conditional solution», en singular (comprobarlo)."),
+    ("Módulo 10, tabla de la TRM: ADF p = 0.586 y KPSS(∇) = 0.242 son un doble redondeo del JSON (0.5855 y 0.2415).",
+     "Los valores exactos son 0.58549 y 0.24147 (0.585 y 0.241). La diapositiva usa los exactos; el capítulo decía 0.586 y 0.242 y se corrigió (commit c3239a4)."),
+    ("Módulo 7, «Cinco modelos quedan a 1.71 puntos»: con la regla de 2 puntos, la búsqueda exhaustiva del Nilo deja siete, no cinco.",
+     "Los que faltan son el ARIMA(2,1,1), a 1.81, y el ARIMA(1,1,2), a 1.84. El capítulo y su autoevaluación se detienen en el quinto. La diapositiva dice siete."),
+    ("La ayuda de `AirPassengers` cita «Box, Jenkins y Reinsel (1976)» en R 4.3.3 y (1994) en R 4.6.",
+     "Reinsel entró como coautor en la tercera edición (1994): 1976 era un anacronismo. La diapositiva usa 1994."),
+    ("Módulo 1: el capítulo dice que el IMA(2,2) «equivale» al método de Holt.",
+     "Con más precisión, Holt es un caso particular del IMA(2,2), con restricciones sobre los coeficientes. La diapositiva dice «incluye»."),
     ("La raíz AR del ARIMA(2,1,2) del Nilo (Módulo 7, «1.001») depende del estimador: 1.0008 sin deriva y 1.0005 con deriva (`Arima`, CSS-ML), pero 2.24 con `arima(method = \"ML\")`, que es lo que trae la rejilla del JSON.",
      "Es coherente con lo que el capítulo dice de `auto.arima` (usa `Arima`), pero conviene no mezclar las dos cifras."),
     ("Módulo 10: «la varianza real de los cambios a 3–12 meses es entre 1.07 y 1.14 veces esa cifra» no se reproduce.",
@@ -915,7 +995,7 @@ def main() -> int:
         c.estado = ("definición (no se mide)" if all(x.tag == "DEF" for x in c.srcs) else "verificado") if ok else "NO COINCIDE"
         if not ok:
             fallos.append(c)
-        if not presente(c.shown, sl["texto"]):
+        if not presente(c.shown, sl["titulo"] + "\n" + sl["texto"]):
             sin_presencia.append(c)
     for k, texto, _ in SIN_VERIFICAR:
         if "[SIN VERIFICAR]" not in por_clave[k]["texto"]:
@@ -959,13 +1039,13 @@ def main() -> int:
                 print(f"  ✗ bloque «{pl}»: {h}/{e} salidas coinciden. {err}")
 
     if "--sin-escribir" not in sys.argv:
-        escribe_informe(slides, por_clave, verificados, sv, codigo_res, (total_json, difs_json))
+        escribe_informe(slides, por_clave, verificados, sv, codigo_res, (total_json, difs_json), len(fallos))
     ok_total = not (fallos or sin_presencia or sin_marca or sin_cobertura or fallos_codigo)
     print("RESULTADO:", "todo verificado y cubierto" if ok_total else "hay pendientes")
     return 0 if ok_total else 1
 
 
-def escribe_informe(slides, por_clave, verificados, sv, codigo_res=None, json_cmp=None):
+def escribe_informe(slides, por_clave, verificados, sv, codigo_res=None, json_cmp=None, n_fallos=0):
     L = []
     L += ["# Verificación de cifras · Capítulo 4 (diapositivas)", "",
           "Generado por `verifica_cifras_cap4.py`. Cada fila es una cifra (o afirmación) de las diapositivas o de sus notas, con las fuentes contra las que se contrastó.", ""]
@@ -976,16 +1056,19 @@ def escribe_informe(slides, por_clave, verificados, sv, codigo_res=None, json_cm
           f"- **RD** · recálculo directo sobre los datos crudos, `verifica_directo_cap4.R` → `directo_cap4.json`.",
           f"- **PY** · statsmodels {PY['entorno']['statsmodels']}, `verifica_python_cap4.py` → `directo_python_cap4.json`.",
           "- **DOC** · documentación de R (`?Nile`, `?BJsales`, `?lynx`, `?AirPassengers`, `?arima`, `citation(\"forecast\")`).",
+          f"- **R46** · cifras exactas que faltaban en los JSON (p exactos de la TRM, ranking completo de la búsqueda exhaustiva, cita de AirPassengers de esta versión de R), `verifica_directo_r46_cap4.R` → `directo_r46_cap4.json`, calculadas en {R46['entorno']['R']} (forecast {R46['entorno']['forecast']}, tseries {R46['entorno']['tseries']}).",
+          "- **MAN** · comprobación manual contra un libro que no está en el repositorio (con página); no la ejecuta ningún guion, y por eso se cuenta aparte.",
           "- **CALC** · aritmética sobre las fuentes anteriores. **C** · texto del capítulo. **A** · `PLAN_Auditoria_Cap4.md`.",
           "- La fuente se redondea a los decimales que muestra la diapositiva, a la mitad hacia arriba.",
           "- Los datos crudos de la TRM son la copia congelada de `datos_series.json` (consulta 2026-07-26); **no** se cotejaron con datos.gov.co.",
-          "- Las definiciones y equivalencias teóricas y las referencias bibliográficas se toman del capítulo; **los libros no estaban disponibles** y no se contrastaron.", ""]
+          "- Las definiciones y equivalencias teóricas y las referencias bibliográficas se toman del capítulo. Los libros no están en el repositorio: solo se hicieron a mano las comprobaciones marcadas `MAN` (edición de 1970 de Box y Jenkins en Shumway y Stoffer; signo de θ en Cryer y Chan y Tsay), con su página.", ""]
     n_def = sum(1 for c in CLAIMS if c.estado == "definición (no se mide)")
+    n_man = sum(1 for c in CLAIMS if c.estado == "verificado" and any(x.tag == "MAN" for x in c.srcs) and all(x.tag == "MAN" for x in c.srcs))
     L += ["## Resumen", "", f"- Cifras y afirmaciones registradas: **{len(CLAIMS)}**",
-          f"- Verificadas contra al menos una fuente: **{verificados - n_def}**",
+          f"- Verificadas contra al menos una fuente: **{verificados - n_def}** (de ellas, **{n_man}** son comprobaciones manuales contra un libro, sin guion)",
           f"- Definiciones o convenciones (nivel del 5 %, z = 1.96, etc.): **{n_def}**; no se miden, se enuncian",
           f"- Marcadas `[SIN VERIFICAR]` (no se presentan como dato confirmado): **{sv}**",
-          "- No coinciden: **0**", ""]
+          f"- No coinciden: **{n_fallos}**", ""]
     tags = Counter()
     for c in CLAIMS:
         if c.estado == "verificado":
