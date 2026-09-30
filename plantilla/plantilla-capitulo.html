@@ -561,6 +561,16 @@
       margin: 0 auto;
     }
 
+    /* KaTeX dibuja con SVG el signo de \sqrt (y los acentos anchos, las llaves y
+       las flechas estirables) y le da `height: inherit` con `.katex svg`. La regla
+       anterior tiene la misma especificidad y va después de katex.min.css, así que
+       su `height: auto` ganaba y el signo √ quedaba con 0 px de alto dentro de un
+       .diagram. Se devuelve solo el alto: lo demás ya coincide con lo que tiene
+       el mismo SVG fuera del diagrama. */
+    .diagram .katex svg {
+      height: inherit;
+    }
+
     .exercise {
       background-color: #eff6ff;
       border: 1px solid #dbeafe;
