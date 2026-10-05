@@ -14,11 +14,11 @@ simuladores** interactivos, autoevaluación con retroalimentación por opción y
 | 1 | [Componentes y descomposición](capitulo-1-componentes-descomposicion.html) | Objetos temporales, gráficos estacionales, los cuatro componentes, medias móviles, descomposición clásica y STL | 9 | 11 |
 | 2 | [Estacionariedad, ACF y PACF](capitulo-2-estacionariedad-acf-pacf.html) | Ruido blanco, correlograma, PACF, caminata aleatoria, ADF y KPSS, diferenciación, Box–Cox | 9 | 8 |
 | 3 | [Modelos AR, MA y ARMA](capitulo-3-modelos-ar-ma-arma.html) | Polinomios característicos, invertibilidad, dualidad AR↔MA, identificación, máxima verosimilitud, diagnóstico | 11 | 12 |
-| 4 | [Modelos ARIMA y Box–Jenkins](capitulo-4-modelos-arima.html) | Orden de integración, ciclo de Box–Jenkins, AICc, Hyndman–Khandakar, sobrediferenciación, intervalos | 10 | 11 |
+| 4 | [Modelos ARIMA y Box–Jenkins](capitulo-4-modelos-arima.html) | Orden de integración, ciclo de Box–Jenkins, AICc, Hyndman–Khandakar, sobrediferenciación, intervalos | 12 | 11 |
 | 5 | [Modelos SARIMA](capitulo-5-sarima.html) | Firma estacional, notación multiplicativa, modelo *airline*, SARIMAX, Fourier y STL | 11 | 12 |
 | 6 | [Pronóstico y evaluación](capitulo-6-pronostico-evaluacion.html) | Métricas de error, fuga de información, origen móvil, backtesting, Diebold–Mariano, cobertura, auditoría de IA | 12 | 14 |
 
-La portada [`index.html`](index.html) enlaza los seis capítulos. En total: **62 módulos, 68
+La portada [`index.html`](index.html) enlaza los seis capítulos. En total: **64 módulos, 68
 simuladores, 61 preguntas de autoevaluación y 20 ejercicios guiados con solución comentada.**
 
 ## Talleres y preparcial
@@ -42,6 +42,7 @@ series, los auditores y el ensamblador. Se versionan después de calificar.
 | # | Preparcial | Cubre | Módulos | Ítems |
 |---|------------|-------|:---:|:---:|
 | I | [Corte I · Componentes, estacionariedad, ACF y PACF](preparcial-corte-1.html) | Capítulos 1 y 2 · antes del Parcial 1 | 9 | 44 |
+| II | [Corte II · Modelos AR, MA, ARMA y ARIMA](preparcial-corte-2.html) | Capítulos 3 y 4 · antes del Parcial 2 | 8 | 38 |
 
 El preparcial **no se entrega y no tiene nota**, y por eso es el mismo para los nueve: aquí copiar
 no tiene sentido, porque el que copia se queda sin lo único que produce. De sus 44 ítems, **32 alimentan
@@ -61,6 +62,16 @@ que hay que releer. Las soluciones viajan dentro de la página: no hay clave ocu
 Ninguna cifra del instrumento está escrita a mano — todas salen de R — y
 `precalculo/verifica_preparcial.R` las vuelve a calcular desde los valores publicados y las
 contrasta, además de comprobar que ningún enunciado repita uno de los que el estudiante ya vio.
+
+El **preparcial del Corte II** sigue el mismo diseño sobre los capítulos 3 y 4, y lo presenta el Módulo 12 del
+capítulo 4. Sus 32 ítems de diagnóstico se reparten con la tabla de especificaciones del Parcial 2, que se presenta
+en Brightspace, con calculadora y sin R: por eso doce de ellos son cuentas a mano —pesos ψ, γ₀,
+pronósticos a dos pasos, el AICc o la Q de Ljung–Box desde sus piezas— y otros ocho leen salidas de R ya
+impresas. Pesan más donde nada se había evaluado por escrito (los módulos 4.5 a 4.10) y piden operaciones nuevas
+donde el capítulo 3 ya estaba muy preguntado. Cierran un simulacro de seis ítems con las formas de Brightspace y una
+hoja con las fórmulas y las reglas de decisión. Sus cifras salen de `precalculo/genera_preparcial2.R`, y
+`precalculo/verifica_preparcial2.py` las rehace en Python —otro lenguaje, otras bibliotecas— desde las series
+publicadas, sigue la procedencia de cada número impreso y compara los enunciados con lo que el estudiante ya vio.
 
 ## Presentaciones de clase
 
