@@ -52,6 +52,7 @@ TALLERES = [
     ("taller-1-modulo-1.html", "Taller 1 · Módulo I"),
     ("taller-2-modulo-2.html", "Taller 2 · Módulo II"),
     ("preparcial-corte-1.html", "Preparcial · Corte I"),
+    ("preparcial-corte-2.html", "Preparcial · Corte II"),
 ]
 
 # El preparcial no declara simuladores ni ejercicios: lo que anuncia son sus
@@ -59,11 +60,13 @@ TALLERES = [
 # README no tienen la forma de las de los capítulos — y sin esto quedaría
 # registrado pero con las cifras sin contrastar, que es exactamente cómo la
 # tarjeta del capítulo 1 estuvo meses diciendo 7 simuladores cuando eran 11.
-PREPARCIAL = "preparcial-corte-1.html"
+PREPARCIALES = ["preparcial-corte-1.html", "preparcial-corte-2.html"]
 
 
 # Se enganchan al registro de simuladores, pero no lo son: no hay nada que mover.
-NO_SIMULADOR = {"cap3-simulacro"}
+# El del capítulo 4 se coló en la cuenta del 27 de septiembre al 5 de octubre: la
+# tarjeta del capítulo 4 decía 12 simuladores y la banda sumaba 11.
+NO_SIMULADOR = {"cap3-simulacro", "cap4-simulacro"}
 
 
 def cuenta(ruta: pathlib.Path) -> dict:
@@ -179,27 +182,28 @@ def main() -> int:
         problemas.append(f"README, párrafo de cabecera: dice {m.group(1)} simuladores "
                          f"y son {tot['simuladores']}")
 
-    # El preparcial: sus dos cifras, en la portada y en el README.
-    prep = talleres[PREPARCIAL]
-    m = re.search(rf'href="{re.escape(PREPARCIAL)}"[\s\S]{{0,2200}}?'
-                  r"(\d+) módulos · (\d+) ítems", idx)
-    if not m:
-        problemas.append("la tarjeta del preparcial no declara sus cifras")
-    else:
-        for leido, real, que in ((m.group(1), prep["modulos"], "módulos"),
-                                 (m.group(2), prep["preguntas"], "ítems")):
-            if int(leido) != real:
-                problemas.append(f"tarjeta del preparcial: dice {leido} {que} y son {real}")
+    # Los preparciales: sus dos cifras, en la portada y en el README.
+    for PREPARCIAL in PREPARCIALES:
+        prep = talleres[PREPARCIAL]
+        m = re.search(rf'href="{re.escape(PREPARCIAL)}"[\s\S]{{0,2200}}?'
+                      r"(\d+) módulos · (\d+) ítems", idx)
+        if not m:
+            problemas.append(f"la tarjeta de {PREPARCIAL} no declara sus cifras")
+        else:
+            for leido, real, que in ((m.group(1), prep["modulos"], "módulos"),
+                                     (m.group(2), prep["preguntas"], "ítems")):
+                if int(leido) != real:
+                    problemas.append(f"tarjeta de {PREPARCIAL}: dice {leido} {que} y son {real}")
 
-    fila = re.search(rf"\|[^|]*\|\s*\[[^\]]+\]\({re.escape(PREPARCIAL)}\)[^|]*\|[^|]*\|"
-                     r"\s*(\d+)\s*\|\s*(\d+)\s*\|", readme)
-    if not fila:
-        problemas.append("el README no tiene fila para el preparcial")
-    else:
-        for leido, real, que in ((fila.group(1), prep["modulos"], "módulos"),
-                                 (fila.group(2), prep["preguntas"], "ítems")):
-            if int(leido) != real:
-                problemas.append(f"README, preparcial: dice {leido} {que} y son {real}")
+        fila = re.search(rf"\|[^|]*\|\s*\[[^\]]+\]\({re.escape(PREPARCIAL)}\)[^|]*\|[^|]*\|"
+                         r"\s*(\d+)\s*\|\s*(\d+)\s*\|", readme)
+        if not fila:
+            problemas.append(f"el README no tiene fila para {PREPARCIAL}")
+        else:
+            for leido, real, que in ((fila.group(1), prep["modulos"], "módulos"),
+                                     (fila.group(2), prep["preguntas"], "ítems")):
+                if int(leido) != real:
+                    problemas.append(f"README, {PREPARCIAL}: dice {leido} {que} y son {real}")
 
     # El taller, alcanzable desde la portada. En Espacial quedó publicado y
     # con cero enlaces entrantes: existía y no se podía llegar a él.
