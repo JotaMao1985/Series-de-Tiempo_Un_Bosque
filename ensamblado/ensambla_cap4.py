@@ -130,7 +130,8 @@ html = una_vez(html, FIN_CSS_SIMULACRO,
                "CSS de las respuestas del .simulacro")
 
 # ---------------------------------------------------------------------------
-# 2. Las once plantillas de módulo (la 11 es el simulacro del quiz)
+# 2. Las doce plantillas de módulo (la 11 es el simulacro del quiz y la 12
+#    presenta el preparcial del Corte II, que vive en su propia página)
 # ---------------------------------------------------------------------------
 plantillas_viejas = entre(html, '  <template id="module-1">',
                           "  </template>\n\n  <script>", "plantillas")
@@ -139,7 +140,8 @@ plantillas_nuevas = (
     lee(FUENTES / "templates_4_6.html").rstrip("\n") + "\n\n" +
     lee(FUENTES / "templates_7_9.html").rstrip("\n") + "\n\n" +
     lee(FUENTES / "templates_10.html").rstrip("\n") + "\n\n" +
-    lee(FUENTES / "templates_11.html").rstrip("\n") + "\n\n  <script>"
+    lee(FUENTES / "templates_11.html").rstrip("\n") + "\n\n" +
+    lee(FUENTES / "templates_12.html").rstrip("\n") + "\n\n  <script>"
 )
 
 # Los componentes se generan con su constructor, no a mano: así el marcado es
@@ -178,7 +180,8 @@ course_nuevo = """    const courseData = {
         { id: 8, title: "Diagnóstico y errores comunes", shortTitle: "Diagnóstico", duration: "16 min" },
         { id: 9, title: "Pronóstico: forma e intervalos", shortTitle: "Pronóstico", duration: "16 min" },
         { id: 10, title: "Caso TRM, puente y cierre", shortTitle: "Cierre", duration: "24 min" },
-        { id: 11, title: "Simulacro del quiz", shortTitle: "Simulacro", duration: "40 min" }
+        { id: 11, title: "Simulacro del quiz", shortTitle: "Simulacro", duration: "40 min" },
+        { id: 12, title: "Preparcial del Corte II", shortTitle: "Preparcial", duration: "5 min" }
       ]
     };"""
 html = una_vez(html, course_viejo, course_nuevo, "courseData")
@@ -229,7 +232,7 @@ SIMULADORES = [
     "trm-abanico", "puente-estacional", "cap4-simulacro",
 ]
 
-for n in range(1, 12):
+for n in range(1, 13):
     if html.count(f'<template id="module-{n}">') != 1:
         fallos.append(f"la plantilla module-{n} no aparece exactamente una vez")
 
@@ -347,6 +350,15 @@ if html.count("SIMULACROS['cap4-simulacro']") == 1 and html.count("    // [fin �
         if pista in registro:
             fallos.append(f"el simulacro publica «{pista}»: eso es la clave")
 
+# El Módulo 12 presenta el preparcial del Corte II, que es una página aparte
+# (`preparcial-corte-2.html`). El enlace es plano, como todos los del sitio: en
+# gh-pages los archivos viven en la raíz. Si alguna vez se borra o se duplica,
+# el capítulo deja de llevar al preparcial sin ningún error a la vista.
+if html.count('<a class="usta-button" href="preparcial-corte-2.html">') != 1:
+    fallos.append("el Módulo 12 no enlaza exactamente una vez el preparcial del Corte II")
+if html.count('<template id="module-13">'):
+    fallos.append("sobra una plantilla module-13")
+
 # Datos del capítulo 4 presentes
 for dato in ["const DATOS_CAP4", "const SERIES_CAP4", "genera_cap4.R"]:
     if html.count(dato) != 1:
@@ -376,6 +388,6 @@ if fallos:
 
 CAP4.write_text(html, encoding="utf-8")
 print(f"OK  {CAP4.name} escrito ({len(html.encode('utf-8')) / 1024:.1f} KB)")
-print(f"    11 plantillas · {len(SIMULADORES)} simuladores · 3 derivaciones · "
+print(f"    12 plantillas · {len(SIMULADORES)} simuladores · 3 derivaciones · "
       f"3 ejercicios · 8 preguntas de autoevaluación · 1 tabla de ranking · "
       f"simulacro del quiz")
