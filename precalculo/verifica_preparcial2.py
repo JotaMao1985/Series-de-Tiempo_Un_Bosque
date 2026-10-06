@@ -29,6 +29,7 @@ Secciones:
   §8 Casi-duplicados contra lo que el estudiante ya vio
   §9 La prueba del propio verificador (--inyecta)
 """
+import datetime
 import hashlib
 import html as htmlmod
 import json
@@ -62,6 +63,8 @@ OBJETIVO_DE = {"3.1": "O1", "3.2": "O1", "3.3": "O1", "3.4": "O2", "3.5": "O2", 
                "4.1": "O4", "4.3": "O4", "4.5": "O4", "4.2": "O5", "4.4": "O5", "4.6": "O5",
                "4.7": "O5", "4.8": "O6", "4.9": "O6", "4.10": "O6"}
 PESOS = {"O1": 15, "O2": 15, "O3": 20, "O4": 15, "O5": 15, "O6": 20}
+# Javier, 2026-10-05: el Parcial 2 es el miércoles 14 de octubre (antes se había escrito «martes 13»).
+FECHA_PARCIAL = "miércoles 14 de octubre"
 
 
 class Registro:
@@ -775,7 +778,20 @@ def seccion6(R, E, html_txt, lista):
     R.ok({o: int(p) for o, p in filas12} == PESOS, f"la tabla del Módulo 12 del capítulo 4 dice {filas12}")
     R.ok(m12.count('href="preparcial-corte-2.html"') == 1, "el Módulo 12 no enlaza el preparcial")
     portada = (RAIZ / "Htmls_Series" / "index.html").read_text(encoding="utf-8")
-    R.ok(portada.count('href="preparcial-corte-2.html"') == 2, "la portada no enlaza el preparcial dos veces (héroe y tarjeta)")
+    # Botón del héroe y tarjeta, más el aviso con fecha mientras no se retire.
+    R.ok(portada.count('href="preparcial-corte-2.html"') >= 2, "la portada no enlaza el preparcial desde el héroe y la tarjeta")
+    # La fecha del parcial está escrita en el módulo 1, en el Módulo 12 y en el aviso de la portada: las tres
+    # copias tienen que decir lo mismo, y el día de la semana tiene que ser el de esa fecha.
+    plano = lambda s: re.sub(r"\s+", " ", s)
+    f_mod1 = re.findall(r"Parcial 2</strong> es el <strong>([^<]+)</strong>", plano(html_txt))
+    f_m12 = re.findall(r"Parcial 2</strong>: el <strong>([^<]+)</strong>", plano(m12))
+    f_portada = re.findall(r"<strong>El Parcial 2 es el ([^<]+)</strong>", plano(portada))
+    R.ok(f_mod1 == [FECHA_PARCIAL], f"el módulo 1 da como fecha del parcial {f_mod1}")
+    R.ok(f_m12 == [FECHA_PARCIAL], f"el Módulo 12 del capítulo 4 da como fecha del parcial {f_m12}")
+    R.ok(f_portada in ([], [FECHA_PARCIAL]), f"el aviso de la portada da como fecha del parcial {f_portada}")
+    dia, num = FECHA_PARCIAL.split()[:2]
+    R.ok(["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"][
+        datetime.date(2026, 10, int(num)).weekday()] == dia, f"{FECHA_PARCIAL} no cae en {dia}")
     sim = [x for x in lista if x[0].startswith("simulacro")]
     R.ok(sorted(p["objetivo"] for _, _, p in sim) == list(PESOS), "el simulacro no lleva uno por objetivo")
     for etiqueta, clave, p in sim:
