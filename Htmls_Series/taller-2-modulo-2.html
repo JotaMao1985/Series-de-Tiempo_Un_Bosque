@@ -2434,7 +2434,9 @@
     .remision .fa-map-signs { color: #FF6600; margin-right: 0.3rem; }
     /* Las tablas anchas dentro de .simulador-lectura: la caja manda sobre la tabla (ver ensambla_taller1.py). */
     .taller2-ancho, .taller2-datos { flex: 1 1 100%; min-width: 0; width: 100%; }
-    .taller2-ancho, .taller2-datos > div { overflow-x: auto; }
+    /* `position: relative`: la caja pasa a ser el bloque contenedor del `.katex-mathml` que KaTeX pone en absoluto.
+       Sin él, el de las fórmulas en columnas fuera de la vista escapaba del recorte y estiraba la página. */
+    .taller2-ancho, .taller2-datos > div { overflow-x: auto; position: relative; }
     .taller2-ancho > table, .taller2-datos > div > table { width: max-content; min-width: 100%; }
     .taller2-prosa { flex: 1 1 100%; min-width: 0; width: 100%; }
     .taller2-prosa > table { width: 100%; min-width: 0; table-layout: auto; }
