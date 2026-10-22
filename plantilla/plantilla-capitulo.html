@@ -3226,9 +3226,30 @@ round(mean(rnorm(200)), 4)   # 0.0117</code></pre>
 
     document.addEventListener('DOMContentLoaded', () => {
       renderNavigation();
-      loadModule(moduloDelHash() ?? 1);
       setupEventListeners();
+      fuentesDeLosLienzos().then(() => loadModule(moduloDelHash() ?? 1));
     });
+
+    // ================================================================
+    // Las fuentes de los gráficos, antes del primer módulo
+    //
+    // Chart.js mide y pinta el texto al crear el gráfico y no repinta
+    // cuando llega la fuente web: el módulo de arranque se quedaba con la
+    // letra de respaldo y se veía distinto que llegando por clic. Se
+    // espera a las dos caras que piden los gráficos, con un tope para
+    // que una red lenta no deje la página en blanco. El texto de muestra
+    // pide los tramos de Google Fonts que usan las etiquetas (latín,
+    // latín extendido por «ℓ», griego), no solo el primero.
+    // ================================================================
+    function fuentesDeLosLienzos() {
+      if (!document.fonts) return Promise.resolve();
+      const muestra = 'Aaá ℓ φθσ 0,5 %';
+      const caras = ['400 12px Montserrat', "400 12px 'Fira Code'"];
+      return Promise.race([
+        Promise.all(caras.map(c => document.fonts.load(c, muestra))),
+        new Promise(r => setTimeout(r, 3000))
+      ]).catch(() => {});
+    }
 
     // ================================================================
     // Navegación de módulos
