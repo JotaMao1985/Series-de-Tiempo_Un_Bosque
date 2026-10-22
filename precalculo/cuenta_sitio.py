@@ -53,6 +53,7 @@ TALLERES = [
     ("taller-2-modulo-2.html", "Taller 2 · Módulo II"),
     ("preparcial-corte-1.html", "Preparcial · Corte I"),
     ("preparcial-corte-2.html", "Preparcial · Corte II"),
+    ("proyecto-pronostico-corte-iii.html", "Proyecto de pronóstico · Corte III"),
 ]
 
 # El preparcial no declara simuladores ni ejercicios: lo que anuncia son sus

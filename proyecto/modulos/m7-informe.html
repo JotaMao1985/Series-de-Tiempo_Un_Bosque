@@ -1,0 +1,92 @@
+      <p>El informe cierra el <strong>@@INFORME_CIERRA@@</strong>, en la semana @@INFORME_SEMANA@@,
+        y vale el <strong>@@PESO_INFORME@@ %</strong> del proyecto: es lo que más pesa. Se entrega
+        con la release <code>@@ETIQUETA_INFORME@@</code>, y en ella tienen que estar tres cosas:
+        <code>informe.Rmd</code>, los datos en <code>datos/</code> y el informe ya renderizado, en
+        HTML o en PDF. Son hasta <strong>@@PAGINAS_INFORME@@ páginas</strong> sin contar los
+        anexos (@@PAGINAS_INFORME_CONJUNTO@@ en el proyecto conjunto).</p>
+
+      <h3>La estructura</h3>
+
+      <div class="diagram">
+        <ol>
+          <li><strong>Resumen.</strong> Cinco líneas: qué se pronosticó, cómo se evaluó y qué
+            salió.</li>
+          <li><strong>La serie y la pregunta.</strong> La fuente con su fecha de corte, para quién es
+            el pronóstico y por qué ese horizonte.</li>
+          <li><strong>El protocolo, preregistrado y aplicado.</strong> Lo que decía el preregistro y
+            lo que pasó, con cada desviación.</li>
+          <li><strong>La exploración y los candidatos</strong>, en resumen: lo esencial del
+            avance.</li>
+          <li><strong>El modelo final y su diagnóstico.</strong> Por qué ese, sus coeficientes y sus
+            raíces, el Ljung–Box con sus grados de libertad y la normalidad.</li>
+          <li><strong>La evaluación por origen móvil.</strong> El modelo frente a la referencia, con
+            la métrica preregistrada, y el contraste de Diebold–Mariano.</li>
+          <li><strong>Los intervalos.</strong> La cobertura al 80 % y al 95 %, y el puntaje de
+            Winkler
+            (<a href="capitulo-6-pronostico-evaluacion.html#modulo-9">módulo 6.9</a>).</li>
+          <li><strong>El pronóstico.</strong> El modelo ajustado con toda la serie y su pronóstico
+            desde el último dato, con sus intervalos.</li>
+          <li><strong>La conclusión.</strong> En el lenguaje del problema: si el modelo le gana a la
+            referencia, para qué sirve el pronóstico y qué no permite afirmar.</li>
+          <li><strong>Lo exploratorio</strong>, si lo hay, en su propia sección y rotulado.</li>
+          <li><strong>La declaración de uso de IA.</strong></li>
+        </ol>
+      </div>
+
+      <h3>Que corra de principio a fin</h3>
+
+      <p>El informe tiene que salir entero de clonar el repositorio, abrir
+        <code>informe.Rmd</code> en un R recién abierto y pulsar <em>Knit</em>: rutas relativas,
+        ningún objeto que exista solo en tu sesión. Las cifras del texto no se copian a mano de la
+        salida: se escriben con R en línea, como <code>`r round(mase["candidato"], 3)`</code>, para
+        que si cambia un dato cambie también el texto. Es la misma regla con la que se escribe este
+        material.</p>
+
+      <div class="tip-box">
+        <p style="margin:0;"><strong>Hay una plantilla.</strong>
+          <a href="@@PLANTILLA_RMD@@" download>Descarga <code>@@PLANTILLA_RMD@@</code></a> y
+          guárdala como <code>informe.Rmd</code> en la raíz del repositorio. Trae la estructura de
+          arriba, los bloques del protocolo y de la evaluación del módulo 5, la cobertura y el
+          Winkler por origen móvil, y la sección de la declaración de IA. Si todavía no existe
+          <code>datos/serie.csv</code>, la plantilla escribe una serie simulada para que la puedas
+          renderizar desde el primer día. Esa serie es solo para probar: el proyecto es sobre la
+          tuya.</p>
+      </div>
+
+      <h3>La declaración de uso de IA</h3>
+
+      <p>Es obligatoria, también si no usaste ninguna (en ese caso dice eso). Si la usaste, dice
+        cuatro cosas: <strong>qué herramienta</strong>, <strong>para qué</strong>, <strong>qué te
+        devolvió</strong> y <strong>qué verificaste o corregiste</strong>, con al menos un ejemplo
+        concreto que se pueda comprobar en el repositorio. «Le pedí el bucle de la cobertura; usaba
+        los cuantiles de los residuos en vez de los del pronóstico, y lo cambié en el commit
+        <em>tal</em>» es una declaración. «Se usó IA como apoyo» no lo es.</p>
+
+      <h3>Los errores que más cuestan</h3>
+
+      <ul>
+        <li><strong>Evaluar con una sola partición.</strong> El orden de los modelos puede
+          invertirse con otra, como pasa en el ejercicio 1 del
+          <a href="capitulo-6-pronostico-evaluacion.html#modulo-12">módulo 6.12</a>.</li>
+        <li><strong>Elegir el modelo mirando el tramo de evaluación.</strong> Es fuga de
+          información (<a href="capitulo-6-pronostico-evaluacion.html#modulo-6">módulo
+          6.6</a>), y la evaluación deja de medir lo que dice medir.</li>
+        <li><strong>Leer los residuales como errores de pronóstico.</strong> Los residuales son
+          errores a un paso dentro de la muestra: casi siempre son más pequeños
+          (<a href="capitulo-6-pronostico-evaluacion.html#modulo-1">módulo 6.1</a>).</li>
+        <li><strong>Comparar el AICc entre modelos con distinta diferenciación</strong>
+          (<a href="capitulo-4-modelos-arima.html#modulo-6">módulo 4.6</a>).</li>
+        <li><strong>Poner mal los grados de libertad del Ljung–Box</strong>: se le restan los
+          parámetros ARMA, $p + q + P + Q$, y no la constante, la deriva ni los regresores
+          (<a href="capitulo-4-modelos-arima.html#modulo-8">módulo 4.8</a>). Por eso
+          <code>length(coef(modelo))</code> se equivoca en cuanto el modelo lleva deriva.</li>
+        <li><strong>Contrastar con una pérdida que no es la de la métrica.</strong> Si la métrica es
+          el MASE o el MAE, el Diebold–Mariano va con <code>power = 1</code>; con el RMSE, con
+          <code>power = 2</code>.</li>
+        <li><strong>Reportar un MAPE sobre una serie que pasa cerca del cero</strong>, o creer que un
+          MAPE pequeño es bueno en una serie que casi no se mueve
+          (<a href="capitulo-6-pronostico-evaluacion.html#modulo-4">módulo 6.4</a>).</li>
+        <li><strong>Comprobar la cobertura a un solo nivel.</strong> Un intervalo puede cubrir bien
+          al 95 % y fallar al 80 %
+          (<a href="capitulo-6-pronostico-evaluacion.html#modulo-9">módulo 6.9</a>).</li>
+      </ul>

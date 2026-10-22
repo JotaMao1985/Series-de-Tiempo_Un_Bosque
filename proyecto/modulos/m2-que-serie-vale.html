@@ -1,0 +1,85 @@
+      <p>Casi todo lo que puede salir mal en este proyecto se decide al elegir la serie. Una serie
+        demasiado corta no deja evaluar nada. Una que nadie más puede descargar no se puede
+        reproducir. Una que el curso ya trabajó llega con el análisis hecho. Este módulo dice qué
+        tiene que cumplir la serie antes de escribir la ficha.</p>
+
+      <h3>Lo que tiene que cumplir</h3>
+
+      <div class="diagram">
+        <ol>
+          <li><strong>Es real y pública.</strong> Sale de una fuente que se puede citar y volver a
+            consultar: un instituto de estadística, un banco central, un operador de servicios, un
+            portal de datos abiertos. Al descargarla anotas el enlace y la fecha, porque esa es la
+            <em>fecha de corte</em> que pide el
+            <a href="capitulo-6-pronostico-evaluacion.html#modulo-12">módulo 6.12</a>.</li>
+          <li><strong>Tiene una frecuencia fija</strong>, y sabes cuál es: mensual, trimestral,
+            semanal, diaria. El periodo estacional $m$ sale de ahí.</li>
+          <li><strong>Es lo bastante larga para el origen móvil.</strong> El primer ajuste necesita
+            un tramo de entrenamiento de $T_0$ observaciones, y la evaluación necesita al menos
+            <strong>@@ORIGENES_MIN@@ orígenes</strong> con el horizonte completo. Eso da la
+            condición de abajo.</li>
+          <li><strong>Su pronóstico le sirve a alguien.</strong> Tienes que poder decir quién usaría
+            el pronóstico, para qué y a qué horizonte. De ahí salen el horizonte $h$ y la métrica,
+            que no se eligen por gusto.</li>
+        </ol>
+      </div>
+
+      <div class="formula">
+        $$n \;\ge\; T_0 + h + (@@ORIGENES_MIN@@ - 1), \qquad T_0 \;\ge\; \max(@@CICLOS@@\,m,\ @@T0_MINIMO@@)$$
+      </div>
+
+      <p>El entrenamiento pide <strong>@@CICLOS@@ ciclos estacionales</strong> y nunca menos de
+        @@T0_MINIMO@@ observaciones. El ejercicio 1 del
+        <a href="capitulo-6-pronostico-evaluacion.html#modulo-12">módulo 6.12</a> muestra por qué:
+        con seis años de datos mensuales, el SARIMA <em>airline</em> gasta trece observaciones en las
+        diferencias y en los primeros orígenes estima sus parámetros con poco más de veinte datos
+        efectivos. Para las frecuencias más comunes, el mínimo queda así:</p>
+
+@@TABLA_FRECUENCIAS@@
+
+      <p>Son mínimos, no metas. Si la serie da para más, usa más: más orígenes hacen que la
+        comparación con la referencia sea más firme, y el contraste de Diebold–Mariano del
+        <a href="capitulo-6-pronostico-evaluacion.html#modulo-8">módulo 6.8</a> lo agradece.</p>
+
+      <h3>Con estación o sin ella</h3>
+
+      <p>No se exige que la serie tenga estacionalidad, pero se recomienda. Sin estación, el
+        <a href="capitulo-5-sarima.html">capítulo 5</a> queda fuera del proyecto y la referencia
+        pasa a ser el naïve. Se puede hacer un buen proyecto así, pero tienes menos con qué
+        trabajar. Con estación, la referencia es el naïve estacional, que en series mensuales es un
+        rival difícil: en el ejercicio 1 del
+        <a href="capitulo-6-pronostico-evaluacion.html#modulo-12">módulo 6.12</a>, el naïve
+        estacional le gana al <em>airline</em> por origen móvil.</p>
+
+      <h3>Qué no vale</h3>
+
+      <ul>
+        <li><strong>Las series del material.</strong> Ninguna serie que aparezca en los capítulos,
+          en los talleres o en los preparciales: @@SERIES_DEL_MATERIAL@@. Ya vienen con el análisis
+          hecho.</li>
+        <li><strong>Las series que trae R o un paquete</strong> (<code>datasets</code>,
+          <code>fpp2</code>, <code>fpp3</code>, <code>tsibbledata</code>, <code>astsa</code> y
+          similares). Están resueltas en cien sitios, y un asistente de IA las conoce de memoria.</li>
+        <li><strong>Las series simuladas.</strong> El proyecto es sobre datos reales.</li>
+        <li><strong>Una serie que no se puede volver a descargar</strong>: la de una hoja que te
+          pasó alguien, la de un tablero que no deja exportar. Sin fuente no hay fecha de corte, y
+          sin fecha de corte el trabajo no se puede reproducir.</li>
+      </ul>
+
+      <div class="definition">
+        <h4><i class="fas fa-download mr-2" aria-hidden="true"></i>La serie se vuelve a descargar</h4>
+        <p style="margin-bottom:0;">El docente vuelve a descargar tu serie de la fuente que citas, con la
+          fecha de corte que declaras en <code>datos/fuente.md</code>, y la compara con tu descarga cruda.
+          <strong>Si no coincide, P1 e I7 quedan en insuficiente.</strong> Las revisiones que la propia
+          fuente publique después de tu fecha de corte no cuentan como diferencia, siempre que la fuente las
+          documente: por eso el enlace y la fecha tienen que ser exactos.</p>
+      </div>
+
+      <div class="warning">
+        <p style="margin:0;"><strong>Cuidado con los cambios de metodología.</strong> Muchas series
+          oficiales cambian de base, de cobertura o de definición a mitad de camino, y el cambio
+          aparece como un salto de nivel que no tiene nada que ver con el fenómeno. Lee la ficha
+          metodológica de la fuente antes de elegir la serie. Si hay un cambio, decide en el
+          preregistro qué vas a hacer con él: recortar la serie, empalmarla o modelar el salto. No
+          lo decidas cuando ya hayas visto qué le conviene a tu modelo.</p>
+      </div>

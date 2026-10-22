@@ -1,0 +1,46 @@
+      <p>El avance cierra el <strong>@@AVANCE_CIERRA@@</strong>, en la semana @@AVANCE_SEMANA@@, y
+        vale el <strong>@@PESO_AVANCE@@ %</strong> del proyecto. Va en <code>avance.md</code>, con
+        sus figuras en <code>figuras/</code>, y se entrega con la release
+        <code>@@ETIQUETA_AVANCE@@</code>.</p>
+
+      <p><strong>El avance no es un borrador del informe.</strong> Es lo que se puede decir de la
+        serie mirando solo el tramo de entrenamiento: cómo es, qué hay que hacerle para modelarla y
+        qué candidatos salen de ahí. La evaluación por origen móvil no va aquí. Si llegas al avance
+        con el informe medio escrito y los resultados de la evaluación ya vistos, perdiste lo único
+        que el avance protege.</p>
+
+      <h3>Qué se entrega</h3>
+
+      <div class="diagram">
+        <ol>
+          <li><strong>La serie limpia y cómo se hizo.</strong> <code>R/prepara.R</code>, que lee la
+            descarga cruda y escribe <code>datos/serie.csv</code>, con cada decisión comentada: los
+            huecos, las filas que sobraban, el empalme si lo hubo.</li>
+          <li><strong>La exploración</strong>, sobre el entrenamiento: la descomposición STL
+            (<a href="capitulo-1-componentes-descomposicion.html#modulo-7">módulo 1.7</a>), la
+            transformación con su razón
+            (<a href="capitulo-2-estacionariedad-acf-pacf.html#modulo-8">módulo 2.8</a>) y las
+            diferencias, regulares y estacionales, con la evidencia que las justifica
+            (<a href="capitulo-4-modelos-arima.html#modulo-3">módulo 4.3</a> y
+            <a href="capitulo-5-sarima.html#modulo-3">5.3</a>).</li>
+          <li><strong>La identificación</strong>: la ACF y la PACF de la serie ya diferenciada, y lo
+            que se lee en ellas
+            (<a href="capitulo-4-modelos-arima.html#modulo-4">módulo 4.4</a> y
+            <a href="capitulo-5-sarima.html#modulo-4">5.4</a>).</li>
+          <li><strong>Los candidatos, ajustados sobre el entrenamiento</strong>, con su AICc y sus
+            residuos. El AICc solo compara modelos con las mismas diferencias, porque cambiar $d$
+            cambia los datos que se ajustan
+            (<a href="capitulo-4-modelos-arima.html#modulo-6">módulo 4.6</a>).</li>
+          <li><strong>Las desviaciones del preregistro</strong>, cada una con su razón y su
+            consecuencia. Si no hay ninguna, se dice.</li>
+        </ol>
+      </div>
+
+      <h3>Si la serie da un problema</h3>
+
+      <p>Pasa casi siempre: un hueco de tres meses, un salto que resultó ser un cambio de base, un
+        valor imposible. Lo que no se hace es arreglarlo en silencio ni esconderlo. Se decide qué
+        hacer, se hace en <code>R/prepara.R</code> y se escribe en el avance qué se encontró, qué se
+        hizo y qué cambia para la evaluación. Si el problema obliga a recortar la serie por debajo
+        del mínimo, pregunta antes de seguir: es mejor cambiar el horizonte que evaluar con cinco
+        orígenes.</p>

@@ -1,0 +1,117 @@
+      <p>El preregistro cierra el <strong>@@PREREGISTRO_CIERRA@@</strong>, en la semana
+        @@PREREGISTRO_SEMANA@@, y vale el <strong>@@PESO_PREREGISTRO@@ %</strong> del proyecto. Va
+        en <code>preregistro.md</code> y se entrega con la release
+        <code>@@ETIQUETA_PREREGISTRO@@</code>, junto con la descarga cruda en
+        <code>datos/crudo/</code> y su <code>datos/fuente.md</code>. Son hasta
+        <strong>@@PAGINAS_PREREGISTRO@@ páginas</strong>.</p>
+
+      <h3>Por qué se preregistra</h3>
+
+      <p>Con una serie y una tarde se pueden probar cincuenta modelos, tres métricas y cuatro
+        particiones, y quedarse con la combinación que mejor sale. El número que resulta no dice
+        cómo pronostica el modelo: dice cuánto se buscó. Es la <strong>fuga de información</strong>
+        del <a href="capitulo-6-pronostico-evaluacion.html#modulo-6">módulo 6.6</a> en su forma más
+        común, y no hace falta mala fe para cometerla, basta con mirar.</p>
+
+      <p>El remedio es decidir antes. El preregistro fija <strong>cómo se va a juzgar</strong> el
+        pronóstico antes de que puedas ver cómo le va a cada modelo. Después puedes cambiar de
+        opinión, pero el cambio queda a la vista, con su razón, en la sección de desviaciones. Lo
+        que se califica mal no es cambiar el protocolo sino cambiarlo en silencio.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-scissors mr-2" aria-hidden="true"></i>El tramo de entrenamiento</h4>
+        <p style="margin-bottom:0;">Son las primeras $T_0$ observaciones, $y_1, \dots, y_{T_0}$. Todo
+          lo que decides sobre el modelo (transformación, diferencias, órdenes, candidatos) lo
+          decides mirando <strong>solo ese tramo</strong>. Lo que viene después de $T_0$ es el
+          terreno de la evaluación por origen móvil: se usa para juzgar a los candidatos, no para
+          elegirlos.</p>
+      </div>
+
+      <h3>Los diez campos</h3>
+
+      <div class="diagram">
+        <ol>
+          <li><strong>La serie y su fuente.</strong> Enlace, fecha de descarga, frecuencia, unidad y
+            $n$ frente al mínimo del módulo 2.</li>
+          <li><strong>Los huecos y los cambios de metodología</strong>, y qué vas a hacer con ellos,
+            dicho antes de saber qué le conviene al modelo.</li>
+          <li><strong>El horizonte $h$</strong>, y por qué ese: quién usa el pronóstico y con cuánta
+            anticipación lo necesita.</li>
+          <li><strong>La métrica, y por qué.</strong> El MASE por defecto. RMSE o MAE si el costo del
+            error lo justifica (el RMSE castiga más los errores grandes). El MAPE solo si la serie
+            está lejos del cero. Los
+            <a href="capitulo-6-pronostico-evaluacion.html#modulo-3">módulos 6.3 a 6.5</a> dicen qué
+            optimiza cada una.</li>
+          <li><strong>$T_0$ y el número de orígenes</strong> que resulta.</li>
+          <li><strong>La ventana</strong>: creciente (cada origen usa todo lo anterior) o deslizante
+            (siempre las últimas $T_0$), con su razón.</li>
+          <li><strong>El método de referencia.</strong> Naïve estacional si hay estación; naïve si no.
+            Puedes añadir otros, pero este no se quita.</li>
+          <li><strong>Los candidatos.</strong> Dos o tres familias de modelo que esperas que tengan
+            sentido para esta serie, con su razón.</li>
+          <li><strong>El diagnóstico previsto</strong>: el Ljung–Box con sus rezagos y sus grados de
+            libertad, la normalidad y las raíces, y qué harás si falla.</li>
+          <li><strong>Los niveles de los intervalos</strong>: al 80 % y al 95 %, y cómo vas a medir
+            la cobertura.</li>
+        </ol>
+      </div>
+
+      <h3>El protocolo, en código</h3>
+
+      <p>Que el protocolo esté escrito en R hace que no se pueda leer de dos maneras. Este bloque
+        lee la serie limpia, fija $h$ y $T_0$, y comprueba que hay orígenes suficientes. Va al
+        principio de tu <code>informe.Rmd</code>, y su salida va en el preregistro:</p>
+
+      <pre><code class="language-r">library(forecast)
+
+serie <- read.csv("datos/serie.csv")          # la escribió R/prepara.R
+y <- ts(serie$valor, start = c(2010, 1), frequency = 12)  # año y mes de la primera observación
+
+h  <- 12        # horizonte: lo que necesita quien usa el pronóstico
+T0 <- 48        # entrenamiento: al menos @@CICLOS@@ ciclos y nunca menos de @@T0_MINIMO@@
+
+n <- length(y)
+origenes <- n - T0 - h + 1
+stopifnot(origenes >= @@ORIGENES_MIN@@)        # si falla, la serie no da para el protocolo
+c(n = n, T0 = T0, h = h, origenes = origenes)
+
+entrenamiento <- window(y, end = time(y)[T0])  # lo único que se mira para elegir</code></pre>
+
+      <p>Y este es el que va a juzgar a los candidatos. Escríbelo ya, aunque todavía no lo corras
+        sobre tus candidatos: el preregistro lo congela tal como está. La función
+        <code>tsCV</code> devuelve una matriz de errores, una fila por origen y una columna por
+        horizonte. Con <code>initial = T0 - 1</code>, el primer origen es $T_0$, como en el
+        <a href="capitulo-6-pronostico-evaluacion.html#modulo-7">módulo 6.7</a>:</p>
+
+      <pre><code class="language-r">referencia <- function(x, h) snaive(x, h = h)
+candidato  <- function(x, h) forecast(Arima(x, order = c(0, 1, 1),
+                                             seasonal = c(0, 1, 1)), h = h)
+
+completos <- function(e) e[which(rowSums(!is.na(e)) == ncol(e)), , drop = FALSE]
+e_ref <- completos(tsCV(y, referencia, h = h, initial = T0 - 1))
+e_mod <- completos(tsCV(y, candidato,  h = h, initial = T0 - 1))
+stopifnot(nrow(e_ref) == origenes)
+
+# La escala del MASE sale del entrenamiento, con el naïve estacional
+Q <- mean(abs(diff(as.numeric(entrenamiento), lag = frequency(y))))
+c(referencia = mean(abs(e_ref)) / Q, candidato = mean(abs(e_mod)) / Q)
+
+# ¿La diferencia a horizonte h es más que ruido? La pérdida sigue a la métrica:
+# power = 1 con el MASE o el MAE, power = 2 con el RMSE
+dm.test(e_mod[, h], e_ref[, h], h = h, power = 1)</code></pre>
+
+      <div class="warning">
+        <p style="margin:0;"><strong>El candidato de este bloque es un ejemplo</strong>, el SARIMA
+          <em>airline</em>, no una recomendación. Los tuyos salen de la exploración del avance,
+          sobre el entrenamiento. Lo que el preregistro congela es la <strong>forma</strong> de la
+          evaluación: $h$, $T_0$, la ventana, la referencia, la métrica y el contraste. Si en el
+          avance tus candidatos resultan ser otros, cambias la función <code>candidato</code> y lo
+          dices. No es una desviación: es para lo que está el avance.</p>
+      </div>
+
+      <h3>Lo exploratorio, aparte</h3>
+
+      <p>Si después de ver los resultados quieres probar algo que no estaba en el preregistro (otra
+        métrica, otra ventana, un modelo que se te ocurrió tarde), hazlo. Pero va en su propia
+        sección del informe, rotulada <em>exploratorio</em>, y no cambia la conclusión principal,
+        que sale de lo preregistrado.</p>

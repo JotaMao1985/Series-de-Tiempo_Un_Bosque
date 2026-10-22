@@ -1,0 +1,83 @@
+      <p>Si cursas también <strong>Estadística Espacial</strong>, puedes presentar un solo proyecto
+        para las dos materias. No es un proyecto de series con un mapa al final, ni uno espacial con
+        una serie de adorno: es una pregunta que no se puede responder sin las dos cosas. Este
+        módulo es el único sitio donde están escritas las reglas. La guía de Espacial las enlaza y
+        no las repite.</p>
+
+      <div class="definition">
+        <h4><i class="fas fa-stamp mr-2" aria-hidden="true"></i>La autorización</h4>
+        <p style="margin-bottom:0;">Esta es la <strong>única</strong> situación en que un mismo
+          trabajo cuenta en dos cursos, y está autorizada por escrito aquí. Fuera de ella, presentar
+          en Series un trabajo hecho para otra materia es autoplagio.</p>
+      </div>
+
+      <h3>Quién puede</h3>
+
+      <p>Quien curse las dos materias, individual o en pareja. En pareja, <strong>los dos</strong>
+        cursan las dos: no hay parejas mixtas, porque una de las dos notas no se le podría poner a
+        quien no está en esa materia. Se declara en la ficha. Se puede pasar del proyecto conjunto al
+        simple <strong>hasta el preregistro</strong> (@@PREREGISTRO_CIERRA@@); después, no.</p>
+
+      <h3>Los datos</h3>
+
+      <p>Un <strong>panel abierto</strong>: $N$ unidades espaciales (municipios, departamentos,
+        estaciones de medición) por $T$ periodos, de una fuente que se puede citar. Del lado de
+        Series se pide que <strong>al menos una serie</strong> (la de una unidad o la del agregado)
+        cumpla el módulo 2 y se lleve por el protocolo completo del preregistro. Los mínimos del
+        lado espacial los fija la guía de Espacial. Como referencia, con menos de unas
+        @@AREAS_MINIMAS@@ áreas, el índice de Moran por permutación dice poco.</p>
+
+      <h3>La pregunta: una de estas dos</h3>
+
+      <p>O una propia, aprobada en la ficha, que necesite las dos dimensiones y no dependa de la
+        econometría espacial ni del kriging: esos temas se ven en Espacial demasiado cerca del
+        @@INFORME_CIERRA@@.</p>
+
+      <div class="diagram">
+        <ol type="a">
+          <li><strong>¿Los errores de pronóstico tienen estructura espacial?</strong> El mismo
+            protocolo (la referencia y un modelo automático, por ejemplo <code>auto.arima</code>) se
+            aplica a cada unidad, y se calcula el MASE por origen móvil de cada una. Después se
+            pregunta si las unidades que se pronostican mal están juntas: Moran global y LISA sobre
+            esos MASE. Si lo están, a un modelo que trata cada serie por separado le falta algo que
+            el mapa ve.</li>
+          <li><strong>¿Los vecinos ayudan a pronosticar?</strong> Una regresión con errores ARIMA
+            (<a href="capitulo-5-sarima.html#modulo-9">módulo 5.9</a>) que lleva como regresor el
+            <em>rezago espacial</em> de la serie, el promedio de los vecinos $W y$, frente al mismo
+            modelo sin él. Se comparan por origen móvil y con Diebold–Mariano.</li>
+        </ol>
+      </div>
+
+      <div class="warning">
+        <p style="margin:0;"><strong>En la (b), el rezago temporal del regresor tiene que ser de al
+          menos $h$.</strong> Para pronosticar $y_{t+h}$ en un municipio no se conoce todavía lo que
+          harán sus vecinos en $t+h$. Si el regresor es $(Wy)_{t+h-1}$ con $h &gt; 1$, el modelo usa
+          el futuro de los vecinos. Es la fuga del
+          <a href="capitulo-6-pronostico-evaluacion.html#modulo-6">módulo 6.6</a> con otra cara, y
+          hace que el modelo con vecinos gane sin merecerlo. Con $(Wy)_{t}$ como regresor de
+          $y_{t+h}$, la comparación es limpia.</p>
+      </div>
+
+      <h3>Dos notas sobre un entregable</h3>
+
+      <ul>
+        <li><strong>Series califica la parte temporal con la rúbrica completa</strong> del módulo
+          10. El puente entre las dos dimensiones entra en la interpretación (I6).</li>
+        <li><strong>Espacial califica la parte espacial con la rúbrica de su guía.</strong></li>
+        <li>Si falta una de las dos partes, cae la nota de esa materia y no la de la otra.</li>
+        <li>El proyecto pesa lo mismo en las dos: el <strong>@@PROYECTO_DEL_CORTE@@ %</strong> del
+          Corte III.</li>
+        <li>Es más grande que un proyecto simple, pero no el doble. El informe tiene hasta
+          <strong>@@PAGINAS_INFORME_CONJUNTO@@ páginas</strong> y la exposición dura
+          <strong>@@MINUTOS_EXPOSICION_CONJUNTA@@ minutos</strong>, con
+          <strong>@@MINUTOS_PREGUNTAS_CONJUNTA@@ de preguntas</strong>.</li>
+      </ul>
+
+      <h3>Un repositorio, una defensa, dos topes</h3>
+
+      <p>El repositorio se llama <code>@@NOMBRE_REPO_CONJUNTO@@</code>, y las dos materias califican
+        <strong>la misma release</strong>, en las mismas fechas de este proyecto. En la defensa hay
+        al menos <strong>@@PREGUNTAS_POR_MATERIA@@ preguntas de cada materia</strong>, y el tope del
+        módulo 1 se aplica a cada una por separado. Tu nota de preguntas en Series sale solo de las
+        preguntas de Series, y acota solo lo escrito de Series. Defender bien la mitad espacial no
+        salva la temporal, ni al revés.</p>
