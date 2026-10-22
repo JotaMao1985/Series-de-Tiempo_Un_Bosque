@@ -563,8 +563,13 @@ def frente_conjunta(A: Auditoria, V: str, mod) -> None:
     cj = re.sub(r"\s+", " ", mod(T_CONJUNTA))
     t = texto_visible(cj)
     A.check("H", bool(cj), "la guía tiene el módulo de la opción conjunta")
-    A.check("H", "única" in t and "autoplagio" in t and "autorizada por escrito" in t,
-            "D11 · la autorización escrita: la única excepción, y fuera de ella es autoplagio")
+    # La conjunta y un acuerdo individual por escrito son las dos únicas vías para que
+    # un trabajo cuente en dos cursos (2026-10-22: la conjunta de Diseño y Espacial va
+    # por acuerdo individual, y el m8 de Espacial dice lo mismo). La frase «única
+    # situación» lo contradecía y no puede volver.
+    A.check("H", "autoplagio" in t and "autorizada por escrito" in t
+            and "acuerdo individual por escrito" in t and "única situación" not in t,
+            "D11 · la autorización escrita: fuera de la conjunta y de un acuerdo individual, es autoplagio")
     A.check("H", "no hay parejas mixtas" in t and "los dos cursan las dos" in t,
             "D11 · solo quien curse las dos materias; sin parejas mixtas")
     pre = D.HITO["preregistro"]["fecha"]

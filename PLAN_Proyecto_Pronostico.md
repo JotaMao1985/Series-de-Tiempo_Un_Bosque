@@ -214,8 +214,11 @@ pendientes P1–P3 de §4.
 7. **Un repositorio y las mismas releases.** El repositorio es `proyecto-st-ee-apellido1-apellido2`. Las dos
    materias califican la misma release, en las fechas de §5, que Espacial adopta (P3).
 8. **Cambiar de opción.** Se puede pasar de la conjunta al proyecto simple **hasta el preregistro**. Después, no.
-9. **La autorización, por escrito.** La guía dice que esta es la **única** situación en que un mismo trabajo
-   cuenta en dos cursos. Fuera de ella, presentar en Series un trabajo de otra materia es autoplagio.
+9. **La autorización, por escrito.** La guía dice que esta opción está autorizada por escrito y que, fuera de
+   ella, un mismo trabajo cuenta en dos cursos solo con un acuerdo individual por escrito con el docente; sin
+   una de las dos cosas, presentar en Series un trabajo de otra materia es autoplagio. (Decía «la **única**
+   situación»; se cambió el 2026-10-22 porque la conjunta de Diseño y Espacial va por acuerdo individual, y el
+   m8 de Espacial ya lo dice así.)
 
 ## 8. Estructura de la guía (10 módulos)
 
@@ -256,8 +259,8 @@ pendientes P1–P3 de §4.
 - Ninguna cifra de la guía está escrita a mano: todas salen de `datos.py`, y el R de la guía se ejecuta.
 - Las seis exigencias del M12 aparecen como criterios y la guía no contradice ninguna (frente G).
 - Tras reejecutar `ensambla_cap6.py`, `git diff` del cap. 6 muestra como único cambio el enlace del M12.
-- La conjunta dice por escrito quién puede elegirla, cómo se califica en cada materia y que es la única
-  excepción al autoplagio (frente H).
+- La conjunta dice por escrito quién puede elegirla, cómo se califica en cada materia y que, fuera de ella y
+  de un acuerdo individual por escrito, es autoplagio (frente H).
 - Publicada antes del viernes 23 de octubre, o con la ficha corrida en la misma cantidad de días si no se llega.
 
 ## 11. Riesgos

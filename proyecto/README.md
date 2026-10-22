@@ -11,7 +11,7 @@ Fuente de `Htmls_Series/proyecto-pronostico-corte-iii.html` y de la plantilla de
 | `modulos/m1…m10-*.html` | La prosa de los diez módulos, con marcadores `@@CLAVE@@` que el ensamblador resuelve desde `datos.py`. El código R va crudo: el ensamblador lo escapa |
 | `plantilla-informe.Rmd` | La plantilla del informe que se descarga desde la guía (se copia tal cual al sitio) |
 | `audita_proyecto.py` | El auditor, sobre el artefacto: ocho frentes (A calendario, B pesos, C decisiones, D estructura, E código R y plantilla, F contenido, G el módulo 6.12, H la conjunta) |
-| `prueba_audita_proyecto.py` | El arnés: inyecta 49 defectos y exige que cada uno lo cace su frente; cinco van en la plantilla, que se le pasa al auditor por `PROYECTO_RMD` |
+| `prueba_audita_proyecto.py` | El arnés: inyecta 52 defectos y exige que cada uno lo cace su frente; cinco van en la plantilla, que se le pasa al auditor por `PROYECTO_RMD` |
 | `RESISTENCIA_IA.md` | La medición del 2026-10-21: una entrega fabricada con IA, calificada en frío |
 | `../precalculo/ensambla_proyecto.py` | El ensamblador, calcado del de Diseño; acepta `--revisar` |
 

@@ -144,6 +144,14 @@ DEFECTOS = [
     ("la conjunta pesa distinto en cada materia", "H", cambia("lo mismo en las dos", "más en Series que en Espacial"), False),
     ("las reglas se copian en la guía de Espacial", "H",
      cambia("La guía de Espacial las enlaza", "La guía de Espacial las copia"), False),
+    ("se pierde el aviso del autoplagio", "H", cambia("autoplagio", "un descuido", todas=True), False),
+    ("se pierde el acuerdo individual por escrito", "H",
+     cambia("solo con un <strong>acuerdo individual por escrito</strong>\n          con el docente, que fija sus propias reglas",
+            "solo en ella"), False),
+    ("vuelve la «única situación»", "H",
+     cambia("Esta opción está autorizada por escrito aquí.",
+            "Esta es la única situación en que un mismo trabajo cuenta en dos cursos, y está autorizada por escrito aquí."),
+     False),
 ]
 
 
