@@ -5662,7 +5662,7 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
 
     document.addEventListener('DOMContentLoaded', () => {
       renderNavigation();
-      loadModule(moduloDelHash());
+      loadModule(moduloDelHash() ?? 1);
       setupEventListeners();
     });
 
@@ -5688,10 +5688,12 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
     // llegar al sitio y llegar al principio es el instrumento entero.
     // ================================================================
     function moduloDelHash() {
+      // null, y no 1, si el ancla no es de un módulo: el arranque lo traduce
+      // a 1 y el oyente de hashchange lo ignora.
       const m = /^#modulo-(\d+)$/.exec(window.location.hash || '');
-      if (!m) return 1;
+      if (!m) return null;
       const id = parseInt(m[1], 10);
-      return (id >= 1 && id <= courseData.modules.length) ? id : 1;
+      return (id >= 1 && id <= courseData.modules.length) ? id : null;
     }
 
     function fijarHashDelModulo(id) {
@@ -5703,9 +5705,11 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
       } catch (e) { /* file:// sin permisos de historial */ }
     }
 
+    // Un ancla que no es de un módulo no mueve nada. Antes cargaba el 1, y el
+    // «Saltar al contenido» (#main-content) sacaba al lector del que leía.
     window.addEventListener('hashchange', () => {
       const id = moduloDelHash();
-      if (id !== currentModuleId) loadModule(id);
+      if (id !== null && id !== currentModuleId) loadModule(id);
     });
 
     function loadModule(id) {
