@@ -73,6 +73,26 @@ hoja con las fórmulas y las reglas de decisión. Sus cifras salen de `precalcul
 `precalculo/verifica_preparcial2.py` las rehace en Python —otro lenguaje, otras bibliotecas— desde las series
 publicadas, sigue la procedencia de cada número impreso y compara los enunciados con lo que el estudiante ya vio.
 
+## Proyecto de pronóstico
+
+| Documento | Cubre | Módulos |
+|-----------|-------|:---:|
+| [Proyecto de pronóstico · Corte III](proyecto-pronostico-corte-iii.html) | Todo el curso · Corte III, semanas 13 a 16 | 10 |
+
+El proyecto vale el **50 % del Corte III**, que no tiene examen final. Cada equipo, de una o dos personas,
+elige una serie real y pública, **preregistra el protocolo de evaluación** antes de poder ver cómo le va a cada
+modelo (horizonte, métrica, orígenes, ventana y método de referencia), la modela y la evalúa por origen
+móvil. Se entrega por hitos, cada uno como una release de un repositorio privado de GitHub, y se defiende en
+clase con la misma regla de los talleres: la nota de las preguntas acota la de lo escrito. La guía trae la
+rúbrica entera y una plantilla del informe en R Markdown
+([`proyecto-pronostico-plantilla.Rmd`](proyecto-pronostico-plantilla.Rmd)). Quien cursa también Estadística
+Espacial puede presentar **un solo proyecto para las dos materias**, con dos notas: el módulo 8 tiene las
+reglas.
+
+Sus cifras (fechas, pesos, rúbrica y longitudes mínimas) viven en `proyecto/datos.py`.
+`precalculo/ensambla_proyecto.py` las imprime y `proyecto/audita_proyecto.py` las vuelve a calcular sobre el
+documento publicado, corre su código R y renderiza la plantilla.
+
 ## Presentaciones de clase
 
 Diapositivas para proyectar, generadas con la skill `diapositivas-clase` a partir del capítulo y con

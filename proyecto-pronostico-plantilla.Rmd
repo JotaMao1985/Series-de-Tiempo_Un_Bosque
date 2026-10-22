@@ -1,0 +1,175 @@
+---
+title: "Proyecto de pronóstico — [la serie]"
+subtitle: "Series de Tiempo (20948) · Corte III · Universidad El Bosque"
+author: "[Integrante 1] y [Integrante 2]"
+date: "`r meses <- c('enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'); hoy <- Sys.Date(); paste(as.integer(format(hoy, '%d')), 'de', meses[as.integer(format(hoy, '%m'))], 'de', format(hoy, '%Y'))`"
+output:
+  html_document:
+    toc: true
+    number_sections: true
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, fig.width = 8, fig.height = 4)
+library(forecast)
+```
+
+<!--
+  CÓMO USAR ESTA PLANTILLA
+  Guárdala como informe.Rmd en la raíz del repositorio. Lee datos/serie.csv
+  (columnas fecha y valor), que escribe R/prepara.R desde la descarga cruda.
+  Mientras ese archivo no exista, la plantilla usa una serie SIMULADA, solo para
+  que se pueda renderizar desde el primer día, y lo avisa en el resumen.
+  Ninguna cifra del texto se escribe a mano: van con R en línea.
+-->
+
+```{r datos, include = FALSE}
+simulada <- !file.exists("datos/serie.csv")
+if (simulada) {
+  set.seed(20261027)
+  n_ej <- 120
+  t_ej <- seq_len(n_ej)
+  ruido <- as.numeric(arima.sim(list(ar = 0.5), n = n_ej, sd = 2))
+  serie <- data.frame(
+    fecha = seq(as.Date("2010-01-01"), by = "month", length.out = n_ej),
+    valor = round(100 + 0.3 * t_ej + 8 * sin(2 * pi * t_ej / 12) + ruido, 2))
+} else {
+  serie <- read.csv("datos/serie.csv")
+}
+inicio <- as.Date(serie$fecha[1])
+# Para otra frecuencia, cambia frequency y la forma de start (trimestral: c(año, trimestre)).
+y <- ts(serie$valor, frequency = 12,
+        start = c(as.numeric(format(inicio, "%Y")), as.numeric(format(inicio, "%m"))))
+```
+
+# Resumen
+
+`r if (simulada) "**AVISO: este informe usa una serie SIMULADA de ejemplo, porque todav&iacute;a no existe datos/serie.csv.**"`
+
+[Cinco líneas: qué se pronosticó, cómo se evaluó y qué salió.]
+
+# La serie y la pregunta
+
+[La fuente, con su enlace y su fecha de corte (la de `datos/fuente.md`). Para quién es el
+pronóstico y por qué el horizonte elegido.]
+
+```{r serie}
+autoplot(y) + ggplot2::labs(x = NULL, y = "[unidad]")
+```
+
+# El protocolo, preregistrado y aplicado
+
+```{r protocolo}
+h  <- 12        # horizonte
+T0 <- 48        # entrenamiento: al menos cuatro ciclos y nunca menos de 30
+
+n <- length(y)
+origenes <- n - T0 - h + 1
+stopifnot(origenes >= 10)
+c(n = n, T0 = T0, h = h, origenes = origenes)
+
+entrenamiento <- window(y, end = time(y)[T0])
+```
+
+[Lo que decía el preregistro, campo por campo, y lo que pasó. Cada desviación, con su razón y
+su consecuencia. Si no hubo ninguna, se dice.]
+
+# La exploración y los candidatos
+
+```{r exploracion}
+autoplot(stl(entrenamiento, s.window = "periodic"))
+```
+
+[Lo esencial del avance: la transformación, las diferencias y la evidencia que las justifica;
+la ACF y la PACF; los candidatos.]
+
+# El modelo final y su diagnóstico
+
+```{r modelo}
+modelo <- Arima(entrenamiento, order = c(0, 1, 1), seasonal = c(0, 1, 1))
+modelo
+# Ljung–Box: los grados de libertad descuentan los parámetros ARMA (p + q + P + Q),
+# no la constante, la deriva ni los regresores: length(coef()) los contaría.
+o <- arimaorder(modelo)
+k <- sum(o[intersect(names(o), c("p", "q", "P", "Q"))])
+Box.test(residuals(modelo), lag = 24, type = "Ljung-Box", fitdf = k)
+checkresiduals(modelo, test = FALSE)
+```
+
+[Por qué este modelo y no los otros candidatos. Las raíces. Lo que se ve en los residuos y qué
+consecuencia tiene para los intervalos.]
+
+# La evaluación por origen móvil
+
+```{r evaluacion}
+referencia <- function(x, h) snaive(x, h = h)
+candidato  <- function(x, h) forecast(Arima(x, order = c(0, 1, 1),
+                                             seasonal = c(0, 1, 1)), h = h)
+
+completos <- function(e) e[which(rowSums(!is.na(e)) == ncol(e)), , drop = FALSE]
+e_ref <- completos(tsCV(y, referencia, h = h, initial = T0 - 1))
+e_mod <- completos(tsCV(y, candidato,  h = h, initial = T0 - 1))
+stopifnot(nrow(e_ref) == origenes)
+
+Q <- mean(abs(diff(as.numeric(entrenamiento), lag = frequency(y))))
+mase <- c(referencia = mean(abs(e_ref)) / Q, candidato = mean(abs(e_mod)) / Q)
+round(mase, 3)
+
+# power = 1 porque la métrica es el MASE (error absoluto); con el RMSE sería power = 2
+dm <- dm.test(e_mod[, h], e_ref[, h], h = h, power = 1)
+dm
+```
+
+Con `r origenes` orígenes, el MASE del candidato es `r round(mase["candidato"], 3)` y el de
+la referencia `r round(mase["referencia"], 3)`. El contraste de Diebold–Mariano a horizonte
+`r h` da $p =$ `r round(dm$p.value, 3)`. [Qué dice y qué no dice.]
+
+# Los intervalos
+
+```{r intervalos}
+cobertura <- function(y, f, h, T0, niveles = c(80, 95)) {
+  n <- length(y)
+  filas <- list()
+  for (t in T0:(n - h)) {
+    fc   <- f(subset(y, end = t), h)
+    real <- as.numeric(y)[(t + 1):(t + h)]
+    for (nv in niveles) {
+      lo <- as.numeric(fc$lower[, paste0(nv, "%")])
+      hi <- as.numeric(fc$upper[, paste0(nv, "%")])
+      a  <- 1 - nv / 100
+      w  <- (hi - lo) + (2 / a) * (lo - real) * (real < lo) + (2 / a) * (real - hi) * (real > hi)
+      filas[[length(filas) + 1]] <- data.frame(nivel = nv, dentro = real >= lo & real <= hi,
+                                               winkler = w)
+    }
+  }
+  aggregate(cbind(dentro, winkler) ~ nivel, data = do.call(rbind, filas), FUN = mean)
+}
+cob <- rbind(cbind(metodo = "referencia", cobertura(y, referencia, h, T0)),
+             cbind(metodo = "candidato",  cobertura(y, candidato,  h, T0)))
+cob
+```
+
+[La cobertura a los dos niveles frente a lo que promete cada intervalo, y el Winkler. Si un
+intervalo es demasiado estrecho o demasiado ancho, qué lo explica.]
+
+# El pronóstico
+
+```{r pronostico}
+final <- Arima(y, order = c(0, 1, 1), seasonal = c(0, 1, 1))
+autoplot(forecast(final, h = h))
+```
+
+# La conclusión
+
+[En el lenguaje del problema: si el modelo le gana a la referencia, para qué sirve el
+pronóstico y qué no permite afirmar.]
+
+# Lo exploratorio
+
+[Solo si lo hay: lo que no estaba en el preregistro, rotulado como exploratorio. No cambia la
+conclusión.]
+
+# Declaración de uso de IA
+
+[Qué herramienta, para qué, qué te devolvió y qué verificaste o corregiste, con al menos un
+ejemplo que se pueda comprobar en el repositorio. Si no usaste ninguna, dilo.]
