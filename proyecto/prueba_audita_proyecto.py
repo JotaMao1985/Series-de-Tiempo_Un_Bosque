@@ -42,6 +42,15 @@ def antes_de_style(extra: str):
     return f
 
 
+def en_tabla(caption: str, transforma):
+    """Aplica `transforma` solo a la tabla cuyo caption empieza por `caption`."""
+    def f(t: str) -> str:
+        i = t.index(f"<caption>{caption}")
+        j = t.index("</table>", i)
+        return t[:i] + transforma(t[i:j]) + t[j:]
+    return f
+
+
 def en_modulo(n: int, extra: str):
     def f(t: str) -> str:
         marca = f'<template id="module-{n}">'
@@ -89,7 +98,16 @@ DEFECTOS = [
     ("el guion de la exposición se pasa del tiempo", "C",
      cambia("<td>El modelo frente a la referencia, con una figura, y los intervalos</td><td>3</td>",
             "<td>El modelo frente a la referencia, con una figura, y los intervalos</td><td>4</td>"), False),
-    ("una longitud mínima mal calculada", "C", cambia("<strong>$230$</strong>", "<strong>$220$</strong>"), False),
+    ("una longitud mínima mal calculada", "C", cambia("<strong>$259$</strong>", "<strong>$250$</strong>"), False),
+    # Los orígenes mínimos, max(10, 3h) (Javier, 2026-10-23)
+    ("la condición vuelve a 10 orígenes fijos", "C", cambia(r"\big(\max(10,\ 3h) - 1\big)", "(10 - 1)"), False),
+    ("la tabla de mínimos vuelve a los 10 orígenes fijos", "C", en_tabla("La longitud mínima", lambda t: re.sub(
+        r"<strong>\$(\d+)\$</strong>",
+        lambda m: f"<strong>${ {'95': 69, '45': 43, '259': 230, '85': 53, '49': 44}[m.group(1)]}$</strong>", t)), False),
+    ("el módulo 2 vuelve a pedir 10 orígenes en la prosa", "C",
+     cambia("<strong>$3h$ orígenes, y nunca menos de 10</strong>", "<strong>10 orígenes</strong>"), False),
+    ("la ficha de ejemplo vuelve al mínimo de 69", "C", cambia("frente a un mínimo de 95", "frente a un mínimo de 69"), False),
+    ("el bloque del preregistro vuelve a exigir 10 orígenes", "C", cambia("max(10, 3 * h)", "10"), False),
     ("vuelven a valer las series simuladas", "C", cambia("Las series simuladas", "Las series inventadas"), False),
     ("desaparece la nueva descarga de la serie", "C",
      cambia("Si no coincide, P1 e I7 quedan en insuficiente.", "Si no coincide, se conversa en la defensa."), False),
@@ -121,15 +139,33 @@ DEFECTOS = [
     ("la plantilla vuelve a contar la deriva en fitdf", "E", "rmd",
      cambia('o <- arimaorder(modelo)\nk <- sum(o[intersect(names(o), c("p", "q", "P", "Q"))])', "k <- length(coef(modelo))")),
     ("el preregistro vuelve a la pérdida cuadrática con el MASE", "F",
-     cambia("h = h, power = 1)", "h = h, power = 2)"), False),
+     cambia("h = h, power = 1,", "h = h, power = 2,"), False),
     ("la plantilla vuelve a la fecha con %B", "E", "rmd",
      cambia("paste(as.integer(format(hoy, '%d')), 'de', meses[as.integer(format(hoy, '%m'))], 'de', format(hoy, '%Y'))",
             "format(hoy, '%d de %B de %Y')")),
+    ("el primer bloque avisa en vez de detenerse si faltan orígenes", "E",
+     cambia('  stop("La serie no da', '  warning("La serie no da'), True),
+    ("la plantilla pierde la varianza de Bartlett", "E", "rmd",
+     cambia(', varestimator = "bartlett"),', '),')),
+    ("la plantilla vuelve a esconder los avisos de dm.test", "E", "rmd",
+     cambia('dm <- withCallingHandlers(\n  dm.test(e_mod[, h], e_ref[, h], h = h, power = 1, varestimator = "bartlett"),\n'
+            '  warning = function(w) stop("dm.test: ", conditionMessage(w), call. = FALSE))',
+            'dm <- dm.test(e_mod[, h], e_ref[, h], h = h, power = 1, varestimator = "bartlett")')),
+    ("el texto de la plantilla vuelve a dar h como horizonte del contraste", "E", "rmd",
+     cambia("`r unname(dm$parameter[1])`", "`r h`")),
+    ("la plantilla vuelve a exigir 10 orígenes", "E", "rmd", cambia("minimo <- max(10, 3 * h)", "minimo <- 10")),
+    ("la plantilla avisa en vez de detenerse si faltan orígenes", "E", "rmd",
+     cambia('  stop("La serie no da', '  warning("La serie no da')),
     # F · Contenido
     ("una referencia a un módulo que trata otra cosa", "F", cambia(">módulo 4.8</a>", ">módulo 4.7</a>"), False),
     ("el texto de un enlace nombra otro módulo", "F",
      cambia('href="capitulo-5-sarima.html#modulo-9">módulo 5.9</a>', 'href="capitulo-5-sarima.html#modulo-9">módulo 5.10</a>'), False),
     ("tsCV con otro primer origen", "F", cambia("initial = T0 - 1", "initial = T0", todas=True), False),
+    ("el preregistro pierde la varianza de Bartlett", "F", cambia(', varestimator = "bartlett")', ')'), False),
+    ("los errores que más cuestan dejan de avisar del horizonte 1", "F",
+     cambia("y pasar a horizonte 1", "y seguir"), False),
+    ("I2 vuelve a castigar raíces fuera del círculo", "F",
+     cambia("dentro del círculo unitario, o sobre él", "fuera del círculo"), False),
     # G · Módulo 6.12
     ("la guía deja de pedir el MASE por defecto", "G", cambia("El MASE por defecto", "El RMSE por defecto"), False),
     ("una exigencia del 6.12 se queda sin criterio", "G", lambda t: re.sub(

@@ -56,6 +56,14 @@ dos notas.
   pasa a 49 defectos, 49 cazados. Publicada: commit en `main` por ruta (el cap. 4 de otra sesión queda fuera) y
   `subtree push` a `gh-pages`. Las otras dos propuestas de `RESISTENCIA_IA.md` (cobertura por horizonte,
   imputar con el pasado) siguen sin aplicar.
+- 2026-10-23: **El mínimo de orígenes pasa de 10 fijos a máx(10, 3h)** (Javier, 22 oct, hallazgo 2 de una
+  revisión independiente). Con 10, el mínimo mensual publicado (n = 69 con h = 12) no dejaba correr `dm.test` a
+  horizonte 12 («h cannot be longer than the number of forecast errors»), y con apenas unos orígenes más que h
+  el factor de Harvey–Leybourne–Newbold es casi 0: el contraste no dice nada. El mensual pasa a **n ≥ 95** (D2).
+  En la misma ronda, el Diebold–Mariano va con `varestimator = "bartlett"` (el estimador por defecto pasaba en
+  silencio a h = 1) y el insuficiente de I2 castiga las raíces dentro del círculo o sobre él, no fuera. Auditor
+  y arnés en verde (63 defectos, 63 cazados). **Sin commit ni publicar**, a la espera del visto bueno de
+  Javier; el parche está en `proyecto/hallazgos-1-3.patch`.
 
 ## 1. El hueco
 
@@ -104,7 +112,7 @@ Todo lo que lleva cifra vivirá en `proyecto/datos.py` como constante, igual que
 | | Decisión | Origen | Coste / consecuencia |
 |---|---|---|---|
 | **D1** | **Individual o en parejas** (máximo 2) | Diseño D1 | Hasta 9 proyectos en Series |
-| **D2** | **Qué serie vale.** Una serie real y pública, con fuente citable y fecha de descarga, y de longitud suficiente para el origen móvil: **n ≥ T₀ + h + 9** (10 orígenes como mínimo), con **T₀ ≥ máx(4m, 30)** (cuatro ciclos para entrenar y nunca menos de 30 observaciones; el piso de 30 se añadió al construir, para las series sin estación o trimestrales). Para una serie mensual con h = 12, n ≥ 69. **No valen** las series del material, de los talleres o de los paquetes de R (`AirPassengers`, `USAccDeaths`, `co2`, `nottem`…), ni las series simuladas. La estacionalidad se recomienda, no se exige: sin ella, el SARIMA del cap. 5 queda fuera | Nueva (equivale al «Qué experimento vale» de Diseño) | La longitud mínima sale del ejercicio 1 del M12: con 72 observaciones, el *airline* estima dos parámetros con poco más de 20 datos efectivos en los primeros orígenes |
+| **D2** | **Qué serie vale.** Una serie real y pública, con fuente citable y fecha de descarga, y de longitud suficiente para el origen móvil: **n ≥ T₀ + h + (máx(10, 3h) − 1)** (al menos 3h orígenes y nunca menos de 10; hasta el 2026-10-23 eran 10 fijos), con **T₀ ≥ máx(4m, 30)** (cuatro ciclos para entrenar y nunca menos de 30 observaciones; el piso de 30 se añadió al construir, para las series sin estación o trimestrales). Para una serie mensual con h = 12, n ≥ 95. **No valen** las series del material, de los talleres o de los paquetes de R (`AirPassengers`, `USAccDeaths`, `co2`, `nottem`…), ni las series simuladas. La estacionalidad se recomienda, no se exige: sin ella, el SARIMA del cap. 5 queda fuera | Nueva (equivale al «Qué experimento vale» de Diseño) | La longitud mínima sale del ejercicio 1 del M12: con 72 observaciones, el *airline* estima dos parámetros con poco más de 20 datos efectivos en los primeros orígenes |
 | **D3** | **Cuatro hitos y una exposición**: ficha (sin nota), preregistro, avance, informe y código. Las fechas están en §5 (P1 cerrada) | Diseño D3 | La ficha cae en la semana 13, la de la «presentación de la propuesta» del sílabo. De la ficha al informe hay menos de tres semanas, contra las cinco de Diseño |
 | **D4** | **Exposición en clase**: 10 min y 5 de preguntas por equipo (15 y 10 en la conjunta, D11). El orden se sortea y, en las parejas, un dado decide quién responde cada pregunta. El día exacto se acuerda en clase | Diseño D4 y D12 | Con 9 estudiantes caben en una sesión |
 | **D5** | **Documento propio, no anexo**, con prefijo `proyecto-*`. Se construye como el Taller 2 y el proyecto de Diseño: `datos.py`, módulos con marcadores `@@CLAVE@@`, ensamblador con `--revisar`, auditor por frentes y arnés de defectos | Diseño D5 | La guía hay que añadirla a la portada y a la lista explícita de documentos de `cuenta_sitio.py`, que no va por prefijo |

@@ -82,7 +82,10 @@
           <code>length(coef(modelo))</code> se equivoca en cuanto el modelo lleva deriva.</li>
         <li><strong>Contrastar con una pérdida que no es la de la métrica.</strong> Si la métrica es
           el MASE o el MAE, el Diebold–Mariano va con <code>power = 1</code>; con el RMSE, con
-          <code>power = 2</code>.</li>
+          <code>power = 2</code>. Y con <code>varestimator = "bartlett"</code>: con el estimador por
+          defecto, <code>dm.test</code> puede avisar de una varianza negativa y pasar a horizonte 1
+          sin que nadie lo note
+          (<a href="capitulo-6-pronostico-evaluacion.html#modulo-8">módulo 6.8</a>).</li>
         <li><strong>Reportar un MAPE sobre una serie que pasa cerca del cero</strong>, o creer que un
           MAPE pequeño es bueno en una serie que casi no se mueve
           (<a href="capitulo-6-pronostico-evaluacion.html#modulo-4">módulo 6.4</a>).</li>

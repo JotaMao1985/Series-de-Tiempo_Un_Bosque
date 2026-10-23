@@ -11,7 +11,7 @@ Fuente de `Htmls_Series/proyecto-pronostico-corte-iii.html` y de la plantilla de
 | `modulos/m1…m10-*.html` | La prosa de los diez módulos, con marcadores `@@CLAVE@@` que el ensamblador resuelve desde `datos.py`. El código R va crudo: el ensamblador lo escapa |
 | `plantilla-informe.Rmd` | La plantilla del informe que se descarga desde la guía (se copia tal cual al sitio) |
 | `audita_proyecto.py` | El auditor, sobre el artefacto: ocho frentes (A calendario, B pesos, C decisiones, D estructura, E código R y plantilla, F contenido, G el módulo 6.12, H la conjunta) |
-| `prueba_audita_proyecto.py` | El arnés: inyecta 49 defectos y exige que cada uno lo cace su frente; cinco van en la plantilla, que se le pasa al auditor por `PROYECTO_RMD` |
+| `prueba_audita_proyecto.py` | El arnés: inyecta 63 defectos y exige que cada uno lo cace su frente; nueve van en la plantilla, que se le pasa al auditor por `PROYECTO_RMD` |
 | `RESISTENCIA_IA.md` | La medición del 2026-10-21: una entrega fabricada con IA, calificada en frío |
 | `../precalculo/ensambla_proyecto.py` | El ensamblador, calcado del de Diseño; acepta `--revisar` |
 
@@ -52,6 +52,14 @@ mínimas, así que una fecha en otro día o un peso que no cuadra lo para.
   (P1, Javier, 2026-10-21).
 - **El informe cierra un domingo** porque el lunes 16 de noviembre es festivo. El auditor lleva su propia
   lista de festivos y no la importa de `datos.py`.
+- **Los orígenes mínimos son max(10, 3h), no 10 fijos** (Javier, 2026-10-23): con 10, el mínimo publicado
+  para h = 12 (n = 69) no dejaba correr `dm.test` a horizonte 12, y con pocos más orígenes que h el contraste
+  no distingue nada. La regla está en tres sitios: `datos.py`, la plantilla (que no tiene marcadores) y el
+  auditor, que la lleva aparte como los festivos. Si cambia, cambian los tres.
+- **El Diebold–Mariano va con `varestimator = "bartlett"`**, en la guía y en la plantilla. Con el estimador
+  por defecto, `dm.test` puede avisar de una varianza negativa y seguir a horizonte 1, y el `setup` de la
+  plantilla esconde los avisos: por eso la llamada va dentro de `withCallingHandlers`, que convierte el aviso
+  en un error que para el Knit, y el texto da el horizonte que usó el contraste, no `h`.
 - **Los bloques de R de la guía se corren encadenados**: el segundo usa `y`, `h` y `T0` del primero, como en
   el informe. El frente E escribe una serie mensual de prueba en `datos/serie.csv` de un directorio temporal.
 - **La plantilla no escribe nada en `datos/`.** Sin serie, usa una simulada en memoria y lo avisa en el

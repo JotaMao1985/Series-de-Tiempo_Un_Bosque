@@ -17,7 +17,8 @@ cuenta cada cosa que afirma. Calcado del auditor del proyecto de Diseño
                    del tope y la del retraso se recalculan con la regla que el
                    propio documento imprime, y sus valores son alcanzables.
   C · Decisiones   D1–D10: parejas sin tríos, la serie que vale y su longitud
-                   mínima (recalculada), la exposición y su guion, el
+                   mínima (recalculada con max(10, 3h) orígenes, también en el
+                   bloque del preregistro), la exposición y su guion, el
                    repositorio privado con una release por hito, el descuento,
                    el Corte III sin examen final ni Talleres 4 y 5, el
                    protocolo que congela el preregistro.
@@ -27,11 +28,17 @@ cuenta cada cosa que afirma. Calcado del auditor del proyecto de Diseño
                    ni restos de la plantilla, courseData igual a los módulos.
   E · Código R     los bloques de R de la guía corren en un R limpio, en orden;
                    la plantilla .Rmd publicada es la de la fuente y se renderiza
-                   sin serie (avisándolo y sin escribir en datos/) y con una.
+                   sin serie (avisándolo y sin escribir en datos/) y con una;
+                   con un dato menos del mínimo, el primer bloque y la plantilla
+                   se detienen. El Diebold–Mariano de la plantilla va con
+                   Bartlett, un aviso suyo detiene el Knit y el texto da el
+                   horizonte que usó el contraste.
   F · Contenido    cada «módulo X.Y» citado existe y trata lo que se le
                    atribuye, el ancla de cada enlace es la del módulo que nombra
                    su texto, las series «del material» están de verdad en el
-                   material, y lo que la guía afirma del material está en él.
+                   material, y lo que la guía afirma del material está en él
+                   (el Diebold–Mariano con Bartlett, como el 6.8). Ningún
+                   descriptor de la rúbrica castiga raíces fuera del círculo.
   G · Módulo 6.12  las seis exigencias del informe (y la nota de la IA) siguen en
                    el capítulo 6 publicado, cada una tiene su criterio en la
                    rúbrica, y la guía no contradice lo que el 6.12 promete.
@@ -86,6 +93,14 @@ T_EXPOSICION, T_RUBRICA = "La exposición", "La rúbrica"
 ANCLA_SEMANA_10 = date(2026, 10, 5)
 FESTIVOS_2026 = {date(2026, 10, 12), date(2026, 11, 2), date(2026, 11, 16), date(2026, 12, 8)}
 DIAS_DE_CLASE = {1, 2}          # martes y miércoles
+
+# Los orígenes mínimos, max(10, 3h): decisión de Javier (2026-10-23), tampoco importada.
+# Con 10 fijos, el mínimo publicado para h = 12 no dejaba correr dm.test a horizonte 12.
+ORIGENES_PISO, ORIGENES_POR_H = 10, 3
+
+
+def origenes_min(h: int) -> int:
+    return max(ORIGENES_PISO, ORIGENES_POR_H * h)
 DIAS = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]
 MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto",
          "septiembre", "octubre", "noviembre", "diciembre"]
@@ -339,22 +354,32 @@ def main() -> int:
     legitimos = [mo.start() + 7 for mo in re.finditer(r"no hay tr[ií]os", V)]
     A.check("C", set(trios) <= set(legitimos), "D1 · «tríos» solo aparece para decir que no los hay")
     vale = texto_visible(mod(T_QUE_VALE))
-    formula = re.search(r"n \\;\\ge\\; T_0 \+ h \+ \((\d+) - 1\), \\qquad T_0 \\;\\ge\\; \\max\((\d+)\\,m,\\ (\d+)\)",
-                        mod(T_QUE_VALE))
+    formula = re.search(r"n \\;\\ge\\; T_0 \+ h \+ \\big\(\\max\((\d+),\\ (\d+)h\) - 1\\big\), "
+                        r"\\qquad T_0 \\;\\ge\\; \\max\((\d+)\\,m,\\ (\d+)\)", mod(T_QUE_VALE))
     A.check("C", bool(formula), "D2 · el módulo 2 imprime la condición de longitud")
     if formula:
-        org, ciclos, t0min = (int(x) for x in formula.groups())
+        piso, por_h, ciclos, t0min = (int(x) for x in formula.groups())
+        A.check("C", (piso, por_h) == (ORIGENES_PISO, ORIGENES_POR_H),
+                f"D2 · la condición pide max({ORIGENES_PISO}, {ORIGENES_POR_H}h) orígenes (Javier, 2026-10-23)",
+                f"(impresa: max({piso}, {por_h}h))")
+        A.check("C", f"al menos ${ORIGENES_POR_H}h$ orígenes, y nunca menos de {ORIGENES_PISO}" in vale
+                and "dm.test ni siquiera corre" in vale,
+                "D2 · el módulo 2 dice los orígenes que pide y por qué crecen con h")
         frec = re.findall(r"<tr><td>([^<]+)</td><td>\$(\d+)\$</td><td>\$(\d+)\$</td><td>\$(\d+)\$</td>"
                           r"<td><strong>\$(\d+)\$</strong></td></tr>", mod(T_QUE_VALE))
         A.check("C", len(frec) >= 3, "D2 · la tabla de longitudes mínimas tiene sus filas", f"({len(frec)})")
         for f_, m_, h_, t0_, n_ in frec:
             m_, h_, t0_, n_ = int(m_), int(h_), int(t0_), int(n_)
-            A.check("C", t0_ == max(ciclos * m_, t0min) and n_ == t0_ + h_ + org - 1,
-                    f"D2 · {f_}: T0 = {t0_} y n mínimo = {n_}, con la regla impresa",
-                    f"(recalculado: {max(ciclos * m_, t0min)} y {max(ciclos * m_, t0min) + h_ + org - 1})")
+            A.check("C", t0_ == max(ciclos * m_, t0min) and n_ == t0_ + h_ + origenes_min(h_) - 1,
+                    f"D2 · {f_}: T0 = {t0_} y n mínimo = {n_}, con max({ORIGENES_PISO}, {ORIGENES_POR_H}h) orígenes",
+                    f"(recalculado: {max(ciclos * m_, t0min)} y {max(ciclos * m_, t0min) + h_ + origenes_min(h_) - 1})")
         ejemplo = re.search(r"frente a un mínimo de (\d+) para \$h = 12\$", texto_visible(mod(T_FICHA)))
-        A.check("C", bool(ejemplo) and int(ejemplo.group(1)) == max(ciclos * 12, t0min) + 12 + org - 1,
+        A.check("C", bool(ejemplo) and int(ejemplo.group(1)) == max(ciclos * 12, t0min) + 12 + origenes_min(12) - 1,
                 "D2 · el ejemplo de la ficha usa el mínimo mensual que da la regla")
+    # El bloque del preregistro comprueba los mismos orígenes que pide el módulo 2.
+    b1 = _html.unescape((re.findall(r'<code class="language-r">(.*?)</code>', mod(T_PREREGISTRO), re.S) or [""])[0])
+    A.check("C", f"minimo <- max({ORIGENES_PISO}, {ORIGENES_POR_H} * h)" in b1 and "if (origenes < minimo)" in b1,
+            f"D2 · el bloque del preregistro exige max({ORIGENES_PISO}, {ORIGENES_POR_H}h) orígenes")
     # La comprobación que caza una serie inventada (RESISTENCIA_IA.md, Javier, 2026-10-21).
     p1 = re.search(r"P1 · .*?</table>", mod(T_RUBRICA), re.S)
     i7 = re.search(r"I7 · .*?</table>", mod(T_RUBRICA), re.S)
@@ -522,6 +547,23 @@ def frente_contenido(A: Auditoria, M: str, V: str, mod) -> None:
     dm5 = next((l for l in m5.splitlines() if "dm.test(" in l and not l.lstrip().startswith("#")), "")
     A.check("F", "power = 1" in dm5 and "power = 2 con el RMSE" in m5,
             "el Diebold–Mariano del preregistro usa la pérdida de la métrica (MASE, power = 1)")
+    # Con el estimador por defecto, dm.test puede avisar de varianza negativa y seguir a h = 1 (6.8).
+    A.check("F", 'varestimator = "bartlett"' in dm5,
+            "el Diebold–Mariano del preregistro usa la varianza de Bartlett, que no sale negativa (6.8)")
+    inf = _html.unescape(mod(T_INFORME))
+    A.check("F", '<code>varestimator = "bartlett"</code>' in inf and "pasar a horizonte 1" in texto_visible(inf)
+            and 'varestimator = "bartlett"' in texto_visible(c6.get(8, "")),
+            "los errores que más cuestan avisan del cambio silencioso a horizonte 1, como el 6.8")
+    # Las raíces del curso son las de φ(B) y θ(B): fuera del círculo es lo correcto (caps. 3 y 4).
+    criterios = re.findall(r"<caption><strong>[A-Z]\d · .*?</table>", mod(T_RUBRICA), re.S)
+    defectos = [d for c in criterios
+                for d in re.findall(r"<tr><td>(?:Insuficiente|Aceptable)</td><td>(.*?)</td></tr>", c, re.S)]
+    i2 = re.search(r"I2 · .*?<tr><td>Insuficiente</td><td>(.*?)</td></tr>", mod(T_RUBRICA), re.S)
+    A.check("F", criterios and len(defectos) == 2 * len(criterios)
+            and not any("fuera del círculo" in texto_visible(d) for d in defectos)
+            and bool(i2) and "dentro del círculo unitario, o sobre él" in texto_visible(i2.group(1)),
+            "ningún descriptor castiga raíces fuera del círculo; I2 castiga las de dentro o sobre él",
+            f"({len(defectos)} descriptores de nivel bajo)")
     A.check("F", "deriva" in texto_visible(mod(T_INFORME)) and "length(coef(modelo))" in _html.unescape(mod(T_INFORME)),
             "la guía avisa de que fitdf no cuenta la deriva")
     A.check("F", "initial = 35" in m12 and "T_0 = 36" in m12 and "initial = T0 - 1" in _html.unescape(mod(T_PREREGISTRO)),
@@ -611,6 +653,18 @@ def frente_r(A: Auditoria, M: str) -> None:
             primera = bloques[k - 1].strip().splitlines()[0][:60]
             A.check("E", r.returncode == 0, f"el bloque de R {k} corre («{primera}»)",
                     (r.stderr.strip().splitlines() or [""])[-1][:160])
+        # Un dato menos del mínimo: el primer bloque se detiene y dice cuántos orígenes hacen falta.
+        hb, tb = (re.search(rf"^{v}\s+<- (\d+)", bloques[0] if bloques else "", re.M) for v in ("h", "T0"))
+        A.check("E", bool(hb and tb), "el primer bloque de R fija h y T0")
+        if hb and tb:
+            hg, t0g = int(hb.group(1)), int(tb.group(1))
+            corta = t0g + hg + origenes_min(hg) - 2
+            escribe_serie(tmp / "datos" / "serie.csv", corta)
+            r = subprocess.run(["Rscript", "--vanilla", "bloque1.R"], cwd=tmp,
+                               capture_output=True, text=True, env=entorno)
+            A.check("E", r.returncode != 0 and f"hacen falta al menos {origenes_min(hg)}." in r.stderr,
+                    f"con n = {corta}, un dato menos del mínimo, el primer bloque se detiene y dice cuántos orígenes faltan",
+                    (r.stderr.strip().splitlines() or [""])[-1][:160])
 
     A.check("E", RMD_PUBLICADO.exists() and RMD_PUBLICADO.read_bytes() == RMD_FUENTE.read_bytes(),
             "la plantilla .Rmd publicada es idéntica a la de la fuente")
@@ -622,7 +676,19 @@ def frente_r(A: Auditoria, M: str) -> None:
             "la plantilla cuenta solo los parámetros ARMA para fitdf, no la deriva (resistencia, 21 oct)")
     linea_dm = next((l for l in rmd.splitlines() if "dm.test(" in l and not l.lstrip().startswith("#")), "")
     A.check("E", "power = 1" in linea_dm, "la plantilla contrasta con la pérdida de su métrica: MASE, power = 1")
+    A.check("E", 'varestimator = "bartlett"' in linea_dm,
+            "la plantilla usa la varianza de Bartlett en el Diebold–Mariano (6.8)")
+    # El setup pone warning = FALSE: un aviso de dm.test tiene que parar el Knit, no esconderse.
+    A.check("E", bool(re.search(r"withCallingHandlers\(\s*dm\.test\([^\n]*\),\s*warning\s*=\s*function\(w\)\s*stop\(",
+                                rmd)), "un aviso de dm.test detiene el Knit de la plantilla")
+    A.check("E", bool(re.search(r"Diebold–Mariano a horizonte\s+`r unname\(dm\$parameter\[1\]\)`", rmd)),
+            "el texto de la plantilla da el horizonte que usó el contraste, no h")
+    A.check("E", f"minimo <- max({ORIGENES_PISO}, {ORIGENES_POR_H} * h)" in rmd and "if (origenes < minimo)" in rmd,
+            f"la plantilla exige max({ORIGENES_PISO}, {ORIGENES_POR_H}h) orígenes, como el módulo 2")
     A.check("E", "initial = T0 - 1" in rmd, "la plantilla usa el mismo primer origen que la guía")
+    h_rmd = re.search(r"^h\s+<- (\d+)", rmd, re.M)
+    t0_rmd = re.search(r"^T0\s+<- (\d+)", rmd, re.M)
+    h_rmd, t0_rmd = (int(h_rmd.group(1)) if h_rmd else 12), (int(t0_rmd.group(1)) if t0_rmd else 48)
     for con_serie in (False, True):
         with tempfile.TemporaryDirectory() as tmp:
             tmp = pathlib.Path(tmp)
@@ -648,17 +714,31 @@ def frente_r(A: Auditoria, M: str) -> None:
                         f"{cual}, la fecha sale en español aunque R corra en otro idioma")
                 A.check("E", not re.search(r"`r\s", t) and re.search(r"orígenes, el MASE del candidato es \d", t),
                         f"{cual}, las cifras en línea se evaluaron")
+                A.check("E", f"Diebold–Mariano a horizonte {h_rmd} da" in t,
+                        f"{cual}, el Diebold–Mariano sale a horizonte {h_rmd}, el del protocolo")
                 for seccion in ("El protocolo, preregistrado y aplicado", "La evaluación por origen móvil",
                                 "Los intervalos", "Lo exploratorio", "Declaración de uso de IA"):
                     A.check("E", seccion in t, f"{cual}, el informe renderizado trae «{seccion}»")
                 A.check("E", re.search(r"referencia\s+80", t) and re.search(r"candidato\s+95", t),
                         f"{cual}, la cobertura sale a los dos niveles para los dos métodos")
+    # Un dato menos del mínimo: el Knit se detiene en el protocolo y dice cuántos orígenes hacen falta.
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = pathlib.Path(tmp)
+        shutil.copyfile(RMD_PRUEBA, tmp / "plantilla.Rmd")
+        (tmp / "datos").mkdir()
+        corta = t0_rmd + h_rmd + origenes_min(h_rmd) - 2
+        escribe_serie(tmp / "datos" / "serie.csv", corta)
+        r = subprocess.run(["Rscript", "--vanilla", "-e", "rmarkdown::render('plantilla.Rmd', quiet = TRUE)"],
+                           cwd=tmp, capture_output=True, text=True, env=dict(os.environ, LC_ALL="C", LANG="C"))
+        A.check("E", r.returncode != 0 and f"hacen falta al menos {origenes_min(h_rmd)}." in r.stderr,
+                f"con n = {corta}, un dato menos del mínimo, la plantilla se detiene y dice cuántos orígenes faltan",
+                (r.stderr.strip().splitlines() or [""])[-1][:160])
 
 
-def escribe_serie(ruta: pathlib.Path) -> None:
+def escribe_serie(ruta: pathlib.Path, n: int = 132) -> None:
     """Una serie mensual de prueba, con tendencia y estación, sin ruido aleatorio."""
     filas = ["fecha,valor"]
-    for k in range(132):
+    for k in range(n):
         anio, mes = 2012 + k // 12, k % 12 + 1
         v = 200 + 0.8 * k + 15 * [0, 2, 5, 8, 6, 3, -1, -4, -7, -5, -3, -1][mes - 1] / 8 + (k * 37 % 11) / 3
         filas.append(f"{anio}-{mes:02d}-01,{v:.2f}")

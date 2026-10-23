@@ -16,8 +16,8 @@
             semanal, diaria. El periodo estacional $m$ sale de ahí.</li>
           <li><strong>Es lo bastante larga para el origen móvil.</strong> El primer ajuste necesita
             un tramo de entrenamiento de $T_0$ observaciones, y la evaluación necesita al menos
-            <strong>@@ORIGENES_MIN@@ orígenes</strong> con el horizonte completo. Eso da la
-            condición de abajo.</li>
+            <strong>$@@ORIGENES_POR_H@@h$ orígenes, y nunca menos de @@ORIGENES_PISO@@</strong>, con el
+            horizonte completo. Eso da la condición de abajo.</li>
           <li><strong>Su pronóstico le sirve a alguien.</strong> Tienes que poder decir quién usaría
             el pronóstico, para qué y a qué horizonte. De ahí salen el horizonte $h$ y la métrica,
             que no se eligen por gusto.</li>
@@ -25,7 +25,7 @@
       </div>
 
       <div class="formula">
-        $$n \;\ge\; T_0 + h + (@@ORIGENES_MIN@@ - 1), \qquad T_0 \;\ge\; \max(@@CICLOS@@\,m,\ @@T0_MINIMO@@)$$
+        $$n \;\ge\; T_0 + h + \big(\max(@@ORIGENES_PISO@@,\ @@ORIGENES_POR_H@@h) - 1\big), \qquad T_0 \;\ge\; \max(@@CICLOS@@\,m,\ @@T0_MINIMO@@)$$
       </div>
 
       <p>El entrenamiento pide <strong>@@CICLOS@@ ciclos estacionales</strong> y nunca menos de
@@ -33,7 +33,13 @@
         <a href="capitulo-6-pronostico-evaluacion.html#modulo-12">módulo 6.12</a> muestra por qué:
         con seis años de datos mensuales, el SARIMA <em>airline</em> gasta trece observaciones en las
         diferencias y en los primeros orígenes estima sus parámetros con poco más de veinte datos
-        efectivos. Para las frecuencias más comunes, el mínimo queda así:</p>
+        efectivos.</p>
+
+      <p>Los orígenes crecen con el horizonte por el contraste de Diebold–Mariano: a horizonte $h$,
+        los errores de dos orígenes seguidos cubren casi el mismo tramo de la serie (con $h = 12$,
+        once de sus doce meses), así que cada origen nuevo aporta poco, y con apenas unos más que
+        $h$ el contraste no distingue nada. Con menos de $h$ orígenes, <code>dm.test</code> ni
+        siquiera corre. Para las frecuencias más comunes, el mínimo queda así:</p>
 
 @@TABLA_FRECUENCIAS@@
 

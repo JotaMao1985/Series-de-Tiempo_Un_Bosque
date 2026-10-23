@@ -188,8 +188,8 @@ def tabla_niveles() -> str:
 def tabla_frecuencias() -> str:
     filas = [[f, f"${m}$", f"${h}$", f"${D.t0_minimo(m)}$", f"<strong>${D.n_minimo(m, h)}$</strong>"]
              for f, m, h in D.FRECUENCIAS]
-    return tabla(f"La longitud mínima para {D.ORIGENES_MIN} orígenes, con un horizonte de ejemplo. "
-                 "Con otro horizonte, la cuenta es la misma.",
+    return tabla(f"La longitud mínima, con $\\max({D.ORIGENES_PISO},\\ {D.ORIGENES_POR_H}h)$ orígenes y "
+                 "un horizonte de ejemplo. Con otro horizonte, la cuenta es la misma.",
                  ["Frecuencia", "$m$", "$h$", "$T_0$ mínimo", "$n$ mínimo"], filas)
 
 
@@ -275,7 +275,8 @@ def marcadores() -> dict[str, str]:
         "PLANTILLA_RMD": RMD_DESTINO.name,
         "CICLOS": str(D.CICLOS_ENTRENAMIENTO),
         "T0_MINIMO": str(D.T0_MINIMO),
-        "ORIGENES_MIN": str(D.ORIGENES_MIN),
+        "ORIGENES_PISO": str(D.ORIGENES_PISO),
+        "ORIGENES_POR_H": str(D.ORIGENES_POR_H),
         "N_MIN_MENSUAL": str(D.n_minimo(12, 12)),
     }
     for clave, h in (("FICHA", H["ficha"]), ("PREREGISTRO", H["preregistro"]),

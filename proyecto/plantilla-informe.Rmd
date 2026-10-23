@@ -65,7 +65,12 @@ T0 <- 48        # entrenamiento: al menos cuatro ciclos y nunca menos de 30
 
 n <- length(y)
 origenes <- n - T0 - h + 1
-stopifnot(origenes >= 10)
+# Al menos 3h orígenes y nunca menos de 10: el Diebold–Mariano a horizonte h
+# necesita bastantes más orígenes que h (módulo 2 de la guía)
+minimo <- max(10, 3 * h)
+if (origenes < minimo)
+  stop("La serie no da para el protocolo: hay ", origenes, " orígenes y con h = ", h,
+       " hacen falta al menos ", minimo, ".", call. = FALSE)
 c(n = n, T0 = T0, h = h, origenes = origenes)
 
 entrenamiento <- window(y, end = time(y)[T0])
@@ -115,14 +120,20 @@ Q <- mean(abs(diff(as.numeric(entrenamiento), lag = frequency(y))))
 mase <- c(referencia = mean(abs(e_ref)) / Q, candidato = mean(abs(e_mod)) / Q)
 round(mase, 3)
 
-# power = 1 porque la métrica es el MASE (error absoluto); con el RMSE sería power = 2
-dm <- dm.test(e_mod[, h], e_ref[, h], h = h, power = 1)
+# power = 1 porque la métrica es el MASE (error absoluto); con el RMSE sería power = 2.
+# varestimator = "bartlett": con el estimador por defecto la varianza puede salir negativa,
+# y entonces dm.test pasa a horizonte 1 sin decirlo; la de Bartlett nunca es negativa
+# (módulos 6.7 y 6.8). Si aun así dm.test avisa de algo, el Knit se detiene: el setup
+# esconde los avisos, y uno escondido aquí cambiaría el p-valor sin que se viera.
+dm <- withCallingHandlers(
+  dm.test(e_mod[, h], e_ref[, h], h = h, power = 1, varestimator = "bartlett"),
+  warning = function(w) stop("dm.test: ", conditionMessage(w), call. = FALSE))
 dm
 ```
 
 Con `r origenes` orígenes, el MASE del candidato es `r round(mase["candidato"], 3)` y el de
 la referencia `r round(mase["referencia"], 3)`. El contraste de Diebold–Mariano a horizonte
-`r h` da $p =$ `r round(dm$p.value, 3)`. [Qué dice y qué no dice.]
+`r unname(dm$parameter[1])` da $p =$ `r round(dm$p.value, 3)`. [Qué dice y qué no dice.]
 
 # Los intervalos
 

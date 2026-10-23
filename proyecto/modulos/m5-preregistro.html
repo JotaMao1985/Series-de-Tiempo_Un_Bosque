@@ -72,7 +72,10 @@ T0 <- 48        # entrenamiento: al menos @@CICLOS@@ ciclos y nunca menos de @@T
 
 n <- length(y)
 origenes <- n - T0 - h + 1
-stopifnot(origenes >= @@ORIGENES_MIN@@)        # si falla, la serie no da para el protocolo
+minimo <- max(@@ORIGENES_PISO@@, @@ORIGENES_POR_H@@ * h)   # los orígenes que pide el módulo 2
+if (origenes < minimo)     # si falla, la serie no da para el protocolo
+  stop("La serie no da para el protocolo: hay ", origenes, " orígenes y con h = ", h,
+       " hacen falta al menos ", minimo, ".", call. = FALSE)
 c(n = n, T0 = T0, h = h, origenes = origenes)
 
 entrenamiento <- window(y, end = time(y)[T0])  # lo único que se mira para elegir</code></pre>
@@ -97,8 +100,10 @@ Q <- mean(abs(diff(as.numeric(entrenamiento), lag = frequency(y))))
 c(referencia = mean(abs(e_ref)) / Q, candidato = mean(abs(e_mod)) / Q)
 
 # ¿La diferencia a horizonte h es más que ruido? La pérdida sigue a la métrica:
-# power = 1 con el MASE o el MAE, power = 2 con el RMSE
-dm.test(e_mod[, h], e_ref[, h], h = h, power = 1)</code></pre>
+# power = 1 con el MASE o el MAE, power = 2 con el RMSE.
+# Con el estimador por defecto la varianza puede salir negativa, y entonces dm.test
+# pasa a horizonte 1 sin decirlo; la de Bartlett nunca es negativa (módulos 6.7 y 6.8)
+dm.test(e_mod[, h], e_ref[, h], h = h, power = 1, varestimator = "bartlett")</code></pre>
 
       <div class="warning">
         <p style="margin:0;"><strong>El candidato de este bloque es un ejemplo</strong>, el SARIMA

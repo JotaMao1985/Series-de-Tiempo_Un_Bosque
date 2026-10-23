@@ -117,11 +117,21 @@ DUDAS_EN = "en clase o en las horas de tutoría"
 # D2 · Qué serie vale
 # ---------------------------------------------------------------------------
 # La longitud mínima sale del origen móvil: hacen falta T0 observaciones para
-# el primer ajuste, h para el primer pronóstico y, con ORIGENES_MIN orígenes,
-# ORIGENES_MIN − 1 más. T0 pide cuatro ciclos estacionales y nunca menos de 30.
+# el primer ajuste, h para el primer pronóstico y, con origenes_min(h) orígenes,
+# origenes_min(h) − 1 más. T0 pide cuatro ciclos estacionales y nunca menos de 30.
 CICLOS_ENTRENAMIENTO = 4
 T0_MINIMO = 30
-ORIGENES_MIN = 10
+
+# Los orígenes crecen con h (Javier, 2026-10-23): el Diebold–Mariano a horizonte h
+# necesita bastantes más orígenes que h. Con menos de h, `dm.test` ni corre, y el
+# factor de Harvey–Leybourne–Newbold vale 0 con h − 1 o h orígenes y es pequeño
+# cerca de ahí. Antes eran 10 fijos, y con h = 12 el informe no se podía renderizar.
+ORIGENES_PISO = 10
+ORIGENES_POR_H = 3
+
+
+def origenes_min(h: int) -> int:
+    return max(ORIGENES_PISO, ORIGENES_POR_H * h)
 
 
 def t0_minimo(m: int) -> int:
@@ -129,8 +139,8 @@ def t0_minimo(m: int) -> int:
 
 
 def n_minimo(m: int, h: int) -> int:
-    """n ≥ T0 + h + (ORIGENES_MIN − 1): con n así, `tsCV` da ORIGENES_MIN orígenes completos."""
-    return t0_minimo(m) + h + ORIGENES_MIN - 1
+    """n ≥ T0 + h + (origenes_min(h) − 1): con n así, `tsCV` da origenes_min(h) orígenes completos."""
+    return t0_minimo(m) + h + origenes_min(h) - 1
 
 
 # Los casos que la guía tabula: (frecuencia, m, h de ejemplo).
@@ -227,9 +237,11 @@ RUBRICA = [
              solido="El modelo se elige con lo preregistrado, y se dice qué tiene que los otros "
                     "candidatos no tienen."),
         dict(id="I2", nombre="Corrección técnica en R", puntos=8, exigencia="diagnostico",
+             # Las raíces son las de φ(B) y θ(B), como en todo el curso: el caso
+             # malo es dentro del círculo o sobre él (autoplot() dibuja las inversas).
              insuficiente="Errores que cambian el resultado: diferencias de más, un AICc "
                           "comparado entre órdenes de diferenciación distintos, raíces "
-                          "fuera del círculo sin decirlo.",
+                          "dentro del círculo unitario, o sobre él, sin decirlo.",
              aceptable="El ajuste es correcto, con errores menores en la lectura de los "
                        "coeficientes o de las raíces.",
              solido="Estimación, órdenes, raíces y transformación correctos, y bien leídos."),
