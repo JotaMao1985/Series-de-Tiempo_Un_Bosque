@@ -2985,8 +2985,8 @@
             semanal, diaria. El periodo estacional $m$ sale de ahí.</li>
           <li><strong>Es lo bastante larga para el origen móvil.</strong> El primer ajuste necesita
             un tramo de entrenamiento de $T_0$ observaciones, y la evaluación necesita al menos
-            <strong>10 orígenes</strong> con el horizonte completo. Eso da la
-            condición de abajo.</li>
+            <strong>$3h$ orígenes, y nunca menos de 10</strong>, con el
+            horizonte completo. Eso da la condición de abajo.</li>
           <li><strong>Su pronóstico le sirve a alguien.</strong> Tienes que poder decir quién usaría
             el pronóstico, para qué y a qué horizonte. De ahí salen el horizonte $h$ y la métrica,
             que no se eligen por gusto.</li>
@@ -2994,7 +2994,7 @@
       </div>
 
       <div class="formula">
-        $$n \;\ge\; T_0 + h + (10 - 1), \qquad T_0 \;\ge\; \max(4\,m,\ 30)$$
+        $$n \;\ge\; T_0 + h + \big(\max(10,\ 3h) - 1\big), \qquad T_0 \;\ge\; \max(4\,m,\ 30)$$
       </div>
 
       <p>El entrenamiento pide <strong>4 ciclos estacionales</strong> y nunca menos de
@@ -3002,19 +3002,25 @@
         <a href="capitulo-6-pronostico-evaluacion.html#modulo-12">módulo 6.12</a> muestra por qué:
         con seis años de datos mensuales, el SARIMA <em>airline</em> gasta trece observaciones en las
         diferencias y en los primeros orígenes estima sus parámetros con poco más de veinte datos
-        efectivos. Para las frecuencias más comunes, el mínimo queda así:</p>
+        efectivos.</p>
+
+      <p>Los orígenes crecen con el horizonte por el contraste de Diebold–Mariano: a horizonte $h$,
+        los errores de dos orígenes seguidos cubren casi el mismo tramo de la serie (con $h = 12$,
+        once de sus doce meses), así que cada origen nuevo aporta poco, y con apenas unos más que
+        $h$ el contraste no distingue nada. Con menos de $h$ orígenes, <code>dm.test</code> ni
+        siquiera corre. Para las frecuencias más comunes, el mínimo queda así:</p>
 
       <table>
-        <caption>La longitud mínima para 10 orígenes, con un horizonte de ejemplo. Con otro horizonte, la cuenta es la misma.</caption>
+        <caption>La longitud mínima, con $\max(10,\ 3h)$ orígenes y un horizonte de ejemplo. Con otro horizonte, la cuenta es la misma.</caption>
         <thead>
           <tr><th scope="col">Frecuencia</th><th scope="col">$m$</th><th scope="col">$h$</th><th scope="col">$T_0$ mínimo</th><th scope="col">$n$ mínimo</th></tr>
         </thead>
         <tbody>
-          <tr><td>Mensual</td><td>$12$</td><td>$12$</td><td>$48$</td><td><strong>$69$</strong></td></tr>
-          <tr><td>Trimestral</td><td>$4$</td><td>$4$</td><td>$30$</td><td><strong>$43$</strong></td></tr>
-          <tr><td>Semanal</td><td>$52$</td><td>$13$</td><td>$208$</td><td><strong>$230$</strong></td></tr>
-          <tr><td>Diaria, con estación semanal</td><td>$7$</td><td>$14$</td><td>$30$</td><td><strong>$53$</strong></td></tr>
-          <tr><td>Anual, sin estación</td><td>$1$</td><td>$5$</td><td>$30$</td><td><strong>$44$</strong></td></tr>
+          <tr><td>Mensual</td><td>$12$</td><td>$12$</td><td>$48$</td><td><strong>$95$</strong></td></tr>
+          <tr><td>Trimestral</td><td>$4$</td><td>$4$</td><td>$30$</td><td><strong>$45$</strong></td></tr>
+          <tr><td>Semanal</td><td>$52$</td><td>$13$</td><td>$208$</td><td><strong>$259$</strong></td></tr>
+          <tr><td>Diaria, con estación semanal</td><td>$7$</td><td>$14$</td><td>$30$</td><td><strong>$85$</strong></td></tr>
+          <tr><td>Anual, sin estación</td><td>$1$</td><td>$5$</td><td>$30$</td><td><strong>$49$</strong></td></tr>
         </tbody>
       </table>
 
@@ -3243,7 +3249,7 @@
           <em>Serie:</em> demanda mensual de energía eléctrica de una región, en GWh.
           <em>Fuente:</em> el portal del operador del mercado, descargada el 26 de octubre de
           2026. <em>Frecuencia y longitud:</em> mensual ($m = 12$), de enero de 2010 a agosto de
-          2026: $n = 200$, frente a un mínimo de 69 para $h = 12$. <em>Pregunta:</em> la demanda de
+          2026: $n = 200$, frente a un mínimo de 95 para $h = 12$. <em>Pregunta:</em> la demanda de
           los próximos doce meses, para planear el mantenimiento de la red sin quedarse corto en los
           meses de más consumo. <em>Esperamos:</em> tendencia creciente, estación anual y la caída
           de 2020.</p>
@@ -3358,7 +3364,10 @@ T0 &lt;- 48        # entrenamiento: al menos 4 ciclos y nunca menos de 30
 
 n &lt;- length(y)
 origenes &lt;- n - T0 - h + 1
-stopifnot(origenes &gt;= 10)        # si falla, la serie no da para el protocolo
+minimo &lt;- max(10, 3 * h)   # los orígenes que pide el módulo 2
+if (origenes &lt; minimo)     # si falla, la serie no da para el protocolo
+  stop("La serie no da para el protocolo: hay ", origenes, " orígenes y con h = ", h,
+       " hacen falta al menos ", minimo, ".", call. = FALSE)
 c(n = n, T0 = T0, h = h, origenes = origenes)
 
 entrenamiento &lt;- window(y, end = time(y)[T0])  # lo único que se mira para elegir</code></pre>
@@ -3383,8 +3392,10 @@ Q &lt;- mean(abs(diff(as.numeric(entrenamiento), lag = frequency(y))))
 c(referencia = mean(abs(e_ref)) / Q, candidato = mean(abs(e_mod)) / Q)
 
 # ¿La diferencia a horizonte h es más que ruido? La pérdida sigue a la métrica:
-# power = 1 con el MASE o el MAE, power = 2 con el RMSE
-dm.test(e_mod[, h], e_ref[, h], h = h, power = 1)</code></pre>
+# power = 1 con el MASE o el MAE, power = 2 con el RMSE.
+# Con el estimador por defecto la varianza puede salir negativa, y entonces dm.test
+# pasa a horizonte 1 sin decirlo; la de Bartlett nunca es negativa (módulos 6.7 y 6.8)
+dm.test(e_mod[, h], e_ref[, h], h = h, power = 1, varestimator = "bartlett")</code></pre>
 
       <div class="warning">
         <p style="margin:0;"><strong>El candidato de este bloque es un ejemplo</strong>, el SARIMA
@@ -3573,7 +3584,10 @@ dm.test(e_mod[, h], e_ref[, h], h = h, power = 1)</code></pre>
           <code>length(coef(modelo))</code> se equivoca en cuanto el modelo lleva deriva.</li>
         <li><strong>Contrastar con una pérdida que no es la de la métrica.</strong> Si la métrica es
           el MASE o el MAE, el Diebold–Mariano va con <code>power = 1</code>; con el RMSE, con
-          <code>power = 2</code>.</li>
+          <code>power = 2</code>. Y con <code>varestimator = "bartlett"</code>: con el estimador por
+          defecto, <code>dm.test</code> puede avisar de una varianza negativa y pasar a horizonte 1
+          sin que nadie lo note
+          (<a href="capitulo-6-pronostico-evaluacion.html#modulo-8">módulo 6.8</a>).</li>
         <li><strong>Reportar un MAPE sobre una serie que pasa cerca del cero</strong>, o creer que un
           MAPE pequeño es bueno en una serie que casi no se mueve
           (<a href="capitulo-6-pronostico-evaluacion.html#modulo-4">módulo 6.4</a>).</li>
@@ -3902,7 +3916,7 @@ dm.test(e_mod[, h], e_ref[, h], h = h, power = 1)</code></pre>
           <tr><th scope="col">Nivel</th><th scope="col">Qué se ve</th></tr>
         </thead>
         <tbody>
-          <tr><td>Insuficiente</td><td>Errores que cambian el resultado: diferencias de más, un AICc comparado entre órdenes de diferenciación distintos, raíces fuera del círculo sin decirlo.</td></tr>
+          <tr><td>Insuficiente</td><td>Errores que cambian el resultado: diferencias de más, un AICc comparado entre órdenes de diferenciación distintos, raíces dentro del círculo unitario, o sobre él, sin decirlo.</td></tr>
           <tr><td>Aceptable</td><td>El ajuste es correcto, con errores menores en la lectura de los coeficientes o de las raíces.</td></tr>
           <tr><td>Sólido</td><td>Estimación, órdenes, raíces y transformación correctos, y bien leídos.</td></tr>
         </tbody>
