@@ -4,7 +4,7 @@ curso: "[[20948 Series de Tiempo]]"
 capitulo: "[[20948-04 Modelos ARIMA y Box-Jenkins]]"
 fecha: 2026-10-27
 estado: ejecutado
-revision: 2026-10-27 (Q1–Q8 corregidos en el capítulo; ver sección 9)
+revision: 2026-10-27 (Q1–Q8 corregidos en el capítulo, sección 9; marcas [SIN VERIFICAR] resueltas, sección 10)
 ---
 
 # Plan — Auditoría de las diapositivas del Capítulo 4
@@ -89,7 +89,7 @@ imprecisiones, sin cambiar la estructura del material. Todo lo que sigue sale de
 
 | # | Qué | Por qué sigue abierto |
 |---|---|---|
-| P1 | Cuatro `[SIN VERIFICAR]`: la presa baja de Asuán como causa del descenso; el signo de θ en el libro original de Box y Jenkins; el origen de la TRM en datos.gov.co; las secciones y capítulos de las lecturas (FPP3 §9.5–9.8, Shumway y Stoffer cap. 3, Box et al. caps. 4–8) | Piden la fuente primaria o el libro. Las notas dan la Presa Baja hacia 1898–1902 como dato plausible no confirmado |
+| P1 | Cuatro `[SIN VERIFICAR]`: la presa baja de Asuán como causa del descenso; el signo de θ en el libro original de Box y Jenkins; el origen de la TRM en datos.gov.co; las secciones y capítulos de las lecturas (FPP3 §9.5–9.8, Shumway y Stoffer cap. 3, Box et al. caps. 4–8) | **Resuelto en gran parte el 2026-10-27 (sección 10).** Siguen marcadas solo las secciones 9.5 a 9.8 de FPP3 y los capítulos 7 y 8 de Box et al. Antes: piden la fuente primaria o el libro |
 | P2 | Título de Cobb (1978): «conditional solutions» frente a «conditional solution» | `verificacion_cifras.md` lo deja como «comprobarlo». Volumen, número y páginas (*Biometrika* 65(2), 243–251) sí están confirmados en R 4.6 |
 | P3 | Las cifras de R 4.6 viven en `directo_r46_cap4.json` | En un equipo con R 4.3.3 no se regeneran; solo se leen. El JSON registra el entorno (R 4.6.0, forecast 9.0.2, tseries 0.10.62) |
 
@@ -173,7 +173,7 @@ hace fallar el guion (probado con mutaciones el 2026-09-29).
 | T5 | Verificador: fuente R46, clase `MAN`, «No coinciden» calculado | `verifica_cifras_cap4.py`, `verificacion_cifras.md` | Hecho (`fd92bd1`): 445 comprobaciones |
 | T6 | Reconstruir y publicar | HTML, `index.html` | Hecho (`fd92bd1`); `gh-pages` al día |
 | T7 | Q1–Q8 en el capítulo | `ensamblado/cap4/templates_*.html`, `chapter.js` y reensamblado | **Hecho** el 2026-10-27 por encargo de Javier (sección 9) |
-| T8 | P1–P2 | libros, datos.gov.co | **Pendiente**; P2 avanzó (sección 9) pero no está cerrado contra la revista |
+| T8 | P1–P2 | libros, datos.gov.co | **Parcial**: P1 se resolvió en gran parte (sección 10); quedan FPP3 §9.5–9.8 y Box et al. caps. 7–8, y P2 no está cerrado contra la revista |
 | T9 | Propuestas de la sección 4 en el verificador | `verifica_cifras_cap4.py` | **Pendiente**, sin prioridad fijada |
 
 ## 6. Criterios de aceptación
@@ -212,8 +212,8 @@ mensaje de `fd92bd1`, las 50 diapositivas a ≥ 88 % de escala.
 **No aplicado en esa ronda, a propósito:** Q1–Q8 en el capítulo y el título de Cobb. Q1–Q8 se aplicó
 en la segunda ronda (sección 9); Cobb quedó a medias.
 
-**Pendiente tras la segunda ronda:** P1, la parte de P2 que exige la revista (T8) y T9. P3 es una
-limitación, no una tarea.
+**Pendiente tras la tercera ronda (sección 10):** las secciones 9.5 a 9.8 de FPP3 y los capítulos 7 y 8 de
+Box et al. (P1), la parte de P2 que exige la revista (T8) y T9. P3 es una limitación, no una tarea.
 
 ## 9. Segunda ronda (2026-10-27): Q1–Q8 corregidos en el capítulo
 
@@ -251,7 +251,40 @@ Q4, 192 y Cobb dejan de decir que el capítulo conserva el texto antiguo y cuent
 valores de H2 y de la búsqueda de 192 vienen de su JSON); no se tocó la afirmación sobre α = 1 + θ de
 la fila del suavizamiento exponencial, que H12 matiza solo en las diapositivas.
 
-## 10. Enlaces
+## 10. Tercera ronda (2026-10-27): marcas `[SIN VERIFICAR]`
+
+Javier pidió quitar las marcas «siempre que sea pertinente». Se interpretó así: **la marca se quita solo si
+hay una fuente consultada que respalde lo que la diapositiva dice, o si la diapositiva deja de decirlo.**
+Ninguna se quitó solo porque estorbara.
+
+**Límite de la evidencia.** No hay libros en el entorno y la red bloquea las páginas (`getaddrinfo ENOTFOUND`
+o 403 de `datos.gov.co`, `otexts.com`, Springer, Crossref y la revista). Lo único accesible fue el buscador,
+y de él **solo se leyeron los resúmenes de los resultados, no las páginas**. Esa evidencia es más débil que
+un libro abierto o un cálculo, y el informe la etiqueta aparte (`WEB`).
+
+| Marca | Decisión | Evidencia y límite |
+|---|---|---|
+| Presa baja de Asuán como causa | **Acotada.** La diapositiva dice que el descenso *coincide en fecha* con las obras (c. 1898 a 1902) y que eso no prueba la causa; «posible causa» se retiró | WEB: Wikipedia fecha las obras entre 1899 y 1902; otras fuentes dan 1898 como inicio y 1902 como fin. Ninguna fuente consultada atribuye el descenso a la presa, y `?Nile` solo habla de un cambio cerca de 1898 |
+| Signo de θ en Box y Jenkins | **Retirada** de las notas | Solo hay fuentes secundarias (R-help sobre Minitab, una enciclopedia, código de ejercicios); no bastan para decir qué escribe el libro original. Siguen Cryer y Chan, Tsay y `?arima` |
+| Origen de la TRM | **Marca quitada** | REPO: `genera_datos.R` descarga el recurso de la TRM de datos.gov.co y `datos_series.json` registra la consulta del 2026-07-26 (el mismo día del commit `54e45ef`). WEB: la página oficial de la Superintendencia Financiera dice que calcula la TRM y enlaza su histórico en el portal de datos abiertos. **Límite:** la serie no se volvió a descargar para compararla; la diapositiva ya decía que no se cotejó |
+| Shumway y Stoffer, cap. 3 | **Marca quitada** | WEB: 4.ª edición, Springer, 2017; los registros de biblioteca listan el capítulo 3 como «ARIMA models». Las secciones 3.6 y 3.7 que cita el capítulo **no** se contrastaron, y un listado de la 3.ª edición numera esos temas 3.7 y 3.8 |
+| FPP3 §9.5–9.8 | **Marca solo en las secciones** | WEB: la documentación de `fable` remite a «ARIMA models (chapter 9)». Ninguna consulta mostró los títulos 9.5 a 9.8 |
+| Box et al. caps. 4 a 8 | **Marca solo en los capítulos 7 y 8** | WEB: la tabla de contenidos de la 5.ª edición da 4 Linear Nonstationary Models, 5 Forecasting y 6 Model Identification. Los títulos de 7 y 8 no aparecieron. **Hallazgo:** el año de esa edición figura como 2015 (Wiley-VCH) y como 2016 (registros de bibliotecas); las notas lo dicen y el capítulo conserva «2015» |
+
+**Cambios.**
+- Diapositivas (`capitulo_4.md`): la leyenda y sus notas, la fila de la TRM, la viñeta de la presa con su línea
+  de fuente (nueva clase **W**), el contexto de la diapositiva de la TRM, las notas del signo de θ y las notas de
+  la última diapositiva. Quedan dos marcas, ambas en notas.
+- Verificador (`verifica_cifras_cap4.py`): fuentes `WEB` y `REPO`, la sección «Marcas que se resolvieron» del informe,
+  y una comprobación nueva: **cada marca debe ir pegada a su texto** (antes bastaba con que la diapositiva
+  tuviera *alguna*, así que quitar una de dos marcas pasaba sin avisar; se probó con mutaciones).
+- Resultado del informe: 450 comprobaciones, 448 verificadas, 2 marcadas, 0 no coinciden. Las 50
+  diapositivas caben a ≥ 88 % de escala.
+
+**No se hizo.** No se abrió ningún libro ni ninguna página; no se corrigió el capítulo (el listado de lecturas
+conserva «caps. 4 a 8», «9.5 a 9.8» y «3.6 y 3.7»); la grafía «changepoint» de Cobb sigue sin comprobar.
+
+## 11. Enlaces
 
 - Precedente: [[PLAN_Auditoria_Cap4]] (la auditoría del capítulo)
 - Diapositivas: `Htmls_Series/diapositivas/` y su [README](Htmls_Series/diapositivas/README.md)

@@ -17,7 +17,7 @@ temas: ARIMA, Box–Jenkins, elegir d, identificar p y q, media y deriva, AICc, 
     · cada afirmación lleva una etiqueta: Dato · Definición · Interpretación · Opinión
     · cada cifra lleva su fuente (J = cap4_arima.json, R = reejecución en R: 4.3.3 y,
       para las cifras añadidas después, 4.6.0; C = capítulo, D = documentación de R,
-      A = plan de auditoría)
+      A = plan de auditoría, W = consulta web)
     · lo que no se pudo contrastar va marcado [SIN VERIFICAR]
   Las cifras se contrastan con `verificacion/verifica_cifras_cap4.py`; el detalle,
   cifra por cifra, está en `verificacion/verificacion_cifras.md`.
@@ -41,14 +41,14 @@ Cada afirmación lleva su etiqueta y cada cifra, su fuente: así se distingue lo
 
 <mark>[SIN VERIFICAR]</mark> marca lo que no se pudo contrastar con una fuente: no es un dato confirmado.
 
-<small>Fuentes: **J** = `cap4_arima.json` (R 4.6) · **R** = reejecución en R · **C** = capítulo · **D** = documentación de R · **A** = plan de auditoría</small>
+<small>Fuentes: **J** = `cap4_arima.json` (R 4.6) · **R** = reejecución en R · **C** = capítulo · **D** = documentación de R · **A** = plan de auditoría · **W** = consulta web</small>
 
 ???
 Antes de empezar, una regla de juego: cada cifra de la presentación lleva su fuente en la línea pequeña de abajo, y cada afirmación su etiqueta. Lo que no se pudo contrastar lo marca el resaltado «SIN VERIFICAR» y no se debe citar como dato.
 
-Lo que no se pudo contrastar en esta presentación <mark>[SIN VERIFICAR]</mark>: que el descenso del Nilo hacia 1899 se deba a la presa baja de Asuán; que Box y Jenkins usen el signo menos en θ(B) en su libro original; el origen de la TRM en datos.gov.co (solo se comprobó contra la copia congelada del repositorio); y las secciones y capítulos de las lecturas de la última diapositiva. La edición de 1970 de Box y Jenkins sí se confirmó (Shumway y Stoffer la citan).
+Lo que no se pudo contrastar en esta presentación <mark>[SIN VERIFICAR]</mark>: las secciones 9.5 a 9.8 de FPP3 y los capítulos 7 y 8 de Box, Jenkins, Reinsel y Ljung (están en las notas de la última diapositiva). Otras marcas de la primera versión ya no hacen falta, cada una por una razón distinta: la presa de Asuán (solo se afirma la coincidencia en fecha, que sí se contrastó, y no que sea la causa), el origen de la TRM (el propio repositorio documenta la descarga), el capítulo de Shumway y Stoffer (contrastado en la web) y el signo de θ en el libro original de Box y Jenkins (se dejó de afirmar). La edición de 1970 de Box y Jenkins sí se confirmó (Shumway y Stoffer la citan).
 
-Verificación: las cifras salen de `precalculo/salidas/cap4_arima.json` (R 4.6, forecast 9.0.2). Para esta presentación se volvió a correr `genera_cap4.R` en R 4.3.3 (forecast 8.21.1) y se recalcularon aparte las cifras que no están en el JSON; las que hacían falta después (p exactos, ranking completo de la búsqueda exhaustiva) salen de `verifica_directo_r46_cap4.R`, en R 4.6.0. La tabla cifra por cifra está en `verificacion/verificacion_cifras.md`, con enlace en la última diapositiva. Las definiciones y equivalencias teóricas se toman del capítulo y de su bibliografía; los libros no estaban a mano y no se contrastaron, salvo dos comprobaciones manuales con página (la edición de 1970 de Box y Jenkins en Shumway y Stoffer, y el signo de θ en Cryer y Chan y en Tsay).
+Verificación: las cifras salen de `precalculo/salidas/cap4_arima.json` (R 4.6, forecast 9.0.2). Para esta presentación se volvió a correr `genera_cap4.R` en R 4.3.3 (forecast 8.21.1) y se recalcularon aparte las cifras que no están en el JSON; las que hacían falta después (p exactos, ranking completo de la búsqueda exhaustiva) salen de `verifica_directo_r46_cap4.R`, en R 4.6.0. La tabla cifra por cifra está en `verificacion/verificacion_cifras.md`, con enlace en la última diapositiva. Las definiciones y equivalencias teóricas se toman del capítulo y de su bibliografía; los libros no estaban a mano y no se contrastaron, salvo dos comprobaciones manuales con página (la edición de 1970 de Box y Jenkins en Shumway y Stoffer, y el signo de θ en Cryer y Chan y en Tsay). Lo que se contrastó en la web (la Presa Baja de Asuán, los capítulos de las lecturas y quién publica la TRM) se leyó en los resúmenes del buscador: desde este entorno no se pudo abrir ninguna página.
 
 # Módulos 1–2 · El modelo y el método {seccion=modulo-1}
 
@@ -72,7 +72,7 @@ $$\phi(B)\,(1-B)^d\,y_t = c + \theta(B)\,\varepsilon_t$$
 ???
 Lo importante está a la izquierda de la ecuación: el polinomio autorregresivo completo es φ(B)(1−B)^d, de grado p+d, con d raíces exactamente sobre el círculo unitario. Un ARIMA no es un ARMA cualquiera. Transición: ¿qué queda si se multiplican los factores?
 
-Detalle en el material: Módulo 1. Aviso sobre el signo de θ: R (`arima`) escribe θ(B) = 1 + θ₁B + … (D `?arima`, comprobado); statsmodels, según el capítulo, también. Que Box y Jenkins usen el signo menos en su libro original <mark>[SIN VERIFICAR]</mark>: no se tuvo. Sí usan el menos Cryer y Chan (§4.2, con la nota de que R usa el más) y Tsay. Copiar un θ de un libro a R sin mirar el convenio produce otro modelo.
+Detalle en el material: Módulo 1. Aviso sobre el signo de θ: R (`arima`) escribe θ(B) = 1 + θ₁B + … (D `?arima`, comprobado); statsmodels, según el capítulo, también. Usan el menos Cryer y Chan (§4.2, con la nota de que R usa el más) y Tsay. El libro original de Box y Jenkins no se consultó, y por eso no se afirma qué signo usa. Copiar un θ de un libro a R sin mirar el convenio produce otro modelo.
 
 ## Un ARIMA(1,1,1) es un ARMA(2,1) con una raíz unitaria impuesta
 
@@ -115,7 +115,7 @@ Verificación: las equivalencias (IMA(1,1) = suavizamiento exponencial simple; I
 | Serie | De dónde sale | Qué ilustra |
 |---|---|---|
 | **Nilo** · caudal anual en Asuán, 1871–1970 (*n* = 100, 10⁸ m³) | `Nile` de R; Cobb (1978) | Cómo elegir \(d\) |
-| **TRM** · promedio mensual COP/USD, ene 2015–jun 2026 (*n* = 138) | Superintendencia Financiera vía datos.gov.co, consulta 2026-07-26 <mark>[SIN VERIFICAR]</mark> | El ciclo completo, de la identificación al pronóstico |
+| **TRM** · promedio mensual COP/USD, ene 2015–jun 2026 (*n* = 138) | Superintendencia Financiera vía datos.gov.co, consulta 2026-07-26 | El ciclo completo, de la identificación al pronóstico |
 | **log(AirPassengers)** · pasajeros mensuales, 1949–1960 (*n* = 144) | `AirPassengers` de R; Box, Jenkins y Reinsel (1994) | Hasta dónde llega un ARIMA sin parte estacional |
 
 <small>«Qué ilustra» es <kbd>Interpretación</kbd> del capítulo. La TRM es una copia congelada: no se cotejó con datos.gov.co. Fuente: J `nilo`, `trm`, `puente_estacional` · R · D `?Nile`, `?AirPassengers`</small>
@@ -123,7 +123,7 @@ Verificación: las equivalencias (IMA(1,1) = suavizamiento exponencial simple; I
 ???
 Presentar las tres series una vez, justo antes del primer ejemplo con datos, y no volver a explicarlas: cada diapositiva de ejemplo repite en una línea de qué serie habla. No adelantar aquí lo que cada una revelará. Las series de los ejercicios —BJsales (n = 150) y lynx (1821–1934)— entran más adelante con su propio contexto.
 
-Verificación: los datos del Nilo y de AirPassengers son idénticos a los de `datasets` de R (comprobado). La ayuda de AirPassengers en R 4.6 cita a Box, Jenkins y Reinsel (1994); la de R 4.3.3 decía 1976, un anacronismo, porque Reinsel entró como coautor en la tercera edición. El origen de la TRM (datos.gov.co) no se pudo contrastar: solo se comprobó contra la copia congelada de `precalculo/salidas/datos_series.json` (n = 138, de 2015-01 a 2026-06).
+Verificación: los datos del Nilo y de AirPassengers son idénticos a los de `datasets` de R (comprobado). La ayuda de AirPassengers en R 4.6 cita a Box, Jenkins y Reinsel (1994); la de R 4.3.3 decía 1976, un anacronismo, porque Reinsel entró como coautor en la tercera edición. El origen de la TRM está documentado en el repositorio: `precalculo/genera_datos.R` descarga el recurso de la TRM de datos.gov.co y promedia por mes, y `precalculo/salidas/datos_series.json` registra la consulta del 2026-07-26 (n = 138, de 2015-01 a 2026-06). La página oficial de la TRM de la Superintendencia Financiera dice que la calcula y certifica, y enlaza su histórico en el portal de datos abiertos (consulta web). Lo que no se hizo es volver a descargar la serie para compararla con el portal: la red de este entorno bloquea datos.gov.co.
 
 ## En el Nilo, diferenciar una vez casi no reduce la varianza
 
@@ -542,14 +542,14 @@ $$y_t=\mu+\beta\,\mathbf 1\{t\ge1899\}+\varepsilon_t$$
 - <kbd>Dato</kbd> \(\hat\beta=-247.78\) (e.e. 28.15, \(t=-8.80\)): la media pasa de 1097.75 a 849.97
 - <kbd>Dato</kbd> AICc 1257.91 frente a 1282.50 del mejor ARMA sin escalón: casi 25 puntos, **dentro de \(d=0\)**. Ljung–Box(20): \(p=0.812\)
 - <kbd>Interpretación</kbd> El ARIMA(1,1,1) probablemente diferencia una serie sin raíz unitaria, y su \(\hat\theta=-0.874\) es el modelo intentando deshacerlo. El año 1899 sale de los mismos datos (Cobb, 1978): ni el AICc ni el \(t\) lo descuentan
-- <kbd>Interpretación</kbd> Posible causa: el descenso coincide en fecha con la construcción de la presa baja de Asuán <mark>[SIN VERIFICAR]</mark>
+- <kbd>Interpretación</kbd> El descenso coincide en fecha con la construcción de la presa baja de Asuán (c. 1898 a 1902); la coincidencia no prueba que sea la causa
 
-<small>Contexto: el mismo Nilo, ahora con un escalón como alternativa a la raíz unitaria (Cobb, 1978; `?Nile` habla de un cambio «cerca de 1898»). Fuente: J `nilo.cambio_nivel`, `nilo.diagnostico` · R recalculado</small>
+<small>Contexto: el mismo Nilo, ahora con un escalón como alternativa a la raíz unitaria (Cobb, 1978; `?Nile` habla de un cambio «cerca de 1898»). Fuente: J `nilo.cambio_nivel`, `nilo.diagnostico` · R recalculado · W Aswan Low Dam</small>
 
 ???
 Es la explicación única de tres piezas: en el Módulo 1 integrar el ARMA del Nilo casi no cambia la varianza (razón 1.006, frente a 32.8 sin el término MA) porque θ = −0.874 está cerca de −1; en el Módulo 3, dos de tres pruebas dicen que no hay que diferenciar y KPSS rechaza el 100 % con un escalón; aquí, el escalón. Box–Jenkins no tiene una etapa para «detectar intervenciones»: la absorbe subiendo d. Los 25 puntos comparan el escalón con el mejor ARMA (d = 0), no con la raíz unitaria: contra el ARIMA(1,1,1) no son comparables, y la diapositiva siguiente lo resuelve fuera de muestra.
 
-Verificación: β̂, e.e., t, medias, AICc y Ljung–Box en J y recalculados en R. La presa de Asuán no se pudo confirmar con ninguna fuente de esta sesión: la Presa Baja se construyó hacia 1898–1902, así que la coincidencia en fecha es plausible, pero `?Nile` solo habla de un «cambio aparente cerca de 1898» y no dice que la presa lo explique. Observación para el docente: `?Nile` dice «cambio aparente cerca de 1898» y el capítulo usa 1899 (posición 29) como primer año del nuevo nivel; no es un error, pero conviene decirlo así. Detalle: Módulo 8.
+Verificación: β̂, e.e., t, medias, AICc y Ljung–Box en J y recalculados en R. La Presa Baja de Asuán: Wikipedia fecha las obras entre 1899 y 1902, y otras fuentes consultadas dan 1898 como inicio (consulta web, resúmenes del buscador). Eso contrasta la coincidencia en fecha, no la causa: `?Nile` solo habla de un «cambio aparente cerca de 1898» y no dice que la presa lo explique, y en las fuentes consultadas no apareció esa atribución. Por eso la diapositiva dejó de decir «posible causa». Observación para el docente: `?Nile` dice «cambio aparente cerca de 1898» y el capítulo usa 1899 (posición 29) como primer año del nuevo nivel; no es un error, pero conviene decirlo así. Detalle: Módulo 8.
 
 ## El escalón gana casi 25 puntos de AICc: ¿pronostica mejor fuera de muestra? {.pregunta}
 
@@ -688,7 +688,7 @@ La TRM mensual (promedio del mes) entre enero de 2015 y junio de 2026: 138 obser
 - <kbd>Dato</kbd> `nsdiffs` = 0. En la ACF de ∇TRM, \(\hat\rho_1=0.088\) y una sola barra fuera de ±0.167 (\(\hat\rho_8=-0.190\)), aislada y sin patrón
 - <kbd>Interpretación</kbd> ∇TRM parece ruido blanco: la tabla del Capítulo 3 propone \(p=q=0\)
 
-<small>Contexto: TRM, copia congelada (2026-07-26) <mark>[SIN VERIFICAR]</mark> frente a datos.gov.co. Fuente: J `trm.pruebas`, `trm.identificacion` · R</small>
+<small>Contexto: TRM, copia congelada de datos.gov.co (2026-07-26). Fuente: J `trm.pruebas`, `trm.identificacion` · R</small>
 
 ???
 La ACF de la serie en niveles arranca en 0.964 y decae lentísimo: el retrato de un proceso no estacionario. Tras una diferencia, solo una barra de veinte se sale, y por poco: es lo que el azar da al 5 %.
@@ -823,6 +823,6 @@ Fuente: resumen del Módulo 10 («Lo que hay que llevarse»).
 ???
 El Módulo 11 del material es un simulacro del quiz del capítulo 3 y los módulos 4.1–4.4, con reloj y sin clave: no se proyecta, se recomienda hacerlo antes de la próxima sesión. Las soluciones de los tres ejercicios, con su código, están en el Módulo 10. El ejercicio 2 (lynx) ya se adelantó en la diapositiva de la regla de la varianza: pedirles que reproduzcan el cálculo y decidan con las raíces.
 
-Lecturas del capítulo (las secciones y capítulos no se contrastaron con los libros): FPP3, secciones 9.5 a 9.8 <mark>[SIN VERIFICAR]</mark>; Shumway y Stoffer (2017), cap. 3 <mark>[SIN VERIFICAR]</mark>; Box, Jenkins, Reinsel y Ljung (2015), caps. 4 a 8 <mark>[SIN VERIFICAR]</mark>; Hyndman y Khandakar (2008), *J. Stat. Softw.* 27(3); Cobb (1978), *Biometrika* 65, 243–251.
+Lecturas del capítulo (contrastadas en la web, sin abrir los libros ni las páginas): FPP3 (Hyndman y Athanasopoulos), capítulo 9, «ARIMA models», que cita la documentación de `fable`, y dentro de él las secciones 9.5 a 9.8 <mark>[SIN VERIFICAR]</mark>; Shumway y Stoffer (2017, 4.ª ed.), capítulo 3, «ARIMA models»; Box, Jenkins, Reinsel y Ljung (5.ª ed.), capítulos 4 a 6 (no estacionarios, pronóstico, identificación), y los capítulos 7 y 8 (estimación y diagnóstico) <mark>[SIN VERIFICAR]</mark>; el año de esa edición aparece como 2015 (listado de Wiley-VCH) y como 2016 (registros de bibliotecas); Hyndman y Khandakar (2008), *J. Stat. Softw.* 27(3); Cobb (1978), *Biometrika* 65, 243–251.
 
 Verificación: Hyndman–Khandakar: volumen 27(3) según el DOI de `citation("forecast")`. Cobb (1978): `?Nile` da *Biometrika* 65(2), 243–251, y el capítulo escribe lo mismo. La cifra de cada diapositiva está contrastada en `verificacion/verificacion_cifras.md`, con enlace desde aquí. El capítulo escribía el título de Cobb con «conditional solutions» en plural; `?Nile` (R 4.3.3) da «conditional solution to a change-point problem», en singular, y el capítulo se corrigió al singular. La página de *Biometrika* no se pudo abrir desde aquí, así que la grafía «change-point» o «changepoint» sigue sin comprobar contra la revista.
