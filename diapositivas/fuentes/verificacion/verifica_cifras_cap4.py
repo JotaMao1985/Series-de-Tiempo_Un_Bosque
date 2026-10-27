@@ -14,6 +14,9 @@ Qué hace
              `verifica_directo_r46_cap4.R` (el JSON registra la versión: R 4.6.0, forecast 9.0.2)
         MAN  comprobación MANUAL contra un libro o una fuente que no está en el repositorio (con página);
              no la ejecuta ningún guion y el informe la cuenta aparte
+        WEB  consulta web hecha el 2026-10-27 con el buscador: solo se leyeron los resúmenes de los resultados,
+             ninguna página se pudo abrir desde el entorno; no la ejecuta ningún guion y el informe la cuenta aparte
+        REPO procedencia documentada en el propio repositorio (guion que descarga los datos, registro de la consulta)
         DOC  documentación de R guardada en `directo_cap4.json`
         CALC aritmética sobre las fuentes anteriores
         C    texto del capítulo (`capitulo-4-modelos-arima.html`)
@@ -72,6 +75,7 @@ def _texto_html(p: Path) -> str:
 
 CAP = _texto_html(RAIZ / "Htmls_Series/capitulo-4-modelos-arima.html")
 PLAN = re.sub(r"\s+", " ", (RAIZ / "PLAN_Auditoria_Cap4.md").read_text(encoding="utf-8"))
+GENERA_DATOS = (RAIZ / "precalculo/genera_datos.R").read_text(encoding="utf-8")
 
 
 def get(obj, ruta: str):
@@ -136,6 +140,15 @@ def MAN_(desc):
     return Src("MAN", lambda: True, desc, True)
 
 
+def WEB_(desc):
+    """Consulta web (resumen del buscador; la página no se abrió). Va aparte en el informe."""
+    return Src("WEB", lambda: True, desc, True)
+
+
+def REPO_(fn, desc):
+    return Src("REPO", fn, desc, True)
+
+
 def CALC_(fn, desc):
     return Src("CALC", fn, desc)
 
@@ -176,7 +189,7 @@ class Claim:
 
 CLAIMS: list[Claim] = []
 ALLOW: dict[str, dict[str, str]] = defaultdict(dict)  # slide -> token -> motivo
-SIN_VERIFICAR: list[tuple[str, str, str]] = []  # slide, texto, motivo
+SIN_VERIFICAR: list[tuple[str, str, str, str | None]] = []  # slide, texto, motivo, ancla
 
 
 def C(slide, shown, *srcs, kind="dato", tol=None, nota=""):
@@ -191,8 +204,33 @@ def permite(slide, tokens, motivo):
         ALLOW[slide][t] = motivo
 
 
-def sin_verificar(slide, texto, motivo):
-    SIN_VERIFICAR.append((slide, texto, motivo))
+def sin_verificar(slide, texto, motivo, ancla=None):
+    """`ancla`: el texto de la diapositiva que debe ir seguido de la marca [SIN VERIFICAR].
+    Sin ancla solo se exige que la diapositiva tenga alguna marca (basta con otra para que pase)."""
+    SIN_VERIFICAR.append((slide, texto, motivo, ancla))
+
+
+# (qué decía, decisión, evidencia y límite) de las marcas que dejaron de hacer falta
+RESUELTAS = [
+    ("El descenso del Nilo hacia 1899 se debe a la presa baja de Asuán",
+     "**Acotada.** La diapositiva afirma solo que el descenso *coincide en fecha* con las obras (c. 1898 a 1902) y que eso no prueba la causa; «posible causa» se retiró",
+     "WEB: Wikipedia fecha las obras entre 1899 y 1902 y otras fuentes dan 1898 como inicio. Ninguna fuente consultada atribuye el descenso a la presa; `?Nile` solo habla de un cambio cerca de 1898"),
+    ("Box y Jenkins usan el signo menos en θ(B) en su libro original",
+     "**Retirada.** Las notas ya no lo afirman; siguen Cryer y Chan y Tsay (comprobado a mano) y R (`?arima`)",
+     "Solo hay fuentes secundarias (un mensaje en R-help sobre Minitab, una entrada de enciclopedia, código de ejercicios del libro); no bastan para decir qué escribe el libro original"),
+    ("Origen de la TRM en datos.gov.co",
+     "**Quitada la marca.** El origen está documentado en el repositorio y la diapositiva ya decía que la copia no se cotejó con el portal",
+     "REPO: `genera_datos.R` descarga el recurso de la TRM de datos.gov.co y `datos_series.json` registra la consulta del 2026-07-26. WEB: la página oficial de la Superintendencia Financiera dice que calcula la TRM y enlaza su histórico en el portal de datos abiertos. Límite: no se volvió a descargar para comparar (la red bloquea datos.gov.co)"),
+    ("Shumway y Stoffer (2017), cap. 3",
+     "**Quitada la marca.**",
+     "WEB: 4.ª edición, Springer, 2017; los registros de biblioteca listan el capítulo 3 como «ARIMA models». Límite: no se vieron las páginas del libro; las secciones 3.6 y 3.7 que cita el capítulo no se contrastaron (la 3.ª edición las numera 3.7 y 3.8)"),
+    ("FPP3, secciones 9.5 a 9.8",
+     "**Se mantiene la marca en las secciones.** El capítulo 9 sí se contrastó",
+     "WEB: la documentación de `fable` remite a «ARIMA models (chapter 9)». Ninguna consulta mostró los títulos 9.5 a 9.8"),
+    ("Box, Jenkins, Reinsel y Ljung (2015), caps. 4 a 8",
+     "**Marca solo en los capítulos 7 y 8.** Los capítulos 4 a 6 sí se contrastaron",
+     "WEB: tabla de contenidos de la 5.ª edición en listados de librería y biblioteca (4 Linear Nonstationary Models, 5 Forecasting, 6 Model Identification). Los títulos de los capítulos 7 y 8 no aparecieron. El año figura como 2015 (Wiley-VCH) y como 2016 (registros de bibliotecas)"),
+]
 
 
 def normaliza(t: str) -> str:
@@ -237,9 +275,9 @@ K = "Cada afirmación es un dato"
 C(K, "4.6", PLAN_("R 4.6"), kind="versión")
 C(K, "4.3.3", BOOL_("RD", lambda: "4.3.3" in RD["entorno"]["R"], "directo_cap4.json › entorno.R"), kind="versión")
 C(K, "1970", MAN_("Shumway y Stoffer, *Time Series Analysis and Its Applications* (3.ª ed.), PDF pp. 8, 15 y 75: «Box and Jenkins (1970)» (comprobado a mano, 2026-09-29)"), kind="libro (manual)")
-C(K, "1899", CALC_(lambda: 1871 + RD["m8.posicion_1899"] - 1, "año de la observación 29 (1871 + 29 − 1)"), tol=0)
-sin_verificar(K, "la presa baja de Asuán como causa · el signo de θ en el libro original de Box y Jenkins · el origen de la TRM en datos.gov.co · las secciones y capítulos de las lecturas",
-              "ver la lista completa en verificacion_cifras.md")
+sin_verificar(K, "las secciones 9.5 a 9.8 de FPP3 · los capítulos 7 y 8 de Box, Jenkins, Reinsel y Ljung",
+              "ver la lista completa en verificacion_cifras.md", ancla="Lo que no se pudo contrastar en esta presentación")
+permite(K, "9.5 9.8", "secciones de FPP3 que siguen [SIN VERIFICAR]; se detallan en «Para seguir»")
 
 K = "Tres series conducen"
 C(K, "1871", RD_("datos.nilo_inicio"), DOC_("doc.nile", "1871-1970"), kind="documentación")
@@ -261,7 +299,13 @@ C(K, "1994", BOOL_("R46", lambda: "Reinsel GC (1994)" in R46["doc.airpassengers"
 C(K, "150", RD_("datos.bjsales_n"), DOC_("doc.bjsales", "150 observations"), kind="documentación")
 C(K, "1821", RD_("datos.lynx_inicio"), DOC_("doc.lynx", "1821-1934"), kind="documentación")
 C(K, "1934", RD_("datos.lynx_fin"), DOC_("doc.lynx", "1821-1934"), kind="documentación")
-sin_verificar(K, "origen de la TRM en datos.gov.co", "no se pudo contrastar con la fuente primaria; solo con la copia congelada del repositorio")
+C(K, "datos.gov.co",
+  REPO_(lambda: "https://www.datos.gov.co/resource/32sa-8pi3.json" in GENERA_DATOS and "mean" in GENERA_DATOS,
+        "precalculo/genera_datos.R descarga https://www.datos.gov.co/resource/32sa-8pi3.json y promedia por mes"),
+  REPO_(lambda: DAT["trm"]["fuente"] == "Superintendencia Financiera de Colombia vía datos.gov.co (consulta: 2026-07-26)",
+        "datos_series.json › trm.fuente = «Superintendencia Financiera de Colombia vía datos.gov.co (consulta: 2026-07-26)»"),
+  WEB_("Superintendencia Financiera, página oficial de la TRM (superfinanciera.gov.co/publicaciones/60819): la calcula, certifica y divulga, y enlaza el histórico en el portal de datos abiertos"),
+  kind="procedencia", nota="la serie no se volvió a descargar para compararla con el portal")
 
 # ---- M1 ---------------------------------------------------------------------------
 K = "La diferenciación es parte del modelo"
@@ -591,9 +635,12 @@ C(K, "1.006", RD_("m1.razon"))
 C(K, "32.8", RD_("m1.razon_sin_ma"))
 C(K, "100", J_("nilo.cambio_nivel.monte_carlo.con_escalon.kpss_rechaza", 100))
 C(K, "29", RD_("m8.posicion_1899"))
-sin_verificar(K, "el descenso coincide con la construcción de la presa baja de Asuán",
-              "afirmación histórica del capítulo y del JSON (cambio_nivel.fuente); ninguna fuente de esta sesión la confirma")
-permite(K, "1902", "año de la Presa Baja de Asuán citado en las notas como dato histórico [SIN VERIFICAR]")
+C(K, "1898", WEB_("Aswan Low Dam, inicio de las obras: 1898 según otras fuentes consultadas (Grace's Guide, British Empire); 1899 según Wikipedia"),
+  kind="historia (web)", nota="inicio de las obras de la Presa Baja")
+C(K, "1899", WEB_("Aswan Low Dam (en.wikipedia.org/wiki/Aswan_Low_Dam): obras entre 1899 y 1902; piedra fundacional el 12 de febrero de 1899 según el Huntington Library finding aid"),
+  kind="historia (web)", nota="inicio de las obras según Wikipedia")
+C(K, "1902", WEB_("Aswan Low Dam: obras terminadas en 1902 (Wikipedia, Grace's Guide, Huntington Library); inaugurada en diciembre de 1902"),
+  kind="historia (web)", nota="fin de las obras de la Presa Baja")
 
 K = "¿pronostica mejor fuera de muestra?"
 FM = "nilo.cambio_nivel.fuera_muestra"
@@ -808,11 +855,20 @@ C(K, "251", DOC_("doc.nile", "*65*, 243-51"), kind="documentación", nota="?Nile
 C(K, "4.1", CH_("módulos 4.1 a 4.4"), kind="capítulo")
 C(K, "4.4", CH_("módulos 4.1 a 4.4"), kind="capítulo")
 C(K, "11", CH_("Simulacro del quiz"), kind="capítulo")
-sin_verificar(K, "FPP3, secciones 9.5 a 9.8", "las secciones salen del capítulo; no se tuvo el libro")
-sin_verificar(K, "Shumway y Stoffer (2017), cap. 3", "año y capítulo salen del capítulo; no se tuvo el libro")
-sin_verificar(K, "Box, Jenkins, Reinsel y Ljung (2015), caps. 4 a 8", "año y capítulos salen del capítulo; no se tuvo el libro")
-for t in ("9.5", "9.8", "2017", "2015"):
+sin_verificar(K, "FPP3, secciones 9.5 a 9.8", "el capítulo 9 sí se contrastó; ningún resultado de la consulta mostró los títulos de las secciones",
+              ancla="las secciones 9.5 a 9.8")
+sin_verificar(K, "Box, Jenkins, Reinsel y Ljung, capítulos 7 y 8", "estimación y diagnóstico: ningún resultado de la consulta mostró esos títulos; salen del capítulo",
+              ancla="y los capítulos 7 y 8 (estimación y diagnóstico)")
+for t in ("9.5", "9.8"):
     C(K, t, BOOL_("SV", lambda: False, "sin fuente en esta sesión"), kind="sin verificar")
+C(K, "2017", WEB_("Shumway y Stoffer, *Time Series Analysis and Its Applications*, 4.ª ed., Springer, 2017 (link.springer.com/book/10.1007/978-3-319-52452-8); sus registros de biblioteca listan el cap. 3 como «ARIMA models»"),
+  kind="libro (web)", nota="año de la 4.ª edición y título del capítulo 3")
+C(K, "2015", WEB_("Box, Jenkins, Reinsel y Ljung, 5.ª ed.: Wiley-VCH la lista en agosto de 2015 (wiley-vch.de); la tabla de contenidos de Kinokuniya y de la biblioteca TUM da 4 Linear Nonstationary Models, 5 Forecasting y 6 Model Identification"),
+  kind="libro (web)", nota="año según Wiley-VCH y capítulos 4 a 6")
+C(K, "2016", WEB_("Box, Jenkins, Reinsel y Ljung, 5.ª ed.: 2016 en el registro de la biblioteca TUM y en una reseña de ProQuest"),
+  kind="libro (web)", nota="año según registros de bibliotecas")
+C(K, "9", WEB_("Hyndman y Athanasopoulos, FPP3: la documentación de fable (rdrr.io/cran/fable/man/ARIMA.html) remite a «ARIMA models (chapter 9)»"),
+  kind="libro (web)", nota="capítulo 9; las secciones 9.5 a 9.8 siguen sin verificar")
 permite(K, "10", "ordinal de módulo")
 
 
@@ -997,9 +1053,11 @@ def main() -> int:
             fallos.append(c)
         if not presente(c.shown, sl["titulo"] + "\n" + sl["texto"]):
             sin_presencia.append(c)
-    for k, texto, _ in SIN_VERIFICAR:
+    for k, texto, _, ancla in SIN_VERIFICAR:
         if "[SIN VERIFICAR]" not in por_clave[k]["texto"]:
             sin_marca.append((k, texto))
+        elif ancla and not re.search(re.escape(ancla) + r"\s*(?:<mark>)?\s*\[SIN VERIFICAR\]", limpio(por_clave[k]["texto"])):
+            sin_marca.append((k, f"{texto} (la marca debe ir tras «{ancla}»)"))
 
     # cobertura: toda cifra de la presentación debe tener claim o permiso
     sin_cobertura = []
@@ -1058,14 +1116,17 @@ def escribe_informe(slides, por_clave, verificados, sv, codigo_res=None, json_cm
           "- **DOC** · documentación de R (`?Nile`, `?BJsales`, `?lynx`, `?AirPassengers`, `?arima`, `citation(\"forecast\")`).",
           f"- **R46** · cifras exactas que faltaban en los JSON (p exactos de la TRM, ranking completo de la búsqueda exhaustiva, cita de AirPassengers de esta versión de R), `verifica_directo_r46_cap4.R` → `directo_r46_cap4.json`, calculadas en {R46['entorno']['R']} (forecast {R46['entorno']['forecast']}, tseries {R46['entorno']['tseries']}).",
           "- **MAN** · comprobación manual contra un libro que no está en el repositorio (con página); no la ejecuta ningún guion, y por eso se cuenta aparte.",
+          "- **WEB** · consulta web del 2026-10-27 con el buscador: solo se leyeron los resúmenes de los resultados, **ninguna página se pudo abrir** desde el entorno. No la ejecuta ningún guion y se cuenta aparte; es evidencia más débil que un libro o un cálculo.",
+          "- **REPO** · procedencia documentada en el propio repositorio (el guion que descarga los datos y el registro de la consulta).",
           "- **CALC** · aritmética sobre las fuentes anteriores. **C** · texto del capítulo. **A** · `PLAN_Auditoria_Cap4.md`.",
           "- La fuente se redondea a los decimales que muestra la diapositiva, a la mitad hacia arriba.",
           "- Los datos crudos de la TRM son la copia congelada de `datos_series.json` (consulta 2026-07-26); **no** se cotejaron con datos.gov.co.",
           "- Las definiciones y equivalencias teóricas y las referencias bibliográficas se toman del capítulo. Los libros no están en el repositorio: solo se hicieron a mano las comprobaciones marcadas `MAN` (edición de 1970 de Box y Jenkins en Shumway y Stoffer; signo de θ en Cryer y Chan y Tsay), con su página.", ""]
     n_def = sum(1 for c in CLAIMS if c.estado == "definición (no se mide)")
     n_man = sum(1 for c in CLAIMS if c.estado == "verificado" and any(x.tag == "MAN" for x in c.srcs) and all(x.tag == "MAN" for x in c.srcs))
+    n_web = sum(1 for c in CLAIMS if c.estado == "verificado" and any(x.tag == "WEB" for x in c.srcs) and all(x.tag in ("WEB", "REPO") for x in c.srcs))
     L += ["## Resumen", "", f"- Cifras y afirmaciones registradas: **{len(CLAIMS)}**",
-          f"- Verificadas contra al menos una fuente: **{verificados - n_def}** (de ellas, **{n_man}** son comprobaciones manuales contra un libro, sin guion)",
+          f"- Verificadas contra al menos una fuente: **{verificados - n_def}** (de ellas, **{n_man}** son comprobaciones manuales contra un libro y **{n_web}** son solo consultas web, ambas sin guion)",
           f"- Definiciones o convenciones (nivel del 5 %, z = 1.96, etc.): **{n_def}**; no se miden, se enuncian",
           f"- Marcadas `[SIN VERIFICAR]` (no se presentan como dato confirmado): **{sv}**",
           f"- No coinciden: **{n_fallos}**", ""]
@@ -1082,8 +1143,13 @@ def escribe_informe(slides, por_clave, verificados, sv, codigo_res=None, json_cm
             L.append(f"| `{pl}` | {e} | {h} | {'coincide' if ok else 'NO COINCIDE'} |")
         L.append("")
     L += ["## Lo que no se pudo verificar (`[SIN VERIFICAR]`)", "", "| Diapositiva | Qué | Por qué |", "|---|---|---|"]
-    for k, t, m in SIN_VERIFICAR:
+    for k, t, m, _ in SIN_VERIFICAR:
         L.append(f"| {por_clave[k]['titulo'][:60]} | {t} | {m} |")
+    L += ["", "## Marcas `[SIN VERIFICAR]` que se resolvieron el 2026-10-27", "",
+          "Cada una se quitó por una razón distinta; quitar la marca no significa que todas queden comprobadas con la misma fuerza.", "",
+          "| Qué decía | Decisión | Evidencia y límite |", "|---|---|---|"]
+    for q, d, e in RESUELTAS:
+        L.append(f"| {q} | {d} | {e} |")
     L += ["", "## Observaciones sobre el material (no corregidas en silencio)", ""]
     for i, (a, b) in enumerate(OBSERVACIONES, 1):
         L += [f"{i}. {a} {b}"]

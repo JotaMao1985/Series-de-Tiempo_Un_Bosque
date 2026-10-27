@@ -100,7 +100,7 @@ notas del presentador. No sustituyen al capítulo: cada sección remite a su mó
 
 | # | Capítulo | Diapositivas |
 |---|----------|:---:|
-| 4 | [Modelos ARIMA y Box–Jenkins](diapositivas/capitulo-4-modelos-arima.html) | 47 |
+| 4 | [Modelos ARIMA y Box–Jenkins](diapositivas/capitulo-4-modelos-arima.html) | 50 |
 
 Cada afirmación va etiquetada (dato, definición, interpretación u opinión) y cada cifra se contrasta
 con su fuente; lo que no se pudo verificar va marcado `[SIN VERIFICAR]`. Cómo se reconstruyen y se
