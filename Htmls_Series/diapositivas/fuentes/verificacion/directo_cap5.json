@@ -1,0 +1,331 @@
+{
+  "entorno": {
+    "R": "R version 4.6.0 (2026-04-24)",
+    "forecast": "9.0.2",
+    "tseries": "0.10.62",
+    "fecha": "2026-10-27 11:37"
+  },
+  "datos": {
+    "ap_igual_datasets": true,
+    "uad_igual_datasets": true,
+    "co2_igual_datasets": true,
+    "ap_inicio": 1949,
+    "ap_fin": 1960,
+    "ap_n": 144,
+    "uad_inicio": 1973,
+    "uad_fin": 1978,
+    "uad_n": 72,
+    "co2_inicio": 1959,
+    "co2_fin": 1997,
+    "co2_n": 468,
+    "trm_inicio": "2015-1",
+    "trm_fin": "2026-6",
+    "trm_n": 138
+  },
+  "m1": {
+    "ap_log": [0.95370336924, 0.7619429184, 0.52048972535, 0.31929315297],
+    "banda_ap": 0.16333333333,
+    "trm_niveles": [0.96366272039, 0.63649005973, 0.48954809692, 0.2252184639],
+    "banda_trm": 0.16684628003,
+    "trm_diff": [0.087560422631, -0.0024532198722, -0.067214871612, 0.071382795811],
+    "banda_trm_diff": 0.16745410091
+  },
+  "m2": {
+    "theta": -0.40182838358,
+    "Theta": -0.55694506023,
+    "sigma2": 0.0013712599553,
+    "factor_airline": 1.5217386488,
+    "gamma0_airline": 0.0020866992715,
+    "var_muestral_w": 0.0021020659387,
+    "n_w": 131,
+    "rho1_airline": -0.34596653396,
+    "choque_exacta": 2.3,
+    "choque_factorizada": 1.7,
+    "tabla_phi": [
+      {
+        "phi": 0.6,
+        "phi12": 0.002176782336,
+        "exacta": 3.0730764276,
+        "factorizada": 3.0637254902,
+        "error_pct": -0.30428587216,
+        "psi12": 0.70217678234
+      },
+      {
+        "phi": 0.8,
+        "phi12": 0.068719476736,
+        "exacta": 5.9971081498,
+        "factorizada": 5.4466230937,
+        "error_pct": -9.1791750678,
+        "psi12": 0.76871947674
+      },
+      {
+        "phi": 0.9,
+        "phi12": 0.28242953648,
+        "exacta": 15.4059360556,
+        "factorizada": 10.3199174407,
+        "error_pct": -33.0133696298,
+        "psi12": 0.98242953648
+      },
+      {
+        "phi": 0.95,
+        "phi12": 0.54036008766,
+        "exacta": 44.5799425871,
+        "factorizada": 20.1106083459,
+        "error_pct": -54.8886625266,
+        "psi12": 1.2403600877
+      }
+    ],
+    "coef_b13": 0.22379633329
+  },
+  "m4": {
+    "ar1_sar1": {
+      "r1": 0.60162285798,
+      "r11": 0.42298345053,
+      "r12": 0.70110846996,
+      "r13": 0.42180108257,
+      "r24": 0.49077834187,
+      "producto": 0.42180288146
+    },
+    "airline": {
+      "r1": -0.34596653396,
+      "r11": 0.14706620843,
+      "r12": -0.42508796081,
+      "r13": 0.14706620843,
+      "r24": 0,
+      "producto": 0.14706620843
+    },
+    "airline_redondeado": {
+      "r1": -0.34594889028,
+      "r11": 0.1470524436,
+      "r12": -0.42506985201
+    },
+    "sar1": {
+      "r12": 0.7,
+      "r24": 0.49,
+      "r36": 0.343,
+      "r1": 0,
+      "r11": 0
+    },
+    "sma1": {
+      "r12": -0.44117647059,
+      "r24": 0
+    },
+    "ar1_sma1": {
+      "r1": 0.49982791512,
+      "r11": -0.23446488842,
+      "r12": -0.46966228275,
+      "r13": -0.23483114137,
+      "r24": -0.00011466364325
+    }
+  },
+  "m3": {
+    "formals_nsdiffs_test": "seas,ocsb,hegy,ch",
+    "news_seas": "5.6 ·  - Improved tbats and bats by ensuring ARMA coefficients are not close to the boundary of invertibility and stationarity. - Improved nsdiffs() handling of degenerate series (e.g., all zeros). - Improved forecast.ar() when function buried within other functions. - Improved handling of degenerate ARIMA models when xreg used. - More robust ets initialization. - Fixed problem in na.interp() with seasonal data having frequency <= 5. - Removed undocumented option to use Rmalschains for optimization of ets. || 5.5 ·  - Improved documentation for croston - Added stlm() and forecast.stlm() functions, and added forecastfunction argument as a way of specifying a forecast method in stlf() and forecast.stl(). - Improved forecast.ar() so that it is more likely to work if ar() and forecast.ar() are embedded within other functions. - Improved handling of ARIMA models with seasonality greater than 48 - Improved handling of some degenerate regression models in nsdiffs - Changed AIC for poor models from 1e20 to Inf. - Update fourier() and fourierf() to work with msts object. - Added a new argument find.frequency to forecast.ts(). - Added new arguments d and D to accuracy() for MASE. - Corrected bugs in accuracy(). - Better handling of regression models with perfect fit in auto.arima(). - Fixed bug in tbats.components() when there are no seasonal components. || 5.0 ·  - Added argument model to dshw(). - Added bizdays() and easter() for calendar variables. - Added arguments max.D and max.d to auto.arima(), ndiffs() and nsdiffs(). - Made several functions more robust to zoo objects. - Corrected an error in the calculation of AICc when using CV(). - Made minimum default p in nnetar() equal to 1. - Added tsoutliers() and tsclean() for identifying and replacing outliers - Improved na.interp() to handle seasonality and added argument lambda to na.interp() - Added robust option to forecast.ts() to allow outliers and missing values - Improved output from snaive() and naive() to better reflect user expectations - Allowed Acf() to handle missing values by using na.contiguous - Changed default information criterion in ets() to AICc. - Removed drift term in Arima() when d+D>1. - Added bootstrap option to forecast.Arima() || 4.02 ·  - Fixed error in the prediction intervals returned by forecast.ets() when simulation was used and a Box-Cox transformation was specified. - Fixed bug in accuracy() when a numerical f vector was passed. - Fixed man file for Diebold-Mariano test. - Corrected references in nsdiffs() help page. - Added warning to nsdiffs when series too short for seasonal differencing. - Fixed problem in getResponse.Arima when Arima object created by stats::arima() from within a function. - Added tbats.components() and extended seasadj() to allow tbats objects. - Added undocumented functions for forecasting, printing and plotting output from vars::VAR. || 3.00 ·  - Added Box-Cox parameter as argument to Arima(), ets(), arfima(), stlf(), rwf(), meanf(), splinef() - Added Box-Cox parameter as argument to forecast.Arima(), forecast.ets(), forecast.fracdiff(), forecast.ar(), forecast.StructTS(), forecast.HoltWinters(). - Removed lambda argument from plot.forecast() and accuracy(). - Added BoxCox.lambda() function to allow automatic choice for Box-Cox parameter using Guerrero's method or the profile log likelihood method. - Modified BoxCox and InvBoxCox to return missing values when lambda < 0 and data < 0. - Add nsdiffs() function for selecting the number of seasonal differences. - Modified selection of seasonal differencing in auto.arima(). - Better error message if seasonal factor used in tslm() with non-seasonal data. - Added PI argument to forecast.ets() to allow only point forecasts to be computed. - Added include.constant argument to Arima(). - Added subset.ts() function. - Upgraded seasonplot() function to allow colors and to fix some bugs. - Fixed fitted values returned by forecast.HoltWinters() - Modified simulate.Arima() because of undocumented changes in filter() function in stats package. - Changed residuals returned by splinef() to be ordinary residuals. The standardized residuals are now returned as standardizedresiduals. - Added dshw() function for double-seasonal Holt-Winters method based on Taylor (2003). - Fixed further bugs in the decompose() function that caused the results to be incorrect with odd frequencies.",
+    "ap": [1, 0],
+    "uad": [1, 0, 0, 1],
+    "ap_var": [0.19488377448, 0.011354212576, 0.0038000609816, 0.0021020659387]
+  },
+  "m7": {
+    "rango_relativo": 1.8480291356,
+    "n_w": 131,
+    "banda_w": 0.17124599511,
+    "ee_aprox": 0.087370405666,
+    "r1": -0.3411237983,
+    "r11": 0.064383939886,
+    "r12": -0.38661285965,
+    "r13": 0.15160201212,
+    "r3": -0.20213866416,
+    "r9": 0.17636868146,
+    "r23": 0.22326890551,
+    "res_r3": -0.12541837572,
+    "res_r9": 0.11658474686,
+    "res_r23": 0.21962225763,
+    "res_r12": -0.051463143868,
+    "res_r24": 0.012363810054,
+    "banda_res": 0.16333333333,
+    "ee": [0.089643823669, 0.073099637242],
+    "t": [-4.4824993751, -7.6189852815],
+    "lb24": 0.23303276866,
+    "lb36": 0.296922875,
+    "shapiro": 0.16742953498,
+    "raiz_ma": 0.95239629306,
+    "pron24": [525.4600453519, 399.6628206311, 690.8530016007],
+    "media24": 530.6067819086
+  },
+  "m9": {
+    "beta_dias": 1.0839622521,
+    "ee_dias": 0.44623914817,
+    "t_beta1": 0.18815528041,
+    "beta_pascua": 0.029002634555,
+    "t_pascua": 2.6026072792,
+    "pascua_pct": 2.9427306554,
+    "pascuas_marzo": 2,
+    "pascuas_abril": 10,
+    "aicc": -490.7220971205,
+    "delta_aicc": 7.5120123049,
+    "variacion_dias_pct": 10.7142857143
+  },
+  "m10": {
+    "auto_365": "ARIMA(0,0,0) with zero mean",
+    "n_semanal": 156,
+    "queda_tras_52": 104,
+    "ncol_fourier_K3_m52": 6,
+    "nobs_airline": 131
+  },
+  "m11": {
+    "crecimiento_anual": {
+      "1950": 10.2632,
+      "1951": 21.8377,
+      "1952": 15.7689,
+      "1953": 14.2132,
+      "1954": 6.1852,
+      "1955": 18.8699,
+      "1956": 15.581,
+      "1957": 12.2366,
+      "1958": 3.4155,
+      "1959": 12.4234,
+      "1960": 11.1673
+    },
+    "crec_1958": 3.4155168514,
+    "crec_otros_min": 6.1851851852,
+    "crec_otros_max": 21.8377088305,
+    "sarima_pron": {
+      "f59_vs_obs58": 4.7113623322,
+      "f60_vs_f59": 6.9444499703,
+      "f60_vs_obs59": -0.39178354519
+    },
+    "ets_log_pron": {
+      "f59_vs_obs58": 9.3529411862,
+      "f60_vs_f59": 12.814547947,
+      "f60_vs_obs59": 9.7333603284
+    },
+    "armonica_pron": {
+      "f59_vs_obs58": 10.5861011589,
+      "f60_vs_f59": 13.1477990004,
+      "f60_vs_obs59": 11.2986149453
+    },
+    "sesgo_sarima": 39.4472578498,
+    "mae_sarima": 39.4472578498,
+    "errores_positivos": 24,
+    "particion": {
+      "snaive": {
+        "rmse": 76.9945885544,
+        "mae": 71.25,
+        "mape": 15.5233551624
+      },
+      "sarima": {
+        "rmse": 43.1836663804,
+        "mae": 39.4472578498,
+        "mape": 8.5163156028
+      },
+      "ets": {
+        "rmse": 72.5479090459,
+        "mae": 63.2129741007,
+        "mape": 13.3034467002,
+        "metodo": "ETS(M,Ad,M)",
+        "n_par": 17
+      },
+      "ets_log": {
+        "rmse": 19.4287484458,
+        "mae": 16.1248629804,
+        "mape": 3.5468841341,
+        "metodo": "ETS(M,A,M)",
+        "n_par": 16
+      },
+      "armonica": {
+        "rmse": 19.5052199819,
+        "mae": 14.6899279548,
+        "mape": 3.1511669886,
+        "n_par": 16
+      },
+      "stl_arima": {
+        "rmse": 35.481402254,
+        "mae": 30.2906571891,
+        "mape": 6.3300281524,
+        "n_par": 2,
+        "modelo": "ARIMA(1,1,0) with drift"
+      },
+      "sarima_calendario": {
+        "rmse": 45.4773919462,
+        "mae": 41.4521594809,
+        "mape": 8.9493171762
+      }
+    },
+    "om12": {
+      "n": 61,
+      "primer": "1954-12",
+      "rmse_medio": {
+        "snaive": 41.2380471548,
+        "sarima": 16.8122961414,
+        "armonica": 22.3846985173,
+        "ets_log": 21.4159741678,
+        "ets_orig": 26.3840116369,
+        "stl": 21.8482488854
+      },
+      "gana_al_sarima_pct": {
+        "snaive": 11.4754098361,
+        "sarima": 0,
+        "armonica": 9.8360655738,
+        "ets_log": 8.1967213115,
+        "ets_orig": 14.7540983607,
+        "stl": 8.1967213115
+      },
+      "error_mes_h_abs": {
+        "snaive": 38.606557377,
+        "sarima": 18.2227741622,
+        "armonica": 16.1662877779,
+        "ets_log": 15.9626919943,
+        "ets_orig": 23.6059378565,
+        "stl": 16.2699191523
+      },
+      "error_mes_h_rmse": {
+        "snaive": 42.6543484609,
+        "sarima": 22.6138476685,
+        "armonica": 21.254708593,
+        "ets_log": 20.9229821053,
+        "ets_orig": 27.7282464396,
+        "stl": 21.2422431026
+      },
+      "sarima_no_es_el_mejor": 14,
+      "origenes_no_mejor": ["1955-05", "1956-06", "1957-05", "1957-06", "1957-07", "1957-08", "1957-09", "1957-10", "1957-11", "1957-12", "1958-01", "1958-11", "1958-12", "1959-01"]
+    },
+    "om24": {
+      "n": 49,
+      "primer": "1954-12",
+      "rmse_medio": {
+        "snaive": 59.5344502485,
+        "sarima": 26.0013852914,
+        "armonica": 28.2957161946,
+        "ets_log": 26.6081255495,
+        "ets_orig": 34.8429474286,
+        "stl": 27.7998061476
+      },
+      "gana_al_sarima_pct": {
+        "snaive": 8.1632653061,
+        "sarima": 0,
+        "armonica": 32.6530612245,
+        "ets_log": 48.9795918367,
+        "ets_orig": 40.8163265306,
+        "stl": 32.6530612245
+      },
+      "error_mes_h_abs": {
+        "snaive": 73.1428571429,
+        "sarima": 34.7395499521,
+        "armonica": 29.8354360391,
+        "ets_log": 27.0835522321,
+        "ets_orig": 37.4712893349,
+        "stl": 29.8477530407
+      },
+      "error_mes_h_rmse": {
+        "snaive": 77.1338619094,
+        "sarima": 40.2464484363,
+        "armonica": 35.7015417522,
+        "ets_log": 32.1324730719,
+        "ets_orig": 46.2536143128,
+        "stl": 35.7917076331
+      },
+      "sarima_no_es_el_mejor": 31,
+      "origenes_no_mejor": ["1954-12", "1955-05", "1956-01", "1956-02", "1956-04", "1956-05", "1956-06", "1956-07", "1956-08", "1956-09", "1956-10", "1956-11", "1956-12", "1957-01", "1957-02", "1957-03", "1957-04", "1957-05", "1957-06", "1957-07", "1957-08", "1957-09", "1957-10", "1957-11", "1957-12", "1958-04", "1958-05", "1958-09", "1958-10", "1958-11", "1958-12"]
+    }
+  }
+}
