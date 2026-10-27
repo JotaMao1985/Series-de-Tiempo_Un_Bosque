@@ -4,6 +4,7 @@ curso: "[[20948 Series de Tiempo]]"
 capitulo: "[[20948-04 Modelos ARIMA y Box-Jenkins]]"
 fecha: 2026-10-27
 estado: ejecutado
+revision: 2026-10-27 (Q1–Q8 corregidos en el capítulo; ver sección 9)
 ---
 
 # Plan — Auditoría de las diapositivas del Capítulo 4
@@ -92,11 +93,12 @@ imprecisiones, sin cambiar la estructura del material. Todo lo que sigue sale de
 | P2 | Título de Cobb (1978): «conditional solutions» frente a «conditional solution» | `verificacion_cifras.md` lo deja como «comprobarlo». Volumen, número y páginas (*Biometrika* 65(2), 243–251) sí están confirmados en R 4.6 |
 | P3 | Las cifras de R 4.6 viven en `directo_r46_cap4.json` | En un equipo con R 4.3.3 no se regeneran; solo se leen. El JSON registra el entorno (R 4.6.0, forecast 9.0.2, tseries 0.10.62) |
 
-### Fuera de las diapositivas: el capítulo conserva lo que las diapositivas corrigieron
+### Fuera de las diapositivas: el capítulo conservaba lo que las diapositivas corrigieron
 
-Comprobado en `capitulo-4-modelos-arima.html` el 2026-10-27. Las diapositivas no pueden contradecir el
-capítulo sin decirlo, así que cada una de estas diferencias está dicha en las notas. Solo se corrigió
-el capítulo en H1 (`c3239a4`).
+Comprobado en `capitulo-4-modelos-arima.html` el 2026-10-27, antes de corregirlo. Las diapositivas no
+pueden contradecir el capítulo sin decirlo, así que cada una de estas diferencias estaba dicha en las
+notas. Hasta ese día solo se había corregido el capítulo en H1 (`c3239a4`). **Las ocho se corrigieron el
+mismo 2026-10-27 (sección 9); la tabla describe cómo estaba el capítulo, no cómo está.**
 
 | # | Dónde | Qué dice el capítulo | Frente a |
 |---|---|---|---|
@@ -135,7 +137,8 @@ El mensaje del commit no dice quién las tomó; se listan tal como quedaron.
 - **D1.** Cuando el capítulo se equivoca o se queda corto, la diapositiva dice lo correcto y la nota
   lo explica, en lugar de repetirlo: siete modelos, 0.585 y 0.241, Reinsel (1994), «incluye» para Holt.
 - **D2.** Solo se corrigió el capítulo en las dos cifras de H1 (`c3239a4`). El resto de las
-  diferencias queda en Q1–Q8 (comprobado el 2026-10-27).
+  diferencias quedó en Q1–Q8 (comprobado el 2026-10-27) hasta que se corrigieron ese mismo día
+  (sección 9).
 - **D3.** Las comprobaciones manuales contra libros (clase `MAN`) se cuentan aparte, con página, porque
   ningún guion las ejecuta.
 - **D4.** El informe calcula «No coinciden» en lugar de escribir 0.
@@ -169,8 +172,8 @@ hace fallar el guion (probado con mutaciones el 2026-09-29).
 | T4 | F1–F5 y E1–E6: gráficas y estructura | `capitulo_4.md`, `recursos/cap4/` | Hecho (`fd92bd1`) |
 | T5 | Verificador: fuente R46, clase `MAN`, «No coinciden» calculado | `verifica_cifras_cap4.py`, `verificacion_cifras.md` | Hecho (`fd92bd1`): 445 comprobaciones |
 | T6 | Reconstruir y publicar | HTML, `index.html` | Hecho (`fd92bd1`); `gh-pages` al día |
-| T7 | Q1–Q8 en el capítulo | `ensamblado/cap4/templates_*.html` y reensamblado | **Pendiente**, decisión de Javier (ver sección 7) |
-| T8 | P1–P2 | libros, datos.gov.co | **Pendiente**, requiere las fuentes |
+| T7 | Q1–Q8 en el capítulo | `ensamblado/cap4/templates_*.html`, `chapter.js` y reensamblado | **Hecho** el 2026-10-27 por encargo de Javier (sección 9) |
+| T8 | P1–P2 | libros, datos.gov.co | **Pendiente**; P2 avanzó (sección 9) pero no está cerrado contra la revista |
 | T9 | Propuestas de la sección 4 en el verificador | `verifica_cifras_cap4.py` | **Pendiente**, sin prioridad fijada |
 
 ## 6. Criterios de aceptación
@@ -181,18 +184,17 @@ hace fallar el guion (probado con mutaciones el 2026-09-29).
   diapositivas, 43 de contenido con notas); la escala no se repitió el 2026-10-27, solo la
   reconstrucción.
 - El HTML sale de la fuente sin diferencias: **cumplido** el 2026-10-27.
-- Las diapositivas no contradicen el capítulo sin decirlo: **cumplido**; lo que difiere está en las
-  notas y en Q1–Q8.
+- Las diapositivas no contradicen el capítulo sin decirlo: **cumplido**. Tras la sección 9 ya no
+  difieren en Q1–Q8; las notas dicen qué decía antes el capítulo.
 - Cero errores de consola y de MathJax en las 50: **no consta** en los commits; la comprobación de la
   primera versión (47 diapositivas, 2026-09-29) no se repitió sobre la actual.
 
 ## 7. Riesgos y decisiones abiertas
 
-- **Q1–Q8 en el capítulo.** Mientras el capítulo diga «cinco modelos» y las diapositivas «siete», un
-  estudiante que lea los dos verá una contradicción que solo explica la nota del presentador. La
-  decisión es suya: corregir el capítulo (y la pregunta de autoevaluación de M7, que tiene la
-  respuesta «cinco»), o dejarlo como está y que la clase lo diga. Las correcciones al capítulo pasan
-  por `ensamblado/cap4/` y se reensamblan 4 → 5 → 6, como en [[PLAN_Auditoria_Cap4]].
+- **Q1–Q8 en el capítulo.** *(Resuelto el 2026-10-27: Javier pidió corregir el capítulo; ver sección 9.)*
+  Antes, mientras el capítulo dijera «cinco modelos» y las diapositivas «siete», un estudiante que
+  leyera los dos habría visto una contradicción que solo explicaba la nota del presentador. Las
+  correcciones pasan por `ensamblado/cap4/` y se reensamblan 4 → 5 → 6, como en [[PLAN_Auditoria_Cap4]].
 - **Verificar no es auditar.** El verificador comprobó cifras y no la redacción, y H1–H7 aparecieron
   en una segunda lectura. Una tercera, hecha por alguien que no haya visto ni el capítulo ni las
   diapositivas, es la forma de comprobar que no queda un H8.
@@ -207,14 +209,49 @@ del capítulo, en `c3239a4`.
 **Verificado:** el 2026-10-27, la reconstrucción y el verificador (sección 2). El 2026-09-29, según el
 mensaje de `fd92bd1`, las 50 diapositivas a ≥ 88 % de escala.
 
-**No aplicado, a propósito:**
+**No aplicado en esa ronda, a propósito:** Q1–Q8 en el capítulo y el título de Cobb. Q1–Q8 se aplicó
+en la segunda ronda (sección 9); Cobb quedó a medias.
 
-- Q1–Q8 en el capítulo (sección 7).
-- Cobb: el título en singular o plural queda como «comprobarlo» (P2).
+**Pendiente tras la segunda ronda:** P1, la parte de P2 que exige la revista (T8) y T9. P3 es una
+limitación, no una tarea.
 
-**Pendiente, fuera de esta ronda:** P1, P2, Q1–Q8 (T7), T8 y T9. P3 es una limitación, no una tarea.
+## 9. Segunda ronda (2026-10-27): Q1–Q8 corregidos en el capítulo
 
-## 9. Enlaces
+Javier pidió corregir el capítulo. Se editaron las fuentes (`ensamblado/cap4/templates_1_3.html`,
+`templates_7_9.html`, `templates_10.html` y `chapter.js`) y se reensambló el capítulo con
+`ensambla_cap4.py`; no se tocó `Htmls_Series/capitulo-4-modelos-arima.html` a mano.
+
+| # | Dónde | Quedó |
+|---|---|---|
+| Q1 | M7 (tabla, nota y autoevaluación) y resumen del Nilo en M10 | La tabla suma el 6.º (ARIMA(2,1,1), 1269.322, +1.81) y el 7.º (ARIMA(1,1,2), 1269.348, +1.84). Título de la nota: «Siete modelos a menos de 2 puntos de AICc»; «siete candidatos». La pregunta pasa del quinto al séptimo clasificado (1269.348; distancia 1.84), con sus opciones y retroalimentaciones; la respuesta correcta sigue siendo la misma |
+| Q2 | M1 | «Incluye al método de Holt con tendencia, con restricciones sobre los coeficientes». La fila del suavizamiento exponencial simple no se tocó |
+| Q3 | M3 | Sustituye «potencias distintas» por el experimento: ARIMA(1,1,1) del Nilo con raíz unitaria verdadera, 1 000 réplicas, semilla 2026, nivel 5 %: `PP.test` la rechaza en el 100 % y `adf.test` con $k = 4$ en el 51.3 %. Se repitió en R 4.3.3 con el mismo resultado |
+| Q4 | M10 | El ARIMA(0,1,5) es el mejor con $p + q \le 5$; con una búsqueda más amplia ($p, q \le 8$) gana el ARIMA(8,1,3) con deriva y $\hat\rho_{12} = 0.437$. El «haría falta $q = 24$» pasa a «un orden altísimo, con dos docenas de parámetros (no se ajustó un modelo de ese orden)». Las dos $\hat\rho_{12}$ (0.7245 y 0.4370) se repitieron en R 4.3.3 |
+| Q5 | M10 | «Compatible con una caminata aleatoria». Los 192 modelos son los de la búsqueda con parte estacional permitida; «sin ella son 42». Es lo que dice el JSON de R 4.6; el 150 de las diapositivas es la resta 192 − 42 y el capítulo no lo usa |
+| Q6 | M2 | «Su aportación fue el método —la familia ya existía, aunque ellos también la sistematizaron y fijaron cómo identificarla con la ACF y la PACF—». Es la misma afirmación que ya traen las notas de la diapositiva (H13), que no cita libro |
+| Q7 | Lecturas | «conditional solution» en singular, según `?Nile` (R 4.3.3): «conditional solution to a change-point problem». **No se abrió la página de *Biometrika* ni Crossref** (la red las bloquea). El capítulo conserva «changepoint», sin guion, sin comprobar |
+| Q8 | M8 | «Mínimo de varianza.» sin «Correcto.» |
+
+**Cambios en las diapositivas, solo de notas y de la línea «Definición» de la diapositiva de las equivalencias (Holt):** Holt, M7, M8, Q3,
+Q4, 192 y Cobb dejan de decir que el capítulo conserva el texto antiguo y cuentan qué decía antes.
+
+**Comprobado:**
+
+- Antes de editar, `ensambla_cap4.py` reprodujo el capítulo byte a byte (`git status` limpio). Después
+  de editar, el diff del capítulo publicado es exactamente la suma de los de las fuentes
+  (51 líneas = 37 de plantillas + 14 de `chapter.js`).
+- `ensambla_cap5.py` y `ensambla_cap6.py` se reejecutaron y no cambian ni el 5 ni el 6.
+- En Chrome sin ventana (KaTeX y Chart.js desde npm local; Tailwind sustituido por un objeto vacío, así
+  que **no** se juzgó el diseño): se cargaron los 12 módulos, 0 `.katex-error`, 0 errores de página, y
+  se leyó el texto renderizado de cada pasaje corregido.
+- Deck: se reconstruye (50 diapositivas, todas ≥ 88 %), y `verifica_cifras_cap4.py` da 445
+  comprobaciones, 441 verificadas, 4 marcadas `[SIN VERIFICAR]`, 0 no coinciden.
+
+**No se hizo:** no se abrió el capítulo en un navegador con diseño completo; no se repitió R 4.6 (los
+valores de H2 y de la búsqueda de 192 vienen de su JSON); no se tocó la afirmación sobre α = 1 + θ de
+la fila del suavizamiento exponencial, que H12 matiza solo en las diapositivas.
+
+## 10. Enlaces
 
 - Precedente: [[PLAN_Auditoria_Cap4]] (la auditoría del capítulo)
 - Diapositivas: `Htmls_Series/diapositivas/` y su [README](Htmls_Series/diapositivas/README.md)

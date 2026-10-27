@@ -101,7 +101,7 @@ Verificación: φ̂ = 0.2544 sale del ajuste ARIMA(1,1,1) del Nilo (J). 1.2544, 
 | ARIMA(\(0,1,1\)) | IMA(1,1) | Equivale al suavizamiento exponencial simple, con \(\alpha=1+\theta\) (signo de R) |
 | ARIMA(\(0,2,2\)) | IMA(2,2) | Incluye al método de Holt con tendencia, con restricciones sobre los coeficientes |
 
-<kbd>Definición</kbd> Equivalencias tomadas del capítulo; el capítulo dice «equivale» para Holt, y con más precisión es un caso particular del IMA(2,2). <kbd>Interpretación</kbd> Para esos métodos no hay dos teorías, hay una: los criterios de información, el diagnóstico y los intervalos del capítulo también les sirven.
+<kbd>Definición</kbd> Equivalencias tomadas del capítulo; Holt es un caso particular del IMA(2,2). <kbd>Interpretación</kbd> Para esos métodos no hay dos teorías, hay una: los criterios de información, el diagnóstico y los intervalos del capítulo también les sirven.
 
 <small>Fuente: C Módulo 1 (equivalencias no contrastadas con los libros)</small>
 
@@ -249,7 +249,7 @@ Un d mal elegido no produce un modelo un poco peor: produce uno cuyos criterios 
 ???
 Las pruebas no contrastan lo mismo: ADF y PP parten de la raíz unitaria (PP corrige la autocorrelación de forma no paramétrica); KPSS invierte la hipótesis nula. La caída de la varianza de d = 0 a d = 1 es llamativamente pequeña, un 1.3 %: aviso de que algo no encaja con la historia habitual de la raíz unitaria. El Módulo 8 lo destapa.
 
-Verificación: las cifras de la tabla están en J y se recalcularon en R (adf.test, kpss.test, PP.test). Detalle: Módulo 3. Sobre el PP: con este mismo ARIMA(1,1,1) simulado con raíz unitaria verdadera (1 000 réplicas), `PP.test` rechaza el 100 % de las veces y `adf.test` con k = 4, el 51.3 %; con un MA fuerte y negativo (θ̂ ≈ −0.87) el PP rechaza casi siempre, así que su −6.690 apenas informa.
+Verificación: las cifras de la tabla están en J y se recalcularon en R (adf.test, kpss.test, PP.test). Detalle: Módulo 3. Sobre el PP: con este mismo ARIMA(1,1,1) simulado con raíz unitaria verdadera (1 000 réplicas), `PP.test` rechaza el 100 % de las veces y `adf.test` con k = 4, el 51.3 %; con un MA fuerte y negativo (θ̂ ≈ −0.87) el PP rechaza casi siempre, así que su −6.690 apenas informa. El capítulo decía «potencias distintas» y ahora trae este mismo experimento (también se repitió en R 4.3.3: 100 % y 51.3 %).
 
 ## Las tres versiones de `ndiffs` no coinciden en el Nilo {columnas=1:1}
 
@@ -502,7 +502,7 @@ Verificación: los 18 y 42 modelos en J y R. La raíz AR del (2,1,2) se recalcul
 <small>Contexto: el Nilo, búsqueda exhaustiva (`stepwise = FALSE`). Fuente: J `nilo.hyndman_khandakar` · R</small>
 
 ???
-Pregunta de la autoevaluación del módulo 7: «auto.arima devuelve el (1,1,1) con 1267.507 y el quinto tiene 1269.216, ¿qué se concluye?». Respuesta: que hay varios modelos prácticamente indistinguibles y conviene decirlo en vez de presentar un único ganador. Ojo: el capítulo y su autoevaluación se detienen en el quinto (a 1.71 puntos); con la misma regla de 2 puntos, la búsqueda exhaustiva deja siete, y los dos que faltan son el (2,1,1) y el (1,1,2). Opinión (regla de referencia habitual): diferencias menores que 2 «no distinguen modelos». Tres cosas que auto.arima no hace: no mira el gráfico (elige d con KPSS), no garantiza el óptimo (explora un vecindario) y no sabe si el modelo tiene sentido.
+Pregunta de la autoevaluación del módulo 7: «auto.arima devuelve el (1,1,1) con 1267.507 y el séptimo tiene 1269.348, ¿qué se concluye?». Respuesta: que hay varios modelos prácticamente indistinguibles y conviene decirlo en vez de presentar un único ganador. El capítulo y su autoevaluación se detenían en el quinto (a 1.71 puntos) y se corrigieron: con la regla de 2 puntos, la búsqueda exhaustiva deja siete, y los dos que faltaban eran el (2,1,1) y el (1,1,2). Opinión (regla de referencia habitual): diferencias menores que 2 «no distinguen modelos». Tres cosas que auto.arima no hace: no mira el gráfico (elige d con KPSS), no garantiza el óptimo (explora un vecindario) y no sabe si el modelo tiene sentido.
 
 Verificación: los cinco primeros AICc y sus diferencias en J y R; el 6.º y el 7.º y las diferencias con todos los decimales, en `verifica_directo_r46_cap4.R` (R 4.6, 42 modelos evaluados, 7 a menos de 2 puntos). Detalle: Módulo 7.
 
@@ -533,7 +533,7 @@ Si \(w_t=\nabla y_t\) ya es ruido blanco, una diferencia más produce un MA(1) c
 ???
 No es una metáfora, es álgebra, y se ve en el número: con θ̂ = −1 el MA(1) ajustado sobre ∇²y da σ̂² = 28 268.34, exactamente Var(∇y): el modelo recuperó la serie con una sola diferencia. La rejilla no solo premia modelos con un d equivocado: premia los que son numéricamente degenerados. Matiz: la igualdad ∇²y = ε_t − ε_{t−1} es exacta solo si ∇y es ruido blanco; con ρ̂₁ = −0.626 o −0.719, θ̂ = −1 es además la frontera del MA(1), porque |ρ₁| ≤ 0.5 para cualquier MA(1).
 
-Verificación: la tabla completa en J (`sobrediferenciacion`) y los cuatro modelos degenerados en `rejilla` (raíces MA). La tabla del capítulo rotula d = 1 «Mínimo de varianza. Correcto.»; aquí se dejó solo «Mínimo de varianza» porque el propio Módulo 8 dice que ese mínimo es por poco margen. Detalle: Módulo 8.
+Verificación: la tabla completa en J (`sobrediferenciacion`) y los cuatro modelos degenerados en `rejilla` (raíces MA). La tabla del capítulo rotulaba d = 1 «Mínimo de varianza. Correcto.»; se corrigió a «Mínimo de varianza», como aquí, porque el propio Módulo 8 dice que ese mínimo es por poco margen. Detalle: Módulo 8.
 
 ## El escalón de 1899 ajusta casi 25 puntos de AICc mejor que cualquier ARMA del Nilo
 
@@ -714,7 +714,7 @@ Los dos polinomios del (2,1,2) son casi el mismo: (1 − 0.661B + 0.992B²)∇y 
 
 Coincide con lo que predice la teoría financiera —si el tipo de cambio fuera predecible, alguien ya habría arbitrado la diferencia— y con lo que encontró el Capítulo 3. La caminata reaparece en el Capítulo 6 como método naïve, la referencia que hay que batir.
 
-Verificación: 1703.38, 1708.83, 2.56, raíces, 192 modelos (150 con parte estacional y 42 sin ella, igual que en el Nilo), p-valores y δ̂ en J y R (los estadísticos t del (2,1,2) degenerado difieren entre versiones de R y no se usan). Detalle: Módulo 10.
+Verificación: 1703.38, 1708.83, 2.56, raíces, 192 modelos (150 con parte estacional y 42 sin ella, igual que en el Nilo); el capítulo decía «búsqueda exhaustiva sobre 192 modelos» sin distinguir y ahora dice que 42 son sin parte estacional, p-valores y δ̂ en J y R (los estadísticos t del (2,1,2) degenerado difieren entre versiones de R y no se usan). Detalle: Módulo 10.
 
 ## El diagnóstico manda sobre el criterio {.idea etiqueta="Opinión"}
 
@@ -786,7 +786,7 @@ El no estacional usa 143 observaciones efectivas; el *airline*, 131. Decide el *
 <small>Contexto: `AirPassengers` en log (\(n=144\)), mensual y con estacionalidad evidente. Fuente: J `puente_estacional` · R regenerado</small>
 
 ???
-«El mejor no estacional» lo es con p + q ≤ 5, el tope por defecto de auto.arima. Con una búsqueda más amplia gana otro modelo (un ARIMA(8,1,3) con deriva) y ρ̂₁₂ sigue siendo grande. Cubrir los rezagos 12 y 24 subiendo q exigiría un orden altísimo (el capítulo habla de q = 24, con dos docenas de parámetros; ese orden concreto no se reprodujo); el modelo airline, diferenciando también en el rezago 12, lo hace con dos. Es la misma regla del Módulo 6, ahora con la diferenciación estacional dentro.
+«El mejor no estacional» lo es con p + q ≤ 5, el tope por defecto de auto.arima. Con una búsqueda más amplia gana otro modelo (un ARIMA(8,1,3) con deriva) y ρ̂₁₂ sigue siendo grande. Cubrir los rezagos 12 y 24 subiendo q exigiría un orden altísimo (el capítulo hablaba de q = 24, con dos docenas de parámetros; ese orden concreto no se reprodujo y el capítulo ya lo dice así); el modelo airline, diferenciando también en el rezago 12, lo hace con dos. Es la misma regla del Módulo 6, ahora con la diferenciación estacional dentro.
 
 Verificación: Q, p y el ρ̂₁₂ del airline en J y R; 143 y 131 son n − d y n − d − 12 (144 − 1 y 144 − 1 − 12). Búsqueda ancha y mejor por defecto en `verifica_directo_r46_cap4.R` (R 4.6). Detalle: Módulo 10, puente.
 
@@ -825,4 +825,4 @@ El Módulo 11 del material es un simulacro del quiz del capítulo 3 y los módul
 
 Lecturas del capítulo (las secciones y capítulos no se contrastaron con los libros): FPP3, secciones 9.5 a 9.8 <mark>[SIN VERIFICAR]</mark>; Shumway y Stoffer (2017), cap. 3 <mark>[SIN VERIFICAR]</mark>; Box, Jenkins, Reinsel y Ljung (2015), caps. 4 a 8 <mark>[SIN VERIFICAR]</mark>; Hyndman y Khandakar (2008), *J. Stat. Softw.* 27(3); Cobb (1978), *Biometrika* 65, 243–251.
 
-Verificación: Hyndman–Khandakar: volumen 27(3) según el DOI de `citation("forecast")`. Cobb (1978): `?Nile` da *Biometrika* 65(2), 243–251, y el capítulo escribe lo mismo. La cifra de cada diapositiva está contrastada en `verificacion/verificacion_cifras.md`, con enlace desde aquí. El capítulo escribe el título de Cobb con «conditional solutions» en plural; el de Biometrika parece ser «conditional solution», en singular (comprobarlo).
+Verificación: Hyndman–Khandakar: volumen 27(3) según el DOI de `citation("forecast")`. Cobb (1978): `?Nile` da *Biometrika* 65(2), 243–251, y el capítulo escribe lo mismo. La cifra de cada diapositiva está contrastada en `verificacion/verificacion_cifras.md`, con enlace desde aquí. El capítulo escribía el título de Cobb con «conditional solutions» en plural; `?Nile` (R 4.3.3) da «conditional solution to a change-point problem», en singular, y el capítulo se corrigió al singular. La página de *Biometrika* no se pudo abrir desde aquí, así que la grafía «change-point» o «changepoint» sigue sin comprobar contra la revista.
