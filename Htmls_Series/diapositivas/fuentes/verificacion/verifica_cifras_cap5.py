@@ -247,13 +247,6 @@ PRON = "airpassengers.pronostico"
 TRMC = "trm_contraejemplo"
 UA = "usaccdeaths"
 PUENTE = "puente_estacional.no_estacional"
-CR = lambda y: CALC_(lambda: 100 * math.log(R["m11"]["crecimiento_anual"][str(y)] / 100 + 1), f"100·log(1 + crecimiento {y}) desde directo_cap5.json")  # noqa: E731
-
-
-def crec_log(clave, campo):
-    return CALC_(lambda: 100 * math.log(1 + R["m11"][clave][campo] / 100), f"100·log(1 + {clave}.{campo}/100) desde directo_cap5.json")
-
-
 def ANI_(nombre):
     return BOOL_("CALC", lambda: (AQUI.parent / "recursos/cap5" / nombre).read_text(encoding="utf-8") == GEN.texto(GEN.construye()[nombre]),
                  f"recursos/cap5/{nombre} es idéntico a lo que genera genera_animados_cap5.py desde J")
@@ -279,7 +272,8 @@ permite(K, "12 24 36", "rezagos")
 C(K, "0.7245", J4_(PUENTE + ".acf_12"))
 C(K, "0.6727", J4_(PUENTE + ".acf_24"))
 C(K, "0.163", J4_(PUENTE + ".banda"), CALC_(lambda: banda(144), "1.96/√144"))
-C(K, "222.4", J4_(PUENTE + ".ljung_box_24.Q"))
+C(K, "222.4", J4_(PUENTE + ".ljung_box_24.Q"), CH_("$Q = 222.4$"))
+C(K, "0,1,5", CH_("ARIMA($0,1,5$): cinco términos MA"), BOOL_("C", lambda: "238.64" not in CAP, "la nota del Módulo 7 ya no cita el AICc del ARIMA(0,1,1)"), kind="capítulo")
 C(K, "-0.0515", J_(DIAG + ".acf.11"), R_("m7.res_r12"))
 C(K, "0.233", J_(DIAG + ".lb24_p"), R_("m7.lb24"))
 C(K, "1949", R_("datos.ap_inicio"), DOC_("airpassengers", "1949 to 1960"))
@@ -312,7 +306,7 @@ permite(K, "12 52 11", "definición: m = 12 mensual, 52 semanal; m = 11 del ejem
 K = "Con datos mensuales la estacionalidad está en 12"
 C(K, "0.762", J_(FIR + ".airpassengers_log.acf.11"), CALC_(lambda: acf(LAP, 12), "ACF de log(AirPassengers), rezago 12"))
 C(K, "0.520", J_(FIR + ".airpassengers_log.acf.23"), CALC_(lambda: acf(LAP, 24), "rezago 24"))
-C(K, "0.521", CH_("0.521"), kind="capítulo (doble redondeo)")
+C(K, "0.520", CH_("$0.520$"), kind="capítulo")
 C(K, "0.5205", J_(FIR + ".airpassengers_log.acf.23"))
 C(K, "0.52049", CALC_(lambda: acf(LAP, 24), "ACF exacta en 24"))
 C(K, "0.319", J_(FIR + ".airpassengers_log.acf.35"), CALC_(lambda: acf(LAP, 36), "rezago 36"))
@@ -338,8 +332,8 @@ C(K, "137", J_(FIR + ".trm_diff.n"))
 C(K, "1.96", DEF_("cuantil 0.975 de la normal"), kind="convención")
 for v, x, k in (("0.52049", LAP, 24), ("0.70747", UAD, 1), ("0.85546", CO2, 24), ("0.63649", TRM, 12)):
     C(K, v, CALC_(lambda x=x, k=k: acf(x, k), f"ACF exacta en {k}"))
-for v in ("0.521", "0.708", "0.856", "0.637", "-0.003"):
-    C(K, v, CH_(v.lstrip("-")), kind="capítulo (doble redondeo)")
+for v, aguja in (("0.520", "$0.520$"), ("0.707", "$0.707$"), ("0.855", "$0.855$"), ("0.636", "$0.636$"), ("-0.002", "{-0.002}")):
+    C(K, v, CH_(aguja), kind="capítulo")
 permite(K, "12", "múltiplos de 12")
 C(K, "-0.00245", CALC_(lambda: acf(DTRM, 12), "ACF de ∇TRM en 12"), R_("m1.trm_diff.1"))
 C(K, "-0.0024", CH_("-0.0024"), kind="capítulo (código en vivo)")
@@ -347,7 +341,7 @@ C(K, "-0.0025", J_(TRMC + ".acf12"))
 
 K = "Es estacional una serie con"
 C(K, "0.636", J_(FIR + ".trm.acf.11"), CALC_(lambda: acf(TRM, 12), "ACF de la TRM en 12"))
-C(K, "0.637", CHQ_("0.637"), kind="capítulo (doble redondeo)")
+C(K, "0.636", CHQ_("= 0.636$, muy por encima"), kind="capítulo")
 C(K, "0.6365", J_(FIR + ".trm.acf.11"))
 C(K, "0.63649", CALC_(lambda: acf(TRM, 12), "ACF exacta de la TRM en 12"))
 C(K, "138", R_("datos.trm_n"))
@@ -494,6 +488,7 @@ C(K, "0.42298", R_("m4.ar1_sar1.r11"))
 C(K, "0.42180", R_("m4.ar1_sar1.r13"))
 C(K, "-0.23446", R_("m4.ar1_sma1.r11"))
 C(K, "-0.23483", R_("m4.ar1_sma1.r13"))
+C(K, "-0.234", CH_("{-0.234}"), kind="capítulo")
 C(K, "0.14707", R_("m4.airline.r11"))
 C(K, "0.14705", R_("m4.airline_redondeado.r11"), CH_("0.14705"))
 C(K, "0.1471", R_("m4.airline.producto"))
@@ -611,7 +606,7 @@ K = "Pasos 0 y 1 del caso"
 C(K, "1.848", R_("m7.rango_relativo"), CH_("1.848"))
 C(K, "0.762", J_(FIR + ".airpassengers_log.acf.11"))
 C(K, "0.520", J_(FIR + ".airpassengers_log.acf.23"), CALC_(lambda: acf(LAP, 24), "ACF exacta en 24"))
-C(K, "0.521", CH_("0.521"), kind="capítulo (doble redondeo)")
+C(K, "0.520", CH_("\\hat\\rho_{24}=0.520$"), kind="capítulo")
 C(K, "0.52049", CALC_(lambda: acf(LAP, 24), "ACF exacta en 24"))
 C(K, "0.319", J_(FIR + ".airpassengers_log.acf.35"))
 C(K, "0.714", J_(COMB + ".d0_D1.acf1"))
@@ -858,6 +853,7 @@ C(K, "1958", BOOL_("J", lambda: get(J, COMP + ".corte") == "1958-12", "corte"), 
 C(K, "1959", BOOL_("J", lambda: get(J, COMP + ".fechas_prueba.0") == "1959-01", "primera fecha de prueba"), kind="fecha")
 C(K, "1960", BOOL_("J", lambda: get(J, COMP + ".fechas_prueba.23") == "1960-12", "última fecha de prueba"), kind="fecha")
 C(K, "orden", BOOL_("J", lambda: get(J, COMP + ".orden_rmse")[:4] == ["ets_log", "armonica", "stl_arima", "sarima"], "orden por RMSE: ETS log, armónica, STL, SARIMA"), kind="orden")
+C(K, "pregunta 8", CHQ_("segunda por RMSE ($19.51$"), kind="capítulo")
 permite(K, "12", "mes (1958-12)")
 
 K = "Con una sola partición, el modelo de once"
@@ -874,7 +870,7 @@ C(K, "auto", BOOL_("J", lambda: get(J, COMP + ".modelos.auto_arima.rmse") == get
 C(K, "11", CALC_(lambda: 12 - 1, "valores libres de la estacionalidad (m − 1)"), CH_("valores de la estacionalidad"))
 C(K, "stl 2", BOOL_("J", lambda: get(J, f"{COMP}.modelos.stl_arima.n_par") == 2, "n_par del STL + ARIMA = 2 en J"),
   BOOL_("R", lambda: R["m11"]["particion"]["stl_arima"]["n_par"] == 2, "n_par = 2 en R"), kind="dato")
-C(K, "16.13", CH_("16.13"), kind="capítulo (doble redondeo)")
+C(K, "16.12", CH_("$16.12$"), kind="capítulo")
 C(K, "16.125", J_(f"{COMP}.modelos.ets_log.mae"))
 C(K, "16.1249", R_("m11.particion.ets_log.mae"))
 C(K, "1,1,0", BOOL_("R", lambda: R["m11"]["particion"]["stl_arima"]["modelo"] == "ARIMA(1,1,0) with drift", "STL + ARIMA sobre el entrenamiento"), kind="modelo")
@@ -890,19 +886,19 @@ C(K, "1954", BOOL_("J", lambda: get(J, OM + ".primer_origen") == "1954-12", "pri
 C(K, "85", CALC_(lambda: 100 - max(v for k, v in get(J, OM + ".porcentaje_gana_al_sarima").items() if k != "sarima"), "100 − el peor porcentaje"), tol=0.5, nota="«más del 85 %»: 85.2")
 C(K, "85.2", CALC_(lambda: 100 - get(J, OM + ".porcentaje_gana_al_sarima.ets_orig"), "100 − 14.8"))
 C(K, "12", J_(OM + ".horizonte"))
-C(K, "22.39", CHQ_("22.39"), kind="capítulo (doble redondeo)")
+C(K, "22.38", CH_("$22.38$"), CHQ_("frente a $22.38$"), kind="capítulo")
 C(K, "22.385", J_(OM + ".rmse_medio.armonica"))
 C(K, "22.3847", R_("m11.om12.rmse_medio.armonica"))
 
 K = "La partición cayó justo detrás del frenazo"
 C(K, "1958", BOOL_("J", lambda: get(J, COMP + ".corte") == "1958-12", "corte 1958-12"), kind="fecha")
-C(K, "3.4", CR(1958))
-C(K, "6.0", CALC_(lambda: min(100 * math.log(1 + v / 100) for y, v in R["m11"]["crecimiento_anual"].items() if y != "1958"), "mínimo de 100·Δlog fuera de 1958"))
-C(K, "19.8", CALC_(lambda: max(100 * math.log(1 + v / 100) for y, v in R["m11"]["crecimiento_anual"].items() if y != "1958"), "máximo de 100·Δlog fuera de 1958"))
-C(K, "4.6", crec_log("sarima_pron", "f59_vs_obs58"))
-C(K, "6.7", crec_log("sarima_pron", "f60_vs_f59"))
-C(K, "11.7", CR(1959))
-C(K, "10.6", CR(1960))
+C(K, "3.4", R_("m11.crecimiento_anual.1958"))
+C(K, "6.2", R_("m11.crec_otros_min"))
+C(K, "21.8", R_("m11.crec_otros_max"))
+C(K, "4.7", R_("m11.sarima_pron.f59_vs_obs58"))
+C(K, "6.9", R_("m11.sarima_pron.f60_vs_f59"))
+C(K, "12.4", R_("m11.crecimiento_anual.1959"))
+C(K, "11.2", R_("m11.crecimiento_anual.1960"))
 C(K, "39.45", R_("m11.sesgo_sarima"), R_("m11.mae_sarima"), J_(COMP + ".modelos.sarima.mae"))
 C(K, "24", R_("m11.errores_positivos"))
 C(K, "14", R_("m11.om12.sarima_no_es_el_mejor"))
@@ -911,18 +907,13 @@ for y, et in ((1957, "1957-05"), (1959, "1959-01")):
     C(K, str(y), BOOL_("R", lambda et=et: et in R["m11"]["om12"]["origenes_no_mejor"], f"{et} es uno de los orígenes en que el SARIMA no es el mejor"), kind="fecha")
 C(K, "61", R_("m11.om12.n"), J_(OM + ".n_origenes"))
 C(K, "1960", DEF_("año pronosticado"), kind="fecha")
-C(K, "100", DEF_("factor de la diferencia logarítmica"), kind="unidad")
-C(K, "8.9", crec_log("ets_log_pron", "f59_vs_obs58"))
-C(K, "12.1", crec_log("ets_log_pron", "f60_vs_f59"))
-C(K, "10.1", crec_log("armonica_pron", "f59_vs_obs58"))
-C(K, "12.4", crec_log("armonica_pron", "f60_vs_f59"))
-C(K, "6.2", R_("m11.crec_otros_min"))
-C(K, "21.8", R_("m11.crec_otros_max"))
-C(K, "11.2", R_("m11.crecimiento_anual.1960"))
-C(K, "4.7", R_("m11.sarima_pron.f59_vs_obs58"))
-C(K, "6.9", R_("m11.sarima_pron.f60_vs_f59"))
-for y in ("3.4", "11.7", "10.6", "4.6", "6.7", "8.9", "12.1", "10.1", "12.4", "6.0", "19.8"):
-    C(K, y, CH_(y), kind="capítulo")
+C(K, "9.4", R_("m11.ets_log_pron.f59_vs_obs58"))
+C(K, "12.8", R_("m11.ets_log_pron.f60_vs_f59"))
+C(K, "10.6", R_("m11.armonica_pron.f59_vs_obs58"))
+C(K, "13.1", R_("m11.armonica_pron.f60_vs_f59"))
+for v, aguja in (("3.4", "$3.4\\,\\%$"), ("6.2", "$6.2$"), ("21.8", "$21.8\\,\\%$"), ("4.7", "$4.7\\,\\%$"), ("6.9", "$6.9\\,\\%$"),
+                 ("12.4", "$12.4$"), ("11.2", "$11.2\\,\\%$"), ("9.4", "$9.4$"), ("12.8", "$12.8\\,\\%$"), ("10.6", "$10.6$"), ("13.1", "$13.1\\,\\%$")):
+    C(K, v, CH_(aguja), kind="capítulo")
 
 K = "A 24 meses, SARIMA y ETS"
 C(K, "49", R_("m11.om24.n"))
@@ -958,6 +949,8 @@ C(K, "3.9", CH_("Cap. 3.9"), kind="capítulo (sin contrastar con el libro)")
 C(K, "10.1", WEB_("otexts.com/fpp3: § 10.1 «Estimation» y § 10.2 «Regression with ARIMA errors using fable» (2026-10-27)"), kind="sección de FPP3")
 C(K, "10.2", WEB_("ídem"), kind="sección de FPP3")
 C(K, "9.1", WEB_("otexts.com/fpp3: el ejemplo A10 (antidiabéticos) está en § 9.1, «Seasonal differencing» (2026-10-27)"), kind="sección de FPP3")
+C(K, "H02", CH_("el caso de los corticoides (H02)"), kind="capítulo")
+C(K, "armónica dinámica", CH_("§ 7.4, § 10.5 Regresores de calendario y regresión armónica dinámica"), kind="capítulo")
 C(K, "2026", DEF_("año de la consulta"), kind="fecha")
 permite(K, "10 27", "fecha de la consulta (2026-10-27)")
 sin_verificar(K, "Shumway y Stoffer, cap. 3.9 · Box, Jenkins, Reinsel y Ljung, cap. 9", "los libros no están en el repositorio")
@@ -967,14 +960,6 @@ sin_verificar(K, "Shumway y Stoffer, cap. 3.9 · Box, Jenkins, Reinsel y Ljung, 
 # MOTOR
 # ===========================================================================
 OBSERVACIONES = [
-    ("Ocho cifras del capítulo están doblemente redondeadas: se redondearon desde el valor ya redondeado de J (que acaba en 5) y no desde el exacto.",
-     "M1 (tabla de la firma): ρ̂₂₄ de log(AirPassengers) 0.521 → 0.520 (exacto 0.52049; también en el M7); ρ̂₁ de USAccDeaths 0.708 → 0.707 (0.70747); ρ̂₂₄ de co2 0.856 → 0.855 (0.85546); ρ̂₁₂ de la TRM en niveles 0.637 → 0.636 (0.63649; también en la pregunta 1 de la autoevaluación); ρ̂₁₂ de ∇TRM −0.003 → −0.002 (−0.00245). M4: ρ₁₁ del AR(1)×SMA(1) −0.235 → −0.234 (−0.23446). M11: MAE del ETS sobre el logaritmo 16.13 → 16.12 (16.1249); RMSE medio de la armónica en 61 orígenes 22.39 → 22.38 (22.3847; también en la pregunta 8). Las diapositivas usan los exactos y lo dicen en sus notas. Ninguna conclusión cambia."),
-    ("Módulo 11, autoevaluación (pregunta 8): el enunciado dice que en la partición única la regresión armónica es «primera (19.51)».",
-     "Por RMSE la primera es el ETS sobre el logaritmo (19.43; J `orden_rmse`); la armónica gana solo en MAE y MAPE. La explicación de la segunda opción afirma que «las tres métricas dan el mismo orden», y no es así; y la de la opción correcta atribuye el resultado a un «crecimiento especialmente regular» de 1959–1960, cuando el texto del módulo lo atribuye al frenazo de 1958. La diapositiva no proyecta esa pregunta tal cual. El texto interno de J (`origen_movil.nota`) arrastra la misma frase («corona a la regresión armónica»)."),
-    ("Módulo 11: los crecimientos anuales (3.4; entre 6.0 y 19.8; 11.7 y 10.6; 4.6 y 6.7; 8.9 y 12.1; 10.1 y 12.4) se escriben con «%», pero son diferencias logarítmicas del total anual, × 100.",
-     "En porcentaje: 1958 creció 3.4 %, los demás años entre 6.2 y 21.8 %, lo observado fue 12.4 y 11.2 %, y el airline pronosticó 4.7 y 6.9 %. La conclusión no cambia. La diapositiva conserva las cifras del capítulo con la unidad «100 · Δlog»."),
-    ("Módulo 7, nota «El problema del Capítulo 4, cerrado»: dice que el mejor no estacional era un ARIMA(0,1,1) con AICc −238.64 y ρ̂₁₂ = 0.8106, y compara ese AICc con el del airline (−483.21).",
-     "El Módulo 1 (corregido en la auditoría del capítulo 4) dice que el mejor no estacional es el ARIMA(0,1,5), con ρ̂₁₂ = 0.7245; y comparar AICc con distinto D es justo lo que el Módulo 6 prohíbe (143 frente a 131 observaciones). La cifra −238.64 viene de J (`puente_cap4`), que no se actualizó. Las diapositivas usan el ARIMA(0,1,5) y no comparan AICc."),
     ("Módulo 5: ψ₁₂ = 1.0412 y ψ₁₃…₂₃ = 0.8632 en el texto; el bloque de R del Módulo 7 imprime 1.0413 y 0.8633.",
      "Es redondeo: el bloque usa los coeficientes redondeados (−0.4018, −0.5569). Las diapositivas usan los del texto, que coinciden con J."),
     ("Módulo 4: el capítulo da ρ₁₁ = ρ₁₃ = 0.14705 «del modelo ajustado».",
@@ -988,8 +973,8 @@ OBSERVACIONES = [
      "Con statsmodels 0.14.6 la diferencia máxima es 2.4 × 10⁻⁴ (−0.4021 y −0.5571 frente a −0.4018 y −0.5569). Sigue siendo despreciable; depende de la versión. No se proyecta."),
     ("Las dos copias de la TRM llevan fechas de consulta distintas: `cap5_sarima.json` dice «consulta: 2026-07-24» y `datos_series.json` (y el capítulo 4) «2026-07-26».",
      "No afecta a ninguna cifra (las dos son la misma copia de 138 meses), pero conviene unificarlo."),
-    ("Lecturas: el capítulo asocia FPP3 § 10.5 a «regresión dinámica con errores ARIMA» y § 9.9 al «caso de los medicamentos antidiabéticos».",
-     "Comprobado en otexts.com/fpp3 (2026-10-27): § 10.5 es «Dynamic harmonic regression» (la regresión con errores ARIMA está en § 10.1–10.2), y el caso de § 9.9 son los corticoides (H02); los antidiabéticos (A10) salen en § 9.1. Las demás secciones de FPP3 citadas (7.4, 12.1) coinciden."),
+    ("Resueltas en el capítulo el 2026-10-27 (`114b910`) cinco observaciones de la primera pasada: los ocho dobles redondeos (M1, M4, M7, M11 y las preguntas 1 y 8), los «%» de crecimiento del Módulo 11, que eran 100·Δlog y ahora son porcentajes, la nota del puente del Módulo 7, que ahora usa el ARIMA(0,1,5) y no compara AICc entre distintos D, el enunciado y dos explicaciones de la pregunta 8, y las secciones de FPP3 de las lecturas.",
+     "Capítulo y diapositivas dan ahora las mismas cifras, y las comprobaciones de tipo «capítulo» lo exigen. Siguen en J dos textos que el capítulo embebe pero no muestra: `puente_cap4` (el ARIMA(0,1,1) con AICc −238.64) y `origen_movil.nota` («corona a la regresión armónica»)."),
 ]
 
 

@@ -15,14 +15,14 @@ Generado por `verifica_cifras_cap5.py`. Cada fila es una cifra (o afirmación) d
 
 ## Resumen
 
-- Cifras y afirmaciones registradas: **625**
+- Cifras y afirmaciones registradas: **624**
 - Verificadas contra al menos una fuente: **582**
-- Definiciones o convenciones: **43**
+- Definiciones o convenciones: **42**
 - Comprobadas a mano en una fuente pública fuera del repositorio (`WEB`, con fecha): **7**
 - Marcadas `[SIN VERIFICAR]`: **5**
 - No coinciden: **0**
 
-Contrastes por tipo de fuente: C 46, CALC 105, DOC 11, J 321, J3 2, J4 6, PY 10, R 223, WEB 7.
+Contrastes por tipo de fuente: C 54, CALC 94, DOC 11, J 321, J3 2, J4 6, PY 10, R 229, WEB 7.
 
 ## Código proyectado, ejecutado
 
@@ -47,18 +47,14 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 
 ## Observaciones sobre el material (no corregidas en silencio)
 
-1. Ocho cifras del capítulo están doblemente redondeadas: se redondearon desde el valor ya redondeado de J (que acaba en 5) y no desde el exacto. M1 (tabla de la firma): ρ̂₂₄ de log(AirPassengers) 0.521 → 0.520 (exacto 0.52049; también en el M7); ρ̂₁ de USAccDeaths 0.708 → 0.707 (0.70747); ρ̂₂₄ de co2 0.856 → 0.855 (0.85546); ρ̂₁₂ de la TRM en niveles 0.637 → 0.636 (0.63649; también en la pregunta 1 de la autoevaluación); ρ̂₁₂ de ∇TRM −0.003 → −0.002 (−0.00245). M4: ρ₁₁ del AR(1)×SMA(1) −0.235 → −0.234 (−0.23446). M11: MAE del ETS sobre el logaritmo 16.13 → 16.12 (16.1249); RMSE medio de la armónica en 61 orígenes 22.39 → 22.38 (22.3847; también en la pregunta 8). Las diapositivas usan los exactos y lo dicen en sus notas. Ninguna conclusión cambia.
-2. Módulo 11, autoevaluación (pregunta 8): el enunciado dice que en la partición única la regresión armónica es «primera (19.51)». Por RMSE la primera es el ETS sobre el logaritmo (19.43; J `orden_rmse`); la armónica gana solo en MAE y MAPE. La explicación de la segunda opción afirma que «las tres métricas dan el mismo orden», y no es así; y la de la opción correcta atribuye el resultado a un «crecimiento especialmente regular» de 1959–1960, cuando el texto del módulo lo atribuye al frenazo de 1958. La diapositiva no proyecta esa pregunta tal cual. El texto interno de J (`origen_movil.nota`) arrastra la misma frase («corona a la regresión armónica»).
-3. Módulo 11: los crecimientos anuales (3.4; entre 6.0 y 19.8; 11.7 y 10.6; 4.6 y 6.7; 8.9 y 12.1; 10.1 y 12.4) se escriben con «%», pero son diferencias logarítmicas del total anual, × 100. En porcentaje: 1958 creció 3.4 %, los demás años entre 6.2 y 21.8 %, lo observado fue 12.4 y 11.2 %, y el airline pronosticó 4.7 y 6.9 %. La conclusión no cambia. La diapositiva conserva las cifras del capítulo con la unidad «100 · Δlog».
-4. Módulo 7, nota «El problema del Capítulo 4, cerrado»: dice que el mejor no estacional era un ARIMA(0,1,1) con AICc −238.64 y ρ̂₁₂ = 0.8106, y compara ese AICc con el del airline (−483.21). El Módulo 1 (corregido en la auditoría del capítulo 4) dice que el mejor no estacional es el ARIMA(0,1,5), con ρ̂₁₂ = 0.7245; y comparar AICc con distinto D es justo lo que el Módulo 6 prohíbe (143 frente a 131 observaciones). La cifra −238.64 viene de J (`puente_cap4`), que no se actualizó. Las diapositivas usan el ARIMA(0,1,5) y no comparan AICc.
-5. Módulo 5: ψ₁₂ = 1.0412 y ψ₁₃…₂₃ = 0.8632 en el texto; el bloque de R del Módulo 7 imprime 1.0413 y 0.8633. Es redondeo: el bloque usa los coeficientes redondeados (−0.4018, −0.5569). Las diapositivas usan los del texto, que coinciden con J.
-6. Módulo 4: el capítulo da ρ₁₁ = ρ₁₃ = 0.14705 «del modelo ajustado». Con los coeficientes sin redondear es 0.14707; 0.14705 sale con −0.4018 y −0.5569. A cuatro decimales los dos son 0.1471.
-7. Autoevaluación, pregunta 2: la explicación dice «ρ₂ = ρ₁² ≈ 0.36» para el AR(1)×SAR(1). En el proceso multiplicado ρ₂ = 0.3637 y ρ₁² = 0.3619: no es una igualdad, aunque los dos redondean a 0.36.
-8. Autoevaluación, pregunta 6: está etiquetada «módulo 6» y su explicación remite a la lección del Módulo 10. Menor.
-9. Módulo 3: «∇ solo reduce la varianza a la vigésima parte» y «∇₁₂ sola la reduce cincuenta veces». Los cocientes son 17.2 y 51.3. «La vigésima parte» es una aproximación generosa.
-10. Módulo 6, advertencia final: «los coeficientes casi coinciden con los de R (diferencia 6 × 10⁻⁵)» con statsmodels sin `simple_differencing`. Con statsmodels 0.14.6 la diferencia máxima es 2.4 × 10⁻⁴ (−0.4021 y −0.5571 frente a −0.4018 y −0.5569). Sigue siendo despreciable; depende de la versión. No se proyecta.
-11. Las dos copias de la TRM llevan fechas de consulta distintas: `cap5_sarima.json` dice «consulta: 2026-07-24» y `datos_series.json` (y el capítulo 4) «2026-07-26». No afecta a ninguna cifra (las dos son la misma copia de 138 meses), pero conviene unificarlo.
-12. Lecturas: el capítulo asocia FPP3 § 10.5 a «regresión dinámica con errores ARIMA» y § 9.9 al «caso de los medicamentos antidiabéticos». Comprobado en otexts.com/fpp3 (2026-10-27): § 10.5 es «Dynamic harmonic regression» (la regresión con errores ARIMA está en § 10.1–10.2), y el caso de § 9.9 son los corticoides (H02); los antidiabéticos (A10) salen en § 9.1. Las demás secciones de FPP3 citadas (7.4, 12.1) coinciden.
+1. Módulo 5: ψ₁₂ = 1.0412 y ψ₁₃…₂₃ = 0.8632 en el texto; el bloque de R del Módulo 7 imprime 1.0413 y 0.8633. Es redondeo: el bloque usa los coeficientes redondeados (−0.4018, −0.5569). Las diapositivas usan los del texto, que coinciden con J.
+2. Módulo 4: el capítulo da ρ₁₁ = ρ₁₃ = 0.14705 «del modelo ajustado». Con los coeficientes sin redondear es 0.14707; 0.14705 sale con −0.4018 y −0.5569. A cuatro decimales los dos son 0.1471.
+3. Autoevaluación, pregunta 2: la explicación dice «ρ₂ = ρ₁² ≈ 0.36» para el AR(1)×SAR(1). En el proceso multiplicado ρ₂ = 0.3637 y ρ₁² = 0.3619: no es una igualdad, aunque los dos redondean a 0.36.
+4. Autoevaluación, pregunta 6: está etiquetada «módulo 6» y su explicación remite a la lección del Módulo 10. Menor.
+5. Módulo 3: «∇ solo reduce la varianza a la vigésima parte» y «∇₁₂ sola la reduce cincuenta veces». Los cocientes son 17.2 y 51.3. «La vigésima parte» es una aproximación generosa.
+6. Módulo 6, advertencia final: «los coeficientes casi coinciden con los de R (diferencia 6 × 10⁻⁵)» con statsmodels sin `simple_differencing`. Con statsmodels 0.14.6 la diferencia máxima es 2.4 × 10⁻⁴ (−0.4021 y −0.5571 frente a −0.4018 y −0.5569). Sigue siendo despreciable; depende de la versión. No se proyecta.
+7. Las dos copias de la TRM llevan fechas de consulta distintas: `cap5_sarima.json` dice «consulta: 2026-07-24» y `datos_series.json` (y el capítulo 4) «2026-07-26». No afecta a ninguna cifra (las dos son la misma copia de 138 meses), pero conviene unificarlo.
+8. Resueltas en el capítulo el 2026-10-27 (`114b910`) cinco observaciones de la primera pasada: los ocho dobles redondeos (M1, M4, M7, M11 y las preguntas 1 y 8), los «%» de crecimiento del Módulo 11, que eran 100·Δlog y ahora son porcentajes, la nota del puente del Módulo 7, que ahora usa el ARIMA(0,1,5) y no compara AICc entre distintos D, el enunciado y dos explicaciones de la pregunta 8, y las secciones de FPP3 de las lecturas. Capítulo y diapositivas dan ahora las mismas cifras, y las comprobaciones de tipo «capítulo» lo exigen. Siguen en J dos textos que el capítulo embebe pero no muestra: `puente_cap4` (el ARIMA(0,1,1) con AICc −238.64) y `origen_movil.nota` («corona a la regresión armónica»).
 
 ## Tabla de cifras
 
@@ -75,7 +71,8 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `0.7245` | dato | J4: cap4_arima.json › puente_estacional.no_estacional.acf_12 = 0.7245 | verificado |
 | `0.6727` | dato | J4: cap4_arima.json › puente_estacional.no_estacional.acf_24 = 0.6727 | verificado |
 | `0.163` | dato | J4: cap4_arima.json › puente_estacional.no_estacional.banda = 0.1633<br>CALC: 1.96/√144 = 0.163333 | verificado |
-| `222.4` | dato | J4: cap4_arima.json › puente_estacional.no_estacional.ljung_box_24.Q = 222.398 | verificado |
+| `222.4` | dato | J4: cap4_arima.json › puente_estacional.no_estacional.ljung_box_24.Q = 222.398<br>C: capítulo 5 contiene «$Q = 222.4$» | verificado |
+| `0,1,5` | capítulo | C: capítulo 5 contiene «ARIMA($0,1,5$): cinco términos MA»<br>C: la nota del Módulo 7 ya no cita el AICc del ARIMA(0,1,1) | verificado |
 | `-0.0515` | dato | J: cap5_sarima.json › airpassengers.airline.diagnostico.acf.11 = -0.0515<br>R: directo_cap5.json › m7.res_r12 = -0.051463 | verificado |
 | `0.233` | dato | J: cap5_sarima.json › airpassengers.airline.diagnostico.lb24_p = 0.233<br>R: directo_cap5.json › m7.lb24 = 0.233033 | verificado |
 | `1949` | dato | R: directo_cap5.json › datos.ap_inicio = 1949<br>DOC: docs_cap5.json › airpassengers contiene «1949 to 1960» | verificado |
@@ -119,7 +116,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 |---|---|---|---|
 | `0.762` | dato | J: cap5_sarima.json › airpassengers.firma.airpassengers_log.acf.11 = 0.7619<br>CALC: ACF de log(AirPassengers), rezago 12 = 0.761943 | verificado |
 | `0.520` | dato | J: cap5_sarima.json › airpassengers.firma.airpassengers_log.acf.23 (empate: decide el exacto) = 0.5205<br>CALC: rezago 24 = 0.52049 | verificado |
-| `0.521` | capítulo (doble redondeo) | C: capítulo 5 contiene «0.521» | verificado |
+| `0.520` | capítulo | C: capítulo 5 contiene «$0.520$» | verificado |
 | `0.5205` | dato | J: cap5_sarima.json › airpassengers.firma.airpassengers_log.acf.23 = 0.5205 | verificado |
 | `0.52049` | dato | CALC: ACF exacta en 24 = 0.52049 | verificado |
 | `0.319` | dato | J: cap5_sarima.json › airpassengers.firma.airpassengers_log.acf.35 = 0.3193<br>CALC: rezago 36 = 0.319293 | verificado |
@@ -164,11 +161,11 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `0.70747` | dato | CALC: ACF exacta en 1 = 0.707471 | verificado |
 | `0.85546` | dato | CALC: ACF exacta en 24 = 0.855458 | verificado |
 | `0.63649` | dato | CALC: ACF exacta en 12 = 0.63649 | verificado |
-| `0.521` | capítulo (doble redondeo) | C: capítulo 5 contiene «0.521» | verificado |
-| `0.708` | capítulo (doble redondeo) | C: capítulo 5 contiene «0.708» | verificado |
-| `0.856` | capítulo (doble redondeo) | C: capítulo 5 contiene «0.856» | verificado |
-| `0.637` | capítulo (doble redondeo) | C: capítulo 5 contiene «0.637» | verificado |
-| `-0.003` | capítulo (doble redondeo) | C: capítulo 5 contiene «0.003» | verificado |
+| `0.520` | capítulo | C: capítulo 5 contiene «$0.520$» | verificado |
+| `0.707` | capítulo | C: capítulo 5 contiene «$0.707$» | verificado |
+| `0.855` | capítulo | C: capítulo 5 contiene «$0.855$» | verificado |
+| `0.636` | capítulo | C: capítulo 5 contiene «$0.636$» | verificado |
+| `-0.002` | capítulo | C: capítulo 5 contiene «{-0.002}» | verificado |
 | `-0.00245` | dato | CALC: ACF de ∇TRM en 12 = -0.002453<br>R: directo_cap5.json › m1.trm_diff.1 = -0.002453 | verificado |
 | `-0.0024` | capítulo (código en vivo) | C: capítulo 5 contiene «-0.0024» | verificado |
 | `-0.0025` | dato | J: cap5_sarima.json › trm_contraejemplo.acf12 = -0.0025 | verificado |
@@ -178,7 +175,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
 | `0.636` | dato | J: cap5_sarima.json › airpassengers.firma.trm.acf.11 (empate: decide el exacto) = 0.6365<br>CALC: ACF de la TRM en 12 = 0.63649 | verificado |
-| `0.637` | capítulo (doble redondeo) | C: capítulo 5 (autoevaluación) contiene «0.637» | verificado |
+| `0.636` | capítulo | C: capítulo 5 (autoevaluación) contiene «= 0.636$, muy por encima» | verificado |
 | `0.6365` | dato | J: cap5_sarima.json › airpassengers.firma.trm.acf.11 = 0.6365 | verificado |
 | `0.63649` | dato | CALC: ACF exacta de la TRM en 12 = 0.63649 | verificado |
 | `138` | dato | R: directo_cap5.json › datos.trm_n = 138 | verificado |
@@ -359,6 +356,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `0.42180` | dato | R: directo_cap5.json › m4.ar1_sar1.r13 = 0.421801 | verificado |
 | `-0.23446` | dato | R: directo_cap5.json › m4.ar1_sma1.r11 = -0.234465 | verificado |
 | `-0.23483` | dato | R: directo_cap5.json › m4.ar1_sma1.r13 = -0.234831 | verificado |
+| `-0.234` | capítulo | C: capítulo 5 contiene «{-0.234}» | verificado |
 | `0.14707` | dato | R: directo_cap5.json › m4.airline.r11 = 0.147066 | verificado |
 | `0.14705` | dato | R: directo_cap5.json › m4.airline_redondeado.r11 = 0.147052<br>C: capítulo 5 contiene «0.14705» | verificado |
 | `0.1471` | dato | R: directo_cap5.json › m4.airline.producto = 0.147066 | verificado |
@@ -505,7 +503,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `1.848` | dato | R: directo_cap5.json › m7.rango_relativo = 1.848029<br>C: capítulo 5 contiene «1.848» | verificado |
 | `0.762` | dato | J: cap5_sarima.json › airpassengers.firma.airpassengers_log.acf.11 = 0.7619 | verificado |
 | `0.520` | dato | J: cap5_sarima.json › airpassengers.firma.airpassengers_log.acf.23 (empate: decide el exacto) = 0.5205<br>CALC: ACF exacta en 24 = 0.52049 | verificado |
-| `0.521` | capítulo (doble redondeo) | C: capítulo 5 contiene «0.521» | verificado |
+| `0.520` | capítulo | C: capítulo 5 contiene «\hat\rho_{24}=0.520$» | verificado |
 | `0.52049` | dato | CALC: ACF exacta en 24 = 0.52049 | verificado |
 | `0.319` | dato | J: cap5_sarima.json › airpassengers.firma.airpassengers_log.acf.35 = 0.3193 | verificado |
 | `0.714` | dato | J: cap5_sarima.json › airpassengers.combinaciones.d0_D1.acf1 = 0.7137 | verificado |
@@ -808,6 +806,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `1959` | fecha | J: primera fecha de prueba | verificado |
 | `1960` | fecha | J: última fecha de prueba | verificado |
 | `orden` | orden | J: orden por RMSE: ETS log, armónica, STL, SARIMA | verificado |
+| `pregunta 8` | capítulo | C: capítulo 5 (autoevaluación) contiene «segunda por RMSE ($19.51$» | verificado |
 
 ### Con una sola partición, el modelo de once módulos queda cuarto
 
@@ -840,7 +839,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `auto` | dato | J: auto.arima = airline (mismo RMSE) | verificado |
 | `11` | dato | CALC: valores libres de la estacionalidad (m − 1) = 11<br>C: capítulo 5 contiene «valores de la estacionalidad» | verificado |
 | `stl 2` | dato | J: n_par del STL + ARIMA = 2 en J<br>R: n_par = 2 en R | verificado |
-| `16.13` | capítulo (doble redondeo) | C: capítulo 5 contiene «16.13» | verificado |
+| `16.12` | capítulo | C: capítulo 5 contiene «$16.12$» | verificado |
 | `16.125` | dato | J: cap5_sarima.json › airpassengers.comparativa.modelos.ets_log.mae = 16.125 | verificado |
 | `16.1249` | dato | R: directo_cap5.json › m11.particion.ets_log.mae = 16.124863 | verificado |
 | `1,1,0` | modelo | R: STL + ARIMA sobre el entrenamiento | verificado |
@@ -865,7 +864,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `85` («más del 85 %»: 85.2) | dato | CALC: 100 − el peor porcentaje = 85.2 | verificado |
 | `85.2` | dato | CALC: 100 − 14.8 = 85.2 | verificado |
 | `12` | dato | J: cap5_sarima.json › airpassengers.comparativa.origen_movil.horizonte = 12 | verificado |
-| `22.39` | capítulo (doble redondeo) | C: capítulo 5 (autoevaluación) contiene «22.39» | verificado |
+| `22.38` | capítulo | C: capítulo 5 contiene «$22.38$»<br>C: capítulo 5 (autoevaluación) contiene «frente a $22.38$» | verificado |
 | `22.385` | dato | J: cap5_sarima.json › airpassengers.comparativa.origen_movil.rmse_medio.armonica = 22.385 | verificado |
 | `22.3847` | dato | R: directo_cap5.json › m11.om12.rmse_medio.armonica = 22.384699 | verificado |
 
@@ -874,13 +873,13 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
 | `1958` | fecha | J: corte 1958-12 | verificado |
-| `3.4` | dato | CALC: 100·log(1 + crecimiento 1958) desde directo_cap5.json = 3.358467 | verificado |
-| `6.0` | dato | CALC: mínimo de 100·Δlog fuera de 1958 = 6.001455 | verificado |
-| `19.8` | dato | CALC: máximo de 100·Δlog fuera de 1958 = 19.751965 | verificado |
-| `4.6` | dato | CALC: 100·log(1 + sarima_pron.f59_vs_obs58/100) desde directo_cap5.json = 4.603745 | verificado |
-| `6.7` | dato | CALC: 100·log(1 + sarima_pron.f60_vs_f59/100) desde directo_cap5.json = 6.713935 | verificado |
-| `11.7` | dato | CALC: 100·log(1 + crecimiento 1959) desde directo_cap5.json = 11.710191 | verificado |
-| `10.6` | dato | CALC: 100·log(1 + crecimiento 1960) desde directo_cap5.json = 10.586609 | verificado |
+| `3.4` | dato | R: directo_cap5.json › m11.crecimiento_anual.1958 = 3.4155 | verificado |
+| `6.2` | dato | R: directo_cap5.json › m11.crec_otros_min = 6.185185 | verificado |
+| `21.8` | dato | R: directo_cap5.json › m11.crec_otros_max = 21.837709 | verificado |
+| `4.7` | dato | R: directo_cap5.json › m11.sarima_pron.f59_vs_obs58 = 4.711362 | verificado |
+| `6.9` | dato | R: directo_cap5.json › m11.sarima_pron.f60_vs_f59 = 6.94445 | verificado |
+| `12.4` | dato | R: directo_cap5.json › m11.crecimiento_anual.1959 = 12.4234 | verificado |
+| `11.2` | dato | R: directo_cap5.json › m11.crecimiento_anual.1960 = 11.1673 | verificado |
 | `39.45` | dato | R: directo_cap5.json › m11.sesgo_sarima = 39.447258<br>R: directo_cap5.json › m11.mae_sarima = 39.447258<br>J: cap5_sarima.json › airpassengers.comparativa.modelos.sarima.mae = 39.447 | verificado |
 | `24` | dato | R: directo_cap5.json › m11.errores_positivos = 24 | verificado |
 | `14` | dato | R: directo_cap5.json › m11.om12.sarima_no_es_el_mejor = 14 | verificado |
@@ -889,27 +888,21 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `1959` | fecha | R: 1959-01 es uno de los orígenes en que el SARIMA no es el mejor | verificado |
 | `61` | dato | R: directo_cap5.json › m11.om12.n = 61<br>J: cap5_sarima.json › airpassengers.comparativa.origen_movil.n_origenes = 61 | verificado |
 | `1960` | fecha | DEF: año pronosticado | definición (no se mide) |
-| `100` | unidad | DEF: factor de la diferencia logarítmica | definición (no se mide) |
-| `8.9` | dato | CALC: 100·log(1 + ets_log_pron.f59_vs_obs58/100) desde directo_cap5.json = 8.941046 | verificado |
-| `12.1` | dato | CALC: 100·log(1 + ets_log_pron.f60_vs_f59/100) desde directo_cap5.json = 12.057512 | verificado |
-| `10.1` | dato | CALC: 100·log(1 + armonica_pron.f59_vs_obs58/100) desde directo_cap5.json = 10.062423 | verificado |
-| `12.4` | dato | CALC: 100·log(1 + armonica_pron.f60_vs_f59/100) desde directo_cap5.json = 12.352473 | verificado |
-| `6.2` | dato | R: directo_cap5.json › m11.crec_otros_min = 6.185185 | verificado |
-| `21.8` | dato | R: directo_cap5.json › m11.crec_otros_max = 21.837709 | verificado |
-| `11.2` | dato | R: directo_cap5.json › m11.crecimiento_anual.1960 = 11.1673 | verificado |
-| `4.7` | dato | R: directo_cap5.json › m11.sarima_pron.f59_vs_obs58 = 4.711362 | verificado |
-| `6.9` | dato | R: directo_cap5.json › m11.sarima_pron.f60_vs_f59 = 6.94445 | verificado |
-| `3.4` | capítulo | C: capítulo 5 contiene «3.4» | verificado |
-| `11.7` | capítulo | C: capítulo 5 contiene «11.7» | verificado |
-| `10.6` | capítulo | C: capítulo 5 contiene «10.6» | verificado |
-| `4.6` | capítulo | C: capítulo 5 contiene «4.6» | verificado |
-| `6.7` | capítulo | C: capítulo 5 contiene «6.7» | verificado |
-| `8.9` | capítulo | C: capítulo 5 contiene «8.9» | verificado |
-| `12.1` | capítulo | C: capítulo 5 contiene «12.1» | verificado |
-| `10.1` | capítulo | C: capítulo 5 contiene «10.1» | verificado |
-| `12.4` | capítulo | C: capítulo 5 contiene «12.4» | verificado |
-| `6.0` | capítulo | C: capítulo 5 contiene «6.0» | verificado |
-| `19.8` | capítulo | C: capítulo 5 contiene «19.8» | verificado |
+| `9.4` | dato | R: directo_cap5.json › m11.ets_log_pron.f59_vs_obs58 = 9.352941 | verificado |
+| `12.8` | dato | R: directo_cap5.json › m11.ets_log_pron.f60_vs_f59 = 12.814548 | verificado |
+| `10.6` | dato | R: directo_cap5.json › m11.armonica_pron.f59_vs_obs58 = 10.586101 | verificado |
+| `13.1` | dato | R: directo_cap5.json › m11.armonica_pron.f60_vs_f59 = 13.147799 | verificado |
+| `3.4` | capítulo | C: capítulo 5 contiene «$3.4\,\%$» | verificado |
+| `6.2` | capítulo | C: capítulo 5 contiene «$6.2$» | verificado |
+| `21.8` | capítulo | C: capítulo 5 contiene «$21.8\,\%$» | verificado |
+| `4.7` | capítulo | C: capítulo 5 contiene «$4.7\,\%$» | verificado |
+| `6.9` | capítulo | C: capítulo 5 contiene «$6.9\,\%$» | verificado |
+| `12.4` | capítulo | C: capítulo 5 contiene «$12.4$» | verificado |
+| `11.2` | capítulo | C: capítulo 5 contiene «$11.2\,\%$» | verificado |
+| `9.4` | capítulo | C: capítulo 5 contiene «$9.4$» | verificado |
+| `12.8` | capítulo | C: capítulo 5 contiene «$12.8\,\%$» | verificado |
+| `10.6` | capítulo | C: capítulo 5 contiene «$10.6$» | verificado |
+| `13.1` | capítulo | C: capítulo 5 contiene «$13.1\,\%$» | verificado |
 
 ### A 24 meses, SARIMA y ETS sobre el logaritmo son indistinguibles
 
@@ -960,4 +953,6 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `10.1` | sección de FPP3 | WEB: otexts.com/fpp3: § 10.1 «Estimation» y § 10.2 «Regression with ARIMA errors using fable» (2026-10-27) | verificado |
 | `10.2` | sección de FPP3 | WEB: ídem | verificado |
 | `9.1` | sección de FPP3 | WEB: otexts.com/fpp3: el ejemplo A10 (antidiabéticos) está en § 9.1, «Seasonal differencing» (2026-10-27) | verificado |
+| `H02` | capítulo | C: capítulo 5 contiene «el caso de los corticoides (H02)» | verificado |
+| `armónica dinámica` | capítulo | C: capítulo 5 contiene «§ 7.4, § 10.5 Regresores de calendario y regresión armónica dinámica» | verificado |
 | `2026` | fecha | DEF: año de la consulta | definición (no se mide) |
