@@ -97,14 +97,16 @@
             <tr><td>3.º</td><td>ARIMA($0,1,2$)</td><td>$1268.210$</td><td>$+0.70$</td></tr>
             <tr><td>4.º</td><td>ARIMA($0,1,2$) con deriva</td><td>$1268.969$</td><td>$+1.46$</td></tr>
             <tr><td>5.º</td><td>ARIMA($0,1,1$)</td><td>$1269.216$</td><td>$+1.71$</td></tr>
+            <tr><td>6.º</td><td>ARIMA($2,1,1$)</td><td>$1269.322$</td><td>$+1.81$</td></tr>
+            <tr><td>7.º</td><td>ARIMA($1,1,2$)</td><td>$1269.348$</td><td>$+1.84$</td></tr>
           </tbody>
         </table>
       </div>
 
       <div class="note">
-        <p><strong>Cinco modelos en $1.71$ puntos de AICc.</strong> La regla de referencia habitual es que
+        <p><strong>Siete modelos a menos de $2$ puntos de AICc.</strong> La regla de referencia habitual es que
           diferencias menores que $2$ no distinguen modelos. Es decir: <code>auto.arima</code> devuelve un ganador
-          con toda la seguridad de una sola línea de salida, y detrás de él hay <strong>cinco candidatos
+          con toda la seguridad de una sola línea de salida, y detrás de él hay <strong>siete candidatos
           indistinguibles según el propio criterio</strong>, incluido el ARIMA($0,1,1$) que proponía el correlograma
           del Módulo 4. La función no miente; simplemente no está diseñada para comunicar esa incertidumbre. Pedir
           <code>trace = TRUE</code> no cuesta nada y la enseña.</p>
@@ -271,7 +273,7 @@ print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
           <tbody>
             <tr><td>0</td><td>$28\,637.95$</td><td>$0.498$</td><td>$0.378$</td><td>Sin diferenciar.</td></tr>
             <tr style="background:rgba(1,40,32,0.05);"><td>1</td><td>$28\,268.34$</td><td>$-0.402$</td>
-              <td>$-0.733$</td><td>Mínimo de varianza. Correcto.</td></tr>
+              <td>$-0.733$</td><td>Mínimo de varianza.</td></tr>
             <tr><td>2</td><td>$80\,055.01$</td><td>$-0.626$</td><td>$\mathbf{-1.000}$</td>
               <td>Raíz unitaria en el MA.</td></tr>
             <tr><td>3</td><td>$262\,507.29$</td><td>$-0.719$</td><td>$\mathbf{-1.000}$</td>

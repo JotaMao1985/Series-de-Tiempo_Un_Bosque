@@ -102,8 +102,8 @@
             <tr><td>ARIMA($0,1,1$)</td><td>IMA(1,1)</td><td>Equivale al <strong>suavizamiento exponencial
               simple</strong>: $\hat y_{t+1\mid t} = \alpha\, y_t + (1-\alpha)\,\hat y_{t\mid t-1}$ con
               $\alpha = 1 + \theta$, un promedio ponderado que decae hacia el pasado.</td></tr>
-            <tr><td>ARIMA($0,2,2$)</td><td>IMA(2,2)</td><td>Equivale al método de <strong>Holt</strong> con
-              tendencia.</td></tr>
+            <tr><td>ARIMA($0,2,2$)</td><td>IMA(2,2)</td><td>Incluye al método de <strong>Holt</strong> con
+              tendencia, con restricciones sobre los coeficientes.</td></tr>
           </tbody>
         </table>
       </div>
@@ -267,8 +267,9 @@ print(round(razon, 3), round(razon0, 1))
 
       <p>El Módulo 1 dejó definido el modelo; falta el método para elegirlo y validarlo frente a una serie
         concreta. En 1970 George Box y Gwilym Jenkins publicaron <em>Time Series Analysis: Forecasting and Control</em> y con
-        él un procedimiento que sigue siendo el esqueleto de todo lo que se hace con modelos ARIMA. Su aportación no
-        fue el modelo —la familia ya existía— sino <strong>el método</strong>: una secuencia de etapas con criterios
+        él un procedimiento que sigue siendo el esqueleto de todo lo que se hace con modelos ARIMA. Su aportación
+        fue <strong>el método</strong> —la familia ya existía, aunque ellos también la sistematizaron y fijaron cómo
+        identificarla con la ACF y la PACF—: una secuencia de etapas con criterios
         explícitos para pasar de una a la siguiente, y con vueltas atrás previstas.</p>
 
       <p>La palabra clave es <em>iterativo</em>. No es una receta que se ejecuta una vez de arriba abajo: es un ciclo
@@ -544,7 +545,11 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
           Usa solo constante y un rezago ($\alpha_1 = 0$, $k = 1$), y con esa especificación rechaza la raíz
           unitaria ($\tau_\mu = -4.05$, frente al valor crítico de $-2.89$ al $5\,\%$); con la de la tabla no la
           rechaza. No es un fallo de ninguna función: KPSS invierte la hipótesis nula, y ADF y PP, que comparten la
-          de raíz unitaria, corrigen la autocorrelación de forma distinta y tienen potencias distintas. Cuando
+          de raíz unitaria, corrigen la autocorrelación de forma distinta y no reaccionan igual a un MA fuerte y negativo, como el
+          $\hat\theta \approx -0.87$ del Nilo: simulando ese mismo ARIMA($1,1,1$) con raíz unitaria
+          <em>verdadera</em> ($1\,000$ réplicas, semilla $2026$, nivel $5\,\%$), <code>PP.test</code> la rechaza en el
+          $100\,\%$ de las réplicas y <code>adf.test</code> con $k = 4$, en el $51.3\,\%$; por eso el $-6.690$ del PP de
+          la tabla apenas informa. Cuando
           discrepan, la respuesta no está en la prueba sino en el gráfico, y en esta serie hay una razón
           concreta.</p>
       </div>

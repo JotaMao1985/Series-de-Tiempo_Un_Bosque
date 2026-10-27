@@ -1289,13 +1289,13 @@
       {
         tipo: 'opcion',
         modulo: 7,
-        pregunta: '<code>auto.arima</code> devuelve un ARIMA($1,1,1$) con AICc $1267.507$. La búsqueda exhaustiva confirma que es el mínimo, y el quinto clasificado tiene $1269.216$. ¿Qué se concluye?',
-        pista: '¿Cuánta diferencia de AICc hace falta para distinguir dos modelos? Compara ese umbral con la distancia entre el primero y el quinto.',
+        pregunta: '<code>auto.arima</code> devuelve un ARIMA($1,1,1$) con AICc $1267.507$. La búsqueda exhaustiva confirma que es el mínimo, y el séptimo clasificado tiene $1269.348$. ¿Qué se concluye?',
+        pista: '¿Cuánta diferencia de AICc hace falta para distinguir dos modelos? Compara ese umbral con la distancia entre el primero y el séptimo.',
         opciones: [
           {
             texto: 'Que el ARIMA($1,1,1$) es el modelo verdadero, ya que lo confirman las dos búsquedas.',
             correcta: false,
-            retro: 'Que dos búsquedas coincidan dice que el <em>algoritmo</em> es consistente, no que el modelo sea verdadero. Ambas optimizan el mismo criterio sobre los mismos datos, así que coincidir es lo esperable. Y con cinco candidatos en $1.71$ puntos, el criterio apenas los separa.'
+            retro: 'Que dos búsquedas coincidan dice que el <em>algoritmo</em> es consistente, no que el modelo sea verdadero. Ambas optimizan el mismo criterio sobre los mismos datos, así que coincidir es lo esperable. Y con siete candidatos a menos de $2$ puntos, el criterio apenas los separa.'
           },
           {
             texto: 'Que la búsqueda escalonada es innecesaria, porque la exhaustiva llega al mismo sitio.',
@@ -1303,14 +1303,14 @@
             retro: 'Aquí llegaron al mismo sitio, pero eso no está garantizado: la escalonada explora un vecindario y puede quedarse en un óptimo local. Es la escalonada la que existe por eficiencia ($18$ modelos frente a $42$); precisamente por eso conviene contrastar con la completa en casos difíciles.'
           },
           {
-            texto: 'Que hay cinco modelos prácticamente indistinguibles, y conviene decirlo en vez de presentar un único ganador.',
+            texto: 'Que hay siete modelos prácticamente indistinguibles, y conviene decirlo en vez de presentar un único ganador.',
             correcta: true,
-            retro: 'La diferencia entre el primero y el quinto es de $1.71$ puntos, por debajo del umbral habitual de $2$. Entre esos cinco está el ARIMA($0,1,1$) que proponía el correlograma. <code>auto.arima</code> no miente, pero su salida de una línea no comunica esa incertidumbre; <code>trace = TRUE</code> sí.'
+            retro: 'La diferencia entre el primero y el séptimo es de $1.84$ puntos, por debajo del umbral habitual de $2$. Entre esos siete está el ARIMA($0,1,1$) que proponía el correlograma. <code>auto.arima</code> no miente, pero su salida de una línea no comunica esa incertidumbre; <code>trace = TRUE</code> sí.'
           },
           {
-            texto: 'Que como la diferencia es menor que $2$, hay que elegir el modelo con menos parámetros de los cinco.',
+            texto: 'Que como la diferencia es menor que $2$, hay que elegir el modelo con menos parámetros de los siete.',
             correcta: false,
-            retro: 'La parsimonia es un criterio razonable para desempatar y llevaría al ARIMA($0,1,1$), que es defendible. Pero la conclusión que pide la pregunta es previa: lo primero es <strong>reconocer que hay un empate</strong>. Elegir por parsimonia sin decir que había cinco candidatos oculta la misma incertidumbre.'
+            retro: 'La parsimonia es un criterio razonable para desempatar y llevaría al ARIMA($0,1,1$), que es defendible. Pero la conclusión que pide la pregunta es previa: lo primero es <strong>reconocer que hay un empate</strong>. Elegir por parsimonia sin decir que había siete candidatos oculta la misma incertidumbre.'
           }
         ]
       },
