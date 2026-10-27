@@ -254,7 +254,7 @@ print(round(f.aic, 2))
             <tr><th>Método</th><th>Escala</th><th>$k$</th><th>RMSE</th><th>MAE</th><th>MAPE %</th></tr>
           </thead>
           <tbody>
-            <tr><td>ETS($M,A,M$) sobre el logaritmo</td><td>log</td><td>$16$</td><td>$\mathbf{19.43}$</td><td>$16.13$</td><td>$3.55$</td></tr>
+            <tr><td>ETS($M,A,M$) sobre el logaritmo</td><td>log</td><td>$16$</td><td>$\mathbf{19.43}$</td><td>$16.12$</td><td>$3.55$</td></tr>
             <tr><td>Regresión armónica $K=6$ + ARIMA</td><td>log</td><td>$16$</td><td>$19.51$</td><td>$\mathbf{14.69}$</td><td>$\mathbf{3.15}$</td></tr>
             <tr><td>STL + ARIMA</td><td>log</td><td>$2 + 11$</td><td>$35.48$</td><td>$30.29$</td><td>$6.33$</td></tr>
             <tr><td><strong>SARIMA <em>airline</em></strong></td><td>log</td><td>$2$</td><td>$43.18$</td><td>$39.45$</td><td>$8.52$</td></tr>
@@ -287,7 +287,7 @@ print(round(f.aic, 2))
             <tr><td><strong>SARIMA <em>airline</em></strong></td><td>$\mathbf{16.81}$</td><td>—</td></tr>
             <tr><td>ETS sobre el logaritmo</td><td>$21.42$</td><td>$8.2\,\%$</td></tr>
             <tr><td>STL + ARIMA</td><td>$21.85$</td><td>$8.2\,\%$</td></tr>
-            <tr><td>Regresión armónica $K=6$</td><td>$22.39$</td><td>$9.8\,\%$</td></tr>
+            <tr><td>Regresión armónica $K=6$</td><td>$22.38$</td><td>$9.8\,\%$</td></tr>
             <tr><td>ETS sobre la serie cruda</td><td>$26.38$</td><td>$14.8\,\%$</td></tr>
             <tr><td>Naïve estacional</td><td>$41.24$</td><td>$11.5\,\%$</td></tr>
           </tbody>
@@ -300,10 +300,10 @@ print(round(f.aic, 2))
 
       <p>Lo que ocurría en la tabla anterior no tiene que ver con la estacionalidad, sino con la tendencia. El corte
         cae en 1958-12, justo detrás del único año en que el tráfico casi no creció: el total anual de pasajeros subió
-        un $3.4\,\%$ en 1958, frente a entre $6.0$ y $19.8\,\%$ en los demás años. El <em>airline</em> ajusta su
-        pendiente a lo último que ve y pronostica un $4.6\,\%$ para 1959 y un $6.7\,\%$ para 1960; lo observado fue
-        $11.7$ y $10.6\,\%$. Por eso se queda corto en los $24$ meses: su sesgo medio ($39.45$) es igual a su MAE. El
-        ETS sobre el logaritmo ($8.9$ y $12.1\,\%$) y la regresión armónica ($10.1$ y $12.4\,\%$) arrastran menos
+        un $3.4\,\%$ en 1958, frente a entre $6.2$ y $21.8\,\%$ en los demás años. El <em>airline</em> ajusta su
+        pendiente a lo último que ve y pronostica un $4.7\,\%$ para 1959 y un $6.9\,\%$ para 1960; lo observado fue
+        $12.4$ y $11.2\,\%$. Por eso se queda corto en los $24$ meses: su sesgo medio ($39.45$) es igual a su MAE. El
+        ETS sobre el logaritmo ($9.4$ y $12.8\,\%$) y la regresión armónica ($10.6$ y $13.1\,\%$) arrastran menos
         ese frenazo. De los $14$ orígenes en que el SARIMA no es el mejor de los seis, $12$ caen entre 1957-05 y
         1959-01, alrededor de ese año. Con una sola partición, el azar de <em>dónde</em> cae el corte pesa más que la
         diferencia entre los métodos.</p>
@@ -671,9 +671,9 @@ round(c(armonico_K4 = 180.200, n_armonico = 467,
             <tr><th>Fuente</th><th>Secciones</th><th>Qué añade</th></tr>
           </thead>
           <tbody>
-            <tr><td>Hyndman &amp; Athanasopoulos, <em>Forecasting: Principles and Practice</em> (3.ª ed.)</td><td>§ 9.9</td><td>SARIMA con la notación de <code>fable</code>; el caso de los medicamentos antidiabéticos</td></tr>
+            <tr><td>Hyndman &amp; Athanasopoulos, <em>Forecasting: Principles and Practice</em> (3.ª ed.)</td><td>§ 9.9</td><td>SARIMA con la notación de <code>fable</code>; el caso de los corticoides (H02)</td></tr>
             <tr><td>Hyndman &amp; Athanasopoulos, <em>FPP3</em></td><td>§ 12.1</td><td>Estacionalidad compleja: términos de Fourier con varios periodos, TBATS</td></tr>
-            <tr><td>Hyndman &amp; Athanasopoulos, <em>FPP3</em></td><td>§ 7.4, § 10.5</td><td>Regresores de calendario y regresión dinámica con errores ARIMA</td></tr>
+            <tr><td>Hyndman &amp; Athanasopoulos, <em>FPP3</em></td><td>§ 7.4, § 10.5</td><td>Regresores de calendario y regresión armónica dinámica: términos de Fourier con errores ARIMA</td></tr>
             <tr><td>Shumway &amp; Stoffer, <em>Time Series Analysis and Its Applications</em></td><td>Cap. 3.9</td><td>Desarrollo formal del SARIMA multiplicativo y el caso <code>birth</code></td></tr>
             <tr><td>Box, Jenkins, Reinsel &amp; Ljung, <em>Time Series Analysis: Forecasting and Control</em></td><td>Cap. 9</td><td>El modelo <em>airline</em> original, con la serie que le da nombre</td></tr>
           </tbody>

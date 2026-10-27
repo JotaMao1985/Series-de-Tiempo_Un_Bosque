@@ -913,11 +913,11 @@
       {
         tipo: 'opcion',
         modulo: 1,
-        pregunta: 'La TRM mensual en niveles tiene $\\hat\\rho_{12} = 0.637$, muy por encima de su banda de $0.167$. ¿Qué se concluye?',
+        pregunta: 'La TRM mensual en niveles tiene $\\hat\\rho_{12} = 0.636$, muy por encima de su banda de $0.167$. ¿Qué se concluye?',
         pista: 'Fíjate en qué vale $\\hat\\rho_1$ en esa misma serie, y en qué le pasa a la ACF de cualquier serie con tendencia.',
         opciones: [
           {
-            texto: 'Que la TRM tiene estacionalidad anual, porque $0.637$ supera claramente la banda.',
+            texto: 'Que la TRM tiene estacionalidad anual, porque $0.636$ supera claramente la banda.',
             correcta: false,
             retro: 'Es la conclusión que el módulo está diseñado para evitar. Una serie con tendencia da autocorrelaciones grandes en <em>todos</em> los rezagos, incluidos los múltiplos de $12$. Cuatro evidencias independientes (Módulo 8) muestran que esta serie no tiene estacionalidad.'
           },
@@ -1083,18 +1083,18 @@
       {
         tipo: 'opcion',
         modulo: 11,
-        pregunta: 'Sobre los últimos $24$ meses el SARIMA queda cuarto (RMSE $43.18$) y la regresión armónica primera ($19.51$). Sobre $61$ orígenes el SARIMA es primero ($16.81$) y la armónica cuarta ($22.39$). ¿Qué explica esto?',
+        pregunta: 'Sobre los últimos $24$ meses el SARIMA queda cuarto (RMSE $43.18$) y la regresión armónica, segunda por RMSE ($19.51$, a $0.08$ del ETS sobre el logaritmo), es la primera por MAE y por MAPE. Sobre $61$ orígenes el SARIMA es primero ($16.81$) y la armónica cuarta ($22.38$). ¿Qué explica esto?',
         pista: 'Pregúntate cuántos números independientes hay realmente detrás de cada una de las dos comparaciones.',
         opciones: [
           {
             texto: 'Una sola partición mide el comportamiento en <em>un</em> tramo concreto; con $24$ puntos, qué tramo toque pesa más que la diferencia entre métodos.',
             correcta: true,
-            retro: 'Los años 1959–1960 tuvieron un crecimiento especialmente regular y ahí una estacionalidad determinista extrapola mejor. Promediando sobre $61$ orígenes el efecto del tramo se diluye y el SARIMA le gana a cada rival en más del $85\\,\\%$ de ellos. Construir esa evaluación es el contenido del Capítulo 6.'
+            retro: 'El corte cae justo detrás de 1958, el único año en que el tráfico casi no creció: el SARIMA ajusta su pendiente a ese frenazo y se queda corto en 1959–1960, y la armónica lo arrastra menos. Promediando sobre $61$ orígenes el efecto del tramo se diluye y el SARIMA le gana a cada rival en más del $85\\,\\%$ de ellos. Construir esa evaluación es el contenido del Capítulo 6.'
           },
           {
             texto: 'Que el RMSE no sirve para comparar métodos y hay que usar MAPE.',
             correcta: false,
-            retro: 'Las tres métricas de la tabla —RMSE, MAE y MAPE— dan el mismo orden en la partición única. El problema no es la métrica sino el número de particiones sobre las que se calcula.'
+            retro: 'Con cualquiera de las tres métricas de la tabla —RMSE, MAE o MAPE— el SARIMA queda cuarto en la partición única; solo cambia quién va primero: el ETS sobre el logaritmo por RMSE y la armónica por MAE y por MAPE. El problema no es la métrica sino el número de particiones sobre las que se calcula.'
           },
           {
             texto: 'Que el SARIMA está mal especificado y por eso falla en la partición corta.',
@@ -1104,7 +1104,7 @@
           {
             texto: 'Que los $61$ orígenes se solapan entre sí, así que ese resultado no vale.',
             correcta: false,
-            retro: 'Es cierto que las ventanas se solapan y que por eso los $61$ errores no son independientes —conviene saberlo al poner barras de error—. Pero eso afecta a la <em>precisión</em> de la estimación, no la invalida: una diferencia de $16.81$ frente a $22.39$ con victoria en el $90\\,\\%$ de los orígenes no se explica por el solape.'
+            retro: 'Es cierto que las ventanas se solapan y que por eso los $61$ errores no son independientes —conviene saberlo al poner barras de error—. Pero eso afecta a la <em>precisión</em> de la estimación, no la invalida: una diferencia de $16.81$ frente a $22.38$ con victoria en el $90\\,\\%$ de los orígenes no se explica por el solape.'
           }
         ]
       }
