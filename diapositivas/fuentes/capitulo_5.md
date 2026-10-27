@@ -110,7 +110,7 @@ Verificación: la definición y la distinción con el ciclo son del capítulo (M
 ???
 Señalar las jorobas sobre el decaimiento lento: el decaimiento es la tendencia; las jorobas, la estación. El simulador del Módulo 1 pone al lado el mapa mes × año: con logaritmo y las dos diferencias, las bandas verticales desaparecen y la ACF se queda con dos barras, en 1 y 12. Abrirlo en vivo desde el enlace del divisor si hay tiempo.
 
-Verificación: ρ̂₁₂, ρ̂₂₄, ρ̂₃₆ y la banda en J (`firma.airpassengers_log`) y en R (`m1.ap_log`). El capítulo escribe ρ̂₂₄ = 0.521: es un doble redondeo (J guarda 0.5205; el exacto es 0.52049). Detalle: Módulo 1, «Dónde mirar la ACF».
+Verificación: ρ̂₁₂, ρ̂₂₄, ρ̂₃₆ y la banda en J (`firma.airpassengers_log`) y en R (`m1.ap_log`). ρ̂₂₄ se redondea desde el exacto, 0.52049, y no desde el 0.5205 de J: 0.520, como en el capítulo. Detalle: Módulo 1, «Dónde mirar la ACF».
 
 ## Cuatro filas se parecen y solo tres de esas series son estacionales
 
@@ -127,9 +127,9 @@ Verificación: ρ̂₁₂, ρ̂₂₄, ρ̂₃₆ y la banda en J (`firma.airpas
 <small>Fuente: J `firma` · R (ACF recalculada sobre los datos; bandas \(1.96/\sqrt n\))</small>
 
 ???
-La trampa de la tabla: la TRM tiene ρ̂₁₂ = 0.637 y ninguna estacionalidad. Antes de pasar, preguntar cuál de las cuatro primeras filas es la intrusa; después de ver la quinta, la respuesta es obvia. El Módulo 8 vuelve sobre la TRM con cuatro evidencias.
+La trampa de la tabla: la TRM tiene ρ̂₁₂ = 0.636 y ninguna estacionalidad. Antes de pasar, preguntar cuál de las cuatro primeras filas es la intrusa; después de ver la quinta, la respuesta es obvia. El Módulo 8 vuelve sobre la TRM con cuatro evidencias.
 
-Verificación: cada celda se recalculó desde los datos congelados con divisor n (como `Acf`), para no redondear dos veces. La tabla del capítulo tiene cinco celdas doblemente redondeadas desde los cuatro decimales de J: dice 0.521, 0.708, 0.856, 0.637 y −0.003, y los exactos son 0.52049, 0.70747, 0.85546, 0.63649 y −0.00245 (aquí, 0.520, 0.707, 0.855, 0.636 y −0.002). La banda de ∇TRM es 1.96/√137 = 0.16745 → 0.167 (J guarda 0.1675). Para ρ̂₁₂ de ∇TRM, el código del capítulo, que descarga la serie en vivo, imprime −0.0024, y la tabla del Módulo 8 dice −0.0025 (el capítulo explica el empate). Detalle: Módulo 1, tabla.
+Verificación: cada celda se recalculó desde los datos congelados con divisor n (como `Acf`), para no redondear dos veces: en cinco celdas los cuatro decimales de J acaban en 5, y los exactos (0.52049, 0.70747, 0.85546, 0.63649 y −0.00245) dan 0.520, 0.707, 0.855, 0.636 y −0.002, las mismas cifras de la tabla del capítulo. La banda de ∇TRM es 1.96/√137 = 0.16745 → 0.167 (J guarda 0.1675). Para ρ̂₁₂ de ∇TRM, el código del capítulo, que descarga la serie en vivo, imprime −0.0024, y la tabla del Módulo 8 dice −0.0025 (el capítulo explica el empate). Detalle: Módulo 1, tabla.
 
 ## ¿Es estacional una serie con \(\hat\rho_{12}=0.636\) en niveles? {.pregunta}
 
@@ -147,7 +147,7 @@ En niveles la tendencia infla **todos** los \(\hat\rho_k\): \(\hat\rho_1=0.964\)
 <small>Fuente: J `firma.trm`, `trm_contraejemplo` · R · C autoevaluación, pregunta 1</small>
 
 ???
-Pregunta 1 de la autoevaluación del capítulo (Módulo 11). Pedir que voten antes de revelar. La opción 2 es la más tentadora; la 3 no: 1.96/√138 = 0.167 está bien calculada. El material escribe 0.637 (doble redondeo de 0.6365); el exacto es 0.63649, y aquí va 0.636.
+Pregunta 1 de la autoevaluación del capítulo (Módulo 11). Pedir que voten antes de revelar. La opción 2 es la más tentadora; la 3 no: 1.96/√138 = 0.167 está bien calculada. J guarda 0.6365, un empate; el exacto es 0.63649, y aquí, como en el material, va 0.636.
 
 Verificación: ρ̂₁, ρ̂₁₂, ρ̂₃₆ en niveles y los tres de ∇TRM en J y R; −0.0025 es el valor de J (`trm_contraejemplo.acf12`). Detalle: Módulo 1 y Módulo 8.
 
@@ -491,7 +491,7 @@ Es la idea que hay que llevarse del Módulo 4. Antes de añadir un parámetro po
 ???
 Un MA tiene un número finito de pesos que nunca se pisan; un AR los tiene infinitos y sí se pisan. Sobre un correlograma estimado, con su banda de ±2/√n, la diferencia entre 0.42298 y 0.42180 es invisible.
 
-Verificación: la tabla en J (`teoricas`) y recalculada en R con `ARMAacf`. El capítulo da −0.235 para ρ₁₁ del AR(1)×SMA(1): el exacto es −0.23446 (−0.234); ρ₁₃ sí es −0.23483 (−0.235). Con los coeficientes sin redondear, ρ₁₁ = ρ₁₃ = 0.14707 en el airline; el capítulo escribe 0.14705, que es el valor con −0.4018 y −0.5569 redondeados. A cuatro decimales los dos son 0.1471. Detalle: Módulo 4, «Los satélites».
+Verificación: la tabla en J (`teoricas`) y recalculada en R con `ARMAacf`. En el AR(1)×SMA(1), ρ₁₁ y ρ₁₃ no son iguales: −0.23446 y −0.23483, que redondean a −0.234 y −0.235, como en el capítulo. Con los coeficientes sin redondear, ρ₁₁ = ρ₁₃ = 0.14707 en el airline; el capítulo escribe 0.14705, que es el valor con −0.4018 y −0.5569 redondeados. A cuatro decimales los dos son 0.1471. Detalle: Módulo 4, «Los satélites».
 
 ## Picos de 0.70, 0.49 y 0.34 en 12, 24 y 36, y cero en lo demás: ¿qué modelo es? {.pregunta}
 
@@ -732,7 +732,7 @@ Verificación: nobs 144 y 131, y los coeficientes de USAccDeaths con y sin la op
 ???
 El logaritmo convierte una estacionalidad multiplicativa en aditiva, que es la que un SARIMA sabe modelar; el capítulo 2 ya lo dejó zanjado. En el mapa del Módulo 1 se ve: las bandas de la serie cruda se ensanchan hacia abajo y las del logaritmo no.
 
-Verificación: 1.848 = (622 − 104)/280.30, recalculado en R; el resto en J. El capítulo escribe 0.521 (doble redondeo; el exacto es 0.52049). Detalle: Módulo 7, pasos 0 y 1.
+Verificación: 1.848 = (622 − 104)/280.30, recalculado en R; el resto en J. ρ̂₂₄ = 0.520 sale del exacto, 0.52049, como en el capítulo. Detalle: Módulo 7, pasos 0 y 1.
 
 ## Paso 2: un pico en 1 y otro en 12 piden \(q=1\) y \(Q=1\)
 
@@ -1075,7 +1075,7 @@ RMSE: ETS sobre el logaritmo (19.43); MAE y MAPE: la regresión armónica (14.69
 ???
 El simulador del Módulo 11 pide exactamente esto: apuntar cuál dirían que es el mejor antes de mirar la tabla. Pedir el voto a mano alzada.
 
-Verificación: las tres cifras del ganador y el RMSE del airline en J (`comparativa.modelos`). El ganador por RMSE es el ETS sobre el logaritmo, no la armónica: la autoevaluación del material (pregunta 8) dice lo contrario y no se proyecta tal cual. Detalle: Módulo 11, tabla.
+Verificación: las tres cifras del ganador y el RMSE del airline en J (`comparativa.modelos`). El ganador por RMSE es el ETS sobre el logaritmo; la armónica gana en MAE y MAPE, y así lo plantea también la pregunta 8 de la autoevaluación. Detalle: Módulo 11, tabla.
 
 ## Con una sola partición, el modelo de once módulos queda cuarto
 
@@ -1094,7 +1094,7 @@ Verificación: las tres cifras del ganador y el RMSE del airline en J (`comparat
 ???
 Un lector razonable cerraría el capítulo concluyendo que el SARIMA no vale para esta serie. Dejar la conclusión en el aire un momento: la diapositiva siguiente la desmiente. `auto.arima` elige el mismo airline, por eso comparte fila.
 
-Verificación: cada celda en J (`comparativa.modelos`, `n_par`) y recalculada sin redondear en R (`m11.particion`). El capítulo da 16.13 para el MAE del ETS sobre el logaritmo: es un doble redondeo (J guarda 16.125; el exacto es 16.1249). El «2 + 11» del STL cuenta los dos parámetros del ARIMA que J registra —sobre el entrenamiento es un ARIMA(1,1,0) con deriva— y los once valores libres de la estacionalidad (C). Detalle: Módulo 11, tabla de los ocho métodos.
+Verificación: cada celda en J (`comparativa.modelos`, `n_par`) y recalculada sin redondear en R (`m11.particion`). El MAE del ETS sobre el logaritmo se redondea desde el exacto, 16.1249, y no desde el 16.125 de J: 16.12, como en el capítulo. El «2 + 11» del STL cuenta los dos parámetros del ARIMA que J registra —sobre el entrenamiento es un ARIMA(1,1,0) con deriva— y los once valores libres de la estacionalidad (C). Detalle: Módulo 11, tabla de los ocho métodos.
 
 ## Con 61 orígenes, el SARIMA pasa de cuarto a primero
 
@@ -1114,23 +1114,21 @@ Verificación: cada celda en J (`comparativa.modelos`, `n_par`) y recalculada si
 ???
 El método (validación de origen móvil) es contenido del capítulo 6; aquí se cita el resultado como advertencia. El resto del orden apenas se mueve: ETS sobre el logaritmo por delante del STL y de la armónica; ETS sobre la cruda y naïve, últimos.
 
-Verificación: RMSE medios y porcentajes en J y recalculados en R con los mismos seis pronosticadores (`verifica_directo_cap5.R`). El capítulo (y su autoevaluación) da 22.39 para la armónica: doble redondeo de 22.385 (J); el exacto es 22.3847. «Más del 85 %»: el peor caso es el ETS sobre la serie cruda, que le gana en el 14.8 % (el SARIMA gana en el 85.2 %). Detalle: Módulo 11.
+Verificación: RMSE medios y porcentajes en J y recalculados en R con los mismos seis pronosticadores (`verifica_directo_cap5.R`). La armónica se redondea desde el exacto, 22.3847, y no desde el 22.385 de J: 22.38, como en el capítulo y en su autoevaluación. «Más del 85 %»: el peor caso es el ETS sobre la serie cruda, que le gana en el 14.8 % (el SARIMA gana en el 85.2 %). Detalle: Módulo 11.
 
 ## La partición cayó justo detrás del frenazo de 1958, y el *airline* lo extrapoló
 
-- <kbd>Dato</kbd> Crecimiento del total anual en 1958: **3.4**; en los demás años, entre 6.0 y 19.8 (100 · Δlog)
-- <kbd>Dato</kbd> El *airline* pronostica 4.6 para 1959 y 6.7 para 1960; lo observado fue 11.7 y 10.6. Sesgo medio 39.45 = MAE: los 24 errores son por **defecto**
+- <kbd>Dato</kbd> Crecimiento del total anual en 1958: **3.4 %**; en los demás años, entre 6.2 y 21.8 %
+- <kbd>Dato</kbd> El *airline* pronostica 4.7 % para 1959 y 6.9 % para 1960; lo observado fue 12.4 y 11.2 %. Sesgo medio 39.45 = MAE: los 24 errores son por **defecto**
 - <kbd>Dato</kbd> De los 14 orígenes en que el SARIMA no es el mejor de los seis, 12 caen entre 1957-05 y 1959-01
 - <kbd>Interpretación</kbd> El problema es de **tendencia**, no de estacionalidad
 
-<small>Contexto: `AirPassengers`, totales anuales. Fuente: R `m11` (crecimientos como 100 · Δlog del total anual) · J `comparativa`</small>
+<small>Contexto: `AirPassengers`, totales anuales. Fuente: R `m11` (crecimiento del total anual, en %) · J `comparativa`</small>
 
 ???
-El ETS sobre el logaritmo (8.9 y 12.1) y la regresión armónica (10.1 y 12.4) arrastran menos ese frenazo. Con una sola partición, el azar de dónde cae el corte pesa más que la diferencia entre los métodos.
+El ETS sobre el logaritmo (9.4 y 12.8 %) y la regresión armónica (10.6 y 13.1 %) arrastran menos ese frenazo. Con una sola partición, el azar de dónde cae el corte pesa más que la diferencia entre los métodos.
 
-Unidad: el capítulo escribe estas cifras con «%», pero son diferencias logarítmicas del total anual (×100). En porcentaje, 1958 creció un 3.4 %, los demás años entre un 6.2 y un 21.8 %, lo observado fue 12.4 y 11.2 %, y el airline pronosticó 4.7 y 6.9 %. La conclusión no cambia. Por eso la diapositiva dice «100 · Δlog» y no «%».
-
-Verificación: todo recalculado en R (`m11.crecimiento_anual`, `sarima_pron`, `ets_log_pron`, `armonica_pron`, `sesgo_sarima`, `om12.origenes_no_mejor`). Detalle: Módulo 11, párrafo tras la tabla de 61 orígenes.
+Verificación: todo recalculado en R (`m11.crecimiento_anual`, `sarima_pron`, `ets_log_pron`, `armonica_pron`, `sesgo_sarima`, `om12.origenes_no_mejor`), en porcentaje del total anual, como el capítulo. Detalle: Módulo 11, párrafo tras la tabla de 61 orígenes.
 
 ## A 24 meses, SARIMA y ETS sobre el logaritmo son indistinguibles
 
@@ -1205,4 +1203,4 @@ Son los títulos más importantes de la clase 2, más los dos de la clase 1 que 
 ???
 Las soluciones de los tres ejercicios, con su código, están en el Módulo 11. El 2 ya se adelantó al final de la clase 1.
 
-Lecturas: las cuatro secciones de FPP3 se comprobaron en la edición en línea (otexts.com/fpp3, 2026-10-27): §7.4 «Some useful predictors», §9.9 «Seasonal ARIMA models», §10.5 «Dynamic harmonic regression» y §12.1 «Complex seasonality». Dos matices frente al capítulo: la regresión con errores ARIMA está en §10.1–10.2, no en §10.5; y el caso de §9.9 son los corticoides (H02), no los antidiabéticos (A10, que salen en §9.1). Shumway y Stoffer (cap. 3.9) y Box, Jenkins, Reinsel y Ljung (cap. 9) <mark>[SIN VERIFICAR]</mark>: los libros no están en el repositorio.
+Lecturas: las cuatro secciones de FPP3 se comprobaron en la edición en línea (otexts.com/fpp3, 2026-10-27): §7.4 «Some useful predictors», §9.9 «Seasonal ARIMA models», §10.5 «Dynamic harmonic regression» y §12.1 «Complex seasonality». El capítulo las describe igual. Para no confundirlas: la regresión con errores ARIMA en general está en §10.1–10.2, y los antidiabéticos (A10) salen en §9.1, no en §9.9. Shumway y Stoffer (cap. 3.9) y Box, Jenkins, Reinsel y Ljung (cap. 9) <mark>[SIN VERIFICAR]</mark>: los libros no están en el repositorio.
