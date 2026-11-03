@@ -772,7 +772,9 @@
           { label: 'IC 80 %', data: datos('hi80'), borderColor: 'rgba(255,102,0,0.45)', backgroundColor: 'rgba(255,102,0,0.22)', borderWidth: 1, pointRadius: 0, fill: '+1' },
           { label: '', data: datos('lo80'), borderColor: 'rgba(255,102,0,0.45)', borderWidth: 1, pointRadius: 0, fill: false },
           { label: 'Pronóstico', data: datos('media'), borderColor: COLORES_GRAFICO.secundario, borderWidth: 2, pointRadius: 0, borderDash: [6, 3] }
-        ], { plugins: { legend: { display: true } } });
+          // Los bordes inferiores de las bandas no llevan rótulo: sin el filtro,
+          // la leyenda los pintaba como dos recuadros vacíos.
+        ], { plugins: { legend: { display: true, labels: { filter: it => !!(it.text && it.text.trim()) } } } });
 
         const i = h - 1;
         const ancho = esc.hi95[i] - esc.lo95[i];

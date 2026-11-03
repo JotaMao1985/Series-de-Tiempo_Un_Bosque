@@ -2204,6 +2204,9 @@
         min-height: 1.4rem;
       }
     }
+      /* La copia MathML de KaTeX (position:absolute) no debe escaparse de una
+         tabla con desplazamiento horizontal: en el teléfono ensanchaba la página. */
+      .katex { position: relative; }
 
     /* ------------------------------------------------------------------
        Componente .tabla-ranking — tabla comparativa ordenable
@@ -2664,7 +2667,7 @@ round(1.96 / sqrt(length(diff(trm))), 4)
 #&gt; [1] 0.1675
 # Ninguno se acerca a la banda: no hay nada estacional que modelar.</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python">
+        <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd
 import statsmodels.api as sm
 
@@ -2900,7 +2903,7 @@ round(c(r[c("1", "11", "12", "13")], rho1_x_rho12 = r[["1"]] * r[["12"]]), 4)
 #&gt;            1           11           12           13 rho1_x_rho12
 #&gt;       0.6016       0.4230       0.7011       0.4218       0.4218</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python">
+        <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np
 from statsmodels.tsa.arima_process import ArmaProcess
 
@@ -3123,7 +3126,7 @@ round(c(psi_12 = psi[13], phi12_mas_Phi = phi^12 + Phi), 5)
 #&gt;        psi_12 phi12_mas_Phi
 #&gt;       0.98243       0.98243</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python">
+        <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 
@@ -3190,7 +3193,7 @@ round(c(B1 = th, B12 = Th, B13 = th * Th), 4)
 # La forma no multiplicativa se pediria con fixed=, y necesita 13 parametros
 # para tocar los mismos rezagos. Casi nunca compensa.</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python">
+        <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 
@@ -3436,7 +3439,7 @@ diff(diff(y2, lag = 12))
 #&gt; 2024   2   2   2   2   2   2   2   2   2   2   2   2
 #&gt; 2025   0   0   0   0   0   0   0   0   0   0   0   0</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python">
+        <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd
 
 MESES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun",
@@ -3623,7 +3626,7 @@ for (D in 0:2) {
 #&gt; D=1  Theta=-0.5569 (e.e. 0.0731)  |raiz MA|^-1=0.9524
 #&gt; D=2  Theta=-0.9973 (e.e. 0.0830)  |raiz MA|^-1=0.9998</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python">
+        <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm
 
 ap = np.log(sm.datasets.get_rdataset("AirPassengers").data["value"].values)
@@ -3940,7 +3943,7 @@ round(acf_sarima(phi = 0.6, Phi = 0.7)[c(1, 11, 12, 13, 24)], 4)
 round(acf_sarima(theta = -0.4018, Theta = -0.5569)[c(1, 11, 12, 13, 24)], 4)
 #&gt; [1] -0.3459  0.1471 -0.4251  0.1471  0.0000</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python">
+        <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np
 from statsmodels.tsa.arima_process import ArmaProcess
 
@@ -4209,7 +4212,7 @@ round(c(r12 = r[13], r24 = r[25], banda = 1.96/sqrt(length(ap))), 4)
 #&gt;     r12     r24   banda
 #&gt; -0.0515  0.0124  0.1633</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python">
+        <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm, warnings
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from statsmodels.stats.diagnostic import acorr_ljungbox
@@ -4495,7 +4498,7 @@ round(psi[c(1, 2, 12, 13, 14)], 4)
 round(sqrt(cumsum(psi^2) * fit$sigma2)[c(1, 12, 24)], 6)
 #&gt; [1] 0.037031 0.082273 0.139634</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python">
+        <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm, warnings
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 warnings.filterwarnings("ignore")
@@ -4703,7 +4706,7 @@ round(c(forzado = g$aicc, simple = h$aicc), 3)
 as.character(auto.arima(trm, stepwise = FALSE, approximation = FALSE))
 #&gt; [1] "ARIMA(0,1,0)"</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python">
+        <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm, warnings
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 warnings.filterwarnings("ignore")
@@ -4781,8 +4784,8 @@ print(round(g.params["ar.S.L12"], 4), round(g.tvalues["ar.S.L12"], 3))
 
       <div class="definition">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: SARIMAX / regresión con errores SARIMA</h4>
-        $$y_t = \beta' x_t + n_t, \qquad \text{donde } n_t \text{ sigue un SARIMA}(p,d,q)(P,D,Q)_m$$
-        <p style="margin-bottom:0;">Es una regresión ordinaria cuyo <strong>error</strong> tiene estructura temporal, no
+        $$y_t = \beta' x_t + n_t$$
+        <p style="margin-bottom:0;">donde $n_t$ sigue un SARIMA($p,d,q$)($P,D,Q$)$_m$. Es una regresión ordinaria cuyo <strong>error</strong> tiene estructura temporal, no
           un SARIMA con términos añadidos. La distinción importa al interpretar: $\beta$ mide el efecto del regresor
           <em>una vez descontada</em> la dinámica, y por eso su error estándar es mayor que el de un MCO ingenuo.
           Cuidado con el nombre: en <code>statsmodels</code>, <code>SARIMAX</code> con <code>exog</code> ajusta esto
@@ -4894,7 +4897,7 @@ round((coef(f2)["log_dias"] - 1) / sqrt(diag(f2$var.coef))["log_dias"], 4)
 #&gt; log_dias
 #&gt;   0.1882      no se rechaza beta = 1</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python">
+        <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm, warnings
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 warnings.filterwarnings("ignore")
@@ -4987,8 +4990,10 @@ print(round(float((f2.params["x1"] - 1) / f2.bse["x1"]), 4))
 
       <div class="definition">
         <h4><i class="fas fa-wave-square mr-2" aria-hidden="true"></i>Definición: términos de Fourier</h4>
-        $$y_t = \beta_0 + \sum_{k=1}^{K}\left[\alpha_k \sin\!\left(\frac{2\pi k t}{m}\right)
-          + \delta_k \cos\!\left(\frac{2\pi k t}{m}\right)\right] + n_t$$
+        $$\begin{aligned}
+          y_t = \beta_0 &+ \sum_{k=1}^{K}\alpha_k \sin\!\left(\frac{2\pi k t}{m}\right) \\
+          &+ \sum_{k=1}^{K}\delta_k \cos\!\left(\frac{2\pi k t}{m}\right) + n_t
+        \end{aligned}$$
         <p style="margin-bottom:0;">con $n_t$ un ARIMA <strong>no estacional</strong>. Cuesta $2K$ parámetros
           <em>independientemente de $m$</em>, y $K$ controla la suavidad: $K=1$ da una sinusoide pura, y $K$ mayor
           admite formas más quebradas. El máximo útil es $K = m/2$; ahí los términos son tantos como meses y
@@ -5100,7 +5105,7 @@ s &lt;- stlm(ap, s.window = "periodic", method = "arima")
 as.character(s$model)
 #&gt; [1] "ARIMA(1,1,1) with drift"</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python">
+        <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm, warnings
 from statsmodels.tsa.deterministic import Fourier, DeterministicProcess
 from statsmodels.tsa.statespace.sarimax import SARIMAX
@@ -7919,7 +7924,9 @@ round(c(armonico_K4 = 180.200, n_armonico = 467,
           { label: 'IC 80 %', data: datos('hi80'), borderColor: 'rgba(255,102,0,0.45)', backgroundColor: 'rgba(255,102,0,0.22)', borderWidth: 1, pointRadius: 0, fill: '+1' },
           { label: '', data: datos('lo80'), borderColor: 'rgba(255,102,0,0.45)', borderWidth: 1, pointRadius: 0, fill: false },
           { label: 'Pronóstico', data: datos('media'), borderColor: COLORES_GRAFICO.secundario, borderWidth: 2, pointRadius: 0, borderDash: [6, 3] }
-        ], { plugins: { legend: { display: true } } });
+          // Los bordes inferiores de las bandas no llevan rótulo: sin el filtro,
+          // la leyenda los pintaba como dos recuadros vacíos.
+        ], { plugins: { legend: { display: true, labels: { filter: it => !!(it.text && it.text.trim()) } } } });
 
         const i = h - 1;
         const ancho = esc.hi95[i] - esc.lo95[i];

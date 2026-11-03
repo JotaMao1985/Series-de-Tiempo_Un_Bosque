@@ -44,8 +44,10 @@
 
       <div class="definition">
         <h4><i class="fas fa-wave-square mr-2" aria-hidden="true"></i>Definición: términos de Fourier</h4>
-        $$y_t = \beta_0 + \sum_{k=1}^{K}\left[\alpha_k \sin\!\left(\frac{2\pi k t}{m}\right)
-          + \delta_k \cos\!\left(\frac{2\pi k t}{m}\right)\right] + n_t$$
+        $$\begin{aligned}
+          y_t = \beta_0 &+ \sum_{k=1}^{K}\alpha_k \sin\!\left(\frac{2\pi k t}{m}\right) \\
+          &+ \sum_{k=1}^{K}\delta_k \cos\!\left(\frac{2\pi k t}{m}\right) + n_t
+        \end{aligned}$$
         <p style="margin-bottom:0;">con $n_t$ un ARIMA <strong>no estacional</strong>. Cuesta $2K$ parámetros
           <em>independientemente de $m$</em>, y $K$ controla la suavidad: $K=1$ da una sinusoide pura, y $K$ mayor
           admite formas más quebradas. El máximo útil es $K = m/2$; ahí los términos son tantos como meses y
@@ -157,7 +159,7 @@ s &lt;- stlm(ap, s.window = "periodic", method = "arima")
 as.character(s$model)
 #&gt; [1] "ARIMA(1,1,1) with drift"</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python">
+        <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm, warnings
 from statsmodels.tsa.deterministic import Fourier, DeterministicProcess
 from statsmodels.tsa.statespace.sarimax import SARIMAX

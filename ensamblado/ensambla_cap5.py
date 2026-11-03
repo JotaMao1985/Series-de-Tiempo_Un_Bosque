@@ -165,8 +165,19 @@ if j == -1:
     raise SystemExit("ABORTA [CSS del mapa estacional/fin]: no encuentro el cierre de "
                      "la media query del ciclo después del marcador de inicio.")
 j += len(fin_css)
+# Detrás del mapa va el arreglo del desborde en móvil (auditoría del 2026-11-03).
+# KaTeX acompaña cada fórmula de una copia en MathML para lectores de pantalla,
+# oculta con position:absolute. Dentro de una tabla que se desplaza en horizontal
+# esa copia se escapa de la caja y ensancha la página: a 375 px, 9 de los 11
+# módulos medían de 432 a 629 px. Con `.katex` relativo la copia queda contenida.
+# El capítulo 6 lo hereda, porque se ensambla sobre este HTML.
+KATEX_RELATIVO = """      /* La copia MathML de KaTeX (position:absolute) no debe escaparse de una
+         tabla con desplazamiento horizontal: en el teléfono ensanchaba la página. */
+      .katex { position: relative; }
+"""
 html = (html[:j]
         + lee(COMPONENTES / "mapa_estacional.css").rstrip("\n") + "\n"
+        + KATEX_RELATIVO
         + html[j:])
 
 ancla_js = """        const inicial = botones.findIndex(b => b.getAttribute('aria-selected') === 'true');
@@ -426,7 +437,8 @@ for pieza, esperadas in [(".mapa-estacional {", 1), (".mapa-estacional-rejilla {
                          ("function pintarMapaEstacional", 1),
                          ("function iniciarMapasEstacionales", 1),
                          ("const MAPAS_ESTACIONALES", 1),
-                         ("        iniciarMapasEstacionales();", 1)]:
+                         ("        iniciarMapasEstacionales();", 1),
+                         ("      .katex { position: relative; }", 1)]:
     if html.count(pieza) != esperadas:
         fallos.append(f"mapa estacional: '{pieza}' aparece {html.count(pieza)} veces, "
                       f"se esperaban {esperadas}")

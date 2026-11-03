@@ -135,7 +135,7 @@ round(1.96 / sqrt(length(diff(trm))), 4)
 #&gt; [1] 0.1675
 # Ninguno se acerca a la banda: no hay nada estacional que modelar.</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python">
+        <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd
 import statsmodels.api as sm
 
@@ -371,7 +371,7 @@ round(c(r[c("1", "11", "12", "13")], rho1_x_rho12 = r[["1"]] * r[["12"]]), 4)
 #&gt;            1           11           12           13 rho1_x_rho12
 #&gt;       0.6016       0.4230       0.7011       0.4218       0.4218</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python">
+        <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np
 from statsmodels.tsa.arima_process import ArmaProcess
 
@@ -594,7 +594,7 @@ round(c(psi_12 = psi[13], phi12_mas_Phi = phi^12 + Phi), 5)
 #&gt;        psi_12 phi12_mas_Phi
 #&gt;       0.98243       0.98243</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python">
+        <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 
@@ -661,7 +661,7 @@ round(c(B1 = th, B12 = Th, B13 = th * Th), 4)
 # La forma no multiplicativa se pediria con fixed=, y necesita 13 parametros
 # para tocar los mismos rezagos. Casi nunca compensa.</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python">
+        <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 
@@ -900,7 +900,7 @@ diff(diff(y2, lag = 12))
 #&gt; 2024   2   2   2   2   2   2   2   2   2   2   2   2
 #&gt; 2025   0   0   0   0   0   0   0   0   0   0   0   0</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python">
+        <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd
 
 MESES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun",
@@ -1087,7 +1087,7 @@ for (D in 0:2) {
 #&gt; D=1  Theta=-0.5569 (e.e. 0.0731)  |raiz MA|^-1=0.9524
 #&gt; D=2  Theta=-0.9973 (e.e. 0.0830)  |raiz MA|^-1=0.9998</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python">
+        <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm
 
 ap = np.log(sm.datasets.get_rdataset("AirPassengers").data["value"].values)

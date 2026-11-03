@@ -237,7 +237,7 @@ round(psi[c(1, 2, 12, 13, 14)], 4)
 round(sqrt(cumsum(psi^2) * fit$sigma2)[c(1, 12, 24)], 6)
 #&gt; [1] 0.037031 0.082273 0.139634</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python">
+        <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm, warnings
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 warnings.filterwarnings("ignore")
@@ -445,7 +445,7 @@ round(c(forzado = g$aicc, simple = h$aicc), 3)
 as.character(auto.arima(trm, stepwise = FALSE, approximation = FALSE))
 #&gt; [1] "ARIMA(0,1,0)"</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python">
+        <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm, warnings
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 warnings.filterwarnings("ignore")
@@ -523,8 +523,8 @@ print(round(g.params["ar.S.L12"], 4), round(g.tvalues["ar.S.L12"], 3))
 
       <div class="definition">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: SARIMAX / regresión con errores SARIMA</h4>
-        $$y_t = \beta' x_t + n_t, \qquad \text{donde } n_t \text{ sigue un SARIMA}(p,d,q)(P,D,Q)_m$$
-        <p style="margin-bottom:0;">Es una regresión ordinaria cuyo <strong>error</strong> tiene estructura temporal, no
+        $$y_t = \beta' x_t + n_t$$
+        <p style="margin-bottom:0;">donde $n_t$ sigue un SARIMA($p,d,q$)($P,D,Q$)$_m$. Es una regresión ordinaria cuyo <strong>error</strong> tiene estructura temporal, no
           un SARIMA con términos añadidos. La distinción importa al interpretar: $\beta$ mide el efecto del regresor
           <em>una vez descontada</em> la dinámica, y por eso su error estándar es mayor que el de un MCO ingenuo.
           Cuidado con el nombre: en <code>statsmodels</code>, <code>SARIMAX</code> con <code>exog</code> ajusta esto
@@ -636,7 +636,7 @@ round((coef(f2)["log_dias"] - 1) / sqrt(diag(f2$var.coef))["log_dias"], 4)
 #&gt; log_dias
 #&gt;   0.1882      no se rechaza beta = 1</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python">
+        <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm, warnings
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 warnings.filterwarnings("ignore")
