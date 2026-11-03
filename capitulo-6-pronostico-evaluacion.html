@@ -2660,7 +2660,7 @@ round(accuracy(fc, te)[, c("RMSE", "MAE", "MAPE", "MASE")], 4)
 # el 8.84 no dice nada sobre 1959-1960. El numero que importa es el 43.18.
 # La razon entre los dos es 43.1837 / 8.8353 = 4.888.</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python" role="tabpanel">
+        <div class="code-tab-panel" data-lang="python" role="tabpanel" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from statsmodels.datasets import get_rdataset
@@ -2874,7 +2874,7 @@ round(as.numeric(tail(tr, 1)) +
       (1:3) * (as.numeric(tail(tr, 1)) - tr[1]) / (length(tr) - 1), 4)
 #&gt; [1] 338.8908 340.7815 342.6723   # identico, hecho a mano</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python" role="tabpanel">
+        <div class="code-tab-panel" data-lang="python" role="tabpanel" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd
 from statsmodels.datasets import get_rdataset
 
@@ -3046,7 +3046,7 @@ round(sort(abs(e_dr)), 2)
 # estacional; sus cuatro ultimos, mucho mayores. El MAE promedia y gana la
 # deriva; el RMSE eleva al cuadrado primero, y el 111.17 basta para invertirlo.</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python" role="tabpanel">
+        <div class="code-tab-panel" data-lang="python" role="tabpanel" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd
 from statsmodels.datasets import get_rdataset
 
@@ -3234,7 +3234,7 @@ round(c(mae = mean(abs(te - p)), rmse = sqrt(mean((te - p)^2))), 4)
 sum(abs(as.numeric(ret)) &lt; 0.1)      # meses con retorno casi nulo
 #&gt; [1] 6</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python" role="tabpanel">
+        <div class="code-tab-panel" data-lang="python" role="tabpanel" hidden>
           <pre><code class="language-python">import numpy as np, json
 
 # Fallo 1
@@ -3393,7 +3393,7 @@ round(b / a, 4)
 #&gt;  RMSE   MAE  MAPE  MASE
 #&gt;  1000  1000     1     1</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python" role="tabpanel">
+        <div class="code-tab-panel" data-lang="python" role="tabpanel" hidden>
           <pre><code class="language-python">import numpy as np
 from statsmodels.datasets import get_rdataset
 
@@ -3588,7 +3588,7 @@ round(evalua(polinomio), 4)
 round(unname(evalua(polinomio)[2] / evalua(polinomio)[1]), 2)
 #&gt; [1] 95.46                      &lt;- el error real es 95 veces el prometido</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python" role="tabpanel">
+        <div class="code-tab-panel" data-lang="python" role="tabpanel" hidden>
           <pre><code class="language-python">import numpy as np
 from sklearn.model_selection import KFold, TimeSeriesSplit   # solo ilustrativo
 from statsmodels.datasets import get_rdataset
@@ -3925,7 +3925,7 @@ min(which(rowSums(!is.na(ew)) &gt; 0))      #&gt; [1] 72    &lt;- window = 72 em
 ewb &lt;- ew[which(rowSums(!is.na(ew)) == 12), ]
 round(sqrt(mean(ewb^2)), 4)              #&gt; [1] 20.0956</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python" role="tabpanel">
+        <div class="code-tab-panel" data-lang="python" role="tabpanel" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from statsmodels.datasets import get_rdataset
@@ -4126,7 +4126,7 @@ round(c(sarima = sqrt(mean(e_sar^2)), ets = sqrt(mean(e_ets^2))), 4)
 #&gt;  sarima     ets
 #&gt; 18.9154 23.1706</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python" role="tabpanel">
+        <div class="code-tab-panel" data-lang="python" role="tabpanel" hidden>
           <pre><code class="language-python">import numpy as np
 from scipy import stats
 
@@ -4348,7 +4348,7 @@ round(c(airline = shapiro.test(residuals(Arima(AirPassengers, order = c(0,1,1),
 #&gt; airline    nilo     trm
 #&gt;  0.1674  0.7312  0.0006</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python" role="tabpanel">
+        <div class="code-tab-panel" data-lang="python" role="tabpanel" hidden>
           <pre><code class="language-python">import numpy as np, json
 from scipy import stats
 
@@ -4619,7 +4619,7 @@ sapply(c(1, 3, 5), function(h)
   round(dm.test(ea[, h], eb[, h], h = h, power = 2)$p.value, 4))
 #&gt; [1] 0.0176 0.0278 0.0013     significativo a los tres horizontes</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python" role="tabpanel">
+        <div class="code-tab-panel" data-lang="python" role="tabpanel" hidden>
           <pre><code class="language-python">import numpy as np, json
 from statsmodels.tsa.arima.model import ARIMA
 
@@ -4810,7 +4810,7 @@ round(c(ts = accuracy(fc, te)["Test set","MASE"],
 #&gt;      ts numeric
 #&gt;  2.4935  3.2153</code></pre>
         </div>
-        <div class="code-tab-panel" data-lang="python" role="tabpanel">
+        <div class="code-tab-panel" data-lang="python" role="tabpanel" hidden>
           <pre><code class="language-python">import numpy as np
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from statsmodels.datasets import get_rdataset
