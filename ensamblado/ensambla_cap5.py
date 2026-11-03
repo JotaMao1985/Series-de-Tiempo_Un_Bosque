@@ -284,6 +284,8 @@ plantillas_nuevas = (
 # selectores CSS no encuentra diferencias.
 MAPAS = {
     "firma": ("Mapa mes × año", ""),
+    # Módulo 3: la tienda inventada, el ejemplo para seguir a mano
+    "tienda": ("La tienda inventada, mes × año", ""),
 }
 for clave, (titulo, nota) in MAPAS.items():
     marca = f"<!--MAPA:{clave}|{titulo}|{nota}-->"
@@ -380,7 +382,7 @@ html = html[:i] + lee(FUENTES / "chapter.js").rstrip("\n") + html[j:]
 fallos = []
 
 SIMULADORES = [
-    "mapa-firma", "constructor-polinomio", "cuatro-combinaciones",
+    "mapa-firma", "constructor-polinomio", "tienda-cuadricula", "cuatro-combinaciones",
     "sobrediferenciacion-estacional", "firma-teorica", "airline-pesos",
     "explorador-sarima", "pronostico-estacional", "contraejemplo-trm",
     "calendario-regresores", "armonicos-K", "comparativa-particion",
@@ -414,6 +416,7 @@ if html.count("function iniciarCiclos()") != 1 or html.count("        iniciarCic
 
 # Componente .mapa-estacional: nuevo, hay que comprobar las tres piezas
 fallos += comprueba_mapa_estacional(html, "firma")
+fallos += comprueba_mapa_estacional(html, "tienda")
 # `.mapa-estacional-rejilla` y `.mapa-estacional-celda` salen dos veces a
 # propósito: la segunda es la sobreescritura de la media query de móvil.
 for pieza, esperadas in [(".mapa-estacional {", 1), (".mapa-estacional-rejilla {", 2),
@@ -480,11 +483,11 @@ for dato in ["const DATOS_CAP5", "const SERIES_CAP5", "genera_cap5.R"]:
 # suelta, porque el JavaScript heredado documenta el componente con un ejemplo
 # dentro de un comentario.
 n_der = len(re.findall(r'<div class="derivacion">\s*\n\s*<button', html))
-if n_der != 3:
-    fallos.append(f"hay {n_der} cajas de derivación, se esperaban 3")
+if n_der != 4:
+    fallos.append(f"hay {n_der} cajas de derivación, se esperaban 4")
 n_paneles_der = len(re.findall(r'<div class="derivacion-panel" id="[^"]+" hidden>', html))
-if n_paneles_der != 3:
-    fallos.append(f"hay {n_paneles_der} paneles de derivación, se esperaban 3")
+if n_paneles_der != 4:
+    fallos.append(f"hay {n_paneles_der} paneles de derivación, se esperaban 4")
 
 # Ejercicios guiados con sus dos desplegables cada uno
 n_ej = html.count('<div class="ejercicio-guiado">')
@@ -504,6 +507,6 @@ if fallos:
 
 CAP5.write_text(html, encoding="utf-8")
 print(f"OK  {CAP5.name} escrito ({len(html.encode('utf-8')) / 1024:.1f} KB)")
-print(f"    11 plantillas · {len(SIMULADORES)} simuladores · 3 derivaciones · "
+print(f"    11 plantillas · {len(SIMULADORES)} simuladores · 4 derivaciones · "
       f"3 ejercicios · 8 preguntas de autoevaluación · 1 tabla de ranking · "
       f"componente .mapa-estacional instalado")

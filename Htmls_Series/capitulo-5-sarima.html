@@ -3085,7 +3085,223 @@ print(np.round([th, Th, th * Th], 4))
         </div>
       </div>
 
+      <h3>Un ejemplo para seguir a mano: la tienda inventada</h3>
+
+      <p>Antes de medir con datos reales conviene ver qué hace cada diferencia con números que se comprueban de
+        cabeza. La serie de este ejemplo es <strong>inventada</strong>, no medida: las ventas mensuales de una tienda
+        que abre en enero de 2022 con $100$ unidades, vende <strong>una unidad más cada mes</strong> y repite cada año
+        el mismo patrón estacional $s_{\text{mes}}$:</p>
+
+      <p>$$y_t = 100 + (t - 1) + s_{\text{mes}}$$</p>
+
+      <p>donde $t$ cuenta los meses: $t = 1$ es enero de 2022 y $t = 48$, diciembre de 2025. El patrón, en
+        unidades:</p>
+
+      <div class="diagram">
+        <table>
+          <tbody>
+            <tr><th>Ene</th><th>Feb</th><th>Mar</th><th>Abr</th><th>May</th><th>Jun</th></tr>
+            <tr><td>$-6$</td><td>$-8$</td><td>$-4$</td><td>$-2$</td><td>$0$</td><td>$4$</td></tr>
+            <tr><th>Jul</th><th>Ago</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dic</th></tr>
+            <tr><td>$6$</td><td>$4$</td><td>$0$</td><td>$-2$</td><td>$2$</td><td>$6$</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>El patrón suma cero a lo largo del año: pasa ventas de unos meses a otros, pero no cambia el nivel medio. En
+        una cuadrícula con un año por fila y un mes por columna —la vista del mapa del Módulo 1—, cada diferencia es
+        una <strong>dirección de resta</strong>:</p>
+
+      <ul>
+        <li><strong>$\nabla_{12}$ resta la celda de arriba</strong>, que es el mismo mes del año anterior. Marzo de
+          2024 menos marzo de 2023: $122 - 110 = 12$.</li>
+        <li><strong>$\nabla$ resta la celda de la izquierda</strong>, que es el mes anterior. A enero le toca el
+          diciembre de la fila de arriba.</li>
+        <li><strong>$\nabla^{12}$ es otra cosa</strong>: repetir doce veces la resta hacia la izquierda, cada vez
+          sobre el resultado anterior. No equivale a restar una sola vez hacia arriba.</li>
+      </ul>
+
+      <div class="simulador" data-simulador="tienda-cuadricula">
+        <h4><i class="fas fa-store" aria-hidden="true"></i> La tienda inventada, celda a celda</h4>
+        <p class="simulador-intro">Elige qué restar y mira la cuadrícula. Empieza por la serie tal cual, pasa a
+          $\nabla_{12}$ y compara con $\nabla$. Después cambia al escenario en que la tienda acelera en 2024. La
+          lectura hace la cuenta de marzo de 2024 con los números de la serie.</p>
+        <div class="simulador-controles"></div>
+        <div class="mapa-estacional" data-mapa="tienda">
+          <p class="mapa-estacional-titulo">La tienda inventada, mes × año</p>
+          <div class="mapa-estacional-marco">
+            <div class="mapa-estacional-rejilla" role="table" aria-label="La tienda inventada, mes × año"></div>
+          </div>
+          <div class="mapa-estacional-leyenda"></div>
+          <p class="mapa-estacional-nota"></p>
+        </div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <p>Las cuatro cuadrículas adelantan lo que el resto del módulo mide con datos reales:</p>
+
+      <ul>
+        <li><strong>$\nabla$ no quita la estacionalidad.</strong> Con crecimiento fijo, cada año repite los mismos
+          doce números, de $-11$ en enero a $5$ en diciembre: el patrón sigue ahí, escrito como cambios de un mes al
+          siguiente. Por eso, en la tabla de más abajo, la diferencia regular sube $\hat\rho_{12}$ en lugar de
+          bajarlo.</li>
+        <li><strong>$\nabla_{12}$ quita el patrón y también la tendencia.</strong> Todas las celdas valen $12$, las
+          doce unidades que la tienda gana en un año. La tendencia lineal se volvió una constante: es lo que el
+          desarrollo de arriba demuestra en general cuando dice que $\nabla_{12}$ contiene a $\nabla$.</li>
+        <li><strong>$\nabla\nabla_{12}$ hace falta cuando el crecimiento cambia.</strong> Con crecimiento fijo solo
+          deja ceros: ya no quedaba nada que quitar. Si la tienda acelera en 2024, $\nabla_{12}$ deja de ser
+          constante —sube de $14$ en enero a $36$ en diciembre— y la diferencia regular recoge el cambio: $2$ en cada
+          mes de 2024 y $0$ antes y después. En $\log(\text{AirPassengers})$ el crecimiento anual tampoco es fijo:
+          su media va de $0.032$ en 1958 a $0.201$ en 1951. Esa es la «tendencia sin resolver» que $\nabla_{12}$
+          sola deja en la tabla de abajo.</li>
+        <li><strong>El orden de las restas no importa.</strong> Primero hacia arriba y después hacia la izquierda, o al
+          revés: sale la misma cuadrícula. Es lo que más abajo se llama que los operadores <em>conmutan</em>.</li>
+      </ul>
+
+      <div class="derivacion">
+        <button type="button" class="derivacion-boton" aria-expanded="false" aria-controls="der-cuadrado-2x2">
+          <i class="fas fa-square-root-variable" aria-hidden="true"></i>
+          <span class="derivacion-texto">Ver por qué el orden no importa</span>
+          <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="derivacion-panel" id="der-cuadrado-2x2" hidden>
+          <ol class="derivacion-pasos">
+            <li>
+              <p>Las dos diferencias juntas son el producto de sus polinomios:</p>
+              $$\nabla\nabla_{12}\,y_t = (1-B)(1-B^{12})\,y_t = (1 - B - B^{12} + B^{13})\,y_t$$
+            </li>
+            <li>
+              <p>Es decir, cuatro términos:</p>
+              $$\nabla\nabla_{12}\,y_t = y_t - y_{t-1} - y_{t-12} + y_{t-13}$$
+              <p>En la cuadrícula son las cuatro esquinas de un cuadrado de $2 \times 2$: la celda, la de su
+                izquierda, la de arriba y la de arriba a la izquierda.</p>
+            </li>
+            <li>
+              <p>Con la tienda que acelera, en marzo de 2024: $128 - 121 - 110 + 105 = 2$, el mismo $2$ que muestra
+                la cuadrícula de $\nabla\nabla_{12}$.</p>
+            </li>
+            <li>
+              <p>Multiplicar en el otro orden, $(1-B^{12})(1-B)$, da el mismo polinomio. Por eso la serie resultante
+                no depende de qué diferencia se aplique primero.</p>
+            </li>
+          </ol>
+          <p class="derivacion-resultado">Diferenciar dos veces es restar las cuatro esquinas de un cuadrado. Los
+            operadores conmutan; lo que no conmuta, como se ve más abajo, son las pruebas que deciden cuántos
+            aplicar.</p>
+        </div>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="La tienda inventada">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r">
+          <pre><code class="language-r"># Tienda inventada: 100 unidades, una mas al mes y un patron anual de suma cero
+t      &lt;- 1:48
+patron &lt;- c(-6, -8, -4, -2, 0, 4, 6, 4, 0, -2, 2, 6)
+mes    &lt;- (t - 1) %% 12 + 1
+y      &lt;- ts(100 + (t - 1) + patron[mes], start = c(2022, 1), frequency = 12)
+y                              # una serie mensual se imprime como cuadricula
+#&gt;      Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+#&gt; 2022  94  93  98 101 104 109 112 111 108 107 112 117
+#&gt; 2023 106 105 110 113 116 121 124 123 120 119 124 129
+#&gt; 2024 118 117 122 125 128 133 136 135 132 131 136 141
+#&gt; 2025 130 129 134 137 140 145 148 147 144 143 148 153
+diff(y, lag = 12)              # nabla_12: menos la celda de arriba
+#&gt;      Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+#&gt; 2023  12  12  12  12  12  12  12  12  12  12  12  12
+#&gt; 2024  12  12  12  12  12  12  12  12  12  12  12  12
+#&gt; 2025  12  12  12  12  12  12  12  12  12  12  12  12
+diff(y)                        # nabla: menos la celda de la izquierda
+#&gt;      Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+#&gt; 2022      -1   5   3   3   5   3  -1  -3  -1   5   5
+#&gt; 2023 -11  -1   5   3   3   5   3  -1  -3  -1   5   5
+#&gt; 2024 -11  -1   5   3   3   5   3  -1  -3  -1   5   5
+#&gt; 2025 -11  -1   5   3   3   5   3  -1  -3  -1   5   5
+diff(diff(y, lag = 12))        # las dos
+#&gt;      Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+#&gt; 2023       0   0   0   0   0   0   0   0   0   0   0
+#&gt; 2024   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 2025   0   0   0   0   0   0   0   0   0   0   0   0
+max(abs(diff(diff(y, lag = 12)) - diff(diff(y), lag = 12)))   # orden: da igual
+#&gt; [1] 0
+
+# Desde enero de 2024 la tienda crece tres unidades al mes
+tend2 &lt;- ifelse(t &lt;= 24, t - 1, 23 + 3 * (t - 24))
+y2    &lt;- ts(100 + tend2 + patron[mes], start = c(2022, 1), frequency = 12)
+diff(y2, lag = 12)
+#&gt;      Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+#&gt; 2023  12  12  12  12  12  12  12  12  12  12  12  12
+#&gt; 2024  14  16  18  20  22  24  26  28  30  32  34  36
+#&gt; 2025  36  36  36  36  36  36  36  36  36  36  36  36
+diff(diff(y2, lag = 12))
+#&gt;      Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+#&gt; 2023       0   0   0   0   0   0   0   0   0   0   0
+#&gt; 2024   2   2   2   2   2   2   2   2   2   2   2   2
+#&gt; 2025   0   0   0   0   0   0   0   0   0   0   0   0</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python">
+          <pre><code class="language-python">import numpy as np, pandas as pd
+
+MESES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun",
+         "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
+t = np.arange(1, 49)
+patron = np.array([-6, -8, -4, -2, 0, 4, 6, 4, 0, -2, 2, 6])
+fechas = pd.period_range("2022-01", periods=48, freq="M")
+y = pd.Series(100 + (t - 1) + patron[(t - 1) % 12], index=fechas)
+
+def cuadricula(s):
+    """Un ano por fila y un mes por columna, como imprime R."""
+    s = s.dropna()
+    tabla = s.groupby([s.index.year, s.index.month]).first().unstack()
+    return tabla.astype("Int64").rename(columns=dict(enumerate(MESES, 1)))
+
+print(cuadricula(y))
+#&gt;       Ene  Feb  Mar  Abr  May  Jun  Jul  Ago  Sep  Oct  Nov  Dic
+#&gt; 2022   94   93   98  101  104  109  112  111  108  107  112  117
+#&gt; 2023  106  105  110  113  116  121  124  123  120  119  124  129
+#&gt; 2024  118  117  122  125  128  133  136  135  132  131  136  141
+#&gt; 2025  130  129  134  137  140  145  148  147  144  143  148  153
+print(cuadricula(y.diff(12)))          # nabla_12: menos la celda de arriba
+#&gt;       Ene  Feb  Mar  Abr  May  Jun  Jul  Ago  Sep  Oct  Nov  Dic
+#&gt; 2023   12   12   12   12   12   12   12   12   12   12   12   12
+#&gt; 2024   12   12   12   12   12   12   12   12   12   12   12   12
+#&gt; 2025   12   12   12   12   12   12   12   12   12   12   12   12
+print(cuadricula(y.diff()))            # nabla: menos la celda de la izquierda
+#&gt;        Ene  Feb  Mar  Abr  May  Jun  Jul  Ago  Sep  Oct  Nov  Dic
+#&gt; 2022  &lt;NA&gt;   -1    5    3    3    5    3   -1   -3   -1    5    5
+#&gt; 2023   -11   -1    5    3    3    5    3   -1   -3   -1    5    5
+#&gt; 2024   -11   -1    5    3    3    5    3   -1   -3   -1    5    5
+#&gt; 2025   -11   -1    5    3    3    5    3   -1   -3   -1    5    5
+print(cuadricula(y.diff(12).diff()))   # las dos
+#&gt;        Ene  Feb  Mar  Abr  May  Jun  Jul  Ago  Sep  Oct  Nov  Dic
+#&gt; 2023  &lt;NA&gt;    0    0    0    0    0    0    0    0    0    0    0
+#&gt; 2024     0    0    0    0    0    0    0    0    0    0    0    0
+#&gt; 2025     0    0    0    0    0    0    0    0    0    0    0    0
+print((y.diff(12).diff() - y.diff().diff(12)).abs().max())   # orden: da igual
+#&gt; 0.0
+
+# Desde enero de 2024 la tienda crece tres unidades al mes
+tend2 = np.where(t &lt;= 24, t - 1, 23 + 3 * (t - 24))
+y2 = pd.Series(100 + tend2 + patron[(t - 1) % 12], index=fechas)
+print(cuadricula(y2.diff(12)))
+#&gt;       Ene  Feb  Mar  Abr  May  Jun  Jul  Ago  Sep  Oct  Nov  Dic
+#&gt; 2023   12   12   12   12   12   12   12   12   12   12   12   12
+#&gt; 2024   14   16   18   20   22   24   26   28   30   32   34   36
+#&gt; 2025   36   36   36   36   36   36   36   36   36   36   36   36
+print(cuadricula(y2.diff(12).diff()))
+#&gt;        Ene  Feb  Mar  Abr  May  Jun  Jul  Ago  Sep  Oct  Nov  Dic
+#&gt; 2023  &lt;NA&gt;    0    0    0    0    0    0    0    0    0    0    0
+#&gt; 2024     2    2    2    2    2    2    2    2    2    2    2    2
+#&gt; 2025     0    0    0    0    0    0    0    0    0    0    0    0</code></pre>
+        </div>
+      </div>
+
       <h3>Las cuatro combinaciones</h3>
+
+      <p>Con datos reales las celdas no salen constantes, pero cada diferencia hace lo mismo que en la tienda. Sobre
+        $\log(\text{AirPassengers})$:</p>
 
       <div class="simulador" data-simulador="cuatro-combinaciones">
         <h4><i class="fas fa-grip" aria-hidden="true"></i> $\nabla^d \nabla_{12}^D \log(\text{AirPassengers})$</h4>
@@ -7054,6 +7270,101 @@ round(c(armonico_K4 = 180.200, n_armonico = 467,
 
       pintar();
       return [manejador(() => grafico)];
+    };
+
+    // ================================================================
+    // Módulo 3 · La tienda inventada: cada diferencia, celda a celda
+    // ================================================================
+    // Serie construida, no medida: 100 unidades al empezar, una más cada mes y
+    // un patrón anual que suma cero. En el escenario «acelera», desde enero de
+    // 2024 crece tres unidades al mes. Todo son enteros a propósito, para que
+    // cada celda se compruebe de cabeza; el bloque de R del módulo imprime las
+    // mismas cuadrículas.
+    const PATRON_TIENDA = [-6, -8, -4, -2, 0, 4, 6, 4, 0, -2, 2, 6];
+
+    function tendenciaTienda(t, acelera) {
+      return acelera && t > 24 ? 23 + 3 * (t - 24) : t - 1;
+    }
+
+    SIMULADORES['tienda-cuadricula'] = function (raiz) {
+      const params = { escenario: 'fijo', resta: 'ninguna' };
+      const controles = raiz.querySelector('.simulador-controles');
+      const lectura = raiz.querySelector('.simulador-lectura');
+      const mapa = raiz.querySelector('.mapa-estacional');
+
+      const ESCENARIOS = {
+        fijo: 'Crece una unidad al mes',
+        acelera: 'Desde 2024 crece tres al mes'
+      };
+      const RESTAS = {
+        ninguna: { texto: 'Nada: la serie tal cual', d: 0, D: 0 },
+        d1: { texto: '∇: la celda de la izquierda', d: 1, D: 0 },
+        D1: { texto: '∇₁₂: la celda de arriba', d: 0, D: 1 },
+        d1D1: { texto: '∇∇₁₂: las dos', d: 1, D: 1 }
+      };
+      // Marzo de 2024 (t = 27) es la celda de la cuenta de ejemplo. Cae en el
+      // año en que la tienda acelera, así que la cuenta cambia con el escenario.
+      const T_EJEMPLO = 27;
+
+      function pintar() {
+        const acelera = params.escenario === 'acelera';
+        const serie = [];
+        for (let t = 1; t <= 48; t++) {
+          serie.push(100 + tendenciaTienda(t, acelera) + PATRON_TIENDA[(t - 1) % 12]);
+        }
+        const r = RESTAS[params.resta];
+        // Primero la estacional, después la regular, como en el Módulo 1; el
+        // resultado es el mismo en cualquier orden, no así el mes de arranque.
+        let y = serie.slice();
+        if (r.D > 0) y = diferenciarEstacional(y, r.D);
+        if (r.d > 0) y = diferenciar(y, r.d);
+
+        const perdidas = serie.length - y.length;
+        let anio = 2022, mes = 1 + perdidas;
+        anio += Math.floor((mes - 1) / 12); mes = ((mes - 1) % 12) + 1;
+        const diferenciada = r.d + r.D > 0;
+        pintarMapaEstacional(mapa, Object.assign(matrizMesAnio(y, anio, mes), {
+          escala: diferenciada ? 'divergente' : 'secuencial',
+          decimales: 0,
+          unidad: '',
+          nota: `<strong>Tienda inventada</strong> · ${ESCENARIOS[params.escenario]} · ${r.texto}. ` +
+            (diferenciada
+              ? 'Escala divergente centrada en cero: naranja por debajo, verde por encima.'
+              : 'Escala secuencial: cuanto más oscuro, más alto.')
+        }));
+
+        // La cuenta se hace con los números de la serie sin diferenciar:
+        // v(0) es marzo de 2024, v(1) febrero de 2024, v(12) marzo de 2023.
+        const v = k => serie[T_EJEMPLO - 1 - k];
+        const p = PATRON_TIENDA[2];
+        const cuentas = {
+          ninguna: `100 + ${tendenciaTienda(T_EJEMPLO, acelera)} ${p < 0 ? '−' : '+'} ${Math.abs(p)} = ${v(0)}`,
+          d1: `${v(0)} − ${v(1)} = ${v(0) - v(1)}`,
+          D1: `${v(0)} − ${v(12)} = ${v(0) - v(12)}`,
+          d1D1: `${v(0)} − ${v(1)} − ${v(12)} + ${v(13)} = ${v(0) - v(1) - v(12) + v(13)}`
+        };
+        const distintos = [...new Set(y)].sort((a, b) => a - b);
+        actualizarLectura(lectura, [
+          { etiqueta: 'marzo de 2024', valor: cuentas[params.resta] },
+          { etiqueta: 'celdas', valor: y.length },
+          {
+            etiqueta: 'valores distintos',
+            valor: distintos.length <= 3 ? `${distintos.length} (${distintos.join(', ')})` : distintos.length
+          }
+        ]);
+      }
+
+      crearSelector(controles, {
+        clave: 'escenario', etiqueta: 'La tienda',
+        opciones: Object.keys(ESCENARIOS).map(k => ({ valor: k, texto: ESCENARIOS[k] }))
+      }, params, pintar);
+      crearSelector(controles, {
+        clave: 'resta', etiqueta: 'Qué se resta',
+        opciones: Object.keys(RESTAS).map(k => ({ valor: k, texto: RESTAS[k].texto }))
+      }, params, pintar);
+
+      pintar();
+      return [];
     };
 
     // ================================================================

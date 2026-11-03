@@ -321,6 +321,101 @@
     };
 
     // ================================================================
+    // Módulo 3 · La tienda inventada: cada diferencia, celda a celda
+    // ================================================================
+    // Serie construida, no medida: 100 unidades al empezar, una más cada mes y
+    // un patrón anual que suma cero. En el escenario «acelera», desde enero de
+    // 2024 crece tres unidades al mes. Todo son enteros a propósito, para que
+    // cada celda se compruebe de cabeza; el bloque de R del módulo imprime las
+    // mismas cuadrículas.
+    const PATRON_TIENDA = [-6, -8, -4, -2, 0, 4, 6, 4, 0, -2, 2, 6];
+
+    function tendenciaTienda(t, acelera) {
+      return acelera && t > 24 ? 23 + 3 * (t - 24) : t - 1;
+    }
+
+    SIMULADORES['tienda-cuadricula'] = function (raiz) {
+      const params = { escenario: 'fijo', resta: 'ninguna' };
+      const controles = raiz.querySelector('.simulador-controles');
+      const lectura = raiz.querySelector('.simulador-lectura');
+      const mapa = raiz.querySelector('.mapa-estacional');
+
+      const ESCENARIOS = {
+        fijo: 'Crece una unidad al mes',
+        acelera: 'Desde 2024 crece tres al mes'
+      };
+      const RESTAS = {
+        ninguna: { texto: 'Nada: la serie tal cual', d: 0, D: 0 },
+        d1: { texto: '∇: la celda de la izquierda', d: 1, D: 0 },
+        D1: { texto: '∇₁₂: la celda de arriba', d: 0, D: 1 },
+        d1D1: { texto: '∇∇₁₂: las dos', d: 1, D: 1 }
+      };
+      // Marzo de 2024 (t = 27) es la celda de la cuenta de ejemplo. Cae en el
+      // año en que la tienda acelera, así que la cuenta cambia con el escenario.
+      const T_EJEMPLO = 27;
+
+      function pintar() {
+        const acelera = params.escenario === 'acelera';
+        const serie = [];
+        for (let t = 1; t <= 48; t++) {
+          serie.push(100 + tendenciaTienda(t, acelera) + PATRON_TIENDA[(t - 1) % 12]);
+        }
+        const r = RESTAS[params.resta];
+        // Primero la estacional, después la regular, como en el Módulo 1; el
+        // resultado es el mismo en cualquier orden, no así el mes de arranque.
+        let y = serie.slice();
+        if (r.D > 0) y = diferenciarEstacional(y, r.D);
+        if (r.d > 0) y = diferenciar(y, r.d);
+
+        const perdidas = serie.length - y.length;
+        let anio = 2022, mes = 1 + perdidas;
+        anio += Math.floor((mes - 1) / 12); mes = ((mes - 1) % 12) + 1;
+        const diferenciada = r.d + r.D > 0;
+        pintarMapaEstacional(mapa, Object.assign(matrizMesAnio(y, anio, mes), {
+          escala: diferenciada ? 'divergente' : 'secuencial',
+          decimales: 0,
+          unidad: '',
+          nota: `<strong>Tienda inventada</strong> · ${ESCENARIOS[params.escenario]} · ${r.texto}. ` +
+            (diferenciada
+              ? 'Escala divergente centrada en cero: naranja por debajo, verde por encima.'
+              : 'Escala secuencial: cuanto más oscuro, más alto.')
+        }));
+
+        // La cuenta se hace con los números de la serie sin diferenciar:
+        // v(0) es marzo de 2024, v(1) febrero de 2024, v(12) marzo de 2023.
+        const v = k => serie[T_EJEMPLO - 1 - k];
+        const p = PATRON_TIENDA[2];
+        const cuentas = {
+          ninguna: `100 + ${tendenciaTienda(T_EJEMPLO, acelera)} ${p < 0 ? '−' : '+'} ${Math.abs(p)} = ${v(0)}`,
+          d1: `${v(0)} − ${v(1)} = ${v(0) - v(1)}`,
+          D1: `${v(0)} − ${v(12)} = ${v(0) - v(12)}`,
+          d1D1: `${v(0)} − ${v(1)} − ${v(12)} + ${v(13)} = ${v(0) - v(1) - v(12) + v(13)}`
+        };
+        const distintos = [...new Set(y)].sort((a, b) => a - b);
+        actualizarLectura(lectura, [
+          { etiqueta: 'marzo de 2024', valor: cuentas[params.resta] },
+          { etiqueta: 'celdas', valor: y.length },
+          {
+            etiqueta: 'valores distintos',
+            valor: distintos.length <= 3 ? `${distintos.length} (${distintos.join(', ')})` : distintos.length
+          }
+        ]);
+      }
+
+      crearSelector(controles, {
+        clave: 'escenario', etiqueta: 'La tienda',
+        opciones: Object.keys(ESCENARIOS).map(k => ({ valor: k, texto: ESCENARIOS[k] }))
+      }, params, pintar);
+      crearSelector(controles, {
+        clave: 'resta', etiqueta: 'Qué se resta',
+        opciones: Object.keys(RESTAS).map(k => ({ valor: k, texto: RESTAS[k].texto }))
+      }, params, pintar);
+
+      pintar();
+      return [];
+    };
+
+    // ================================================================
     // Módulo 3 · Las cuatro combinaciones (d, D)
     // ================================================================
     SIMULADORES['cuatro-combinaciones'] = function (raiz) {
