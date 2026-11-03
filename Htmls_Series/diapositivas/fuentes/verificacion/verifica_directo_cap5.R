@@ -174,8 +174,10 @@ out$m9 <- list(
 
 # --- M10 · m grande ---------------------------------------------------------
 set.seed(1); z <- ts(rnorm(800), frequency = 365)
-# La misma longitud con una estación anual real: un seno de amplitud 3 más el ruido
-set.seed(1); z_est <- ts(3 * sin(2 * pi * (1:800) / 365) + rnorm(800), frequency = 365)
+# El bloque del Módulo 10, tal cual: la serie semanal y después la de frecuencia 365 con una estación anual
+# real (un seno de amplitud 3 más ruido), en el mismo flujo de números aleatorios
+set.seed(1); y52 <- ts(10 + 0.02*(1:156) + 2*sin(2*pi*(1:156)/52) + rnorm(156, 0, 0.5), frequency = 52)
+z_est <- ts(3 * sin(2 * pi * (1:800) / 365) + rnorm(800), frequency = 365)
 out$m10 <- list(
   auto_365 = as.character(auto.arima(z)),
   auto_365_estacional = as.character(auto.arima(z_est)),

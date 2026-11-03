@@ -36,8 +36,9 @@
       <p>Las dos primeras filas crecen con $m$; la tercera no. Con tres años de datos semanales ($n = 156$),
         $\nabla_{52}$ deja $104$ observaciones para estimar un modelo cuyo polinomio llega al rezago $52$. Y el patrón
         anual con datos diarios ni siquiera es entero: $365.25$ no es un número de rezagos. En la práctica,
-        <code>auto.arima</code> con una serie de frecuencia $365$ devuelve un modelo <strong>sin ninguna parte
-        estacional</strong>, y lo hace en silencio.</p>
+        con una serie de frecuencia $365$ y una estación anual de verdad, <code>auto.arima</code> toma una diferencia
+        estacional —gasta $365$ observaciones— y <strong>no estima ningún $\Phi$ ni $\Theta$</strong>: devuelve un
+        ARIMA$(0,0,0)(0,1,0)_{365}$ y deja toda la estacionalidad en manos de $\nabla_{365}$.</p>
 
       <h3>Regresión armónica: la estacionalidad como suma de senos</h3>
 
@@ -147,9 +148,9 @@ n - 52                                 # lo que deja nabla_52
 #&gt; [1] 104
 ncol(fourier(y, K = 3))                # los armonicos no dependen de m
 #&gt; [1] 6
-z &lt;- ts(rnorm(800), frequency = 365)
-as.character(auto.arima(z))            # con m = 365 renuncia a la estacionalidad
-#&gt; [1] "ARIMA(0,0,0) with zero mean"
+z &lt;- ts(3 * sin(2 * pi * (1:800) / 365) + rnorm(800), frequency = 365)   # estacion anual real
+as.character(auto.arima(z))            # con m = 365: una diferencia y ningun Phi ni Theta
+#&gt; [1] "ARIMA(0,0,0)(0,1,0)[365]"
 
 # --- STL + ARIMA ------------------------------------------------------------
 s &lt;- stlm(ap, s.window = "periodic", method = "arima")

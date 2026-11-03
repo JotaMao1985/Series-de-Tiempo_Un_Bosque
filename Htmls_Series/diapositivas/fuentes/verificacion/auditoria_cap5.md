@@ -26,7 +26,13 @@ Las referencias son «diap. N» (número en el visor) y «L» (línea de la fuen
 > - **Cursivas de *airline*** en el objetivo de la portada, en los títulos de sección y en el título del bloque de código: el constructor no procesa Markdown ahí y mostraba los asteriscos.
 > - **«Estación» frente a «estacionalidad»**: solo se unificó el par de la misma sección (diap. 68 y 75 de la versión auditada); el resto es una decisión de estilo.
 > - **«Lo que se llevan…»** se conserva: es el cierre que fija la skill y el que usa el deck del capítulo 4.
-> - **El capítulo no se tocó.** A1, A2, A5 y T12 están corregidos en el deck y anotados en las notas y en las observaciones de `verificacion_cifras_cap5.md`.
+> - **El capítulo** se corrigió aparte, el mismo 2026-11-03, en `ensamblado/cap5/` y reensamblado con `ensambla_cap5.py`; el capítulo 6 sale byte a byte igual. Los cuatro hallazgos que heredaba el deck quedaron así:
+>   - **A1:** la invertibilidad se lee en Θ̂, y bajo la tabla se explica que 0.9524 es 0.5569^(1/12).
+>   - **A2:** el ejemplo de m = 365 usa un seno anual, y `auto.arima` da ARIMA(0,0,0)(0,1,0)[365].
+>   - **A5:** los errores estándar son entre 1.4 y 2.4 veces mayores, no el doble.
+>   - **T12:** el caso del Módulo 7 sigue las etapas 1–5 del protocolo.
+>
+>   El verificador exige ya el texto nuevo (671/671).
 
 Prioridades:
 
@@ -184,6 +190,6 @@ Lo revisó un corrector independiente, que leyó la fuente entera. Encontró lim
 
 No se recoge aquí la sugerencia del corrector de cambiar «Lo que se llevan…» por «Ideas clave…»: el título es de la convención de cierre de la skill y es una decisión de estilo del docente.
 
-## 7. Lo que hay que corregir también en el capítulo
+## 7. Lo que hay que corregir también en el capítulo (hecho el 2026-11-03)
 
-Estas observaciones nacen en el texto del capítulo y la diapositiva solo las hereda: A1 («aunque justo»), A2 (el ejemplo de m = 365), A5 («el doble»), T12 («Paso 0…4»). Para corregirlas hay que editar `ensamblado/cap5/`, no el HTML (ver la memoria sobre el riesgo de reensamblado), y luego realinear el verificador, como en `ddfecc3`.
+Estas observaciones nacían en el texto del capítulo y la diapositiva solo las hereda: A1 («aunque justo»), A2 (el ejemplo de m = 365), A5 («el doble»), T12 («Paso 0…4»). Para corregirlas hay que editar `ensamblado/cap5/`, no el HTML (ver la memoria sobre el riesgo de reensamblado), y luego realinear el verificador, como en `ddfecc3`.

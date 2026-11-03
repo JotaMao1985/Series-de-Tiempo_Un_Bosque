@@ -610,6 +610,8 @@ C(K, "2.4", CALC_(lambda: PY["ap_dif_max_coef"] * 1e4, "diferencia máxima × 10
 permite(K, "10", "exponente de 6×10⁻⁵ y 2.4×10⁻⁴")
 
 K = "Etapas 1 a 3: logaritmo"
+C(K, "etapas", CH_("Etapas 2 y 3 · $D$ y luego $d$"), CH_("Etapa 5 · Estimación y diagnóstico"),
+  BOOL_("C", lambda: not re.search(r"Pasos? \d", CAP), "el capítulo ya no numera «Paso 0…4»"), kind="capítulo")
 C(K, "1.848", R_("m7.rango_relativo"), CH_("1.848"))
 C(K, "0.762", J_(FIR + ".airpassengers_log.acf.11"))
 C(K, "0.520", J_(FIR + ".airpassengers_log.acf.23"), CALC_(lambda: acf(LAP, 24), "ACF exacta en 24"))
@@ -675,6 +677,7 @@ C(K, "0.825", CALC_(lambda: 0.1 ** (1 / 12), "0.1^(1/12)"))
 C(K, "0.1", DEF_("Θ del ejemplo"), kind="parámetro")
 C(K, "-0.557", J_(AIR + ".coeficientes.1.valor"))
 C(K, "0.073", J_(AIR + ".coeficientes.1.ee"))
+C(K, "capítulo", CH_("es $|\\hat\\Theta|^{1/12} = 0.5569^{1/12}$"), BOOL_("C", lambda: "aunque justo" not in CAP, "el capítulo ya no dice «aunque justo»"), kind="capítulo")
 permite(K, "24 36 12", "rezagos de Ljung–Box; exponente 1/12")
 
 K = "En los residuales solo el rezago 23"
@@ -751,6 +754,7 @@ C(K, "2.44", CALC_(lambda: EE(1, UA) / EE(1, AIR), "0.1784/0.0731"))
 C(K, "59", CALC_(lambda: get(J, "usaccdeaths.n") - 13, "72 − 1 − 12"))
 C(K, "131", J_(AIR + ".nobs"))
 C(K, "1.49", CALC_(lambda: math.sqrt(131 / 59), "√(131/59)"))
+C(K, "capítulo", CH_("entre $1.4$ y $2.4$ veces mayores"), kind="capítulo")
 permite(K, "12 24", "periodo y rezagos")
 
 K = "La TRM es mensual y no tiene"
@@ -843,7 +847,7 @@ C(K, "365.25", DEF_("días del año medio (calendario)"), kind="calendario")
 C(K, "0,0,0", BOOL_("R", lambda: R["m10"]["auto_365_estacional"] == "ARIMA(0,0,0)(0,1,0)[365]", "auto.arima con un seno anual y frecuencia 365"), kind="modelo")
 C(K, "ruido", BOOL_("R", lambda: R["m10"]["auto_365"] == "ARIMA(0,0,0) with zero mean", "auto.arima sobre rnorm(800) con frecuencia 365 (el ejemplo del capítulo)"), kind="modelo")
 C(K, "nsdiffs", BOOL_("R", lambda: R["m10"]["nsdiffs_365_estacional"] == 1, "nsdiffs del seno anual = 1"), kind="modelo")
-C(K, "en silencio", CH_("y lo hace en silencio"), kind="capítulo")
+C(K, "capítulo", CH_("ARIMA$(0,0,0)(0,1,0)_{365}$"), CH_("3 * sin(2 * pi * (1:800) / 365) + rnorm(800)"), kind="capítulo")
 C(K, "K3", BOOL_("J", lambda: all(c["parametros_fourier_K3"] == 6 for c in get(J, FOU + ".costo_m")), "6 términos con K = 3 para todo m"), kind="dato")
 
 K = "Fourier modela la estación con"
@@ -1024,14 +1028,8 @@ OBSERVACIONES = [
      "No afecta a ninguna cifra (las dos son la misma copia de 138 meses), pero conviene unificarlo."),
     ("Resueltas en el capítulo el 2026-10-27 (`114b910`) cinco observaciones de la primera pasada: los ocho dobles redondeos (M1, M4, M7, M11 y las preguntas 1 y 8), los «%» de crecimiento del Módulo 11, que eran 100·Δlog y ahora son porcentajes, la nota del puente del Módulo 7, que ahora usa el ARIMA(0,1,5) y no compara AICc entre distintos D, el enunciado y dos explicaciones de la pregunta 8, y las secciones de FPP3 de las lecturas.",
      "Capítulo y diapositivas dan ahora las mismas cifras, y las comprobaciones de tipo «capítulo» lo exigen. Siguen en J dos textos que el capítulo embebe pero no muestra: `puente_cap4` (el ARIMA(0,1,1) con AICc −238.64) y `origen_movil.nota` («corona a la regresión armónica»)."),
-    ("Auditoría del 2026-10-28 (`auditoria_cap5.md`), sin corregir en el capítulo. Módulo 7, paso 3: «módulo inverso máximo 0.9524 · Invertible, aunque justo».",
-     "0.9524 = 0.5569^(1/12): con un SMA(1) el módulo de las raíces se acerca a 1 con casi cualquier Θ. La diapositiva lee la invertibilidad en Θ̂ y explica el 0.9524 en las notas."),
-    ("Módulo 10: «auto.arima con una serie de frecuencia 365 devuelve un modelo sin ninguna parte estacional, y lo hace en silencio», ilustrado con `rnorm(800)`.",
-     "Para ruido blanco, ARIMA(0,0,0) es la respuesta correcta. Con un seno anual, auto.arima da ARIMA(0,0,0)(0,1,0)[365] (R): sí ve la estación, pero no estima ningún Φ ni Θ. La diapositiva usa este segundo caso."),
-    ("Módulo 8: «los errores estándar son el doble» (USAccDeaths frente a AirPassengers).",
-     "Los cocientes son 1.37 (θ) y 2.44 (Θ). La diapositiva da los dos."),
-    ("Módulo 7: los «Paso 0» a «Paso 4» no siguen la numeración 1–5 del protocolo del Módulo 4.",
-     "La diapositiva usa las etapas del protocolo y lo avisa en la nota del divisor."),
+    ("Resueltas en el capítulo el 2026-11-03 las cuatro observaciones de la auditoría del 2026-10-28 (`auditoria_cap5.md`): la invertibilidad del Módulo 7 («aunque justo»), el `auto.arima` con m = 365 del Módulo 10 (ilustrado con ruido blanco), los errores estándar «el doble» del Módulo 8 y los «Paso 0…4» del Módulo 7.",
+     "El capítulo lee ahora la invertibilidad en Θ̂ y explica que 0.9524 = 0.5569^(1/12); el ejemplo de m = 365 usa un seno anual (ARIMA(0,0,0)(0,1,0)[365]); los cocientes son 1.4 y 2.4; y el caso sigue las etapas 1–5 del protocolo. Las comprobaciones de tipo «capítulo» exigen el texto nuevo."),
 ]
 
 
