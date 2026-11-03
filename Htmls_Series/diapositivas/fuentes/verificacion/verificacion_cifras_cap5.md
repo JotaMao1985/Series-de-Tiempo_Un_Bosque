@@ -7,7 +7,7 @@ Generado por `verifica_cifras_cap5.py`. Cada fila es una cifra (o afirmación) d
 - **J** · `precalculo/salidas/cap5_sarima.json`, el precálculo del capítulo. **J4** · `cap4_arima.json`. **J3** · `cap3_arma.json`.
 - **R** · recálculo directo sobre los datos congelados, `verifica_directo_cap5.R` → `directo_cap5.json`, en R version 4.6.0 (2026-04-24) (forecast 9.0.2, tseries 0.10.62). Incluye lo que J no guarda: la tabla de varianzas con parte AR, el horizonte de 24 meses, el error del mes 12 y los crecimientos anuales del Módulo 11.
 - **PY** · statsmodels 0.14.6, `verifica_python_cap5.py` → `directo_python_cap5.json`.
-- **DOC** · ayuda de R de `AirPassengers`, `USAccDeaths` y `co2`, y el NEWS de forecast, `verifica_docs_cap5.R` → `docs_cap5.json`.
+- **DOC** · ayuda de R de `AirPassengers`, `USAccDeaths`, `co2`, `ets`, `nsdiffs` y `snaive`, y el NEWS de forecast, `verifica_docs_cap5.R` → `docs_cap5.json`.
 - **CALC** · aritmética sobre los datos (ACF con divisor n, bandas 1.96/√n) o sobre las fuentes anteriores. **C** · texto del capítulo. **DEF** · definición o convención.
 - La fuente se redondea a los decimales que muestra la diapositiva, a la mitad hacia arriba. Las ACF y las bandas se recalculan desde los datos para no redondear dos veces.
 - La TRM es la copia congelada de `datos_series.json`; **no** se cotejó con datos.gov.co.
@@ -15,14 +15,14 @@ Generado por `verifica_cifras_cap5.py`. Cada fila es una cifra (o afirmación) d
 
 ## Resumen
 
-- Cifras y afirmaciones registradas: **624**
-- Verificadas contra al menos una fuente: **582**
-- Definiciones o convenciones: **42**
+- Cifras y afirmaciones registradas: **668**
+- Verificadas contra al menos una fuente: **621**
+- Definiciones o convenciones: **47**
 - Comprobadas a mano en una fuente pública fuera del repositorio (`WEB`, con fecha): **7**
 - Marcadas `[SIN VERIFICAR]`: **5**
 - No coinciden: **0**
 
-Contrastes por tipo de fuente: C 54, CALC 94, DOC 11, J 321, J3 2, J4 6, PY 10, R 229, WEB 7.
+Contrastes por tipo de fuente: C 57, CALC 116, DOC 17, J 330, J3 2, J4 6, PY 10, R 234, WEB 7.
 
 ## Código proyectado, ejecutado
 
@@ -55,6 +55,10 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 6. Módulo 6, advertencia final: «los coeficientes casi coinciden con los de R (diferencia 6 × 10⁻⁵)» con statsmodels sin `simple_differencing`. Con statsmodels 0.14.6 la diferencia máxima es 2.4 × 10⁻⁴ (−0.4021 y −0.5571 frente a −0.4018 y −0.5569). Sigue siendo despreciable; depende de la versión. No se proyecta.
 7. Las dos copias de la TRM llevan fechas de consulta distintas: `cap5_sarima.json` dice «consulta: 2026-07-24» y `datos_series.json` (y el capítulo 4) «2026-07-26». No afecta a ninguna cifra (las dos son la misma copia de 138 meses), pero conviene unificarlo.
 8. Resueltas en el capítulo el 2026-10-27 (`114b910`) cinco observaciones de la primera pasada: los ocho dobles redondeos (M1, M4, M7, M11 y las preguntas 1 y 8), los «%» de crecimiento del Módulo 11, que eran 100·Δlog y ahora son porcentajes, la nota del puente del Módulo 7, que ahora usa el ARIMA(0,1,5) y no compara AICc entre distintos D, el enunciado y dos explicaciones de la pregunta 8, y las secciones de FPP3 de las lecturas. Capítulo y diapositivas dan ahora las mismas cifras, y las comprobaciones de tipo «capítulo» lo exigen. Siguen en J dos textos que el capítulo embebe pero no muestra: `puente_cap4` (el ARIMA(0,1,1) con AICc −238.64) y `origen_movil.nota` («corona a la regresión armónica»).
+9. Auditoría del 2026-10-28 (`auditoria_cap5.md`), sin corregir en el capítulo. Módulo 7, paso 3: «módulo inverso máximo 0.9524 · Invertible, aunque justo». 0.9524 = 0.5569^(1/12): con un SMA(1) el módulo de las raíces se acerca a 1 con casi cualquier Θ. La diapositiva lee la invertibilidad en Θ̂ y explica el 0.9524 en las notas.
+10. Módulo 10: «auto.arima con una serie de frecuencia 365 devuelve un modelo sin ninguna parte estacional, y lo hace en silencio», ilustrado con `rnorm(800)`. Para ruido blanco, ARIMA(0,0,0) es la respuesta correcta. Con un seno anual, auto.arima da ARIMA(0,0,0)(0,1,0)[365] (R): sí ve la estación, pero no estima ningún Φ ni Θ. La diapositiva usa este segundo caso.
+11. Módulo 8: «los errores estándar son el doble» (USAccDeaths frente a AirPassengers). Los cocientes son 1.37 (θ) y 2.44 (Θ). La diapositiva da los dos.
+12. Módulo 7: los «Paso 0» a «Paso 4» no siguen la numeración 1–5 del protocolo del Módulo 4. La diapositiva usa las etapas del protocolo y lo avisa en la nota del divisor.
 
 ## Tabla de cifras
 
@@ -183,6 +187,8 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `0.964` | dato | J: cap5_sarima.json › airpassengers.firma.trm.acf.0 = 0.9637<br>CALC: rezago 1 = 0.963663 | verificado |
 | `0.225` | dato | J: cap5_sarima.json › airpassengers.firma.trm.acf.35 = 0.2252<br>CALC: rezago 36 = 0.225218 | verificado |
 | `-0.0025` | dato | J: cap5_sarima.json › trm_contraejemplo.acf12 = -0.0025 | verificado |
+| `-0.002` | dato | CALC: ACF de ∇TRM en 12, exacta = -0.002453<br>J: cap5_sarima.json › airpassengers.firma.trm_diff.acf.11 (empate: decide el exacto) = -0.0025 | verificado |
+| `-0.00245` | dato | CALC: ACF exacta de ∇TRM en 12 = -0.002453 | verificado |
 | `-0.067` | dato | J: cap5_sarima.json › trm_contraejemplo.acf24 = -0.0672<br>CALC: ∇TRM, 24 = -0.067215 | verificado |
 | `0.071` | dato | J: cap5_sarima.json › trm_contraejemplo.acf36 = 0.0714<br>CALC: ∇TRM, 36 = 0.071383 | verificado |
 | `1.96` | convención | DEF: cuantil 0.975 de la normal, convención | definición (no se mide) |
@@ -201,7 +207,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `0.7` | parámetro | DEF: Φ del capítulo | definición (no se mide) |
 | `animado` | gráfico animado | CALC: recursos/cap5/satelites.json es idéntico a lo que genera genera_animados_cap5.py desde J | verificado |
 
-### En un MA puro con \(q<m\) la varianza se factoriza exactamente: el *airline* es ese caso
+### En un MA puro con \(q<m\), la varianza se factoriza exactamente: el *airline* es ese caso
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -216,7 +222,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `1.700` | dato | R: directo_cap5.json › m2.choque_factorizada = 1.7 | verificado |
 | `0.00137126` | dato | R: directo_cap5.json › m2.sigma2 = 0.001371 | verificado |
 
-### Con parte AR no hay factorización: \(\psi_{12}=\phi^{12}+\Phi\), y el error llega al 33 %
+### Con parte AR no hay factorización: \(\psi_{12}=\phi^{12}+\Phi\), y el error pasa del 50 %
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -240,7 +246,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `44.580` | dato | R: directo_cap5.json › m2.tabla_phi.3.exacta = 44.579943 | verificado |
 | `20.111` | dato | R: directo_cap5.json › m2.tabla_phi.3.factorizada = 20.110608 | verificado |
 | `-54.9` | dato | R: directo_cap5.json › m2.tabla_phi.3.error_pct = -54.888663 | verificado |
-| `33` | dato | R: directo_cap5.json › m2.tabla_phi.2.error_pct = 33.01337 | verificado |
+| `50` | cota | R: el error con φ = 0.95 pasa del −50 % (R) | verificado |
 | `0.7` | parámetro | DEF: Φ fijo del capítulo | definición (no se mide) |
 | `20000` | cálculo | DEF: número de pesos ψ que suma verifica_directo_cap5.R | definición (no se mide) |
 
@@ -292,7 +298,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `1978` | dato | R: directo_cap5.json › datos.uad_fin = 1978 | verificado |
 | `72` | dato | R: directo_cap5.json › datos.uad_n = 72 | verificado |
 
-### Diferenciar de más deja la firma del capítulo 4, ahora en \(\Theta\): se pega a −1
+### Diferenciar de más deja la firma del capítulo 4: \(\hat\Theta\) se acerca a −1
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -320,6 +326,8 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `8.3` | documentación | DOC: docs_cap5.json › news_cambio_D.version = 8.3<br>DOC: formals(nsdiffs)$test empieza por "seas" | verificado |
 | `tabla` | tabla (enteros < 10) | J: las 16 celdas de la tabla = orden_pruebas de J | verificado |
 | `9.0.2` | versión | DOC: docs_cap5.json › entorno.forecast | verificado |
+| `ocsb` | documentación | DOC: docs_cap5.json › nsdiffs contiene «Osborn-Chui-Smith-Birchenhall (1988) test» | verificado |
+| `seas` | documentación | DOC: docs_cap5.json › nsdiffs contiene «a measure of seasonal strength is used»<br>C: capítulo 5 contiene «fuerza estacional de la descomposición STL» | verificado |
 
 ### Los rezagos estacionales se leen con la misma tabla del capítulo 3
 
@@ -332,7 +340,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `0.7` | parámetro | DEF: Φ | definición (no se mide) |
 | `-0.6` | parámetro | DEF: Θ | definición (no se mide) |
 
-### En el *airline* el producto es exacto; con parte AR solo se parece
+### En el *airline*, el producto es exacto; con parte AR solo se parece
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -359,20 +367,23 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `-0.234` | capítulo | C: capítulo 5 contiene «{-0.234}» | verificado |
 | `0.14707` | dato | R: directo_cap5.json › m4.airline.r11 = 0.147066 | verificado |
 | `0.14705` | dato | R: directo_cap5.json › m4.airline_redondeado.r11 = 0.147052<br>C: capítulo 5 contiene «0.14705» | verificado |
+| `1.96` | convención | DEF: cuantil 0.975 de la normal | definición (no se mide) |
 | `0.1471` | dato | R: directo_cap5.json › m4.airline.producto = 0.147066 | verificado |
 | `0.6` | parámetro | DEF: φ | definición (no se mide) |
 | `0.7` | parámetro | DEF: Φ | definición (no se mide) |
 | `0.5` | parámetro | DEF: φ | definición (no se mide) |
 | `-0.7` | parámetro | DEF: Θ | definición (no se mide) |
 
-### Picos de 0.70, 0.49 y 0.34 en 12, 24 y 36, y cero en lo demás: ¿qué modelo es? {.pregunta}
+### Picos de 0.80, 0.64 y 0.51 en 12, 24 y 36, y cero en lo demás: ¿qué modelo es? {.pregunta}
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
-| `0.70` | dato | J: cap5_sarima.json › teoricas.sar1_pos.acf.11 = 0.7 | verificado |
-| `0.49` | dato | J: cap5_sarima.json › teoricas.sar1_pos.acf.23 = 0.49 | verificado |
-| `0.34` | dato | J: cap5_sarima.json › teoricas.sar1_pos.acf.35 = 0.343 | verificado |
-| `0.7` | parámetro | DEF: Φ = 0.7 | definición (no se mide) |
+| `0.80` | definición | CALC: Φ^1 con Φ = 0.8: ACF de un SAR(1) en 12·1 = 0.8 | verificado |
+| `0.64` | definición | CALC: Φ^2 con Φ = 0.8: ACF de un SAR(1) en 12·2 = 0.64 | verificado |
+| `0.51` | definición | CALC: Φ^3 con Φ = 0.8: ACF de un SAR(1) en 12·3 = 0.512 | verificado |
+| `0.512` | definición | CALC: Φ^3 con Φ = 0.8: ACF de un SAR(1) en 12·3 = 0.512 | verificado |
+| `0.8` | parámetro | DEF: Φ = 0.8, elegido para no repetir el 0.7 del Módulo 2 | definición (no se mide) |
+| `0.7` | parámetro | DEF: Φ = 0.7 del material | definición (no se mide) |
 
 ### El *airline*: dos diferencias y dos MA para una serie con tendencia y estación
 
@@ -398,7 +409,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `1973` | dato | R: directo_cap5.json › datos.uad_inicio = 1973 | verificado |
 | `1978` | dato | R: directo_cap5.json › datos.uad_fin = 1978 | verificado |
 
-### Los pesos \(\psi\) suben a escalones: la incertidumbre salta al cruzar el rezago 12
+### Los pesos \(\psi\) suben en escalones: la incertidumbre salta al cruzar el rezago 12
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -436,14 +447,14 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 |---|---|---|---|
 | `36` | dato | CALC: número de modelos de la rejilla (J) = 36<br>CALC: 3 × 3 × 2 × 2 = 36 | verificado |
 
-### Donde quedamos: dos parámetros en el rezago 12 arreglan lo que cinco MA no
+### Lo que dejó la clase 1: dos parámetros en el rezago 12 corrigen lo que cinco MA no
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
 | `-0.0515` | dato | J: cap5_sarima.json › airpassengers.airline.diagnostico.acf.11 = -0.0515 | verificado |
 | `0.7245` | dato | J4: cap4_arima.json › puente_estacional.no_estacional.acf_12 = 0.7245 | verificado |
 
-### Dos hábitos nuevos: el AICc no cruza distintos \(D\), y Ljung–Box mira \(2m\) rezagos
+### Dos hábitos nuevos: el AICc no se compara entre distintos \(D\), y Ljung–⁠Box con \(2m\)
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -483,7 +494,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `1.63` | dato | CALC: −481.582 − (−483.210) = 1.6281 | verificado |
 | `144` | dato | J: cap5_sarima.json › airpassengers.airline.diagnostico.n_residuales = 144 | verificado |
 
-### statsmodels no diferencia la serie: sus AIC parecen comparables y no lo son
+### statsmodels no diferencia la serie: sus AIC parecen comparables, pero no lo son
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -494,9 +505,10 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `-0.3924` | dato | PY: directo_python_cap5.json › uad_difuso.ma1 = -0.392397 | verificado |
 | `-0.5475` | dato | PY: directo_python_cap5.json › uad_difuso.sma1 = -0.547514 | verificado |
 | `-0.5527` | dato | PY: directo_python_cap5.json › uad_simple.sma1 = -0.55272 | verificado |
+| `-0.5528` | dato | J: cap5_sarima.json › usaccdeaths.coeficientes.1.valor = -0.5528 | verificado |
 | `2.4` | dato | CALC: diferencia máxima × 10⁴ (PY) = 2.438557 | verificado |
 
-### Pasos 0 y 1 del caso: logaritmo, después \(D=1\) y, sobre la serie sin estación, \(d=1\)
+### Etapas 1 a 3: logaritmo, después \(D=1\) y, sobre la serie sin estación, \(d=1\)
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -516,7 +528,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `1949` | dato | R: directo_cap5.json › datos.ap_inicio = 1949 | verificado |
 | `1960` | dato | R: directo_cap5.json › datos.ap_fin = 1960 | verificado |
 
-### Paso 2: un pico en 1 y otro en 12 piden \(q=1\) y \(Q=1\)
+### Etapa 4: un pico en 1 y otro en 12 piden \(q=1\) y \(Q=1\)
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -545,7 +557,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `0.06438` | dato | R: directo_cap5.json › m7.r11 = 0.064384 | verificado |
 | `0.15160` | dato | R: directo_cap5.json › m7.r13 = 0.151602 | verificado |
 
-### Paso 3: los dos coeficientes son significativos y el diagnóstico pasa
+### Etapa 5: los dos coeficientes son significativos y el diagnóstico pasa
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -564,9 +576,15 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `0.9524` | dato | J: cap5_sarima.json › airpassengers.airline.raices.ma_max = 0.9524<br>R: directo_cap5.json › m7.raiz_ma = 0.952396 | verificado |
 | `0.001371` | dato | J: cap5_sarima.json › airpassengers.airline.sigma2 = 0.001371 | verificado |
 | `131` | dato | J: cap5_sarima.json › airpassengers.airline.nobs = 131 | verificado |
-| `0.9998` | dato | J: cap5_sarima.json › airpassengers.sobrediferenciacion_estacional.2.raiz_ma = 0.9998 | verificado |
+| `-0.9973` | dato | J: cap5_sarima.json › airpassengers.sobrediferenciacion_estacional.2.theta_est = -0.9973 | verificado |
+| `0.5569` | dato | J: cap5_sarima.json › airpassengers.airline.coeficientes.1.valor = 0.5569 | verificado |
+| `0.9524 = Θ^(1/12)` | cálculo | CALC: |Θ̂|^(1/12) = módulo inverso máximo de J (a 10⁻⁴) | verificado |
+| `0.825` | dato | CALC: 0.1^(1/12) = 0.825404 | verificado |
+| `0.1` | parámetro | DEF: Θ del ejemplo | definición (no se mide) |
+| `-0.557` | dato | J: cap5_sarima.json › airpassengers.airline.coeficientes.1.valor = -0.5569 | verificado |
+| `0.073` | dato | J: cap5_sarima.json › airpassengers.airline.coeficientes.1.ee = 0.0731 | verificado |
 
-### En los residuales solo el rezago 23 sale de la banda, y Ljung–Box no rechaza
+### En los residuales solo el rezago 23 sale de la banda, y Ljung–⁠Box no rechaza
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -578,6 +596,10 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `1.96` | convención | DEF: cuantil 0.975 de la normal | definición (no se mide) |
 | `0.233` | dato | J: cap5_sarima.json › airpassengers.airline.diagnostico.lb24_p = 0.233 | verificado |
 | `144` | dato | J: cap5_sarima.json › airpassengers.airline.diagnostico.n_residuales = 144 | verificado |
+| `-0.157` | dato | J: cap5_sarima.json › airpassengers.airline.diagnostico.acf.15 = -0.1573 | verificado |
+| `0.171` | dato | R: directo_cap5.json › m7.banda_w = 0.171246 | verificado |
+| `131` | dato | R: directo_cap5.json › m7.n_w = 131 | verificado |
+| `solo el 23` | dato | R: directo_cap5.json › m7.res_fuera_131 = 23 (con la banda de 131) | verificado |
 
 ### Los satélites, comprobados: el modelo predice 0.1471 y la muestra da 0.064 y 0.152
 
@@ -598,7 +620,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `0.14707` | dato | R: directo_cap5.json › m4.airline.r11 = 0.147066 | verificado |
 | `-0.3459` | dato | J: cap5_sarima.json › teoricas.ma1_sma1.acf.0 = -0.3459 | verificado |
 
-### Paso 4: exp() del pronóstico en logaritmos es la mediana, y el intervalo no es simétrico
+### El exp() del pronóstico en logaritmos es la mediana, y el intervalo no es simétrico
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -625,7 +647,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `24` | convención | DEF: rezagos de Ljung–Box | definición (no se mide) |
 | `22` | dato | CALC: 24 − 2 = 22 | verificado |
 
-### USAccDeaths vuelve a elegir el *airline*, con el doble de error estándar
+### USAccDeaths vuelve a elegir el *airline*, con errores estándar 1.4 y 2.4 veces mayores
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -639,12 +661,24 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `144` | dato | J: cap5_sarima.json › airpassengers.n = 144 | verificado |
 | `0.0896` | dato | J: cap5_sarima.json › airpassengers.airline.coeficientes.0.ee = 0.0896 | verificado |
 | `0.0731` | dato | J: cap5_sarima.json › airpassengers.airline.coeficientes.1.ee = 0.0731 | verificado |
+| `1.4` | dato | CALC: 0.1228/0.0896 = 1.370536 | verificado |
+| `2.4` | dato | CALC: 0.1784/0.0731 = 2.440492 | verificado |
+| `1.37` | dato | CALC: 0.1228/0.0896 = 1.370536 | verificado |
+| `2.44` | dato | CALC: 0.1784/0.0731 = 2.440492 | verificado |
+| `59` | dato | CALC: 72 − 1 − 12 = 59 | verificado |
+| `131` | dato | J: cap5_sarima.json › airpassengers.airline.nobs = 131 | verificado |
+| `1.49` | dato | CALC: √(131/59) = 1.49008 | verificado |
 
-### La TRM es mensual y no tiene estacionalidad: cuatro evidencias apuntan igual
+### La TRM es mensual y no tiene estacionalidad: cuatro evidencias coinciden
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
 | `-0.0025` | dato | J: cap5_sarima.json › trm_contraejemplo.acf12 = -0.0025 | verificado |
+| `-0.002` | dato | CALC: ACF exacta de ∇TRM en 12 = -0.002453<br>J: cap5_sarima.json › airpassengers.firma.trm_diff.acf.11 (empate: decide el exacto) = -0.0025 | verificado |
+| `-0.00245` | dato | CALC: ACF exacta de ∇TRM en 12 = -0.002453 | verificado |
+| `-0.067` | dato | J: cap5_sarima.json › trm_contraejemplo.acf24 = -0.0672<br>CALC: ∇TRM, 24 = -0.067215 | verificado |
+| `0.071` | dato | J: cap5_sarima.json › trm_contraejemplo.acf36 = 0.0714<br>CALC: ∇TRM, 36 = 0.071383 | verificado |
+| `0,1,0` | modelo | J: el modelo simple es la caminata aleatoria | verificado |
 | `-0.0672` | dato | J: cap5_sarima.json › trm_contraejemplo.acf24 = -0.0672<br>CALC: ∇TRM, 24 = -0.067215 | verificado |
 | `0.0714` | dato | J: cap5_sarima.json › trm_contraejemplo.acf36 = 0.0714<br>CALC: ∇TRM, 36 = 0.071383 | verificado |
 | `0.167` | dato | CALC: 1.96/√137 = 0.167454 | verificado |
@@ -674,7 +708,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `23` | calendario | DEF: ejemplo del capítulo | definición (no se mide) |
 | `rango` | dato | J: rango de días del mes en la serie: 28 a 31 | verificado |
 
-### Los días del mes entran con \(\hat\beta=1.084\): justo lo que predice la aritmética
+### Los días del mes entran con \(\hat\beta=1.084\), compatible con la aritmética
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -710,6 +744,11 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `0.1882` | dato | R: directo_cap5.json › m9.t_beta1 = 0.188155 | verificado |
 | `0.18816` | dato | R: directo_cap5.json › m9.t_beta1 = 0.188155 | verificado |
 | `0.18826` | dato | CALC: (1.0840 − 1)/0.4462 = 0.188256 | verificado |
+| `0.21` | dato | CALC: 1.0840 − 1.96 × 0.4462 = 0.209448 | verificado |
+| `1.96` | dato | CALC: 1.0840 + 1.96 × 0.4462 (el límite superior coincide con el cuantil) = 1.958552 | verificado |
+| `0.2094` | dato | CALC: límite inferior = 0.209448 | verificado |
+| `1.9586` | dato | CALC: límite superior = 1.958552 | verificado |
+| `95` | convención | DEF: nivel del intervalo | definición (no se mide) |
 
 ### Ganar 7.5 puntos de AICc no es pronosticar mejor
 
@@ -725,7 +764,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `-483.21` | dato | J: cap5_sarima.json › airpassengers.calendario.modelos.sin_regresores.aicc = -483.2101 | verificado |
 | `-490.72` | dato | J: cap5_sarima.json › airpassengers.calendario.modelos.con_dias_pascua.aicc = -490.7221 | verificado |
 
-### Con \(m\) grande el SARIMA se rompe por tres sitios
+### Con \(m\) grande el SARIMA falla por tres motivos
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -736,7 +775,10 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `104` | dato | R: directo_cap5.json › m10.queda_tras_52 = 104 | verificado |
 | `800` | simulación | DEF: longitud de la serie simulada (verifica_directo_cap5.R) | definición (no se mide) |
 | `365.25` | calendario | DEF: días del año medio (calendario) | definición (no se mide) |
-| `0,0,0` | modelo | R: auto.arima con frecuencia 365 | verificado |
+| `0,0,0` | modelo | R: auto.arima con un seno anual y frecuencia 365 | verificado |
+| `ruido` | modelo | R: auto.arima sobre rnorm(800) con frecuencia 365 (el ejemplo del capítulo) | verificado |
+| `nsdiffs` | modelo | R: nsdiffs del seno anual = 1 | verificado |
+| `en silencio` | capítulo | C: capítulo 5 contiene «y lo hace en silencio» | verificado |
 | `K3` | dato | J: 6 términos con K = 3 para todo m | verificado |
 
 ### Fourier modela la estación con \(2K\) parámetros, sea cual sea \(m\)
@@ -746,7 +788,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `11` | dato | CALC: m − 1 con m = 12 = 11 | verificado |
 | `12` | convención | DEF: m | definición (no se mide) |
 
-### Hace falta \(K=5\) para que Ljung–Box deje de rechazar
+### Hace falta \(K=5\) para que Ljung–⁠Box deje de rechazar
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -780,7 +822,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `38.0` | dato | CALC: ídem = 38.009 | verificado |
 | `143` | dato | J: cap5_sarima.json › airpassengers.fourier.comparabilidad.nobs_armonicos = 143 | verificado |
 | `131` | dato | J: cap5_sarima.json › airpassengers.fourier.comparabilidad.nobs_airline = 131 | verificado |
-| `16` | dato | J: cap5_sarima.json › airpassengers.fourier.resultados.5.n_par_total = 16 | verificado |
+| `15` | dato | J: cap5_sarima.json › airpassengers.fourier.resultados.4.n_par_total = 15 | verificado |
 | `0.1341` | dato | J: cap5_sarima.json › airpassengers.fourier.resultados.4.lb24_p = 0.1341 | verificado |
 | `0.2330` | dato | J: cap5_sarima.json › airpassengers.airline.diagnostico.lb24_p = 0.233 | verificado |
 | `521.22` | dato | J: cap5_sarima.json › airpassengers.fourier.resultados.4.aicc = 521.2191 | verificado |
@@ -791,6 +833,17 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
 | `stl` | modelo | J: STL + ARIMA = ARIMA(1,1,1) con deriva | verificado |
+
+### Antes de comparar: qué hace cada rival y cómo se mide el error
+
+| Cifra o afirmación | Tipo | Fuentes y valor | Estado |
+|---|---|---|---|
+| `100` | definición | DEF: MAPE en porcentaje | definición (no se mide) |
+| `MAM` | documentación | DOC: docs_cap5.json › ets contiene «is multiplicative Holt-Winters' method with multiplicative errors» | verificado |
+| `letras` | documentación | DOC: docs_cap5.json › ets contiene «The first letter denotes the error type» | verificado |
+| `Ad` | documentación | DOC: docs_cap5.json › ets contiene «use a damped trend»<br>J: el ETS de la serie cruda es (M,Ad,M) en J | verificado |
+| `snaive` | documentación | DOC: docs_cap5.json › snaive contiene «seasonal random walk» | verificado |
+| `ETS nuevo` | capítulos 1–4 | C: «ETS» no aparece en los capítulos 1 a 4 | verificado |
 
 ### Con los últimos 24 meses como prueba, ¿qué método gana? {.pregunta}
 
@@ -808,7 +861,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `orden` | orden | J: orden por RMSE: ETS log, armónica, STL, SARIMA | verificado |
 | `pregunta 8` | capítulo | C: capítulo 5 (autoevaluación) contiene «segunda por RMSE ($19.51$» | verificado |
 
-### Con una sola partición, el modelo de once módulos queda cuarto
+### Con una sola partición, el modelo de todo el capítulo queda cuarto
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -868,7 +921,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `22.385` | dato | J: cap5_sarima.json › airpassengers.comparativa.origen_movil.rmse_medio.armonica = 22.385 | verificado |
 | `22.3847` | dato | R: directo_cap5.json › m11.om12.rmse_medio.armonica = 22.384699 | verificado |
 
-### La partición cayó justo detrás del frenazo de 1958, y el *airline* lo extrapoló
+### La partición cayó justo después de la desaceleración de 1958, y el *airline* la extrapoló
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|

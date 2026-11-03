@@ -265,7 +265,7 @@ sin_verificar(K, "origen de la TRM · nombre y difusión del airline · tabla de
 # ---- M1 -------------------------------------------------------------------------
 permite("Clase 1 · Módulo 1", "12 24", "rezagos")
 permite("Módulo 2 · Notación SARIMA", "12", "rezago")
-permite("Módulos 10–11 ·", "11 12", "número de módulo y m")
+permite("Módulo 10 · Cuando", "12", "m = 12")
 permite("Los satélites no piden parámetros", "11 12 13", "rezagos")
 K = "El capítulo 4 dejó toda la estructura"
 permite(K, "12 24 36", "rezagos")
@@ -349,6 +349,8 @@ C(K, "0.167", CALC_(lambda: banda(138), "1.96/√138"), J_(FIR + ".trm.banda"))
 C(K, "0.964", J_(FIR + ".trm.acf.0"), CALC_(lambda: acf(TRM, 1), "rezago 1"))
 C(K, "0.225", J_(FIR + ".trm.acf.35"), CALC_(lambda: acf(TRM, 36), "rezago 36"))
 C(K, "-0.0025", J_(TRMC + ".acf12"))
+C(K, "-0.002", CALC_(lambda: acf(DTRM, 12), "ACF de ∇TRM en 12, exacta"), J_(FIR + ".trm_diff.acf.11"))
+C(K, "-0.00245", CALC_(lambda: acf(DTRM, 12), "ACF exacta de ∇TRM en 12"))
 C(K, "-0.067", J_(TRMC + ".acf24"), CALC_(lambda: acf(DTRM, 24), "∇TRM, 24"))
 C(K, "0.071", J_(TRMC + ".acf36"), CALC_(lambda: acf(DTRM, 36), "∇TRM, 36"))
 C(K, "1.96", DEF_("cuantil 0.975 de la normal, convención"), kind="convención")
@@ -394,7 +396,8 @@ for i, (phi, p12, ex, fa, er) in enumerate((("0.6", "0.002", "3.073", "3.064", "
     C(K, ex, R_(f"m2.tabla_phi.{i}.exacta"))
     C(K, fa, R_(f"m2.tabla_phi.{i}.factorizada"))
     C(K, er, R_(f"m2.tabla_phi.{i}.error_pct"))
-C(K, "33", R_("m2.tabla_phi.2.error_pct", -1))
+C(K, "50", BOOL_("R", lambda: R["m2"]["tabla_phi"][3]["error_pct"] < -50, "el error con φ = 0.95 pasa del −50 % (R)"), kind="cota")
+permite(K, "50", "cota del título (ver el claim «50»)")
 C(K, "0.7", DEF_("Φ fijo del capítulo"), kind="parámetro")
 C(K, "20000", DEF_("número de pesos ψ que suma verifica_directo_cap5.R"), kind="cálculo")
 permite(K, "12", "rezago")
@@ -463,6 +466,8 @@ PRUEBAS = ("ndiffs_crudo", "ndiffs_tras_D", "nsdiffs_seas", "nsdiffs_ocsb")
 C(K, "tabla", BOOL_("J", lambda: all([get(J, f"airpassengers.orden_pruebas.{s}.{c}") for c in PRUEBAS] == v for s, v in TABLA_PRUEBAS.items()),
                     "las 16 celdas de la tabla = orden_pruebas de J"), kind="tabla (enteros < 10)")
 C(K, "9.0.2", BOOL_("DOC", lambda: DOCS["entorno"]["forecast"] == "9.0.2", "docs_cap5.json › entorno.forecast"), kind="versión")
+C(K, "ocsb", DOC_("nsdiffs", "Osborn-Chui-Smith-Birchenhall (1988) test"), kind="documentación")
+C(K, "seas", DOC_("nsdiffs", "a measure of seasonal strength is used"), CH_("fuerza estacional de la descomposición STL"), kind="documentación")
 permite(K, "12", "rezago")
 
 K = "Los rezagos estacionales se leen"
@@ -474,7 +479,7 @@ C(K, "0.7", DEF_("Φ"), kind="parámetro")
 C(K, "-0.6", DEF_("Θ"), kind="parámetro")
 permite(K, "12 24 36 11", "rezagos")
 
-K = "En el *airline* el producto es exacto"
+K = "En el *airline*, el producto es exacto"
 for fila, clave, vals in (("ar1_sar1", "ar1_sar1", ["0.602", "0.423", "0.701", "0.422", "0.491"]),
                           ("airline", "airline", ["-0.346", "0.147", "-0.425", "0.147", None]),
                           ("ar1_sma1", "ar1_sma1", ["0.500", "-0.234", "-0.470", "-0.235", None])):
@@ -491,6 +496,7 @@ C(K, "-0.23483", R_("m4.ar1_sma1.r13"))
 C(K, "-0.234", CH_("{-0.234}"), kind="capítulo")
 C(K, "0.14707", R_("m4.airline.r11"))
 C(K, "0.14705", R_("m4.airline_redondeado.r11"), CH_("0.14705"))
+C(K, "1.96", DEF_("cuantil 0.975 de la normal"), kind="convención")
 C(K, "0.1471", R_("m4.airline.producto"))
 C(K, "0.6", DEF_("φ"), kind="parámetro")
 C(K, "0.7", DEF_("Φ"), kind="parámetro")
@@ -498,11 +504,11 @@ C(K, "0.5", DEF_("φ"), kind="parámetro")
 C(K, "-0.7", DEF_("Θ"), kind="parámetro")
 permite(K, "12 11 13 24", "rezagos")
 
-K = "Picos de 0.70, 0.49 y 0.34"
-C(K, "0.70", J_(TEO + ".sar1_pos.acf.11"))
-C(K, "0.49", J_(TEO + ".sar1_pos.acf.23"))
-C(K, "0.34", J_(TEO + ".sar1_pos.acf.35"))
-C(K, "0.7", DEF_("Φ = 0.7"), kind="parámetro")
+K = "Picos de 0.80, 0.64 y 0.51"
+for v, k in (("0.80", 1), ("0.64", 2), ("0.51", 3), ("0.512", 3)):
+    C(K, v, CALC_(lambda k=k: 0.8 ** k, f"Φ^{k} con Φ = 0.8: ACF de un SAR(1) en 12·{k}"), kind="definición")
+C(K, "0.8", DEF_("Φ = 0.8, elegido para no repetir el 0.7 del Módulo 2"), kind="parámetro")
+C(K, "0.7", DEF_("Φ = 0.7 del material"), kind="parámetro")
 permite(K, "12 24 36 11 13", "rezagos")
 
 
@@ -526,7 +532,7 @@ for y, src in ((1949, R_("datos.ap_inicio")), (1960, R_("datos.ap_fin")), (1973,
     C(K, str(y), src)
 permite(K, "12", "periodo")
 
-K = "Los pesos \\(\\psi\\) suben a escalones"
+K = "Los pesos \\(\\psi\\) suben en escalones"
 C(K, "0.5982", J_(PRON + ".psi.1"), CALC_(lambda: 1 + R["m2"]["theta"], "1 + θ̂ (R)"))
 C(K, "1.0412", J_(PRON + ".psi.12"))
 C(K, "0.8632", J_(PRON + ".psi.13"))
@@ -557,7 +563,7 @@ K = "Para la próxima clase"
 C(K, "36", CALC_(lambda: len(get(J, REJ)), "número de modelos de la rejilla (J)"), CALC_(lambda: 3 * 3 * 2 * 2, "3 × 3 × 2 × 2"))
 
 # ---- M6–M7 ----------------------------------------------------------------------
-K = "Donde quedamos"
+K = "Lo que dejó la clase 1"
 C(K, "-0.0515", J_(DIAG + ".acf.11"))
 C(K, "0.7245", J4_(PUENTE + ".acf_12"))
 permite(K, "12", "rezagos")
@@ -599,10 +605,11 @@ C(K, "-0.4303", J_(UA + ".coeficientes.0.valor"), PY_("uad_simple.ma1"))
 C(K, "-0.3924", PY_("uad_difuso.ma1"))
 C(K, "-0.5475", PY_("uad_difuso.sma1"))
 C(K, "-0.5527", PY_("uad_simple.sma1"))
+C(K, "-0.5528", J_(UA + ".coeficientes.1.valor"))
 C(K, "2.4", CALC_(lambda: PY["ap_dif_max_coef"] * 1e4, "diferencia máxima × 10⁴ (PY)"))
 permite(K, "10", "exponente de 6×10⁻⁵ y 2.4×10⁻⁴")
 
-K = "Pasos 0 y 1 del caso"
+K = "Etapas 1 a 3: logaritmo"
 C(K, "1.848", R_("m7.rango_relativo"), CH_("1.848"))
 C(K, "0.762", J_(FIR + ".airpassengers_log.acf.11"))
 C(K, "0.520", J_(FIR + ".airpassengers_log.acf.23"), CALC_(lambda: acf(LAP, 24), "ACF exacta en 24"))
@@ -620,7 +627,7 @@ C(K, "1949", R_("datos.ap_inicio"))
 C(K, "1960", R_("datos.ap_fin"))
 permite(K, "12 24 36", "rezagos")
 
-K = "Paso 2: un pico en 1"
+K = "Etapa 4: un pico en 1"
 C(K, "-0.341", J_(COMB + ".d1_D1.acf1"), R_("m7.r1"))
 C(K, "-0.387", J_(COMB + ".d1_D1.acf12"), R_("m7.r12"))
 C(K, "0.171", R_("m7.banda_w"))
@@ -645,7 +652,7 @@ C(K, "0.06438", R_("m7.r11"))
 C(K, "0.15160", R_("m7.r13"))
 permite(K, "11 13", "rezagos")
 
-K = "Paso 3: los dos coeficientes"
+K = "Etapa 5: los dos coeficientes"
 C(K, "-0.4018", J_(AIR + ".coeficientes.0.valor"))
 C(K, "0.0896", J_(AIR + ".coeficientes.0.ee"), R_("m7.ee.0"))
 C(K, "-4.48", J_(AIR + ".coeficientes.0.t"), R_("m7.t.0"))
@@ -661,8 +668,14 @@ C(K, "0.163", R_("m7.banda_res"))
 C(K, "0.9524", J_(AIR + ".raices.ma_max"), R_("m7.raiz_ma"))
 C(K, "0.001371", J_(AIR + ".sigma2"))
 C(K, "131", J_(AIR + ".nobs"))
-C(K, "0.9998", J_(SOB + ".2.raiz_ma"))
-permite(K, "24 36", "rezagos de Ljung–Box")
+C(K, "-0.9973", J_(SOB + ".2.theta_est"))
+C(K, "0.5569", J_(AIR + ".coeficientes.1.valor", -1))
+C(K, "0.9524 = Θ^(1/12)", BOOL_("CALC", lambda: abs(abs(get(J, AIR + ".coeficientes.1.valor")) ** (1 / 12) - get(J, AIR + ".raices.ma_max")) < 1e-4, "|Θ̂|^(1/12) = módulo inverso máximo de J (a 10⁻⁴)"), kind="cálculo")
+C(K, "0.825", CALC_(lambda: 0.1 ** (1 / 12), "0.1^(1/12)"))
+C(K, "0.1", DEF_("Θ del ejemplo"), kind="parámetro")
+C(K, "-0.557", J_(AIR + ".coeficientes.1.valor"))
+C(K, "0.073", J_(AIR + ".coeficientes.1.ee"))
+permite(K, "24 36 12", "rezagos de Ljung–Box; exponente 1/12")
 
 K = "En los residuales solo el rezago 23"
 C(K, "-0.125", J_(DIAG + ".acf.2"), R_("m7.res_r3"))
@@ -673,7 +686,11 @@ C(K, "0.1633", R_("m7.banda_res"))
 C(K, "1.96", DEF_("cuantil 0.975 de la normal"), kind="convención")
 C(K, "0.233", J_(DIAG + ".lb24_p"))
 C(K, "144", J_(DIAG + ".n_residuales"))
-permite(K, "23 24", "rezagos")
+C(K, "-0.157", J_(DIAG + ".acf.15"))
+C(K, "0.171", R_("m7.banda_w"))
+C(K, "131", R_("m7.n_w"))
+C(K, "solo el 23", BOOL_("R", lambda: R["m7"]["res_fuera_131"] == 23, "directo_cap5.json › m7.res_fuera_131 = 23 (con la banda de 131)"), kind="dato")
+permite(K, "23 24 16", "rezagos")
 
 K = "Los satélites, comprobados"
 C(K, "0.1471", R_("m4.airline.producto"), J_(TEO + ".ma1_sma1.acf.10"))
@@ -692,7 +709,7 @@ C(K, "0.14707", R_("m4.airline.r11"))
 C(K, "-0.3459", J_(TEO + ".ma1_sma1.acf.0"))
 permite(K, "11 13 12", "rezagos")
 
-K = "Paso 4: exp() del pronóstico"
+K = "El exp() del pronóstico en logaritmos"
 C(K, "525.46", J_(PRON + ".original.media.23"), R_("m7.pron24.0"))
 C(K, "399.66", J_(PRON + ".original.lo95.23"), R_("m7.pron24.1"))
 C(K, "690.85", J_(PRON + ".original.hi95.23"), R_("m7.pron24.2"))
@@ -726,10 +743,23 @@ C(K, "72", J_("usaccdeaths.n"))
 C(K, "144", J_("airpassengers.n"))
 C(K, "0.0896", J_(AIR + ".coeficientes.0.ee"))
 C(K, "0.0731", J_(AIR + ".coeficientes.1.ee"))
+EE = lambda i, s: get(J, f"{s}.coeficientes.{i}.ee")
+C(K, "1.4", CALC_(lambda: EE(0, UA) / EE(0, AIR), "0.1228/0.0896"))
+C(K, "2.4", CALC_(lambda: EE(1, UA) / EE(1, AIR), "0.1784/0.0731"))
+C(K, "1.37", CALC_(lambda: EE(0, UA) / EE(0, AIR), "0.1228/0.0896"))
+C(K, "2.44", CALC_(lambda: EE(1, UA) / EE(1, AIR), "0.1784/0.0731"))
+C(K, "59", CALC_(lambda: get(J, "usaccdeaths.n") - 13, "72 − 1 − 12"))
+C(K, "131", J_(AIR + ".nobs"))
+C(K, "1.49", CALC_(lambda: math.sqrt(131 / 59), "√(131/59)"))
 permite(K, "12 24", "periodo y rezagos")
 
 K = "La TRM es mensual y no tiene"
 C(K, "-0.0025", J_(TRMC + ".acf12"))
+C(K, "-0.002", CALC_(lambda: acf(DTRM, 12), "ACF exacta de ∇TRM en 12"), J_(FIR + ".trm_diff.acf.11"))
+C(K, "-0.00245", CALC_(lambda: acf(DTRM, 12), "ACF exacta de ∇TRM en 12"))
+C(K, "-0.067", J_(TRMC + ".acf24"), CALC_(lambda: acf(DTRM, 24), "∇TRM, 24"))
+C(K, "0.071", J_(TRMC + ".acf36"), CALC_(lambda: acf(DTRM, 36), "∇TRM, 36"))
+C(K, "0,1,0", BOOL_("J", lambda: get(J, TRMC + ".simple.modelo") == "ARIMA(0,1,0)", "el modelo simple es la caminata aleatoria"), kind="modelo")
 C(K, "-0.0672", J_(TRMC + ".acf24"), CALC_(lambda: acf(DTRM, 24), "∇TRM, 24"))
 C(K, "0.0714", J_(TRMC + ".acf36"), CALC_(lambda: acf(DTRM, 36), "∇TRM, 36"))
 C(K, "0.167", CALC_(lambda: banda(137), "1.96/√137"))
@@ -783,6 +813,11 @@ C(K, "0.1883", CALC_(lambda: (1.0840 - 1) / 0.4462, "(1.0840 − 1)/0.4462"), CH
 C(K, "0.1882", R_("m9.t_beta1"))
 C(K, "0.18816", R_("m9.t_beta1"))
 C(K, "0.18826", CALC_(lambda: (1.0840 - 1) / 0.4462, "(1.0840 − 1)/0.4462"))
+C(K, "0.21", CALC_(lambda: 1.0840 - 1.96 * 0.4462, "1.0840 − 1.96 × 0.4462"))
+C(K, "1.96", CALC_(lambda: 1.0840 + 1.96 * 0.4462, "1.0840 + 1.96 × 0.4462 (el límite superior coincide con el cuantil)"))
+C(K, "0.2094", CALC_(lambda: 1.0840 - 1.96 * 0.4462, "límite inferior"))
+C(K, "1.9586", CALC_(lambda: 1.0840 + 1.96 * 0.4462, "límite superior"))
+C(K, "95", DEF_("nivel del intervalo"), kind="convención")
 
 K = "Ganar 7.5 puntos de AICc"
 C(K, "7.5", R_("m9.delta_aicc"), CALC_(lambda: get(J, CAL + ".modelos.sin_regresores.aicc") - get(J, CAL + ".modelos.con_dias_pascua.aicc"), "J"))
@@ -797,7 +832,7 @@ C(K, "-490.72", J_(CAL + ".modelos.con_dias_pascua.aicc"))
 permite(K, "12", "mes (1958-12)")
 
 # ---- M10–M11 --------------------------------------------------------------------
-K = "Con \\(m\\) grande el SARIMA se rompe"
+K = "Con \\(m\\) grande el SARIMA falla"
 for i, m in enumerate((12, 52, None, 365)):
     if m:
         C(K, str(m), J_(f"{FOU}.costo_m.{i}.observaciones_perdidas"), J_(f"{FOU}.costo_m.{i}.rezago_maximo_sma1"))
@@ -805,7 +840,10 @@ C(K, "156", R_("m10.n_semanal"))
 C(K, "104", R_("m10.queda_tras_52"))
 C(K, "800", DEF_("longitud de la serie simulada (verifica_directo_cap5.R)"), kind="simulación")
 C(K, "365.25", DEF_("días del año medio (calendario)"), kind="calendario")
-C(K, "0,0,0", BOOL_("R", lambda: R["m10"]["auto_365"] == "ARIMA(0,0,0) with zero mean", "auto.arima con frecuencia 365"), kind="modelo")
+C(K, "0,0,0", BOOL_("R", lambda: R["m10"]["auto_365_estacional"] == "ARIMA(0,0,0)(0,1,0)[365]", "auto.arima con un seno anual y frecuencia 365"), kind="modelo")
+C(K, "ruido", BOOL_("R", lambda: R["m10"]["auto_365"] == "ARIMA(0,0,0) with zero mean", "auto.arima sobre rnorm(800) con frecuencia 365 (el ejemplo del capítulo)"), kind="modelo")
+C(K, "nsdiffs", BOOL_("R", lambda: R["m10"]["nsdiffs_365_estacional"] == 1, "nsdiffs del seno anual = 1"), kind="modelo")
+C(K, "en silencio", CH_("y lo hace en silencio"), kind="capítulo")
 C(K, "K3", BOOL_("J", lambda: all(c["parametros_fourier_K3"] == 6 for c in get(J, FOU + ".costo_m")), "6 términos con K = 3 para todo m"), kind="dato")
 
 K = "Fourier modela la estación con"
@@ -832,7 +870,7 @@ C(K, "38", CALC_(lambda: get(J, AIR + ".aicc") - get(J, FOU + ".resultados.4.aic
 C(K, "38.0", CALC_(lambda: get(J, AIR + ".aicc") - get(J, FOU + ".resultados.4.aicc"), "ídem"))
 C(K, "143", J_(FOU + ".comparabilidad.nobs_armonicos"))
 C(K, "131", J_(FOU + ".comparabilidad.nobs_airline"))
-C(K, "16", J_(FOU + ".resultados.5.n_par_total"))
+C(K, "15", J_(FOU + ".resultados.4.n_par_total"))
 C(K, "0.1341", J_(FOU + ".resultados.4.lb24_p"))
 C(K, "0.2330", J_(DIAG + ".lb24_p"))
 C(K, "521.22", J_(FOU + ".resultados.4.aicc", -1))
@@ -841,6 +879,17 @@ C(K, "483.21", J_(AIR + ".aicc", -1))
 K = "SARIMA, Fourier o STL"
 C(K, "stl", BOOL_("J", lambda: get(J, FOU + ".stl.modelo_errores") == "ARIMA(1,1,1) with drift", "STL + ARIMA = ARIMA(1,1,1) con deriva"), kind="modelo")
 permite(K, "12", "m")
+
+K = "Antes de comparar: qué hace cada rival"
+C(K, "100", DEF_("MAPE en porcentaje"), kind="definición")
+C(K, "MAM", DOC_("ets", "is multiplicative Holt-Winters' method with multiplicative errors"), kind="documentación")
+C(K, "letras", DOC_("ets", "The first letter denotes the error type"), kind="documentación")
+C(K, "Ad", DOC_("ets", "use a damped trend"), BOOL_("J", lambda: "Ad" in json.dumps(get(J, COMP + ".modelos.ets"), ensure_ascii=False), "el ETS de la serie cruda es (M,Ad,M) en J"), kind="documentación")
+C(K, "snaive", DOC_("snaive", "seasonal random walk"), kind="documentación")
+C(K, "ETS nuevo", BOOL_("C", lambda: all("ETS" not in _texto_html(RAIZ / "Htmls_Series" / c) for c in (
+    "capitulo-1-componentes-descomposicion.html", "capitulo-2-estacionariedad-acf-pacf.html",
+    "capitulo-3-modelos-ar-ma-arma.html", "capitulo-4-modelos-arima.html")), "«ETS» no aparece en los capítulos 1 a 4"), kind="capítulos 1–4")
+permite(K, "10 11", "números de módulo")
 
 K = "Con los últimos 24 meses como prueba"
 C(K, "19.43", J_(COMP + ".modelos.ets_log.rmse"))
@@ -856,7 +905,7 @@ C(K, "orden", BOOL_("J", lambda: get(J, COMP + ".orden_rmse")[:4] == ["ets_log",
 C(K, "pregunta 8", CHQ_("segunda por RMSE ($19.51$"), kind="capítulo")
 permite(K, "12", "mes (1958-12)")
 
-K = "Con una sola partición, el modelo de once"
+K = "Con una sola partición, el modelo de todo"
 for m, k, rmse, mae, mape in (("ets_log", "16", "19.43", "16.12", "3.55"), ("armonica", "16", "19.51", "14.69", "3.15"),
                               ("stl_arima", None, "35.48", "30.29", "6.33"), ("sarima", "2", "43.18", "39.45", "8.52"),
                               ("sarima_calendario", "4", "45.48", "41.45", "8.95"), ("ets", "17", "72.55", "63.21", "13.30"),
@@ -890,7 +939,7 @@ C(K, "22.38", CH_("$22.38$"), CHQ_("frente a $22.38$"), kind="capítulo")
 C(K, "22.385", J_(OM + ".rmse_medio.armonica"))
 C(K, "22.3847", R_("m11.om12.rmse_medio.armonica"))
 
-K = "La partición cayó justo detrás del frenazo"
+K = "La partición cayó justo después"
 C(K, "1958", BOOL_("J", lambda: get(J, COMP + ".corte") == "1958-12", "corte 1958-12"), kind="fecha")
 C(K, "3.4", R_("m11.crecimiento_anual.1958"))
 C(K, "6.2", R_("m11.crec_otros_min"))
@@ -975,6 +1024,14 @@ OBSERVACIONES = [
      "No afecta a ninguna cifra (las dos son la misma copia de 138 meses), pero conviene unificarlo."),
     ("Resueltas en el capítulo el 2026-10-27 (`114b910`) cinco observaciones de la primera pasada: los ocho dobles redondeos (M1, M4, M7, M11 y las preguntas 1 y 8), los «%» de crecimiento del Módulo 11, que eran 100·Δlog y ahora son porcentajes, la nota del puente del Módulo 7, que ahora usa el ARIMA(0,1,5) y no compara AICc entre distintos D, el enunciado y dos explicaciones de la pregunta 8, y las secciones de FPP3 de las lecturas.",
      "Capítulo y diapositivas dan ahora las mismas cifras, y las comprobaciones de tipo «capítulo» lo exigen. Siguen en J dos textos que el capítulo embebe pero no muestra: `puente_cap4` (el ARIMA(0,1,1) con AICc −238.64) y `origen_movil.nota` («corona a la regresión armónica»)."),
+    ("Auditoría del 2026-10-28 (`auditoria_cap5.md`), sin corregir en el capítulo. Módulo 7, paso 3: «módulo inverso máximo 0.9524 · Invertible, aunque justo».",
+     "0.9524 = 0.5569^(1/12): con un SMA(1) el módulo de las raíces se acerca a 1 con casi cualquier Θ. La diapositiva lee la invertibilidad en Θ̂ y explica el 0.9524 en las notas."),
+    ("Módulo 10: «auto.arima con una serie de frecuencia 365 devuelve un modelo sin ninguna parte estacional, y lo hace en silencio», ilustrado con `rnorm(800)`.",
+     "Para ruido blanco, ARIMA(0,0,0) es la respuesta correcta. Con un seno anual, auto.arima da ARIMA(0,0,0)(0,1,0)[365] (R): sí ve la estación, pero no estima ningún Φ ni Θ. La diapositiva usa este segundo caso."),
+    ("Módulo 8: «los errores estándar son el doble» (USAccDeaths frente a AirPassengers).",
+     "Los cocientes son 1.37 (θ) y 2.44 (Θ). La diapositiva da los dos."),
+    ("Módulo 7: los «Paso 0» a «Paso 4» no siguen la numeración 1–5 del protocolo del Módulo 4.",
+     "La diapositiva usa las etapas del protocolo y lo avisa en la nota del divisor."),
 ]
 
 
@@ -1127,7 +1184,7 @@ def escribe_informe(slides, por_clave, verificados, codigo_res, n_fallos):
          "- **J** · `precalculo/salidas/cap5_sarima.json`, el precálculo del capítulo. **J4** · `cap4_arima.json`. **J3** · `cap3_arma.json`.",
          f"- **R** · recálculo directo sobre los datos congelados, `verifica_directo_cap5.R` → `directo_cap5.json`, en {R['entorno']['R']} (forecast {R['entorno']['forecast']}, tseries {R['entorno']['tseries']}). Incluye lo que J no guarda: la tabla de varianzas con parte AR, el horizonte de 24 meses, el error del mes 12 y los crecimientos anuales del Módulo 11.",
          f"- **PY** · statsmodels {PY['entorno']['statsmodels']}, `verifica_python_cap5.py` → `directo_python_cap5.json`.",
-         "- **DOC** · ayuda de R de `AirPassengers`, `USAccDeaths` y `co2`, y el NEWS de forecast, `verifica_docs_cap5.R` → `docs_cap5.json`.",
+         "- **DOC** · ayuda de R de `AirPassengers`, `USAccDeaths`, `co2`, `ets`, `nsdiffs` y `snaive`, y el NEWS de forecast, `verifica_docs_cap5.R` → `docs_cap5.json`.",
          "- **CALC** · aritmética sobre los datos (ACF con divisor n, bandas 1.96/√n) o sobre las fuentes anteriores. **C** · texto del capítulo. **DEF** · definición o convención.",
          "- La fuente se redondea a los decimales que muestra la diapositiva, a la mitad hacia arriba. Las ACF y las bandas se recalculan desde los datos para no redondear dos veces.",
          "- La TRM es la copia congelada de `datos_series.json`; **no** se cotejó con datos.gov.co.",

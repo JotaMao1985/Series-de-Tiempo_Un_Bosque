@@ -65,7 +65,7 @@ def satelites() -> dict:
     e3 = [
         {"tipo": "marca", "x": 11.2, "y": mix[10], "radio": 20, "texto": f"ρ_{{11}} = {f(mix[10], 4)}", "lado": "izquierda"},
         {"tipo": "marca", "x": 13.2, "y": mix[12], "radio": 20, "texto": f"ρ_{{13}} = {f(mix[12], 4)}", "lado": "derecha"},
-        {"tipo": "texto", "serie": 6, "x": 18.5, "y": 0.6, "texto": f"satélites ≈ ρ_{{1}}·ρ_{{12}} = {f(mix[0], 4)} × {f(mix[11], 4)}", "ancla": "inicio"},
+        {"tipo": "texto", "serie": 6, "x": 15.5, "y": 0.6, "texto": f"satélites ≈ ρ_{{1}}·ρ_{{12}} = {f(mix[0], 4)} × {f(mix[11], 4)} = {f(mix[0] * mix[11], 4)}", "ancla": "inicio"},
     ]
     return {
         "tipo": "animado",
@@ -108,7 +108,7 @@ def escalones() -> dict:
         "paneles": [
             {"titulo": "Pesos ψ_{j}", "x": {"titulo": "j", "min": -0.7, "max": 23.7, "marcas": [0, 6, 12, 18, 23]},
              "y": {"min": 0, "max": 1.2, "marcas": [0, 0.5, 1]}},
-            {"titulo": "σ_{h} (escala logarítmica)", "x": {"titulo": "h (meses)", "min": 0.3, "max": 24.7, "marcas": [1, 6, 12, 18, 24]},
+            {"titulo": "σ_{h} (en unidades de log y)", "x": {"titulo": "h (meses)", "min": 0.3, "max": 24.7, "marcas": [1, 6, 12, 18, 24]},
              "y": {"min": 0, "max": 0.17, "marcas": [0, 0.05, 0.1, 0.15]}},
         ],
         "etapas": [e1, e2, e3],

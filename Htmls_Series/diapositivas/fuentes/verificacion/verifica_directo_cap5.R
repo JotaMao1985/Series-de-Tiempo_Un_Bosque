@@ -9,7 +9,7 @@
 #   - Recalcula: los momentos del M2 (factorización exacta en el MA y la tabla
 #     de error con parte AR), las ACF teóricas a 5 decimales del M4, el rango
 #     relativo del M7, el contraste de beta = 1 del M9, el auto.arima con m = 365
-#     del M10, y todo lo del M11 que el JSON no guarda (crecimientos anuales, el
+#     del M10 (sobre ruido y sobre una serie con estación anual de verdad), y todo lo del M11 que el JSON no guarda (crecimientos anuales, el
 #     sesgo del airline, los orígenes en que pierde, el horizonte de 24 meses y
 #     el error del mes 12).
 #   - Guarda el entorno (versiones de R, forecast y tseries) en el JSON.
@@ -134,6 +134,7 @@ out$m7 <- list(
   r1 = a_w[2], r11 = a_w[12], r12 = a_w[13], r13 = a_w[14], r3 = a_w[4], r9 = a_w[10], r23 = a_w[24],
   res_r3 = r_res[4], res_r9 = r_res[10], res_r23 = r_res[24], res_r12 = r_res[13], res_r24 = r_res[25],
   banda_res = 1.96 / sqrt(length(residuals(fit))),
+  res_fuera_131 = which(abs(r_res[-1]) > 1.96 / sqrt(length(w))),
   ee = sqrt(diag(fit$var.coef)), t = coef(fit) / sqrt(diag(fit$var.coef)),
   lb24 = Box.test(residuals(fit), lag = 24, type = "Ljung-Box", fitdf = 2)$p.value,
   lb36 = Box.test(residuals(fit), lag = 36, type = "Ljung-Box", fitdf = 2)$p.value,
@@ -173,8 +174,12 @@ out$m9 <- list(
 
 # --- M10 · m grande ---------------------------------------------------------
 set.seed(1); z <- ts(rnorm(800), frequency = 365)
+# La misma longitud con una estación anual real: un seno de amplitud 3 más el ruido
+set.seed(1); z_est <- ts(3 * sin(2 * pi * (1:800) / 365) + rnorm(800), frequency = 365)
 out$m10 <- list(
   auto_365 = as.character(auto.arima(z)),
+  auto_365_estacional = as.character(auto.arima(z_est)),
+  nsdiffs_365_estacional = nsdiffs(z_est),
   n_semanal = 156, queda_tras_52 = 156 - 52,
   ncol_fourier_K3_m52 = ncol(fourier(ts(rnorm(156), frequency = 52), K = 3)),
   nobs_airline = fit$nobs

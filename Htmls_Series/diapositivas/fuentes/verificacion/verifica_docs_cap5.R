@@ -1,4 +1,5 @@
-# Guarda el texto de la ayuda de R de las series que citan las diapositivas del capítulo 5,
+# Guarda el texto de la ayuda de R de las series y funciones que citan las diapositivas del capítulo 5
+# (AirPassengers, USAccDeaths, co2, ets, nsdiffs, snaive),
 # y la entrada del NEWS de forecast sobre la prueba estacional, en docs_cap5.json.
 # Uso (desde la raíz del repositorio):
 #   Rscript Htmls_Series/diapositivas/fuentes/verificacion/verifica_docs_cap5.R
@@ -17,6 +18,9 @@ out <- list(
   airpassengers = ayuda("AirPassengers", "datasets"),
   usaccdeaths = ayuda("USAccDeaths", "datasets"),
   co2 = ayuda("co2", "datasets"),
+  ets = ayuda("ets", "forecast"),
+  nsdiffs = ayuda("nsdiffs", "forecast"),
+  snaive = ayuda("snaive", "forecast"),
   nsdiffs_test_por_defecto = eval(formals(forecast::nsdiffs)$test)[1],
   news_cambio_D = list(version = version, texto = trimws(news_md[i]))
 )
