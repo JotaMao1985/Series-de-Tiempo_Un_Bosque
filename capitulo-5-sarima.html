@@ -3862,14 +3862,14 @@ print(acorr_ljungbox(fit.resid[13:], lags=[24], model_df=2)["lb_pvalue"].round(4
         </div>
       </div>
 
-      <h3>Paso 0 · La transformación</h3>
+      <h3>Etapa 1 · La transformación</h3>
 
       <p>El Capítulo 2 dejó zanjado que $\text{AirPassengers}$ pide logaritmo: la amplitud estacional crece con el
         nivel, y el rango relativo de la serie es $1.848$. En el mapa del Módulo 1 se ve directamente —las bandas de
         la serie cruda se ensanchan hacia abajo y las de $\log(y_t)$ no—. El logaritmo convierte una estacionalidad
         multiplicativa en una aditiva, que es la que un SARIMA sabe modelar.</p>
 
-      <h3>Paso 1 · $D$ y luego $d$</h3>
+      <h3>Etapas 2 y 3 · $D$ y luego $d$</h3>
 
       <div class="diagram">
         <table>
@@ -3884,7 +3884,7 @@ print(acorr_ljungbox(fit.resid[13:], lags=[24], model_df=2)["lb_pvalue"].round(4
         </table>
       </div>
 
-      <h3>Paso 2 · $p, q, P, Q$</h3>
+      <h3>Etapa 4 · $p, q, P, Q$</h3>
 
       <p>Sobre $\nabla\nabla_{12}\log(y_t)$, la ACF tiene $\hat\rho_1 = -0.341$ y $\hat\rho_{12} = -0.387$, las dos
         negativas y fuera de la banda $\pm 0.171$ —que aquí se calcula con las $131$ observaciones que quedan
@@ -3911,21 +3911,21 @@ print(acorr_ljungbox(fit.resid[13:], lags=[24], model_df=2)["lb_pvalue"].round(4
       <p>Los dos satélites son <strong>positivos</strong> —el signo que produce el producto de dos coeficientes
         negativos— y los dos caen dentro de la banda. Ahí está la decisión que importa: <strong>no piden
         parámetros</strong>. Subir $q$ hasta $13$ para «cubrir» el rezago $13$ añadiría once términos con tal de
-        reproducir un número que un modelo de dos parámetros predice solo. El Paso 3 lo comprueba con las
+        reproducir un número que un modelo de dos parámetros predice solo. La etapa 5 lo comprueba con las
         estimaciones en la mano.</p>
 
       <div class="note">
         <p><strong>Y los rezagos que sobran.</strong> Entre los primeros $24$ hay tres barras más fuera de la
           banda: el $3$ ($-0.202$), el $9$ ($0.176$) y el $23$ ($0.223$). Ninguna forma patrón —ni son múltiplos de
-          $12$ ni satélites de nada— y con $24$ rezagos al $95\,\%$ se espera algo más de una por puro azar. El
-          Paso 3 despacha dos de las tres: en los residuales del modelo ajustado el $3$ queda en $-0.125$ y el $9$
+          $12$ ni satélites de nada— y con $24$ rezagos al $95\,\%$ se espera algo más de una por puro azar. La
+          etapa 5 resuelve dos de las tres: en los residuales del modelo ajustado el $3$ queda en $-0.125$ y el $9$
           en $0.117$, dentro de $\pm 0.163$. <strong>El $23$ sobrevive</strong>, en $0.220$, y aun así
           Ljung–Box($24$) no rechaza: una barra aislada entre veinticuatro no mueve un estadístico conjunto. Un
           rezago $23$ sin interpretación posible es lo que produce el azar, y perseguirlo con parámetros es
           exactamente lo que este capítulo enseña a no hacer.</p>
       </div>
 
-      <h3>Paso 3 · Estimación y diagnóstico</h3>
+      <h3>Etapa 5 · Estimación y diagnóstico</h3>
 
       <div class="formula">
         $$(1-B)(1-B^{12})\log y_t$$
@@ -3945,14 +3945,20 @@ print(acorr_ljungbox(fit.resid[13:], lags=[24], model_df=2)["lb_pvalue"].round(4
             <tr><td>Ljung–Box($36$)</td><td>$p = 0.2969$</td><td>No rechaza</td></tr>
             <tr><td>Shapiro–Wilk</td><td>$p = 0.1674$</td><td>Normalidad razonable</td></tr>
             <tr><td>$\hat\rho_{12}$, $\hat\rho_{24}$ residuales</td><td>$-0.0515$, $0.0124$</td><td>Dentro de $\pm 0.163$</td></tr>
-            <tr><td>Raíces MA</td><td>Módulo inverso máximo $0.9524$</td><td>Invertible, aunque justo</td></tr>
+            <tr><td>Invertibilidad</td><td>$\hat\Theta = -0.5569$, lejos de $-1$</td><td>Invertible</td></tr>
           </tbody>
         </table>
       </div>
 
+      <p>El módulo inverso de las raíces MA vale $0.9524$, y no avisa de que el modelo esté al borde de dejar de ser
+        invertible: es $|\hat\Theta|^{1/12} = 0.5569^{1/12}$. Las doce raíces de $1 + \Theta B^{12}$ tienen módulo
+        $|\Theta|^{-1/12}$, así que con un MA estacional ese número se acerca a $1$ con casi cualquier $\Theta$ (con
+        $\Theta = 0.1$ ya vale $0.825$). La invertibilidad se lee en $\hat\Theta$ mismo: $-0.557$, con e.e. $0.073$,
+        lejos de $-1$. Compárese con la sobrediferenciación del Módulo 3, donde $\hat\Theta = -0.9973$.</p>
+
       <div class="definition">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Los satélites, comprobados</h4>
-        <p>Con $\hat\theta$ y $\hat\Theta$ estimados ya se puede volver al Paso 2 y cerrar la comprobación. En un
+        <p>Con $\hat\theta$ y $\hat\Theta$ estimados ya se puede volver a la etapa 4 y cerrar la comprobación. En un
           modelo <em>airline</em> —MA regular multiplicado por MA estacional— la ACF teórica de los satélites no es
           una aproximación: es <strong>exactamente</strong> el producto de las otras dos autocorrelaciones.</p>
         $$\rho_{11} = \rho_{13} = \frac{\theta\,\Theta}{(1+\theta^2)(1+\Theta^2)} = \rho_1 \cdot \rho_{12}$$
@@ -3986,7 +3992,7 @@ print(acorr_ljungbox(fit.resid[13:], lags=[24], model_df=2)["lb_pvalue"].round(4
           la estructura que faltaba estaba entera en un solo sitio.</p>
       </div>
 
-      <h3>Paso 4 · Pronóstico</h3>
+      <h3>Después del ciclo · Pronóstico</h3>
 
       <div class="simulador" data-simulador="pronostico-estacional">
         <h4><i class="fas fa-chart-line" aria-hidden="true"></i> Pronóstico a $h$ meses con bandas</h4>
@@ -4019,7 +4025,7 @@ print(acorr_ljungbox(fit.resid[13:], lags=[24], model_df=2)["lb_pvalue"].round(4
           <pre><code class="language-r">library(forecast)
 ap &lt;- log(AirPassengers)
 
-# --- Pasos 1 y 2: D primero, d despues, y la ACF de la serie ya estacionaria -
+# --- Etapas 2 a 4: D primero, d despues, y la ACF de la serie ya estacionaria
 c(nsdiffs = nsdiffs(ap), ndiffs_tras_D = ndiffs(diff(ap, lag = 12)))
 #&gt; nsdiffs ndiffs_tras_D
 #&gt;       1             1
@@ -4037,7 +4043,7 @@ round(c(r11 = a[12], r13 = a[14]), 4)
 #&gt;    r11    r13
 #&gt; 0.0644 0.1516      positivos, y dentro de la banda: NO piden parametros
 
-# --- Paso 3: estimacion y diagnostico --------------------------------------
+# --- Etapa 5: estimacion y diagnostico -------------------------------------
 fit &lt;- Arima(ap, order = c(0,1,1), seasonal = list(order = c(0,1,1), period = 12))
 round(c(coef(fit), sigma2 = fit$sigma2, aicc = fit$aicc), 6)
 #&gt;       ma1      sma1    sigma2      aicc
@@ -4058,7 +4064,7 @@ round(c(rho1 = rt[1], rho11 = rt[11], rho12 = rt[12], rho13 = rt[13]), 4)
 round(rt[1] * rt[12], 4)          # el producto, sin aproximar
 #&gt; [1] 0.1471
 
-# --- Paso 4: pronostico -----------------------------------------------------
+# --- Pronostico -------------------------------------------------------------
 p &lt;- forecast(fit, h = 24, level = c(80, 95))
 round(exp(c(media = p$mean[24], lo95 = p$lower[24,2], hi95 = p$upper[24,2])), 2)
 #&gt;  media   lo95   hi95
@@ -4170,7 +4176,8 @@ print(round(float(np.exp(f.predicted_mean.iloc[-1] + sigma_h**2 / 2)), 2))
       <p>Tomada la decisión correcta ($d=1$, $D=1$), <code>auto.arima</code> con búsqueda exhaustiva devuelve otra vez
         el <em>airline</em>: $\hat\theta = -0.4303$ (e.e. $0.1228$), $\hat\Theta = -0.5528$ (e.e. $0.1784$),
         AICc $= 857.32$, Ljung–Box($24$) con $p = 0.2477$. Con la mitad de observaciones que
-        $\text{AirPassengers}$, los errores estándar son el doble y los coeficientes casi los mismos.</p>
+        $\text{AirPassengers}$, los errores estándar son entre $1.4$ y $2.4$ veces mayores ($0.1228$ frente a
+        $0.0896$ en $\hat\theta$; $0.1784$ frente a $0.0731$ en $\hat\Theta$) y los coeficientes, casi los mismos.</p>
 
       <h3>La TRM: una serie mensual sin estacionalidad</h3>
 
@@ -4559,8 +4566,9 @@ print(round(float((f2.params["x1"] - 1) / f2.bse["x1"]), 4))
       <p>Las dos primeras filas crecen con $m$; la tercera no. Con tres años de datos semanales ($n = 156$),
         $\nabla_{52}$ deja $104$ observaciones para estimar un modelo cuyo polinomio llega al rezago $52$. Y el patrón
         anual con datos diarios ni siquiera es entero: $365.25$ no es un número de rezagos. En la práctica,
-        <code>auto.arima</code> con una serie de frecuencia $365$ devuelve un modelo <strong>sin ninguna parte
-        estacional</strong>, y lo hace en silencio.</p>
+        con una serie de frecuencia $365$ y una estación anual de verdad, <code>auto.arima</code> toma una diferencia
+        estacional —gasta $365$ observaciones— y <strong>no estima ningún $\Phi$ ni $\Theta$</strong>: devuelve un
+        ARIMA$(0,0,0)(0,1,0)_{365}$ y deja toda la estacionalidad en manos de $\nabla_{365}$.</p>
 
       <h3>Regresión armónica: la estacionalidad como suma de senos</h3>
 
@@ -4670,9 +4678,9 @@ n - 52                                 # lo que deja nabla_52
 #&gt; [1] 104
 ncol(fourier(y, K = 3))                # los armonicos no dependen de m
 #&gt; [1] 6
-z &lt;- ts(rnorm(800), frequency = 365)
-as.character(auto.arima(z))            # con m = 365 renuncia a la estacionalidad
-#&gt; [1] "ARIMA(0,0,0) with zero mean"
+z &lt;- ts(3 * sin(2 * pi * (1:800) / 365) + rnorm(800), frequency = 365)   # estacion anual real
+as.character(auto.arima(z))            # con m = 365: una diferencia y ningun Phi ni Theta
+#&gt; [1] "ARIMA(0,0,0)(0,1,0)[365]"
 
 # --- STL + ARIMA ------------------------------------------------------------
 s &lt;- stlm(ap, s.window = "periodic", method = "arima")

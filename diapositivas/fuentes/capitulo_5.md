@@ -736,7 +736,7 @@ Verificación: nobs 144 y 131, y los coeficientes de USAccDeaths con y sin la op
 > El ciclo entero sobre una serie, de la transformación al pronóstico, para cerrar el problema que dejó abierto el capítulo 4.
 
 ???
-El caso sigue las cinco etapas del protocolo del Módulo 4 y añade el pronóstico. El capítulo las numera «Paso 0» a «Paso 4»; aquí se usan los números de las etapas, para no tener dos numeraciones en el mismo deck.
+El caso sigue las cinco etapas del protocolo del Módulo 4, con la misma numeración que el capítulo, y añade el pronóstico.
 
 ## Etapas 1 a 3: logaritmo, después \(D=1\) y, sobre la serie sin estación, \(d=1\)
 
@@ -752,7 +752,7 @@ El caso sigue las cinco etapas del protocolo del Módulo 4 y añade el pronósti
 ???
 El logaritmo convierte una estacionalidad multiplicativa en aditiva, que es la que un SARIMA sabe modelar; el capítulo 2 ya lo dejó zanjado. En el mapa del Módulo 1 se ve: las bandas de la serie cruda se ensanchan hacia abajo y las del logaritmo no.
 
-Verificación: 1.848 = (622 − 104)/280.30, recalculado en R; el resto en J. ρ̂₂₄ = 0.520 sale del exacto, 0.52049, como en el capítulo. El capítulo llama a estas etapas «Pasos 0 y 1». Detalle: Módulo 7, pasos 0 y 1.
+Verificación: 1.848 = (622 − 104)/280.30, recalculado en R; el resto en J. ρ̂₂₄ = 0.520 sale del exacto, 0.52049, como en el capítulo. Detalle: Módulo 7, etapas 1 a 3.
 
 ## Etapa 4: un pico en 1 y otro en 12 piden \(q=1\) y \(Q=1\)
 
@@ -765,7 +765,7 @@ Verificación: 1.848 = (622 − 104)/280.30, recalculado en R; el resto en J. ρ
 ???
 Hay tres barras más fuera de la banda entre las primeras 24: el 3 (−0.202), el 9 (0.176) y el 23 (0.223). Ninguna forma patrón; con 24 rezagos al 95 % se espera algo más de una por azar. La etapa 5 resuelve dos de las tres; la del 23 sobrevive (diapositiva de los residuales).
 
-Verificación: ρ̂₁, ρ̂₁₂, ρ̂₃, ρ̂₉, ρ̂₂₃ y la banda 1.96/√131 = 0.1712 en J y en R. Detalle: Módulo 7, paso 2.
+Verificación: ρ̂₁, ρ̂₁₂, ρ̂₃, ρ̂₉, ρ̂₂₃ y la banda 1.96/√131 = 0.1712 en J y en R. Detalle: Módulo 7, etapa 4.
 
 ## En 11 y 13 aparecen 0.064 y 0.152: ¿se añaden parámetros? {.pregunta}
 
@@ -780,7 +780,7 @@ Son los **satélites**: positivos, como el producto de dos coeficientes negativo
 ???
 Pregunta propia de la presentación, construida con el caso del Módulo 7. Si alguien dice «sí, la del 13», preguntar qué signo esperaría de θ·Θ con θ y Θ negativos. La comprobación con los coeficientes ya estimados va tres diapositivas más adelante.
 
-Verificación: 0.064 y 0.152 (0.0644 y 0.1516 en J; 0.06438 y 0.15160 en R). Detalle: Módulo 7, paso 2, tabla de los satélites.
+Verificación: 0.064 y 0.152 (0.0644 y 0.1516 en J; 0.06438 y 0.15160 en R). Detalle: Módulo 7, etapa 4, tabla de los satélites.
 
 ## Etapa 5: los dos coeficientes son significativos y el diagnóstico pasa
 
@@ -796,9 +796,9 @@ Verificación: 0.064 y 0.152 (0.0644 y 0.1516 en J; 0.06438 y 0.15160 en R). Det
 <small>Contexto: \(\hat\sigma^2=0.001371\), \(n=131\). Fuente: J `airline` · R `m7`</small>
 
 ???
-El capítulo escribe aquí «módulo inverso máximo 0.9524 · Invertible, aunque justo». Ese 0.9524 es 0.5569^(1/12): las doce raíces de 1 + ΘB¹² tienen módulo |Θ|^(−1/12), que se acerca a 1 con casi cualquier Θ (con Θ = 0.1, el inverso ya vale 0.825). La invertibilidad se lee en Θ̂, a −0.557 con e. e. 0.073, lejos de −1. Comparar con la fila D = 2 de la sobrediferenciación, donde Θ̂ = −0.9973.
+El módulo inverso de las raíces MA, 0.9524, no se proyecta: es 0.5569^(1/12), y el capítulo lo explica bajo la tabla: las doce raíces de 1 + ΘB¹² tienen módulo |Θ|^(−1/12), que se acerca a 1 con casi cualquier Θ (con Θ = 0.1, el inverso ya vale 0.825). La invertibilidad se lee en Θ̂, a −0.557 con e. e. 0.073, lejos de −1. Comparar con la fila D = 2 de la sobrediferenciación, donde Θ̂ = −0.9973.
 
-Verificación: cada valor en J (`airline.coeficientes`, `airline.diagnostico`, `airline.raices`) y recalculado en R. Detalle: Módulo 7, paso 3.
+Verificación: cada valor en J (`airline.coeficientes`, `airline.diagnostico`, `airline.raices`) y recalculado en R. Detalle: Módulo 7, etapa 5.
 
 ## En los residuales solo el rezago 23 sale de la banda, y Ljung–⁠Box no rechaza
 
@@ -841,7 +841,7 @@ Verificación: −0.3460, −0.4251 y 0.1471 con los coeficientes sin redondear 
 ???
 Los límites sí se transforman sin más, porque exp es monótona y respeta los cuantiles; el punto central no. Esa asimetría es correcta y es del logaritmo, no un error del modelo. En logaritmos el abanico se abre a escalones (la forma de σ_h de la clase 1).
 
-Verificación: 525.46, 399.66 y 690.85 en J y en R; 125.80 y 165.39 por resta. El capítulo da la media (530.52) con statsmodels; en R, con el σ de forecast, sale 530.61. No se proyecta. Detalle: Módulo 7, paso 4.
+Verificación: 525.46, 399.66 y 690.85 en J y en R; 125.80 y 165.39 por resta. El capítulo da la media (530.52) con statsmodels; en R, con el σ de forecast, sale 530.61. No se proyecta. Detalle: Módulo 7, pronóstico.
 
 ## El caso completo cabe en seis líneas de R
 
@@ -882,7 +882,7 @@ Dos casos: uno donde las pruebas engañan y otro donde no hay nada que modelar. 
 <small>Contexto: `USAccDeaths`, sin logaritmo (la amplitud no crece con el nivel). Fuente: J `usaccdeaths` · R</small>
 
 ???
-El orden importa: por el camino «d primero» se llega a (0,0,1)(0,1,1)₁₂, que no pasa Ljung–Box (ejercicio 2). En AirPassengers los e. e. eran 0.0896 y 0.0731: los cocientes son 0.1228/0.0896 = 1.37 y 0.1784/0.0731 = 2.44. El capítulo dice «el doble». Con n efectivos de 59 y 131, la raíz del cociente es √(131/59) = 1.49: θ̂ se comporta como se espera; Θ̂, peor.
+El orden importa: por el camino «d primero» se llega a (0,0,1)(0,1,1)₁₂, que no pasa Ljung–Box (ejercicio 2). En AirPassengers los e. e. eran 0.0896 y 0.0731: los cocientes son 0.1228/0.0896 = 1.37 y 0.1784/0.0731 = 2.44. Con n efectivos de 59 y 131, la raíz del cociente es √(131/59) = 1.49: θ̂ se comporta como se espera; Θ̂, peor.
 
 Verificación: coeficientes, e.e., AICc y p en J (`usaccdeaths`). Detalle: Módulo 8, USAccDeaths.
 
@@ -1014,9 +1014,9 @@ Dónde deja de servir el SARIMA y qué se usa entonces: la regresión armónica 
 ???
 Las dos primeras filas crecen con m; la tercera no: ese es el argumento de Fourier.
 
-El capítulo ilustra el `auto.arima` con ruido blanco (`rnorm(800)`) y dice que devuelve un modelo «sin ninguna parte estacional, y lo hace en silencio». Para ruido blanco, el ARIMA(0,0,0) es la respuesta correcta. Con una estación de verdad, la misma llamada sí toma D = 1 (`nsdiffs` da 1), pero no pone ningún Φ ni Θ. Lo que se proyecta es este segundo caso.
+El ejemplo necesita una estación de verdad: sobre ruido blanco (`rnorm(800)`), `auto.arima` devuelve un ARIMA(0,0,0), que es la respuesta correcta y no enseña nada. Con el seno anual toma D = 1 (`nsdiffs` da 1) y no pone ningún Φ ni Θ.
 
-Verificación: la tabla en J (`fourier.costo_m`); 104 y los dos `auto.arima` con frecuencia 365 (el ruido de 800 observaciones y el seno anual), recalculados en R. Detalle: Módulo 10, tabla.
+Verificación: la tabla en J (`fourier.costo_m`); 104 y los dos `auto.arima` con frecuencia 365 (el seno anual del capítulo y el ruido de 800 observaciones), recalculados en R con el código del capítulo. Detalle: Módulo 10, tabla.
 
 ## Fourier modela la estación con \(2K\) parámetros, sea cual sea \(m\)
 

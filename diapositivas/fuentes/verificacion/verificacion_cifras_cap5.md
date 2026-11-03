@@ -15,14 +15,14 @@ Generado por `verifica_cifras_cap5.py`. Cada fila es una cifra (o afirmación) d
 
 ## Resumen
 
-- Cifras y afirmaciones registradas: **668**
-- Verificadas contra al menos una fuente: **621**
+- Cifras y afirmaciones registradas: **671**
+- Verificadas contra al menos una fuente: **624**
 - Definiciones o convenciones: **47**
 - Comprobadas a mano en una fuente pública fuera del repositorio (`WEB`, con fecha): **7**
 - Marcadas `[SIN VERIFICAR]`: **5**
 - No coinciden: **0**
 
-Contrastes por tipo de fuente: C 57, CALC 116, DOC 17, J 330, J3 2, J4 6, PY 10, R 234, WEB 7.
+Contrastes por tipo de fuente: C 64, CALC 116, DOC 17, J 330, J3 2, J4 6, PY 10, R 234, WEB 7.
 
 ## Código proyectado, ejecutado
 
@@ -55,10 +55,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 6. Módulo 6, advertencia final: «los coeficientes casi coinciden con los de R (diferencia 6 × 10⁻⁵)» con statsmodels sin `simple_differencing`. Con statsmodels 0.14.6 la diferencia máxima es 2.4 × 10⁻⁴ (−0.4021 y −0.5571 frente a −0.4018 y −0.5569). Sigue siendo despreciable; depende de la versión. No se proyecta.
 7. Las dos copias de la TRM llevan fechas de consulta distintas: `cap5_sarima.json` dice «consulta: 2026-07-24» y `datos_series.json` (y el capítulo 4) «2026-07-26». No afecta a ninguna cifra (las dos son la misma copia de 138 meses), pero conviene unificarlo.
 8. Resueltas en el capítulo el 2026-10-27 (`114b910`) cinco observaciones de la primera pasada: los ocho dobles redondeos (M1, M4, M7, M11 y las preguntas 1 y 8), los «%» de crecimiento del Módulo 11, que eran 100·Δlog y ahora son porcentajes, la nota del puente del Módulo 7, que ahora usa el ARIMA(0,1,5) y no compara AICc entre distintos D, el enunciado y dos explicaciones de la pregunta 8, y las secciones de FPP3 de las lecturas. Capítulo y diapositivas dan ahora las mismas cifras, y las comprobaciones de tipo «capítulo» lo exigen. Siguen en J dos textos que el capítulo embebe pero no muestra: `puente_cap4` (el ARIMA(0,1,1) con AICc −238.64) y `origen_movil.nota` («corona a la regresión armónica»).
-9. Auditoría del 2026-10-28 (`auditoria_cap5.md`), sin corregir en el capítulo. Módulo 7, paso 3: «módulo inverso máximo 0.9524 · Invertible, aunque justo». 0.9524 = 0.5569^(1/12): con un SMA(1) el módulo de las raíces se acerca a 1 con casi cualquier Θ. La diapositiva lee la invertibilidad en Θ̂ y explica el 0.9524 en las notas.
-10. Módulo 10: «auto.arima con una serie de frecuencia 365 devuelve un modelo sin ninguna parte estacional, y lo hace en silencio», ilustrado con `rnorm(800)`. Para ruido blanco, ARIMA(0,0,0) es la respuesta correcta. Con un seno anual, auto.arima da ARIMA(0,0,0)(0,1,0)[365] (R): sí ve la estación, pero no estima ningún Φ ni Θ. La diapositiva usa este segundo caso.
-11. Módulo 8: «los errores estándar son el doble» (USAccDeaths frente a AirPassengers). Los cocientes son 1.37 (θ) y 2.44 (Θ). La diapositiva da los dos.
-12. Módulo 7: los «Paso 0» a «Paso 4» no siguen la numeración 1–5 del protocolo del Módulo 4. La diapositiva usa las etapas del protocolo y lo avisa en la nota del divisor.
+9. Resueltas en el capítulo el 2026-11-03 las cuatro observaciones de la auditoría del 2026-10-28 (`auditoria_cap5.md`): la invertibilidad del Módulo 7 («aunque justo»), el `auto.arima` con m = 365 del Módulo 10 (ilustrado con ruido blanco), los errores estándar «el doble» del Módulo 8 y los «Paso 0…4» del Módulo 7. El capítulo lee ahora la invertibilidad en Θ̂ y explica que 0.9524 = 0.5569^(1/12); el ejemplo de m = 365 usa un seno anual (ARIMA(0,0,0)(0,1,0)[365]); los cocientes son 1.4 y 2.4; y el caso sigue las etapas 1–5 del protocolo. Las comprobaciones de tipo «capítulo» exigen el texto nuevo.
 
 ## Tabla de cifras
 
@@ -512,6 +509,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
+| `etapas` | capítulo | C: capítulo 5 contiene «Etapas 2 y 3 · $D$ y luego $d$»<br>C: capítulo 5 contiene «Etapa 5 · Estimación y diagnóstico»<br>C: el capítulo ya no numera «Paso 0…4» | verificado |
 | `1.848` | dato | R: directo_cap5.json › m7.rango_relativo = 1.848029<br>C: capítulo 5 contiene «1.848» | verificado |
 | `0.762` | dato | J: cap5_sarima.json › airpassengers.firma.airpassengers_log.acf.11 = 0.7619 | verificado |
 | `0.520` | dato | J: cap5_sarima.json › airpassengers.firma.airpassengers_log.acf.23 (empate: decide el exacto) = 0.5205<br>CALC: ACF exacta en 24 = 0.52049 | verificado |
@@ -583,6 +581,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `0.1` | parámetro | DEF: Θ del ejemplo | definición (no se mide) |
 | `-0.557` | dato | J: cap5_sarima.json › airpassengers.airline.coeficientes.1.valor = -0.5569 | verificado |
 | `0.073` | dato | J: cap5_sarima.json › airpassengers.airline.coeficientes.1.ee = 0.0731 | verificado |
+| `capítulo` | capítulo | C: capítulo 5 contiene «es $|\hat\Theta|^{1/12} = 0.5569^{1/12}$»<br>C: el capítulo ya no dice «aunque justo» | verificado |
 
 ### En los residuales solo el rezago 23 sale de la banda, y Ljung–⁠Box no rechaza
 
@@ -668,6 +667,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `59` | dato | CALC: 72 − 1 − 12 = 59 | verificado |
 | `131` | dato | J: cap5_sarima.json › airpassengers.airline.nobs = 131 | verificado |
 | `1.49` | dato | CALC: √(131/59) = 1.49008 | verificado |
+| `capítulo` | capítulo | C: capítulo 5 contiene «entre $1.4$ y $2.4$ veces mayores» | verificado |
 
 ### La TRM es mensual y no tiene estacionalidad: cuatro evidencias coinciden
 
@@ -778,7 +778,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `0,0,0` | modelo | R: auto.arima con un seno anual y frecuencia 365 | verificado |
 | `ruido` | modelo | R: auto.arima sobre rnorm(800) con frecuencia 365 (el ejemplo del capítulo) | verificado |
 | `nsdiffs` | modelo | R: nsdiffs del seno anual = 1 | verificado |
-| `en silencio` | capítulo | C: capítulo 5 contiene «y lo hace en silencio» | verificado |
+| `capítulo` | capítulo | C: capítulo 5 contiene «ARIMA$(0,0,0)(0,1,0)_{365}$»<br>C: capítulo 5 contiene «3 * sin(2 * pi * (1:800) / 365) + rnorm(800)» | verificado |
 | `K3` | dato | J: 6 términos con K = 3 para todo m | verificado |
 
 ### Fourier modela la estación con \(2K\) parámetros, sea cual sea \(m\)
