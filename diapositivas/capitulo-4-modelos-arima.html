@@ -2039,9 +2039,12 @@ sapply(c("kpss", "adf", "pp"),
         const guardar = (k, v) => { try { localStorage.setItem(k, v); } catch (e) { } };
 
         /* ---------- Resaltado de código, como `resaltar` de LP-CORE ------- */
+        // Sin cdnjs (sin red, o bloqueado), `window.Prism` es solo el `{ manual: true }`
+        // de la cabecera, sin gramáticas: el código sale sin color y el visor arranca igual.
+        const hayPrism = !!(window.Prism && Prism.languages);
         // El pseudocódigo de Lógica de Programación Financiera: la misma gramática
         // que registra el capítulo (Prism no la trae).
-        if (window.Prism && !Prism.languages.pseudo) {
+        if (hayPrism && !Prism.languages.pseudo) {
             Prism.languages.pseudo = {
                 'comment': { pattern: /\/\/.*/, greedy: true },
                 'string': { pattern: /"(?:[^"\\\n]|\\.)*"/, greedy: true },
@@ -2065,7 +2068,7 @@ sapply(c("kpss", "adf", "pp"),
                 bloque._fuente = fuente;
                 const lang = bloque.dataset.lang || 'text';
                 const nombre = GRAMATICA[lang];
-                const gram = nombre && window.Prism && Prism.languages[nombre];
+                const gram = nombre && hayPrism && Prism.languages[nombre];
                 let html = gram ? Prism.highlight(fuente, gram, nombre) : escaparHtml(fuente);
                 const pref = PREFIJO_SALIDA[lang];
                 const foco = new Set((bloque.dataset.foco || '').split(',').filter(Boolean).flatMap((r) => {
