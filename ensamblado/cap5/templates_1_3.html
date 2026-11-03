@@ -213,6 +213,201 @@ print(round(1.96 / np.sqrt(len(ap)), 4))
           diagnóstico— es exactamente lo de los Capítulos 3 y 4, aplicado al polinomio ya multiplicado.</p>
       </div>
 
+      <h3>Un ejemplo para seguir a mano: pronosticar un mes</h3>
+
+      <p>La definición se entiende mejor con un modelo pequeño y tres números. El más pequeño en que se ve todo lo
+        nuevo es un SARIMA($1,0,0$)($1,0,0$)$_{12}$ con $\phi = 0.6$ y $\Phi = 0.7$, los mismos valores que usa el
+        desarrollo de más abajo. La etiqueta se lee por bloques:</p>
+
+      <ul>
+        <li><strong>($1,0,0$), la parte regular:</strong> un rezago autorregresivo, el <strong>mes anterior</strong>,
+          sin diferencias y sin términos MA.</li>
+        <li><strong>($1,0,0$)$_{12}$, la parte estacional:</strong> un rezago autorregresivo de doce meses, el
+          <strong>mismo mes del año anterior</strong>.</li>
+      </ul>
+
+      <p>Con la notación de la definición, el modelo es $(1 - 0.6B)(1 - 0.7B^{12})\,y_t = \varepsilon_t$. Los datos
+        son <strong>inventados</strong>, para que las cuentas salgan de cabeza: las ventas de una heladería, medidas
+        como desvío de su promedio. Se conocen tres meses y se quiere pronosticar marzo de 2025:</p>
+
+      <div class="diagram">
+        <table>
+          <thead>
+            <tr><th></th><th>Febrero</th><th>Marzo</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>2024</td><td>$15$</td><td>$20$</td></tr>
+            <tr><td>2025</td><td>$10$</td><td>$?$</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Multiplicar los dos polinomios equivale a hacer <strong>dos preguntas, una detrás de otra</strong>:</p>
+
+      <ol>
+        <li><strong>La regular: ¿qué no explica el mes anterior?</strong> Se llama <em>sorpresa</em> de un mes a lo
+          que queda después de descontar el mes anterior, $u_t = y_t - 0.6\,y_{t-1}$. La de marzo de 2024 es
+          $20 - 0.6 \cdot 15 = 11$.</li>
+        <li><strong>La estacional: ¿se repite la sorpresa de hace un año?</strong> El factor $(1 - 0.7B^{12})$ actúa
+          sobre las sorpresas, $u_t = 0.7\,u_{t-12} + \varepsilon_t$. Para marzo de 2025 se espera una sorpresa de
+          $0.7 \cdot 11 = 7.7$.</li>
+      </ol>
+
+      <p>El pronóstico junta las dos respuestas: lo que aporta febrero de 2025 más la sorpresa esperada,
+        $0.6 \cdot 10 + 7.7 = 13.7$. La misma cifra sale en una sola cuenta con el polinomio ya multiplicado, que
+        escrito como ecuación es</p>
+
+      <p>$$\begin{aligned}
+          y_t &= 0.6\,y_{t-1} + 0.7\,y_{t-12} \\
+          &\quad - 0.42\,y_{t-13} + \varepsilon_t
+        \end{aligned}$$</p>
+
+      <p>$$0.6 \cdot 10 + 0.7 \cdot 20 - 0.42 \cdot 15 = 13.7$$</p>
+
+      <p>El tercer término es el <strong>satélite</strong>. El rezago $13$ es febrero de 2024, y su peso,
+        $-0.42 = -0.6 \cdot 0.7$, quita a marzo de 2024 la parte que ya venía de febrero de 2024. Si los dos modelos
+        se sumaran en vez de multiplicarse, el pronóstico sería $0.6 \cdot 10 + 0.7 \cdot 20 = 20$: usaría marzo de
+        2024 entero, incluidos los $0.6 \cdot 15 = 9$ que en él venían de febrero. La diferencia,
+        $20 - 13.7 = 6.3$, es justo $0.7 \cdot 9$.</p>
+
+      <div class="simulador" data-simulador="receta-mes">
+        <h4><i class="fas fa-ice-cream" aria-hidden="true"></i> La receta de un mes</h4>
+        <p class="simulador-intro">Mueve $\phi$ y $\Phi$ y mira cuánto pesa cada mes conocido en el pronóstico de
+          marzo de 2025. Las dos rutas de la lectura siempre dan lo mismo. Prueba $\Phi = 0$, después $\phi = 0$, y
+          por último $\phi = \Phi = 1$.</p>
+        <div class="simulador-controles"></div>
+        <div class="diagram receta-cuadrado" style="padding:0.75rem;"></div>
+        <div class="simulador-lectura"></div>
+      </div>
+
+      <p>El ejemplo adelanta lo que el resto del módulo generaliza:</p>
+
+      <ul>
+        <li><strong>El rezago 13 no es un parámetro nuevo.</strong> Su peso, $-\phi\Phi$, sale de los otros dos: el
+          modelo toca tres meses con solo dos parámetros. Es el «AR($13$) con dos parámetros libres» del desarrollo
+          de más abajo.</li>
+        <li><strong>Si cualquiera de los dos vale cero, el satélite desaparece.</strong> Con $\Phi = 0$ queda el
+          AR($1$) del Capítulo 3; con $\phi = 0$, un modelo que solo mira el mismo mes del año anterior.</li>
+        <li><strong>En la ACF, el satélite es un camino.</strong> Marzo de 2025 se parece a marzo de 2024, y marzo de
+          2024 a febrero de 2024: subir un año y retroceder un mes lleva al rezago $13$. Por eso $\rho_{13} = 0.4218$,
+          prácticamente $\rho_1 \cdot \rho_{12} = 0.6016 \cdot 0.7011$. Subir un año y avanzar un mes lleva al rezago
+          $11$, con $\rho_{11} = 0.4230$.</li>
+        <li><strong>Con $\phi = \Phi = 1$ los pesos son $+1$, $+1$ y $-1$.</strong> Es $(1-B)(1-B^{12})$, la doble
+          diferencia $\nabla\nabla_{12}$ del Módulo 3, que allí aparece como las cuatro esquinas del mismo
+          cuadrado.</li>
+      </ul>
+
+      <div class="derivacion">
+        <button type="button" class="derivacion-boton" aria-expanded="false" aria-controls="der-satelite-ma">
+          <i class="fas fa-square-root-variable" aria-hidden="true"></i>
+          <span class="derivacion-texto">Ver la misma cuenta en la parte MA: el <em>airline</em></span>
+          <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="derivacion-panel" id="der-satelite-ma" hidden>
+          <ol class="derivacion-pasos">
+            <li>
+              <p>El <em>airline</em> tiene términos MA en lugar de AR, pero sus dos factores también se
+                multiplican:</p>
+              $$\begin{aligned}
+                &(1+\theta B)(1+\Theta B^{12}) \\
+                &\quad = 1 + \theta B + \Theta B^{12} + \theta\Theta B^{13}
+              \end{aligned}$$
+            </li>
+            <li>
+              <p>Las dos preguntas son ahora sobre choques. Cada mes arrastra una fracción $\theta$ del choque del mes
+                anterior y una fracción $\Theta$ del de hace un año. El choque de hace trece meses llega por los dos
+                caminos a la vez, un año y un mes, y por eso entra con peso $\theta\Theta$.</p>
+            </li>
+            <li>
+              <p>Con el <em>airline</em> ajustado a $\log(\text{AirPassengers})$, $\hat\theta = -0.4018$ y
+                $\hat\Theta = -0.5569$, así que el satélite pesa $(-0.4018)(-0.5569) = 0.2238$. Es el coeficiente
+                <code>B13</code> que imprime el bloque de «Cómo se escribe en la práctica»: no se estima, sale del
+                producto.</p>
+            </li>
+            <li>
+              <p>En la ecuación, el satélite AR entra con $-\phi\Phi$ y el MA con $+\theta\Theta$. El polinomio AR
+                está al otro lado del igual, y al despejar $y_t$ sus términos cambian de signo.</p>
+            </li>
+          </ol>
+          <p class="derivacion-resultado">En la parte AR y en la MA, el satélite es siempre el producto de un
+            coeficiente regular por uno estacional. Por eso el <em>airline</em>, con $q = Q = 1$, toca los rezagos
+            $1$, $12$ y $13$ con solo dos parámetros.</p>
+        </div>
+      </div>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="La receta de un mes">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r">
+          <pre><code class="language-r"># Heladeria inventada: desvios de su promedio en tres meses conocidos
+feb24 &lt;- 15; mar24 &lt;- 20; feb25 &lt;- 10
+phi &lt;- 0.6; Phi &lt;- 0.7                 # SARIMA(1,0,0)(1,0,0)[12]
+
+# Ruta 1: el polinomio ya multiplicado, con el satelite en el rezago 13
+phi * feb25 + Phi * mar24 - phi * Phi * feb24
+#&gt; [1] 13.7
+
+# Ruta 2: primero la sorpresa regular, despues la pregunta estacional
+sorpresa_mar24 &lt;- mar24 - phi * feb24  # lo que febrero no explica de marzo
+sorpresa_mar24
+#&gt; [1] 11
+phi * feb25 + Phi * sorpresa_mar24
+#&gt; [1] 13.7
+
+# Si los dos modelos se sumaran, sin satelite
+phi * feb25 + Phi * mar24
+#&gt; [1] 20
+
+# El polinomio AR multiplicado, rezago a rezago: 2 parametros, 3 rezagos
+ar &lt;- c(phi, rep(0, 10), Phi, -phi * Phi)
+round(ar[c(1, 12, 13)], 2)
+#&gt; [1]  0.60  0.70 -0.42
+
+# En la ACF, el satelite es el producto de los dos caminos
+r &lt;- ARMAacf(ar = ar, lag.max = 13)
+round(c(r[c("1", "11", "12", "13")], rho1_x_rho12 = r[["1"]] * r[["12"]]), 4)
+#&gt;            1           11           12           13 rho1_x_rho12
+#&gt;       0.6016       0.4230       0.7011       0.4218       0.4218</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python">
+          <pre><code class="language-python">import numpy as np
+from statsmodels.tsa.arima_process import ArmaProcess
+
+# Heladeria inventada: desvios de su promedio en tres meses conocidos
+feb24, mar24, feb25 = 15, 20, 10
+phi, Phi = 0.6, 0.7                    # SARIMA(1,0,0)(1,0,0)[12]
+
+# Ruta 1: el polinomio ya multiplicado, con el satelite en el rezago 13
+print(round(phi * feb25 + Phi * mar24 - phi * Phi * feb24, 4))
+#&gt; 13.7
+
+# Ruta 2: primero la sorpresa regular, despues la pregunta estacional
+sorpresa_mar24 = mar24 - phi * feb24   # lo que febrero no explica de marzo
+print(round(sorpresa_mar24, 4), round(phi * feb25 + Phi * sorpresa_mar24, 4))
+#&gt; 11.0 13.7
+
+# Si los dos modelos se sumaran, sin satelite
+print(round(phi * feb25 + Phi * mar24, 4))
+#&gt; 20.0
+
+# Multiplicar polinomios es convolucionar sus coeficientes
+poli = np.convolve([1, -phi], np.r_[1, np.zeros(11), -Phi])
+# 1 - phi B - Phi B^12 + phi Phi B^13: coeficientes de B^0, B^1, B^12 y B^13
+print(np.round(poli[[0, 1, 12, 13]], 2))
+#&gt; [ 1.   -0.6  -0.7   0.42]
+
+# En la ACF, el satelite es el producto de los dos caminos
+acf = ArmaProcess(poli, [1]).acf(14)
+print(np.round(acf[[1, 11, 12, 13]], 4), round(acf[1] * acf[12], 4))
+#&gt; [0.6016 0.423  0.7011 0.4218] 0.4218</code></pre>
+        </div>
+      </div>
+
+      <p>La sección siguiente generaliza la cuenta a cualquier par de órdenes y la escribe para todo el
+        polinomio.</p>
+
       <h3>Multiplicar no es sumar: los rezagos satélite</h3>
 
       <p>Aquí está lo único genuinamente nuevo. Si en vez de multiplicar los polinomios se sumaran los términos, un

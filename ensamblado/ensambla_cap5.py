@@ -382,7 +382,8 @@ html = html[:i] + lee(FUENTES / "chapter.js").rstrip("\n") + html[j:]
 fallos = []
 
 SIMULADORES = [
-    "mapa-firma", "constructor-polinomio", "tienda-cuadricula", "cuatro-combinaciones",
+    "mapa-firma", "receta-mes", "constructor-polinomio", "tienda-cuadricula",
+    "cuatro-combinaciones",
     "sobrediferenciacion-estacional", "firma-teorica", "airline-pesos",
     "explorador-sarima", "pronostico-estacional", "contraejemplo-trm",
     "calendario-regresores", "armonicos-K", "comparativa-particion",
@@ -483,11 +484,11 @@ for dato in ["const DATOS_CAP5", "const SERIES_CAP5", "genera_cap5.R"]:
 # suelta, porque el JavaScript heredado documenta el componente con un ejemplo
 # dentro de un comentario.
 n_der = len(re.findall(r'<div class="derivacion">\s*\n\s*<button', html))
-if n_der != 4:
-    fallos.append(f"hay {n_der} cajas de derivación, se esperaban 4")
+if n_der != 5:
+    fallos.append(f"hay {n_der} cajas de derivación, se esperaban 5")
 n_paneles_der = len(re.findall(r'<div class="derivacion-panel" id="[^"]+" hidden>', html))
-if n_paneles_der != 4:
-    fallos.append(f"hay {n_paneles_der} paneles de derivación, se esperaban 4")
+if n_paneles_der != 5:
+    fallos.append(f"hay {n_paneles_der} paneles de derivación, se esperaban 5")
 
 # Ejercicios guiados con sus dos desplegables cada uno
 n_ej = html.count('<div class="ejercicio-guiado">')
@@ -507,6 +508,6 @@ if fallos:
 
 CAP5.write_text(html, encoding="utf-8")
 print(f"OK  {CAP5.name} escrito ({len(html.encode('utf-8')) / 1024:.1f} KB)")
-print(f"    11 plantillas · {len(SIMULADORES)} simuladores · 4 derivaciones · "
+print(f"    11 plantillas · {len(SIMULADORES)} simuladores · 5 derivaciones · "
       f"3 ejercicios · 8 preguntas de autoevaluación · 1 tabla de ranking · "
       f"componente .mapa-estacional instalado")

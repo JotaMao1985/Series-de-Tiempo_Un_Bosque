@@ -265,6 +265,78 @@
     };
 
     // ================================================================
+    // Módulo 2 · La receta de un mes: el satélite con tres números
+    // ================================================================
+    // Heladería inventada, en desvíos de su promedio: febrero y marzo de 2024
+    // y febrero de 2025 son conocidos; se pronostica marzo de 2025 con un
+    // SARIMA(1,0,0)(1,0,0)₁₂. Los tres valores son fijos para que cada aporte
+    // se compruebe de cabeza; los deslizadores solo mueven φ y Φ.
+    const RECETA = { feb24: 15, mar24: 20, feb25: 10 };
+
+    SIMULADORES['receta-mes'] = function (raiz) {
+      const params = { phi: 0.6, Phi: 0.7 };
+      const controles = raiz.querySelector('.simulador-controles');
+      const cuadrado = raiz.querySelector('.receta-cuadrado');
+      const lectura = raiz.querySelector('.simulador-lectura');
+
+      function celda(valor, peso) {
+        return `${valor}<br><small>× ${fmt(peso, 2)} = ${fmt(valor * peso, 2)}</small>`;
+      }
+
+      function modelo(phi, Phi) {
+        if (phi === 0 && Phi === 0) return 'ruido blanco: se pronostica el promedio';
+        if (Phi === 0) return 'AR(1) del Capítulo 3: sin satélite';
+        if (phi === 0) return 'solo el mismo mes del año anterior: sin satélite';
+        if (phi === 1 && Phi === 1) return '∇∇₁₂ del Módulo 3: pesos +1, +1 y −1';
+        if (Math.abs(phi) === 1 || Math.abs(Phi) === 1) {
+          return 'un factor vale ±1: es una diferencia y el proceso ya no es estacionario';
+        }
+        return 'SARIMA(1,0,0)(1,0,0)₁₂';
+      }
+
+      function pintar() {
+        const { phi, Phi } = params;
+        const { feb24, mar24, feb25 } = RECETA;
+        const satelite = -phi * Phi + 0;   // + 0: sin él, φ = 0 se lee «-0.00»
+        const directo = phi * feb25 + Phi * mar24 + satelite * feb24;
+        // La ruta de las dos preguntas: primero la sorpresa regular de marzo
+        // de 2024, después la estacional sobre esa sorpresa.
+        const sorpresa = mar24 - phi * feb24;
+        const esperada = Phi * sorpresa;
+        const sumado = phi * feb25 + Phi * mar24;
+
+        // Relleno de celda menor que el de `.diagram`: dentro del simulador, con
+        // el de la caja y el de las celdas, a 375 px «Febrero» no cabía.
+        const c = ' style="padding:0.45rem 0.4rem"';
+        cuadrado.innerHTML = `<table style="width:100%"><thead><tr><th${c}></th><th${c}>Febrero</th>`
+          + `<th${c}>Marzo</th></tr></thead><tbody>`
+          + `<tr><td${c}>2024</td><td${c}>${celda(feb24, satelite)}</td><td${c}>${celda(mar24, Phi)}</td></tr>`
+          + `<tr><td${c}>2025</td><td${c}>${celda(feb25, phi)}</td>`
+          + `<td${c}><strong>${fmt(directo, 2)}</strong><br><small>pronóstico</small></td></tr>`
+          + '</tbody></table>';
+
+        actualizarLectura(lectura, [
+          { etiqueta: 'pronóstico', valor: fmt(directo, 2) },
+          {
+            etiqueta: 'por sorpresas',
+            valor: `${fmt(sorpresa, 2)} → ${fmt(esperada, 2)} → ${fmt(phi * feb25 + esperada, 2)}`
+          },
+          { etiqueta: 'peso del rezago 13', valor: fmt(satelite, 2) },
+          { etiqueta: 'si se sumaran', valor: fmt(sumado, 2) },
+          { etiqueta: 'modelo', valor: modelo(phi, Phi) }
+        ]);
+      }
+
+      crearControles(controles, [
+        { clave: 'phi', etiqueta: 'φ (regular)', min: -1, max: 1, paso: 0.1, decimales: 1 },
+        { clave: 'Phi', etiqueta: 'Φ (estacional)', min: -1, max: 1, paso: 0.1, decimales: 1 }
+      ], params, pintar);
+
+      pintar();
+      return [];
+    };
+
+    // ================================================================
     // Módulo 2 · Constructor de polinomios SARIMA
     // ================================================================
     SIMULADORES['constructor-polinomio'] = function (raiz) {
