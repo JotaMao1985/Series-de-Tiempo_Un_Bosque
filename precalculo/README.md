@@ -33,6 +33,23 @@ descargar la TRM y a reajustar los 37 modelos del origen móvil del capítulo 6,
 y no hay razón para pagar eso cada vez que se toca un correlograma.
 `genera_cap2.R` no descarga nada: lee la TRM de `salidas/datos_series.json`.
 
+### El CSS de Tailwind (`compila_tailwind.py`)
+
+Desde el 2026-11-03 ninguna página carga `cdn.tailwindcss.com`. Cada una lleva su hoja de Tailwind ya compilada en un
+`<style id="tailwind-compilado">` al final de `<head>`, donde el CDN anexaba la suya. Los capítulos, los preparciales,
+los talleres, el proyecto y la plantilla comparten una hoja; la portada lleva otra.
+
+**Cuándo recompilar:** cuando una página use una clase de Tailwind que antes no usaba, porque una hoja compilada no
+genera reglas nuevas en el navegador.
+
+```bash
+python3 precalculo/compila_tailwind.py              # recompila y sustituye la hoja en las 13 páginas
+python3 precalculo/compila_tailwind.py --comprobar  # sale con 1 si alguna página quedó desfasada
+```
+
+El guion necesita node; usa `npx --yes tailwindcss@3.4.19`, o el ejecutable al que apunte `TAILWIND_CLI`. Escribe
+también en los capítulos 3 a 6, que salen de `ensamblado/`: reensamblarlos después debe dejarlos idénticos.
+
 ## Salidas (`salidas/`)
 
 | Archivo | Contenido | Se incrusta en |
