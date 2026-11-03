@@ -413,7 +413,8 @@ url &lt;- paste0("https://www.datos.gov.co/resource/32sa-8pi3.json",
 crudo &lt;- jsonlite::fromJSON(url)
 diario &lt;- data.frame(fecha = as.Date(substr(crudo$vigenciadesde, 1, 10)),
                      valor = as.numeric(crudo$valor))
-diario &lt;- diario[order(diario$fecha) &amp; diario$fecha &gt;= as.Date("2015-01-01"), ]
+diario &lt;- diario[diario$fecha &gt;= as.Date("2015-01-01"), ]
+diario &lt;- diario[order(diario$fecha), ]
 prom &lt;- tapply(diario$valor, format(diario$fecha, "%Y-%m"), mean)
 prom &lt;- prom[names(prom) &lt;= "2026-06"]     # se descarta el mes en curso
 trm &lt;- ts(as.numeric(prom), start = c(2015, 1), frequency = 12)

@@ -947,6 +947,34 @@ retomar, lo que queda es la revisión de contenido de Javier (Checkpoint 2), la 
       autoevaluación corrige parcialmente **sin el «undefined»** que se corrigió en T8c.
   - *Dependencias:* T9. *Tamaño:* XS.
 
+## Mantenimiento
+
+### Las diapositivas del capítulo 4 arrancan sin cdnjs (2026-10-23)
+
+Sin acceso a cdnjs (sin red, o bloqueado) el visor no arrancaba: la cabecera deja `window.Prism = { manual: true }`, Prism no llega y la guarda `if (window.Prism && !Prism.languages.pseudo)` lanzaba un `TypeError`; la página quedaba en blanco. Afectaba a `Htmls_Series/diapositivas/capitulo-4-modelos-arima.html`.
+
+- **Parcheada a mano** con el arreglo de la skill `diapositivas-clase` (`const hayPrism = !!(window.Prism &&
+  Prism.languages)`), 7 líneas. Reconstruirla desde `diapositivas/fuentes/capitulo_4.md` traería además unas 260
+  líneas de cambios posteriores de la skill, que piden su propia revisión.
+- **Verificado** con `revisar.py` y un Chrome sin red: antes, «el visor no escribió el informe»; ahora 50
+  diapositivas. Con red, el informe es idéntico antes y después. Sin red se encoge la 17 al 85 %: no cargan Montserrat
+  ni MathJax, que deja las fórmulas en TeX crudo.
+- **Commiteado y publicado el 2026-11-03**, sobre el deck que dejó la auditoría del 2026-10-27. Se repitió la prueba
+  bloqueando solo cdnjs: el deck publicado hasta entonces no escribía el informe; el parcheado da 50 diapositivas
+  (la 17 al 85 %), y con red los dos dan lo mismo.
+
+### El caso de la TRM en un solo bloque, y el `order()` del capítulo 5 (2026-11-03)
+
+- **Capítulo 4, Módulo 10.** Al final del caso de la TRM, antes de «El puente al Capítulo 5», hay ahora un bloque
+  R/Python con el caso entero: descarga, etapas 1 a 4, el ARIMA(2,1,2) degenerado y los cambios que caen fuera del
+  abanico. Se escribió el 2026-09-30 en la revisión del capítulo y quedó sin commit. Antes de publicarlo se volvió a
+  correr contra la API en vivo: R reproduce sus 38 líneas de salida y Python sus 20. Los cuatro puntos en que Python
+  difiere de R van comentados en el código con su causa.
+- **Capítulo 5, tres bloques R** (módulos 1–3, 7–9 y 10–11). `diario[order(diario$fecha) & …]` no ordenaba nada, el
+  mismo error que el C10 del capítulo 3: `order()` devuelve índices y `&` los convierte en `TRUE`. Ahora son dos
+  pasos, filtrar y ordenar, como en el capítulo 3. La API no entrega las fechas en orden, pero `trm` sale idéntica
+  porque `tapply` agrupa por mes, así que ninguna salida cambia.
+
 ## Riesgos y mitigaciones
 
 | Riesgo | Impacto | Mitigación |

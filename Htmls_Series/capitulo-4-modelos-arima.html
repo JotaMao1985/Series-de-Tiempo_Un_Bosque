@@ -5065,6 +5065,225 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3))
         asimetría pide innovaciones asimétricas y de colas pesadas, o modelos con saltos, fuera del alcance de este
         curso; ningún ARIMA la captura.</p>
 
+      <p>El caso entero, de la descarga en datos.gov.co al abanico y a los cambios que caen fuera de él, en
+        un solo bloque:</p>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="El caso de la TRM">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel" data-lang="r">
+          <pre><code class="language-r">library(forecast); library(tseries)
+
+# TRM mensual (promedio del mes, SFC via datos.gov.co); necesita internet.
+url &lt;- paste0("https://www.datos.gov.co/resource/32sa-8pi3.json",
+              "?$select=vigenciadesde,valor&amp;$limit=50000")
+crudo &lt;- jsonlite::fromJSON(url)
+fecha &lt;- as.Date(substr(crudo$vigenciadesde, 1, 10))
+desde &lt;- fecha &gt;= as.Date("2015-01-01")
+valor &lt;- as.numeric(crudo$valor)[desde]
+prom  &lt;- tapply(valor, format(fecha[desde], "%Y-%m"), mean)  # ordena por mes
+prom  &lt;- prom[names(prom) &lt;= "2026-06"]           # hasta junio de 2026
+trm   &lt;- ts(as.numeric(prom), start = c(2015, 1), frequency = 12)
+length(trm)
+#&gt; [1] 138
+
+# --- Etapa 1: d ---------------------------------------------------------
+prueba &lt;- function(t) round(c(estad = unname(t$statistic), p = t$p.value), 3)
+suppressWarnings(rbind(adf_nivel  = prueba(adf.test(trm)),
+                       kpss_nivel = prueba(kpss.test(trm)),
+                       adf_d1     = prueba(adf.test(diff(trm))),
+                       kpss_d1    = prueba(kpss.test(diff(trm)))))
+#&gt;             estad     p
+#&gt; adf_nivel  -1.978 0.585
+#&gt; kpss_nivel  2.243 0.010      KPSS topa en su tabla: "p &lt; 0.01"
+#&gt; adf_d1     -3.880 0.017
+#&gt; kpss_d1     0.241 0.100      y aqui "p &gt; 0.10"
+c(ndiffs = ndiffs(trm), nsdiffs = nsdiffs(trm))
+#&gt;  ndiffs nsdiffs
+#&gt;       1       0
+
+# --- Etapa 1: p y q -----------------------------------------------------
+r &lt;- Acf(diff(trm), lag.max = 20, plot = FALSE)$acf[-1]
+banda &lt;- 1.96 / sqrt(length(diff(trm)))
+round(c(rho1 = r[1], rho8 = r[8], banda = banda), 3)
+#&gt;   rho1   rho8  banda
+#&gt;  0.088 -0.190  0.167
+which(abs(r) &gt; banda)                         # la unica barra fuera, de veinte
+#&gt; [1] 8
+
+# --- Etapa 2: la rejilla con d = 1, y auto.arima ------------------------
+aicc &lt;- function(f) {
+  k &lt;- length(f$coef) + 1; f$aic + 2 * k * (k + 1) / (f$nobs - k - 1)
+}
+rej &lt;- expand.grid(p = 0:2, q = 0:2)
+ajustes &lt;- lapply(seq_len(nrow(rej)), function(i)
+  arima(trm, order = c(rej$p[i], 1, rej$q[i]), method = "ML"))
+rej$AICc &lt;- round(sapply(ajustes, aicc), 2)
+rej$BIC  &lt;- round(sapply(ajustes, BIC), 2)
+head(rej[order(rej$AICc), ], 3)
+#&gt;   p q    AICc     BIC
+#&gt; 9 2 2 1703.38 1717.52      &lt;- minimo de AICc
+#&gt; 1 0 0 1705.94 1708.83      &lt;- minimo de BIC
+#&gt; 4 0 1 1706.70 1712.45
+arimaorder(auto.arima(trm, stepwise = FALSE, approximation = FALSE))
+#&gt; p d q
+#&gt; 0 1 0
+
+# --- El minimo de AICc, descartado por sus raices -----------------------
+f212 &lt;- ajustes[[which(rej$p == 2 &amp; rej$q == 2)]]
+round(coef(f212), 3)
+#&gt;    ar1    ar2    ma1    ma2
+#&gt;  0.661 -0.992 -0.623  1.000
+round(c(ar = Mod(polyroot(c(1, -coef(f212)[1:2]))),
+        ma = Mod(polyroot(c(1,  coef(f212)[3:4])))), 4)
+#&gt;    ar1    ar2    ma1    ma2
+#&gt; 1.0042 1.0042 1.0000 1.0000      el MA, sobre el circulo: no invertible
+
+# --- Etapa 3: diagnostico de la caminata aleatoria ----------------------
+rw &lt;- arima(trm, order = c(0, 1, 0), method = "ML")
+e  &lt;- residuals(rw)
+round(c(lb20 = Box.test(e, lag = 20, type = "Ljung-Box")$p.value,
+        lb12 = Box.test(e, lag = 12, type = "Ljung-Box")$p.value,
+        shapiro = shapiro.test(e)$p.value,
+        lb12_cuadrados = Box.test(e^2, lag = 12,
+                                  type = "Ljung-Box")$p.value), 4)
+#&gt;           lb20           lb12        shapiro lb12_cuadrados
+#&gt;         0.1890         0.2059         0.0006         0.8570
+fd &lt;- Arima(trm, order = c(0, 1, 0), include.drift = TRUE)
+round(c(deriva = coef(fd)[["drift"]], ee = sqrt(fd$var.coef[1, 1])), 2)
+#&gt; deriva     ee
+#&gt;   8.00  10.36
+
+# --- Etapa 4: el abanico, y_T +- z * sigma * sqrt(h) --------------------
+s &lt;- sqrt(rw$sigma2); z &lt;- qnorm(0.975); yT &lt;- tail(as.numeric(trm), 1)
+h &lt;- c(1, 3, 6, 12, 24)
+round(cbind(h, sigma_h = s * sqrt(h), semiancho = z * s * sqrt(h),
+            inf = yT - z * s * sqrt(h), sup = yT + z * s * sqrt(h)), 2)
+#&gt;       h sigma_h semiancho     inf     sup
+#&gt; [1,]  1  121.48    238.09 3259.00 3735.18
+#&gt; [2,]  3  210.40    412.38 3084.71 3909.47
+#&gt; [3,]  6  297.55    583.19 2913.90 4080.29
+#&gt; [4,] 12  420.80    824.76 2672.33 4321.85
+#&gt; [5,] 24  595.11   1166.39 2330.70 4663.48
+# Una cota baila en el ultimo decimal (4080.29 aqui, 4080.28 en la tabla): la
+# copia congelada de la TRM del capitulo esta redondeada a dos decimales.
+fc &lt;- forecast(rw, h = 24, level = 95)
+max(abs(fc$upper[h] - (yT + z * s * sqrt(h))))
+#&gt; [1] 4.547474e-13      forecast() da el mismo abanico
+
+# --- Cuantos cambios reales caen fuera del 95 % -------------------------
+d1 &lt;- diff(trm); d12 &lt;- diff(trm, lag = 12)
+c(fuera_1 = sum(abs(d1) &gt; z * s), por_arriba = sum(d1 &gt; z * s), de = length(d1))
+#&gt;    fuera_1 por_arriba         de
+#&gt;          6          5        137
+c(fuera_12 = sum(abs(d12) &gt; z * s * sqrt(12)), de = length(d12))
+#&gt; fuera_12       de
+#&gt;       11      126
+curtosis &lt;- function(x) mean((x - mean(x))^4) / mean((x - mean(x))^2)^2
+round(c(curtosis_1 = curtosis(d1), curtosis_12 = curtosis(d12)), 1)
+#&gt;  curtosis_1 curtosis_12
+#&gt;         5.1         2.8</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" hidden>
+          <pre><code class="language-python">import numpy as np, pandas as pd
+from scipy import stats
+from statsmodels.tsa.stattools import adfuller, kpss, acf
+from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.stats.diagnostic import acorr_ljungbox
+import warnings; warnings.filterwarnings("ignore")
+
+# TRM mensual (promedio del mes, SFC via datos.gov.co); necesita internet.
+url = ("https://www.datos.gov.co/resource/32sa-8pi3.json"
+       "?$select=vigenciadesde,valor&amp;$limit=50000")
+crudo = pd.read_json(url)
+crudo["fecha"] = pd.to_datetime(crudo["vigenciadesde"]).dt.tz_localize(None)
+crudo = crudo[crudo["fecha"] &gt;= "2015-01-01"]
+mensual = crudo.set_index("fecha")["valor"].resample("MS").mean()
+y = mensual.loc[:"2026-06-01"].values
+print(len(y))
+#&gt; 138
+
+# Etapa 1: d. ADF con tendencia y 5 rezagos, KPSS con 4, como tseries
+for nombre, x in (("nivel", y), ("d1", np.diff(y))):
+    a = adfuller(x, regression="ct", maxlag=5, autolag=None)
+    k = kpss(x, regression="c", nlags=4)
+    print(nombre, round(a[0], 3), round(a[1], 3), round(k[0], 3), k[1])
+#&gt; nivel -1.978 0.613 2.243 0.01
+#&gt; d1 -3.88 0.013 0.241 0.1
+# Los estadisticos coinciden con R; el p del ADF no (0.613 y 0.013 frente a
+# 0.585 y 0.017): statsmodels usa la aproximacion de MacKinnon y tseries
+# interpola en una tabla. La decision es la misma: d = 1.
+
+# Etapa 1: p y q
+r = acf(np.diff(y), nlags=20, fft=False)[1:]
+banda = 1.96 / np.sqrt(len(y) - 1)
+print(np.round([r[0], r[7], banda], 3), np.where(np.abs(r) &gt; banda)[0] + 1)
+#&gt; [ 0.088 -0.19   0.167] [8]
+
+# Etapa 2: la rejilla con d = 1
+rej = {(p, q): ARIMA(y, order=(p, 1, q)).fit()
+       for p in range(3) for q in range(3)}
+for (p, q), f in sorted(rej.items(), key=lambda kv: kv[1].aicc)[:3]:
+    print((p, 1, q), round(f.aicc, 2), round(f.bic, 2))
+#&gt; (0, 1, 0) 1705.94 1708.83
+#&gt; (0, 1, 1) 1706.7 1712.45
+#&gt; (1, 1, 0) 1706.8 1712.55
+f212 = rej[(2, 2)]
+print(round(f212.aicc, 2), np.round(np.abs(f212.maroots), 3))
+#&gt; 1712.91 [1.088 4.231]
+# El (2,1,2) degenerado que gana en R no aparece: statsmodels impone
+# estacionariedad e invertibilidad mientras estima, asi que no puede llegar a
+# una raiz sobre el circulo, y su (2,1,2) es otro optimo, 7 puntos peor que el
+# (0,1,0). auto.arima descarta esas raices despues de estimar; aqui ni se
+# alcanzan. statsmodels no trae auto.arima: la rejilla hace su papel.
+
+# Etapa 3: diagnostico de la caminata aleatoria
+rw = ARIMA(y, order=(0, 1, 0)).fit()
+e = rw.resid[1:]                  # el primer residual es y_1: se descarta
+p_lb = acorr_ljungbox(e, lags=[20, 12])["lb_pvalue"].values
+p_lb2 = acorr_ljungbox(e**2, lags=[12])["lb_pvalue"].values[0]
+print(np.round([*p_lb, stats.shapiro(e).pvalue, p_lb2], 4).tolist())
+#&gt; [0.194, 0.2096, 0.0007, 0.8395]
+# R da 0.189, 0.206, 0.0006 y 0.857 porque conserva un primer residual
+# minusculo (2.40, el rastro del arranque difuso). Quitandoselo, R da estas
+# mismas cifras. La lectura no cambia: pasa Ljung-Box y no es normal.
+fd = ARIMA(y, order=(0, 1, 0), trend="t").fit(cov_type="oim")
+print(np.round([fd.params[0], fd.bse[0]], 2))
+#&gt; [ 8.   10.35]
+# Con la covarianza por defecto (OPG) el error estandar sale 11.17. OPG y la
+# informacion observada solo coinciden si los residuales son normales, y
+# estos no lo son. Con la observada, 10.35 frente al 10.36 de R.
+
+# Etapa 4: el abanico, y_T +- z * sigma * sqrt(h)
+s = np.sqrt(rw.params[-1]); z = stats.norm.ppf(0.975)
+h = np.array([1, 3, 6, 12, 24]); sh = s * np.sqrt(h)
+tabla = pd.DataFrame({"h": h, "sigma_h": sh, "semiancho": z * sh,
+                      "inf": y[-1] - z * sh, "sup": y[-1] + z * sh})
+print(tabla.round(2).to_string(index=False))
+#&gt;  h  sigma_h  semiancho     inf     sup
+#&gt;  1   121.48     238.09 3259.00 3735.18
+#&gt;  3   210.40     412.38 3084.71 3909.47
+#&gt;  6   297.55     583.19 2913.90 4080.29
+#&gt; 12   420.80     824.76 2672.33 4321.85
+#&gt; 24   595.11    1166.39 2330.70 4663.48
+ic = rw.get_forecast(24).conf_int(alpha=0.05)
+print(f"{np.max(np.abs(ic[h - 1, 1] - tabla['sup'].values)):.1e}")
+#&gt; 9.1e-13        get_forecast da el mismo abanico
+
+# Cuantos cambios reales caen fuera del 95 %
+d1 = np.diff(y); d12 = y[12:] - y[:-12]
+print(np.sum(np.abs(d1) &gt; z * s), np.sum(d1 &gt; z * s), len(d1))
+#&gt; 6 5 137
+print(np.sum(np.abs(d12) &gt; z * s * np.sqrt(12)), len(d12))
+#&gt; 11 126
+curtosis = lambda x: stats.kurtosis(x, fisher=False)
+print(np.round([curtosis(d1), curtosis(d12)], 1))
+#&gt; [5.1 2.8]</code></pre>
+        </div>
+      </div>
+
       <h3>El puente al Capítulo 5</h3>
 
       <p>La TRM no tenía estacionalidad; la mayoría de las series mensuales sí. El capítulo termina con un
