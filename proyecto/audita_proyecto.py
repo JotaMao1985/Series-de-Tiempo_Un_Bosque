@@ -52,6 +52,7 @@ Variables de entorno (las usa el arnés `prueba_audita_proyecto.py`):
   PROYECTO_HTML    ruta del HTML a auditar (por defecto, el del sitio)
   PROYECTO_SIN_R   si vale 1, se salta el frente E (tarda unos segundos)
   PROYECTO_RMD     la plantilla .Rmd que renderiza el frente E (por defecto, la fuente)
+  PROYECTO_PORTADA la portada cuyo calendario del proyecto revisa el frente A (por defecto, la del sitio)
 """
 from __future__ import annotations
 
@@ -76,6 +77,7 @@ RMD_FUENTE = AQUI / "plantilla-informe.Rmd"
 RMD_PUBLICADO = SITIO / "proyecto-pronostico-plantilla.Rmd"
 RMD_PRUEBA = pathlib.Path(os.environ.get("PROYECTO_RMD", RMD_FUENTE))
 CAP6 = SITIO / "capitulo-6-pronostico-evaluacion.html"
+PORTADA = pathlib.Path(os.environ.get("PROYECTO_PORTADA", SITIO / "index.html"))
 
 sys.path.insert(0, str(AQUI))
 import datos as D  # noqa: E402
@@ -228,6 +230,7 @@ def main() -> int:
     horas = set(re.findall(r"a las (\d{1,2}:\d{2})", V))
     A.check("A", horas == {D.HORA_ENTREGA}, f"todas las entregas cierran a las {D.HORA_ENTREGA}",
             f"({sorted(horas)})")
+    frente_calendario_portada(A, numero_de)
 
     # ------------------------------------------------------------------ B
     print("\n=== B · Pesos ===")
@@ -502,6 +505,60 @@ def main() -> int:
     print("\nTodo limpio.")
     return 0
 
+
+
+def frente_calendario_portada(A: Auditoria, numero_de: dict[str, int]) -> None:
+    """El calendario de la portada (`#calendario-proyecto`) contra datos.py y la guía.
+
+    La portada se escribe a mano, así que nada la ata a datos.py salvo esto: cada
+    hito con su fecha y su hora de cierre (la que usa el guion para el «faltan N
+    días»), la fecha completa del texto oculto, su peso, su semana y el módulo de
+    la guía al que enlaza, buscado por el título de su h2."""
+    if not PORTADA.exists():
+        A.check("A", False, "la portada existe", f"({PORTADA})")
+        return
+    P = PORTADA.read_text(encoding="utf-8")
+    sec = re.search(r'<section id="calendario-proyecto".*?</section>', P, re.S)
+    A.check("A", bool(sec), "la portada tiene el calendario del proyecto")
+    if not sec:
+        return
+    C = sec.group(0)
+    items = dict(re.findall(r'<li class="hito[^"]*" data-hito="([a-z]+)"(.*?)</li>', C, re.S))
+    esperados = [h["id"] for h in D.HITOS] + ["exposicion"]
+    A.check("A", list(items) == esperados, "el calendario de la portada lista los hitos en orden y la exposición",
+            f"({list(items)})")
+    titulo = {"ficha": T_FICHA, "preregistro": T_PREREGISTRO, "avance": T_AVANCE,
+              "informe": T_INFORME, "exposicion": T_EXPOSICION}
+    for hid in esperados:
+        li = items.get(hid, "")
+        if hid == "exposicion":
+            d0, d1 = D.DIAS_EXPOSICION
+            nombre, semana_h, fecha_txt = "Exposición", D.SEMANA_EXPOSICION, f"{DIAS[d0.weekday()]} {d0.day} o {frase(d1)}"
+            cierre, dt = f"{d1.isoformat()}T23:59:00-05:00", d0.isoformat()
+            peso = f"{D.puntos_de('exposicion')} % del proyecto"
+        else:
+            h = D.HITO[hid]
+            nombre, semana_h = h["nombre"], h["semana"]
+            fecha_txt = f"{frase(h['fecha'])}, {D.HORA_ENTREGA}"
+            cierre = f"{h['fecha'].isoformat()}T{D.HORA_ENTREGA}:00-05:00"
+            dt = f"{h['fecha'].isoformat()}T{D.HORA_ENTREGA}-05:00"
+            peso = "Sin nota" if hid == "ficha" else f"{D.puntos_de(hid)} % del proyecto"
+        n = numero_de.get(titulo[hid], -1)
+        A.check("A", f'data-cierre="{cierre}"' in li and f'datetime="{dt}"' in li
+                and f'<span class="sr-only">{fecha_txt}</span>' in li,
+                f"portada · {nombre}: cierra el «{fecha_txt}» ({cierre})")
+        A.check("A", f'href="proyecto-pronostico-corte-iii.html#modulo-{n}">{nombre}</a>' in li,
+                f"portada · {nombre}: enlaza al módulo {n} de la guía («{titulo[hid]}»)")
+        A.check("A", f">{peso} · semana {semana_h}</p>" in li,
+                f"portada · {nombre}: «{peso} · semana {semana_h}»")
+        if hid != "exposicion":
+            dia, num, mes = (re.search(rf'<span\s+class="hito-{k}"[^>]*>([^<]+)</span>', li) for k in ("dia", "num", "mes"))
+            f = D.HITO[hid]["fecha"]
+            A.check("A", bool(dia and num and mes) and dia.group(1) == DIAS[f.weekday()][:3]
+                    and num.group(1) == str(f.day) and mes.group(1) == MESES[f.month - 1][:3],
+                    f"portada · {nombre}: la fecha a la vista dice «{DIAS[f.weekday()][:3]} {f.day} {MESES[f.month - 1][:3]}»")
+    horas = set(re.findall(r"<strong>(\d{1,2}:\d{2})</strong>", C))
+    A.check("A", horas == {D.HORA_ENTREGA}, f"portada: las entregas cierran a las {D.HORA_ENTREGA}", f"({sorted(horas)})")
 
 def frente_contenido(A: Auditoria, M: str, V: str, mod) -> None:
     print("\n=== F · Contenido ===")

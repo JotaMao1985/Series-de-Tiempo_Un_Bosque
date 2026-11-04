@@ -25,6 +25,7 @@ AQUI = pathlib.Path(__file__).resolve().parent
 PUBLICADO = AQUI.parent / "Htmls_Series" / "proyecto-pronostico-corte-iii.html"
 AUDITOR = AQUI / "audita_proyecto.py"
 RMD_FUENTE = AQUI / "plantilla-informe.Rmd"
+PORTADA = AQUI.parent / "Htmls_Series" / "index.html"
 
 
 def cambia(viejo: str, nuevo: str, todas: bool = False):
@@ -68,6 +69,18 @@ DEFECTOS = [
     ("el informe cae en el festivo", "A", cambia("domingo 15 de noviembre", "lunes 16 de noviembre", todas=True), False),
     ("una fecha suelta", "A", en_modulo(6, "<p>Hay una sesión de dudas el jueves 12 de noviembre.</p>"), False),
     ("una hora de cierre distinta", "A", cambia("a las 11:00", "a las 12:30"), False),
+    # A · el calendario de la portada (el defecto va en la portada; la guía queda intacta)
+    ("la portada cierra el avance otro día", "A", "portada",
+     cambia('data-cierre="2026-11-10T11:00:00-05:00"', 'data-cierre="2026-11-11T11:00:00-05:00"')),
+    ("el texto oculto de la portada da otra fecha", "A", "portada",
+     cambia("martes 10 de noviembre, 11:00", "martes 11 de noviembre, 11:00")),
+    ("la fecha a la vista de la portada da otro día", "A", "portada",
+     cambia('aria-hidden="true">dom</span>', 'aria-hidden="true">lun</span>')),
+    ("la portada enlaza un hito a otro módulo", "A", "portada",
+     cambia('#modulo-6">Avance</a>', '#modulo-5">Avance</a>')),
+    ("la portada da otro peso", "A", "portada", cambia("45 % del proyecto", "40 % del proyecto")),
+    ("la portada da otra hora de cierre", "A", "portada", cambia("<strong>11:00</strong>", "<strong>12:00</strong>")),
+    ("a la portada le falta un hito", "A", "portada", cambia('data-hito="informe"', 'data-hito="entrega"')),
     ("un día fijo para la exposición, que se acuerda en clase", "A",
      cambia("<td>se acuerda en clase</td>", "<td>martes 17 de noviembre</td>"), False),
     # B · Pesos
@@ -183,10 +196,13 @@ DEFECTOS = [
 ]
 
 
-def audita(ruta: pathlib.Path, con_r: bool, rmd: pathlib.Path | None = None) -> tuple[int, set, str]:
+def audita(ruta: pathlib.Path, con_r: bool, rmd: pathlib.Path | None = None,
+           portada: pathlib.Path | None = None) -> tuple[int, set, str]:
     env = dict(os.environ, PROYECTO_HTML=str(ruta), PROYECTO_SIN_R="0" if con_r else "1")
     if rmd:
         env["PROYECTO_RMD"] = str(rmd)
+    if portada:
+        env["PROYECTO_PORTADA"] = str(portada)
     r = subprocess.run([sys.executable, str(AUDITOR)], env=env, capture_output=True, text=True)
     frentes = set(re.findall(r"^  MAL \[([A-H])\]", r.stdout, re.M))
     return r.returncode, frentes, r.stdout
@@ -211,11 +227,16 @@ def main() -> int:
         print("=== prueba_audita_proyecto.py ===\n")
         control("antes, con R", con_r=True)
         rmd = pathlib.Path(tmp) / "plantilla.Rmd"
+        portada = pathlib.Path(tmp) / "index.html"
         for nombre, frente, transforma, con_r in DEFECTOS:
             if transforma == "rmd":      # el defecto va en la plantilla, la guía queda intacta
                 copia.write_text(original, encoding="utf-8")
                 rmd.write_text(con_r(RMD_FUENTE.read_text(encoding="utf-8")), encoding="utf-8")
                 rc, fr, _ = audita(copia, True, rmd)
+            elif transforma == "portada":    # el defecto va en la portada, la guía queda intacta
+                copia.write_text(original, encoding="utf-8")
+                portada.write_text(con_r(PORTADA.read_text(encoding="utf-8")), encoding="utf-8")
+                rc, fr, _ = audita(copia, False, portada=portada)
             else:
                 nuevo = transforma(original)
                 if nuevo == original:

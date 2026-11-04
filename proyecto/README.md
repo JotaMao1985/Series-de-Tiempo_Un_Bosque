@@ -11,7 +11,7 @@ Fuente de `Htmls_Series/proyecto-pronostico-corte-iii.html` y de la plantilla de
 | `modulos/m1…m10-*.html` | La prosa de los diez módulos, con marcadores `@@CLAVE@@` que el ensamblador resuelve desde `datos.py`. El código R va crudo: el ensamblador lo escapa |
 | `plantilla-informe.Rmd` | La plantilla del informe que se descarga desde la guía (se copia tal cual al sitio) |
 | `audita_proyecto.py` | El auditor, sobre el artefacto: ocho frentes (A calendario, B pesos, C decisiones, D estructura, E código R y plantilla, F contenido, G el módulo 6.12, H la conjunta) |
-| `prueba_audita_proyecto.py` | El arnés: inyecta 63 defectos y exige que cada uno lo cace su frente; nueve van en la plantilla, que se le pasa al auditor por `PROYECTO_RMD` |
+| `prueba_audita_proyecto.py` | El arnés: inyecta 70 defectos y exige que cada uno lo cace su frente; nueve van en la plantilla, que se le pasa al auditor por `PROYECTO_RMD`, y siete en el calendario de la portada, por `PROYECTO_PORTADA` |
 | `RESISTENCIA_IA.md` | La medición del 2026-10-21: una entrega fabricada con IA, calificada en frío |
 | `../precalculo/ensambla_proyecto.py` | El ensamblador, calcado del de Diseño; acepta `--revisar` |
 
@@ -44,6 +44,12 @@ README del sitio y la fila de `precalculo/cuenta_sitio.py`. Para publicar un cam
 Se toca **una línea** de `datos.py`, se reensambla y se vuelve a auditar. El auditor recalcula el día de la
 semana, la semana del curso, los festivos, las sumas de la rúbrica, la tabla del tope y la de longitudes
 mínimas, así que una fecha en otro día o un peso que no cuadra lo para.
+
+Una fecha o un peso de un hito se toca además **a mano en la portada** (`Htmls_Series/index.html`,
+sección `#calendario-proyecto`, desde el 2026-11-04): el ensamblador no la escribe. El frente A la compara
+con `datos.py` (el cierre de `data-cierre`, que usa el guion del «faltan N días»; la fecha del texto oculto y
+la que se ve; el peso, la semana y el módulo enlazado) y no deja pasar una que no coincida. Al terminar la
+semana 16 la sección sobra: se retira, y con ella `frente_calendario_portada` del auditor y sus siete defectos.
 
 ## Lo que no se deduce del código
 

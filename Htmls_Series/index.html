@@ -318,6 +318,128 @@
     .ruta strong { display: block; color: #012820; font-size: 0.9rem; }
     .ruta span { font-size: 0.78rem; color: #64748B; }
 
+    /* ------------------------------------------------------------------
+       Calendario del proyecto — una tarjeta por hito
+       ------------------------------------------------------------------
+       Las fechas salen de `proyecto/datos.py`, y `proyecto/audita_proyecto.py`
+       (frente A) comprueba que las de aquí coinciden. Como en .tarjeta, el
+       enlace lleva solo el nombre del hito y cubre la tarjeta con ::after.
+       Sin script no hay estados: la lista se lee igual. Con script, lo que ya
+       cerró pasa a gris y la próxima entrega se resalta y dice cuánto falta.
+       En fila desde 1024 px, con un trazo que une las fechas; debajo, en
+       columna. Ningún gris baja de #475569 (7,6:1), ni en lo cerrado. */
+    .calendario {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .hito {
+      position: relative;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 1rem;
+      padding: 1rem 1.1rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      overflow-wrap: anywhere;
+      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+
+    .hito:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(1, 40, 32, 0.14);
+      border-color: rgba(255, 102, 0, 0.4);
+    }
+
+    .hito:focus-within { outline: 3px solid #012820; outline-offset: 3px; }
+
+    @supports selector(:has(*)) {
+      .hito:focus-within { outline: none; }
+      .hito:has(.hito-nombre a:focus-visible) { outline: 3px solid #012820; outline-offset: 3px; }
+      .hito-nombre a:focus-visible { outline: none; }
+    }
+
+    .hito-fecha {
+      flex-shrink: 0;
+      width: 3.6rem;
+      padding: 0.4rem 0 0.45rem;
+      border-radius: 0.85rem;
+      border: 2px solid #012820;
+      background: #fff;
+      color: #012820;
+      text-align: center;
+      line-height: 1.1;
+    }
+
+    .hito-fecha span { display: block; }
+    .hito-dia, .hito-mes { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+    .hito-num { font-size: 1.45rem; font-weight: 800; letter-spacing: -0.02em; }
+    .hito--doble .hito-fecha { width: 4.6rem; }
+    .hito--doble .hito-num { font-size: 1.05rem; padding: 0.2rem 0; }
+
+    /* Con la letra agrandada en un teléfono, el texto junto a la fecha se
+       partía palabra por palabra. El `flex-wrap` y la base de 11rem (que
+       crece con la letra) bajan el texto debajo de la fecha cuando no le
+       quedan 11rem al lado: a 320 px desde el 150 %; a tamaño normal, nunca. */
+    .hito { flex-wrap: wrap; }
+    .hito-cuerpo { flex: 1 1 11rem; min-width: 0; display: flex; flex-direction: column; gap: 0.3rem; }
+    .hito-nombre { color: #012820; font-weight: 700; font-size: 0.95rem; line-height: 1.3; }
+    .hito-nombre a { color: inherit; text-decoration: none; }
+    .hito-nombre a::after { content: ''; position: absolute; inset: 0; z-index: 1; }
+    .hito-que { font-size: 0.82rem; line-height: 1.5; color: #475569; }
+    .hito-pie { font-size: 0.75rem; font-weight: 600; color: #475569; }
+
+    /* El estado, con la pastilla de .tarjeta-semana: verde oscuro sobre el
+       naranja tenue (el naranja oscuro no llega a 4,5:1 sobre ese fondo). */
+    .hito-estado {
+      align-self: flex-start;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      color: #475569;
+      background: #F1F5F9;
+      border: 1px solid #E2E8F0;
+    }
+
+    .hito--cerrado .hito-fecha { border-color: #CBD5E1; background: #F1F5F9; color: #475569; }
+    .hito--cerrado .hito-nombre { color: #475569; }
+
+    .hito--proximo { border: 2px solid rgba(255, 102, 0, 0.55); box-shadow: 0 10px 28px rgba(255, 102, 0, 0.14); }
+    .hito--proximo .hito-fecha {
+      border-color: transparent;
+      color: #fff;
+      background: linear-gradient(140deg, #012820 0%, #FF6600 100%);
+      box-shadow: 0 6px 16px rgba(1, 40, 32, 0.25);
+    }
+    .hito--proximo .hito-estado { color: #012820; background: rgba(255, 102, 0, 0.12); border-color: rgba(255, 102, 0, 0.3); }
+
+    @media (min-width: 1024px) {
+      .calendario { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1rem; }
+      .hito { flex-direction: column; flex-wrap: nowrap; gap: 0.85rem; }
+      .hito-cuerpo { flex: 1 1 auto; }     /* en columna, la base de 11rem sería un alto */
+      /* El trazo que une cada fecha con la siguiente, en el hueco entre tarjetas. */
+      .hito:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        top: 2.6rem;
+        right: calc(-1rem - 1px);
+        width: 1rem;
+        height: 2px;
+        background: linear-gradient(90deg, #012820, #FF6600);
+        opacity: 0.45;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hito:hover { transform: none; }
+    }
+
     /* Foco: verde sobre lo claro (unos 15:1) y dorado sobre lo oscuro
        —cabecera, héroe y pie—, por encima de 8:1 en el punto más claro del
        héroe. */
@@ -411,6 +533,81 @@
   </section>
 
   <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12">
+
+    <!-- Calendario del proyecto. Va primero porque es lo que tiene fecha; al
+         terminar la semana 16 (sábado 21 de noviembre) sobra y se retira. Las
+         fechas salen de proyecto/datos.py y las vigila proyecto/audita_proyecto.py:
+         cada <li> lleva su `data-hito`, el cierre en `data-cierre` y la fecha
+         completa en el texto oculto. -->
+    <section id="calendario-proyecto" class="mb-12" aria-labelledby="titulo-calendario">
+      <div class="corte-rotulo">
+        <h2 id="titulo-calendario">Calendario del proyecto</h2>
+        <span class="corte-semanas">Corte III · semanas 13 a 16</span>
+      </div>
+      <p class="corte-intro">
+        Cuatro entregas y una exposición. Cada entrega cierra a las <strong>11:00</strong> del día
+        indicado y se entrega como una <em>release</em> del repositorio del proyecto en GitHub; por cada
+        sesión de retraso se descuenta el 15 % de su nota. Lo que pide cada hito está en la
+        <a class="underline" href="proyecto-pronostico-corte-iii.html">guía del proyecto</a>.
+      </p>
+      <ol class="calendario">
+        <li class="hito" data-hito="ficha" data-cierre="2026-10-27T11:00:00-05:00">
+          <time class="hito-fecha" datetime="2026-10-27T11:00-05:00"><span class="hito-dia"
+              aria-hidden="true">mar</span><span class="hito-num" aria-hidden="true">27</span><span
+              class="hito-mes" aria-hidden="true">oct</span><span class="sr-only">martes 27 de octubre, 11:00</span></time>
+          <div class="hito-cuerpo">
+            <h3 class="hito-nombre"><a href="proyecto-pronostico-corte-iii.html#modulo-4">Ficha de la serie</a></h3>
+            <p class="hito-que">La serie, su fuente, su frecuencia, su longitud y la pregunta, en unas 150 palabras.</p>
+            <p class="hito-pie">Sin nota · semana 13</p>
+            <p class="hito-estado" hidden></p>
+          </div>
+        </li>
+        <li class="hito" data-hito="preregistro" data-cierre="2026-11-03T11:00:00-05:00">
+          <time class="hito-fecha" datetime="2026-11-03T11:00-05:00"><span class="hito-dia"
+              aria-hidden="true">mar</span><span class="hito-num" aria-hidden="true">3</span><span
+              class="hito-mes" aria-hidden="true">nov</span><span class="sr-only">martes 3 de noviembre, 11:00</span></time>
+          <div class="hito-cuerpo">
+            <h3 class="hito-nombre"><a href="proyecto-pronostico-corte-iii.html#modulo-5">Preregistro</a></h3>
+            <p class="hito-que">El protocolo de evaluación, congelado antes de ver cómo le va a cada modelo, y la descarga cruda.</p>
+            <p class="hito-pie">15 % del proyecto · semana 14</p>
+            <p class="hito-estado" hidden></p>
+          </div>
+        </li>
+        <li class="hito" data-hito="avance" data-cierre="2026-11-10T11:00:00-05:00">
+          <time class="hito-fecha" datetime="2026-11-10T11:00-05:00"><span class="hito-dia"
+              aria-hidden="true">mar</span><span class="hito-num" aria-hidden="true">10</span><span
+              class="hito-mes" aria-hidden="true">nov</span><span class="sr-only">martes 10 de noviembre, 11:00</span></time>
+          <div class="hito-cuerpo">
+            <h3 class="hito-nombre"><a href="proyecto-pronostico-corte-iii.html#modulo-6">Avance</a></h3>
+            <p class="hito-que">La exploración, la identificación y los candidatos, solo sobre el tramo de entrenamiento.</p>
+            <p class="hito-pie">10 % del proyecto · semana 15</p>
+            <p class="hito-estado" hidden></p>
+          </div>
+        </li>
+        <li class="hito" data-hito="informe" data-cierre="2026-11-15T11:00:00-05:00">
+          <time class="hito-fecha" datetime="2026-11-15T11:00-05:00"><span class="hito-dia"
+              aria-hidden="true">dom</span><span class="hito-num" aria-hidden="true">15</span><span
+              class="hito-mes" aria-hidden="true">nov</span><span class="sr-only">domingo 15 de noviembre, 11:00</span></time>
+          <div class="hito-cuerpo">
+            <h3 class="hito-nombre"><a href="proyecto-pronostico-corte-iii.html#modulo-7">Informe y código</a></h3>
+            <p class="hito-que">El informe, el código que lo produce y los datos. Cierra en domingo porque el lunes 16 es festivo.</p>
+            <p class="hito-pie">45 % del proyecto · semana 15</p>
+            <p class="hito-estado" hidden></p>
+          </div>
+        </li>
+        <li class="hito hito--doble" data-hito="exposicion" data-cierre="2026-11-18T23:59:00-05:00">
+          <time class="hito-fecha" datetime="2026-11-17"><span class="hito-dia"
+              aria-hidden="true">mar · mié</span><span class="hito-num" aria-hidden="true">17 · 18</span><span
+              class="hito-mes" aria-hidden="true">nov</span><span class="sr-only">martes 17 o miércoles 18 de noviembre</span></time>
+          <div class="hito-cuerpo">
+            <h3 class="hito-nombre"><a href="proyecto-pronostico-corte-iii.html#modulo-9">Exposición</a></h3>
+            <p class="hito-que">En clase: 10 minutos para contarlo y 5 de preguntas (15 y 10 en el proyecto conjunto). El día exacto se acuerda en clase.</p>
+            <p class="hito-pie">30 % del proyecto · semana 16</p>
+            <p class="hito-estado" hidden></p>
+          </div>
+        </li>
+      </ol>
+    </section>
 
     <!-- Cómo está pensado -->
     <section class="mb-12" aria-labelledby="recorrido">
@@ -860,6 +1057,52 @@
       }
       new ResizeObserver(ajusta).observe(cabecera);
       window.addEventListener('resize', ajusta);
+    })();
+
+    // El calendario del proyecto: lo que ya cerró, en gris; la próxima entrega,
+    // resaltada y con lo que falta. Los días se cuentan en la hora de Bogotá
+    // (UTC−5 todo el año), no en la del navegador: quien abra la página desde
+    // otro huso ve el mismo «faltan N días» que el resto del curso.
+    (function () {
+      var hitos = document.querySelectorAll('.calendario .hito[data-cierre]');
+      if (!hitos.length) return;
+      var DIA = 864e5, BOGOTA = -5 * 36e5;
+      function diaBogota(t) { return Math.floor((t + BOGOTA) / DIA); }
+      var ahora = Date.now(), hoy = diaBogota(ahora), proximo = null;
+      Array.prototype.forEach.call(hitos, function (li) {
+        var cierre = Date.parse(li.getAttribute('data-cierre'));
+        if (isNaN(cierre)) return;
+        var estado = li.querySelector('.hito-estado');
+        var exposicion = li.getAttribute('data-hito') === 'exposicion';
+        if (ahora > cierre) {
+          li.classList.add('hito--cerrado');
+          estado.textContent = exposicion ? 'Ya pasó' : 'Cerró';
+        } else if (!proximo) {
+          proximo = li;
+          li.classList.add('hito--proximo');
+          li.setAttribute('aria-current', 'step');
+          var faltan = diaBogota(cierre) - hoy;
+          if (exposicion) {
+            var alPrimerDia = faltan - 1;     // el cierre es el miércoles; el primer día, el martes
+            estado.textContent = alPrimerDia < 0 ? 'Hoy, en clase'
+              : alPrimerDia === 0 ? 'Hoy o mañana, en clase'
+              : alPrimerDia === 1 ? 'Empieza mañana'
+              : 'En ' + alPrimerDia + ' días';
+          } else {
+            estado.textContent = faltan === 0 ? 'Cierra hoy a las 11:00'
+              : faltan === 1 ? 'Cierra mañana a las 11:00'
+              : 'Faltan ' + faltan + ' días';
+          }
+          // La tarjeta resaltada ya lo dice a la vista; al lector de pantalla, aquí.
+          var sr = document.createElement('span');
+          sr.className = 'sr-only';
+          sr.textContent = exposicion ? 'Lo próximo: ' : 'Próxima entrega: ';
+          estado.insertBefore(sr, estado.firstChild);
+        } else {
+          return;
+        }
+        estado.hidden = false;
+      });
     })();
   </script>
 </body>
