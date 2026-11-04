@@ -15,14 +15,14 @@ Generado por `verifica_cifras_cap5.py`. Cada fila es una cifra (o afirmación) d
 
 ## Resumen
 
-- Cifras y afirmaciones registradas: **768**
-- Verificadas contra al menos una fuente: **707**
+- Cifras y afirmaciones registradas: **770**
+- Verificadas contra al menos una fuente: **709**
 - Definiciones o convenciones: **61**
 - Comprobadas a mano en una fuente pública fuera del repositorio (`WEB`, con fecha): **7**
 - Marcadas `[SIN VERIFICAR]`: **5**
 - No coinciden: **0**
 
-Contrastes por tipo de fuente: C 101, CALC 193, DOC 17, J 331, J3 2, J4 6, PY 10, R 223, WEB 7.
+Contrastes por tipo de fuente: C 104, CALC 195, DOC 17, J 331, J3 2, J4 6, PY 10, R 223, WEB 7.
 
 ## Código proyectado, ejecutado
 
@@ -51,11 +51,11 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 2. Módulo 4: el capítulo da ρ₁₁ = ρ₁₃ = 0.14705 «del modelo ajustado». Con los coeficientes sin redondear es 0.14707; 0.14705 sale con −0.4018 y −0.5569. A cuatro decimales los dos son 0.1471.
 3. Autoevaluación, pregunta 2: la explicación dice «ρ₂ = ρ₁² ≈ 0.36» para el AR(1)×SAR(1). En el proceso multiplicado ρ₂ = 0.3637 y ρ₁² = 0.3619: no es una igualdad, aunque los dos redondean a 0.36.
 4. Autoevaluación, pregunta 6: está etiquetada «módulo 6» y su explicación remite a la lección del Módulo 10. Menor.
-5. Módulo 3: «∇ solo reduce la varianza a la vigésima parte» y «∇₁₂ sola la reduce cincuenta veces». Los cocientes son 17.2 y 51.3. «La vigésima parte» es una aproximación generosa.
-6. Módulo 6, advertencia final: «los coeficientes casi coinciden con los de R (diferencia 6 × 10⁻⁵)» con statsmodels sin `simple_differencing`. Con statsmodels 0.14.6 la diferencia máxima es 2.4 × 10⁻⁴ (−0.4021 y −0.5571 frente a −0.4018 y −0.5569). Sigue siendo despreciable; depende de la versión. No se proyecta.
-7. Las dos copias de la TRM llevan fechas de consulta distintas: `cap5_sarima.json` dice «consulta: 2026-07-24» y `datos_series.json` (y el capítulo 4) «2026-07-26». No afecta a ninguna cifra (las dos son la misma copia de 138 meses), pero conviene unificarlo.
-8. Resueltas en el capítulo el 2026-10-27 (`114b910`) cinco observaciones de la primera pasada: los ocho dobles redondeos (M1, M4, M7, M11 y las preguntas 1 y 8), los «%» de crecimiento del Módulo 11, que eran 100·Δlog y ahora son porcentajes, la nota del puente del Módulo 7, que ahora usa el ARIMA(0,1,5) y no compara AICc entre distintos D, el enunciado y dos explicaciones de la pregunta 8, y las secciones de FPP3 de las lecturas. Capítulo y diapositivas dan ahora las mismas cifras, y las comprobaciones de tipo «capítulo» lo exigen. Siguen en J dos textos que el capítulo embebe pero no muestra: `puente_cap4` (el ARIMA(0,1,1) con AICc −238.64) y `origen_movil.nota` («corona a la regresión armónica»).
-9. Resueltas en el capítulo el 2026-11-03 las cuatro observaciones de la auditoría del 2026-10-28 (`auditoria_cap5.md`): la invertibilidad del Módulo 7 («aunque justo»), el `auto.arima` con m = 365 del Módulo 10 (ilustrado con ruido blanco), los errores estándar «el doble» del Módulo 8 y los «Paso 0…4» del Módulo 7. El capítulo lee ahora la invertibilidad en Θ̂ y explica que 0.9524 = 0.5569^(1/12); el ejemplo de m = 365 usa un seno anual (ARIMA(0,0,0)(0,1,0)[365]); los cocientes son 1.4 y 2.4; y el caso sigue las etapas 1–5 del protocolo. Las comprobaciones de tipo «capítulo» exigen el texto nuevo.
+5. Módulo 6, advertencia final: «los coeficientes casi coinciden con los de R (diferencia 6 × 10⁻⁵)» con statsmodels sin `simple_differencing`. Con statsmodels 0.14.6 la diferencia máxima es 2.4 × 10⁻⁴ (−0.4021 y −0.5571 frente a −0.4018 y −0.5569). Sigue siendo despreciable; depende de la versión. No se proyecta.
+6. Las dos copias de la TRM llevan fechas de consulta distintas: `cap5_sarima.json` dice «consulta: 2026-07-24» y `datos_series.json` (y el capítulo 4) «2026-07-26». No afecta a ninguna cifra (las dos son la misma copia de 138 meses), pero conviene unificarlo.
+7. Resueltas en el capítulo el 2026-10-27 (`114b910`) cinco observaciones de la primera pasada: los ocho dobles redondeos (M1, M4, M7, M11 y las preguntas 1 y 8), los «%» de crecimiento del Módulo 11, que eran 100·Δlog y ahora son porcentajes, la nota del puente del Módulo 7, que ahora usa el ARIMA(0,1,5) y no compara AICc entre distintos D, el enunciado y dos explicaciones de la pregunta 8, y las secciones de FPP3 de las lecturas. Capítulo y diapositivas dan ahora las mismas cifras, y las comprobaciones de tipo «capítulo» lo exigen. Siguen en J dos textos que el capítulo embebe pero no muestra: `puente_cap4` (el ARIMA(0,1,1) con AICc −238.64) y `origen_movil.nota` («corona a la regresión armónica»).
+8. Resueltas en el capítulo el 2026-11-03 las cuatro observaciones de la auditoría del 2026-10-28 (`auditoria_cap5.md`): la invertibilidad del Módulo 7 («aunque justo»), el `auto.arima` con m = 365 del Módulo 10 (ilustrado con ruido blanco), los errores estándar «el doble» del Módulo 8 y los «Paso 0…4» del Módulo 7. El capítulo lee ahora la invertibilidad en Θ̂ y explica que 0.9524 = 0.5569^(1/12); el ejemplo de m = 365 usa un seno anual (ARIMA(0,0,0)(0,1,0)[365]); los cocientes son 1.4 y 2.4; y el caso sigue las etapas 1–5 del protocolo. Las comprobaciones de tipo «capítulo» exigen el texto nuevo.
+9. Resueltas en el capítulo el 2026-11-04 dos frases del Módulo 3 que señaló la revisión del ejercicio en Excel: «∇ solo reduce la varianza a la vigésima parte» (el cociente es 17.2) y la tienda que «abre en enero de 2022 con 100 unidades» (el primer valor es 94). El capítulo dice ahora que ∇ divide la varianza entre 17 y ∇₁₂ entre 51, y que la tienda parte de un nivel de 100: en enero vende 100 + 0 − 6 = 94. Las comprobaciones de tipo «capítulo» exigen el texto nuevo.
 
 ## Tabla de cifras
 
@@ -327,7 +327,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `144` | ejemplo inventado | CALC: la fila 2025 de la tienda recalculada contiene 144 = 144 | verificado |
 | `143` | ejemplo inventado | CALC: la fila 2025 de la tienda recalculada contiene 143 = 143 | verificado |
 | `153` | ejemplo inventado | CALC: la fila 2025 de la tienda recalculada contiene 153 = 153 | verificado |
-| `100` | ejemplo inventado | C: capítulo 5 contiene «con $100$ unidades» | verificado |
+| `100` | ejemplo inventado | C: capítulo 5 contiene «de un nivel de $100$ unidades»<br>C: capítulo 5 contiene «$y_1 = 100 + 0 - 6 = 94$» | verificado |
 | `122` | dato | CALC: marzo de 2024 (t = 27) = 122 | verificado |
 | `110` | dato | CALC: marzo de 2023 (t = 15) = 110 | verificado |
 | `12` | dato | CALC: ∇₁₂ en marzo de 2024 = 12<br>C: capítulo 5 contiene «$122 - 110 = 12$» | verificado |
@@ -393,6 +393,8 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `0.71` | dato | J: cap5_sarima.json › airpassengers.combinaciones.d0_D1.acf1 = 0.7137 | verificado |
 | `17.2` | dato | CALC: 0.194884/0.011354 = 17.164347 | verificado |
 | `51.3` | dato | CALC: 0.194884/0.003800 = 51.285263 | verificado |
+| `17` | dato | CALC: 0.194884/0.011354 = 17.164347<br>C: capítulo 5 contiene «divide la varianza entre $17$» | verificado |
+| `51` | dato | CALC: 0.194884/0.003800 = 51.285263<br>C: capítulo 5 contiene «la divide entre $51$» | verificado |
 | `animado` | gráfico animado | CALC: recursos/cap5/diferencias.json es idéntico a lo que genera genera_animados_cap5.py desde J | verificado |
 
 ### `ndiffs()` da 0 en la serie cruda y 1 tras \(\nabla_{12}\): ¿qué significa? {.pregunta}
