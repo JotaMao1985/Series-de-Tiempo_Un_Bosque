@@ -24,7 +24,7 @@ el guion falla hasta que el claim correspondiente se actualice.
 
 ## Capítulo 5
 
-`capitulo-5-sarima.html` (82 diapositivas, un divisor por módulo) cubre el capítulo en **dos clases**: la 1 va de los módulos 1 a 5 y termina en «Para la próxima clase»; la 2 empieza en el divisor «Clase 2 · Módulo 6». Misma convención que el 4: etiqueta en cada afirmación, fuente en cada cifra y `[SIN VERIFICAR]` donde no hubo con qué contrastar. Lleva tres gráficos animados (diferencias, satélites y pesos ψ), que salen del JSON del precálculo.
+`capitulo-5-sarima.html` (84 diapositivas, un divisor por módulo) cubre el capítulo en **dos clases**: la 1 va de los módulos 1 a 5 y termina en «Para la próxima clase»; la 2 empieza en el divisor «Clase 2 · Módulo 6». Misma convención que el 4: etiqueta en cada afirmación, fuente en cada cifra y `[SIN VERIFICAR]` donde no hubo con qué contrastar. Lleva tres gráficos animados (diferencias, satélites y pesos ψ), que salen del JSON del precálculo. Los módulos 2 y 3 llevan además los dos ejemplos inventados del capítulo (la heladería y la tienda), que el verificador recalcula y ata, fila a fila, a la salida de R impresa en el capítulo.
 
 ```bash
 python3 Htmls_Series/diapositivas/fuentes/verificacion/genera_animados_cap5.py      # los tres .json animados, desde cap5_sarima.json

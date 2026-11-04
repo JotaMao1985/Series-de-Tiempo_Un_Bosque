@@ -201,84 +201,94 @@ Leer la ecuación de izquierda a derecha: AR estacional, AR regular, integració
 
 Detalle: Módulo 2, definición.
 
+## Multiplicar es preguntar dos veces: primero al mes anterior, después al año anterior {columnas=2:3}
+
+| | Febrero | Marzo |
+|---|---|---|
+| 2024 | 15 | 20 |
+| 2025 | 10 | ? |
+
+<small>Ventas de una heladería **inventada**, en desvíos de su promedio</small>
+
+|||
+
+<kbd>Definición</kbd> SARIMA(1,0,0)(1,0,0)\(_{12}\) con \(\phi=0.6\) y \(\Phi=0.7\): \((1-0.6B)(1-0.7B^{12})\,y_t=\varepsilon_t\)
+
+::: revelar
+<kbd>Dato</kbd> **Regular**: lo que febrero no explica de marzo de 2024, \(20-0.6\cdot 15=11\)
+:::
+
+::: revelar
+<kbd>Dato</kbd> **Estacional**: esa sorpresa se repite al año siguiente, \(0.7\cdot 11=7.7\)
+:::
+
+::: revelar
+<kbd>Dato</kbd> **Pronóstico** de marzo de 2025: \(0.6\cdot 10+7.7=13.7\)
+:::
+
+<small>Contexto: cifras inventadas para seguir la cuenta a mano; \(\phi\) y \(\Phi\) son los del capítulo. Fuente: C Módulo 2, «Un ejemplo para seguir a mano»</small>
+
+???
+Tres pulsaciones, una por pregunta. Pedir la primera cuenta antes de revelarla. La «sorpresa» es lo que queda de un mes después de descontar el anterior; el factor estacional actúa sobre las sorpresas, no sobre las ventas. Eso es, en concreto, multiplicar los polinomios.
+
+Verificación: 11, 7.7 y 13.7 se recalculan en el verificador con φ = 0.6 y Φ = 0.7, y son las cuentas del capítulo; su bloque de R las imprime. Detalle: Módulo 2, «Un ejemplo para seguir a mano».
+
 ## Multiplicar no es sumar: el rezago 13 aparece sin un parámetro propio
 
 $$(1-\Phi B^{12})(1-\phi B) = 1-\phi B-\Phi B^{12}+\phi\Phi B^{13}$$
 
-- <kbd>Definición</kbd> Es un AR(13) con **dos** parámetros libres: los **coeficientes** de los rezagos 2 a 11 valen cero, y el del 13, atado a los otros dos, es \(+\phi\Phi\) en el polinomio (\(-\phi\Phi\) al despejar \(y_t\))
-- <kbd>Definición</kbd> Si se **sumaran** los términos, el modelo tocaría solo 1 y 12
+- <kbd>Definición</kbd> Un AR(13) con **dos** parámetros: de 2 a 11, cero; en el 13, \(+\phi\Phi\) en el polinomio (\(-\phi\Phi\) al despejar \(y_t\))
+- <kbd>Dato</kbd> En la heladería: \(0.6\cdot 10+0.7\cdot 20-0.42\cdot 15=13.7\), como con las dos preguntas
+- <kbd>Interpretación</kbd> El satélite, \(-0.42\cdot 15\), quita a marzo de 2024 lo que traía de febrero; **sumando** saldría 20
 
 <small>Fuente: C Módulo 2, derivación</small>
 
 ???
-Hacer la multiplicación en el tablero. Preguntar cuántos parámetros se estiman (dos) y cuántos coeficientes no nulos tiene el polinomio (tres: en 1, 12 y 13). Esa distancia entre parámetros libres y rezago más lejano es la economía de la notación.
+Hacer la multiplicación en el tablero. Preguntar cuántos parámetros se estiman (dos) y cuántos coeficientes no nulos tiene el polinomio (tres: en 1, 12 y 13). Esa distancia entre parámetros libres y rezago más lejano es la economía de la notación. En la heladería, la diferencia entre sumar y multiplicar, 20 − 13.7 = 6.3, es justo 0.7 · 9: los 9 que marzo de 2024 traía de febrero.
 
 Detalle: Módulo 2, «Multiplicar no es sumar».
 
 ## Con \(\phi=0.6\) y \(\Phi=0.7\) brotan satélites en 11 y 13 que nadie pidió
 
-![ACF teórica: primero un SAR(1); después el AR(1)×SAR(1); por último, los satélites](recursos/cap5/satelites.json){alto=380}
+![ACF teórica: primero un SAR(1); después el AR(1)×SAR(1); por último, los satélites](recursos/cap5/satelites.json){alto=330}
 
 ::: revelar
-<kbd>Definición</kbd> **Satélites**: las barras en \(m\pm1\) que crea el producto de polinomios. \(\rho_{11}=0.4230\) y \(\rho_{13}=0.4218\), cerca de \(\rho_1\rho_{12}=0.6016\times0.7011\).
+<kbd>Definición</kbd> **Satélites**: barras en \(m\pm1\) que crea el producto. \(\rho_{11}=0.4230\) y \(\rho_{13}=0.4218\), cerca de \(\rho_1\rho_{12}=0.6016\times0.7011\).
+:::
+
+::: revelar
+<kbd>Interpretación</kbd> Cada satélite es un **camino**: subir un año y retroceder un mes lleva al rezago 13.
 :::
 
 <small>Contexto: procesos teóricos, no una serie; \(\phi\) y \(\Phi\) son los del capítulo. Fuente: J `teoricas` · R</small>
 
 ???
-Cuatro pulsaciones: tres etapas del gráfico y la conclusión. Primero el SAR(1) con Φ = 0.7: picos limpios en 12, 24 y 36 y cero en todo lo demás. Segundo, se multiplica por un AR(1) con φ = 0.6: la parte regular llena los rezagos bajos. Tercero, los satélites: barras en 11 y 13, simétricas alrededor del pico, que ningún parámetro pidió. Un correlograma con picos en 11, 12 y 13 no pide tres parámetros: pide dos.
+Cinco pulsaciones: tres etapas del gráfico, la definición y el camino (un mes se parece al del año anterior, y este a su vecino). Primero el SAR(1) con Φ = 0.7: picos limpios en 12, 24 y 36 y cero en todo lo demás. Segundo, se multiplica por un AR(1) con φ = 0.6: la parte regular llena los rezagos bajos. Tercero, los satélites: barras en 11 y 13, simétricas alrededor del pico, que ningún parámetro pidió. Un correlograma con picos en 11, 12 y 13 no pide tres parámetros: pide dos.
 
 Verificación: las barras salen de la ACF teórica de J (`teoricas.sar1_pos` y `teoricas.ar1_sar1`), y ρ₁₁ = 0.42298 y ρ₁₃ = 0.42180 se recalcularon con `ARMAacf` en R. Con parte AR el producto ρ₁ρ₁₂ = 0.42180 coincide con ρ₁₃ solo aproximadamente (lo precisa el Módulo 4). El gráfico lo genera `genera_animados_cap5.py` desde J. Detalle: Módulo 2, derivación (paso 4).
 
-## Los momentos se piden a la serie ya diferenciada, nunca a \(y_t\)
+## La varianza se pide a la serie diferenciada, y solo se factoriza si el modelo es MA puro
 
 ::: warn Solo con \(d=D=0\)
-Un modelo con diferencias no tiene varianza finita. Todo lo que sigue es de \(w_t=\nabla^d\nabla_m^D y_t=(1-B)^d(1-B^m)^D y_t\).
+Con diferencias no hay varianza finita: los momentos son de \(w_t=\nabla^d\nabla_m^D y_t\).
 :::
 
-$$\mu=\frac{c}{\phi_p(1)\,\Phi_P(1)} \qquad \gamma_0=\operatorname{Var}(w_t)=\sigma^2\sum_{j\ge0}\psi_j^2$$
+$$\gamma_0=\operatorname{Var}(w_t)=\sigma^2\sum_{j\ge0}\psi_j^2$$
 
-<kbd>Definición</kbd> Son las fórmulas del capítulo 3 con los \(\psi_j\) del polinomio ya multiplicado; la suma es la del intervalo de pronóstico del capítulo 4, llevada al infinito.
+- <kbd>Dato</kbd> MA puro con \(q<m\), el *airline*: \(\gamma_0=\sigma^2(1+\theta^2)(1+\Theta^2)=1.5217\,\sigma^2\), 0.002087 frente a 0.002102 muestral
+- <kbd>Dato</kbd> Con parte AR, \(\psi_{12}=\phi^{12}+\Phi\): con \(\phi=0.9\) y \(\Phi=0.7\), 15.406 exacta frente a 10.320 (−33.0 %)
+- <kbd>Opinión</kbd> Con parte AR la varianza se **calcula**, no se multiplica
 
-<small>Fuente: C Módulo 2, «Media, varianza y autocorrelación»</small>
-
-???
-Por qué se factoriza el denominador de la media: evaluar un producto de polinomios en B = 1 es multiplicar sus valores. La varianza del proceso es el límite de la incertidumbre de pronóstico cuando el horizonte deja de importar.
-
-Detalle: Módulo 2, fórmula de los momentos.
-
-## En un MA puro con \(q<m\), la varianza se factoriza exactamente: el *airline* es ese caso
-
-$$\gamma_0=\sigma^2(1+\theta^2)(1+\Theta^2)=1.5217\,\sigma^2$$
-
-- <kbd>Dato</kbd> Con \(\hat\sigma^2=0.001371\): \(\gamma_0=0.002087\) para \(\nabla\nabla_{12}\log y_t\); la varianza muestral de sus 131 observaciones es **0.002102**
-- <kbd>Definición</kbd> En \(\rho_1=\theta/(1+\theta^2)\) el factor estacional **se cancela**
-- <kbd>Definición</kbd> Si \(q\) alcanza a \(m\), los pesos chocan: con \(\theta_{12}=0.5\) y \(\Theta=0.6\), \(2.300\,\sigma^2\) frente a \(1.700\,\sigma^2\)
-
-<small>Contexto: el *airline* ajustado sobre `AirPassengers` en logaritmos. Fuente: J `airline` · R `m2`</small>
+<small>Contexto: *airline* sobre `AirPassengers` en logaritmos; AR(1)×SAR(1) teórico. Fuente: J `airline` · R `m2` · C Módulo 2</small>
 
 ???
-La razón es de contabilidad: un MA tiene un número finito de pesos, en los rezagos i + jm con i ≤ q y j ≤ Q. Si q < m, cada par cae en un rezago distinto y ningún término se suma con otro. En el airline los pesos están en 0, 1, 12 y 13 y nunca chocan.
+Por qué solo con w_t: un modelo con diferencias no tiene varianza finita. La media, μ = c/(φ_p(1)Φ_P(1)), se factoriza porque evaluar un producto de polinomios en B = 1 es multiplicar sus valores. La suma de los ψ² es la del intervalo de pronóstico del capítulo 4, llevada al infinito.
 
-Verificación: 1.5217, 0.002087 (con σ̂² sin redondear: 0.00137126), 0.002102, 131, y el caso del choque (2.300 frente a 1.700) recalculados en R. Detalle: Módulo 2, «El regalo».
+El regalo: en un MA puro con q < m los pesos caen en rezagos distintos y nunca chocan; en el airline, en 0, 1, 12 y 13. Con σ̂² = 0.001371 sale 0.002087, frente a 0.002102 en las 131 observaciones de ∇∇₁₂ log y, y en ρ₁ = θ/(1 + θ²) el factor estacional se cancela. Si q alcanza a m, los pesos chocan: con θ₁₂ = 0.5 y Θ = 0.6, 2.300σ² frente a 1.700σ².
 
-## Con parte AR no hay factorización: \(\psi_{12}=\phi^{12}+\Phi\), y el error pasa del 50 %
+El peaje: con parte AR el rezago 12 recibe dos caminos, doce pasos regulares o uno estacional. Con Φ = 0.7, el error de factorizar es −0.3 % con φ = 0.6, −9.2 % con 0.8, −33.0 % con 0.9 y −54.9 % con 0.95.
 
-| \(\phi\) | \(\phi^{12}\) | \(\gamma_0/\sigma^2\) exacta | Factorizada | Error |
-|---|---|---|---|---|
-| 0.6 | 0.002 | 3.073 | 3.064 | −0.3 % |
-| 0.8 | 0.069 | 5.997 | 5.447 | −9.2 % |
-| 0.9 | 0.282 | 15.406 | 10.320 | **−33.0 %** |
-| 0.95 | 0.540 | 44.580 | 20.111 | **−54.9 %** |
-
-<kbd>Definición</kbd> Con \(\Phi=0.7\) fijo. El rezago 12 recibe **dos caminos** —doce pasos regulares o uno estacional— y sus pesos se suman. <kbd>Opinión</kbd> Con parte AR la varianza se **calcula**, no se multiplica.
-
-<small>Contexto: procesos teóricos AR(1)×SAR(1). Fuente: R `m2.tabla_phi` (20 000 pesos ψ) · C Módulo 2</small>
-
-???
-El término de colisión es φ^m: con φ moderado es despreciable y la factorización aproxima bien; con φ cerca de 1 domina. El Módulo 4 vuelve sobre esta frontera desde el lado de la ACF.
-
-Verificación: cada celda se recalculó en R expandiendo el polinomio con `ARMAtoMA` (20 000 pesos) y comparando con 1/((1−φ²)(1−Φ²)). Detalle: Módulo 2, «El peaje».
+Verificación: 1.5217, 0.002087 (con σ̂² sin redondear: 0.00137126), 0.002102, 131, 2.300 y 1.700, recalculados en R (`m2`); la tabla de φ, en R (`m2.tabla_phi`, con 20 000 pesos ψ). Detalle: Módulo 2, «Media, varianza y autocorrelación».
 
 ## En un SARIMA(1,0,0)(1,0,0)\(_{12}\), ¿cuáles son ciertas? {.pregunta}
 
@@ -317,6 +327,7 @@ round(c(B1 = th, B12 = Th, B13 = th * Th), 4)
 |||
 
 - <kbd>Dato</kbd> El coeficiente de \(B^{13}\), **0.2238**, no se estima: es \(\theta\Theta\)
+- <kbd>Interpretación</kbd> El choque de hace 13 meses llega por **dos caminos**, un año y un mes: por eso pesa \(\theta\Theta\)
 - <kbd>Definición</kbd> La forma no multiplicativa necesita **13** parámetros para tocar los mismos rezagos
 - Este SARIMA(0,1,1)(0,1,1)\(_{12}\) es el *airline* del Módulo 5
 
@@ -342,15 +353,79 @@ $$\nabla_m y_t=(1-B^m)\,y_t=y_t-y_{t-m}$$
 
 $$1-B^{12}=(1-B)(1+B+B^2+\cdots+B^{11})$$
 
-- <kbd>Definición</kbd> \(\nabla^{12}\neq\nabla_{12}\): una raíz de multiplicidad 12 frente a doce raíces **distintas** sobre el círculo unitario
 - <kbd>Definición</kbd> \(\nabla_{12}\) quita la tendencia lineal **y** el patrón estacional; por eso a veces basta \(D=1\), \(d=0\)
+- <kbd>Definición</kbd> \(\nabla^{12}\) es otra cosa: doce restas seguidas contra el mes anterior, no una contra el año anterior
 
 <small>Fuente: C Módulo 3, definición y derivación</small>
 
 ???
-Las doce raíces de 1 − B¹² son las raíces duodécimas de la unidad; solo una vale B = 1. Las otras once están en las frecuencias estacionales: son las que anulan el patrón que se repite cada doce meses. Aplicar además ∇ vuelve a imponer B = 1, que ya estaba: se hace cuando la tendencia es más que lineal, no por rutina.
+Para quien quiera la versión algebraica: ∇^12 tiene una raíz de multiplicidad doce en B = 1, y ∇₁₂ doce raíces distintas sobre el círculo unitario, las raíces duodécimas de la unidad; solo una vale B = 1. Las otras once están en las frecuencias estacionales: son las que anulan el patrón que se repite cada doce meses. Aplicar además ∇ vuelve a imponer B = 1, que ya estaba: se hace cuando la tendencia es más que lineal, no por rutina.
 
 Detalle: Módulo 3, derivación.
+
+## \(\nabla_{12}\) resta la celda de arriba y \(\nabla\), la de la izquierda
+
+| | Ene | Feb | Mar | Abr | May | Jun | Jul | Ago | Sep | Oct | Nov | Dic |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 2022 | 94 | 93 | 98 | 101 | 104 | 109 | 112 | 111 | 108 | 107 | 112 | 117 |
+| 2023 | 106 | 105 | 110 | 113 | 116 | 121 | 124 | 123 | 120 | 119 | 124 | 129 |
+| 2024 | 118 | 117 | 122 | 125 | 128 | 133 | 136 | 135 | 132 | 131 | 136 | 141 |
+| 2025 | 130 | 129 | 134 | 137 | 140 | 145 | 148 | 147 | 144 | 143 | 148 | 153 |
+
+<kbd>Definición</kbd> Tienda **inventada**: 100 unidades al abrir, una más cada mes y un patrón anual de suma cero. Marzo de 2024 menos marzo de 2023: \(122-110=12\).
+
+<small>Contexto: cifras construidas para seguirlas a mano, enero de 2022 a diciembre de 2025. Fuente: C Módulo 3, «Un ejemplo para seguir a mano» (su bloque de R imprime esta cuadrícula)</small>
+
+???
+Es la misma vista del mapa mes × año del Módulo 1: un año por fila. Con ella, las dos diferencias son dos direcciones de resta: hacia arriba, el mismo mes del año anterior; hacia la izquierda, el mes anterior (a enero le toca el diciembre de la fila de arriba). Pedir que calculen una celda de cada antes de pasar.
+
+Verificación: la cuadrícula se recalcula en el verificador con la fórmula de la tienda y coincide fila a fila con la que imprime el bloque de R del capítulo. Detalle: Módulo 3, «Un ejemplo para seguir a mano», y su simulador «La tienda inventada, celda a celda».
+
+## \(\nabla\) deja el patrón; \(\nabla_{12}\) quita patrón y tendencia; las dos, todo
+
+| | Ene | Feb | Mar | Abr | May | Jun | Jul | Ago | Sep | Oct | Nov | Dic |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| \(\nabla\) · 2024 | −11 | −1 | 5 | 3 | 3 | 5 | 3 | −1 | −3 | −1 | 5 | 5 |
+| \(\nabla\) · 2025 | −11 | −1 | 5 | 3 | 3 | 5 | 3 | −1 | −3 | −1 | 5 | 5 |
+| \(\nabla_{12}\) · 2024 | 12 | 12 | 12 | 12 | 12 | 12 | 12 | 12 | 12 | 12 | 12 | 12 |
+| \(\nabla\nabla_{12}\) · 2024 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+::: revelar
+<kbd>Dato</kbd> \(\nabla\): cada año repite los mismos doce números; el patrón sigue ahí, escrito como cambios
+:::
+
+::: revelar
+<kbd>Dato</kbd> \(\nabla_{12}\): 12 en todas las celdas, lo que la tienda gana en un año; la tendencia lineal se volvió una constante
+:::
+
+::: revelar
+<kbd>Dato</kbd> \(\nabla\nabla_{12}\): ceros; con crecimiento fijo ya no quedaba nada que quitar
+:::
+
+<small>Contexto: la tienda inventada de la diapositiva anterior. Fuente: C Módulo 3 (bloque de R y simulador)</small>
+
+???
+Tres pulsaciones, una por operador. La primera es la que más cuesta: ∇ quita la tendencia, pero el patrón sigue ahí, porque los cambios de un mes al siguiente se repiten cada año. Por eso, con datos reales, la diferencia regular sube ρ̂₁₂ en vez de bajarlo. La segunda muestra que ∇₁₂ contiene a ∇: la tendencia lineal queda como una constante.
+
+Verificación: las filas se recalculan en el verificador y coinciden con las del bloque de R del capítulo. Detalle: Módulo 3, «Un ejemplo para seguir a mano».
+
+## Si la tienda acelera en 2024, \(\nabla_{12}\) deja una rampa y hace falta \(\nabla\)
+
+| | Ene | Feb | Mar | Abr | May | Jun | Jul | Ago | Sep | Oct | Nov | Dic |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| \(\nabla_{12}\) · 2023 | 12 | 12 | 12 | 12 | 12 | 12 | 12 | 12 | 12 | 12 | 12 | 12 |
+| \(\nabla_{12}\) · 2024 | 14 | 16 | 18 | 20 | 22 | 24 | 26 | 28 | 30 | 32 | 34 | 36 |
+| \(\nabla\nabla_{12}\) · 2024 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 |
+
+- <kbd>Dato</kbd> Desde 2024 gana tres unidades al mes: \(\nabla_{12}\) sube de 12 a 36 y \(\nabla\) lo recoge
+- <kbd>Dato</kbd> En \(\log(\text{AirPassengers})\), la media anual de \(\nabla_{12}\) va de 0.032 (1958) a 0.201 (1951): por eso deja \(\hat\rho_1=0.714\)
+
+<small>Fuente: C Módulo 3 · CALC sobre los datos congelados</small>
+
+???
+Es la frontera de la decisión: con crecimiento fijo, D = 1 y d = 0 bastan; si el crecimiento cambia, hace falta d = 1. La diapositiva siguiente lo enseña con datos reales: la fila de ∇₁₂ sola deja ρ̂₁ = 0.714, que es esta rampa en una serie de verdad.
+
+Verificación: las filas de la tienda se recalculan en el verificador y coinciden con las del capítulo; las medias anuales de ∇₁₂ log y (0.032 y 0.201), recalculadas sobre los datos congelados; 0.714 es J. Detalle: Módulo 3, «Un ejemplo para seguir a mano».
 
 ## Cada operador hace su trabajo y solo el suyo
 
@@ -406,11 +481,12 @@ max(abs(diff(diff(uad, lag = 12)) - diff(diff(uad), lag = 12)))
 - <kbd>Dato</kbd> Diferencia máxima entre los dos órdenes: **0**
 - <kbd>Dato</kbd> Lo que cambia es la **prueba**: 0 sobre la serie cruda, 1 sobre \(\nabla_{12}y_t\)
 - <kbd>Definición</kbd> `nsdiffs()` estima \(D\) como `ndiffs()` estima \(d\)
+- <kbd>Definición</kbd> Las dos juntas son \(y_t-y_{t-1}-y_{t-12}+y_{t-13}\): las cuatro esquinas de un cuadrado de la cuadrícula; en la tienda que acelera, \(128-121-110+105=2\)
 
 <small>Fuente: código del Módulo 3, ejecutado en R 4.6 · J `orden_pruebas`</small>
 
 ???
-La lección se enuncia en la diapositiva siguiente. Aquí, que lo vean: misma serie, distinta decisión según el orden en que se pregunta.
+La lección se enuncia en la diapositiva siguiente. Aquí, que lo vean: misma serie, distinta decisión según el orden en que se pregunta. Hilo con el Módulo 2: el cuadrado es el de la heladería con φ = Φ = 1, porque (1 − B)(1 − B¹²) es el modelo multiplicativo con los dos coeficientes en 1.
 
 Verificación: el bloque se ejecutó en R 4.6.0 y sus tres salidas coinciden con J (`orden_pruebas.usaccdeaths`, `orden_pruebas.conmutan`). Detalle: Módulo 3, bloque «Elegir D y d».
 
