@@ -212,8 +212,8 @@
 
     .tarjeta:hover .tarjeta-abrir { gap: 0.75rem; }
 
-    /* Un SEGUNDO enlace dentro de la tarjeta —hoy solo las diapositivas del
-       capítulo 4—. El enlace del título cubre la tarjeta entera con un
+    /* Un SEGUNDO enlace dentro de la tarjeta —las diapositivas de los
+       capítulos 4 y 5—. El enlace del título cubre la tarjeta entera con un
        `::after` en `inset: 0`, así que este tiene que ponerse POR ENCIMA o el
        clic se lo come la capa de arriba: `position: relative` y un `z-index`
        mayor. El relleno vertical lo lleva a 27 px de alto, por encima de los
@@ -265,8 +265,9 @@
     }
 
     /* `min-width: 0` y `overflow-wrap`: el h2 es un elemento flex, y con la
-       letra al 200 % «Presentaciones» no cabía en 375 px y ensanchaba la
-       página. */
+       letra al 200 % una palabra larga del título no cabe en 375 px y
+       ensancharía la página. Pasó con «Presentaciones», de la sección de
+       diapositivas que había antes de llevarlas a las tarjetas. */
     .corte-rotulo h2 { color: #012820; font-weight: 800; font-size: 1.35rem; margin: 0;
       min-width: 0; overflow-wrap: break-word; }
     .corte-rotulo .corte-semanas { color: #C24E00; font-weight: 700; font-size: 0.85rem; }
@@ -757,6 +758,18 @@
         </div>
         <p class="mt-4"><span class="tarjeta-abrir">Abrir el capítulo <i class="fas fa-arrow-right"
               aria-hidden="true"></i></span></p>
+        <!-- Un solo archivo para las dos clases. «Clase 2» abre la diapositiva
+             45, el divisor «Clase 2 · Módulo 6»: si se reconstruye el deck y
+             cambia de número, hay que cambiar aquí el `#45`. «Clase 1» lleva
+             `#1` porque, sin número, el deck vuelve a la última diapositiva
+             vista, que puede ser de la clase 2. -->
+        <p class="tarjeta-diapositivas mt-3">
+          <span><i class="fas fa-chalkboard-user mr-1" aria-hidden="true"></i>Diapositivas de clase</span>
+          <a class="tarjeta-extra" href="diapositivas/capitulo-5-sarima.html#1"
+            aria-label="Clase 1, módulos 1 a 5: diapositivas del capítulo 5">Clase 1</a>
+          <a class="tarjeta-extra" href="diapositivas/capitulo-5-sarima.html#45"
+            aria-label="Clase 2, módulos 6 a 11: diapositivas del capítulo 5">Clase 2</a>
+        </p>
       </article>
 
       <article class="tarjeta p-5">
@@ -780,48 +793,6 @@
           <span><i class="fas fa-list-ul mr-1" aria-hidden="true"></i>12 módulos · 14 simuladores</span>
         </div>
         <p class="mt-4"><span class="tarjeta-abrir">Abrir el capítulo <i class="fas fa-arrow-right"
-              aria-hidden="true"></i></span></p>
-      </article>
-
-      </div>
-    </section>
-
-    <!-- Presentaciones de clase -->
-    <section id="diapositivas" class="mb-12" aria-labelledby="titulo-diapositivas">
-      <div class="corte-rotulo">
-        <h2 id="titulo-diapositivas">Presentaciones de clase</h2>
-        <span class="corte-semanas">Para la clase</span>
-      </div>
-      <p class="corte-intro">
-        Diapositivas para proyectar, con notas del presentador. No sustituyen al capítulo: cada
-        sección remite a su módulo. Cada afirmación se etiqueta como dato, definición,
-        interpretación u opinión; cada cifra lleva su fuente, y lo que no se pudo verificar va
-        marcado como tal.
-      </p>
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-
-      <article class="tarjeta p-5">
-        <div class="flex items-start gap-4">
-          <div class="tarjeta-num"><i class="fas fa-desktop" aria-hidden="true"></i></div>
-          <div class="min-w-0 flex-grow">
-            <div class="flex items-center gap-2 flex-wrap">
-              <span class="tarjeta-semana">Capítulo 4</span>
-              <span class="text-xs font-semibold text-slate-500">Unos 90–120 min (estimado)</span>
-            </div>
-            <h3 class="tarjeta-titulo mt-2 text-base">
-              <a href="diapositivas/capitulo-4-modelos-arima.html">Modelos ARIMA y Box–Jenkins<span
-                  class="sr-only"> · diapositivas</span></a>
-            </h3>
-          </div>
-        </div>
-        <p class="tarjeta-desc mt-3">Los módulos 1 a 10 del capítulo en diapositivas: la diferenciación como parte
-          del modelo, el ciclo de Box–Jenkins, cómo elegir <em>d</em>, <em>p</em> y <em>q</em>, la constante y la
-          deriva, el AICc y <code>auto.arima</code>, la sobrediferenciación y el intervalo de pronóstico, hasta el
-          caso de la TRM. Con preguntas para la clase y el código proyectado ejecutado.</p>
-        <div class="tarjeta-meta mt-4">
-          <span><i class="fas fa-list-ul mr-1" aria-hidden="true"></i>50 diapositivas · con notas</span>
-        </div>
-        <p class="mt-4"><span class="tarjeta-abrir">Abrir las diapositivas <i class="fas fa-arrow-right"
               aria-hidden="true"></i></span></p>
       </article>
 
