@@ -26,130 +26,253 @@
 
 
   <style>
+    /* ------------------------------------------------------------------
+       La portada sigue el diseño de la del curso de Diseño de
+       Experimentos: cabecera fija, héroe oscuro con las cifras del
+       material, una sección por bloque con su rótulo subrayado, y una
+       tarjeta compacta por documento. Lo que aquí difiere de aquella está
+       comentado donde ocurre: el contraste del texto pequeño (naranja y
+       grises más oscuros), el color del foco, la cabecera que solo es fija
+       desde 768 px y el héroe dentro de <main>.
+       ------------------------------------------------------------------ */
     *, *::before, *::after { box-sizing: border-box; }
+
     html { scroll-behavior: smooth; }
+
+    /* La cabecera solo es fija desde 768 px (`md:sticky`). En el teléfono
+       mide 89 px a 375 y 105 a 320, y con la letra del navegador agrandada
+       pasa de 240: fija, se comería un tercio de la pantalla y taparía el
+       ancla y el foco. Desde 768 px, sin este margen, el ancla «#capitulos»
+       y el elemento que recibe el foco al tabular hacia atrás quedarían
+       debajo de ella. Mide 84 px; 7rem (112 px) escala con la letra, igual
+       que ella. */
+    @media (min-width: 768px) {
+      html { scroll-padding-top: 7rem; }
+    }
+
     body {
       font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
       background-color: #F8FAFC;
       color: #1E293B;
       margin: 0;
-      line-height: 1.6;
     }
 
-    .usta-gradient { background: linear-gradient(140deg, #012820 0%, #FF6600 100%); }
     .usta-header { background: linear-gradient(180deg, #012820 0%, #001F18 100%); }
+    .usta-gradient { background: linear-gradient(140deg, #012820 0%, #FF6600 100%); }
 
-    /* Hero */
     .hero {
-      background: linear-gradient(140deg, #012820 0%, #023a2e 55%, #FF6600 160%);
+      background:
+        radial-gradient(1200px 400px at 15% -20%, rgba(255, 102, 0, 0.18), transparent 60%),
+        linear-gradient(140deg, #012820 0%, #02382D 55%, #001F18 100%);
+    }
+
+    /* ------------------------------------------------------------------
+       Componente .tarjeta — una tarjeta por documento
+       ------------------------------------------------------------------
+       El enlace envuelve la tarjeta entera con ::after, no solo el rótulo
+       «Abrir»: el área de clic es toda la tarjeta, pero en el árbol de
+       accesibilidad hay UN enlace con un nombre que se basta solo —el
+       título—, y no un enlace cuyo nombre es la tarjeta entera. Por eso
+       el <a> lleva el título dentro y el resto es texto hermano.
+       ------------------------------------------------------------------ */
+    .tarjeta {
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 1rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
       position: relative;
       overflow: hidden;
-    }
-    .hero::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(circle at 20% 30%, rgba(255, 102, 0, 0.18), transparent 40%),
-                        radial-gradient(circle at 85% 20%, rgba(255, 194, 75, 0.12), transparent 35%);
-      pointer-events: none;
-    }
-
-    /* Chapter cards */
-    .chapter-card {
-      background: white;
-      border-radius: 1rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      border: 1px solid rgba(0, 0, 0, 0.05);
-      transition: all 0.3s ease;
       display: flex;
       flex-direction: column;
-      height: 100%;
-      overflow: hidden;
-      text-decoration: none;
-      color: inherit;
     }
-    .chapter-card:hover {
-      box-shadow: 0 14px 38px rgba(1, 40, 32, 0.16);
+
+    .tarjeta::before {
+      content: '';
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 5px;
+      background: linear-gradient(180deg, #012820, #FF6600);
+      opacity: 0;
+      transition: opacity .25s ease;
+    }
+
+    .tarjeta:hover {
       transform: translateY(-6px);
-      border-color: rgba(255, 102, 0, 0.35);
+      box-shadow: 0 16px 40px rgba(1, 40, 32, 0.16);
+      border-color: rgba(255, 102, 0, 0.4);
     }
-    .chapter-card__top {
-      background: linear-gradient(135deg, #012820 0%, #FF6600 100%);
-      color: white;
-      padding: 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+
+    .tarjeta:hover::before { opacity: 1; }
+
+    /* El foco. En Diseño es naranja translúcido, que sobre el fondo claro
+       no llega a 3:1 (WCAG 1.4.11); aquí es el verde del curso, 15:1.
+       Se dibuja en la tarjeta y no en el título, porque es la tarjeta lo
+       que se pulsa; con :has() solo aparece al llegar con el teclado, y
+       donde :has() no existe queda :focus-within, como en Diseño. */
+    .tarjeta:focus-within { outline: 3px solid #012820; outline-offset: 3px; }
+
+    @supports selector(:has(*)) {
+      .tarjeta:focus-within { outline: none; }
+      .tarjeta:has(.tarjeta-titulo a:focus-visible) { outline: 3px solid #012820; outline-offset: 3px; }
+      .tarjeta-titulo a:focus-visible { outline: none; }
     }
-    .chapter-card__num {
-      font-size: 2.75rem;
-      font-weight: 800;
-      line-height: 1;
-      opacity: 0.95;
-    }
-    .chapter-card__icon {
-      width: 3.25rem;
-      height: 3.25rem;
-      border-radius: 0.9rem;
-      background: rgba(255, 255, 255, 0.15);
+
+    .tarjeta-num {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 0.85rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.4rem;
+      color: #fff;
+      font-size: 1.15rem;
+      background: linear-gradient(140deg, #012820 0%, #FF6600 100%);
+      box-shadow: 0 6px 16px rgba(1, 40, 32, 0.25);
+      flex-shrink: 0;
     }
-    .chapter-card__body { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
-    .chapter-card__kicker {
+
+    /* En Diseño la pastilla no se parte nunca (`nowrap`). Aquí sí puede,
+       pero solo cuando no cabe sola en el renglón: con la letra agrandada,
+       «Material de estudio · código 20948» o «Antes del Parcial 1» se
+       salían de la pantalla del teléfono. En la fila de la tarjeta, el
+       `flex-wrap` la baja de renglón antes de partirla. Desde el 175 % de
+       letra, junto al icono no cabe ni «SEMANAS»: `overflow-wrap: anywhere`
+       y `max-width` la parten dentro de la palabra en vez de que el
+       `overflow: hidden` de la tarjeta la corte. A tamaño normal no cambia
+       nada: la palabra cabe entera. */
+    .tarjeta-semana {
+      max-width: 100%;
+      overflow-wrap: anywhere;
       font-size: 0.7rem;
       font-weight: 700;
-      letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: #FF6600;
-      margin-bottom: 0.4rem;
+      letter-spacing: 0.06em;
+      color: #012820;
+      background: rgba(255, 102, 0, 0.12);
+      border: 1px solid rgba(255, 102, 0, 0.3);
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
     }
-    .chapter-card__title { font-size: 1.2rem; font-weight: 700; color: #012820; margin: 0 0 0.5rem; }
-    .chapter-card__desc { font-size: 0.9rem; color: #475569; flex-grow: 1; }
-    .chapter-card__meta {
+
+    /* La misma pastilla sobre el héroe oscuro (en Diseño, con estilo en línea). */
+    .tarjeta-semana--heroe {
+      display: inline-block;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Sin `line-height` propio: el `text-base` del h3 va en la hoja de
+       Tailwind, que llega después y lo fijaría en 1.5rem de todos modos.
+       `overflow-wrap`: con la letra del navegador al 150 % y 320 px, una
+       palabra como «descomposición» no cabe junto al cuadro del icono, y el
+       `overflow: hidden` de la tarjeta la cortaba sin avisar. */
+    .tarjeta-titulo { color: #012820; font-weight: 700; overflow-wrap: break-word; }
+    .tarjeta-titulo a { color: inherit; text-decoration: none; }
+
+    .tarjeta-titulo a::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    .tarjeta-desc { font-size: 0.875rem; line-height: 1.6; color: #475569; flex-grow: 1; }
+
+    .tarjeta-meta {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 1.1rem;
-      padding-top: 1rem;
-      border-top: 1px solid #f1f5f9;
+      flex-wrap: wrap;
+      gap: 0.35rem 0.9rem;
+      font-size: 0.75rem;
+      color: #64748B;
     }
-    .chapter-card__modules { font-size: 0.78rem; color: #64748b; font-weight: 600; }
-    .chapter-card__go {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: #FF6600;
+
+    /* El naranja del curso (#FF6600) da 2,9:1 sobre blanco, poco para un
+       texto de 14 px. Para el texto pequeño se usa uno más oscuro de la
+       misma familia, #C24E00, que da 4,8:1; el #FF6600 queda para lo que
+       no es texto: barras, degradados e iconos. */
+    .tarjeta-abrir {
+      color: #C24E00;
+      font-weight: 600;
+      font-size: 0.875rem;
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-      transition: gap 0.2s ease;
+      transition: gap .2s ease;
     }
-    .chapter-card:hover .chapter-card__go { gap: 0.7rem; }
 
-    .pill {
+    .tarjeta:hover .tarjeta-abrir { gap: 0.75rem; }
+
+    /* Un SEGUNDO enlace dentro de la tarjeta —hoy solo las diapositivas del
+       capítulo 4—. El enlace del título cubre la tarjeta entera con un
+       `::after` en `inset: 0`, así que este tiene que ponerse POR ENCIMA o el
+       clic se lo come la capa de arriba: `position: relative` y un `z-index`
+       mayor. El relleno vertical lo lleva a 27 px de alto, por encima de los
+       24 del objetivo táctil mínimo (WCAG 2.5.8): un toque que se queda corto
+       abre el capítulo y no las diapositivas. El gris es #475569 (7,6:1) y
+       no el #64748B de Diseño. */
+    .tarjeta-extra {
+      position: relative;
+      z-index: 2;
       display: inline-flex;
       align-items: center;
-      gap: 0.45rem;
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      color: #fff;
-      padding: 0.4rem 0.9rem;
-      border-radius: 50px;
+      gap: 0.4rem;
+      padding: 0.2rem 0;
+      color: #475569;
+      font-weight: 600;
       font-size: 0.8rem;
-      font-weight: 500;
+      text-decoration: none;
+      border-bottom: 2px solid rgba(255, 102, 0, 0.35);
     }
 
-    .feature-card {
-      background: white;
-      border-radius: 0.9rem;
-      padding: 1.5rem;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      border: 1px solid rgba(0, 0, 0, 0.04);
-      text-align: center;
+    .tarjeta-extra:hover { color: #012820; border-bottom-color: #FF6600; }
+
+    /* Las diapositivas de clase, en una línea propia debajo de «Abrir el
+       capítulo», como en Diseño. El rótulo no es enlace: pulsarlo abre el
+       capítulo, como el resto de la tarjeta. Su gris es #64748B (4,8:1) y
+       no el #94A3B8 de Diseño (2,6:1); por lo mismo, el rótulo gris de cada
+       tarjeta («Capítulo 1 · Módulo I») va en `text-slate-500` y no en
+       `text-slate-400`. */
+    .tarjeta-diapositivas {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.35rem 1rem;
+      padding-top: 0.75rem;
+      border-top: 1px dashed #E2E8F0;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #64748B;
     }
-    .feature-card i { color: #FF6600; font-size: 1.6rem; margin-bottom: 0.6rem; }
+
+    .corte-rotulo {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      border-bottom: 2px solid rgba(1, 40, 32, 0.12);
+      padding-bottom: 0.6rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* `min-width: 0` y `overflow-wrap`: el h2 es un elemento flex, y con la
+       letra al 200 % «Presentaciones» no cabía en 375 px y ensanchaba la
+       página. */
+    .corte-rotulo h2 { color: #012820; font-weight: 800; font-size: 1.35rem; line-height: 1.3; margin: 0;
+      min-width: 0; overflow-wrap: break-word; }
+    .corte-rotulo .corte-semanas { color: #C24E00; font-weight: 700; font-size: 0.85rem; }
+
+    /* El texto que presenta cada sección. Diseño no lo tiene: sus rótulos
+       llevan un lema de una línea. Los de aquí explican cómo se usa cada
+       cosa y no caben en una. */
+    .corte-intro {
+      max-width: 48rem;
+      margin: -0.5rem 0 1.5rem;
+      font-size: 0.9rem;
+      line-height: 1.65;
+      color: #475569;
+    }
 
     /* Recorrido: la secuencia de los seis capítulos como una línea */
     .ruta {
@@ -160,109 +283,132 @@
       padding: 0;
       margin: 0;
     }
+
     .ruta li {
-      background: white;
+      background: #fff;
       border: 1px solid rgba(0, 0, 0, 0.06);
       border-left: 4px solid #FF6600;
-      border-radius: 0.6rem;
+      border-radius: 0.75rem;
       padding: 0.85rem 1rem;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     }
-    .ruta strong { display: block; color: #012820; font-size: 0.9rem; }
-    .ruta span { font-size: 0.76rem; color: #64748b; }
 
-    *:focus-visible { outline: 2px solid #012820; outline-offset: 3px; border-radius: 4px; }
-    .hero *:focus-visible { outline-color: #FFC24B; }
+    .ruta strong { display: block; color: #012820; font-size: 0.9rem; }
+    .ruta span { font-size: 0.78rem; color: #64748B; }
+
+    /* Foco: verde sobre lo claro (unos 15:1) y dorado sobre lo oscuro
+       —cabecera, héroe y pie—, por encima de 8:1 en el punto más claro del
+       héroe. */
+    a:focus-visible { outline: 3px solid #012820; outline-offset: 3px; }
+    .hero a:focus-visible,
+    .usta-header a:focus-visible { outline-color: #FFC24B; }
+
+    ::-webkit-scrollbar { width: 9px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #012820, #FF6600); border-radius: 4px; }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+      .tarjeta:hover { transform: none; }
     }
   </style>
   <!-- Tailwind CSS v3.4.19 compilado (precalculo/compila_tailwind.py), en lugar del Play CDN
        cdn.tailwindcss.com, que en algunas redes no resuelve y dejaba la página sin maquetar.
        Va al final de <head>, donde el CDN anexaba su hoja: detrás del <style> de la página. -->
-  <style id="tailwind-compilado">*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:Montserrat,Helvetica Neue,Helvetica,Arial,sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.absolute{position:absolute}.relative{position:relative}.m-0{margin:0}.mx-auto{margin-left:auto;margin-right:auto}.-mt-10{margin-top:-2.5rem}.mb-10{margin-bottom:2.5rem}.mb-2{margin-bottom:.5rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.mt-1{margin-top:.25rem}.mt-3{margin-top:.75rem}.mt-6{margin-top:1.5rem}.mt-8{margin-top:2rem}.block{display:block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.max-w-2xl{max-width:42rem}.max-w-3xl{max-width:48rem}.max-w-6xl{max-width:72rem}.flex-grow{flex-grow:1}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.list-none{list-style-type:none}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.gap-2{gap:.5rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.75rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.75rem*var(--tw-space-y-reverse))}.rounded-full{border-radius:9999px}.rounded-xl{border-radius:.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-t{border-top-width:1px}.border-gold{--tw-border-opacity:1;border-color:rgb(255 194 75/var(--tw-border-opacity,1))}.border-white\/20{border-color:hsla(0,0%,100%,.2)}.border-white\/40{border-color:hsla(0,0%,100%,.4)}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.p-0{padding:0}.p-3{padding:.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-12{padding-top:3rem;padding-bottom:3rem}.py-14{padding-top:3.5rem;padding-bottom:3.5rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.pb-14{padding-bottom:3.5rem}.pt-14{padding-top:3.5rem}.pt-6{padding-top:1.5rem}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-relaxed{line-height:1.625}.leading-tight{line-height:1.25}.tracking-tight{letter-spacing:-.025em}.tracking-widest{letter-spacing:.1em}.text-gold{--tw-text-opacity:1;color:rgb(255 194 75/var(--tw-text-opacity,1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128/var(--tw-text-opacity,1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99/var(--tw-text-opacity,1))}.text-primary{--tw-text-opacity:1;color:rgb(1 40 32/var(--tw-text-opacity,1))}.text-secondary{--tw-text-opacity:1;color:rgb(255 102 0/var(--tw-text-opacity,1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.text-white\/60{color:hsla(0,0%,100%,.6)}.text-white\/70{color:hsla(0,0%,100%,.7)}.text-white\/80{color:hsla(0,0%,100%,.8)}.text-white\/90{color:hsla(0,0%,100%,.9)}.underline{text-decoration-line:underline}.shadow-lg{--tw-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color),0 4px 6px -4px var(--tw-shadow-color)}.shadow-lg,.shadow-md{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color),0 2px 4px -2px var(--tw-shadow-color)}.outline{outline-style:solid}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.hover\:bg-gold:hover{--tw-bg-opacity:1;background-color:rgb(255 194 75/var(--tw-bg-opacity,1))}.hover\:bg-white\/10:hover{background-color:hsla(0,0%,100%,.1)}.hover\:text-gold:hover{--tw-text-opacity:1;color:rgb(255 194 75/var(--tw-text-opacity,1))}.hover\:text-primary:hover{--tw-text-opacity:1;color:rgb(1 40 32/var(--tw-text-opacity,1))}@media (min-width:640px){.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}}@media (min-width:768px){.md\:-mt-12{margin-top:-3rem}.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.md\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.md\:py-20{padding-top:5rem}.md\:pb-20,.md\:py-20{padding-bottom:5rem}.md\:pt-20{padding-top:5rem}.md\:text-3xl{font-size:1.875rem;line-height:2.25rem}.md\:text-5xl{font-size:3rem;line-height:1}.md\:text-base{font-size:1rem;line-height:1.5rem}.md\:text-lg{font-size:1.125rem;line-height:1.75rem}}@media (min-width:1024px){.lg\:px-8{padding-left:2rem;padding-right:2rem}}</style>
+  <style id="tailwind-compilado">*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:Montserrat,Helvetica Neue,Helvetica,Arial,sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}.absolute{position:absolute}.relative{position:relative}.z-50{z-index:50}.m-0{margin:0}.mx-auto{margin-left:auto;margin-right:auto}.mb-12{margin-bottom:3rem}.mb-4{margin-bottom:1rem}.mr-1{margin-right:.25rem}.mt-1{margin-top:.25rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}.mt-8{margin-top:2rem}.block{display:block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.min-h-screen{min-height:100vh}.w-full{width:100%}.min-w-0{min-width:0}.max-w-3xl{max-width:48rem}.max-w-4xl{max-width:56rem}.max-w-7xl{max-width:80rem}.max-w-full{max-width:100%}.flex-shrink{flex-shrink:1}.flex-grow{flex-grow:1}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.list-none{list-style-type:none}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.gap-2{gap:.5rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-x-6{-moz-column-gap:1.5rem;column-gap:1.5rem}.gap-x-8{-moz-column-gap:2rem;column-gap:2rem}.gap-y-3{row-gap:.75rem}.break-words{overflow-wrap:break-word}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-xl{border-radius:.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-t{border-top-width:1px}.border-gold{--tw-border-opacity:1;border-color:rgb(255 194 75/var(--tw-border-opacity,1))}.border-white\/20{border-color:hsla(0,0%,100%,.2)}.border-white\/40{border-color:hsla(0,0%,100%,.4)}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.p-0{padding:0}.p-2{padding:.5rem}.p-3{padding:.75rem}.p-5{padding:1.25rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-10{padding-top:2.5rem;padding-bottom:2.5rem}.py-12{padding-top:3rem;padding-bottom:3rem}.py-14{padding-top:3.5rem;padding-bottom:3.5rem}.py-2\.5{padding-top:.625rem;padding-bottom:.625rem}.py-4{padding-top:1rem;padding-bottom:1rem}.pt-6{padding-top:1.5rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-base{font-size:1rem;line-height:1.5rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-relaxed{line-height:1.625}.leading-tight{line-height:1.25}.tracking-tight{letter-spacing:-.025em}.tracking-wide{letter-spacing:.025em}.text-gold{--tw-text-opacity:1;color:rgb(255 194 75/var(--tw-text-opacity,1))}.text-primary{--tw-text-opacity:1;color:rgb(1 40 32/var(--tw-text-opacity,1))}.text-secondary{--tw-text-opacity:1;color:rgb(255 102 0/var(--tw-text-opacity,1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184/var(--tw-text-opacity,1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139/var(--tw-text-opacity,1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.text-white\/60{color:hsla(0,0%,100%,.6)}.text-white\/70{color:hsla(0,0%,100%,.7)}.text-white\/75{color:hsla(0,0%,100%,.75)}.text-white\/80{color:hsla(0,0%,100%,.8)}.text-white\/90{color:hsla(0,0%,100%,.9)}.underline{text-decoration-line:underline}.shadow-lg{--tw-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color),0 4px 6px -4px var(--tw-shadow-color)}.shadow-lg,.shadow-md{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color),0 2px 4px -2px var(--tw-shadow-color)}.outline{outline-style:solid}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.hover\:bg-gold:hover{--tw-bg-opacity:1;background-color:rgb(255 194 75/var(--tw-bg-opacity,1))}.hover\:bg-white\/10:hover{background-color:hsla(0,0%,100%,.1)}.hover\:text-gold:hover{--tw-text-opacity:1;color:rgb(255 194 75/var(--tw-text-opacity,1))}.hover\:text-primary:hover{--tw-text-opacity:1;color:rgb(1 40 32/var(--tw-text-opacity,1))}.focus\:not-sr-only:focus{position:static;width:auto;height:auto;padding:0;margin:0;overflow:visible;clip:auto;white-space:normal}.focus\:absolute:focus{position:absolute}.focus\:z-\[60\]:focus{z-index:60}.focus\:m-3:focus{margin:.75rem}.focus\:rounded-lg:focus{border-radius:.5rem}.focus\:bg-white:focus{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.focus\:px-4:focus{padding-left:1rem;padding-right:1rem}.focus\:py-2:focus{padding-top:.5rem;padding-bottom:.5rem}.focus\:font-semibold:focus{font-weight:600}.focus\:text-primary:focus{--tw-text-opacity:1;color:rgb(1 40 32/var(--tw-text-opacity,1))}@media (min-width:640px){.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}}@media (min-width:768px){.md\:sticky{position:sticky}.md\:top-0{top:0}.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.md\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.md\:flex-row{flex-direction:row}.md\:items-center{align-items:center}.md\:justify-between{justify-content:space-between}.md\:py-20{padding-top:5rem;padding-bottom:5rem}.md\:text-right{text-align:right}.md\:text-5xl{font-size:3rem;line-height:1}.md\:text-lg{font-size:1.125rem;line-height:1.75rem}}@media (min-width:1024px){.lg\:px-8{padding-left:2rem;padding-right:2rem}}@media (min-width:1280px){.xl\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}</style>
 </head>
 
-<body>
-  <!-- Hero / Header -->
-  <header class="hero text-white" role="banner">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20 relative" style="z-index:1;">
-      <div class="flex items-center gap-3 mb-6">
-        <div class="usta-gradient p-3 rounded-xl shadow-md">
-          <i class="fas fa-chart-line text-2xl text-white" aria-hidden="true"></i>
-        </div>
-        <span class="pill"><i class="fas fa-graduation-cap" aria-hidden="true"></i> Universidad El Bosque · 2026-II</span>
-      </div>
-      <h1 class="text-3xl md:text-5xl font-extrabold leading-tight tracking-tight mb-4">
-        Análisis de<br><span class="text-gold">Series de Tiempo</span>
-      </h1>
-      <p class="text-base md:text-lg text-white/80 max-w-2xl mb-8">
-        Material de estudio autónomo e interactivo. Seis capítulos que van de la descomposición de una serie
-        al <em>backtesting</em> de un pronóstico, con teoría, fórmulas, código en <strong>R</strong> y
-        <strong>Python</strong>, y 68 simuladores para mover los parámetros y ver qué pasa.
-      </p>
+<body class="min-h-screen flex flex-col">
+  <a href="#contenido"
+    class="sr-only focus:not-sr-only focus:absolute focus:z-[60] focus:m-3 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:font-semibold focus:text-primary">Saltar
+    al contenido</a>
 
-      <div class="flex flex-wrap gap-3">
-        <a href="#capitulos"
-          class="inline-flex items-center gap-2 bg-white text-primary font-bold px-6 py-3 rounded-full shadow-lg hover:bg-gold hover:text-primary transition-all">
-          <i class="fas fa-book-open" aria-hidden="true"></i> Explorar capítulos
-        </a>
-        <a href="capitulo-1-componentes-descomposicion.html"
-          class="inline-flex items-center gap-2 border-2 border-white/40 text-white font-semibold px-6 py-3 rounded-full hover:bg-white/10 transition-all">
-          <i class="fas fa-play" aria-hidden="true"></i> Comenzar por el Capítulo 1
-        </a>
-        <a href="preparcial-corte-2.html"
-          class="inline-flex items-center gap-2 border-2 border-gold text-gold font-semibold px-6 py-3 rounded-full hover:bg-gold hover:text-primary transition-all">
-          <i class="fas fa-clipboard-check" aria-hidden="true"></i> Preparcial · Corte II
-        </a>
-        <a href="preparcial-corte-1.html"
-          class="inline-flex items-center gap-2 border-2 border-gold text-gold font-semibold px-6 py-3 rounded-full hover:bg-gold hover:text-primary transition-all">
-          <i class="fas fa-clipboard-check" aria-hidden="true"></i> Preparcial · Corte I
-        </a>
+  <header class="usta-header md:sticky md:top-0 z-50 shadow-lg" role="banner">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
+      <div class="usta-gradient p-3 rounded-xl shadow-md">
+        <i class="fas fa-chart-line text-xl text-white" aria-hidden="true"></i>
+      </div>
+      <div class="min-w-0 break-words">
+        <p class="text-xl font-bold text-white leading-tight tracking-tight">Series de Tiempo</p>
+        <p class="text-xs text-white/70 font-medium tracking-wide">UNIVERSIDAD EL BOSQUE • MATEMÁTICAS Y CIENCIA DE
+          DATOS • 2026-II</p>
       </div>
     </div>
   </header>
 
-  <main>
-    <!-- Intro features -->
-    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 md:-mt-12 relative" style="z-index:2;"
-      aria-label="Resumen del material">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="feature-card">
-          <i class="fas fa-layer-group" aria-hidden="true"></i>
-          <h2 class="font-bold text-sm text-primary" style="margin:.3rem 0 0;">6 capítulos</h2>
-          <p class="text-xs text-gray-500" style="margin:0;">64 módulos en total</p>
-        </div>
-        <div class="feature-card">
-          <i class="fas fa-sliders" aria-hidden="true"></i>
-          <h2 class="font-bold text-sm text-primary" style="margin:.3rem 0 0;">68 simuladores</h2>
-          <p class="text-xs text-gray-500" style="margin:0;">Con datos reales precalculados</p>
-        </div>
-        <div class="feature-card">
-          <i class="fas fa-code" aria-hidden="true"></i>
-          <h2 class="font-bold text-sm text-primary" style="margin:.3rem 0 0;">R y Python</h2>
-          <p class="text-xs text-gray-500" style="margin:0;">Todo el código, ejecutado</p>
-        </div>
-        <div class="feature-card">
-          <i class="fas fa-circle-question" aria-hidden="true"></i>
-          <h2 class="font-bold text-sm text-primary" style="margin:.3rem 0 0;">61 preguntas</h2>
-          <p class="text-xs text-gray-500" style="margin:0;">Y 20 ejercicios resueltos</p>
-        </div>
+  <!-- El héroe va DENTRO de <main>, a lo ancho: así el h1 y los cuatro botones
+       están en un landmark, y «Saltar al contenido» salta solo la cabecera. En
+       Diseño el héroe queda entre <header> y <main>, fuera de los dos. -->
+  <main class="flex-grow" id="contenido">
+  <section class="hero text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20">
+      <span class="tarjeta-semana tarjeta-semana--heroe">
+        <i class="fas fa-graduation-cap mr-1" aria-hidden="true"></i> Material de estudio · código 20948
+      </span>
+      <h1 class="mt-4 text-3xl md:text-5xl font-extrabold tracking-tight leading-tight">Análisis de Series de Tiempo</h1>
+      <p class="mt-4 max-w-3xl text-white/80 text-base md:text-lg leading-relaxed">
+        Material de estudio autónomo e interactivo. Seis capítulos que van de la descomposición de una serie
+        al <em>backtesting</em> de un pronóstico, con teoría, fórmulas, código en <strong class="text-white">R</strong> y
+        <strong class="text-white">Python</strong>, y 68 simuladores para mover los parámetros y ver qué pasa.
+      </p>
+
+      <!-- Las cifras del material. `precalculo/cuenta_sitio.py` las contrasta con
+           los capítulos: lee «>N capítulos<», «N módulos en total», «>N simuladores<»,
+           «>N preguntas<» y «Y N ejercicios resueltos», así que van escritas así. -->
+      <ul class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-3 max-w-4xl text-sm text-white/75 break-words"
+        aria-label="Resumen del material">
+        <li class="flex items-start gap-2">
+          <i class="fas fa-layer-group text-secondary mt-1" aria-hidden="true"></i>
+          <span class="min-w-0"><strong class="block text-white font-semibold">6 capítulos</strong>64 módulos en total</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i class="fas fa-sliders text-secondary mt-1" aria-hidden="true"></i>
+          <span class="min-w-0"><strong class="block text-white font-semibold">68 simuladores</strong>Con datos reales precalculados</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i class="fas fa-code text-secondary mt-1" aria-hidden="true"></i>
+          <span class="min-w-0"><strong class="block text-white font-semibold">R y Python</strong>Todo el código, ejecutado</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i class="fas fa-circle-question text-secondary mt-1" aria-hidden="true"></i>
+          <span class="min-w-0"><strong class="block text-white font-semibold">61 preguntas</strong>Y 20 ejercicios resueltos</span>
+        </li>
+      </ul>
+
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="#capitulos"
+          class="inline-flex max-w-full items-center gap-2 bg-white text-primary font-bold px-5 py-2.5 rounded-full shadow-lg hover:bg-gold hover:text-primary transition-all">
+          <i class="fas fa-book-open" aria-hidden="true"></i> Explorar capítulos
+        </a>
+        <a href="capitulo-1-componentes-descomposicion.html"
+          class="inline-flex max-w-full items-center gap-2 border-2 border-white/40 text-white font-semibold px-5 py-2.5 rounded-full hover:bg-white/10 transition-all">
+          <i class="fas fa-play" aria-hidden="true"></i> Comenzar por el Capítulo 1
+        </a>
+        <a href="preparcial-corte-2.html"
+          class="inline-flex max-w-full items-center gap-2 border-2 border-gold text-gold font-semibold px-5 py-2.5 rounded-full hover:bg-gold hover:text-primary transition-all">
+          <i class="fas fa-clipboard-check" aria-hidden="true"></i> Preparcial · Corte II
+        </a>
+        <a href="preparcial-corte-1.html"
+          class="inline-flex max-w-full items-center gap-2 border-2 border-gold text-gold font-semibold px-5 py-2.5 rounded-full hover:bg-gold hover:text-primary transition-all">
+          <i class="fas fa-clipboard-check" aria-hidden="true"></i> Preparcial · Corte I
+        </a>
       </div>
-    </section>
+    </div>
+  </section>
+
+  <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12">
 
     <!-- Cómo está pensado -->
-    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 md:pt-20" aria-labelledby="recorrido">
-      <div class="mb-8 text-center">
-        <p class="text-secondary font-bold uppercase tracking-widest text-sm mb-2">Cómo está pensado</p>
-        <h2 id="recorrido" class="text-2xl md:text-3xl font-bold text-primary">Un recorrido, no seis temas sueltos</h2>
-        <p class="text-gray-600 max-w-3xl mx-auto mt-3 text-sm md:text-base">
-          Cada capítulo usa lo que dejó el anterior y prepara lo que necesita el siguiente. Las mismas series
-          —<code>AirPassengers</code>, el caudal del Nilo, la TRM del peso colombiano— reaparecen capítulo tras
-          capítulo, así que se ve cómo cambia la conclusión a medida que mejoran las herramientas.
-        </p>
+    <section class="mb-12" aria-labelledby="recorrido">
+      <div class="corte-rotulo">
+        <h2 id="recorrido">Un recorrido, no seis temas sueltos</h2>
+        <span class="corte-semanas">Cómo está pensado</span>
       </div>
+      <p class="corte-intro">
+        Cada capítulo usa lo que dejó el anterior y prepara lo que necesita el siguiente. Las mismas series
+        —<code>AirPassengers</code>, el caudal del Nilo, la TRM del peso colombiano— reaparecen capítulo tras
+        capítulo, así que se ve cómo cambia la conclusión a medida que mejoran las herramientas.
+      </p>
       <ol class="ruta">
         <li><strong>1 · Describir</strong><span>¿De qué está hecha la serie?</span></li>
         <li><strong>2 · Estabilizar</strong><span>¿Es modelable así?</span></li>
@@ -273,299 +419,359 @@
       </ol>
     </section>
 
-    <!-- Chapters -->
-    <section id="capitulos" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20"
-      aria-labelledby="titulo-capitulos">
-      <div class="mb-10 text-center">
-        <p class="text-secondary font-bold uppercase tracking-widest text-sm mb-2">Contenido del curso</p>
-        <h2 id="titulo-capitulos" class="text-2xl md:text-3xl font-bold text-primary">Los seis capítulos</h2>
+    <!-- Capítulos -->
+    <section id="capitulos" class="mb-12" aria-labelledby="titulo-capitulos">
+      <div class="corte-rotulo">
+        <h2 id="titulo-capitulos">Los seis capítulos</h2>
+        <span class="corte-semanas">Contenido del curso</span>
       </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-        <a class="chapter-card" href="capitulo-1-componentes-descomposicion.html">
-          <div class="chapter-card__top">
-            <span class="chapter-card__num">1</span>
-            <span class="chapter-card__icon"><i class="fas fa-wave-square" aria-hidden="true"></i></span>
-          </div>
-          <div class="chapter-card__body">
-            <p class="chapter-card__kicker">Módulo I · Semanas 1–2</p>
-            <h3 class="chapter-card__title">Componentes y descomposición</h3>
-            <p class="chapter-card__desc">Qué es una serie de tiempo y cómo se representa en software; gráficos
-              estacionales y de rezagos; los cuatro componentes —tendencia, estacionalidad, ciclo y ruido—; medias
-              móviles, descomposición clásica y STL, desestacionalización y fuerza de cada componente.</p>
-            <div class="chapter-card__meta">
-              <span class="chapter-card__modules"><i class="fas fa-list-ul" aria-hidden="true"></i> 9 módulos · 11 simuladores</span>
-              <span class="chapter-card__go">Comenzar <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+      <article class="tarjeta p-5">
+        <div class="flex items-start gap-4">
+          <div class="tarjeta-num"><i class="fas fa-wave-square" aria-hidden="true"></i></div>
+          <div class="min-w-0 flex-grow">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="tarjeta-semana">Semanas 1–2</span>
+              <span class="text-xs font-semibold text-slate-500">Capítulo 1 · Módulo I</span>
             </div>
+            <h3 class="tarjeta-titulo mt-2 text-base">
+              <a href="capitulo-1-componentes-descomposicion.html">Componentes y descomposición</a>
+            </h3>
           </div>
-        </a>
+        </div>
+        <p class="tarjeta-desc mt-3">Qué es una serie de tiempo y cómo se representa en software; gráficos
+          estacionales y de rezagos; los cuatro componentes —tendencia, estacionalidad, ciclo y ruido—; medias
+          móviles, descomposición clásica y STL, desestacionalización y fuerza de cada componente.</p>
+        <div class="tarjeta-meta mt-4">
+          <span><i class="fas fa-list-ul mr-1" aria-hidden="true"></i>9 módulos · 11 simuladores</span>
+        </div>
+        <p class="mt-4"><span class="tarjeta-abrir">Abrir el capítulo <i class="fas fa-arrow-right"
+              aria-hidden="true"></i></span></p>
+      </article>
 
-        <a class="chapter-card" href="capitulo-2-estacionariedad-acf-pacf.html">
-          <div class="chapter-card__top">
-            <span class="chapter-card__num">2</span>
-            <span class="chapter-card__icon"><i class="fas fa-chart-column" aria-hidden="true"></i></span>
-          </div>
-          <div class="chapter-card__body">
-            <p class="chapter-card__kicker">Módulo I · Semanas 3–4</p>
-            <h3 class="chapter-card__title">Estacionariedad, ACF y PACF</h3>
-            <p class="chapter-card__desc">Estacionariedad estricta y débil, ruido blanco, autocorrelación simple y
-              parcial, caminata aleatoria y raíz unitaria, las pruebas ADF y KPSS —y por qué pueden contradecirse—,
-              diferenciación y transformaciones de Box–Cox.</p>
-            <div class="chapter-card__meta">
-              <span class="chapter-card__modules"><i class="fas fa-list-ul" aria-hidden="true"></i> 9 módulos · 8 simuladores</span>
-              <span class="chapter-card__go">Comenzar <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+      <article class="tarjeta p-5">
+        <div class="flex items-start gap-4">
+          <div class="tarjeta-num"><i class="fas fa-chart-column" aria-hidden="true"></i></div>
+          <div class="min-w-0 flex-grow">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="tarjeta-semana">Semanas 3–4</span>
+              <span class="text-xs font-semibold text-slate-500">Capítulo 2 · Módulo I</span>
             </div>
+            <h3 class="tarjeta-titulo mt-2 text-base">
+              <a href="capitulo-2-estacionariedad-acf-pacf.html">Estacionariedad, ACF y PACF</a>
+            </h3>
           </div>
-        </a>
+        </div>
+        <p class="tarjeta-desc mt-3">Estacionariedad estricta y débil, ruido blanco, autocorrelación simple y
+          parcial, caminata aleatoria y raíz unitaria, las pruebas ADF y KPSS —y por qué pueden contradecirse—,
+          diferenciación y transformaciones de Box–Cox.</p>
+        <div class="tarjeta-meta mt-4">
+          <span><i class="fas fa-list-ul mr-1" aria-hidden="true"></i>9 módulos · 8 simuladores</span>
+        </div>
+        <p class="mt-4"><span class="tarjeta-abrir">Abrir el capítulo <i class="fas fa-arrow-right"
+              aria-hidden="true"></i></span></p>
+      </article>
 
-        <a class="chapter-card" href="capitulo-3-modelos-ar-ma-arma.html">
-          <div class="chapter-card__top">
-            <span class="chapter-card__num">3</span>
-            <span class="chapter-card__icon"><i class="fas fa-diagram-project" aria-hidden="true"></i></span>
-          </div>
-          <div class="chapter-card__body">
-            <p class="chapter-card__kicker">Módulo II · Semanas 5–7</p>
-            <h3 class="chapter-card__title">Modelos AR, MA y ARMA</h3>
-            <p class="chapter-card__desc">Operador de rezago y polinomios característicos, AR(p) y su triángulo de
-              estacionariedad, MA(q) e invertibilidad, dualidad AR↔MA, identificación con ACF y PACF, estimación por
-              máxima verosimilitud, criterios de información y diagnóstico de residuales.</p>
-            <div class="chapter-card__meta">
-              <span class="chapter-card__modules"><i class="fas fa-list-ul" aria-hidden="true"></i> 11 módulos · 12 simuladores</span>
-              <span class="chapter-card__go">Comenzar <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+      <article class="tarjeta p-5">
+        <div class="flex items-start gap-4">
+          <div class="tarjeta-num"><i class="fas fa-diagram-project" aria-hidden="true"></i></div>
+          <div class="min-w-0 flex-grow">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="tarjeta-semana">Semanas 5–7</span>
+              <span class="text-xs font-semibold text-slate-500">Capítulo 3 · Módulo II</span>
             </div>
+            <h3 class="tarjeta-titulo mt-2 text-base">
+              <a href="capitulo-3-modelos-ar-ma-arma.html">Modelos AR, MA y ARMA</a>
+            </h3>
           </div>
-        </a>
+        </div>
+        <p class="tarjeta-desc mt-3">Operador de rezago y polinomios característicos, AR(p) y su triángulo de
+          estacionariedad, MA(q) e invertibilidad, dualidad AR↔MA, identificación con ACF y PACF, estimación por
+          máxima verosimilitud, criterios de información y diagnóstico de residuales.</p>
+        <div class="tarjeta-meta mt-4">
+          <span><i class="fas fa-list-ul mr-1" aria-hidden="true"></i>11 módulos · 12 simuladores</span>
+        </div>
+        <p class="mt-4"><span class="tarjeta-abrir">Abrir el capítulo <i class="fas fa-arrow-right"
+              aria-hidden="true"></i></span></p>
+      </article>
 
-        <a class="chapter-card" href="capitulo-4-modelos-arima.html">
-          <div class="chapter-card__top">
-            <span class="chapter-card__num">4</span>
-            <span class="chapter-card__icon"><i class="fas fa-rotate" aria-hidden="true"></i></span>
-          </div>
-          <div class="chapter-card__body">
-            <p class="chapter-card__kicker">Módulo III · Semanas 8–9</p>
-            <h3 class="chapter-card__title">Modelos ARIMA y Box–Jenkins</h3>
-            <p class="chapter-card__desc">De ARMA a ARIMA, el ciclo de Box–Jenkins recorrible, cómo elegir el orden de
-              integración, la constante y la deriva, el algoritmo de Hyndman–Khandakar por dentro, sobrediferenciación
-              y la construcción del intervalo de pronóstico desde los pesos ψ.</p>
-            <div class="chapter-card__meta">
-              <span class="chapter-card__modules"><i class="fas fa-list-ul" aria-hidden="true"></i> 12 módulos · 11 simuladores</span>
-              <span class="chapter-card__go">Comenzar <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+      <article class="tarjeta p-5">
+        <div class="flex items-start gap-4">
+          <div class="tarjeta-num"><i class="fas fa-rotate" aria-hidden="true"></i></div>
+          <div class="min-w-0 flex-grow">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="tarjeta-semana">Semanas 8–9</span>
+              <span class="text-xs font-semibold text-slate-500">Capítulo 4 · Módulo III</span>
             </div>
+            <h3 class="tarjeta-titulo mt-2 text-base">
+              <a href="capitulo-4-modelos-arima.html">Modelos ARIMA y Box–Jenkins</a>
+            </h3>
           </div>
-        </a>
+        </div>
+        <p class="tarjeta-desc mt-3">De ARMA a ARIMA, el ciclo de Box–Jenkins recorrible, cómo elegir el orden de
+          integración, la constante y la deriva, el algoritmo de Hyndman–Khandakar por dentro, sobrediferenciación
+          y la construcción del intervalo de pronóstico desde los pesos ψ.</p>
+        <div class="tarjeta-meta mt-4">
+          <span><i class="fas fa-list-ul mr-1" aria-hidden="true"></i>12 módulos · 11 simuladores</span>
+        </div>
+        <p class="mt-4"><span class="tarjeta-abrir">Abrir el capítulo <i class="fas fa-arrow-right"
+              aria-hidden="true"></i></span></p>
+        <p class="tarjeta-diapositivas mt-3">
+          <span><i class="fas fa-chalkboard-user mr-1" aria-hidden="true"></i>Diapositivas de clase</span>
+          <a class="tarjeta-extra" href="diapositivas/capitulo-4-modelos-arima.html"
+            aria-label="Módulos 1 a 10: diapositivas del capítulo 4">Módulos 1 a 10</a>
+        </p>
+      </article>
 
-        <a class="chapter-card" href="capitulo-5-sarima.html">
-          <div class="chapter-card__top">
-            <span class="chapter-card__num">5</span>
-            <span class="chapter-card__icon"><i class="fas fa-calendar-days" aria-hidden="true"></i></span>
-          </div>
-          <div class="chapter-card__body">
-            <p class="chapter-card__kicker">Módulo III · Semanas 10–11</p>
-            <h3 class="chapter-card__title">Modelos SARIMA</h3>
-            <p class="chapter-card__desc">La firma de la estacionalidad en la ACF, notación
-              SARIMA(p,d,q)(P,D,Q)<sub>m</sub> y su polinomio multiplicativo, diferenciación estacional, el modelo
-              <em>airline</em>, regresores de calendario y SARIMAX, y qué hacer cuando el periodo es grande:
-              términos de Fourier y STL.</p>
-            <div class="chapter-card__meta">
-              <span class="chapter-card__modules"><i class="fas fa-list-ul" aria-hidden="true"></i> 11 módulos · 12 simuladores</span>
-              <span class="chapter-card__go">Comenzar <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+      <article class="tarjeta p-5">
+        <div class="flex items-start gap-4">
+          <div class="tarjeta-num"><i class="fas fa-calendar-days" aria-hidden="true"></i></div>
+          <div class="min-w-0 flex-grow">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="tarjeta-semana">Semanas 10–11</span>
+              <span class="text-xs font-semibold text-slate-500">Capítulo 5 · Módulo III</span>
             </div>
+            <h3 class="tarjeta-titulo mt-2 text-base">
+              <a href="capitulo-5-sarima.html">Modelos SARIMA</a>
+            </h3>
           </div>
-        </a>
+        </div>
+        <p class="tarjeta-desc mt-3">La firma de la estacionalidad en la ACF, notación
+          SARIMA(p,d,q)(P,D,Q)<sub>m</sub> y su polinomio multiplicativo, diferenciación estacional, el modelo
+          <em>airline</em>, regresores de calendario y SARIMAX, y qué hacer cuando el periodo es grande:
+          términos de Fourier y STL.</p>
+        <div class="tarjeta-meta mt-4">
+          <span><i class="fas fa-list-ul mr-1" aria-hidden="true"></i>11 módulos · 12 simuladores</span>
+        </div>
+        <p class="mt-4"><span class="tarjeta-abrir">Abrir el capítulo <i class="fas fa-arrow-right"
+              aria-hidden="true"></i></span></p>
+      </article>
 
-        <a class="chapter-card" href="capitulo-6-pronostico-evaluacion.html">
-          <div class="chapter-card__top">
-            <span class="chapter-card__num">6</span>
-            <span class="chapter-card__icon"><i class="fas fa-bullseye" aria-hidden="true"></i></span>
-          </div>
-          <div class="chapter-card__body">
-            <p class="chapter-card__kicker">Módulo IV · Semanas 12–16</p>
-            <h3 class="chapter-card__title">Pronóstico y evaluación</h3>
-            <p class="chapter-card__desc">Residual frente a error de pronóstico, métodos de referencia, RMSE, MAE,
-              MAPE y MASE con sus contraejemplos medidos, fuga de información, validación de origen móvil,
-              <em>backtesting</em> con Diebold–Mariano, cobertura de los intervalos y un taller para auditar un
-              análisis asistido por IA.</p>
-            <div class="chapter-card__meta">
-              <span class="chapter-card__modules"><i class="fas fa-list-ul" aria-hidden="true"></i> 12 módulos · 14 simuladores</span>
-              <span class="chapter-card__go">Comenzar <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+      <article class="tarjeta p-5">
+        <div class="flex items-start gap-4">
+          <div class="tarjeta-num"><i class="fas fa-bullseye" aria-hidden="true"></i></div>
+          <div class="min-w-0 flex-grow">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="tarjeta-semana">Semanas 12–16</span>
+              <span class="text-xs font-semibold text-slate-500">Capítulo 6 · Módulo IV</span>
             </div>
+            <h3 class="tarjeta-titulo mt-2 text-base">
+              <a href="capitulo-6-pronostico-evaluacion.html">Pronóstico y evaluación</a>
+            </h3>
           </div>
-        </a>
+        </div>
+        <p class="tarjeta-desc mt-3">Residual frente a error de pronóstico, métodos de referencia, RMSE, MAE,
+          MAPE y MASE con sus contraejemplos medidos, fuga de información, validación de origen móvil,
+          <em>backtesting</em> con Diebold–Mariano, cobertura de los intervalos y un taller para auditar un
+          análisis asistido por IA.</p>
+        <div class="tarjeta-meta mt-4">
+          <span><i class="fas fa-list-ul mr-1" aria-hidden="true"></i>12 módulos · 14 simuladores</span>
+        </div>
+        <p class="mt-4"><span class="tarjeta-abrir">Abrir el capítulo <i class="fas fa-arrow-right"
+              aria-hidden="true"></i></span></p>
+      </article>
 
       </div>
     </section>
 
     <!-- Presentaciones de clase -->
-    <section id="diapositivas" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-14 md:pb-20"
-      aria-labelledby="titulo-diapositivas">
-      <div class="mb-10 text-center">
-        <p class="text-secondary font-bold uppercase tracking-widest text-sm mb-2">Para la clase</p>
-        <h2 id="titulo-diapositivas" class="text-2xl md:text-3xl font-bold text-primary">Presentaciones de clase</h2>
-        <p class="text-gray-600 max-w-3xl mx-auto mt-3 text-sm md:text-base">
-          Diapositivas para proyectar, con notas del presentador. No sustituyen al capítulo: cada
-          sección remite a su módulo. Cada afirmación se etiqueta como dato, definición,
-          interpretación u opinión; cada cifra lleva su fuente, y lo que no se pudo verificar va
-          marcado como tal.
-        </p>
+    <section id="diapositivas" class="mb-12" aria-labelledby="titulo-diapositivas">
+      <div class="corte-rotulo">
+        <h2 id="titulo-diapositivas">Presentaciones de clase</h2>
+        <span class="corte-semanas">Para la clase</span>
       </div>
+      <p class="corte-intro">
+        Diapositivas para proyectar, con notas del presentador. No sustituyen al capítulo: cada
+        sección remite a su módulo. Cada afirmación se etiqueta como dato, definición,
+        interpretación u opinión; cada cifra lleva su fuente, y lo que no se pudo verificar va
+        marcado como tal.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-        <a class="chapter-card" href="diapositivas/capitulo-4-modelos-arima.html">
-          <div class="chapter-card__top">
-            <span class="chapter-card__num">4</span>
-            <span class="chapter-card__icon"><i class="fas fa-desktop" aria-hidden="true"></i></span>
-          </div>
-          <div class="chapter-card__body">
-            <p class="chapter-card__kicker">Capítulo 4 · unos 90–120 min (estimado)</p>
-            <h3 class="chapter-card__title">Modelos ARIMA y Box–Jenkins</h3>
-            <p class="chapter-card__desc">Los módulos 1 a 10 del capítulo en diapositivas: la diferenciación como parte
-              del modelo, el ciclo de Box–Jenkins, cómo elegir <em>d</em>, <em>p</em> y <em>q</em>, la constante y la
-              deriva, el AICc y <code>auto.arima</code>, la sobrediferenciación y el intervalo de pronóstico, hasta el
-              caso de la TRM. Con preguntas para la clase y el código proyectado ejecutado.</p>
-            <div class="chapter-card__meta">
-              <span class="chapter-card__modules"><i class="fas fa-list-ul" aria-hidden="true"></i> 50 diapositivas · con notas</span>
-              <span class="chapter-card__go">Abrir <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+      <article class="tarjeta p-5">
+        <div class="flex items-start gap-4">
+          <div class="tarjeta-num"><i class="fas fa-desktop" aria-hidden="true"></i></div>
+          <div class="min-w-0 flex-grow">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="tarjeta-semana">Capítulo 4</span>
+              <span class="text-xs font-semibold text-slate-500">Unos 90–120 min (estimado)</span>
             </div>
+            <h3 class="tarjeta-titulo mt-2 text-base">
+              <a href="diapositivas/capitulo-4-modelos-arima.html">Modelos ARIMA y Box–Jenkins<span
+                  class="sr-only"> · diapositivas</span></a>
+            </h3>
           </div>
-        </a>
-
-      </div>
-    </section>
-
-    <!-- Talleres -->
-    <section id="talleres" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-14 md:pb-20"
-      aria-labelledby="titulo-talleres">
-      <div class="mb-10 text-center">
-        <p class="text-secondary font-bold uppercase tracking-widest text-sm mb-2">Evaluación y preparación</p>
-        <h2 id="titulo-talleres" class="text-2xl md:text-3xl font-bold text-primary">Talleres, preparciales y proyecto</h2>
-        <p class="text-gray-600 max-w-3xl mx-auto mt-3 text-sm md:text-base">
-          Ninguno es un resumen de los capítulos, y no sirven para lo mismo. Los
-          <strong>talleres</strong> se entregan y se califican: cada estudiante trabaja sobre
-          <strong>sus</strong> series, asignadas por los tres últimos dígitos de su documento, así que
-          el enunciado es el mismo para todos y los datos no. Los <strong>preparciales</strong> no se
-          entregan y no tienen nota: se resuelven solos, y lo que producen no es un puntaje sino la lista
-          concreta de lo que hay que releer antes de cada parcial. El <strong>proyecto</strong> del
-          Corte III es lo único del curso en que la serie la eliges tú.
-        </p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-        <a class="chapter-card" href="taller-1-modulo-1.html">
-          <div class="chapter-card__top">
-            <span class="chapter-card__num">T1</span>
-            <span class="chapter-card__icon"><i class="fas fa-clipboard-check" aria-hidden="true"></i></span>
-          </div>
-          <div class="chapter-card__body">
-            <p class="chapter-card__kicker">Módulo I · Corte I · Semana 4</p>
-            <h3 class="chapter-card__title">Taller 1 · Componentes y estacionariedad</h3>
-            <p class="chapter-card__desc">Cinco tareas sobre los capítulos 1 y 2, cada una con la
-              serie que te toca: clasificar una serie que las pruebas no separan, auditar una
-              descomposición que recibes hecha, refutar una tabla con la evidencia que ella misma
-              contiene, producir un error que no avisa y calificar la respuesta de un modelo.
-              Incluye la rúbrica completa y el banco de la defensa.</p>
-            <div class="chapter-card__meta">
-              <span class="chapter-card__modules"><i class="fas fa-list-ul" aria-hidden="true"></i> 8 módulos · 5 tareas</span>
-              <span class="chapter-card__go">Abrir <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
-            </div>
-          </div>
-        </a>
-
-        <a class="chapter-card" href="taller-2-modulo-2.html">
-          <div class="chapter-card__top">
-            <span class="chapter-card__num">T2</span>
-            <span class="chapter-card__icon"><i class="fas fa-clipboard-check" aria-hidden="true"></i></span>
-          </div>
-          <div class="chapter-card__body">
-            <p class="chapter-card__kicker">Módulo II · Corte II · Semanas 6 a 10</p>
-            <h3 class="chapter-card__title">Taller 2 · Modelos AR, MA y ARMA</h3>
-            <p class="chapter-card__desc">Cinco tareas sobre el capítulo 3, con tres series que te
-              tocan: proponer un orden con la evidencia que hay y decir qué no decide, leer un modelo
-              que sobra en su propia salida, descubrir que un diagnóstico que pasa no basta, medir con
-              tu propio modelo cuán fiable fue tu identificación, y calificar la respuesta de un
-              modelo. Incluye la rúbrica completa y el banco de la defensa.</p>
-            <div class="chapter-card__meta">
-              <span class="chapter-card__modules"><i class="fas fa-list-ul" aria-hidden="true"></i> 8 módulos · 5 tareas</span>
-              <span class="chapter-card__go">Abrir <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
-            </div>
-          </div>
-        </a>
-
-        <a class="chapter-card" href="proyecto-pronostico-corte-iii.html">
-          <div class="chapter-card__top">
-            <span class="chapter-card__num">PRO</span>
-            <span class="chapter-card__icon"><i class="fas fa-chart-line" aria-hidden="true"></i></span>
-          </div>
-          <div class="chapter-card__body">
-            <p class="chapter-card__kicker">Corte III · Semanas 13 a 16 · 50 % del corte</p>
-            <h3 class="chapter-card__title">Proyecto de pronóstico</h3>
-            <p class="chapter-card__desc">Una serie real que eliges tú: preregistrar cómo se va a
-              juzgar el pronóstico antes de ver cómo le va, modelarla, evaluarla por origen móvil
-              contra un método de referencia y defenderla en clase. Cuatro hitos con fecha, la
-              rúbrica completa, una plantilla del informe y la opción de un solo proyecto con
-              Estadística Espacial.</p>
-            <div class="chapter-card__meta">
-              <span class="chapter-card__modules"><i class="fas fa-list-ul" aria-hidden="true"></i> 10 módulos · 4 hitos</span>
-              <span class="chapter-card__go">Abrir <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
-            </div>
-          </div>
-        </a>
-
-        <a class="chapter-card" href="preparcial-corte-1.html">
-          <div class="chapter-card__top">
-            <span class="chapter-card__num">PRE</span>
-            <span class="chapter-card__icon"><i class="fas fa-stethoscope" aria-hidden="true"></i></span>
-          </div>
-          <div class="chapter-card__body">
-            <p class="chapter-card__kicker">Módulo I · antes del Parcial 1 · sin nota</p>
-            <h3 class="chapter-card__title">Preparcial · Corte I</h3>
-            <p class="chapter-card__desc">Autodiagnóstico sobre los capítulos 1 y 2, repartido en
-              cuatro bloques —concepto, procedimiento, interpretación y análisis gráfico— sobre
-              series generadas aparte: aquí reconocer no sustituye a razonar. Publica la tabla de
-              especificaciones del parcial, y al terminar dice en qué objetivo estás flojo y a qué
-              módulo del capítulo volver, con el enlace puesto. Cierran seis ítems de práctica sobre
-              gráficos de series y un simulacro cronometrado de otros seis, con el formato y el reloj
-              del parcial.</p>
-            <div class="chapter-card__meta">
-              <span class="chapter-card__modules"><i class="fas fa-list-ul" aria-hidden="true"></i> 9 módulos · 44 ítems</span>
-              <span class="chapter-card__go">Abrir <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
-            </div>
-          </div>
-        </a>
-
-        <a class="chapter-card" href="preparcial-corte-2.html">
-          <div class="chapter-card__top">
-            <span class="chapter-card__num">PRE</span>
-            <span class="chapter-card__icon"><i class="fas fa-stethoscope" aria-hidden="true"></i></span>
-          </div>
-          <div class="chapter-card__body">
-            <p class="chapter-card__kicker">Módulos II y III · antes del Parcial 2 · sin nota</p>
-            <h3 class="chapter-card__title">Preparcial · Corte II</h3>
-            <p class="chapter-card__desc">Autodiagnóstico sobre los capítulos 3 y 4, de los procesos AR, MA y ARMA
-              al pronóstico con un ARIMA, en cuatro bloques —concepto, procedimiento a mano, interpretación de
-              salidas de R y análisis gráfico— sobre series generadas aparte. Publica la tabla de especificaciones
-              del parcial y al terminar dice en qué objetivo estás flojo y a qué módulo volver. Cierran un
-              simulacro cronometrado de seis ítems y una hoja con las fórmulas y las reglas de decisión.</p>
-            <div class="chapter-card__meta">
-              <span class="chapter-card__modules"><i class="fas fa-list-ul" aria-hidden="true"></i> 8 módulos · 38 ítems</span>
-              <span class="chapter-card__go">Abrir <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
-            </div>
-          </div>
-        </a>
+        </div>
+        <p class="tarjeta-desc mt-3">Los módulos 1 a 10 del capítulo en diapositivas: la diferenciación como parte
+          del modelo, el ciclo de Box–Jenkins, cómo elegir <em>d</em>, <em>p</em> y <em>q</em>, la constante y la
+          deriva, el AICc y <code>auto.arima</code>, la sobrediferenciación y el intervalo de pronóstico, hasta el
+          caso de la TRM. Con preguntas para la clase y el código proyectado ejecutado.</p>
+        <div class="tarjeta-meta mt-4">
+          <span><i class="fas fa-list-ul mr-1" aria-hidden="true"></i>50 diapositivas · con notas</span>
+        </div>
+        <p class="mt-4"><span class="tarjeta-abrir">Abrir las diapositivas <i class="fas fa-arrow-right"
+              aria-hidden="true"></i></span></p>
+      </article>
 
       </div>
     </section>
+
+    <!-- Talleres, preparciales y proyecto -->
+    <section id="talleres" class="mb-4" aria-labelledby="titulo-talleres">
+      <div class="corte-rotulo">
+        <h2 id="titulo-talleres">Talleres, preparciales y proyecto</h2>
+        <span class="corte-semanas">Evaluación y preparación</span>
+      </div>
+      <p class="corte-intro">
+        Ninguno es un resumen de los capítulos, y no sirven para lo mismo. Los
+        <strong>talleres</strong> se entregan y se califican: cada estudiante trabaja sobre
+        <strong>sus</strong> series, asignadas por los tres últimos dígitos de su documento, así que
+        el enunciado es el mismo para todos y los datos no. Los <strong>preparciales</strong> no se
+        entregan y no tienen nota: se resuelven solos, y lo que producen no es un puntaje sino la lista
+        concreta de lo que hay que releer antes de cada parcial. El <strong>proyecto</strong> del
+        Corte III es lo único del curso en que la serie la eliges tú.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+
+      <article class="tarjeta p-5">
+        <div class="flex items-start gap-4">
+          <div class="tarjeta-num"><i class="fas fa-clipboard-check" aria-hidden="true"></i></div>
+          <div class="min-w-0 flex-grow">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="tarjeta-semana">Semana 4</span>
+              <span class="text-xs font-semibold text-slate-500">Corte I · Módulo I</span>
+            </div>
+            <h3 class="tarjeta-titulo mt-2 text-base">
+              <a href="taller-1-modulo-1.html">Taller 1 · Componentes y estacionariedad</a>
+            </h3>
+          </div>
+        </div>
+        <p class="tarjeta-desc mt-3">Cinco tareas sobre los capítulos 1 y 2, cada una con la
+          serie que te toca: clasificar una serie que las pruebas no separan, auditar una
+          descomposición que recibes hecha, refutar una tabla con la evidencia que ella misma
+          contiene, producir un error que no avisa y calificar la respuesta de un modelo.
+          Incluye la rúbrica completa y el banco de la defensa.</p>
+        <div class="tarjeta-meta mt-4">
+          <span><i class="fas fa-list-ul mr-1" aria-hidden="true"></i>8 módulos · 5 tareas</span>
+        </div>
+        <p class="mt-4"><span class="tarjeta-abrir">Abrir el taller <i class="fas fa-arrow-right"
+              aria-hidden="true"></i></span></p>
+      </article>
+
+      <article class="tarjeta p-5">
+        <div class="flex items-start gap-4">
+          <div class="tarjeta-num"><i class="fas fa-clipboard-check" aria-hidden="true"></i></div>
+          <div class="min-w-0 flex-grow">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="tarjeta-semana">Semanas 6 a 10</span>
+              <span class="text-xs font-semibold text-slate-500">Corte II · Módulo II</span>
+            </div>
+            <h3 class="tarjeta-titulo mt-2 text-base">
+              <a href="taller-2-modulo-2.html">Taller 2 · Modelos AR, MA y ARMA</a>
+            </h3>
+          </div>
+        </div>
+        <p class="tarjeta-desc mt-3">Cinco tareas sobre el capítulo 3, con tres series que te
+          tocan: proponer un orden con la evidencia que hay y decir qué no decide, leer un modelo
+          que sobra en su propia salida, descubrir que un diagnóstico que pasa no basta, medir con
+          tu propio modelo cuán fiable fue tu identificación, y calificar la respuesta de un
+          modelo. Incluye la rúbrica completa y el banco de la defensa.</p>
+        <div class="tarjeta-meta mt-4">
+          <span><i class="fas fa-list-ul mr-1" aria-hidden="true"></i>8 módulos · 5 tareas</span>
+        </div>
+        <p class="mt-4"><span class="tarjeta-abrir">Abrir el taller <i class="fas fa-arrow-right"
+              aria-hidden="true"></i></span></p>
+      </article>
+
+      <article class="tarjeta p-5">
+        <div class="flex items-start gap-4">
+          <div class="tarjeta-num"><i class="fas fa-chart-line" aria-hidden="true"></i></div>
+          <div class="min-w-0 flex-grow">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="tarjeta-semana">Semanas 13 a 16</span>
+              <span class="text-xs font-semibold text-primary">Corte III · 50 % del corte</span>
+            </div>
+            <h3 class="tarjeta-titulo mt-2 text-base">
+              <a href="proyecto-pronostico-corte-iii.html">Proyecto de pronóstico</a>
+            </h3>
+          </div>
+        </div>
+        <p class="tarjeta-desc mt-3">Una serie real que eliges tú: preregistrar cómo se va a
+          juzgar el pronóstico antes de ver cómo le va, modelarla, evaluarla por origen móvil
+          contra un método de referencia y defenderla en clase. Cuatro hitos con fecha, la
+          rúbrica completa, una plantilla del informe y la opción de un solo proyecto con
+          Estadística Espacial.</p>
+        <div class="tarjeta-meta mt-4">
+          <span><i class="fas fa-list-ul mr-1" aria-hidden="true"></i>10 módulos · 4 hitos</span>
+        </div>
+        <p class="mt-4"><span class="tarjeta-abrir">Abrir la guía <i class="fas fa-arrow-right"
+              aria-hidden="true"></i></span></p>
+      </article>
+
+      <article class="tarjeta p-5">
+        <div class="flex items-start gap-4">
+          <div class="tarjeta-num"><i class="fas fa-stethoscope" aria-hidden="true"></i></div>
+          <div class="min-w-0 flex-grow">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="tarjeta-semana">Antes del Parcial 1</span>
+              <span class="text-xs font-semibold text-slate-500">Módulo I · sin nota</span>
+            </div>
+            <h3 class="tarjeta-titulo mt-2 text-base">
+              <a href="preparcial-corte-1.html">Preparcial · Corte I</a>
+            </h3>
+          </div>
+        </div>
+        <p class="tarjeta-desc mt-3">Autodiagnóstico sobre los capítulos 1 y 2, repartido en
+          cuatro bloques —concepto, procedimiento, interpretación y análisis gráfico— sobre
+          series generadas aparte: aquí reconocer no sustituye a razonar. Publica la tabla de
+          especificaciones del parcial, y al terminar dice en qué objetivo estás flojo y a qué
+          módulo del capítulo volver, con el enlace puesto. Cierran seis ítems de práctica sobre
+          gráficos de series y un simulacro cronometrado de otros seis, con el formato y el reloj
+          del parcial.</p>
+        <div class="tarjeta-meta mt-4">
+          <span><i class="fas fa-list-ul mr-1" aria-hidden="true"></i>9 módulos · 44 ítems</span>
+        </div>
+        <p class="mt-4"><span class="tarjeta-abrir">Abrir el preparcial <i class="fas fa-arrow-right"
+              aria-hidden="true"></i></span></p>
+      </article>
+
+      <article class="tarjeta p-5">
+        <div class="flex items-start gap-4">
+          <div class="tarjeta-num"><i class="fas fa-stethoscope" aria-hidden="true"></i></div>
+          <div class="min-w-0 flex-grow">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="tarjeta-semana">Antes del Parcial 2</span>
+              <span class="text-xs font-semibold text-slate-500">Módulos II y III · sin nota</span>
+            </div>
+            <h3 class="tarjeta-titulo mt-2 text-base">
+              <a href="preparcial-corte-2.html">Preparcial · Corte II</a>
+            </h3>
+          </div>
+        </div>
+        <p class="tarjeta-desc mt-3">Autodiagnóstico sobre los capítulos 3 y 4, de los procesos AR, MA y ARMA
+          al pronóstico con un ARIMA, en cuatro bloques —concepto, procedimiento a mano, interpretación de
+          salidas de R y análisis gráfico— sobre series generadas aparte. Publica la tabla de especificaciones
+          del parcial y al terminar dice en qué objetivo estás flojo y a qué módulo volver. Cierran un
+          simulacro cronometrado de seis ítems y una hoja con las fórmulas y las reglas de decisión.</p>
+        <div class="tarjeta-meta mt-4">
+          <span><i class="fas fa-list-ul mr-1" aria-hidden="true"></i>8 módulos · 38 ítems</span>
+        </div>
+        <p class="mt-4"><span class="tarjeta-abrir">Abrir el preparcial <i class="fas fa-arrow-right"
+              aria-hidden="true"></i></span></p>
+      </article>
+
+      </div>
+    </section>
+  </div>
   </main>
 
-  <!-- Footer -->
-  <footer class="usta-header" role="contentinfo">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-        <i class="fas fa-book-open" aria-hidden="true"></i> Referencias bibliográficas
+  <footer class="usta-header mt-8" role="contentinfo">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <h2 class="text-base font-semibold text-white mb-4 flex items-center gap-2">
+        <i class="fas fa-book-open text-secondary" aria-hidden="true"></i> Referencias bibliográficas
       </h2>
-      <ul class="space-y-3 text-white/90 text-sm list-none p-0 m-0">
+      <ul class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-white/90 text-sm list-none p-0 m-0">
         <li class="flex items-start gap-2">
           <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
           <span>Hyndman, R.J. &amp; Athanasopoulos, G. (2021). <em class="text-gold">Forecasting: Principles and
@@ -590,16 +796,26 @@
         </li>
       </ul>
 
-      <p class="text-white/70 text-xs mt-6 leading-relaxed">
+      <p class="text-white/70 text-xs mt-6 leading-relaxed max-w-4xl">
         Series de ejemplo: <code>AirPassengers</code>, <code>Nile</code>, <code>co2</code> y
         <code>USAccDeaths</code> de los conjuntos de datos de R, y la Tasa Representativa del Mercado (COP/USD)
         de la Superintendencia Financiera de Colombia vía datos.gov.co. Todos los resultados numéricos del
         material se calcularon ejecutando el código, no se transcribieron.
       </p>
 
-      <div class="mt-8 pt-6 border-t border-white/20 text-center">
-        <p class="text-white font-medium">Diseñado por <span class="text-gold">Javier Mauricio Sierra</span></p>
-        <p class="text-xs mt-1 text-white/60">Análisis de Series de Tiempo · Universidad El Bosque · 2026-II</p>
+      <div class="mt-8 pt-6 border-t border-white/20 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="usta-gradient p-2 rounded-lg shadow-md">
+            <i class="fas fa-chart-line text-white" aria-hidden="true"></i>
+          </div>
+          <div>
+            <p class="text-white font-semibold">Análisis de Series de Tiempo</p>
+            <p class="text-xs text-white/60">Universidad El Bosque • Programa de Matemáticas y Ciencia de Datos •
+              2026-II</p>
+          </div>
+        </div>
+        <p class="text-sm text-white/80 md:text-right">Diseñado por <span class="text-gold font-semibold">Javier
+            Mauricio Sierra</span></p>
       </div>
     </div>
   </footer>
