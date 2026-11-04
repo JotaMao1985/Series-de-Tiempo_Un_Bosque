@@ -592,6 +592,16 @@
       }
     }
 
+    /* KaTeX acompaña cada fórmula de una copia en MathML para lectores de
+       pantalla, oculta con position:absolute. Dentro de una tabla o de una
+       fórmula que se desplazan en horizontal, esa copia se escapaba de la
+       caja y ensanchaba la página en el teléfono (auditoría del 2026-11-03:
+       a 375 px, los módulos 1 y 3 del capítulo 2 medían 391 y 383 px).
+       Con .katex relativo queda contenida. Los capítulos 3 a 6 la heredan. */
+    .katex {
+      position: relative;
+    }
+
     .diagram {
       background-color: #f8fafc;
       border: 2px dashed #cbd5e1;
@@ -2182,9 +2192,6 @@
         min-height: 1.4rem;
       }
     }
-      /* La copia MathML de KaTeX (position:absolute) no debe escaparse de una
-         tabla con desplazamiento horizontal: en el teléfono ensanchaba la página. */
-      .katex { position: relative; }
 
     /* ------------------------------------------------------------------
        Componente .tabla-ranking — tabla comparativa ordenable
