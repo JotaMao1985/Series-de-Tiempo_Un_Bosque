@@ -3276,8 +3276,8 @@ print(np.round([th, Th, th * Th], 4))
 
       <p>Antes de medir con datos reales conviene ver qué hace cada diferencia con números que se comprueban de
         cabeza. La serie de este ejemplo es <strong>inventada</strong>, no medida: las ventas mensuales de una tienda
-        que abre en enero de 2022 con $100$ unidades, vende <strong>una unidad más cada mes</strong> y repite cada año
-        el mismo patrón estacional $s_{\text{mes}}$:</p>
+        que parte en enero de 2022 de un nivel de $100$ unidades, vende <strong>una unidad más cada mes</strong> y
+        repite cada año el mismo patrón estacional $s_{\text{mes}}$:</p>
 
       <p>$$y_t = 100 + (t - 1) + s_{\text{mes}}$$</p>
 
@@ -3295,8 +3295,8 @@ print(np.round([th, Th, th * Th], 4))
         </table>
       </div>
 
-      <p>El patrón suma cero a lo largo del año: pasa ventas de unos meses a otros, pero no cambia el nivel medio. En
-        una cuadrícula con un año por fila y un mes por columna —la vista del mapa del Módulo 1—, cada diferencia es
+      <p>Por eso el primer mes no vende $100$: en enero de 2022, $y_1 = 100 + 0 - 6 = 94$. El patrón suma cero a lo
+        largo del año: pasa ventas de unos meses a otros, pero no cambia el nivel medio. En una cuadrícula con un año por fila y un mes por columna —la vista del mapa del Módulo 1—, cada diferencia es
         una <strong>dirección de resta</strong>:</p>
 
       <ul>
@@ -3384,7 +3384,7 @@ print(np.round([th, Th, th * Th], 4))
           <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
         </div>
         <div class="code-tab-panel active" data-lang="r">
-          <pre><code class="language-r"># Tienda inventada: 100 unidades, una mas al mes y un patron anual de suma cero
+          <pre><code class="language-r"># Tienda inventada: nivel 100, una mas al mes y un patron anual de suma cero
 t      &lt;- 1:48
 patron &lt;- c(-6, -8, -4, -2, 0, 4, 6, 4, 0, -2, 2, 6)
 mes    &lt;- (t - 1) %% 12 + 1
@@ -3522,8 +3522,8 @@ print(cuadricula(y2.diff(12).diff()))
       </div>
 
       <p>La regla de la varianza mínima —del Capítulo 4— señala $d=1, D=1$, y aquí acierta. Pero conviene ver
-        <em>por qué</em> cada fila hace lo que hace: $\nabla$ solo reduce la varianza a la vigésima parte y deja la
-        estacionalidad intacta; $\nabla_{12}$ sola la reduce cincuenta veces y deja $\hat\rho_1 = 0.714$, que es
+        <em>por qué</em> cada fila hace lo que hace: $\nabla$ solo divide la varianza entre $17$ y deja la
+        estacionalidad intacta; $\nabla_{12}$ sola la divide entre $51$ y deja $\hat\rho_1 = 0.714$, que es
         tendencia sin resolver. Cada operador hace su trabajo y solo el suyo.</p>
 
       <h3>El orden en que se decide</h3>
@@ -5620,8 +5620,9 @@ round(c(armonico_K4 = 180.200, n_armonico = 467,
             href="ejercicios/capitulo-5-sarima-ejercicio.xlsx" download>Descarga el libro del estudiante</a>, con
           las fórmulas clave en blanco, y, para comparar después de intentarlo,
           <a class="underline font-semibold" style="color:#c2410c;"
-            href="ejercicios/capitulo-5-sarima-solucion.xlsx" download>la solución</a>. Funciona en Excel 2016 o
-          posterior, en LibreOffice y en Google Sheets.</p>
+            href="ejercicios/capitulo-5-sarima-solucion.xlsx" download>la solución</a>. Está comprobado en
+          Microsoft Excel. Solo usa funciones clásicas, que también existen en LibreOffice y en Google Sheets, aunque
+          ahí todavía no se ha probado.</p>
       </div>
 
       <h3>Lecturas</h3>

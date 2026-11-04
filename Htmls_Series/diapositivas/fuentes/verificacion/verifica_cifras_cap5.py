@@ -486,7 +486,7 @@ permite(K, "12 11", "orden del operador y número de raíces (definición)")
 T, TA = tienda(), tienda(True)
 K = "resta la celda de arriba y"
 claims_cuadricula(K, [(T, (2022, 1), a, f"{a} " + " ".join(str(v) for v in fila_tienda(T, (2022, 1), a))) for a in (2022, 2023, 2024, 2025)])
-C(K, "100", CH_("con $100$ unidades"), kind="ejemplo inventado")
+C(K, "100", CH_("de un nivel de $100$ unidades"), CH_("$y_1 = 100 + 0 - 6 = 94$"), kind="ejemplo inventado")
 C(K, "122", CALC_(lambda: T[26], "marzo de 2024 (t = 27)"))
 C(K, "110", CALC_(lambda: T[14], "marzo de 2023 (t = 15)"))
 C(K, "12", CALC_(lambda: T[26] - T[14], "∇₁₂ en marzo de 2024"), CH_("$122 - 110 = 12$"))
@@ -524,6 +524,10 @@ C(K, "0.20", J_(COMB + ".d1_D0.acf1"))
 C(K, "0.71", J_(COMB + ".d0_D1.acf1"))
 C(K, "17.2", CALC_(lambda: get(J, COMB + ".d0_D0.varianza") / get(J, COMB + ".d1_D0.varianza"), "0.194884/0.011354"))
 C(K, "51.3", CALC_(lambda: get(J, COMB + ".d0_D0.varianza") / get(J, COMB + ".d0_D1.varianza"), "0.194884/0.003800"))
+C(K, "17", CALC_(lambda: get(J, COMB + ".d0_D0.varianza") / get(J, COMB + ".d1_D0.varianza"), "0.194884/0.011354"),
+  CH_("divide la varianza entre $17$"))
+C(K, "51", CALC_(lambda: get(J, COMB + ".d0_D0.varianza") / get(J, COMB + ".d0_D1.varianza"), "0.194884/0.003800"),
+  CH_("la divide entre $51$"))
 C(K, "animado", ANI_("diferencias.json"), kind="gráfico animado")
 permite(K, "12", "rezago")
 
@@ -1115,8 +1119,6 @@ OBSERVACIONES = [
     ("Autoevaluación, pregunta 2: la explicación dice «ρ₂ = ρ₁² ≈ 0.36» para el AR(1)×SAR(1).",
      "En el proceso multiplicado ρ₂ = 0.3637 y ρ₁² = 0.3619: no es una igualdad, aunque los dos redondean a 0.36."),
     ("Autoevaluación, pregunta 6: está etiquetada «módulo 6» y su explicación remite a la lección del Módulo 10.", "Menor."),
-    ("Módulo 3: «∇ solo reduce la varianza a la vigésima parte» y «∇₁₂ sola la reduce cincuenta veces».",
-     "Los cocientes son 17.2 y 51.3. «La vigésima parte» es una aproximación generosa."),
     ("Módulo 6, advertencia final: «los coeficientes casi coinciden con los de R (diferencia 6 × 10⁻⁵)» con statsmodels sin `simple_differencing`.",
      "Con statsmodels 0.14.6 la diferencia máxima es 2.4 × 10⁻⁴ (−0.4021 y −0.5571 frente a −0.4018 y −0.5569). Sigue siendo despreciable; depende de la versión. No se proyecta."),
     ("Las dos copias de la TRM llevan fechas de consulta distintas: `cap5_sarima.json` dice «consulta: 2026-07-24» y `datos_series.json` (y el capítulo 4) «2026-07-26».",
@@ -1125,6 +1127,8 @@ OBSERVACIONES = [
      "Capítulo y diapositivas dan ahora las mismas cifras, y las comprobaciones de tipo «capítulo» lo exigen. Siguen en J dos textos que el capítulo embebe pero no muestra: `puente_cap4` (el ARIMA(0,1,1) con AICc −238.64) y `origen_movil.nota` («corona a la regresión armónica»)."),
     ("Resueltas en el capítulo el 2026-11-03 las cuatro observaciones de la auditoría del 2026-10-28 (`auditoria_cap5.md`): la invertibilidad del Módulo 7 («aunque justo»), el `auto.arima` con m = 365 del Módulo 10 (ilustrado con ruido blanco), los errores estándar «el doble» del Módulo 8 y los «Paso 0…4» del Módulo 7.",
      "El capítulo lee ahora la invertibilidad en Θ̂ y explica que 0.9524 = 0.5569^(1/12); el ejemplo de m = 365 usa un seno anual (ARIMA(0,0,0)(0,1,0)[365]); los cocientes son 1.4 y 2.4; y el caso sigue las etapas 1–5 del protocolo. Las comprobaciones de tipo «capítulo» exigen el texto nuevo."),
+    ("Resueltas en el capítulo el 2026-11-04 dos frases del Módulo 3 que señaló la revisión del ejercicio en Excel: «∇ solo reduce la varianza a la vigésima parte» (el cociente es 17.2) y la tienda que «abre en enero de 2022 con 100 unidades» (el primer valor es 94).",
+     "El capítulo dice ahora que ∇ divide la varianza entre 17 y ∇₁₂ entre 51, y que la tienda parte de un nivel de 100: en enero vende 100 + 0 − 6 = 94. Las comprobaciones de tipo «capítulo» exigen el texto nuevo."),
 ]
 
 

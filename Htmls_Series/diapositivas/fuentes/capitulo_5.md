@@ -372,7 +372,7 @@ Detalle: Módulo 3, derivación.
 | 2024 | 118 | 117 | 122 | 125 | 128 | 133 | 136 | 135 | 132 | 131 | 136 | 141 |
 | 2025 | 130 | 129 | 134 | 137 | 140 | 145 | 148 | 147 | 144 | 143 | 148 | 153 |
 
-<kbd>Definición</kbd> Tienda **inventada**: 100 unidades al abrir, una más cada mes y un patrón anual de suma cero. Marzo de 2024 menos marzo de 2023: \(122-110=12\).
+<kbd>Definición</kbd> Tienda **inventada**: nivel de 100 unidades, una más cada mes y un patrón anual de suma cero. Marzo de 2024 menos marzo de 2023: \(122-110=12\).
 
 <small>Contexto: cifras construidas para seguirlas a mano, enero de 2022 a diciembre de 2025. Fuente: C Módulo 3, «Un ejemplo para seguir a mano» (su bloque de R imprime esta cuadrícula)</small>
 
@@ -440,7 +440,7 @@ Verificación: las filas de la tienda se recalculan en el verificador y coincide
 ???
 Cinco pulsaciones: una combinación por paso y, al final, la conclusión. En el primero, la serie sin diferenciar: todo grande. En el segundo, ∇: la tendencia se va (ρ̂₁ cae a 0.20), pero la estacionalidad se concentra (ρ̂₁₂ sube). En el tercero, ∇₁₂: la estación se va y queda la tendencia (ρ̂₁ = 0.71). En el cuarto, las dos: dos barras negativas, la firma de dos MA, y la varianza mínima. La regla de la varianza del capítulo 4 acierta aquí.
 
-Verificación: ρ̂₁, ρ̂₁₂ y la varianza de cada combinación en J (`combinaciones`) y recalculados en R; el gráfico lo genera `genera_animados_cap5.py` desde J. El capítulo dice que ∇ reduce la varianza «a la vigésima parte» y ∇₁₂ «cincuenta veces»: los cocientes exactos son 17.2 y 51.3. Detalle: Módulo 3, «Las cuatro combinaciones».
+Verificación: ρ̂₁, ρ̂₁₂ y la varianza de cada combinación en J (`combinaciones`) y recalculados en R; el gráfico lo genera `genera_animados_cap5.py` desde J. ∇ divide la varianza entre 17.2 y ∇₁₂ entre 51.3; el capítulo lo redondea a 17 y 51. Detalle: Módulo 3, «Las cuatro combinaciones».
 
 ## `ndiffs()` da 0 en la serie cruda y 1 tras \(\nabla_{12}\): ¿qué significa? {.pregunta}
 

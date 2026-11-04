@@ -161,13 +161,14 @@ def oraculo():
     # M3
     t_ = G.EJEMPLOS["tienda"]
     ok("patron <- c(-6, -8, -4, -2, 0, 4, 6, 4, 0, -2, 2, 6)" in html.unescape(CAPITULO)
-       and "abre en enero de 2022 con $100$" in CAPITULO,
+       and "de un nivel de $100$ unidades" in CAPITULO,
        "M3: los datos de la tienda son los del capítulo")
     t = np.arange(1, 49)
     pat = np.array(t_["patron"])[(t - 1) % 12]
     y0 = 100 + (t - 1) + pat
     y1 = 100 + np.where(t <= 24, t - 1, 23 + 3 * (t - 24)) + pat
     O["tienda"] = (y0, y1)
+    ok("$y_1 = 100 + 0 - 6 = 94$" in CAPITULO and y0[0] == 94, "M3: enero de 2022, 100 + 0 − 6 = 94")
     ok("$122 - 110 = 12$" in CAPITULO and y0[26] - y0[14] == 12, "M3: marzo de 2024, 122 − 110 = 12")
     ok("$128 - 121 - 110 + 105 = 2$" in CAPITULO and y1[26] - y1[25] - y1[14] + y1[13] == 2,
        "M3: con aceleración, 128 − 121 − 110 + 105 = 2")
