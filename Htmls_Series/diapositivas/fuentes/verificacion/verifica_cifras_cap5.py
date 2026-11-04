@@ -256,6 +256,51 @@ def ANI_(nombre):
 # REGISTRO DE CLAIMS, diapositiva por diapositiva (la clave es un trozo del título)
 # ===========================================================================
 
+# ---- Los ejemplos inventados del capítulo (2026-11-03) ------------------------------
+# La heladería del Módulo 2 y la tienda del Módulo 3 no tienen precálculo: son cifras
+# construidas. Se recalculan aquí con la misma regla que el capítulo y, además, cada fila
+# de la tienda se busca tal cual en la salida de R que imprime el capítulo (`CH_`).
+HEL = {"feb24": 15, "mar24": 20, "feb25": 10, "phi": 0.6, "Phi": 0.7}
+PATRON_TIENDA = [-6, -8, -4, -2, 0, 4, 6, 4, 0, -2, 2, 6]
+
+
+def tienda(acelera=False):
+    return [100 + ((23 + 3 * (k - 24)) if acelera and k > 24 else k - 1) + PATRON_TIENDA[(k - 1) % 12]
+            for k in range(1, 49)]
+
+
+def dif(y, lag=1):
+    return [b - a for a, b in zip(y, y[lag:])]
+
+
+def fila_tienda(serie, inicio, anio):
+    """Los doce meses de `anio` de una serie que empieza en `inicio` (año, mes)."""
+    i = (anio - inicio[0]) * 12 - (inicio[1] - 1)
+    return serie[i:i + 12]
+
+
+def claims_cuadricula(K, filas):
+    """filas: [(serie, inicio, año, texto de la fila en la salida de R del capítulo o None)].
+    Cada número ≥ 10 de la diapositiva queda respaldado por un CALC que exige que su fila
+    coincida con la recalculada, y la fila, por su aparición literal en el capítulo."""
+    vistos = set()
+    for serie, inicio, anio, salida_r in filas:
+        valores = fila_tienda(serie, inicio, anio)
+        if salida_r is not None:
+            C(K, f"fila {anio}", CH_(f"{salida_r}"), kind="cuadrícula del capítulo")
+        for v in valores:
+            if abs(v) >= 10 and v not in vistos:
+                vistos.add(v)
+                C(K, str(v), CALC_(lambda v=v, vs=tuple(valores): v if v in vs else math.nan,
+                                    f"la fila {anio} de la tienda recalculada contiene {v}"), kind="ejemplo inventado")
+
+
+def alca(a):
+    """Media de ∇₁₂ log(AirPassengers) en el año `a` (la serie arranca en enero de 1949)."""
+    g = [LAP[i] - LAP[i - 12] for i in range(12, len(LAP))]
+    return sum(g[(a - 1950) * 12:(a - 1950) * 12 + 12]) / 12
+
+
 # ---- Leyenda --------------------------------------------------------------------
 K = "Cada afirmación es un dato"
 C(K, "24", J_("horizonte"), kind="horizonte")
@@ -360,8 +405,34 @@ K = "Ver y medir la estacionalidad cabe"
 permite(K, "13 12", "posición del rezago 12 en a$acf (convención de R)")
 
 # ---- M2 -------------------------------------------------------------------------
+K = "Multiplicar es preguntar dos veces"
+for anio in ("2024", "2025"):
+    C(K, anio, DEF_("año del ejemplo inventado del capítulo"), kind="ejemplo inventado")
+for v in ("15", "20", "10"):
+    C(K, v, CH_("2024 $15$ $20$"), CH_("2025 $10$ $?$"), kind="ejemplo inventado")
+C(K, "0.6", DEF_("φ del capítulo"), kind="parámetro")
+C(K, "0.7", DEF_("Φ del capítulo"), kind="parámetro")
+C(K, "11", CALC_(lambda: HEL["mar24"] - HEL["phi"] * HEL["feb24"], "20 − 0.6·15"), CH_("$20 - 0.6 \\cdot 15 = 11$"))
+C(K, "7.7", CALC_(lambda: HEL["Phi"] * (HEL["mar24"] - HEL["phi"] * HEL["feb24"]), "0.7·11"), CH_("$0.7 \\cdot 11 = 7.7$"))
+C(K, "13.7", CALC_(lambda: HEL["phi"] * HEL["feb25"] + HEL["Phi"] * (HEL["mar24"] - HEL["phi"] * HEL["feb24"]), "0.6·10 + 7.7"),
+  CH_("$0.6 \\cdot 10 + 7.7 = 13.7$"))
+permite(K, "12", "periodo")
+
 K = "Multiplicar no es sumar"
 permite(K, "13 12 11", "rezagos del polinomio (definición)")
+C(K, "0.6", DEF_("φ del capítulo"), kind="parámetro")
+C(K, "0.7", DEF_("Φ del capítulo"), kind="parámetro")
+C(K, "0.42", CALC_(lambda: HEL["phi"] * HEL["Phi"], "φΦ"), CH_("$-0.42 = -0.6 \\cdot 0.7$"))
+C(K, "-0.42", CALC_(lambda: -HEL["phi"] * HEL["Phi"], "−φΦ, el peso del satélite"), CH_("$-0.42 = -0.6 \\cdot 0.7$"))
+for v in ("10", "15"):
+    C(K, v, CH_("2024 $15$ $20$"), CH_("2025 $10$ $?$"), kind="ejemplo inventado")
+C(K, "20", CALC_(lambda: HEL["phi"] * HEL["feb25"] + HEL["Phi"] * HEL["mar24"], "0.6·10 + 0.7·20, sin satélite"),
+  CH_("$0.6 \\cdot 10 + 0.7 \\cdot 20 = 20$"))
+C(K, "13.7", CALC_(lambda: HEL["phi"] * HEL["feb25"] + HEL["Phi"] * HEL["mar24"] - HEL["phi"] * HEL["Phi"] * HEL["feb24"],
+                   "0.6·10 + 0.7·20 − 0.42·15"), CH_("$$0.6 \\cdot 10 + 0.7 \\cdot 20 - 0.42 \\cdot 15 = 13.7$$"))
+C(K, "6.3", CALC_(lambda: 20 - 13.7, "20 − 13.7"), CALC_(lambda: HEL["Phi"] * HEL["phi"] * HEL["feb24"], "0.7·9 = 0.42·15"),
+  CH_("$20 - 13.7 = 6.3$"))
+C(K, "2024", DEF_("año del ejemplo inventado del capítulo"), kind="ejemplo inventado")
 
 K = "brotan satélites en 11 y 13"
 C(K, "0.4230", J_(TEO + ".ar1_sar1.acf.10"), R_("m4.ar1_sar1.r11"))
@@ -375,32 +446,24 @@ C(K, "0.7", DEF_("Φ del capítulo"), kind="parámetro")
 C(K, "animado", ANI_("satelites.json"), kind="gráfico animado")
 permite(K, "11 13 12 24 36", "rezagos")
 
-K = "En un MA puro con"
+K = "La varianza se pide a la serie diferenciada"
 C(K, "1.5217", R_("m2.factor_airline"))
 C(K, "0.001371", J_(AIR + ".sigma2"), R_("m2.sigma2"))
 C(K, "0.002087", R_("m2.gamma0_airline"))
 C(K, "0.002102", J_(COMB + ".d1_D1.varianza"), R_("m2.var_muestral_w"))
 C(K, "131", J_(COMB + ".d1_D1.n"), R_("m2.n_w"))
 C(K, "0.5", DEF_("θ₁₂ del ejemplo del capítulo"), kind="parámetro")
-C(K, "0.6", DEF_("Θ del ejemplo del capítulo"), kind="parámetro")
 C(K, "2.300", R_("m2.choque_exacta"))
 C(K, "1.700", R_("m2.choque_factorizada"))
 C(K, "0.00137126", R_("m2.sigma2"))
-permite(K, "12 13", "rezagos de los pesos")
-
-K = "Con parte AR no hay factorización"
-for i, (phi, p12, ex, fa, er) in enumerate((("0.6", "0.002", "3.073", "3.064", "-0.3"), ("0.8", "0.069", "5.997", "5.447", "-9.2"),
-                                             ("0.9", "0.282", "15.406", "10.320", "-33.0"), ("0.95", "0.540", "44.580", "20.111", "-54.9"))):
+for i, (phi, er) in enumerate((("0.6", "-0.3"), ("0.8", "-9.2"), ("0.9", "-33.0"), ("0.95", "-54.9"))):
     C(K, phi, R_(f"m2.tabla_phi.{i}.phi"), kind="parámetro")
-    C(K, p12, R_(f"m2.tabla_phi.{i}.phi12"))
-    C(K, ex, R_(f"m2.tabla_phi.{i}.exacta"))
-    C(K, fa, R_(f"m2.tabla_phi.{i}.factorizada"))
     C(K, er, R_(f"m2.tabla_phi.{i}.error_pct"))
-C(K, "50", BOOL_("R", lambda: R["m2"]["tabla_phi"][3]["error_pct"] < -50, "el error con φ = 0.95 pasa del −50 % (R)"), kind="cota")
-permite(K, "50", "cota del título (ver el claim «50»)")
+C(K, "15.406", R_("m2.tabla_phi.2.exacta"))
+C(K, "10.320", R_("m2.tabla_phi.2.factorizada"))
 C(K, "0.7", DEF_("Φ fijo del capítulo"), kind="parámetro")
 C(K, "20000", DEF_("número de pesos ψ que suma verifica_directo_cap5.R"), kind="cálculo")
-permite(K, "12", "rezago")
+permite(K, "12 13", "rezagos")
 
 K = "SARIMA(1,0,0)(1,0,0)"
 C(K, "0.364", J_(TEO + ".ar1_sar1.acf.1"))
@@ -419,6 +482,36 @@ permite(K, "13", "rezagos que toca la forma no multiplicativa (1 a 13)")
 # ---- M3–M4 ----------------------------------------------------------------------
 K = "compara enero con enero"
 permite(K, "12 11", "orden del operador y número de raíces (definición)")
+
+T, TA = tienda(), tienda(True)
+K = "resta la celda de arriba y"
+claims_cuadricula(K, [(T, (2022, 1), a, f"{a} " + " ".join(str(v) for v in fila_tienda(T, (2022, 1), a))) for a in (2022, 2023, 2024, 2025)])
+C(K, "100", CH_("con $100$ unidades"), kind="ejemplo inventado")
+C(K, "122", CALC_(lambda: T[26], "marzo de 2024 (t = 27)"))
+C(K, "110", CALC_(lambda: T[14], "marzo de 2023 (t = 15)"))
+C(K, "12", CALC_(lambda: T[26] - T[14], "∇₁₂ en marzo de 2024"), CH_("$122 - 110 = 12$"))
+for a in ("2022", "2023", "2024", "2025"):
+    C(K, a, DEF_("año del ejemplo inventado"), kind="ejemplo inventado")
+
+K = "deja el patrón; "
+claims_cuadricula(K, [(dif(T), (2022, 2), 2024, "2024 -11 -1 5 3 3 5 3 -1 -3 -1 5 5"),
+                      (dif(T), (2022, 2), 2025, "2025 -11 -1 5 3 3 5 3 -1 -3 -1 5 5"),
+                      (dif(T, 12), (2023, 1), 2024, "2024 12 12 12 12 12 12 12 12 12 12 12 12"),
+                      (dif(dif(T, 12)), (2023, 2), 2024, "2024 0 0 0 0 0 0 0 0 0 0 0 0")])
+for a in ("2024", "2025"):
+    C(K, a, DEF_("año del ejemplo inventado"), kind="ejemplo inventado")
+
+K = "Si la tienda acelera en 2024"
+claims_cuadricula(K, [(dif(TA, 12), (2023, 1), 2023, "2023 12 12 12 12 12 12 12 12 12 12 12 12"),
+                      (dif(TA, 12), (2023, 1), 2024, "2024 14 16 18 20 22 24 26 28 30 32 34 36"),
+                      (dif(dif(TA, 12)), (2023, 2), 2024, "2024 2 2 2 2 2 2 2 2 2 2 2 2")])
+for a in ("2023", "2024"):
+    C(K, a, DEF_("año del ejemplo inventado"), kind="ejemplo inventado")
+C(K, "0.032", CALC_(lambda: alca(1958), "media de ∇₁₂ log AP en 1958"), CH_("$0.032$ en 1958"))
+C(K, "0.201", CALC_(lambda: alca(1951), "media de ∇₁₂ log AP en 1951"), CH_("$0.201$ en 1951"))
+C(K, "1958", BOOL_("CALC", lambda: min(range(1950, 1961), key=alca) == 1958, "1958 es el año de menor crecimiento medio"), kind="año")
+C(K, "1951", BOOL_("CALC", lambda: max(range(1950, 1961), key=alca) == 1951, "1951 es el de mayor crecimiento medio"), kind="año")
+C(K, "0.714", J_(COMB + ".d0_D1.acf1"))
 
 K = "Cada operador hace su trabajo"
 C(K, "0.762", J_(COMB + ".d0_D0.acf12"))
@@ -445,7 +538,9 @@ C(K, "1978", R_("datos.uad_fin"))
 C(K, "72", R_("datos.uad_n"))
 
 K = "Los operadores conmutan"
-permite(K, "12", "rezago")
+permite(K, "12 13", "rezagos")
+for v, k in (("128", 26), ("121", 25), ("110", 14), ("105", 13)):
+    C(K, v, CALC_(lambda k=k: tienda(True)[k], f"tienda que acelera, t = {k + 1}"), CH_("$128 - 121 - 110 + 105 = 2$"))
 
 K = "Diferenciar de más deja la firma"
 for i, (n, var, th, ee, rz) in enumerate((("143", "0.011354", "0.7397", "0.0610", "0.9752"), ("131", "0.002102", "-0.5569", "0.0731", "0.9524"),

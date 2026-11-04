@@ -15,14 +15,14 @@ Generado por `verifica_cifras_cap5.py`. Cada fila es una cifra (o afirmación) d
 
 ## Resumen
 
-- Cifras y afirmaciones registradas: **671**
-- Verificadas contra al menos una fuente: **624**
-- Definiciones o convenciones: **47**
+- Cifras y afirmaciones registradas: **768**
+- Verificadas contra al menos una fuente: **707**
+- Definiciones o convenciones: **61**
 - Comprobadas a mano en una fuente pública fuera del repositorio (`WEB`, con fecha): **7**
 - Marcadas `[SIN VERIFICAR]`: **5**
 - No coinciden: **0**
 
-Contrastes por tipo de fuente: C 64, CALC 116, DOC 17, J 330, J3 2, J4 6, PY 10, R 234, WEB 7.
+Contrastes por tipo de fuente: C 101, CALC 193, DOC 17, J 331, J3 2, J4 6, PY 10, R 223, WEB 7.
 
 ## Código proyectado, ejecutado
 
@@ -190,6 +190,36 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `0.071` | dato | J: cap5_sarima.json › trm_contraejemplo.acf36 = 0.0714<br>CALC: ∇TRM, 36 = 0.071383 | verificado |
 | `1.96` | convención | DEF: cuantil 0.975 de la normal, convención | definición (no se mide) |
 
+### Multiplicar es preguntar dos veces: primero al mes anterior, después al año anterior {columnas=2:3}
+
+| Cifra o afirmación | Tipo | Fuentes y valor | Estado |
+|---|---|---|---|
+| `2024` | ejemplo inventado | DEF: año del ejemplo inventado del capítulo | definición (no se mide) |
+| `2025` | ejemplo inventado | DEF: año del ejemplo inventado del capítulo | definición (no se mide) |
+| `15` | ejemplo inventado | C: capítulo 5 contiene «2024 $15$ $20$»<br>C: capítulo 5 contiene «2025 $10$ $?$» | verificado |
+| `20` | ejemplo inventado | C: capítulo 5 contiene «2024 $15$ $20$»<br>C: capítulo 5 contiene «2025 $10$ $?$» | verificado |
+| `10` | ejemplo inventado | C: capítulo 5 contiene «2024 $15$ $20$»<br>C: capítulo 5 contiene «2025 $10$ $?$» | verificado |
+| `0.6` | parámetro | DEF: φ del capítulo | definición (no se mide) |
+| `0.7` | parámetro | DEF: Φ del capítulo | definición (no se mide) |
+| `11` | dato | CALC: 20 − 0.6·15 = 11.0<br>C: capítulo 5 contiene «$20 - 0.6 \cdot 15 = 11$» | verificado |
+| `7.7` | dato | CALC: 0.7·11 = 7.7<br>C: capítulo 5 contiene «$0.7 \cdot 11 = 7.7$» | verificado |
+| `13.7` | dato | CALC: 0.6·10 + 7.7 = 13.7<br>C: capítulo 5 contiene «$0.6 \cdot 10 + 7.7 = 13.7$» | verificado |
+
+### Multiplicar no es sumar: el rezago 13 aparece sin un parámetro propio
+
+| Cifra o afirmación | Tipo | Fuentes y valor | Estado |
+|---|---|---|---|
+| `0.6` | parámetro | DEF: φ del capítulo | definición (no se mide) |
+| `0.7` | parámetro | DEF: Φ del capítulo | definición (no se mide) |
+| `0.42` | dato | CALC: φΦ = 0.42<br>C: capítulo 5 contiene «$-0.42 = -0.6 \cdot 0.7$» | verificado |
+| `-0.42` | dato | CALC: −φΦ, el peso del satélite = -0.42<br>C: capítulo 5 contiene «$-0.42 = -0.6 \cdot 0.7$» | verificado |
+| `10` | ejemplo inventado | C: capítulo 5 contiene «2024 $15$ $20$»<br>C: capítulo 5 contiene «2025 $10$ $?$» | verificado |
+| `15` | ejemplo inventado | C: capítulo 5 contiene «2024 $15$ $20$»<br>C: capítulo 5 contiene «2025 $10$ $?$» | verificado |
+| `20` | dato | CALC: 0.6·10 + 0.7·20, sin satélite = 20.0<br>C: capítulo 5 contiene «$0.6 \cdot 10 + 0.7 \cdot 20 = 20$» | verificado |
+| `13.7` | dato | CALC: 0.6·10 + 0.7·20 − 0.42·15 = 13.7<br>C: capítulo 5 contiene «$$0.6 \cdot 10 + 0.7 \cdot 20 - 0.42 \cdot 15 = 13.7$$» | verificado |
+| `6.3` | dato | CALC: 20 − 13.7 = 6.3<br>CALC: 0.7·9 = 0.42·15 = 6.3<br>C: capítulo 5 contiene «$20 - 13.7 = 6.3$» | verificado |
+| `2024` | ejemplo inventado | DEF: año del ejemplo inventado del capítulo | definición (no se mide) |
+
 ### Con \(\phi=0.6\) y \(\Phi=0.7\) brotan satélites en 11 y 13 que nadie pidió
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
@@ -204,7 +234,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `0.7` | parámetro | DEF: Φ del capítulo | definición (no se mide) |
 | `animado` | gráfico animado | CALC: recursos/cap5/satelites.json es idéntico a lo que genera genera_animados_cap5.py desde J | verificado |
 
-### En un MA puro con \(q<m\), la varianza se factoriza exactamente: el *airline* es ese caso
+### La varianza se pide a la serie diferenciada, y solo se factoriza si el modelo es MA puro
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -214,36 +244,19 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `0.002102` | dato | J: cap5_sarima.json › airpassengers.combinaciones.d1_D1.varianza = 0.002102<br>R: directo_cap5.json › m2.var_muestral_w = 0.002102 | verificado |
 | `131` | dato | J: cap5_sarima.json › airpassengers.combinaciones.d1_D1.n = 131<br>R: directo_cap5.json › m2.n_w = 131 | verificado |
 | `0.5` | parámetro | DEF: θ₁₂ del ejemplo del capítulo | definición (no se mide) |
-| `0.6` | parámetro | DEF: Θ del ejemplo del capítulo | definición (no se mide) |
 | `2.300` | dato | R: directo_cap5.json › m2.choque_exacta = 2.3 | verificado |
 | `1.700` | dato | R: directo_cap5.json › m2.choque_factorizada = 1.7 | verificado |
 | `0.00137126` | dato | R: directo_cap5.json › m2.sigma2 = 0.001371 | verificado |
-
-### Con parte AR no hay factorización: \(\psi_{12}=\phi^{12}+\Phi\), y el error pasa del 50 %
-
-| Cifra o afirmación | Tipo | Fuentes y valor | Estado |
-|---|---|---|---|
 | `0.6` | parámetro | R: directo_cap5.json › m2.tabla_phi.0.phi = 0.6 | verificado |
-| `0.002` | dato | R: directo_cap5.json › m2.tabla_phi.0.phi12 = 0.002177 | verificado |
-| `3.073` | dato | R: directo_cap5.json › m2.tabla_phi.0.exacta = 3.073076 | verificado |
-| `3.064` | dato | R: directo_cap5.json › m2.tabla_phi.0.factorizada = 3.063725 | verificado |
 | `-0.3` | dato | R: directo_cap5.json › m2.tabla_phi.0.error_pct = -0.304286 | verificado |
 | `0.8` | parámetro | R: directo_cap5.json › m2.tabla_phi.1.phi = 0.8 | verificado |
-| `0.069` | dato | R: directo_cap5.json › m2.tabla_phi.1.phi12 = 0.068719 | verificado |
-| `5.997` | dato | R: directo_cap5.json › m2.tabla_phi.1.exacta = 5.997108 | verificado |
-| `5.447` | dato | R: directo_cap5.json › m2.tabla_phi.1.factorizada = 5.446623 | verificado |
 | `-9.2` | dato | R: directo_cap5.json › m2.tabla_phi.1.error_pct = -9.179175 | verificado |
 | `0.9` | parámetro | R: directo_cap5.json › m2.tabla_phi.2.phi = 0.9 | verificado |
-| `0.282` | dato | R: directo_cap5.json › m2.tabla_phi.2.phi12 = 0.28243 | verificado |
-| `15.406` | dato | R: directo_cap5.json › m2.tabla_phi.2.exacta = 15.405936 | verificado |
-| `10.320` | dato | R: directo_cap5.json › m2.tabla_phi.2.factorizada = 10.319917 | verificado |
 | `-33.0` | dato | R: directo_cap5.json › m2.tabla_phi.2.error_pct = -33.01337 | verificado |
 | `0.95` | parámetro | R: directo_cap5.json › m2.tabla_phi.3.phi = 0.95 | verificado |
-| `0.540` | dato | R: directo_cap5.json › m2.tabla_phi.3.phi12 = 0.54036 | verificado |
-| `44.580` | dato | R: directo_cap5.json › m2.tabla_phi.3.exacta = 44.579943 | verificado |
-| `20.111` | dato | R: directo_cap5.json › m2.tabla_phi.3.factorizada = 20.110608 | verificado |
 | `-54.9` | dato | R: directo_cap5.json › m2.tabla_phi.3.error_pct = -54.888663 | verificado |
-| `50` | cota | R: el error con φ = 0.95 pasa del −50 % (R) | verificado |
+| `15.406` | dato | R: directo_cap5.json › m2.tabla_phi.2.exacta = 15.405936 | verificado |
+| `10.320` | dato | R: directo_cap5.json › m2.tabla_phi.2.factorizada = 10.319917 | verificado |
 | `0.7` | parámetro | DEF: Φ fijo del capítulo | definición (no se mide) |
 | `20000` | cálculo | DEF: número de pesos ψ que suma verifica_directo_cap5.R | definición (no se mide) |
 
@@ -263,6 +276,106 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
 | `0.2238` | dato | R: directo_cap5.json › m2.coef_b13 = 0.223796<br>CALC: θ·Θ con J = 0.223762 | verificado |
+
+### \(\nabla_{12}\) resta la celda de arriba y \(\nabla\), la de la izquierda
+
+| Cifra o afirmación | Tipo | Fuentes y valor | Estado |
+|---|---|---|---|
+| `fila 2022` | cuadrícula del capítulo | C: capítulo 5 contiene «2022 94 93 98 101 104 109 112 111 108 107 112 117» | verificado |
+| `94` | ejemplo inventado | CALC: la fila 2022 de la tienda recalculada contiene 94 = 94 | verificado |
+| `93` | ejemplo inventado | CALC: la fila 2022 de la tienda recalculada contiene 93 = 93 | verificado |
+| `98` | ejemplo inventado | CALC: la fila 2022 de la tienda recalculada contiene 98 = 98 | verificado |
+| `101` | ejemplo inventado | CALC: la fila 2022 de la tienda recalculada contiene 101 = 101 | verificado |
+| `104` | ejemplo inventado | CALC: la fila 2022 de la tienda recalculada contiene 104 = 104 | verificado |
+| `109` | ejemplo inventado | CALC: la fila 2022 de la tienda recalculada contiene 109 = 109 | verificado |
+| `112` | ejemplo inventado | CALC: la fila 2022 de la tienda recalculada contiene 112 = 112 | verificado |
+| `111` | ejemplo inventado | CALC: la fila 2022 de la tienda recalculada contiene 111 = 111 | verificado |
+| `108` | ejemplo inventado | CALC: la fila 2022 de la tienda recalculada contiene 108 = 108 | verificado |
+| `107` | ejemplo inventado | CALC: la fila 2022 de la tienda recalculada contiene 107 = 107 | verificado |
+| `117` | ejemplo inventado | CALC: la fila 2022 de la tienda recalculada contiene 117 = 117 | verificado |
+| `fila 2023` | cuadrícula del capítulo | C: capítulo 5 contiene «2023 106 105 110 113 116 121 124 123 120 119 124 129» | verificado |
+| `106` | ejemplo inventado | CALC: la fila 2023 de la tienda recalculada contiene 106 = 106 | verificado |
+| `105` | ejemplo inventado | CALC: la fila 2023 de la tienda recalculada contiene 105 = 105 | verificado |
+| `110` | ejemplo inventado | CALC: la fila 2023 de la tienda recalculada contiene 110 = 110 | verificado |
+| `113` | ejemplo inventado | CALC: la fila 2023 de la tienda recalculada contiene 113 = 113 | verificado |
+| `116` | ejemplo inventado | CALC: la fila 2023 de la tienda recalculada contiene 116 = 116 | verificado |
+| `121` | ejemplo inventado | CALC: la fila 2023 de la tienda recalculada contiene 121 = 121 | verificado |
+| `124` | ejemplo inventado | CALC: la fila 2023 de la tienda recalculada contiene 124 = 124 | verificado |
+| `123` | ejemplo inventado | CALC: la fila 2023 de la tienda recalculada contiene 123 = 123 | verificado |
+| `120` | ejemplo inventado | CALC: la fila 2023 de la tienda recalculada contiene 120 = 120 | verificado |
+| `119` | ejemplo inventado | CALC: la fila 2023 de la tienda recalculada contiene 119 = 119 | verificado |
+| `129` | ejemplo inventado | CALC: la fila 2023 de la tienda recalculada contiene 129 = 129 | verificado |
+| `fila 2024` | cuadrícula del capítulo | C: capítulo 5 contiene «2024 118 117 122 125 128 133 136 135 132 131 136 141» | verificado |
+| `118` | ejemplo inventado | CALC: la fila 2024 de la tienda recalculada contiene 118 = 118 | verificado |
+| `122` | ejemplo inventado | CALC: la fila 2024 de la tienda recalculada contiene 122 = 122 | verificado |
+| `125` | ejemplo inventado | CALC: la fila 2024 de la tienda recalculada contiene 125 = 125 | verificado |
+| `128` | ejemplo inventado | CALC: la fila 2024 de la tienda recalculada contiene 128 = 128 | verificado |
+| `133` | ejemplo inventado | CALC: la fila 2024 de la tienda recalculada contiene 133 = 133 | verificado |
+| `136` | ejemplo inventado | CALC: la fila 2024 de la tienda recalculada contiene 136 = 136 | verificado |
+| `135` | ejemplo inventado | CALC: la fila 2024 de la tienda recalculada contiene 135 = 135 | verificado |
+| `132` | ejemplo inventado | CALC: la fila 2024 de la tienda recalculada contiene 132 = 132 | verificado |
+| `131` | ejemplo inventado | CALC: la fila 2024 de la tienda recalculada contiene 131 = 131 | verificado |
+| `141` | ejemplo inventado | CALC: la fila 2024 de la tienda recalculada contiene 141 = 141 | verificado |
+| `fila 2025` | cuadrícula del capítulo | C: capítulo 5 contiene «2025 130 129 134 137 140 145 148 147 144 143 148 153» | verificado |
+| `130` | ejemplo inventado | CALC: la fila 2025 de la tienda recalculada contiene 130 = 130 | verificado |
+| `134` | ejemplo inventado | CALC: la fila 2025 de la tienda recalculada contiene 134 = 134 | verificado |
+| `137` | ejemplo inventado | CALC: la fila 2025 de la tienda recalculada contiene 137 = 137 | verificado |
+| `140` | ejemplo inventado | CALC: la fila 2025 de la tienda recalculada contiene 140 = 140 | verificado |
+| `145` | ejemplo inventado | CALC: la fila 2025 de la tienda recalculada contiene 145 = 145 | verificado |
+| `148` | ejemplo inventado | CALC: la fila 2025 de la tienda recalculada contiene 148 = 148 | verificado |
+| `147` | ejemplo inventado | CALC: la fila 2025 de la tienda recalculada contiene 147 = 147 | verificado |
+| `144` | ejemplo inventado | CALC: la fila 2025 de la tienda recalculada contiene 144 = 144 | verificado |
+| `143` | ejemplo inventado | CALC: la fila 2025 de la tienda recalculada contiene 143 = 143 | verificado |
+| `153` | ejemplo inventado | CALC: la fila 2025 de la tienda recalculada contiene 153 = 153 | verificado |
+| `100` | ejemplo inventado | C: capítulo 5 contiene «con $100$ unidades» | verificado |
+| `122` | dato | CALC: marzo de 2024 (t = 27) = 122 | verificado |
+| `110` | dato | CALC: marzo de 2023 (t = 15) = 110 | verificado |
+| `12` | dato | CALC: ∇₁₂ en marzo de 2024 = 12<br>C: capítulo 5 contiene «$122 - 110 = 12$» | verificado |
+| `2022` | ejemplo inventado | DEF: año del ejemplo inventado | definición (no se mide) |
+| `2023` | ejemplo inventado | DEF: año del ejemplo inventado | definición (no se mide) |
+| `2024` | ejemplo inventado | DEF: año del ejemplo inventado | definición (no se mide) |
+| `2025` | ejemplo inventado | DEF: año del ejemplo inventado | definición (no se mide) |
+
+### \(\nabla\) deja el patrón; \(\nabla_{12}\) quita patrón y tendencia; las dos, todo
+
+| Cifra o afirmación | Tipo | Fuentes y valor | Estado |
+|---|---|---|---|
+| `fila 2024` | cuadrícula del capítulo | C: capítulo 5 contiene «2024 -11 -1 5 3 3 5 3 -1 -3 -1 5 5» | verificado |
+| `-11` | ejemplo inventado | CALC: la fila 2024 de la tienda recalculada contiene -11 = -11 | verificado |
+| `fila 2025` | cuadrícula del capítulo | C: capítulo 5 contiene «2025 -11 -1 5 3 3 5 3 -1 -3 -1 5 5» | verificado |
+| `fila 2024` | cuadrícula del capítulo | C: capítulo 5 contiene «2024 12 12 12 12 12 12 12 12 12 12 12 12» | verificado |
+| `12` | ejemplo inventado | CALC: la fila 2024 de la tienda recalculada contiene 12 = 12 | verificado |
+| `fila 2024` | cuadrícula del capítulo | C: capítulo 5 contiene «2024 0 0 0 0 0 0 0 0 0 0 0 0» | verificado |
+| `2024` | ejemplo inventado | DEF: año del ejemplo inventado | definición (no se mide) |
+| `2025` | ejemplo inventado | DEF: año del ejemplo inventado | definición (no se mide) |
+
+### Si la tienda acelera en 2024, \(\nabla_{12}\) deja una rampa y hace falta \(\nabla\)
+
+| Cifra o afirmación | Tipo | Fuentes y valor | Estado |
+|---|---|---|---|
+| `fila 2023` | cuadrícula del capítulo | C: capítulo 5 contiene «2023 12 12 12 12 12 12 12 12 12 12 12 12» | verificado |
+| `12` | ejemplo inventado | CALC: la fila 2023 de la tienda recalculada contiene 12 = 12 | verificado |
+| `fila 2024` | cuadrícula del capítulo | C: capítulo 5 contiene «2024 14 16 18 20 22 24 26 28 30 32 34 36» | verificado |
+| `14` | ejemplo inventado | CALC: la fila 2024 de la tienda recalculada contiene 14 = 14 | verificado |
+| `16` | ejemplo inventado | CALC: la fila 2024 de la tienda recalculada contiene 16 = 16 | verificado |
+| `18` | ejemplo inventado | CALC: la fila 2024 de la tienda recalculada contiene 18 = 18 | verificado |
+| `20` | ejemplo inventado | CALC: la fila 2024 de la tienda recalculada contiene 20 = 20 | verificado |
+| `22` | ejemplo inventado | CALC: la fila 2024 de la tienda recalculada contiene 22 = 22 | verificado |
+| `24` | ejemplo inventado | CALC: la fila 2024 de la tienda recalculada contiene 24 = 24 | verificado |
+| `26` | ejemplo inventado | CALC: la fila 2024 de la tienda recalculada contiene 26 = 26 | verificado |
+| `28` | ejemplo inventado | CALC: la fila 2024 de la tienda recalculada contiene 28 = 28 | verificado |
+| `30` | ejemplo inventado | CALC: la fila 2024 de la tienda recalculada contiene 30 = 30 | verificado |
+| `32` | ejemplo inventado | CALC: la fila 2024 de la tienda recalculada contiene 32 = 32 | verificado |
+| `34` | ejemplo inventado | CALC: la fila 2024 de la tienda recalculada contiene 34 = 34 | verificado |
+| `36` | ejemplo inventado | CALC: la fila 2024 de la tienda recalculada contiene 36 = 36 | verificado |
+| `fila 2024` | cuadrícula del capítulo | C: capítulo 5 contiene «2024 2 2 2 2 2 2 2 2 2 2 2 2» | verificado |
+| `2023` | ejemplo inventado | DEF: año del ejemplo inventado | definición (no se mide) |
+| `2024` | ejemplo inventado | DEF: año del ejemplo inventado | definición (no se mide) |
+| `0.032` | dato | CALC: media de ∇₁₂ log AP en 1958 = 0.03221<br>C: capítulo 5 contiene «$0.032$ en 1958» | verificado |
+| `0.201` | dato | CALC: media de ∇₁₂ log AP en 1951 = 0.200586<br>C: capítulo 5 contiene «$0.201$ en 1951» | verificado |
+| `1958` | año | CALC: 1958 es el año de menor crecimiento medio | verificado |
+| `1951` | año | CALC: 1951 es el de mayor crecimiento medio | verificado |
+| `0.714` | dato | J: cap5_sarima.json › airpassengers.combinaciones.d0_D1.acf1 = 0.7137 | verificado |
 
 ### Cada operador hace su trabajo y solo el suyo
 
@@ -294,6 +407,15 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `1973` | dato | R: directo_cap5.json › datos.uad_inicio = 1973 | verificado |
 | `1978` | dato | R: directo_cap5.json › datos.uad_fin = 1978 | verificado |
 | `72` | dato | R: directo_cap5.json › datos.uad_n = 72 | verificado |
+
+### Los operadores conmutan: \(\nabla\nabla_{12}y_t\) es la misma serie en cualquier orden {columnas=3:2}
+
+| Cifra o afirmación | Tipo | Fuentes y valor | Estado |
+|---|---|---|---|
+| `128` | dato | CALC: tienda que acelera, t = 27 = 128<br>C: capítulo 5 contiene «$128 - 121 - 110 + 105 = 2$» | verificado |
+| `121` | dato | CALC: tienda que acelera, t = 26 = 121<br>C: capítulo 5 contiene «$128 - 121 - 110 + 105 = 2$» | verificado |
+| `110` | dato | CALC: tienda que acelera, t = 15 = 110<br>C: capítulo 5 contiene «$128 - 121 - 110 + 105 = 2$» | verificado |
+| `105` | dato | CALC: tienda que acelera, t = 14 = 105<br>C: capítulo 5 contiene «$128 - 121 - 110 + 105 = 2$» | verificado |
 
 ### Diferenciar de más deja la firma del capítulo 4: \(\hat\Theta\) se acerca a −1
 
