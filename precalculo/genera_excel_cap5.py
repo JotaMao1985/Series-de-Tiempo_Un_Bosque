@@ -28,12 +28,12 @@ De dónde sale cada número:
 Excel no estima un SARIMA por máxima verosimilitud: la estimación se queda en R
 y el libro toma θ̂, Θ̂, σ̂² y el log-verosimilitud como datos.
 
-Compatibilidad: solo funciones clásicas, que valen en Excel 2016+, LibreOffice y
-Google Sheets. Nada de LET, LAMBDA, SEQUENCE ni matrices dinámicas. Las fórmulas
-que operan sobre rangos van dentro de SUMPRODUCT, LINEST, SUMXMY2 o de una
-función de agregado, para que ningún Excel les aplique la intersección implícita.
-CHISQ.DIST.RT y NORM.S.INV (Excel 2010) se escriben con el prefijo `_xlfn.` que
-exige el formato de archivo; Excel, LibreOffice y Sheets lo leen sin más.
+Compatibilidad: solo funciones clásicas, que existen en Excel 2016+, LibreOffice y
+Google Sheets, aunque solo se ha probado en Excel. Nada de LET, LAMBDA, SEQUENCE
+ni matrices dinámicas. Las fórmulas que operan sobre rangos van dentro de
+SUMPRODUCT, LINEST, SUMXMY2 o de una función de agregado, para que ningún Excel
+les aplique la intersección implícita. CHISQ.DIST.RT y NORM.S.INV (Excel 2010)
+se escriben con el prefijo `_xlfn.` que exige el formato de archivo.
 
 Determinista: mismas entradas, mismos bytes (las fechas internas del .xlsx van
 fijas).
@@ -606,7 +606,7 @@ def portada_contenido(h, lb, ref):
         "un Excel en inglés) hasta que se completa. Es normal, y vale también entre hojas: el M4 y el M6 leen "
         "el M3, el M7 lee el M5 y el M6, y el M8 lee el M1.",
         "7. Si al abrir el libro las celdas salen vacías o en cero, pulsa «Habilitar edición»: en la vista "
-        "protegida Excel no calcula. LibreOffice y Google Sheets calculan al abrir.",
+        "protegida Excel no calcula.",
     ]
     for i, p in enumerate(pasos):
         h.parrafo(f + 1 + i, p)
@@ -689,8 +689,9 @@ def portada_contenido(h, lb, ref):
               "escritas al abrir el libro.")
     f += 2
     h.seccion(f, "Compatibilidad y datos")
-    h.parrafo(f + 1, "Funciona en Excel 2016 o posterior, en LibreOffice Calc y en Google Sheets (Archivo › "
-              "Importar). Solo usa funciones clásicas: nada de LET, LAMBDA, SEQUENCE ni matrices dinámicas.")
+    h.parrafo(f + 1, "Está comprobado en Microsoft Excel. Solo usa funciones clásicas, sin LET, LAMBDA, SEQUENCE "
+              "ni matrices dinámicas, que también existen en LibreOffice Calc y en Google Sheets (Archivo › "
+              "Importar), aunque en ellos todavía no se ha probado.")
     D = lb.D
     h.parrafo(f + 2, "Datos: AirPassengers y USAccDeaths, de los datasets de R; la TRM mensual, de la "
               f"{D['trm']['fuente']}. Coeficientes y cifras de comparación: los que el capítulo calcula en R "
