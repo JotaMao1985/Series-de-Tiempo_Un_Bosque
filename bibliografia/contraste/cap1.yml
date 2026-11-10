@@ -1,0 +1,124 @@
+# Registro de contraste · Capítulo 1 · Componentes y descomposición
+#
+# Cada entrada une una afirmación del capítulo (el elemento con ese
+# `data-afirma`) con el pasaje LEÍDO que la respalda. La `cita` es literal y
+# `precalculo/audita_citas.py` la busca en el texto de la fuente, en la sección
+# o página que dice `loc`. Quien verifica no es quien redactó.
+#
+# Estas cinco son el piloto de la ronda de gestión documental (2026-11-10). La
+# verificación la hicieron dos subagentes de contexto limpio, uno con Opus 5.5
+# y otro con Sonnet 5.5, que recibieron la afirmación y el texto de la fuente,
+# no el veredicto esperado. Coincidieron en las cinco; donde uno fue más
+# estricto (c1-m6-01) se registra el veredicto estricto.
+capitulo: 1
+archivo: Htmls_Series/capitulo-1-componentes-descomposicion.html
+afirmaciones:
+
+- id: c1-m6-01
+  tipo: resultado
+  afirmacion: Tres limitaciones del método clásico (extremos sin estimar, estacionalidad constante, sensibilidad a atípicos).
+  hash_texto: 027d8f7f2b77c1ce
+  veredicto: con-matiz
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§3.4"
+    clase: WEB
+    instantanea: decomposition
+    cita: "The estimate of the trend-cycle is unavailable for the first few and last few observations."
+  - clave: hyndman2021forecasting
+    loc: "§3.4"
+    clase: WEB
+    instantanea: decomposition
+    cita: "Classical decomposition methods assume that the seasonal component repeats from year to year."
+  - clave: hyndman2021forecasting
+    loc: "§3.4"
+    clase: WEB
+    instantanea: decomposition
+    cita: "The classical method is not robust to these kinds of unusual values."
+  nota: >-
+    La fuente respalda las tres. El matiz está en «m/2»: la fuente solo dice «first few and last few» y da
+    el caso m = 12 (seis por extremo). Para m impar el hueco es (m−1)/2, como se ve en su ejemplo de la
+    5-MA en §3.3; «m/2» solo es exacto con m par. Además la fuente da una cuarta limitación que el capítulo
+    no recoge (la tendencia suaviza en exceso las subidas y caídas rápidas) y añade que en los extremos
+    tampoco hay residuo. Para la ronda del capítulo 1: precisar «m/2» y decidir si entra la cuarta.
+  redactado_por: sesión maestra (Fable 5.2)
+  verificado_por: subagentes verificadores, Opus 5.5 y Sonnet 5.5, contexto limpio
+  fecha: 2026-11-10
+
+- id: c1-m7-01
+  tipo: atribucion
+  afirmacion: STL se desarrolla como «Seasonal-Trend decomposition using Loess».
+  hash_texto: 44b1b14f86516427
+  veredicto: pendiente
+  motivo: >-
+    Falta leer la fuente original, Cleveland et al. (1990), que no tiene DOI y aún no está en la biblioteca:
+    su PDF está en el archivo del Journal of Official Statistics (Statistics Sweden) y descargarlo requiere
+    el permiso de Javier. Lo ya leído no coincide con el capítulo: FPP3 §3.6 desarrolla el acrónimo como
+    «Seasonal and Trend decomposition using Loess» y atribuye el método a Cleveland et al. (1990), cuyo
+    título es «STL: A seasonal-trend decomposition procedure based on loess». La forma del capítulo mezcla
+    las dos. Queda además por resolver el rango de páginas: FPP3 da 3–33 y OpenAlex 3–73.
+  redactado_por: sesión maestra (Fable 5.2)
+  fecha: 2026-11-10
+
+- id: c1-m7-02
+  tipo: resultado
+  afirmacion: En STL la robustez es una opción aparte, cuesta un segundo bucle y en stl() viene desactivada.
+  hash_texto: 79d04e41cf38cda3
+  veredicto: pendiente
+  motivo: >-
+    FPP3 §3.6 solo respalda la primera de las tres partes: que es opcional («the user can specify a robust
+    decomposition»). No habla de bucles ni de iteraciones, y nunca menciona stats::stl() ni su valor por
+    defecto (describe STL() de fable). El segundo bucle hay que contrastarlo con Cleveland et al. (1990) y
+    el valor por defecto con la ayuda de R (?stl), que aún no tiene instantánea ni obra en la biblioteca.
+    Se había puesto una cita a FPP3 y se retiró: habría respaldado a la vista más de lo que la fuente dice.
+  redactado_por: sesión maestra (Fable 5.2)
+  fecha: 2026-11-10
+
+- id: c1-m7-03
+  tipo: resultado
+  afirmacion: STL admite cualquier frecuencia estacional y es aditiva; lo multiplicativo se trata en logaritmos.
+  hash_texto: b14e259d4f1ea5bb
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§3.6"
+    clase: WEB
+    instantanea: decomposition
+    cita: "Unlike SEATS and X-11, STL will handle any type of seasonality, not only monthly and quarterly data."
+  - clave: hyndman2021forecasting
+    loc: "§3.6"
+    clase: WEB
+    instantanea: decomposition
+    cita: "A multiplicative decomposition can be obtained by first taking logs of the data, then back-transforming the components."
+  nota: >-
+    AirPassengers no aparece en la fuente: es el ejemplo del capítulo. La fuente añade que después se
+    deshace la transformación en los componentes y que una Box-Cox con 0 < λ < 1 da descomposiciones
+    intermedias; la equivalencia en logaritmos está en §3.2.
+  redactado_por: sesión maestra (Fable 5.2)
+  verificado_por: subagentes verificadores, Opus 5.5 y Sonnet 5.5, contexto limpio
+  fecha: 2026-11-10
+
+- id: c1-m8-01
+  tipo: atribucion
+  afirmacion: FPP3 define la fuerza de la tendencia y de la estacionalidad con las varianzas de los componentes STL.
+  hash_texto: ae6d0fd6962edd55
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§4.3"
+    clase: WEB
+    instantanea: features
+    cita: "A time series decomposition can be used to measure the strength of trend and seasonality in a time series."
+  - clave: hyndman2021forecasting
+    loc: "§4.3"
+    clase: WEB
+    instantanea: features
+    cita: 'F_S = \max\left( 0, 1 - \frac{\text{Var}(R_t)}{\text{Var}(S_{t} + R_t)} \right)'
+  nota: >-
+    El capítulo publicado remite a «FPP3, §3.6», que es «STL decomposition». Las definiciones y las dos
+    fórmulas, idénticas a las del capítulo, están en §4.3 «STL Features»: el localizador se corrigió en el
+    piloto. La fuente dice «we define» y, en §4.7, atribuye a Wang et al. (2006) la idea de usar STL para
+    construir rasgos, no las fórmulas en concreto.
+  redactado_por: sesión maestra (Fable 5.2)
+  verificado_por: subagentes verificadores, Opus 5.5 y Sonnet 5.5, contexto limpio
+  fecha: 2026-11-10
