@@ -955,6 +955,94 @@
       display: none;
     }
 
+    /* ------------------------------------------------------------------
+       Cita con fuente (añadida en la ronda de gestión documental,
+       2026-11-10).
+
+       Una afirmación que viene de una fuente lo dice ahí mismo, en la
+       prosa, con autor, año y localizador: «(Cleveland et al., 1990, §2)».
+       La cita enlaza a la lista «Fuentes citadas en este módulo», al final
+       del módulo, porque solo el módulo abierto está en el DOM; el
+       capítulo entero se reúne en «Referencias de este capítulo».
+
+       NADA de esto se teclea. Quien redacta escribe solo un elemento
+       `cite` vacío de clase `cita`, con `data-ref` (la clave de la obra) y
+       `data-loc` (el localizador: §2, p. 15), dentro de un elemento con
+       `data-afirma` (el id de la afirmación: c1-m7-01), y deja en el módulo
+       el par de marcadores FUENTES-MODULO. La sintaxis exacta está en la
+       cabecera de `precalculo/genera_referencias.py`; no se repite aquí
+       porque el generador la tomaría por una cita de verdad.
+       El texto visible y las listas los escribe
+       `precalculo/genera_referencias.py` desde Zotero, y
+       `precalculo/audita_citas.py` comprueba que cada cita tenga detrás un
+       pasaje leído (bibliografia/contraste/capN.yml).
+
+       `font-style: normal` porque <cite> es cursiva por defecto y aquí
+       no nombra un título sino que remite a una obra.
+       ------------------------------------------------------------------ */
+    .cita {
+      font-style: normal;
+      white-space: normal;
+    }
+
+    .cita a {
+      color: #012820;
+      text-decoration: underline;
+      text-decoration-color: rgba(255, 102, 0, 0.55);
+      text-decoration-thickness: 1.5px;
+      text-underline-offset: 2px;
+    }
+
+    .cita a:hover {
+      text-decoration-color: #FF6600;
+      background: rgba(255, 102, 0, 0.08);
+    }
+
+    .fuentes-modulo {
+      margin-top: 2.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .fuentes-modulo h4 {
+      font-size: 0.8125rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #6b7280;
+      margin: 0 0 0.6rem;
+    }
+
+    main ul.lista-fuentes,
+    footer ul.lista-fuentes {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    ul.lista-fuentes li {
+      font-size: 0.875rem;
+      line-height: 1.55;
+      margin: 0 0 0.55rem;
+      padding-left: 1.5rem;
+      text-indent: -1.5rem;          /* sangría francesa, como en APA */
+      overflow-wrap: anywhere;       /* un DOI largo no desborda en móvil */
+    }
+
+    ul.lista-fuentes li:target {
+      background: rgba(255, 102, 0, 0.10);
+      box-shadow: -0.5rem 0 0 rgba(255, 102, 0, 0.10), 0.5rem 0 0 rgba(255, 102, 0, 0.10);
+    }
+
+    ul.lista-fuentes a {
+      color: #012820;
+      text-decoration: underline;
+    }
+
+    footer ul.lista-fuentes a {
+      color: #fbbf24;
+    }
+
     /* SVG Styles */
     svg {
       display: block;
@@ -2200,33 +2288,18 @@
       <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
         <i class="fas fa-book-open" aria-hidden="true"></i> Referencias Bibliográficas
       </h3>
-      <ul class="space-y-3 text-white/90 text-sm">
-        <li class="flex items-start gap-2">
-          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
-          <span>Hyndman, R.J., &amp; Athanasopoulos, G. (2021). <em class="text-gold">Forecasting: Principles and
-              Practice</em> (3rd ed.). OTexts. Acceso abierto: <a href="https://otexts.com/fpp3/"
-              class="underline text-gold" target="_blank" rel="noopener">otexts.com/fpp3</a>.</span>
-        </li>
-        <li class="flex items-start gap-2">
-          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
-          <span>Shumway, R.H., &amp; Stoffer, D.S. (2017). <em class="text-gold">Time Series Analysis and Its
-              Applications: With R Examples</em> (4th ed.). Springer.</span>
-        </li>
-        <li class="flex items-start gap-2">
-          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
-          <span>Box, G.E.P., Jenkins, G.M., Reinsel, G.C., &amp; Ljung, G.M. (2015). <em class="text-gold">Time Series
-              Analysis: Forecasting and Control</em> (5th ed.). John Wiley &amp; Sons.</span>
-        </li>
-        <li class="flex items-start gap-2">
-          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
-          <span>Brockwell, P.J., &amp; Davis, R.A. (2016). <em class="text-gold">Introduction to Time Series and
-              Forecasting</em> (3rd ed.). Springer.</span>
-        </li>
+      <!--PIE-REFERENCIAS:inicio-->
+      <ul class="lista-fuentes">
+        <li id="pie-box2016time">Box, G. E. P., Jenkins, G. M., Reinsel, G. C., y Ljung, G. M. (2016). <em>Time series analysis: forecasting and control</em> (5.ª ed.). John Wiley &amp; Sons, Inc.</li>
+        <li id="pie-brockwell2016introduction">Brockwell, P. J., y Davis, R. A. (2016). <em>Introduction to Time Series and Forecasting</em> (3.ª ed.). Springer International Publishing. <a target="_blank" rel="noopener" href="https://doi.org/10.1007/978-3-319-29854-2">https://doi.org/10.1007/978-3-319-29854-2</a></li>
+        <li id="pie-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+        <li id="pie-shumway2017time">Shumway, R. H., y Stoffer, D. S. (2017). <em>Time Series Analysis and Its Applications: With R Examples</em> (4.ª ed.). Springer International Publishing. <a target="_blank" rel="noopener" href="https://doi.org/10.1007/978-3-319-52452-8">https://doi.org/10.1007/978-3-319-52452-8</a></li>
       </ul>
+      <!--PIE-REFERENCIAS:fin-->
       <div class="mt-6 pt-6 border-t border-white/20 text-center">
         <p class="text-white font-medium" style="text-align:center;">Diseñado por <span class="text-gold">Javier
             Mauricio Sierra</span></p>
-        <p class="text-xs mt-1 text-white/60" style="text-align:center;">Series de Tiempo • Plantilla • UnBosque 2026
+        <p class="text-xs mt-1 text-white/60" style="text-align:center;">Series de Tiempo • Capítulo 1 • UnBosque 2026
         </p>
       </div>
     </div>
@@ -3267,11 +3340,21 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
         mira para confirmar que todo fue bien, se mira para descubrir en qué paso hay que volver a entrar</strong>.</p>
 
       <div class="warning">
-        <p><strong>Limitaciones del método clásico:</strong> la tendencia por media móvil deja <em>sin estimar</em> los
-          primeros y últimos $m/2$ valores (los huecos en el panel de tendencia); supone que la estacionalidad es
-          <em>constante</em> en el tiempo; y es sensible a valores atípicos. La descomposición STL (Módulo 7) corrige
+        <p><strong>Limitaciones del método clásico:</strong> <span data-afirma="c1-m6-01">la tendencia por media móvil deja
+          <em>sin estimar</em> los primeros y últimos $m/2$ valores (los huecos en el panel de tendencia); supone que la
+          estacionalidad es <em>constante</em> en el tiempo; y es sensible a valores atípicos
+          <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.4"><a href="#ref-m6-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §3.4)</a></cite></span>. La descomposición STL (Módulo 7) corrige
           estas tres debilidades.</p>
       </div>
+
+      <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
+        <h4>Fuentes citadas en este módulo</h4>
+        <!--FUENTES-MODULO:inicio-->
+        <ul class="lista-fuentes">
+          <li id="ref-m6-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+        </ul>
+        <!--FUENTES-MODULO:fin-->
+      </aside>
     </div>
   </template>
 
@@ -3296,7 +3379,7 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
         </div>
       </div>
 
-      <p><strong>STL</strong> (<em>Seasonal-Trend decomposition using Loess</em>) responde a esas tres debilidades una
+      <p><span data-afirma="c1-m7-01"><strong>STL</strong> (<em>Seasonal-Trend decomposition using Loess</em>)</span> responde a esas tres debilidades una
         por una, y lo consigue cambiando la herramienta de fondo: en lugar de promediar ventanas fijas, ajusta curvas
         locales por regresión ponderada (Loess). Conviene mirar esa herramienta antes de ver qué construye con ella,
         porque las tres respuestas salen todas del mismo sitio.</p>
@@ -3457,9 +3540,9 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
 
       <p>Las tres respuestas de la lista no tienen el mismo estatus, y conviene no meterlas en el mismo saco. Las dos
         primeras salen solas del ajuste local: quien estima con una recta ponderada llega a los extremos y puede dejar
-        respirar al componente estacional sin pedirle permiso a nadie. La tercera, no. La resistencia a los atípicos es
+        respirar al componente estacional sin pedirle permiso a nadie. La tercera, no. <span data-afirma="c1-m7-02">La resistencia a los atípicos es
         una <strong>opción aparte</strong>, cuesta un segundo bucle, y en <code>stl()</code> viene
-        <strong>desactivada por defecto</strong>.</p>
+        <strong>desactivada por defecto</strong></span>.</p>
 
       <p>El mecanismo cabe en una frase: <em>desconfiar de lo que no se supo explicar</em>. Hecha una primera
         descomposición, se miran los residuos. Un punto con un residuo enorme es un punto que el ajuste no ha sabido
@@ -3506,9 +3589,10 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
         robusta de un recorte manual: no hay que <em>encontrar</em> el atípico, basta con activar el bucle que
         pregunta por él. El <strong>Ejercicio 3</strong> del cierre pone la cifra a lo que se gana —y a lo que se
         pierde si se olvida el argumento—.</p>
-      <p>Dos apuntes antes de verlo funcionar. STL admite cualquier frecuencia estacional, no solo las habituales de
-        datos mensuales o trimestrales. Y es <strong>aditiva</strong>: para una serie multiplicativa como
-        <code>AirPassengers</code> se aplica sobre $\log y_t$, que es donde los componentes vuelven a sumarse.</p>
+      <p>Dos apuntes antes de verlo funcionar. <span data-afirma="c1-m7-03">STL admite cualquier frecuencia estacional, no solo
+        las habituales de datos mensuales o trimestrales. Y es <strong>aditiva</strong>: para una serie multiplicativa como
+        <code>AirPassengers</code> se aplica sobre $\log y_t$, que es donde los componentes vuelven a sumarse
+        <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.6"><a href="#ref-m7-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §3.6)</a></cite></span>.</p>
 
       <div class="simulador" data-simulador="descomp-stl">
         <h4><i class="fas fa-stream" aria-hidden="true"></i> STL de <code>log(AirPassengers)</code></h4>
@@ -3607,6 +3691,15 @@ res.plot()</code></pre>
           adelante en el curso será la base de una estrategia de pronóstico —descomponer, modelar la serie ajustada y
           volver a componer— que descansa por entero en que estos componentes sean de fiar.</p>
       </div>
+
+      <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
+        <h4>Fuentes citadas en este módulo</h4>
+        <!--FUENTES-MODULO:inicio-->
+        <ul class="lista-fuentes">
+          <li id="ref-m7-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+        </ul>
+        <!--FUENTES-MODULO:fin-->
+      </aside>
     </div>
   </template>
 
@@ -3648,7 +3741,8 @@ res.plot()</code></pre>
         </div>
       </div>
 
-      <p>Queda la segunda: ¿qué tan marcado es cada componente? Hyndman &amp; Athanasopoulos (FPP3, §3.6) definen la
+      <p data-afirma="c1-m8-01">Queda la segunda: ¿qué tan marcado es cada componente?
+        <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§4.3" data-modo="narrativa"><a href="#ref-m8-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">Hyndman y Athanasopoulos (2021, §4.3)</a></cite> definen la
         <strong>fuerza de la tendencia</strong> $F_T$ y de la <strong>estacionalidad</strong> $F_S$ a partir de las
         varianzas de los componentes STL (aquí, sobre la escala log):</p>
       <div class="formula">
@@ -3703,6 +3797,15 @@ res.plot()</code></pre>
           como <em>features</em>. Sobre colecciones de miles de series —el inventario de un comercio, una flota de
           sensores— permiten agrupar, filtrar y elegir el modelo apropiado sin mirarlas una por una.</p>
       </div>
+
+      <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
+        <h4>Fuentes citadas en este módulo</h4>
+        <!--FUENTES-MODULO:inicio-->
+        <ul class="lista-fuentes">
+          <li id="ref-m8-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+        </ul>
+        <!--FUENTES-MODULO:fin-->
+      </aside>
     </div>
   </template>
 
@@ -3971,6 +4074,12 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
           <li>Shumway &amp; Stoffer, <em>Time Series Analysis and Its Applications</em> (4.ª ed.), cap. 1 — panorama y
             ejemplos.</li>
         </ul>
+        <h3 style="margin-top:1.5rem;"><i class="fas fa-quote-right mr-2" aria-hidden="true"></i>Referencias citadas en este capítulo</h3>
+        <!--REFERENCIAS-CAPITULO:inicio-->
+        <ul class="lista-fuentes">
+          <li id="ref-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+        </ul>
+        <!--REFERENCIAS-CAPITULO:fin-->
       </div>
     </div>
   </template>
