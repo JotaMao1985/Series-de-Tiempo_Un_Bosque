@@ -18,6 +18,12 @@ del capítulo 4. Lo que sí vive aquí es su **instancia** —marcador
 `cap5/chapter.js`—, porque está en las dos regiones que el ensamblado sustituye
 (ver la Advertencia del README).
 
+Desde el 2026-11-10 el Módulo 12 es el simulacro del quiz del capítulo, que se
+corrige al entregar: plantilla en `cap5/templates_12.html`, motor y registro en
+`cap5/simulacro.js` (el registro, entre marcadores, lo escribe
+`exporta_simulacro.py` desde la carpeta del quiz, fuera del repositorio) y CSS en
+`componentes/simulacro.css` + `componentes/simulacro_correccion.css`.
+
 Uso:  python3 ensambla_cap5.py       (desde ensamblado/)
 """
 
@@ -117,24 +123,35 @@ html = una_vez(
     "subtítulo de la cabecera")
 
 # ---------------------------------------------------------------------------
-# 1b. Fuera el CSS del .simulacro, que es del Módulo 11 del capítulo 4
+# 1b. El CSS del .simulacro: se queda el del componente y la corrección
+#     sustituye a las respuestas del capítulo 4
 # ---------------------------------------------------------------------------
-# El simulacro del quiz vive en los capítulos 3 y 4, no aquí. Su motor de
-# JavaScript y su plantilla desaparecen solos —las dos regiones se rehacen
-# enteras más abajo—, pero el <style> se hereda, y sin esto los capítulos 5 y 6
-# arrastrarían más de 250 líneas de CSS que nadie usa: el del componente, que el
-# capítulo 4 hereda del 3, y el de sus respuestas, que el 4 le añade detrás. Los
-# dos llevan rótulo de cierre (`ensamblado/componentes/`), y el recorte va del
-# principio del primero al cierre del segundo. Este recorte lo hacía
-# `ensambla_cap4.py` hasta el 2026-09-27, cuando el capítulo 4 ganó su simulacro;
-# el capítulo 5 sale byte a byte igual que antes.
+# Del 2026-09-27 al 2026-11-10 este paso recortaba entero el CSS del
+# .simulacro que el capítulo 4 hereda del 3 (simulacro.css) y amplía
+# (simulacro_respuestas.css): el capítulo 5 no tenía simulacro. Desde el
+# 2026-11-10 su Módulo 12 es el simulacro del quiz del capítulo, que SÍ se
+# corrige. Se conserva simulacro.css, y en el lugar de las respuestas del 4
+# —desplegables y casillas de un quiz que este no tiene— entra
+# componentes/simulacro_correccion.css: el caso, la casilla de cifra, el botón
+# de entregar, el veredicto, la retroalimentación y las figuras. Los dos llevan
+# rótulo de cierre, y ensambla_cap6.py los recorta para que el capítulo 6 salga
+# byte a byte como antes.
 css_simulacro = entre(
     html,
     "    /* ------------------------------------------------------------------\n"
     "       Simulacro: un examen de práctica que se marca y se cronometra, pero\n",
-    "    /* -------------- fin de las respuestas del .simulacro -------------- */\n",
+    "    /* ------------------- fin del componente .simulacro ------------------- */\n",
     "CSS del .simulacro")
-html = una_vez(html, css_simulacro, "", "recorte del CSS del .simulacro")
+if css_simulacro != lee(COMPONENTES / "simulacro.css"):
+    raise SystemExit("ABORTA: el CSS del .simulacro que hereda el capítulo 4 ya no es componentes/simulacro.css")
+css_respuestas = entre(
+    html,
+    "    /* ------------------------------------------------------------------\n"
+    "       Simulacro: las respuestas que no son botones de opción.\n",
+    "    /* -------------- fin de las respuestas del .simulacro -------------- */\n",
+    "CSS de las respuestas del .simulacro")
+html = una_vez(html, css_respuestas, lee(COMPONENTES / "simulacro_correccion.css"),
+               "CSS de la corrección del .simulacro")
 
 # ---------------------------------------------------------------------------
 # 2. Instalación del componente .mapa-estacional (CSS, JS y llamada de arranque)
@@ -190,7 +207,7 @@ html = una_vez(html, "        renderMathInElement(mainContent, {",
                "llamada de arranque del mapa estacional")
 
 # ---------------------------------------------------------------------------
-# 3. Las once plantillas de módulo
+# 3. Las doce plantillas de módulo
 # ---------------------------------------------------------------------------
 ETAPAS_CICLO = [
     {
@@ -276,7 +293,8 @@ plantillas_nuevas = (
     lee(FUENTES / "templates_1_3.html").rstrip("\n") + "\n\n" +
     lee(FUENTES / "templates_4_6.html").rstrip("\n") + "\n\n" +
     lee(FUENTES / "templates_7_9.html").rstrip("\n") + "\n\n" +
-    lee(FUENTES / "templates_10_11.html").rstrip("\n") + "\n\n  <script>"
+    lee(FUENTES / "templates_10_11.html").rstrip("\n") + "\n\n" +
+    lee(FUENTES / "templates_12.html").rstrip("\n") + "\n\n  <script>"
 )
 
 # Los componentes se generan con su constructor, no a mano: así el marcado es
@@ -342,7 +360,8 @@ course_nuevo = """    const courseData = {
         { id: 8, title: "Segundo caso y contraejemplo", shortTitle: "Contraejemplo", duration: "16 min" },
         { id: 9, title: "Regresores de calendario y SARIMAX", shortTitle: "Calendario", duration: "14 min" },
         { id: 10, title: "Cuando m es grande: Fourier y STL", shortTitle: "Fourier y STL", duration: "16 min" },
-        { id: 11, title: "Panorama comparativo y cierre", shortTitle: "Cierre", duration: "20 min" }
+        { id: 11, title: "Panorama comparativo y cierre", shortTitle: "Cierre", duration: "20 min" },
+        { id: 12, title: "Simulacro del quiz", shortTitle: "Simulacro", duration: "50 min" }
       ]
     };"""
 html = una_vez(html, course_viejo, course_nuevo, "courseData")
@@ -374,7 +393,10 @@ fin_js = "\n  </script>"
 j = html.find(fin_js, i)
 if j == -1:
     raise SystemExit("ABORTA [js]: no hay '</script>' tras el JavaScript del capítulo")
-html = html[:i] + lee(FUENTES / "chapter.js").rstrip("\n") + html[j:]
+# Detrás, el motor del simulacro del Módulo 12 y su registro entre marcadores,
+# que escribe exporta_simulacro.py desde la carpeta del quiz.
+html = (html[:i] + lee(FUENTES / "chapter.js").rstrip("\n") + "\n\n"
+        + lee(FUENTES / "simulacro.js").rstrip("\n") + html[j:])
 
 # ---------------------------------------------------------------------------
 # 7. Comprobaciones finales
@@ -389,11 +411,33 @@ SIMULADORES = [
     "calendario-regresores", "armonicos-K", "comparativa-particion",
 ]
 
-for n in range(1, 12):
+for n in range(1, 13):
     if html.count(f'<template id="module-{n}">') != 1:
         fallos.append(f"la plantilla module-{n} no aparece exactamente una vez")
-if html.count('<template id="module-12">') != 0:
-    fallos.append("ha quedado una plantilla module-12")
+if html.count('<template id="module-13">') != 0:
+    fallos.append("ha quedado una plantilla module-13")
+
+# El simulacro del Módulo 12: contenedor, motor, registro y CSS, una vez cada uno,
+# y el registro sin los datos internos del generador.
+for pieza in ['data-simulador="cap5-simulacro"', "SIMULADORES['cap5-simulacro'] = function",
+              "SIMULACROS['cap5-simulacro'] = ", "    // [inicio · simulacro del quiz]",
+              "    // [fin · simulacro del quiz]", "function pintarSimulacro", "function leeCifraSimulacro",
+              "const SIMULACROS = {};", "const ESTADO_SIMULACRO = {};",
+              # Las reglas se buscan con su primera declaración: la media query de
+              # móvil de simulacro_correccion.css repite algunos selectores.
+              "    .simulacro {\n      background-color", ".simulacro-opcion {",
+              ".simulacro-retro {", ".simulacro-entregar:hover {", "    .simulacro-figura {\n      display: grid",
+              "    .simulacro-caso {\n      background",
+              "fin del componente .simulacro", "fin de la corrección del .simulacro"]:
+    if html.count(pieza) != 1:
+        fallos.append(f"simulacro: '{pieza}' aparece {html.count(pieza)} veces, se esperaba 1")
+_i = html.find("    // [inicio · simulacro del quiz]")
+_bloque = html[_i:html.find("    // [fin · simulacro del quiz]")]
+for interno in ('"auditoria"', '"rol"'):
+    if interno in _bloque:
+        fallos.append(f"el registro del simulacro publica {interno}, que es interno del generador")
+if "SIMULACROS['cap5-simulacro'] = {};" in html:
+    fallos.append("el registro del simulacro está vacío: falta exporta_simulacro.py")
 
 for sim in SIMULADORES:
     if html.count(f"SIMULADORES['{sim}']") != 1:
@@ -470,11 +514,11 @@ for fn in ["function crearGraficoBarras", "function calcularPACF", "function cre
 for resto in ["DATOS_CAP4", "SERIES_CAP4", "AUTOEVALUACIONES['cap4']", "genera_cap4.R",
               "capitulo-4", "Capítulo 4 —", "data-ciclo=\"box-jenkins\"",
               "SIMULADORES['nilo-y-diferencia']", "SIMULADORES['explorador-modelos']",
-              # El simulacro del Módulo 11 del capítulo 4: contenedor, registro, motor y
-              # CSS (el Módulo 11 de este capítulo es otro, así que no se busca la plantilla).
-              "cap4-simulacro", "SIMULACROS", "pintarSimulacro", "ESTADO_SIMULACRO",
-              "FORMAS_SIMULACRO", ".simulacro {", ".simulacro-opcion {", ".simulacro-filas {",
-              "simulacro-preguntas"]:
+              # El simulacro del Módulo 11 del capítulo 4: contenedor, registro y lo que
+              # su motor y su CSS tienen y el de este no (desplegables y puestos). El
+              # motor común (SIMULACROS, pintarSimulacro) es ahora el del Módulo 12.
+              "cap4-simulacro", "FORMAS_SIMULACRO", "LETRAS_SIMULACRO", ".simulacro-filas {",
+              ".simulacro-desplegable", "fin de las respuestas del .simulacro"]:
     if resto in html:
         fallos.append(f"queda material del capítulo 4: '{resto}'")
 
@@ -511,6 +555,6 @@ if fallos:
 
 CAP5.write_text(html, encoding="utf-8")
 print(f"OK  {CAP5.name} escrito ({len(html.encode('utf-8')) / 1024:.1f} KB)")
-print(f"    11 plantillas · {len(SIMULADORES)} simuladores · 5 derivaciones · "
+print(f"    12 plantillas · {len(SIMULADORES)} simuladores · 5 derivaciones · "
       f"3 ejercicios · 8 preguntas de autoevaluación · 1 tabla de ranking · "
-      f"componente .mapa-estacional instalado")
+      f"componente .mapa-estacional instalado · simulacro del quiz en el Módulo 12")

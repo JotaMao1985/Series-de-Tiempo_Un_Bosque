@@ -1,0 +1,256 @@
+    /* ------------------------------------------------------------------
+       Simulacro: las piezas de la corrección al entregar.
+       El simulacro del capítulo 5 (Módulo 12) SÍ se corrige: el caso arriba
+       (.simulacro-caso), la casilla de las preguntas de cifra, el botón de
+       entregar, el veredicto y la retroalimentación de cada pregunta, la nota
+       final y las figuras SVG. Complementa a simulacro.css, que es del
+       capítulo 3 y no se toca. Viene del componente del módulo 7.13 de Diseño
+       de Experimentos, sin la rejilla del cuadro latino y con las figuras en
+       una sola columna. Lo instala ensambla_cap5.py justo después de
+       simulacro.css, en el lugar de simulacro_respuestas.css, y
+       ensambla_cap6.py recorta los dos.
+       ------------------------------------------------------------------ */
+    .simulacro-caso {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      padding: 1.1rem 1.25rem;
+      margin-top: 1rem;
+      color: #1f2937;
+      overflow-x: auto;
+    }
+
+    /* Las tablas del caso son las del encabezado de Brightspace, con su
+       fondo claro en línea; el `table th` del curso les pone letra blanca, y
+       sin esto la cabecera sale blanca sobre blanco. Se vio en la primera
+       captura. */
+    .simulacro-caso table th {
+      color: #012820;
+    }
+
+    .simulacro-caso h3 {
+      font-size: 1.1rem;
+      margin-top: 0;
+    }
+
+    .simulacro-caso h4 {
+      font-size: 1rem;
+      margin-top: 1.1rem;
+    }
+
+    .simulacro-respuesta {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-top: 0.9rem;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    .simulacro-numero {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9375rem;
+      color: #1f2937;
+      width: 10rem;
+      max-width: 100%;
+      border: 1px solid #cbd5e1;
+      border-radius: 0.5rem;
+      padding: 0.45rem 0.7rem;
+    }
+
+    .simulacro-numero:focus-visible {
+      outline: 2px solid #FF6600;
+      outline-offset: 1px;
+    }
+
+    /* --- La corrección al entregar -------------------------------------- */
+    .simulacro-versiones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .simulacro-version,
+    .simulacro-entregar {
+      font-family: inherit;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      border-radius: 50px;
+      padding: 0.4rem 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .simulacro-version {
+      color: #012820;
+      background: white;
+      border: 1px solid rgba(1, 40, 32, 0.25);
+    }
+
+    .simulacro-version:hover {
+      background: #f1f5f9;
+    }
+
+    .simulacro-version.activa {
+      color: white;
+      background: #012820;
+      border-color: #012820;
+    }
+
+    .simulacro-entregar {
+      color: white;
+      background: #FF6600;
+      border: none;
+    }
+
+    .simulacro-entregar:hover {
+      background: #012820;
+    }
+
+    .simulacro-version:focus-visible,
+    .simulacro-entregar:focus-visible {
+      outline: 2px solid #FF6600;
+      outline-offset: 1px;
+    }
+
+    .simulacro-entregar:disabled,
+    .simulacro-empezar:disabled,
+    .simulacro-opcion:disabled {
+      opacity: 0.65;
+      cursor: default;
+    }
+
+    .simulacro-pregunta.acierto {
+      border-left: 4px solid #10b981;
+    }
+
+    .simulacro-pregunta.fallo {
+      border-left: 4px solid #dc2626;
+    }
+
+    .simulacro-pregunta.vacia {
+      border-left: 4px solid #94a3b8;
+    }
+
+    .simulacro-opcion.correcta {
+      opacity: 1;
+      border-color: #10b981;
+      background: #ecfdf5;
+    }
+
+    .simulacro-opcion.equivocada {
+      opacity: 1;
+      border-color: #dc2626;
+      background: #fef2f2;
+    }
+
+    .simulacro-retro {
+      margin-top: 0.9rem;
+      padding: 0.8rem 1rem;
+      background: #f8fafc;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      color: #334155;
+    }
+
+    .simulacro-retro p {
+      margin: 0.35rem 0;
+    }
+
+    .simulacro-veredicto {
+      font-weight: 700;
+      color: #065f46;
+    }
+
+    .simulacro-pregunta.fallo .simulacro-veredicto {
+      color: #b91c1c;
+    }
+
+    .simulacro-pregunta.vacia .simulacro-veredicto {
+      color: #475569;
+    }
+
+    .simulacro-aviso {
+      font-weight: 600;
+      color: #9a3412;
+    }
+
+    .simulacro-errores {
+      font-size: 0.8125rem;
+      color: #475569;
+    }
+
+    .simulacro-nota {
+      font-weight: 700;
+      color: #012820;
+      margin-top: 1rem;
+    }
+
+    .simulacro-nota:empty {
+      display: none;
+    }
+
+    /* Un gráfico dentro de un enunciado: los paneles SVG, uno debajo del
+       otro. En el quiz del capítulo 5 cada panel es un correlograma de 36
+       rezagos o una serie de 150 meses, que en media columna no se leen. El
+       SVG lleva sus colores y su letra en atributos; aquí solo va la
+       maqueta. */
+    .simulacro-figura {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      max-width: 34rem;
+      margin: 0.75rem 0 0.5rem 0;
+    }
+
+    .simulacro-figura-paneles {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .simulacro-figura svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      background-color: #ffffff;
+      border-radius: 0.375rem;
+    }
+
+    .simulacro-figura figcaption {
+      grid-column: 1 / -1;
+      font-size: 0.8125rem;
+      color: #475569;
+    }
+
+    /* Una tabla del enunciado más ancha que la caja se desplaza dentro de él:
+       a 375 px el contenido de una pregunta mide unos 220 px y la tabla de
+       las diferencias, 310 (la primera captura la cortaba). */
+    .simulacro-enunciado {
+      overflow-x: auto;
+    }
+
+    /* En un teléfono, menos relleno en las cajas anidadas y un ancho mínimo
+       para los paneles de las figuras, que se desplazan dentro de su marco
+       con el pie quieto debajo: un correlograma de 36 rezagos encogido a
+       220 px deja la letra en 6 px. */
+    @media (max-width: 640px) {
+      .simulacro {
+        padding: 1rem 0.75rem;
+      }
+
+      .simulacro-pregunta,
+      .simulacro-caso {
+        padding: 0.9rem 0.8rem;
+      }
+
+      .simulacro-figura-paneles {
+        overflow-x: auto;
+      }
+
+      .simulacro-figura svg {
+        min-width: 25rem;
+      }
+    }
+    /* -------------- fin de la corrección del .simulacro --------------- */

@@ -115,6 +115,23 @@ html = una_vez(html, "MODELOS SARIMA", "PRONÓSTICO Y EVALUACIÓN",
                "subtítulo de la cabecera")
 
 # ---------------------------------------------------------------------------
+# 1b. Fuera el CSS del .simulacro, que es del Módulo 12 del capítulo 5
+# ---------------------------------------------------------------------------
+# Desde el 2026-11-10 el capítulo 5 tiene simulacro del quiz en su Módulo 12 y
+# conserva el CSS del componente (simulacro.css) y el de su corrección
+# (simulacro_correccion.css). Este capítulo no tiene simulacro: su motor y su
+# plantilla desaparecen solos —las dos regiones se rehacen enteras más abajo—,
+# pero el <style> se hereda. El recorte va del principio del primero al rótulo
+# de cierre del segundo, y el capítulo 6 sale byte a byte como antes.
+css_simulacro = entre(
+    html,
+    "    /* ------------------------------------------------------------------\n"
+    "       Simulacro: un examen de práctica que se marca y se cronometra, pero\n",
+    "    /* -------------- fin de la corrección del .simulacro --------------- */\n",
+    "CSS del .simulacro")
+html = una_vez(html, css_simulacro, "", "recorte del CSS del .simulacro")
+
+# ---------------------------------------------------------------------------
 # 2. Instalación del componente .tabla-ranking (CSS, JS y llamada de arranque)
 # ---------------------------------------------------------------------------
 # Tras `retropropaga_ranking.py`, el capítulo 5 ya trae el componente y solo hay
@@ -406,7 +423,10 @@ for fn in ["function crearGraficoBarras", "function calcularPACF", "function cre
 # Nada del capítulo anterior debe sobrevivir
 for resto in ["DATOS_CAP5", "SERIES_CAP5", "AUTOEVALUACIONES['cap5']", "genera_cap5.R",
               "capitulo-5", "Capítulo 5 —", 'data-ciclo="identificacion-estacional"',
-              "SIMULADORES['mapa-firma']", "SIMULADORES['explorador-sarima']"]:
+              "SIMULADORES['mapa-firma']", "SIMULADORES['explorador-sarima']",
+              # El simulacro del Módulo 12 del capítulo 5: registro, motor y CSS.
+              "cap5-simulacro", "SIMULACROS", "pintarSimulacro", "ESTADO_SIMULACRO", ".simulacro {",
+              ".simulacro-retro {", "simulacro-preguntas"]:
     if resto in html:
         fallos.append(f"queda material del capítulo 5: '{resto}'")
 
