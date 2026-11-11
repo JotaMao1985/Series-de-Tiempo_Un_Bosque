@@ -1,0 +1,65 @@
+==== EJERCICIO 1 (código de la solución, literal) ====
+b.log(nivel)        2.5 %       97.5 %           R2 
+   1.0830870    0.5752301    1.5909440    0.3354005 
+b.log(nivel)        2.5 %       97.5 %           R2 
+   1.2907695    1.1494815    1.4320574    0.9764348 
+[1] 0.1592032
+[1] 1.848029
+
+-- extra Ej.1: ¿el IC excluye 0 / 1? --
+co2 IC excluye 0: TRUE  incluye 1: TRUE 
+AP  IC excluye 0: TRUE  incluye 1: FALSE 
+co2: variación del nivel anual 1959->1997 (pista):
+1997 
+15.2 
+Estimate Pr(>|t|) 
+ 0.02394  0.00021 
+co2 julio(máx) aditivo ppm: 3  multiplicativo al nivel mín/máx ppm: 2.809 3.234 
+
+==== EJERCICIO 2 (código de la solución, literal) ====
+    FT     FS 
+0.9997 0.9841 
+    FT     FS 
+0.7991 0.9426 
+    FT     FS 
+0.9940 0.9368 
+
+-- extra Ej.2 / Q6: varianzas reales de STL(log AP, periodic) --
+Var(R) = 0.001074  Var(T+R) = 0.1793  Var(S+R) = 0.01699 
+-- extra: fuerzas con s.window = 13 (no periódico) --
+    FT     FS 
+0.9963 0.9613 
+    FT     FS 
+0.7960 0.9427 
+-- feat_stl de feasts (lo que haría un estudiante con fpp3) --
+# A tibble: 1 x 2
+  trend_strength seasonal_strength_year
+           <dbl>                  <dbl>
+1          0.997                  0.964
+# A tibble: 1 x 2
+  trend_strength seasonal_strength_year
+           <dbl>                  <dbl>
+1          0.802                  0.945
+# A tibble: 1 x 2
+  trend_strength seasonal_strength_year
+           <dbl>                  <dbl>
+1          1.000                  0.990
+
+==== EJERCICIO 3 (código de la solución, literal) ====
+[1] 1.226556 1.275811
+[1] 1.256166 1.245817
+[1] 1.241599 1.280584
+distorsión %: clásica 4.02  STL robusto -0.82  STL sin robust 3.14 
+-- extra Ej.3: el robusto mueve el índice LIMPIO de julio en %: 1.17 
+-- extra Ej.3 (FPP3 3.7 ej.7f): atípico al final (obs. 139, jul-1960) --
+clásica julio: 0.21 % ; STL robusto: -0.97 %
+
+==== QUIZ Q3/Q4: valores de tendencia no NA ====
+[1] 132
+[1] 12
+
+==== Bloque R del M5: slide_dbl(.before=6,.after=6) vs 2x12 ====
+max |2x12 - decompose| = 0 
+max |slide_dbl(13 iguales) - 2x12| = 9.897 
+julio 1955 (obs 79): 2x12 = 285.75  slide_dbl = 284 
+stats::filter(y, rep(1/12,12)) (ciclo M6 'Con qué'), obs 79: 287.5 
