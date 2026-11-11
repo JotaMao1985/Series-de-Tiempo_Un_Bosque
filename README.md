@@ -2,7 +2,7 @@
 
 Material de estudio autónomo e interactivo para el curso **Series de Tiempo 2026-II** del programa
 de Matemáticas y Ciencia de Datos. Seis capítulos que van de la descomposición de una serie al
-*backtesting* de un pronóstico, con teoría, fórmulas KaTeX, código en **R** y **Python**, **68
+*backtesting* de un pronóstico, con teoría, fórmulas KaTeX, código en **R** y **Python**, **70
 simuladores** interactivos, autoevaluación con retroalimentación por opción y ejercicios resueltos.
 
 🌐 **Sitio web:** https://jotamao1985.github.io/Series-de-Tiempo_Un_Bosque/
@@ -15,10 +15,10 @@ simuladores** interactivos, autoevaluación con retroalimentación por opción y
 | 2 | [Estacionariedad, ACF y PACF](capitulo-2-estacionariedad-acf-pacf.html) | Ruido blanco, correlograma, PACF, caminata aleatoria, ADF y KPSS, diferenciación, Box–Cox | 9 | 8 |
 | 3 | [Modelos AR, MA y ARMA](capitulo-3-modelos-ar-ma-arma.html) | Polinomios característicos, invertibilidad, dualidad AR↔MA, identificación, máxima verosimilitud, diagnóstico | 11 | 12 |
 | 4 | [Modelos ARIMA y Box–Jenkins](capitulo-4-modelos-arima.html) | Orden de integración, ciclo de Box–Jenkins, AICc, Hyndman–Khandakar, sobrediferenciación, intervalos | 12 | 11 |
-| 5 | [Modelos SARIMA](capitulo-5-sarima.html) | Firma estacional, notación multiplicativa, modelo *airline*, SARIMAX, Fourier y STL | 11 | 12 |
+| 5 | [Modelos SARIMA](capitulo-5-sarima.html) | Firma estacional, notación multiplicativa, modelo *airline*, SARIMAX, Fourier y STL; simulacro del quiz | 12 | 14 |
 | 6 | [Pronóstico y evaluación](capitulo-6-pronostico-evaluacion.html) | Métricas de error, fuga de información, origen móvil, backtesting, Diebold–Mariano, cobertura, auditoría de IA | 12 | 14 |
 
-La portada [`index.html`](index.html) enlaza los seis capítulos. En total: **64 módulos, 68
+La portada [`index.html`](index.html) enlaza los seis capítulos. En total: **65 módulos, 70
 simuladores, 61 preguntas de autoevaluación y 20 ejercicios guiados con solución comentada.**
 
 ## Talleres y preparcial
