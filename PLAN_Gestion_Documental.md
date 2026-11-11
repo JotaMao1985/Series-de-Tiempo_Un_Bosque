@@ -3,7 +3,7 @@ tipo: plan
 curso: "[[20948 Series de Tiempo]]"
 capitulo:
 fecha: 2026-11-10
-estado: en-checkpoint
+estado: publicado
 ---
 
 # Plan — Gestión documental y control de fuentes (Fase 0)
@@ -89,7 +89,7 @@ aprueba aparte, después del Checkpoint 0.
 | T0.9 | `verifica_todo.py` | ✅ |
 | T0.11 | *(pedido por la sesión de Muestreo)* vocabulario cerrado de localizadores en el auditor y `bibliografia/uso_fuentes.json` | ✅ — `data-via` sin implementar |
 | T0.10 | Este plan, `bibliografia/README.md`, `CLAUDE.md`, bitácora y nota del curso | ✅ |
-| **CP0** | Revisión de Javier | ⬜ |
+| **CP0** | Revisión de Javier | ⬜ — pero la Fase 0 se publicó el 2026-11-11 junto con la R1 del capítulo 1 (`main` `b26787e` · gh-pages `4052a27`), por decisión de Javier. Las preguntas de §7 siguen abiertas |
 
 ## 6. Criterios de aceptación
 

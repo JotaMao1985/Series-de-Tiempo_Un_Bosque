@@ -13,7 +13,7 @@ prometa lo que no muestra, con gráficas que se lean y con práctica para cada o
 declara. Es la primera aplicación del sistema de [[PLAN_Gestion_Documental]] a un capítulo entero
 y el molde para los otros cinco.
 
-**Estado: aprobado por Javier el 2026-11-10 (D1–D9). R1 hecha el 2026-11-11; sigue R2.** Lo que sigue es el diagnóstico y el plan;
+**Estado: aprobado por Javier el 2026-11-10 (D1–D9). R1 publicada el 2026-11-11; sigue R2.** Lo que sigue es el diagnóstico y el plan;
 las rondas se registran en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-10
@@ -121,7 +121,7 @@ Cada una lleva mi recomendación; las decide Javier.
 
 ### Registro de rondas
 
-- **R1 · errores — hecha el 2026-11-11, sin publicar.** De los 41 hallazgos del par: 34 corregidos, 5
+- **R1 · errores — hecha y PUBLICADA el 2026-11-11** (`main` `b26787e` · gh-pages `4052a27`; con ella se publicó la Fase 0). De los 41 hallazgos del par: 34 corregidos, 5
   declarados y 2 que pasan a R4 por falta de fuente legible (el desarrollo de «Loess» y la 4.ª edición de
   Shumway y Stoffer). Un verificador independiente encontró siete problemas en lo corregido, y el redactor
   un error que el diagnóstico no había visto (la normalización del M6); todos resueltos. Detalle y
