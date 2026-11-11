@@ -67,7 +67,7 @@ PREPARCIALES = ["preparcial-corte-1.html", "preparcial-corte-2.html"]
 # Se enganchan al registro de simuladores, pero no lo son: no hay nada que mover.
 # El del capítulo 4 se coló en la cuenta del 27 de septiembre al 5 de octubre: la
 # tarjeta del capítulo 4 decía 12 simuladores y la banda sumaba 11.
-NO_SIMULADOR = {"cap3-simulacro", "cap4-simulacro"}
+NO_SIMULADOR = {"cap3-simulacro", "cap4-simulacro", "cap5-simulacro"}
 
 
 def cuenta(ruta: pathlib.Path) -> dict:
