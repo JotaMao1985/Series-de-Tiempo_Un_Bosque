@@ -1,0 +1,111 @@
+======================================================================
+M5 · R · media movil 2x12 en dos pasos
+----------------------------------------------------------------------
+# Media movil centrada 2x12 en dos pasos: una 12-MA y, sobre ella, una 2-MA
+suppressPackageStartupMessages({library(tsibble); library(dplyr); library(ggplot2); library(fabletools); library(feasts)})
+pasajeros <- as_tsibble(AirPassengers) |>
+  mutate(
+    `12-MA`   = slider::slide_dbl(value, mean,
+                  .before = 5, .after = 6, .complete = TRUE),
+    tendencia = slider::slide_dbl(`12-MA`, mean,
+                  .before = 1, .after = 0, .complete = TRUE)
+  )
+pasajeros |>
+  autoplot(value) +
+  geom_line(aes(y = tendencia), colour = "#FF6600", linewidth = 1)
+
+# Control: la tendencia de julio de 1955
+pasajeros |> filter(index == yearmonth("1955 Jul")) |> pull(tendencia)
+#> [1] 285.75
+----------------------------------------------------------------------
+SALIDA:
+[1] 285.75
+NA en tendencia: 12
+codigo de salida: 0 | stderr (sin el aviso de autoplot en desuso): ['Warning messages:', '2: Removed 12 rows containing missing values or values outside the scale range', '(`geom_line()`). ']
+======================================================================
+M5 · Python · media movil 2x12 con pandas
+----------------------------------------------------------------------
+# Media movil centrada 2x12 con pandas, en dos pasos
+ma12 = pasajeros.rolling(window=12).mean()            # media de los 12 meses que terminan en t
+tendencia = ma12.rolling(window=2).mean().shift(-6)   # 2x12: dos ventanas seguidas, centradas en t
+
+print(tendencia["1955-07-01"])    # 285.75
+print(tendencia.isna().sum())     # 12: seis huecos al principio y seis al final
+
+import matplotlib.pyplot as plt
+pasajeros.plot(label="observado")
+tendencia.plot(label="media movil 2x12")
+plt.legend(); plt.show()
+----------------------------------------------------------------------
+SALIDA:
+285.75
+12
+codigo de salida: 0 | stderr: nada
+======================================================================
+M7 · R · STL (solo cambio el comentario)
+----------------------------------------------------------------------
+# STL sobre log(AirPassengers): componentes aditivos en escala log
+suppressPackageStartupMessages({library(tsibble); library(dplyr); library(ggplot2); library(fabletools); library(feasts)})
+as_tsibble(log(AirPassengers)) |>
+  # window = 19 es justo lo que STL calcula solo con m = 12 y
+  # season(window = "periodic"); se escribe para que se vea. Con la ventana
+  # estacional por defecto de STL(), que es 11, calcularia 21; y con
+  # trend(window = 21) esta figura sale distinta: S_julio = 1.2405.
+  model(stl = STL(value ~ trend(window = 19) + season(window = "periodic"))) |>
+  components() |>
+  autoplot()
+
+# R base tambien trae STL, y ahi, con s.window = "periodic", el 19 sale solo:
+plot(stl(log(AirPassengers), s.window = "periodic"))
+----------------------------------------------------------------------
+SALIDA:
+S julio (log): 0.2164  exp: 1.2416
+codigo de salida: 0 | stderr (sin el aviso de autoplot en desuso): ['Warning message:']
+======================================================================
+M7 · Python · STL que reproduce la figura
+----------------------------------------------------------------------
+# STL sobre log(AirPassengers), con los mismos ajustes que el bloque de R:
+# estacionalidad periodica, ventana de tendencia de 19 y sin robustez
+import numpy as np
+from statsmodels.tsa.seasonal import STL
+
+n = len(pasajeros)
+stl = STL(np.log(pasajeros), period=12,
+          seasonal=10 * n + 1, seasonal_deg=0,   # lo que R llama s.window = "periodic"
+          trend=19, robust=False)
+res = stl.fit(inner_iter=2, outer_iter=0)        # las pasadas que da stl() en R
+res.plot()
+
+print(round(res.seasonal["1955-07-01"], 4))      # 0.2164, el julio de la figura
+----------------------------------------------------------------------
+SALIDA:
+0.2164
+codigo de salida: 0 | stderr: nada
+======================================================================
+M6 · R · filtro del paso 2: stats::filter(y, c(0.5, rep(1, m - 1), 0.5) / m)
+----------------------------------------------------------------------
+y <- AirPassengers; m <- 12
+f <- stats::filter(y, c(0.5, rep(1, m - 1), 0.5) / m)
+cat("jul-1955:", f[79], " NA:", sum(is.na(f)), " igual a decompose()$trend:", isTRUE(all.equal(as.numeric(f), as.numeric(decompose(y)$trend))), "\n")
+----------------------------------------------------------------------
+SALIDA:
+jul-1955: 285.75  NA: 12  igual a decompose()$trend: TRUE
+codigo de salida: 0 | stderr (sin el aviso de autoplot en desuso): nada
+======================================================================
+M6 · Python · seasonal_decompose (bloque del capitulo, sin cambios)
+----------------------------------------------------------------------
+# Descomposicion clasica multiplicativa
+from statsmodels.tsa.seasonal import seasonal_decompose
+
+dc = seasonal_decompose(pasajeros, model="multiplicative", period=12)
+dc.plot()
+
+# La version aditiva, la que este modulo descarta al final
+da = seasonal_decompose(pasajeros, model="additive", period=12)
+print("tendencia jul-1955:", dc.trend["1955-07-01"], " NaN:", int(dc.trend.isna().sum()), " indice julio:", round(dc.seasonal["1955-07-01"], 4))
+----------------------------------------------------------------------
+SALIDA:
+tendencia jul-1955: 285.75  NaN: 12  indice julio: 1.2266
+codigo de salida: 0 | stderr: nada
+======================================================================
+bloques con error: 0

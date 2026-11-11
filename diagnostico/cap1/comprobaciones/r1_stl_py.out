@@ -1,0 +1,25 @@
+R: julio estacional = 0.2164  tendencia jul-1955 = 5.646
+firma de STL: (self, /, *args, **kwargs)
+firma de fit: (self, inner_iter=None, outer_iter=None)
+ANTES (publicado): STL(y, period=12, robust=True).fit()
+   julio estacional: 1949 0.1647  1955 0.2329  1960 0.2724  recorrido 0.107726 | exp(jul-1955) 1.2623 | tendencia jul-1955 5.6449
+   max|S - S_R| 1.03e-01  max|T - T_R| 3.17e-02  NaN en tendencia 0
+por defecto: STL(y, period=12).fit()
+   julio estacional: 1949 0.1722  1955 0.2343  1960 0.2717  recorrido 0.101659 | exp(jul-1955) 1.2640 | tendencia jul-1955 5.6451
+   max|S - S_R| 8.51e-02  max|T - T_R| 2.36e-02  NaN en tendencia 0
+A: STL(y, period=12, seasonal=10*n+1, seasonal_deg=0, trend=19).fit()
+   julio estacional: 1949 0.2153  1955 0.2153  1960 0.2153  recorrido 0.000000 | exp(jul-1955) 1.2402 | tendencia jul-1955 5.6462
+   max|S - S_R| 5.01e-03  max|T - T_R| 3.96e-03  NaN en tendencia 0
+B: A + .fit(inner_iter=2, outer_iter=0)
+   julio estacional: 1949 0.2164  1955 0.2164  1960 0.2164  recorrido 0.000000 | exp(jul-1955) 1.2416 | tendencia jul-1955 5.6460
+   max|S - S_R| 7.24e-04  max|T - T_R| 2.38e-03  NaN en tendencia 0
+C: B + saltos de R (seasonal_jump=145, trend_jump=2, low_pass_jump=2)
+   julio estacional: 1949 0.2164  1955 0.2164  1960 0.2164  recorrido 0.000000 | exp(jul-1955) 1.2416 | tendencia jul-1955 5.6460
+   max|S - S_R| 1.36e-07  max|T - T_R| 4.97e-07  NaN en tendencia 0
+D: seasonal=1441 sin seasonal_deg=0 (queda en 1)
+   julio estacional: 1949 0.1561  1955 0.2216  1960 0.2762  recorrido 0.120170 | exp(jul-1955) 1.2481 | tendencia jul-1955 5.6452
+   max|S - S_R| 7.48e-02  max|T - T_R| 2.39e-02  NaN en tendencia 0
+E: sin trend=19 (statsmodels lo calcula)
+   julio estacional: 1949 0.2164  1955 0.2164  1960 0.2164  recorrido 0.000000 | exp(jul-1955) 1.2416 | tendencia jul-1955 5.6460
+   max|S - S_R| 7.24e-04  max|T - T_R| 2.38e-03  NaN en tendencia 0
+   ventana de tendencia que calcula statsmodels en E: 19  low_pass: 13

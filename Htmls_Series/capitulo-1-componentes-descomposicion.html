@@ -2355,7 +2355,7 @@
 
       <div class="simulador" data-simulador="serie-airpassengers">
         <h4><i class="fas fa-chart-line" aria-hidden="true"></i> La serie <code>AirPassengers</code></h4>
-        <p class="simulador-intro">Pasajeros mensuales de aerolíneas internacionales
+        <p class="simulador-intro">Pasajeros mensuales de aerolíneas internacionales, en miles
           (1949–1960). Es la serie clásica de este curso: se ve una <em>tendencia</em> creciente y un patrón que se
           repite cada 12 meses cuya amplitud aumenta con el nivel.</p>
         <div class="grafico-wrapper">
@@ -2460,7 +2460,8 @@ print(pasajeros.head())</code></pre>
           <tr>
             <td>Frecuencia estacional</td>
             <td><code>frequency()</code> (= 12)</td>
-            <td><code>freq="MS"</code></td>
+            <td><code>period=12</code>, que statsmodels deduce de un índice con <code>freq="MS"</code> y que
+              también puede pasarse explícito</td>
           </tr>
           <tr>
             <td>Inicio de la serie</td>
@@ -2469,17 +2470,18 @@ print(pasajeros.head())</code></pre>
           </tr>
           <tr>
             <td>Varias series en un objeto</td>
-            <td><code>key =</code> de <code>tsibble</code> (<code>ts</code> no puede)</td>
+            <td>matriz <code>mts</code>, una columna por serie / <code>key =</code> de <code>tsibble</code></td>
             <td>columnas, o <code>MultiIndex</code></td>
           </tr>
         </tbody>
       </table>
 
       <p>Esa última fila es la diferencia de fondo entre <code>ts</code> y <code>tsibble</code>, y conviene no pasarla
-        por alto. Un <code>ts</code> guarda <strong>una</strong> serie y le fía el «cuándo» a <code>start</code> y
-        <code>frequency</code>. Un <code>tsibble</code> guarda el «cuándo» en una columna —el <strong>índice</strong>—
-        y admite <strong>varias series a la vez</strong> si le declaras cuál es la columna que las distingue: la
-        <strong>clave</strong>.</p>
+        por alto. Un <code>ts</code> le fía el «cuándo» a <code>start</code> y <code>frequency</code>; si recibe una
+        matriz guarda varias series (un objeto <code>mts</code>), pero en formato ancho: una columna por serie y
+        <strong>un único índice</strong> para todas. Un <code>tsibble</code> guarda el «cuándo» en una columna —el
+        <strong>índice</strong>— y admite <strong>varias series a la vez</strong> en formato largo, cada una con sus
+        propias fechas, si le declaras cuál es la columna que las distingue: la <strong>clave</strong>.</p>
 
       <p>La regla que gobierna el objeto es una sola: <strong>índice y clave, juntos, identifican una fila y solo
         una</strong>. Si le pasas ventas mensuales de cinco tiendas y declaras únicamente el índice, cada mes tiene
@@ -2655,9 +2657,10 @@ plt.show()</code></pre>
       </div>
 
       <p>Esa fusión no es pereza de notación, y explica por qué el ciclo casi no volverá a aparecer en el capítulo.
-        Para reconocer un ciclo hacen falta muchas repeticiones, y <code>AirPassengers</code> cubre doce años: un
-        ciclo económico de siete u ocho años cabría ahí una vez y media, indistinguible de una tendencia que sube.
-        Por eso los métodos prácticos —la descomposición clásica y STL de los módulos siguientes incluidas— no separan
+        Para reconocer un ciclo hacen falta muchas repeticiones, y <code>AirPassengers</code> cubre doce años: las
+        fluctuaciones cíclicas no tienen una duración fija y suelen durar al menos dos años, de modo que en una serie
+        tan corta caben pocas, y un ciclo largo del que solo se ve un tramo es indistinguible de una tendencia que
+        sube. Por eso los métodos prácticos —la descomposición clásica y STL de los módulos siguientes incluidas— no separan
         $T_t$ de $C_t$: estiman un único componente <strong>tendencia-ciclo</strong> que absorbe a los dos. Cuando en
         adelante se hable de «la tendencia», será en realidad esa mezcla.</p>
 
@@ -2672,8 +2675,8 @@ plt.show()</code></pre>
         $$\underbrace{y_t = T_t + S_t + R_t}_{\text{aditivo}} \qquad\qquad
         \underbrace{y_t = T_t \times S_t \times R_t}_{\text{multiplicativo}}$$
       </div>
-      <p>El modelo aditivo conviene cuando la amplitud estacional es <em>constante</em>; el multiplicativo, cuando la
-        amplitud <em>crece con el nivel</em> de la serie.</p>
+      <p>El modelo aditivo conviene cuando la amplitud estacional —o la variación alrededor de la tendencia— <em>no
+        depende del nivel</em> de la serie; el multiplicativo, cuando es <em>proporcional al nivel</em>.</p>
 
       <p>Escrita así, la diferencia es un signo. Vista, es otra cosa: dos series pueden compartir exactamente la
         misma tendencia y exactamente el mismo patrón estacional y acabar teniendo formas distintas, según se sumen
@@ -2717,14 +2720,16 @@ plt.show()</code></pre>
       <p>«Los mismos pasajeros de más en julio» no es una manera de hablar. En el Módulo 6 se descompondrá
         <code>AirPassengers</code> también en la escala equivocada, y el modelo aditivo contestará a los doce julios
         de la serie con una sola cifra: ahí esta banda de anchura constante deja de ser una figura y se cobra en
-        pasajeros.</p>
+        miles de pasajeros.</p>
 
       <p>Dicho así, el criterio parece cosa de mirar el gráfico y decidir; de hecho el abanico del Módulo 3 ya
         apuntaba a la respuesta antes de que hubiera con qué justificarla. Conviene desconfiar de eso y convertirlo en
         un número: para cada año, la <strong>amplitud estacional</strong> —el mes más alto menos el más bajo— frente
-        al <strong>nivel medio</strong> de ese mismo año. Si el modelo fuera aditivo, la amplitud se mantendría
+        al <strong>nivel medio</strong> de ese mismo año. Es una medida aproximada, porque el máximo menos el mínimo
+        de un año recoge también lo que la tendencia sube dentro de ese año, pero basta para enfrentar las dos
+        hipótesis. Si el modelo fuera aditivo, la amplitud se mantendría
         constante mientras el nivel sube; si fuera exactamente multiplicativo, lo constante sería la proporción entre
-        las dos. En <code>AirPassengers</code>:</p>
+        las dos. En <code>AirPassengers</code>, con el nivel y la amplitud en miles de pasajeros:</p>
 
       <table>
         <caption class="sr-only">Amplitud estacional y nivel medio de AirPassengers en tres años</caption>
@@ -2757,11 +2762,12 @@ plt.show()</code></pre>
         <p class="simulador-lectura"></p>
       </div>
 
-      <p>La amplitud no es constante ni de lejos: pasa de 44 a 232 pasajeros, se multiplica por más de cinco mientras
-        el nivel se multiplica por menos de cuatro. El modelo aditivo queda descartado, y en el gráfico se ve sin
-        necesidad de aritmética: los puntos abandonan la horizontal desde el primer año y no vuelven. Pero la
-        proporción tampoco es del todo estable —sube del 35&nbsp;% al 49&nbsp;%—, y eso también está en el gráfico:
-        los puntos acompañan al rayo, sí, pero se le quedan por encima. Así que <code>AirPassengers</code> tampoco es
+      <p>La amplitud no es constante ni de lejos: pasa de 44 a 232 mil pasajeros, se multiplica por más de cinco
+        mientras el nivel se multiplica por menos de cuatro. El modelo aditivo queda descartado, y en el gráfico se ve
+        sin necesidad de aritmética: los puntos abandonan la horizontal desde el primer año y no vuelven. Pero la
+        proporción tampoco es estable —va del 35&nbsp;% de 1949 al 49&nbsp;% de 1960, con un mínimo del 32&nbsp;% en
+        1951 y un máximo del 51&nbsp;% en 1958—, y eso también está en el gráfico: los puntos acompañan al rayo, sí,
+        pero después de 1949 todos menos el de 1951 se le quedan por encima. Así que <code>AirPassengers</code> tampoco es
         un multiplicativo de manual; simplemente está mucho más cerca de serlo. Conviene quedarse con esa idea:
         <strong>ningún modelo describe la serie exactamente, se elige el que menos se equivoca</strong>.</p>
 
@@ -2798,8 +2804,8 @@ plt.show()</code></pre>
       </div>
 
       <p>El abanico no se cierra del todo —ahí vuelve a asomar el «casi» de antes—, pero la amplitud pasa de
-        multiplicarse por más de cinco a hacerlo por poco más de uno: el logaritmo no vuelve la serie perfectamente
-        aditiva, la acerca lo bastante como para tratarla así. De ahí que el resto del capítulo trabaje sobre
+        multiplicarse por más de cinco a hacerlo por 1.32: el logaritmo no vuelve la serie perfectamente
+        aditiva —la amplitud todavía crece cerca de un tercio—, la acerca lo bastante como para tratarla así. De ahí que el resto del capítulo trabaje sobre
         $\log$<code>(AirPassengers)</code> siempre que necesite un método aditivo, y devuelva el resultado a la
         escala original al final aplicando $\exp(\cdot)$.</p>
 
@@ -2866,10 +2872,14 @@ plt.show()</code></pre>
 
       <h3>Por qué una ventana del tamaño del período borra la estacionalidad</h3>
 
-      <p>Aquí está el motivo de elegir $m$ igual al período y no un número cualquiera. Una ventana de doce meses
+      <p>Aquí está el motivo de elegir $m$ igual al período —o a un múltiplo suyo, como 24 o 36— y no un número
+        cualquiera. Una ventana de doce meses
         contiene <strong>cada mes exactamente una vez</strong>: un julio alto y un noviembre bajo, un junio fuerte y
         un febrero flojo. Al promediarlos, los efectos estacionales se compensan entre sí y lo que sobrevive es el
-        nivel de la serie, limpio del vaivén anual. Con $m=5$ o $m=7$ la ventana recogería unos meses sí y otros no,
+        nivel de la serie, limpio del vaivén anual. La compensación es exacta cuando los efectos estacionales suman
+        cero a lo largo del ciclo —la condición que el Módulo 6 impone al normalizar— y la tendencia es
+        una recta dentro de la ventana; si la tendencia se curva, o si los componentes se multiplican en
+        vez de sumarse, es solo aproximada. Con $m=5$ o $m=7$ la ventana recogería unos meses sí y otros no,
         arrastraría parte de la estacionalidad, y la curva resultante seguiría ondulando al ritmo del año. De ahí que
         una media móvil del orden del período estime la tendencia-ciclo y no otra cosa.</p>
 
@@ -2888,7 +2898,8 @@ plt.show()</code></pre>
         vez de un nivel, y apoyarse en un solo lado cuando no hay datos al otro. Aflojar las tres a la vez da otro
         suavizador, que es sobre el que está construido STL; el Módulo 7 lo aborda de frente antes de usarlo, y su
         simulador permite volver a apretarlas para comprobar que lo que queda al final del camino es, otra vez, una
-        media móvil como esta.</p>
+        media móvil: la simple de orden impar de la primera fórmula de este módulo, porque ese simulador solo admite
+        anchuras impares.</p>
 
       <p>Queda un compromiso que decidir, y es el que el simulador de abajo deja tocar. Cuanto mayor es $m$, más
         suave sale la curva y menos detalle conserva: con $m$ pequeño la tendencia persigue el ruido y deja de ser
@@ -2917,27 +2928,39 @@ plt.show()</code></pre>
           </button>
         </div>
         <div class="code-tab-panel" data-lang="r">
-          <pre><code class="language-r"># Media movil centrada de orden 12 (2x12) con slider() de fpp3
+          <pre><code class="language-r"># Media movil centrada 2x12 en dos pasos: una 12-MA y, sobre ella, una 2-MA
 library(fpp3)
-pasajeros &lt;- as_tsibble(AirPassengers)
+pasajeros &lt;- as_tsibble(AirPassengers) |&gt;
+  mutate(
+    `12-MA`   = slider::slide_dbl(value, mean,
+                  .before = 5, .after = 6, .complete = TRUE),
+    tendencia = slider::slide_dbl(`12-MA`, mean,
+                  .before = 1, .after = 0, .complete = TRUE)
+  )
 pasajeros |&gt;
-  mutate(tendencia = slider::slide_dbl(value, mean,
-                       .before = 6, .after = 6, .complete = TRUE)) |&gt;
   autoplot(value) +
-  geom_line(aes(y = tendencia), colour = "#FF6600", linewidth = 1)</code></pre>
+  geom_line(aes(y = tendencia), colour = "#FF6600", linewidth = 1)
+
+# Control: la tendencia de julio de 1955
+pasajeros |&gt; filter(index == yearmonth("1955 Jul")) |&gt; pull(tendencia)
+#> [1] 285.75</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
-          <pre><code class="language-python"># Media movil centrada de orden 12 con pandas
-tendencia = pasajeros.rolling(window=12, center=True).mean()
+          <pre><code class="language-python"># Media movil centrada 2x12 con pandas, en dos pasos
+ma12 = pasajeros.rolling(window=12).mean()            # media de los 12 meses que terminan en t
+tendencia = ma12.rolling(window=2).mean().shift(-6)   # 2x12: dos ventanas seguidas, centradas en t
+
+print(tendencia["1955-07-01"])    # 285.75
+print(tendencia.isna().sum())     # 12: seis huecos al principio y seis al final
 
 import matplotlib.pyplot as plt
 pasajeros.plot(label="observado")
-tendencia.plot(label="media movil (m=12)")
+tendencia.plot(label="media movil 2x12")
 plt.legend(); plt.show()</code></pre>
         </div>
       </div>
 
-      <p>Ese cálculo, tan modesto que cabe en una línea, es más importante de lo que parece: <strong>ya es el primer
+      <p>Ese cálculo, tan modesto que cabe en un par de líneas, es más importante de lo que parece: <strong>ya es el primer
         paso de un método completo</strong>. Con la tendencia estimada, quitarla de la serie deja al descubierto lo que
         faltaba —la estacionalidad y el residuo—, y ese encadenamiento tiene nombre propio.</p>
     </div>
@@ -3009,11 +3032,11 @@ plt.legend(); plt.show()</code></pre>
         <div class="ciclo-panel" id="ciclo-descomposicion-escala" role="tabpanel">
           <div class="ciclo-campo">
             <span class="ciclo-etiqueta">Qué haces</span>
-            <p>Mirar si la amplitud estacional <strong>crece con el nivel</strong> de la serie. Si crece, el modelo es multiplicativo $y_t = T_t \times S_t \times R_t$; si se mantiene, aditivo $y_t = T_t + S_t + R_t$. Tomar logaritmos convierte el caso multiplicativo en uno aditivo, porque $\log(T \times S \times R) = \log T + \log S + \log R$.</p>
+            <p>Mirar si la amplitud estacional <strong>crece con el nivel</strong> de la serie. Si crece más o menos en proporción a él, el modelo es multiplicativo $y_t = T_t \times S_t \times R_t$; si se mantiene, aditivo $y_t = T_t + S_t + R_t$. Tomar logaritmos convierte el caso multiplicativo en uno aditivo, porque $\log(T \times S \times R) = \log T + \log S + \log R$.</p>
           </div>
           <div class="ciclo-campo">
             <span class="ciclo-etiqueta">Con qué</span>
-            <p><code>autoplot(y)</code> y el gráfico estacional <code>gg_season(y)</code>; en Python, <code>y.plot()</code>. La decisión es visual, no hay prueba automática.</p>
+            <p><code>autoplot(y)</code> y el gráfico estacional <code>gg_season(y)</code>; en Python, <code>y.plot()</code>. Se empieza por mirar, pero conviene respaldarlo con un número: la amplitud de cada año frente a su nivel, como en el Módulo 4.</p>
           </div>
           <div class="ciclo-campo ciclo-vuelta">
             <span class="ciclo-etiqueta">Qué te devuelve atrás</span>
@@ -3023,11 +3046,11 @@ plt.legend(); plt.show()</code></pre>
         <div class="ciclo-panel" id="ciclo-descomposicion-tendencia" role="tabpanel" hidden>
           <div class="ciclo-campo">
             <span class="ciclo-etiqueta">Qué haces</span>
-            <p>Suavizar con una media móvil centrada del orden del período. Con $m$ par hace falta la media móvil $2\times m$ para que quede centrada, y eso cuesta $m/2$ observaciones en cada extremo.</p>
+            <p>Suavizar con una media móvil centrada del orden del período. Con $m$ par hace falta la media móvil $2\times m$ para que quede centrada, y eso cuesta $m/2$ observaciones en cada extremo; con $m$ impar basta la media móvil de orden $m$, que cuesta $(m-1)/2$.</p>
           </div>
           <div class="ciclo-campo">
             <span class="ciclo-etiqueta">Con qué</span>
-            <p><code>stats::filter(y, rep(1/m, m))</code> o directamente <code>decompose()</code>; en Python, <code>seasonal_decompose()</code>.</p>
+            <p>Con $m$ par, <code>stats::filter(y, c(0.5, rep(1, m - 1), 0.5) / m)</code> —los pesos de la $2\times m$—, o directamente <code>decompose()</code>, que aplica ese mismo filtro; en Python, <code>seasonal_decompose()</code>.</p>
           </div>
           <div class="ciclo-campo ciclo-vuelta">
             <span class="ciclo-etiqueta">Qué te devuelve atrás</span>
@@ -3091,8 +3114,8 @@ plt.legend(); plt.show()</code></pre>
         <tbody>
           <tr>
             <th scope="row">2 · Tendencia</th>
-            <td colspan="2">$\hat{T}_t$, la media móvil centrada de orden $2\times m$ del Módulo 5. Es el único paso
-              que no depende de la escala.</td>
+            <td colspan="2">$\hat{T}_t$, la media móvil centrada del Módulo 5: la $2\times m$ si $m$ es par, la de
+              orden $m$ si es impar. Es el único paso que no depende de la escala.</td>
           </tr>
           <tr>
             <th scope="row">3a · Serie sin tendencia</th>
@@ -3133,8 +3156,8 @@ plt.legend(); plt.show()</code></pre>
         condición de la última fila.</p>
 
       <p>De los cuatro pasos, el que más extraña es el 3c, porque parece un tecnicismo prescindible: los índices ya
-        estaban calculados en 3b y el reescalado apenas los mueve. Sin él, sin embargo, los dos pasos siguientes
-        salen desplazados.</p>
+        estaban calculados en 3b y el reescalado apenas los mueve. Sin él, sin embargo, los índices quedan
+        desplazados, y con ellos todo lo que después se calcule dividiendo por ellos.</p>
 
       <div class="derivacion">
         <button type="button" class="derivacion-boton" aria-expanded="false" aria-controls="der-normalizacion">
@@ -3153,21 +3176,25 @@ plt.legend(); plt.show()</code></pre>
             </li>
             <li>
               <p>Un 0.18&nbsp;% de desvío parece despreciable, y lo sería si fuera ruido. No lo es: es un factor
-                <strong>constante</strong> que afecta por igual a las 144 observaciones. Si se dejara dentro de
-                $\hat{S}$, el residuo lo heredaría invertido, porque el paso 4 lo despeja:</p>
+                <strong>constante</strong>, el mismo en las 144 observaciones, y en algún componente tiene que
+                quedar. El paso 4 dice en cuál:</p>
               $$\frac{y_t}{\hat{T}_t\, \tilde s_k} \;=\; \frac{1}{\bar s} \cdot \frac{y_t}{\hat{T}_t\, \hat{S}_k}
                 \;=\; 1.0018 \times \hat{R}_t$$
-              <p>El residuo dejaría de oscilar alrededor de 1 para hacerlo alrededor de 1.0018.</p>
+              <p>Sin normalizar, el residuo promedia exactamente 1 —cada índice bruto es la media de su propio
+                mes— y el desvío se queda en los índices, que promedian 0.9982. Al normalizar ocurre lo contrario:
+                los índices pasan a promediar 1 y es el residuo el que promedia 0.9982. Normalizar no borra el
+                factor: decide que lo cargue el residuo y no el componente estacional.</p>
             </li>
             <li>
-              <p>Y el desvío se propagaría al Módulo 8. La serie desestacionalizada $y_t / \hat{S}_t$ saldría un
-                0.18&nbsp;% por encima del nivel real en <em>todos</em> sus puntos: no una imprecisión, un
-                desplazamiento sistemático de una serie que se publica como si fuera el nivel limpio.</p>
+              <p>Y hay una razón para preferir que lo cargue el residuo: el componente estacional se usa después.
+                En el Módulo 8 la serie desestacionalizada es $y_t / \hat{S}_t$, y con los índices brutos saldría
+                un 0.18&nbsp;% más alta en <em>todos</em> sus puntos: no una imprecisión, un desplazamiento
+                sistemático de una serie que se publica como si fuera el nivel limpio.</p>
             </li>
             <li>
-              <p>Dividir cada índice por $\bar s$ devuelve ese factor constante a donde pertenece —la tendencia— y
-                deja los índices midiendo solo la desviación respecto del año medio. Para julio, con el promedio
-                bruto del paso 3b:</p>
+              <p>Dividir cada índice por $\bar s$ saca ese factor constante de los índices —la tendencia no se toca:
+                sigue siendo la media móvil del paso 2— y los deja midiendo solo la desviación respecto del año
+                medio. Para julio, con el promedio bruto del paso 3b:</p>
               $$\hat{S}_{\text{julio}} = \frac{1.224391}{0.998236} = 1.2266$$
             </li>
             <li>
@@ -3199,21 +3226,22 @@ plt.legend(); plt.show()</code></pre>
 
       <h3>Cómo se lee una descomposición multiplicativa</h3>
 
-      <p>En la versión aditiva los tres componentes se miden en las unidades de la serie —pasajeros— y se suman. En la
+      <p>En la versión aditiva los tres componentes se miden en las unidades de la serie —miles de pasajeros— y se
+        suman. En la
         multiplicativa no: solo la tendencia conserva las unidades, mientras que estacionalidad y residuo son
         <strong>factores sin unidades</strong>. Por eso oscilan alrededor de 1 y no de 0, y por eso se leen como
         porcentajes: un índice de 1.23 significa «un 23&nbsp;% por encima de la tendencia», y uno de 0.80, «un
         20&nbsp;% por debajo».</p>
 
-      <p>Conviene verlo sobre un punto concreto. En julio de 1955 la serie marcó 364 pasajeros, y la descomposición
-        reparte esa cifra así:</p>
+      <p>Conviene verlo sobre un punto concreto. En julio de 1955 la serie marcó 364 mil pasajeros, y la
+        descomposición reparte esa cifra así:</p>
 
       <div class="formula">
         $$\underbrace{364}_{y_t} \;\approx\; \underbrace{285.75}_{\hat{T}_t} \;\times\;
         \underbrace{1.2266}_{\hat{S}_{\text{julio}}} \;\times\; \underbrace{1.0386}_{\hat{R}_t}$$
       </div>
 
-      <p>Se lee de izquierda a derecha. El nivel de fondo en aquel momento rondaba los 286 pasajeros; julio es un mes
+      <p>Se lee de izquierda a derecha. El nivel de fondo en aquel momento rondaba los 286 mil pasajeros; julio es un mes
         alto y multiplica ese nivel por 1.2266, un 22.7&nbsp;% más; y aun así, ese julio en particular quedó un
         3.9&nbsp;% por encima de lo que tendencia y estacionalidad predecían juntas. Ese sobrante es el residuo, y es
         justamente la parte que la descomposición <em>no</em> explica.</p>
@@ -3222,7 +3250,7 @@ plt.legend(); plt.show()</code></pre>
 
       <p><strong>La tendencia, 285.75</strong>, es la media móvil centrada del módulo anterior evaluada en ese punto.
         Su ventana de trece meses va de enero de 1955 a enero de 1956 —242, 233, 267, 269, 270, 315, 364, 347, 312,
-        274, 237, 278 y 284 pasajeros—, con los dos eneros a media ración. Hecha la cuenta, da 285.75 exacto.</p>
+        274, 237, 278 y 284, en miles de pasajeros—, con los dos eneros a media ración. Hecha la cuenta, da 285.75 exacto.</p>
 
       <p><strong>El índice de julio, 1.2266</strong>, es el paso 3 del recorrido. Dividir cada julio entre su
         tendencia produce once cocientes —uno por cada julio con tendencia definida, de 1949 a 1959—; su promedio es
@@ -3277,7 +3305,7 @@ plot(dc)
 # La version aditiva, la que este modulo descarta al final
 da &lt;- decompose(AirPassengers, type = "additive")
 
-# Version tidyverts (aditiva sobre log = multiplicativa)
+# Version tidyverts de la misma descomposicion multiplicativa
 library(fpp3)
 as_tsibble(AirPassengers) |&gt;
   model(clasica = classical_decomposition(value, type = "multiplicative")) |&gt;
@@ -3310,7 +3338,8 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
 
       <p>La igualdad se cumple, como siempre y por el mismo motivo de antes: el residuo se define para que se cumpla.
         Hasta el reparto parece razonable. El problema no está en este punto, sino en que ese
-        $\hat{S}_{\text{julio}} = 63.83$ es una cantidad de pasajeros <strong>fija para los doce años</strong>. Es la
+        $\hat{S}_{\text{julio}} = 63.83$ es una cantidad, en miles de pasajeros, <strong>fija para los doce
+        años</strong>. Es la
         banda de anchura constante del comparador del Módulo 4, ahora con número puesto: lo que allí se anunciaba en
         el dibujo aparece aquí como el índice que el método devuelve. Basta ponerla junto a lo que julio realmente
         añade sobre el nivel medio de su propio año, de 1949 a 1960:</p>
@@ -3322,11 +3351,12 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
       <p>El exceso de julio se multiplica por casi siete a lo largo de la serie, y el modelo aditivo le responde a los
         doce años con el mismo 63.83: el triple de lo que hace falta en 1949, menos de la mitad en 1960, y acertado
         casi exactamente en 1954. El multiplicativo tampoco es perfecto —eso quedó dicho en el Módulo 4—, pero su
-        único 1.2266 se traduce en cantidades que sí crecen, porque se aplica sobre una tendencia que crece: 28.7
-        pasajeros de más en 1949 y 107.9 en 1960.</p>
+        único 1.2266 se traduce en cantidades que sí crecen, porque se aplica sobre un nivel que crece: sobre el
+        nivel medio de cada año, 28.7 mil pasajeros de más en 1949 y 107.9 mil en 1960.</p>
 
       <p>Ese desajuste no se evapora. Va a parar al residuo, que es donde el paso 4 lo encuentra: la desviación típica
-        del residuo aditivo, calculada año por año, dibuja una U inconfundible.</p>
+        del residuo aditivo, calculada año por año —en 1949 y en 1960, con los seis meses que tienen residuo—, dibuja
+        una U inconfundible.</p>
 
       <div class="formula">
         30.5 · 20.7 · 22.4 · 17.0 · 14.5 · 5.6 · 6.1 · 10.0 · 17.2 · 29.4 · 29.4 · 25.4
@@ -3341,10 +3371,11 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
 
       <div class="warning">
         <p><strong>Limitaciones del método clásico:</strong> <span data-afirma="c1-m6-01">la tendencia por media móvil deja
-          <em>sin estimar</em> los primeros y últimos $m/2$ valores (los huecos en el panel de tendencia); supone que la
+          <em>sin estimar</em> los primeros y últimos $m/2$ valores si $m$ es par, y $(m-1)/2$ si es impar (los huecos
+          en el panel de tendencia); supone que la
           estacionalidad es <em>constante</em> en el tiempo; y es sensible a valores atípicos
-          <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.4"><a href="#ref-m6-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §3.4)</a></cite></span>. La descomposición STL (Módulo 7) corrige
-          estas tres debilidades.</p>
+          <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.4"><a href="#ref-m6-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §3.4)</a></cite></span>. La descomposición STL (Módulo 7) responde
+          a las tres, la última solo cuando se activa su opción robusta.</p>
       </div>
 
       <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
@@ -3374,13 +3405,13 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
           <div>
             <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
             <p class="text-gray-600 text-sm" style="margin:0;">Aplicar la descomposición STL y explicar por qué es más
-              flexible y robusta que la clásica.</p>
+              flexible que la clásica y, cuando se activa su opción robusta, más resistente a los atípicos.</p>
           </div>
         </div>
       </div>
 
       <p><span data-afirma="c1-m7-01"><strong>STL</strong> (<em>Seasonal-Trend decomposition using Loess</em>)</span> responde a esas tres debilidades una
-        por una, y lo consigue cambiando la herramienta de fondo: en lugar de promediar ventanas fijas, ajusta curvas
+        por una —a la tercera, solo si se le pide—, y lo consigue cambiando la herramienta de fondo: en lugar de promediar ventanas fijas, ajusta curvas
         locales por regresión ponderada (Loess). Conviene mirar esa herramienta antes de ver qué construye con ella,
         porque las tres respuestas salen todas del mismo sitio.</p>
 
@@ -3390,13 +3421,16 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
         instante a la vez</strong>. Para dar el valor en $t$ no mira la serie entera: toma los puntos más próximos a
         $t$, les ajusta una recta por mínimos cuadrados, se queda con la altura de esa recta justo en $t$ y descarta
         todo lo demás. Después repite la operación en $t+1$, y así hasta el final. La curva que acaba dibujándose no
-        es ninguna de esas rectas: es el rastro que dejan sus puntos centrales.</p>
+        es ninguna de esas rectas: es el rastro que dejan sus puntos centrales. (Para ahorrar cálculo,
+        <code>stl()</code> no hace el ajuste en todos los instantes: por defecto lo hace cada <code>t.jump</code>
+        —cada dos, con la ventana de este capítulo— e interpola entre ellos.)</p>
 
       <p>Dos números gobiernan el procedimiento. El primero es cuántos vecinos entran en cada ajuste, la anchura de la
         ventana o <strong>span</strong>: es lo que en R se pasa como <code>t.window</code> para la tendencia y
         <code>s.window</code> para lo estacional, los dos argumentos que aparecen en el bloque de código de más abajo.
-        Sobre <code>AirPassengers</code>, <code>stl()</code> calcula por su cuenta una ventana de <strong>19
-        meses</strong> para la tendencia. El segundo es el grado del polinomio local, y no es el mismo en los dos
+        Sobre <code>AirPassengers</code>, y con la estacionalidad fijada con <code>s.window = "periodic"</code> como
+        en este capítulo, <code>stl()</code> calcula por su cuenta una ventana de <strong>19 meses</strong> para la
+        tendencia. El segundo es el grado del polinomio local, y no es el mismo en los dos
         pasos: una recta para la tendencia (<code>t.degree = 1</code>) y una constante para lo estacional
         (<code>s.degree = 0</code>).</p>
 
@@ -3408,7 +3442,9 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
         $$w(u) = \left(1 - |u|^3\right)^3, \qquad u = \frac{\text{distancia a } t}{\text{radio de la ventana}}$$
       </div>
 
-      <p>La caída no es suave, y conviene ver cuánto pesa cada vecino en esa ventana de 19 meses:</p>
+      <p>La caída no es suave, y conviene ver cuánto pesa cada vecino en esa ventana de 19 meses. La tabla —igual que
+        el simulador de más abajo— toma como radio un paso más que la distancia al vecino más lejano, 10 meses en
+        lugar de 9, para que el mes del borde conserve un peso pequeño y se vea que sigue dentro de la ventana:</p>
 
       <table>
         <caption class="sr-only">Pesos tricúbicos según la distancia al punto estimado, en una ventana de 19
@@ -3424,7 +3460,10 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
         </tbody>
       </table>
 
-      <p>El mes del borde cuenta unas <strong>50 veces menos</strong> que el que se está estimando. Es la diferencia de
+      <p>Con ese radio, el mes del borde cuenta unas <strong>50 veces menos</strong> que el que se está estimando.
+        <code>stl()</code> es todavía más tajante: toma como radio la distancia al vecino más lejano —9 meses—, de
+        modo que $u$ vale $3/9$, $6/9$ y $9/9$ y los pesos son 0.8930 a 3 meses, 0.3485 a 6 y <strong>exactamente
+        0</strong> en el borde. En los dos casos es la diferencia de
         fondo con el módulo anterior: allí los once meses centrales valían $1/12$ cada uno, daba igual si estaban al
         lado o a cinco meses; aquí la ventana tiene un centro de gravedad y los extremos apenas participan.</p>
 
@@ -3443,7 +3482,7 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
           la recta naranja es el ajuste, y el punto verde la altura que se guarda. La curva verde es el rastro de
           repetir la operación en los 144 meses. Lleva el foco a enero de 1949 o a diciembre de 1960 y fíjate en qué
           le pasa a la media móvil. Y baja los dos últimos controles a 0: el ajuste local deja de ser Loess y
-          <em>vuelve a ser</em> la media móvil del Módulo 5.</p>
+          <em>vuelve a ser</em> la media móvil simple del Módulo 5.</p>
         <div class="simulador-controles"></div>
         <div class="grafico-wrapper">
           <canvas role="img"
@@ -3548,9 +3587,10 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
         descomposición, se miran los residuos. Un punto con un residuo enorme es un punto que el ajuste no ha sabido
         seguir, así que se le recorta el peso y se rehace todo sin escucharlo; con los pesos nuevos salen componentes
         nuevos, y con ellos residuos nuevos, y vuelta a empezar. Son <strong>dos bucles</strong>, uno dentro de otro:
-        el interior alterna estacionalidad y tendencia hasta que se estabilizan, y el exterior es el que reparte
-        desconfianza. Ahí está el número que delata la opción: sin <code>robust</code>, el bucle exterior da
-        <strong>cero</strong> vueltas. No es que sea poco resistente; es que ese bucle no llega a correr.</p>
+        el interior alterna estacionalidad y tendencia un número fijo de pasadas, sin esperar a que se estabilicen
+        —en <code>stl()</code>, dos sin la opción robusta y una con ella—, y el exterior es el que reparte
+        desconfianza. Ahí está el número que delata la opción: con <code>robust = TRUE</code> el bucle exterior da
+        15 vueltas; sin ella, <strong>cero</strong>. No es que sea poco resistente; es que ese bucle no llega a correr.</p>
 
       <p>El recorte no es gradual sino con corte, y lo fija la función <strong>bicuadrada</strong>, medida en unidades
         de seis veces la mediana de los residuos absolutos:</p>
@@ -3566,8 +3606,8 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
         <strong>en cero</strong>, y el punto sale del ajuste.</p>
 
       <p>Vale la pena verlo sobre el caso que el capítulo usa al final. Si se infla un 50&nbsp;% el julio de 1955
-        —de 364 a 546 pasajeros— y se descompone <em>sin</em> la opción robusta, esto es lo que vería el bucle
-        exterior si se le dejara correr:</p>
+        —de 364 a 546 mil pasajeros— y se descompone <em>sin</em> la opción robusta, esto es lo que vería el bucle
+        exterior en su primera vuelta si se le dejara correr:</p>
 
       <table>
         <caption class="sr-only">Pesos de robustez sobre AirPassengers con julio de 1955 contaminado</caption>
@@ -3584,8 +3624,13 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
         </tbody>
       </table>
 
-      <p>De las 144 observaciones, el procedimiento expulsa exactamente una, y acierta cuál sin que nadie le haya
-        dicho dónde estaba. Las demás siguen contando casi por entero. Eso es lo que separa a la descomposición
+      <p>En esa primera vuelta, de las 144 observaciones el procedimiento expulsa exactamente una, y acierta cuál sin
+        que nadie le haya dicho dónde estaba. No es la única que pierde peso —otras 12 quedan por debajo de 0.5—,
+        pero la mitad de las demás conserva más de 0.94. El ajuste completo no se
+        queda ahí: con <code>robust = TRUE</code> las vueltas son 15, y al terminar las observaciones con peso 0 son
+        cinco —el julio contaminado y otras cuatro (febrero de 1949, de 1951 y de 1952, y marzo de 1960), que quedan
+        fuera igualmente cuando la serie no lleva ningún atípico añadido—, y 15, contando esas cinco, pesan menos de
+        0.5. Eso es lo que separa a la descomposición
         robusta de un recorte manual: no hay que <em>encontrar</em> el atípico, basta con activar el bucle que
         pregunta por él. El <strong>Ejercicio 3</strong> del cierre pone la cifra a lo que se gana —y a lo que se
         pierde si se olvida el argumento—.</p>
@@ -3607,7 +3652,8 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
 
       <h3>Cómo se leen los componentes en escala logarítmica</h3>
 
-      <p>Los cuatro paneles de arriba no están medidos en pasajeros sino en logaritmos, y eso cambia la lectura. La
+      <p>Los cuatro paneles de arriba no están medidos en miles de pasajeros sino en logaritmos, y eso cambia la
+        lectura. La
         ventaja es que los componentes <em>suman</em>; el precio, que ya no se leen directamente. Un valor estacional
         de 0.2164 no significa «un 21.6&nbsp;% por encima de la tendencia»: hay que deshacer el logaritmo antes de
         interpretarlo.</p>
@@ -3651,22 +3697,34 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
           <pre><code class="language-r"># STL sobre log(AirPassengers): componentes aditivos en escala log
 library(fpp3)
 as_tsibble(log(AirPassengers)) |&gt;
-  # window = 19 es justo lo que STL calcula solo con m = 12; se escribe
-  # para que se vea. Con 21 la figura sale distinta: S_julio = 1.2405.
+  # window = 19 es justo lo que STL calcula solo con m = 12 y
+  # season(window = "periodic"); se escribe para que se vea. Con la ventana
+  # estacional por defecto de STL(), que es 11, calcularia 21; y con
+  # trend(window = 21) esta figura sale distinta: S_julio = 1.2405.
   model(stl = STL(value ~ trend(window = 19) + season(window = "periodic"))) |&gt;
   components() |&gt;
   autoplot()
 
-# R base tambien trae STL, y ahi el 19 es el valor por defecto:
+# R base tambien trae STL, y ahi, con s.window = "periodic", el 19 sale solo:
 plot(stl(log(AirPassengers), s.window = "periodic"))</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
-          <pre><code class="language-python"># STL sobre log(AirPassengers)
+          <pre><code class="language-python"># STL sobre log(AirPassengers), con ajustes equivalentes a los del bloque de R:
+# estacionalidad periodica, ventana de tendencia de 19 y sin robustez.
+# No es identico: R evalua el ajuste local a saltos e interpola, y statsmodels
+# lo hace en cada punto. La diferencia es menor de 0.001 en el componente
+# estacional y de 0.003 en la tendencia.
 import numpy as np
 from statsmodels.tsa.seasonal import STL
 
-res = STL(np.log(pasajeros), period=12, robust=True).fit()
-res.plot()</code></pre>
+n = len(pasajeros)
+stl = STL(np.log(pasajeros), period=12,
+          seasonal=10 * n + 1, seasonal_deg=0,   # lo que R llama s.window = "periodic"
+          trend=19, robust=False)
+res = stl.fit(inner_iter=2, outer_iter=0)        # las pasadas que da stl() en R
+res.plot()
+
+print(round(res.seasonal["1955-07-01"], 4))      # 0.2164, el julio de la figura</code></pre>
         </div>
       </div>
 
@@ -3734,8 +3792,9 @@ res.plot()</code></pre>
 
       <div class="simulador" data-simulador="desestacionalizada">
         <h4><i class="fas fa-adjust" aria-hidden="true"></i> Serie observada vs. desestacionalizada</h4>
-        <p class="simulador-intro">La línea desestacionalizada ($y_t/\hat{S}_t$) elimina el
-          diente de sierra mensual y deja la tendencia-ciclo más un residuo suave.</p>
+        <p class="simulador-intro">La línea desestacionalizada ($y_t/\hat{S}_t$, con el índice $\hat{S}_t$ de la
+          descomposición clásica multiplicativa del Módulo 6) elimina el diente de sierra mensual y deja la
+          tendencia-ciclo junto con el residuo: por eso no es una curva suave.</p>
         <div class="grafico-wrapper">
           <canvas aria-label="Serie observada y serie desestacionalizada superpuestas" role="img"></canvas>
         </div>
@@ -3788,9 +3847,14 @@ res.plot()</code></pre>
         </div>
       </div>
 
-      <p>Ambas van de 0 (componente ausente) a 1 (componente dominante). Para <code>AirPassengers</code> resultan
+      <p>En las dos fórmulas, $T_t$, $S_t$ y $R_t$ son los componentes <em>estimados</em> —los $\hat{T}_t$,
+        $\hat{S}_t$ y $\hat{R}_t$ de los módulos anteriores, escritos sin gorro para aligerar—. Ambas van de 0
+        (componente ausente) a 1 (componente dominante). Para <code>AirPassengers</code>, con la STL de este capítulo
+        —sobre el logaritmo y con <code>s.window = "periodic"</code>—, resultan
         $F_T = 0{.}994$ y $F_S = 0{.}937$: tendencia y estacionalidad <strong>muy fuertes</strong>, que es exactamente
-        lo que ya se veía a ojo en el gráfico estacional del Módulo 3.</p>
+        lo que ya se veía a ojo en el gráfico estacional del Módulo 3. Las cifras dependen de esa elección: con
+        <code>feat_stl</code> de <code>feasts</code>, que deja variar el componente estacional
+        (<code>s.window = 11</code>), sobre la misma serie en logaritmos salen 0.997 y 0.964.</p>
 
       <div class="note">
         <p><strong>Una serie entera en dos números:</strong> eso es lo que consiguen $F_T$ y $F_S$, y por eso se usan
@@ -3832,7 +3896,8 @@ res.plot()</code></pre>
 
       <h3>La descomposición como preprocesamiento</h3>
       <p>El capítulo empezó con una mezcla y termina con las piezas separadas. Ese trabajo —descomponer,
-        desestacionalizar, transformar con logaritmos o Box–Cox— rara vez es el objetivo final: es la
+        desestacionalizar, transformar con logaritmos o, más en general, con una transformación de Box–Cox (una
+        familia de transformaciones que incluye al logaritmo y a las potencias)— rara vez es el objetivo final: es la
         <strong>preparación</strong> que va antes de cualquier modelo de pronóstico o de aprendizaje automático. Saber
         qué componentes hay dentro de una serie es lo que permite elegir entre aditivo y multiplicativo, decidir qué
         conviene quitar antes de modelar y, más adelante, explicar de dónde sale un pronóstico. Y no es vocabulario que
@@ -3850,19 +3915,21 @@ res.plot()</code></pre>
         <ul style="margin-bottom:0;">
           <li>Una serie de tiempo tiene <strong>dependencia temporal</strong>: el orden importa.</li>
           <li>Cuatro componentes: <strong>tendencia, estacionalidad, ciclo y ruido</strong> (ciclo ≠ estacionalidad).</li>
-          <li>Modelo <strong>aditivo</strong> si la amplitud es constante; <strong>multiplicativo</strong> (o log) si
-            crece con el nivel.</li>
+          <li>Modelo <strong>aditivo</strong> si la amplitud no depende del nivel; <strong>multiplicativo</strong>
+            (o log) si es proporcional a él.</li>
           <li>La <strong>media móvil</strong> del orden del período estima la tendencia y elimina la estacionalidad.</li>
           <li>Descomposición <strong>clásica</strong> (simple, con huecos y estacionalidad fija) vs. <strong>STL</strong>
-            (flexible y robusta).</li>
+            (flexible y, con <code>robust = TRUE</code>, resistente a los atípicos).</li>
           <li><strong>Desestacionalizar</strong> = quitar $S_t$; $F_T$ y $F_S$ miden la fuerza de cada componente.</li>
         </ul>
       </div>
 
       <div class="quiz" data-quiz="cap1">
         <h4><i class="fas fa-circle-question" aria-hidden="true"></i> Autoevaluación</h4>
-        <p class="text-sm" style="margin-bottom:0;">Seis preguntas para comprobar lo esencial. Cada opción tiene su
-          explicación: si te equivocas, la retroalimentación te dice exactamente dónde estuvo el razonamiento.</p>
+        <p class="text-sm" style="margin-bottom:0;">Ocho preguntas para comprobar lo esencial. En las de respuesta
+          única cada opción tiene su explicación; en las numéricas y en la de selección múltiple la explicación es
+          una para el acierto y otra para el fallo. Si te equivocas, la retroalimentación te dice dónde estuvo el
+          razonamiento.</p>
         <div class="quiz-progreso" role="presentation"><div class="quiz-progreso-barra"></div></div>
         <div class="quiz-preguntas"></div>
         <div class="quiz-resumen" role="status" hidden></div>
@@ -3897,8 +3964,8 @@ res.plot()</code></pre>
               detalle que lo condiciona todo: ¿cuánto varía el nivel del CO₂ entre 1959 y 1997, en porcentaje?</p>
           </div>
           <div class="ejercicio-panel solucion" id="c1e1-sol" hidden>
-            <p><strong>Respuesta: con <code>co2</code> los datos no permiten decidir</strong> — y ese es justamente el
-              aprendizaje.</p>
+            <p><strong>Respuesta: con <code>co2</code> el criterio apunta a la multiplicativa, pero elegir una u otra
+              cambia muy poco</strong> — y distinguir esas dos cosas es justamente el aprendizaje.</p>
             <pre><code class="language-r"># Criterio cuantitativo: elasticidad amplitud-nivel.
 #   log(amplitud del anio) = a + b * log(nivel del anio)
 #   b ~ 0 => ADITIVA (la amplitud no depende del nivel)
@@ -3916,7 +3983,8 @@ elasticidad &lt;- function(x) {
 elasticidad(co2)             # b = 1.083, IC95 [0.575, 1.591], R2 = 0.335
 elasticidad(AirPassengers)   # b = 1.291, IC95 [1.149, 1.432], R2 = 0.976
 
-# La clave esta en cuanto varia el NIVEL en cada serie:
+# La clave esta en cuanto recorre cada serie en proporcion a su media
+# (maximo menos minimo de toda la serie: tendencia y vaiven estacional juntos):
 (max(co2) - min(co2)) / mean(co2)                       # 0.159 -> 16 %
 (max(AirPassengers) - min(AirPassengers)) / mean(AirPassengers)   # 1.848 -> 185 %</code></pre>
             <table>
@@ -3927,22 +3995,33 @@ elasticidad(AirPassengers)   # b = 1.291, IC95 [1.149, 1.432], R2 = 0.976
               </thead>
               <tbody>
                 <tr><td><code>co2</code></td><td>1.083</td><td>[0.575, 1.591]</td><td>0.335</td>
-                  <td>Indistinguible</td></tr>
+                  <td>Descarta la aditiva; compatible con la multiplicativa</td></tr>
                 <tr><td><code>AirPassengers</code></td><td>1.291</td><td>[1.149, 1.432]</td><td>0.976</td>
-                  <td>Multiplicativa</td></tr>
+                  <td>Descarta la aditiva; con esta medida, también la multiplicativa exacta</td></tr>
               </tbody>
             </table>
             <p>En <code>AirPassengers</code> el intervalo es estrecho y excluye el 0 con holgura, y el ajuste explica
-              el 97.6&nbsp;% de la variación: multiplicativa sin discusión. En <code>co2</code>, en cambio, el intervalo
-              va de 0.58 a 1.59 y el $R^2$ es 0.335: <strong>los datos no distinguen</strong> una descomposición de la
-              otra. La razón es que el nivel del CO₂ solo sube un 16&nbsp;% en 39 años, mientras que el de
-              <code>AirPassengers</code> se multiplica por casi cuatro. Sobre un rango tan estrecho, la aditiva y la
-              multiplicativa dan casi lo mismo, así que <strong>la elección importa poco</strong>.</p>
+              el 97.6&nbsp;% de la variación: la aditiva queda descartada. Pero el intervalo excluye también el 1: con
+              esta medida, la amplitud crece <em>más</em> que en proporción al nivel, que es el «tampoco es un
+              multiplicativo de manual» del Módulo 4. La salvedad importa, porque el máximo menos el mínimo del año
+              recoge también lo que sube la tendencia: midiendo la amplitud sobre la serie sin tendencia (1950–1959),
+              $b = 1.18$ con intervalo $[0.95, 1.41]$, que ya alcanza el 1. En <code>co2</code> el intervalo es mucho más ancho —va de 0.58 a 1.59, con un
+              $R^2$ de 0.335—, pero deja fuera el 0 y contiene el 1: <strong>los datos descartan la aditiva y son
+              compatibles con la multiplicativa</strong>. Que el intervalo salga tan ancho tiene su razón: el nivel
+              medio anual del CO₂ solo sube un 15&nbsp;% en 39 años (de 315.8 a 363.8 ppm), mientras que el de
+              <code>AirPassengers</code> se multiplica por 3.76; las dos últimas líneas del código lo resumen con el
+              recorrido total de cada serie frente a su media, 16&nbsp;% y 185&nbsp;%. Y ese mismo rango tan estrecho
+              hace que la aditiva y la multiplicativa den aquí casi lo mismo, así que <strong>la elección importa
+              poco</strong>: no porque los datos no distingan, sino porque la diferencia entre las dos es
+              pequeña.</p>
             <p style="margin-bottom:0;">Hay un matiz interesante y verificable: la amplitud estacional del CO₂
-              <strong>sí</strong> crece, a razón de $+0.024$ ppm por año ($p = 0.0002$). No es proporcional al nivel;
-              es un fenómeno propio. Eso no lo captura bien <em>ninguna</em> descomposición de índices fijos, y sí lo
-              captura <strong>STL</strong>, que deja evolucionar el componente estacional. Es un buen argumento para
-              preferir STL aquí, más allá del debate aditiva/multiplicativa.</p>
+              <strong>sí</strong> crece, a razón de $+0.024$ ppm por año ($p = 0.0002$), y ese crecimiento es el que
+              predice la proporcionalidad: una amplitud que fuera siempre la misma fracción del nivel crecería
+              $+0.023$ ppm por año, y el cociente entre amplitud y nivel no muestra tendencia ($p = 0.85$). Una
+              descomposición aditiva de índices fijos no puede recogerlo; una multiplicativa sí, porque aplica sus
+              índices fijos sobre un nivel que sube. También lo recoge <strong>STL</strong> con una ventana
+              estacional finita, que deja evolucionar el componente estacional, pero aquí no es un argumento para
+              preferirla: a la multiplicativa le basta.</p>
           </div>
         </div>
 
@@ -3959,8 +4038,8 @@ elasticidad(AirPassengers)   # b = 1.291, IC95 [1.149, 1.432], R2 = 0.976
           </div>
           <div class="ejercicio-panel pista" id="c1e2-pista" hidden>
             <p style="margin:0;">Escoge dos series que se parezcan poco entre sí: te dirán mucho más que dos parecidas.
-              <code>co2</code> (tendencia arrolladora) y <code>USAccDeaths</code> (casi pura estacionalidad) son un buen
-              par. Y no olvides el $\max(0, \cdot)$ de la fórmula: sin él pueden salir valores negativos que no
+              <code>co2</code> (tendencia arrolladora) y <code>USAccDeaths</code> (estacionalidad marcada y una tendencia
+              bastante más débil) son un buen par. Y no olvides el $\max(0, \cdot)$ de la fórmula: sin él pueden salir valores negativos que no
               significan nada.</p>
           </div>
           <div class="ejercicio-panel solucion" id="c1e2-sol" hidden>
@@ -3991,8 +4070,9 @@ round(fuerzas(AirPassengers, usar_log = TRUE), 4)  # FT = 0.9940  FS = 0.9368</c
               </tbody>
             </table>
             <p style="margin-bottom:0;">El contraste útil es $F_T$: 0.9997 en <code>co2</code> frente a 0.7991 en
-              <code>USAccDeaths</code>. El CO₂ sube de forma casi determinista, mientras que las muertes accidentales
-              suben y bajan sin una dirección clara — su estructura es sobre todo el ciclo anual. <strong>Dos
+              <code>USAccDeaths</code>. El CO₂ sube de forma casi determinista, mientras que en las muertes accidentales
+              la tendencia existe pero es más débil y cambia de sentido —la media anual baja de 9652 en 1973 a 8395
+              en 1976 y vuelve a subir—: su estructura es sobre todo el ciclo anual. <strong>Dos
               advertencias:</strong> primero, no compares $F_T$ con $F_S$ <em>dentro</em> de una misma serie, porque
               sus denominadores son distintos; compara la misma medida <em>entre</em> series. Y segundo, un $F_T$ de
               0.9997 no significa "explica el 99.97&nbsp;% de la varianza": el denominador es
@@ -4057,7 +4137,9 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
               <code>robust = FALSE</code> —que es el valor <em>por defecto</em> de <code>stl()</code>— la distorsión es
               +3.14&nbsp;%, prácticamente igual de mala que la clásica. El mecanismo está en el Módulo 7: con
               <code>robust = TRUE</code> el julio contaminado recibe peso <strong>0</strong> y sale del ajuste, y sin
-              ella nadie se lo pregunta. Es decir: STL no es intrínsecamente resistente,
+              ella nadie se lo pregunta. (No es el único efecto de la opción: el ajuste robusto reparte pesos entre
+              todas las observaciones —sobre la serie sin atípico deja cuatro sin peso y 18 por debajo de 0.5—, así
+              que su índice «limpio», 1.2562, tampoco coincide con el 1.2416 del ajuste sin robustez.) Es decir: STL no es intrínsecamente resistente,
               lo es la opción. Si le pediste el contraejemplo a un asistente y te dio código sin
               <code>robust = TRUE</code>, la conclusión que habrías sacado sería la contraria a la correcta, y no por
               culpa del método sino de un argumento por defecto. Verificar ejecutando es lo que evita ese error.</p>
@@ -4069,7 +4151,8 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         <h3><i class="fas fa-book-open mr-2" aria-hidden="true"></i>Lecturas de este capítulo</h3>
         <ul style="margin-bottom:0;">
           <li>Hyndman &amp; Athanasopoulos, <em>Forecasting: Principles and Practice</em> (3.ª ed.), <strong>caps. 1–3</strong>
-            — patrones temporales y descomposición. Acceso abierto: <a href="https://otexts.com/fpp3/" target="_blank"
+            —patrones temporales y descomposición—, y la <strong>sección 4.3</strong> para las fuerzas $F_T$ y
+            $F_S$. Acceso abierto: <a href="https://otexts.com/fpp3/" target="_blank"
               rel="noopener">otexts.com/fpp3</a>.</li>
           <li>Shumway &amp; Stoffer, <em>Time Series Analysis and Its Applications</em> (4.ª ed.), cap. 1 — panorama y
             ejemplos.</li>
@@ -4105,7 +4188,7 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
 
     // Generado por precalculo/genera_datos.R el 2026-07-24
     // AirPassengers y su descomposicion (clasica multiplicativa + STL sobre log).
-    const DATOS_CAP1 = {"serie":"airpassengers","descripcion":"Descomposicion de AirPassengers. Clasica multiplicativa con stats::decompose (tendencia por media movil centrada de orden 12; NA en los extremos como null). STL con stats::stl sobre log(AirPassengers): componentes aditivos en escala log. Fuerza de tendencia/estacionalidad segun FPP3 seccion 3.6, calculada sobre STL.","n":144,"fechas":["1949-01","1949-02","1949-03","1949-04","1949-05","1949-06","1949-07","1949-08","1949-09","1949-10","1949-11","1949-12","1950-01","1950-02","1950-03","1950-04","1950-05","1950-06","1950-07","1950-08","1950-09","1950-10","1950-11","1950-12","1951-01","1951-02","1951-03","1951-04","1951-05","1951-06","1951-07","1951-08","1951-09","1951-10","1951-11","1951-12","1952-01","1952-02","1952-03","1952-04","1952-05","1952-06","1952-07","1952-08","1952-09","1952-10","1952-11","1952-12","1953-01","1953-02","1953-03","1953-04","1953-05","1953-06","1953-07","1953-08","1953-09","1953-10","1953-11","1953-12","1954-01","1954-02","1954-03","1954-04","1954-05","1954-06","1954-07","1954-08","1954-09","1954-10","1954-11","1954-12","1955-01","1955-02","1955-03","1955-04","1955-05","1955-06","1955-07","1955-08","1955-09","1955-10","1955-11","1955-12","1956-01","1956-02","1956-03","1956-04","1956-05","1956-06","1956-07","1956-08","1956-09","1956-10","1956-11","1956-12","1957-01","1957-02","1957-03","1957-04","1957-05","1957-06","1957-07","1957-08","1957-09","1957-10","1957-11","1957-12","1958-01","1958-02","1958-03","1958-04","1958-05","1958-06","1958-07","1958-08","1958-09","1958-10","1958-11","1958-12","1959-01","1959-02","1959-03","1959-04","1959-05","1959-06","1959-07","1959-08","1959-09","1959-10","1959-11","1959-12","1960-01","1960-02","1960-03","1960-04","1960-05","1960-06","1960-07","1960-08","1960-09","1960-10","1960-11","1960-12"],"observado":[112,118,132,129,121,135,148,148,136,119,104,118,115,126,141,135,125,149,170,170,158,133,114,140,145,150,178,163,172,178,199,199,184,162,146,166,171,180,193,181,183,218,230,242,209,191,172,194,196,196,236,235,229,243,264,272,237,211,180,201,204,188,235,227,234,264,302,293,259,229,203,229,242,233,267,269,270,315,364,347,312,274,237,278,284,277,317,313,318,374,413,405,355,306,271,306,315,301,356,348,355,422,465,467,404,347,305,336,340,318,362,348,363,435,491,505,404,359,310,337,360,342,406,396,420,472,548,559,463,407,362,405,417,391,419,461,472,535,622,606,508,461,390,432],"clasica_multiplicativa":{"tendencia":[null,null,null,null,null,null,126.7917,127.25,127.9583,128.5833,129,129.75,131.25,133.0833,134.9167,136.4167,137.4167,138.75,140.9167,143.1667,145.7083,148.4167,151.5417,154.7083,157.125,159.5417,161.8333,164.125,166.6667,169.0833,171.25,173.5833,175.4583,176.8333,178.0417,180.1667,183.125,186.2083,189.0417,191.2917,193.5833,195.8333,198.0417,199.75,202.2083,206.25,210.4167,213.375,215.8333,218.5,220.9167,222.9167,224.0833,224.7083,225.3333,225.3333,224.9583,224.5833,224.4583,225.5417,228,230.4583,232.25,233.9167,235.625,237.75,240.5,243.9583,247.1667,250.25,253.5,257.125,261.8333,266.6667,271.125,275.2083,278.5,281.9583,285.75,289.3333,293.25,297.1667,301,305.4583,309.9583,314.4167,318.625,321.75,324.5,327.0833,329.5417,331.8333,334.4583,337.5417,340.5417,344.0833,348.25,353,357.625,361.375,364.5,367.1667,369.4583,371.2083,372.1667,372.4167,372.75,373.625,375.25,377.9167,379.5,380,380.7083,380.9583,381.8333,383.6667,386.5,390.3333,394.7083,398.625,402.5417,407.1667,411.875,416.3333,420.5,425.5,430.7083,435.125,437.7083,440.9583,445.8333,450.625,456.3333,461.375,465.2083,469.3333,472.75,475.0417,null,null,null,null,null,null],"estacional":[0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988],"residuo":[null,null,null,null,null,null,0.9517,0.9534,1.0022,1.004,1.0063,1.0118,0.9626,1.0715,1.0374,1.014,0.9269,0.965,0.9836,0.9734,1.0225,0.9722,0.939,1.0068,1.0138,1.064,1.0919,1.0177,1.0516,0.946,0.9474,0.9398,0.9889,0.9939,1.0235,1.0251,1.0259,1.094,1.0135,0.9696,0.9633,1.0004,0.9469,0.9931,0.9746,1.0047,1.0203,1.0115,0.9977,1.0152,1.0605,1.0802,1.0413,0.9718,0.9552,0.9895,0.9934,1.0193,1.0009,0.9915,0.983,0.9232,1.0044,0.9944,1.0119,0.9979,1.0238,0.9845,0.9881,0.9928,0.9995,0.9909,1.0154,0.9888,0.9776,1.0016,0.9879,1.004,1.0386,0.9831,1.0033,1.0003,0.9828,1.0126,1.0066,0.997,0.9876,0.9968,0.9986,1.0276,1.0218,1.0005,1.0009,0.9835,0.9933,0.9894,0.9937,0.965,0.9882,0.9868,0.9924,1.0329,1.0261,1.0313,1.0236,1.0108,1.0213,1.0005,0.9954,0.9523,0.9469,0.9384,0.9716,1.0261,1.0484,1.079,0.9857,0.9978,0.9803,0.9406,0.9825,0.9506,0.9785,0.9746,1.0178,0.9969,1.0373,1.0531,0.9974,1.0013,1.0135,0.9999,1.0039,0.9591,0.8941,1.0065,1.0174,1.0121,null,null,null,null,null,null]},"indices_estacionales":[0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988],"stl_log":{"escala":"log","tendencia":[4.8294,4.8304,4.8313,4.8334,4.8354,4.8382,4.8409,4.8435,4.846,4.8509,4.8558,4.8646,4.8734,4.8833,4.8931,4.9032,4.9132,4.9254,4.9376,4.9544,4.9712,4.9917,5.0121,5.0311,5.0501,5.065,5.08,5.0939,5.1078,5.1211,5.1343,5.1461,5.158,5.1699,5.1817,5.1948,5.2079,5.2205,5.2331,5.2444,5.2557,5.2669,5.2781,5.2919,5.3057,5.323,5.3404,5.3558,5.3712,5.3817,5.3922,5.3985,5.4047,5.4068,5.4089,5.4078,5.4067,5.407,5.4073,5.4126,5.418,5.4258,5.4337,5.4427,5.4517,5.4636,5.4755,5.489,5.5024,5.5157,5.5289,5.5432,5.5574,5.5726,5.5878,5.6026,5.6173,5.6317,5.646,5.66,5.674,5.6874,5.7008,5.7137,5.7266,5.7387,5.7508,5.7613,5.7717,5.7806,5.7894,5.7974,5.8055,5.8137,5.822,5.8317,5.8413,5.8526,5.8639,5.875,5.8861,5.8947,5.9034,5.9078,5.9122,5.9129,5.9136,5.9146,5.9155,5.9185,5.9215,5.925,5.9285,5.9327,5.9369,5.9433,5.9497,5.9574,5.9651,5.9733,5.9816,5.992,6.0025,6.0156,6.0288,6.0422,6.0556,6.0659,6.0761,6.0841,6.0922,6.1005,6.1088,6.1179,6.127,6.1358,6.1446,6.153,6.1614,6.1701,6.1789,6.1876,6.1963,6.2048],"estacional":[-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006],"residuo":[-0.0192,0.0543,0.0356,0.0405,-0.0246,-0.0427,-0.0601,-0.0559,-0.0008,-0.0015,0.0022,0.0067,-0.0368,0.067,0.0397,0.0161,-0.0698,-0.0312,-0.0182,-0.0282,0.0239,-0.0311,-0.0624,0.0112,0.0183,0.0596,0.0859,0.0138,0.0547,-0.0491,-0.0574,-0.0624,-0.0105,-0.012,0.0154,0.0178,0.0254,0.0865,0.0137,-0.0319,-0.0312,0.0078,-0.0565,-0.0126,-0.0308,-0.0005,0.0206,0.0127,-0.0014,0.0104,0.0557,0.0751,0.044,-0.0235,-0.0493,-0.0116,-0.0062,0.0151,-0.0008,-0.0087,-0.0082,-0.0754,0.01,-0.0037,0.0187,0.0026,0.0185,-0.0184,-0.0131,-0.0117,-0.0022,-0.0088,0.0231,-0.0076,-0.0164,0.0062,-0.0039,0.0111,0.0347,-0.0203,0.0015,-0.004,-0.0192,0.0146,0.014,-0.0006,-0.0078,-0.001,0.0053,0.0339,0.0176,-0.0032,-0.0008,-0.0199,-0.0064,-0.0074,0.0029,-0.0315,-0.0049,-0.0088,0.0011,0.0405,0.0223,0.0289,0.0217,0.0067,0.0202,0.0032,0.005,-0.0424,-0.0457,-0.0587,-0.019,0.0329,0.0431,0.0716,-0.0158,-0.0038,-0.015,-0.0526,-0.0038,-0.0432,-0.012,-0.0202,0.0265,0.005,0.0342,0.0507,-0.0059,-0.0051,0.013,0.004,0.0159,-0.0352,-0.105,0.0116,0.0274,0.0195,0.0552,0.0272,-0.0159,0.0161,-0.0166,-0.0357]},"fuerza_tendencia":0.994,"fuerza_estacional":0.937,"metadatos":{"generado":"2026-07-24","generador":"precalculo/genera_datos.R"}};
+    const DATOS_CAP1 = {"serie":"airpassengers","descripcion":"Descomposicion de AirPassengers. Clasica multiplicativa con stats::decompose (tendencia por media movil centrada de orden 12; NA en los extremos como null). STL con stats::stl sobre log(AirPassengers): componentes aditivos en escala log. Fuerza de tendencia/estacionalidad segun FPP3 seccion 4.3, calculada sobre STL.","n":144,"fechas":["1949-01","1949-02","1949-03","1949-04","1949-05","1949-06","1949-07","1949-08","1949-09","1949-10","1949-11","1949-12","1950-01","1950-02","1950-03","1950-04","1950-05","1950-06","1950-07","1950-08","1950-09","1950-10","1950-11","1950-12","1951-01","1951-02","1951-03","1951-04","1951-05","1951-06","1951-07","1951-08","1951-09","1951-10","1951-11","1951-12","1952-01","1952-02","1952-03","1952-04","1952-05","1952-06","1952-07","1952-08","1952-09","1952-10","1952-11","1952-12","1953-01","1953-02","1953-03","1953-04","1953-05","1953-06","1953-07","1953-08","1953-09","1953-10","1953-11","1953-12","1954-01","1954-02","1954-03","1954-04","1954-05","1954-06","1954-07","1954-08","1954-09","1954-10","1954-11","1954-12","1955-01","1955-02","1955-03","1955-04","1955-05","1955-06","1955-07","1955-08","1955-09","1955-10","1955-11","1955-12","1956-01","1956-02","1956-03","1956-04","1956-05","1956-06","1956-07","1956-08","1956-09","1956-10","1956-11","1956-12","1957-01","1957-02","1957-03","1957-04","1957-05","1957-06","1957-07","1957-08","1957-09","1957-10","1957-11","1957-12","1958-01","1958-02","1958-03","1958-04","1958-05","1958-06","1958-07","1958-08","1958-09","1958-10","1958-11","1958-12","1959-01","1959-02","1959-03","1959-04","1959-05","1959-06","1959-07","1959-08","1959-09","1959-10","1959-11","1959-12","1960-01","1960-02","1960-03","1960-04","1960-05","1960-06","1960-07","1960-08","1960-09","1960-10","1960-11","1960-12"],"observado":[112,118,132,129,121,135,148,148,136,119,104,118,115,126,141,135,125,149,170,170,158,133,114,140,145,150,178,163,172,178,199,199,184,162,146,166,171,180,193,181,183,218,230,242,209,191,172,194,196,196,236,235,229,243,264,272,237,211,180,201,204,188,235,227,234,264,302,293,259,229,203,229,242,233,267,269,270,315,364,347,312,274,237,278,284,277,317,313,318,374,413,405,355,306,271,306,315,301,356,348,355,422,465,467,404,347,305,336,340,318,362,348,363,435,491,505,404,359,310,337,360,342,406,396,420,472,548,559,463,407,362,405,417,391,419,461,472,535,622,606,508,461,390,432],"clasica_multiplicativa":{"tendencia":[null,null,null,null,null,null,126.7917,127.25,127.9583,128.5833,129,129.75,131.25,133.0833,134.9167,136.4167,137.4167,138.75,140.9167,143.1667,145.7083,148.4167,151.5417,154.7083,157.125,159.5417,161.8333,164.125,166.6667,169.0833,171.25,173.5833,175.4583,176.8333,178.0417,180.1667,183.125,186.2083,189.0417,191.2917,193.5833,195.8333,198.0417,199.75,202.2083,206.25,210.4167,213.375,215.8333,218.5,220.9167,222.9167,224.0833,224.7083,225.3333,225.3333,224.9583,224.5833,224.4583,225.5417,228,230.4583,232.25,233.9167,235.625,237.75,240.5,243.9583,247.1667,250.25,253.5,257.125,261.8333,266.6667,271.125,275.2083,278.5,281.9583,285.75,289.3333,293.25,297.1667,301,305.4583,309.9583,314.4167,318.625,321.75,324.5,327.0833,329.5417,331.8333,334.4583,337.5417,340.5417,344.0833,348.25,353,357.625,361.375,364.5,367.1667,369.4583,371.2083,372.1667,372.4167,372.75,373.625,375.25,377.9167,379.5,380,380.7083,380.9583,381.8333,383.6667,386.5,390.3333,394.7083,398.625,402.5417,407.1667,411.875,416.3333,420.5,425.5,430.7083,435.125,437.7083,440.9583,445.8333,450.625,456.3333,461.375,465.2083,469.3333,472.75,475.0417,null,null,null,null,null,null],"estacional":[0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988,0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988],"residuo":[null,null,null,null,null,null,0.9517,0.9534,1.0022,1.004,1.0063,1.0118,0.9626,1.0715,1.0374,1.014,0.9269,0.965,0.9836,0.9734,1.0225,0.9722,0.939,1.0068,1.0138,1.064,1.0919,1.0177,1.0516,0.946,0.9474,0.9398,0.9889,0.9939,1.0235,1.0251,1.0259,1.094,1.0135,0.9696,0.9633,1.0004,0.9469,0.9931,0.9746,1.0047,1.0203,1.0115,0.9977,1.0152,1.0605,1.0802,1.0413,0.9718,0.9552,0.9895,0.9934,1.0193,1.0009,0.9915,0.983,0.9232,1.0044,0.9944,1.0119,0.9979,1.0238,0.9845,0.9881,0.9928,0.9995,0.9909,1.0154,0.9888,0.9776,1.0016,0.9879,1.004,1.0386,0.9831,1.0033,1.0003,0.9828,1.0126,1.0066,0.997,0.9876,0.9968,0.9986,1.0276,1.0218,1.0005,1.0009,0.9835,0.9933,0.9894,0.9937,0.965,0.9882,0.9868,0.9924,1.0329,1.0261,1.0313,1.0236,1.0108,1.0213,1.0005,0.9954,0.9523,0.9469,0.9384,0.9716,1.0261,1.0484,1.079,0.9857,0.9978,0.9803,0.9406,0.9825,0.9506,0.9785,0.9746,1.0178,0.9969,1.0373,1.0531,0.9974,1.0013,1.0135,0.9999,1.0039,0.9591,0.8941,1.0065,1.0174,1.0121,null,null,null,null,null,null]},"indices_estacionales":[0.9102,0.8836,1.0074,0.9759,0.9814,1.1128,1.2266,1.2199,1.0605,0.9218,0.8012,0.8988],"stl_log":{"escala":"log","tendencia":[4.8294,4.8304,4.8313,4.8334,4.8354,4.8382,4.8409,4.8435,4.846,4.8509,4.8558,4.8646,4.8734,4.8833,4.8931,4.9032,4.9132,4.9254,4.9376,4.9544,4.9712,4.9917,5.0121,5.0311,5.0501,5.065,5.08,5.0939,5.1078,5.1211,5.1343,5.1461,5.158,5.1699,5.1817,5.1948,5.2079,5.2205,5.2331,5.2444,5.2557,5.2669,5.2781,5.2919,5.3057,5.323,5.3404,5.3558,5.3712,5.3817,5.3922,5.3985,5.4047,5.4068,5.4089,5.4078,5.4067,5.407,5.4073,5.4126,5.418,5.4258,5.4337,5.4427,5.4517,5.4636,5.4755,5.489,5.5024,5.5157,5.5289,5.5432,5.5574,5.5726,5.5878,5.6026,5.6173,5.6317,5.646,5.66,5.674,5.6874,5.7008,5.7137,5.7266,5.7387,5.7508,5.7613,5.7717,5.7806,5.7894,5.7974,5.8055,5.8137,5.822,5.8317,5.8413,5.8526,5.8639,5.875,5.8861,5.8947,5.9034,5.9078,5.9122,5.9129,5.9136,5.9146,5.9155,5.9185,5.9215,5.925,5.9285,5.9327,5.9369,5.9433,5.9497,5.9574,5.9651,5.9733,5.9816,5.992,6.0025,6.0156,6.0288,6.0422,6.0556,6.0659,6.0761,6.0841,6.0922,6.1005,6.1088,6.1179,6.127,6.1358,6.1446,6.153,6.1614,6.1701,6.1789,6.1876,6.1963,6.2048],"estacional":[-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006,-0.0916,-0.114,0.0159,-0.014,-0.015,0.1098,0.2164,0.2096,0.0675,-0.0702,-0.2135,-0.1006],"residuo":[-0.0192,0.0543,0.0356,0.0405,-0.0246,-0.0427,-0.0601,-0.0559,-0.0008,-0.0015,0.0022,0.0067,-0.0368,0.067,0.0397,0.0161,-0.0698,-0.0312,-0.0182,-0.0282,0.0239,-0.0311,-0.0624,0.0112,0.0183,0.0596,0.0859,0.0138,0.0547,-0.0491,-0.0574,-0.0624,-0.0105,-0.012,0.0154,0.0178,0.0254,0.0865,0.0137,-0.0319,-0.0312,0.0078,-0.0565,-0.0126,-0.0308,-0.0005,0.0206,0.0127,-0.0014,0.0104,0.0557,0.0751,0.044,-0.0235,-0.0493,-0.0116,-0.0062,0.0151,-0.0008,-0.0087,-0.0082,-0.0754,0.01,-0.0037,0.0187,0.0026,0.0185,-0.0184,-0.0131,-0.0117,-0.0022,-0.0088,0.0231,-0.0076,-0.0164,0.0062,-0.0039,0.0111,0.0347,-0.0203,0.0015,-0.004,-0.0192,0.0146,0.014,-0.0006,-0.0078,-0.001,0.0053,0.0339,0.0176,-0.0032,-0.0008,-0.0199,-0.0064,-0.0074,0.0029,-0.0315,-0.0049,-0.0088,0.0011,0.0405,0.0223,0.0289,0.0217,0.0067,0.0202,0.0032,0.005,-0.0424,-0.0457,-0.0587,-0.019,0.0329,0.0431,0.0716,-0.0158,-0.0038,-0.015,-0.0526,-0.0038,-0.0432,-0.012,-0.0202,0.0265,0.005,0.0342,0.0507,-0.0059,-0.0051,0.013,0.004,0.0159,-0.0352,-0.105,0.0116,0.0274,0.0195,0.0552,0.0272,-0.0159,0.0161,-0.0166,-0.0357]},"fuerza_tendencia":0.994,"fuerza_estacional":0.937,"metadatos":{"generado":"2026-07-24","generador":"precalculo/genera_datos.R"}};
 
     // ================================================================
     // Estado y elementos del DOM
@@ -4949,7 +5032,7 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         `<strong>De ${primero.anio} a ${ultimo.anio}:</strong> el nivel medio pasa de ` +
         `${primero.x.toFixed(1)} a ${ultimo.x.toFixed(1)} (×${(ultimo.x / primero.x).toFixed(2)}) y la amplitud, ` +
         `de ${primero.y} a ${ultimo.y} (×${(ultimo.y / primero.y).toFixed(2)}). ` +
-        `La proporción amplitud/nivel sube del ${(100 * proporcion).toFixed(1)}&nbsp;% al ` +
+        `La proporción amplitud/nivel pasa del ${(100 * proporcion).toFixed(1)}&nbsp;% al ` +
         `${(100 * ultimo.y / ultimo.x).toFixed(1)}&nbsp;%.`;
 
       return [g];
@@ -4972,7 +5055,7 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
 
       return [
         panelComponente(c[0], DATOS_CAP1.fechas, y, 'Pasajeros (miles)', COLORES_GRAFICO.primario),
-        panelComponente(c[1], DATOS_CAP1.fechas, logY, 'log(pasajeros)', COLORES_GRAFICO.terciario)
+        panelComponente(c[1], DATOS_CAP1.fechas, logY, 'log(miles de pasajeros)', COLORES_GRAFICO.terciario)
       ];
     };
 
@@ -5232,7 +5315,7 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
           txt += mm === null || mm === undefined
             ? ' <strong>Con grado 0 y pesos planos esto ya no es Loess: es la media móvil</strong>, salvo que aquí' +
               ' la ventana se apoya de un solo lado y por eso sigue dando valor donde la media móvil calla.'
-            : ' <strong>Con grado 0 y pesos planos esto ya no es Loess: es la media móvil del Módulo 5</strong>,' +
+            : ' <strong>Con grado 0 y pesos planos esto ya no es Loess: es la media móvil simple del Módulo 5</strong>,' +
               ' y por eso las dos cifras coinciden.';
         }
         lectura.innerHTML = txt;
@@ -5963,7 +6046,7 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
       return Object.assign(datos, {
         escala: 'secuencial',
         decimales: 0,
-        unidad: 'pasajeros',
+        unidad: 'mil pasajeros',
         nota: 'Cada fila es un año y cada columna un mes. Las bandas verticales de julio y ' +
           'agosto son la estacionalidad; que se oscurezcan hacia abajo a la vez que toda la ' +
           'fila es la tendencia. Y que la <em>diferencia</em> entre el mes alto y el bajo ' +
@@ -6005,7 +6088,7 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
           {
             texto: 'La estacionalidad se repite con un periodo fijo y conocido; el ciclo, con duración variable e impredecible.',
             correcta: true,
-            retro: 'Esa es la diferencia definitoria. La estacionalidad de <code>AirPassengers</code> es anual y siempre dura 12 meses; un ciclo económico puede durar 4 años o 9, y no se sabe de antemano.'
+            retro: 'Esa es la diferencia definitoria. La estacionalidad de <code>AirPassengers</code> es anual y siempre dura 12 meses; las subidas y bajadas de un ciclo económico no tienen duración fija —suelen durar al menos dos años—, y no se sabe de antemano cuánto durará la siguiente.'
           },
           {
             texto: 'La estacionalidad se aprecia en el gráfico de tiempo y el ciclo no.',
@@ -6028,7 +6111,7 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
           {
             texto: 'Aditiva sobre la serie original.',
             correcta: false,
-            retro: 'Dejaría un componente estacional de amplitud constante: subestimaría las oscilaciones de 1960 y sobreestimaría las de 1949. El residuo delataría el problema con un patrón en forma de embudo.'
+            retro: 'Dejaría un componente estacional de amplitud constante: subestimaría las oscilaciones de 1960 y sobreestimaría las de 1949. El residuo delataría el problema: su dispersión, medida año por año, dibuja una U —grande en los dos extremos de la serie y mínima hacia 1954 y 1955—, como muestra el Módulo 6.'
           },
           {
             texto: 'Da igual: las dos ajustan prácticamente lo mismo.',
@@ -6055,7 +6138,7 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         respuesta: 132,
         tolerancia: 0,
         retroAcierto: '$144 - 12 = 132$: se pierden 6 al principio y 6 al final. Puedes comprobarlo tú: en el Módulo 6, las curvas de tendencia arrancan en julio de 1949 y terminan en junio de 1960, no cubren los extremos. Esta pérdida es una de las limitaciones de la descomposición clásica que STL resuelve.',
-        retroFallo: 'Son $144 - 12 = 132$. Una ventana centrada de orden $m$ necesita $m/2$ observaciones a cada lado, así que se pierden $m$ en total: 6 al principio y 6 al final. Si respondiste 138, contaste solo un extremo; si respondiste 144, olvidaste que en los bordes no hay con qué promediar.'
+        retroFallo: 'Son $144 - 12 = 132$. Con $m$ par, la media móvil centrada $2\\times m$ necesita $m/2$ observaciones a cada lado, así que se pierden $m$ en total: aquí, 6 al principio y 6 al final. Si respondiste 138, contaste solo un extremo; si respondiste 144, olvidaste que en los bordes no hay con qué promediar.'
       },
       {
         tipo: 'grafico',
@@ -6161,7 +6244,7 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
           {
             texto: 'Para comparar periodos consecutivos sin que el patrón anual enmascare el movimiento de fondo.',
             correcta: true,
-            retro: 'Es justo el uso que le dan las cifras oficiales de empleo o PIB: sin ajustar, la caída de enero frente a diciembre diría poco, porque enero siempre cae. Ajustada, la comparación revela el cambio real.'
+            retro: 'Es justo el uso que le dan las cifras oficiales de empleo o PIB: sin ajustar, la caída de enero frente a diciembre diría poco, porque enero siempre cae. Ajustada, la comparación ya no arrastra el patrón anual. Pero la serie ajustada conserva el residuo, así que una subida o una bajada de un mes al siguiente todavía puede engañar: para leer cambios de rumbo conviene mirar la tendencia-ciclo.'
           },
           {
             texto: 'Para eliminar la tendencia de la serie.',

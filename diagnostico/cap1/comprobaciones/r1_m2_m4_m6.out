@@ -1,0 +1,45 @@
+== M2 · ts con varias series ==
+class(ts(matrix(1:48, 24, 2), frequency = 12)): mts ts matrix array 
+class(EuStockMarkets): mts ts matrix array  dim: 1860 4 
+un solo indice para todas las columnas: length(time(m)) = 24  ncol = 2 
+tsibble con clave y fechas distintas por serie: filas 5  claves 2 
+frequency(AirPassengers) = 12 
+
+== M4 · Unidades ==
+[1] "Description:"                        
+[2] "Format:"                             
+[3] "A monthly time series, in thousands."
+[1] "Description:"                                              
+[2] ""                                                          
+[3] "The classic Box & Jenkins airline data.  Monthly totals of"
+[4] "international airline passengers, 1949 to 1960."           
+[5] ""                                                          
+
+== M4 · Amplitud y nivel por anio ==
+          1949  1950  1951 1952  1953  1954  1955  1956  1957  1958  1959  1960
+nivel    126.7 139.7 170.2  197 225.0 238.9 284.0 328.2 368.4 381.0 428.3 476.2
+amplitud  44.0  56.0  54.0   71  92.0 114.0 131.0 142.0 166.0 195.0 217.0 232.0
+pct       34.7  40.1  31.7   36  40.9  47.7  46.1  43.3  45.1  51.2  50.7  48.7
+amplitud 1960/1949: 5.27  nivel 1960/1949: 3.76 
+anios por debajo del rayo (pct < pct de 1949): 1951 
+minimo: 1951 31.7  maximo: 1958 51.2 
+amplitud en log: 1949 0.3528  1960 0.4668  razon: 1.323 
+
+== M6 · Clasica ==
+indice julio multiplicativo: 1.2266  exp(aditivo sobre log): 1.2347 
+max |tendencia mult - exp(tendencia de log)|: 6.85 
+feasts classical_decomposition multiplicativa: indice julio = 1.2266  max|dif| con decompose(): 0 
+s-barra = 0.998236  julio bruto = 1.224391  normalizado = 1.2266 
+la tendencia no cambia al normalizar: es la misma media movil (paso 2)
+media del residuo CON normalizar (decompose): 0.998236 
+media del residuo SIN normalizar (y / (T * s-tilde)): 1 
+media de los 12 indices normalizados: 1  suma redondeada a 4: 12.0001 
+exceso de julio sobre el nivel medio de su anio: 21.3 30.3 28.8 33 39 63.1 80 84.8 96.6 110 119.7 145.8 
+aditivo: S_julio = 63.83  R jul-1955 = 14.42 
+(S_julio - 1) x nivel medio de 1949 y de 1960: 28.7 107.9 
+tendencia en jul-1949 y jul-1960: 126.7917 NA 
+(S_julio - 1) x tendencia de jul-1949 y jul-1959: 28.7 97.6 
+sd anual del residuo aditivo: 30.5 20.7 22.4 17 14.5 5.6 6.1 10 17.2 29.4 29.4 25.4 
+residuos disponibles por anio: 6 12 12 12 12 12 12 12 12 12 12 6 
+anios de sd minima: 1954 1955 
+noviembre: 0.8012  tendencia jul-1955: 285.75  residuo: 1.0386 

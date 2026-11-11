@@ -344,7 +344,7 @@ cap1 <- list(
     "Descomposicion de AirPassengers. Clasica multiplicativa con stats::decompose ",
     "(tendencia por media movil centrada de orden 12; NA en los extremos como null). ",
     "STL con stats::stl sobre log(AirPassengers): componentes aditivos en escala log. ",
-    "Fuerza de tendencia/estacionalidad segun FPP3 seccion 3.6, calculada sobre STL."
+    "Fuerza de tendencia/estacionalidad segun FPP3 seccion 4.3, calculada sobre STL."
   ),
   n = n_ap,
   fechas = fechas_ap,

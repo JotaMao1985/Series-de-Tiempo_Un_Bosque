@@ -1,0 +1,31 @@
+== La funcion del capitulo, tal cual ==
+b.log(nivel)        2.5 %       97.5 %           R2 
+       1.083        0.575        1.591        0.335 
+b.log(nivel)        2.5 %       97.5 %           R2 
+       1.291        1.149        1.432        0.976 
+co2: IC excluye 0? TRUE  contiene 1? TRUE 
+AP : IC excluye 0? TRUE  excluye 1? TRUE 
+
+== Las dos ultimas lineas del bloque ==
+(max(co2) - min(co2)) / mean(co2) = 0.159 
+(max(AP) - min(AP)) / mean(AP)    = 1.848 
+
+== Cuanto sube el NIVEL (medias anuales) ==
+co2: 1959 315.8 -> 1997 363.8  = + 15.2 % en 39 anios
+AP : 1949 126.7 -> 1960 476.2  = x 3.76 
+
+== La amplitud del CO2: crece, y como ==
+amplitud ~ anio: pendiente 0.0239 ppm/anio, p = 0.00021 
+si amplitud = c * nivel, con c = media(amp)/media(nivel) = 0.01726 : pendiente 0.0226 ppm/anio
+(amplitud/nivel) ~ anio: pendiente 3.3e-06 , p = 0.85 
+amplitud/nivel: primer anio 1.57 %  ultimo 1.81 %
+
+== 'La eleccion importa poco': clasica aditiva frente a multiplicativa en co2 ==
+max |desestacionalizada aditiva - multiplicativa| = 0.26 ppm ; amplitud estacional aditiva = 6.25 ppm
+sd del residuo: aditiva 0.265  multiplicativa (en ppm, y - T*S) 0.238 
+misma comparacion en AP: max |dif| = 51.1  ; amplitud estacional aditiva = 117.4 
+amplitud que implica la multiplicativa de indices fijos en co2 (rango de indices x nivel): 1959 5.86  1997 6.75 ppm
+
+== STL con ventana estacional finita tambien recoge el crecimiento ==
+stl(co2, s.window = 11): amplitud del componente estacional 1959 5.85  1997 6.72 ppm
+stl(co2, s.window = 'periodic'): amplitud 1959 6.17  1997 6.17 ppm

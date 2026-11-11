@@ -17,14 +17,14 @@ afirmaciones:
 - id: c1-m6-01
   tipo: resultado
   afirmacion: Tres limitaciones del método clásico (extremos sin estimar, estacionalidad constante, sensibilidad a atípicos).
-  hash_texto: 027d8f7f2b77c1ce
+  hash_texto: 6e395a989b440d73
   veredicto: con-matiz
   fuentes:
   - clave: hyndman2021forecasting
     loc: "§3.4"
     clase: WEB
     instantanea: decomposition
-    cita: "The estimate of the trend-cycle is unavailable for the first few and last few observations."
+    cita: "if m = 12, there is no trend-cycle estimate for the first six or the last six observations"
   - clave: hyndman2021forecasting
     loc: "§3.4"
     clase: WEB
@@ -35,15 +35,26 @@ afirmaciones:
     clase: WEB
     instantanea: decomposition
     cita: "The classical method is not robust to these kinds of unusual values."
+  - clave: hyndman2021forecasting
+    loc: "§3.3"
+    clase: WEB
+    instantanea: decomposition
+    cita: 'a 2 \times m-MA is equivalent to a weighted moving average of order m + 1'
+  - clave: hyndman2021forecasting
+    loc: "§3.3"
+    clase: WEB
+    instantanea: decomposition
+    cita: "There are no values for either the first two years or the last two years"
   nota: >-
-    La fuente respalda las tres. El matiz está en «m/2»: la fuente solo dice «first few and last few» y da
-    el caso m = 12 (seis por extremo). Para m impar el hueco es (m−1)/2, como se ve en su ejemplo de la
-    5-MA en §3.3; «m/2» solo es exacto con m par. Además la fuente da una cuarta limitación que el capítulo
-    no recoge (la tendencia suaviza en exceso las subidas y caídas rápidas) y añade que en los extremos
-    tampoco hay residuo. Para la ronda del capítulo 1: precisar «m/2» y decidir si entra la cuarta.
-  redactado_por: sesión maestra (Fable 5.2)
-  verificado_por: subagentes verificadores, Opus 5.5 y Sonnet 5.5, contexto limpio
-  fecha: 2026-11-10
+    Reverificada el 2026-11-11, después de que la ronda R1 precisara los huecos: m/2 con m par y (m−1)/2 con
+    m impar. La fuente respalda las tres limitaciones. El matiz que queda: FPP3 no escribe ninguna de las dos
+    fórmulas; §3.4 solo da el caso m = 12 (seis por extremo) y las generales se deducen de §3.3 (la 2×m-MA
+    tiene orden m + 1; la 5-MA pierde dos valores por extremo). La cita visible apunta a §3.4, donde está la
+    lista de limitaciones. La fuente da además una cuarta limitación que el capítulo no recoge (la tendencia
+    suaviza en exceso las subidas y caídas rápidas): se decide en la ronda de estructura.
+  redactado_por: subagente redactor de la ronda R1 (Fable 5.2)
+  verificado_por: subagente verificador de la ronda R1 (Opus 5.5), contexto limpio
+  fecha: 2026-11-11
 
 - id: c1-m7-01
   tipo: atribucion

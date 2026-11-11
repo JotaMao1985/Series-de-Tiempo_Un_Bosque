@@ -1,0 +1,26 @@
+== ANTES (lo publicado) ==
+slide_dbl(.before=6,.after=6) = 13-MA, jul-1955: 284 
+stats::filter(y, rep(1/12,12)), jul-1955: 287.5  NA: 11 
+
+== BLOQUE NUEVO DEL M5 (R) ==
+Warning message:
+`autoplot.tbl_ts()` was deprecated in fabletools 0.6.0.
+i Please use `ggtime::autoplot.tbl_ts()` instead.
+i Graphics functions have been moved to the {ggtime} package. Please use
+  `library(ggtime)` instead. 
+pasajeros |> filter(index == yearmonth('1955 Jul')) |> pull(tendencia): 285.75 
+NA en tendencia: 12  posiciones: 1 2 3 4 5 6 139 140 141 142 143 144 
+NA en 12-MA: 11 
+max |tendencia - decompose()$trend|: 1.136868e-13 
+
+== FILTRO DEL M6 (R base) ==
+stats::filter(y, c(0.5, rep(1, m - 1), 0.5) / m), jul-1955: 285.75  NA: 12 
+max |filtro - decompose()$trend|: 0 
+identical NA pattern: TRUE 
+linea de decompose() que define el filtro:
+[1] "        filter <- if (!f%%2) "               
+[2] "            c(0.5, rep_len(1, f - 1), 0.5)/f"
+[3] "        else rep_len(1, f)/f"                
+
+Ventana de julio de 1955 (ene-1955 a ene-1956): 242 233 267 269 270 315 364 347 312 274 237 278 284 
+cuenta a mano de la 2x12: 285.75 

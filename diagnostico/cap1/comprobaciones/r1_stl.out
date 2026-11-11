@@ -1,0 +1,67 @@
+== 1. Pesos tricubicos: convencion de stl() frente a la de la tabla ==
+tabla del capitulo (radio = 9 + 1 = 10): u = 0.3, 0.6, 0.9 -> 0.9212 0.4819 0.0199  ; 1/w(0.9) = 50.2 
+stl() (radio = 9, el vecino mas lejano): u = 3/9, 6/9, 9/9 -> 0.8930 0.3485 0.0000 
+max|ajuste local - tendencia de stl()| con radio = dist. max      : 8.37e-08 
+max|ajuste local - tendencia de stl()| con radio = dist. max + 1  : 0.00695 
+
+== 2. Pasadas de los bucles ==
+valores por defecto en la firma de stl():
+$robust
+[1] FALSE
+
+$inner
+if (robust) 1 else 2
+
+$outer
+if (robust) 15 else 0
+
+sin robust: inner = 2  outer = 0 
+con robust: inner = 1  outer = 15 
+
+== 3. Ventana de tendencia: 19 con 'periodic', 21 con s.window = 11 ==
+stl(lx, s.window = 'periodic')$win: 1441 19 13 
+stl(lx, s.window = 11)$win       : 11 21 13 
+regla: periodic ->  18.01876 -> techo e impar: 19 
+regla: s.window 11 ->  20.84211 -> techo e impar: 21 
+t.jump por defecto (periodic): 145 2 2 
+max|tendencia(t.jump=2) - tendencia(t.jump=1)|: 0.00238 
+feasts, bloque del capitulo (trend 19 + periodic): S_julio = 1.2416  ; max|dif| con stats::stl(periodic): 0 
+feasts, solo season('periodic'), sin trend(): max|dif tendencia| con la de 19: 0 
+feasts, trend(window = 21) + periodic: S_julio = 1.2405 
+feasts, STL(value) por defecto: max|dif tendencia| con stats::stl(s.window = 11) [t.window 21]: 8.88e-16 
+julio con s.window = 11: 1949 20.4 %  1960 27.9 %  recorrido en log: 0.0602 
+julio-1955 (periodic): T 5.646  S 0.2164  R 0.0347  exp(S) = 1.2416 
+
+== 4. Pesos de robustez con julio de 1955 inflado un 50 % ==
+364 -> 546 
+PRIMERA pasada (residuos del ajuste no robusto): |R79| = 0.3708  umbral = 0.115  u = 3.22  peso 0 en: 79  peso mediano del resto = 0.9461 
+AJUSTE COMPLETO robust = TRUE ( 15 pasadas exteriores): peso 0 en obs. 2 26 38 79 135 
+   son: Feb 1949, Feb 1951, Feb 1952, Jul 1955, Mar 1960 
+   observaciones con peso < 0.5: 15  ; peso mediano: 0.9452 
+SERIE SIN CONTAMINAR, robust = TRUE: peso 0 en obs. 2 26 38 135 -> Feb 1949, Feb 1951, Feb 1952, Mar 1960  ; < 0.5: 18 
+indice de julio: limpio robusto 1.2562  contaminado robusto 1.2458  limpio no robusto 1.2416  contaminado no robusto 1.2806 
+clasica: limpio 1.2266  contaminado 1.2758 
+
+== 5. Fuerzas (M8) ==
+stl(log(AP), s.window = 'periodic'): 0.994 0.9368 
+feasts::feat_stl sobre log(AP): trend_strength = 0.9966  seasonal_strength_year = 0.96445 
+argumentos por defecto de feat_stl:
+$x
+
+
+$.period
+
+
+$s.window
+[1] 11
+
+$...
+
+
+USAccDeaths: 0.7991 0.9426   co2: 0.9997 0.9841 
+
+== 6. Lo que dice ?stl de los saltos y de los bucles ==
+s.jump, t.jump, l.jump: integers at least one to increase speed of the respective smoother.  Linear interpolation happens between every '*.jump'-th value.  
+robust: logical indicating if robust fitting be used in the 'loess' procedure.  inner: integer; the number of 'inner' (backfitting) iterations; 
+inner: integer; the number of 'inner' (backfitting) iterations; usually very few (2) iterations suffice.  outer: integer; the number of 'outer' robustness iterations. 
+outer: integer; the number of 'outer' robustness iterations.  na.action: action on missing values.  
