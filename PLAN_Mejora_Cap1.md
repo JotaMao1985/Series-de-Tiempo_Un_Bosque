@@ -13,7 +13,7 @@ prometa lo que no muestra, con gráficas que se lean y con práctica para cada o
 declara. Es la primera aplicación del sistema de [[PLAN_Gestion_Documental]] a un capítulo entero
 y el molde para los otros cinco.
 
-**Estado: aprobado por Javier el 2026-11-10 (D1–D9). R1 publicada el 2026-11-11; sigue R2.** Lo que sigue es el diagnóstico y el plan;
+**Estado: aprobado por Javier el 2026-11-10 (D1–D9). R1 publicada y R2 hecha el 2026-11-11; sigue R3.** Lo que sigue es el diagnóstico y el plan;
 las rondas se registran en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-10
@@ -104,9 +104,9 @@ Cada una lleva mi recomendación; las decide Javier.
 | T1.3 ✅ | R1 | M2 (`mts`), M6 (l. 3280), unidades (D6), «Seis preguntas», ciclos del quiz y del M4 | S | — |
 | T1.4 ✅ | R1 | Ejercicio 1: conclusión coherente con sus intervalos; M8: declarar `periodic` y qué índice desestacionaliza | M | — |
 | T1.5 ✅ | R1 | Las 19 imprecisiones y 3 lagunas del par, una por una (incluye «$m/2$» del piloto) | M | T1.1–T1.4 |
-| T2.1 | R2 | Arreglos de una vez: `.grafico-par`, marcas de fecha, `panelComponente`, `.simulador h4`, contraste, títulos de eje | M | R1 |
-| T2.2 | R2 | Específicos: fórmula $F_T$/$F_S$, gráfico estacional del M3, `loess-local`, mapa estacional a 375 px | M | T2.1 |
-| T2.3 | R2 | Accesibilidad: `aria-label` que describa, `aria-live` en las lecturas | S | T2.1 |
+| T2.1 ✅ | R2 | Arreglos de una vez: `.grafico-par`, marcas de fecha, `panelComponente`, `.simulador h4`, contraste, títulos de eje | M | R1 |
+| T2.2 ✅ | R2 | Específicos: fórmula $F_T$/$F_S$, gráfico estacional del M3, `loess-local`, mapa estacional a 375 px | M | T2.1 |
+| T2.3 ✅ | R2 | Accesibilidad: `aria-label` que describa, `aria-live` en las lecturas | S | T2.1 |
 | T3.1 | R3 | M3: gráficos de subseries y de rezagos, con sus datos desde R | M | R1 |
 | T3.2 | R3 | M7: STL como secuencia de pasos; figura con la robustez y la flexibilidad a la vista; recibe el anticipo del M5 | L | R1 |
 | T3.3 | R3 | M8: recibe la lectura en logaritmos y el contraste de fuerzas; gana código y una referencia para «muy fuertes» | M | T3.2 |
@@ -128,6 +128,16 @@ Cada una lleva mi recomendación; las decide Javier.
   evidencia: `diagnostico/cap1/R1_cambios.md`. Lo que R1 deja para otras rondas: alinear el simulador de
   Loess con la convención de pesos de `stl()` (R3), la cuarta limitación del método clásico (R3), y las
   preguntas 2, 3 y 6 del quiz y el ejercicio 1, que se corrigieron en lo falso pero siguen por rehacer (R5).
+
+- **R2 · gráficas — hecha el 2026-11-11.** De los 63 problemas de las 14 fichas: 52 arreglados, 2 en parte,
+  4 que ya había resuelto R1 y 5 sin tocar (exigen cambiar un cálculo o son de R3). Los 21 lienzos, el mapa
+  y el ciclo se recapturaron a 1200, 800 y 375 px: sin desbordes ni fechas montadas; los paneles de las
+  descomposiciones pasan de 35 a 130 px de alto. Seis reglas de CSS fueron también a la plantilla y la guía
+  del proyecto se reensambló (solo CSS). Decisiones de diseño que tomó la ronda: la observada en verde
+  oscuro en todo el capítulo, un morado para la desestacionalizada, `loess-local` en dos lienzos y una
+  lectura nueva en el simulador del M5. Detalle: `diagnostico/cap1/R2_cambios.md`. Para R3: presentar el
+  mapa estacional en la prosa, el eje que se reescala en `construye-tu-serie` y por qué el residuo de STL
+  es más disperso en los extremos.
 
 ## 5. Criterios de aceptación
 

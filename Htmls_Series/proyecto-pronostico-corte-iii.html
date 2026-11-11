@@ -584,6 +584,19 @@
       max-width: 100%;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
+      /* Pista de desplazamiento: una sombra en el borde hacia el que queda
+         fórmula por ver. Las dos primeras capas (blancas) se mueven con el
+         contenido y tapan la sombra cuando ya se ha llegado a ese extremo;
+         una fórmula que cabe entera no enseña ninguna. */
+      background-image:
+        linear-gradient(to right, white 40%, rgba(255, 255, 255, 0)),
+        linear-gradient(to left, white 40%, rgba(255, 255, 255, 0)),
+        linear-gradient(to right, rgba(1, 40, 32, 0.22), rgba(1, 40, 32, 0)),
+        linear-gradient(to left, rgba(1, 40, 32, 0.22), rgba(1, 40, 32, 0));
+      background-position: left center, right center, left center, right center;
+      background-repeat: no-repeat;
+      background-size: 2.2rem 100%, 2.2rem 100%, 0.9rem 100%, 0.9rem 100%;
+      background-attachment: local, local, scroll, scroll;
     }
 
     @media (min-width: 768px) {
@@ -823,24 +836,27 @@
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
     }
 
+    /* En bloque y no en flex: con flex, el texto y cada <code> del título
+       eran ítems separados y en pantalla estrecha se leían desordenados
+       («Simulador: / media móvil AirPassengers / sobre»). */
     .simulador h4 {
       color: #012820;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      display: block;
     }
 
+    .simulador h4 > i {
+      margin-right: 0.5rem;
+    }
+
+    /* Una o dos columnas según el ancho del simulador, no el de la pantalla:
+       a 800 px, con la barra lateral abierta, las dos columnas dejaban cada
+       etiqueta en cuatro líneas. Dos como mucho (el 40 %), y nunca por
+       debajo de 15rem cada una. */
     .simulador-controles {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, max(15rem, 40%)), 1fr));
       gap: 0.75rem 1.5rem;
       margin: 1.25rem 0;
-    }
-
-    @media (min-width: 768px) {
-      .simulador-controles {
-        grid-template-columns: 1fr 1fr;
-      }
     }
 
     .control-slider {
@@ -869,6 +885,8 @@
       padding: 0.1rem 0.5rem;
       min-width: 3.25rem;
       text-align: center;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .control-slider input[type="range"] {
@@ -1974,11 +1992,17 @@
        ------------------------------------------------------------------ */
     .ciclo {
       margin: 1.25rem 0;
+      container-type: inline-size;   /* el ciclo decide por su propio ancho, no por el de la pantalla */
     }
 
+    /* Todas las etapas en UNA fila de columnas iguales, o todas en vertical
+       (ver la consulta de contenedor de más abajo). Nunca a medias: con
+       `flex-wrap`, y también con `auto-fit`, la última etapa caía sola a una
+       segunda fila y dejaba una flecha colgando al final de la primera. */
     .ciclo-etapas {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(0, 1fr);
       align-items: stretch;
       gap: 0.4rem;
       list-style: none;
@@ -1989,12 +2013,27 @@
     .ciclo-etapa {
       display: flex;
       align-items: stretch;
+      min-width: 0;
+    }
+
+    .ciclo-etapa > .ciclo-boton {
+      flex: 1 1 auto;
+      min-width: 0;
     }
 
     /* La flecha vive en el separador, no en el botón: así el orden se lee
        aunque las etapas salten de línea. */
     .ciclo-etapa:not(:last-child)::after {
       content: "\2192";
+      align-self: center;
+      margin: 0 0.15rem;
+      color: rgba(1, 40, 32, 0.35);
+      font-weight: 700;
+    }
+
+    /* Tras la última etapa, la vuelta al principio: es lo que lo hace ciclo. */
+    .ciclo-etapa:last-child::after {
+      content: "\21BA";
       align-self: center;
       margin: 0 0.15rem;
       color: rgba(1, 40, 32, 0.35);
@@ -2125,10 +2164,13 @@
       border-radius: 0.25rem;
     }
 
-    /* En móvil el ciclo se lee en vertical y las flechas giran con él. */
-    @media (max-width: 640px) {
+    /* Cuando el ciclo no tiene ancho para una fila —en el teléfono, pero
+       también en una pantalla mediana con la barra lateral abierta— se lee
+       en vertical y las flechas giran con él. */
+    @container (max-width: 640px) {
       .ciclo-etapas {
-        flex-direction: column;
+        grid-auto-flow: row;
+        grid-template-columns: minmax(0, 1fr);
       }
 
       .ciclo-etapa {
@@ -2144,6 +2186,17 @@
         content: "\2193";
         align-self: center;
         margin: 0.15rem 0;
+      }
+
+      /* En vertical la vuelta ya la dice la frase de debajo, que lleva su
+         propio «↺»: aquí saldría dos veces. */
+      .ciclo-etapa:last-child::after {
+        content: none;
+      }
+
+      /* En una columna tan estrecha, justificar abre huecos entre palabras. */
+      .ciclo-campo p {
+        text-align: left;
       }
     }
 
