@@ -584,6 +584,19 @@
       max-width: 100%;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
+      /* Pista de desplazamiento: una sombra en el borde hacia el que queda
+         fórmula por ver. Las dos primeras capas (blancas) se mueven con el
+         contenido y tapan la sombra cuando ya se ha llegado a ese extremo;
+         una fórmula que cabe entera no enseña ninguna. */
+      background-image:
+        linear-gradient(to right, white 40%, rgba(255, 255, 255, 0)),
+        linear-gradient(to left, white 40%, rgba(255, 255, 255, 0)),
+        linear-gradient(to right, rgba(1, 40, 32, 0.22), rgba(1, 40, 32, 0)),
+        linear-gradient(to left, rgba(1, 40, 32, 0.22), rgba(1, 40, 32, 0));
+      background-position: left center, right center, left center, right center;
+      background-repeat: no-repeat;
+      background-size: 2.2rem 100%, 2.2rem 100%, 0.9rem 100%, 0.9rem 100%;
+      background-attachment: local, local, scroll, scroll;
     }
 
     @media (min-width: 768px) {
@@ -823,24 +836,27 @@
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
     }
 
+    /* En bloque y no en flex: con flex, el texto y cada <code> del título
+       eran ítems separados y en pantalla estrecha se leían desordenados
+       («Simulador: / media móvil AirPassengers / sobre»). */
     .simulador h4 {
       color: #012820;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      display: block;
     }
 
+    .simulador h4 > i {
+      margin-right: 0.5rem;
+    }
+
+    /* Una o dos columnas según el ancho del simulador, no el de la pantalla:
+       a 800 px, con la barra lateral abierta, las dos columnas dejaban cada
+       etiqueta en cuatro líneas. Dos como mucho (el 40 %), y nunca por
+       debajo de 15rem cada una. */
     .simulador-controles {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, max(15rem, 40%)), 1fr));
       gap: 0.75rem 1.5rem;
       margin: 1.25rem 0;
-    }
-
-    @media (min-width: 768px) {
-      .simulador-controles {
-        grid-template-columns: 1fr 1fr;
-      }
     }
 
     .control-slider {
@@ -869,6 +885,8 @@
       padding: 0.1rem 0.5rem;
       min-width: 3.25rem;
       text-align: center;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .control-slider input[type="range"] {
@@ -1739,16 +1757,166 @@
        exactamente el esfuerzo que el gráfico venía a ahorrar. En pantalla
        estrecha vuelven a apilarse: ahí no caben dos.
        ------------------------------------------------------------------ */
+    /* Las dos columnas las decide el ancho del CONTENEDOR, no el de la
+       pantalla: caben dos paneles solo si cada uno llega a 18rem. Con la
+       consulta de medios anterior (768 px de pantalla) el par pasaba a dos
+       columnas con la barra lateral abierta y un área de contenido de
+       438 px, y el segundo panel quedaba fuera de la página. El mínimo de
+       la pista es una longitud y no `auto`, así que el lienzo ya no puede
+       imponer su ancho y salirse de la caja en el teléfono. */
     .grafico-par {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 0.9rem;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+      gap: 1rem;
     }
 
-    @media (min-width: 768px) {
-      .grafico-par {
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
+    .grafico-par > * {
+      min-width: 0;
+    }
+
+    /* ------------------------------------------------------------------
+       Ronda R2 del capítulo 1 (2026-11-11) · reglas nuevas de los gráficos.
+       ------------------------------------------------------------------ */
+
+    /* Leyenda en HTML, fuera del lienzo: no le quita alto al dibujo y se
+       parte en líneas como cualquier texto. La muestra toma el color de
+       `color` (currentColor) y el trazo de su clase. */
+    .simulador .grafico-leyenda {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem 1.1rem;
+      margin: 0 0 0.6rem 0;
+      padding: 0;
+      font-size: 0.78rem;
+      line-height: 1.4;
+    }
+
+    .simulador .grafico-leyenda li {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin: 0;
+      color: #334155;
+    }
+
+    .grafico-leyenda-muestra {
+      display: inline-block;
+      flex: 0 0 auto;
+      width: 1.5rem;
+      height: 0;
+      border-top: 3px solid currentColor;
+    }
+
+    .grafico-leyenda-fina {
+      border-top-width: 2px;
+    }
+
+    .grafico-leyenda-discontinua {
+      border-top-style: dashed;
+    }
+
+    .grafico-leyenda-punteada {
+      border-top-style: dotted;
+    }
+
+    .grafico-leyenda-punto,
+    .grafico-leyenda-rombo {
+      width: 0.66rem;
+      height: 0.66rem;
+      border: 0;
+      background: currentColor;
+    }
+
+    .grafico-leyenda-punto {
+      border-radius: 50%;
+    }
+
+    .grafico-leyenda-rombo {
+      transform: rotate(45deg);
+      margin: 0 0.12rem;
+    }
+
+    .simulador-controles + .grafico-leyenda,
+    .simulador-intro + .grafico-leyenda {
+      margin-top: 0;
+    }
+
+    .grafico-leyenda + .grafico-etiqueta {
+      margin-top: 0.5rem;
+    }
+
+    .grafico-leyenda + .grafico-wrapper,
+    .grafico-leyenda + .grafico-par {
+      margin-top: 0;
+    }
+
+    /* Pila de paneles de una descomposición: los cuatro lienzos comparten
+       caja, van pegados y solo el último lleva el eje de tiempo, de modo
+       que una misma fecha cae en la misma vertical de arriba abajo. El
+       último panel es más alto justo en lo que ocupa ese eje, para que las
+       cuatro áreas de dibujo midan lo mismo. */
+    .grafico-pila {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.75rem 0.6rem 0.5rem;
+    }
+
+    .grafico-pila-panel {
+      position: relative;
+      height: 150px;
+    }
+
+    .grafico-pila-panel + .grafico-pila-panel {
+      border-top: 1px solid #eef2f6;
+    }
+
+    .grafico-pila-panel:last-child {
+      height: 164px;
+    }
+
+    .simulador-intro + .grafico-pila {
+      margin-top: 0;
+    }
+
+    @media (max-width: 640px) {
+      .grafico-pila {
+        padding: 0.4rem 0.35rem 0.5rem 0.2rem;
+      }
+
+      .grafico-pila-panel {
+        height: 136px;
+      }
+
+      .grafico-pila-panel:last-child {
+        height: 150px;
+      }
+    }
+
+    /* Dos fórmulas que van lado a lado si caben y una debajo de la otra si
+       no (F_T y F_S en el Módulo 8): en una sola línea medían más de 600 px
+       y la segunda quedaba fuera de la caja en tableta y en teléfono. */
+    .formula-par {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 0 2.5rem;
+    }
+
+    .formula-par > * {
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .formula-par .katex-display {
+      margin: 0.6em 0;
+    }
+
+    @media (max-width: 640px) {
+      .formula-par .katex {
+        font-size: 1em;
       }
     }
 
@@ -1923,11 +2091,17 @@
        ------------------------------------------------------------------ */
     .ciclo {
       margin: 1.25rem 0;
+      container-type: inline-size;   /* el ciclo decide por su propio ancho, no por el de la pantalla */
     }
 
+    /* Todas las etapas en UNA fila de columnas iguales, o todas en vertical
+       (ver la consulta de contenedor de más abajo). Nunca a medias: con
+       `flex-wrap`, y también con `auto-fit`, la última etapa caía sola a una
+       segunda fila y dejaba una flecha colgando al final de la primera. */
     .ciclo-etapas {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(0, 1fr);
       align-items: stretch;
       gap: 0.4rem;
       list-style: none;
@@ -1938,12 +2112,27 @@
     .ciclo-etapa {
       display: flex;
       align-items: stretch;
+      min-width: 0;
+    }
+
+    .ciclo-etapa > .ciclo-boton {
+      flex: 1 1 auto;
+      min-width: 0;
     }
 
     /* La flecha vive en el separador, no en el botón: así el orden se lee
        aunque las etapas salten de línea. */
     .ciclo-etapa:not(:last-child)::after {
       content: "\2192";
+      align-self: center;
+      margin: 0 0.15rem;
+      color: rgba(1, 40, 32, 0.35);
+      font-weight: 700;
+    }
+
+    /* Tras la última etapa, la vuelta al principio: es lo que lo hace ciclo. */
+    .ciclo-etapa:last-child::after {
+      content: "\21BA";
       align-self: center;
       margin: 0 0.15rem;
       color: rgba(1, 40, 32, 0.35);
@@ -2074,10 +2263,13 @@
       border-radius: 0.25rem;
     }
 
-    /* En móvil el ciclo se lee en vertical y las flechas giran con él. */
-    @media (max-width: 640px) {
+    /* Cuando el ciclo no tiene ancho para una fila —en el teléfono, pero
+       también en una pantalla mediana con la barra lateral abierta— se lee
+       en vertical y las flechas giran con él. */
+    @container (max-width: 640px) {
       .ciclo-etapas {
-        flex-direction: column;
+        grid-auto-flow: row;
+        grid-template-columns: minmax(0, 1fr);
       }
 
       .ciclo-etapa {
@@ -2093,6 +2285,17 @@
         content: "\2193";
         align-self: center;
         margin: 0.15rem 0;
+      }
+
+      /* En vertical la vuelta ya la dice la frase de debajo, que lleva su
+         propio «↺»: aquí saldría dos veces. */
+      .ciclo-etapa:last-child::after {
+        content: none;
+      }
+
+      /* En una columna tan estrecha, justificar abre huecos entre palabras. */
+      .ciclo-campo p {
+        text-align: left;
       }
     }
 
@@ -2207,6 +2410,7 @@
       color: #64748b;
       margin: 0.5rem 0 0 0;
       line-height: 1.4;
+      text-align: left;              /* justificada, en el teléfono abría huecos entre palabras */
     }
 
     @media (max-width: 640px) {
@@ -2217,6 +2421,65 @@
       .mapa-estacional-celda {
         font-size: 0.55rem;
         min-height: 1.4rem;
+      }
+    }
+
+    /* Variante `--entero` (capítulo 1, ronda R2): los doce meses caben
+       siempre, sin desplazamiento. La rejilla base tiene un ancho mínimo de
+       34rem y a 375 px y a 800 px se cortaba en julio, con agosto —una de
+       las dos bandas que la nota manda mirar— fuera de la vista y sin
+       ninguna pista de que hubiera más. Vale para mapas de cifras cortas
+       (aquí, enteros de tres dígitos); uno con decimales necesita la base. */
+    .mapa-estacional--entero {
+      container-type: inline-size;
+    }
+
+    .mapa-estacional--entero .mapa-estacional-rejilla {
+      grid-template-columns: 2.7rem repeat(12, minmax(0, 1fr));
+      min-width: 0;
+    }
+
+    /* La letra sigue al ancho del propio mapa (cqw), no al de la pantalla:
+       con la barra lateral abierta el mapa mide mucho menos que la ventana.
+       La primera declaración es el respaldo donde no haya unidades cq. */
+    .mapa-estacional--entero .mapa-estacional-cabecera,
+    .mapa-estacional--entero .mapa-estacional-anio,
+    .mapa-estacional--entero .mapa-estacional-celda {
+      font-size: 0.6rem;
+      font-size: clamp(0.52rem, 2.9cqw, 0.72rem);
+    }
+
+    .mapa-estacional--entero .mapa-estacional-leyenda {
+      font-size: 0.72rem;
+    }
+
+    .mapa-estacional--entero .mapa-estacional-celda {
+      min-height: 1.8rem;
+    }
+
+    .mapa-estacional--entero .mapa-estacional-leyenda,
+    .mapa-estacional--entero .mapa-estacional-nota {
+      color: #475569;
+    }
+
+    .mapa-estacional--entero .mapa-estacional-nota {
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 640px) {
+      .mapa-estacional--entero .mapa-estacional-rejilla {
+        grid-template-columns: 2.05rem repeat(12, minmax(0, 1fr));
+        gap: 1px;
+      }
+
+      .mapa-estacional--entero .mapa-estacional-anio {
+        padding-right: 0.2rem;
+      }
+
+      .mapa-estacional--entero .mapa-estacional-celda {
+        min-height: 1.55rem;
+        border-radius: 0.12rem;
       }
     }
   </style>
@@ -2359,7 +2622,7 @@
           (1949–1960). Es la serie clásica de este curso: se ve una <em>tendencia</em> creciente y un patrón que se
           repite cada 12 meses cuya amplitud aumenta con el nivel.</p>
         <div class="grafico-wrapper">
-          <canvas aria-label="Serie mensual de pasajeros aéreos internacionales, 1949 a 1960" role="img"></canvas>
+          <canvas aria-label="AirPassengers, en miles de pasajeros al mes, de 1949 a 1960: la serie sube de forma sostenida y repite cada doce meses un pico a mitad de año, más alto cuanto mayor es el nivel" role="img"></canvas>
         </div>
       </div>
 
@@ -2552,7 +2815,7 @@ as_tsibble(ventas, index = mes, key = tienda)   # las cinco series, cada una la 
           distintas.</p>
       </div>
 
-      <div class="mapa-estacional" data-mapa="cap1-airpassengers">
+      <div class="mapa-estacional mapa-estacional--entero" data-mapa="cap1-airpassengers">
         <p class="mapa-estacional-titulo">AirPassengers, mes × año</p>
         <div class="mapa-estacional-marco">
           <div class="mapa-estacional-rejilla" role="table" aria-label="AirPassengers, mes × año"></div>
@@ -2564,10 +2827,11 @@ as_tsibble(ventas, index = mes, key = tienda)   # las cinco series, cada una la 
       <div class="simulador" data-simulador="grafico-estacional">
         <h4><i class="fas fa-calendar-alt" aria-hidden="true"></i> Gráfico estacional de <code>AirPassengers</code></h4>
         <p class="simulador-intro">Cada línea es un año; el eje horizontal son los meses de enero
-          a diciembre. El pico de mediados de año (vacaciones de verano en el hemisferio norte) se repite y crece año
+          a diciembre. El color va de claro (1949) a oscuro (1960), y cada año está rotulado al final de su línea
+          cuando cabe. El pico de mediados de año (vacaciones de verano en el hemisferio norte) se repite y crece año
           tras año: eso es <em>estacionalidad</em> de amplitud creciente.</p>
         <div class="grafico-wrapper">
-          <canvas aria-label="Gráfico estacional: una línea por año de 1949 a 1960, meses en el eje horizontal"
+          <canvas aria-label="Gráfico estacional de AirPassengers: doce líneas, una por año de 1949 a 1960, sobre los meses de enero a diciembre. Todas tienen el máximo en julio o agosto; las de los años posteriores quedan casi siempre por encima y con un pico más alto, de modo que se abren en abanico"
             role="img"></canvas>
         </div>
       </div>
@@ -2707,7 +2971,7 @@ plt.show()</code></pre>
             </div>
           </div>
         </div>
-        <p class="simulador-lectura"></p>
+        <p class="simulador-lectura" aria-live="polite"></p>
       </div>
 
       <p>La lectura del comparador es la definición hecha imagen: a la izquierda la banda conserva su anchura
@@ -2753,11 +3017,11 @@ plt.show()</code></pre>
         <p class="simulador-intro">Los doce años de <code>AirPassengers</code>. Si el modelo fuera aditivo, la
           amplitud no dependería del nivel y los puntos seguirían la <strong>horizontal</strong>; si fuera
           exactamente multiplicativo, la amplitud sería una proporción fija del nivel y seguirían el
-          <strong>rayo</strong>. Ambas referencias se anclan en 1949, el primer año. Al pasar el cursor por cada
-          punto aparece el año.</p>
+          <strong>rayo</strong>. Ambas referencias se anclan en 1949, el primer año. El primer año y el último van
+          rotulados; al pasar el cursor por un punto, o al tocarlo, aparece el suyo.</p>
         <div class="grafico-wrapper" style="height:300px;">
           <canvas role="img"
-            aria-label="Dispersión de amplitud estacional contra nivel medio para los doce años, con la recta horizontal que predice el modelo aditivo y el rayo que predice el multiplicativo"></canvas>
+            aria-label="Dispersión de la amplitud estacional contra el nivel medio de los doce años de AirPassengers, con 1949 y 1960 rotulados. Los puntos se alejan de la horizontal que predice el modelo aditivo y acompañan al rayo que predice el multiplicativo, casi todos algo por encima de él"></canvas>
         </div>
         <p class="simulador-lectura"></p>
       </div>
@@ -2812,7 +3076,8 @@ plt.show()</code></pre>
       <div class="simulador" data-simulador="construye-tu-serie">
         <h4><i class="fas fa-sliders-h" aria-hidden="true"></i> Simulador: construye tu serie</h4>
         <p class="simulador-intro">Serie aditiva $y_t = \beta\,t + A\sin(2\pi t/12) + \sigma\,
-          \varepsilon_t$. Mueve los deslizadores para aislar el efecto de cada componente; el ruido usa una semilla
+          \varepsilon_t$: diez años de datos mensuales simulados (las fechas son ficticias). Mueve los deslizadores
+          para aislar el efecto de cada componente; el ruido usa una semilla
           fija, así que al cambiar $\sigma$ varía su escala pero no su forma. Haz clic en la leyenda para ocultar
           componentes.</p>
         <div class="simulador-controles"></div>
@@ -2916,6 +3181,7 @@ plt.show()</code></pre>
         <div class="grafico-wrapper">
           <canvas aria-label="Serie de pasajeros con su media móvil superpuesta" role="img"></canvas>
         </div>
+        <p class="simulador-lectura" aria-live="polite"></p>
       </div>
 
       <div class="code-tabs" role="group" aria-label="Media móvil en R y Python">
@@ -2996,7 +3262,7 @@ plt.legend(); plt.show()</code></pre>
       <div class="ciclo" data-ciclo="descomposicion">
         <ol class="ciclo-etapas" role="tablist" aria-label="Etapas del ciclo">
           <li class="ciclo-etapa" role="presentation">
-            <button type="button" class="ciclo-boton" role="tab"
+            <button type="button" class="ciclo-boton" role="tab" id="ciclo-descomposicion-escala-pestana"
               aria-selected="true" aria-controls="ciclo-descomposicion-escala" tabindex="0">
               <span class="ciclo-numero">Paso 1</span>
               <span class="ciclo-titulo">Elegir la escala</span>
@@ -3004,7 +3270,7 @@ plt.legend(); plt.show()</code></pre>
             </button>
           </li>
           <li class="ciclo-etapa" role="presentation">
-            <button type="button" class="ciclo-boton" role="tab"
+            <button type="button" class="ciclo-boton" role="tab" id="ciclo-descomposicion-tendencia-pestana"
               aria-selected="false" aria-controls="ciclo-descomposicion-tendencia" tabindex="-1">
               <span class="ciclo-numero">Paso 2</span>
               <span class="ciclo-titulo">Estimar la tendencia</span>
@@ -3012,7 +3278,7 @@ plt.legend(); plt.show()</code></pre>
             </button>
           </li>
           <li class="ciclo-etapa" role="presentation">
-            <button type="button" class="ciclo-boton" role="tab"
+            <button type="button" class="ciclo-boton" role="tab" id="ciclo-descomposicion-estacionalidad-pestana"
               aria-selected="false" aria-controls="ciclo-descomposicion-estacionalidad" tabindex="-1">
               <span class="ciclo-numero">Paso 3</span>
               <span class="ciclo-titulo">Estimar la estacionalidad</span>
@@ -3020,7 +3286,7 @@ plt.legend(); plt.show()</code></pre>
             </button>
           </li>
           <li class="ciclo-etapa" role="presentation">
-            <button type="button" class="ciclo-boton" role="tab"
+            <button type="button" class="ciclo-boton" role="tab" id="ciclo-descomposicion-residuo-pestana"
               aria-selected="false" aria-controls="ciclo-descomposicion-residuo" tabindex="-1">
               <span class="ciclo-numero">Paso 4</span>
               <span class="ciclo-titulo">Analizar el residuo</span>
@@ -3029,7 +3295,7 @@ plt.legend(); plt.show()</code></pre>
           </li>
         </ol>
         <p class="ciclo-retorno">Descomponer no es una fórmula sino un ciclo: el residuo es quien dice si hay que volver.</p>
-        <div class="ciclo-panel" id="ciclo-descomposicion-escala" role="tabpanel">
+        <div class="ciclo-panel" id="ciclo-descomposicion-escala" role="tabpanel" aria-labelledby="ciclo-descomposicion-escala-pestana">
           <div class="ciclo-campo">
             <span class="ciclo-etiqueta">Qué haces</span>
             <p>Mirar si la amplitud estacional <strong>crece con el nivel</strong> de la serie. Si crece más o menos en proporción a él, el modelo es multiplicativo $y_t = T_t \times S_t \times R_t$; si se mantiene, aditivo $y_t = T_t + S_t + R_t$. Tomar logaritmos convierte el caso multiplicativo en uno aditivo, porque $\log(T \times S \times R) = \log T + \log S + \log R$.</p>
@@ -3043,7 +3309,7 @@ plt.legend(); plt.show()</code></pre>
             <p>Si al final el residuo $\hat{R}_t$ conserva la forma estacional abombada, la escala estaba mal elegida.</p>
           </div>
         </div>
-        <div class="ciclo-panel" id="ciclo-descomposicion-tendencia" role="tabpanel" hidden>
+        <div class="ciclo-panel" id="ciclo-descomposicion-tendencia" role="tabpanel" aria-labelledby="ciclo-descomposicion-tendencia-pestana" hidden>
           <div class="ciclo-campo">
             <span class="ciclo-etiqueta">Qué haces</span>
             <p>Suavizar con una media móvil centrada del orden del período. Con $m$ par hace falta la media móvil $2\times m$ para que quede centrada, y eso cuesta $m/2$ observaciones en cada extremo; con $m$ impar basta la media móvil de orden $m$, que cuesta $(m-1)/2$.</p>
@@ -3057,7 +3323,7 @@ plt.legend(); plt.show()</code></pre>
             <p>Si la tendencia estimada ondula al ritmo de la estacionalidad, el orden $m$ no coincide con el período real.</p>
           </div>
         </div>
-        <div class="ciclo-panel" id="ciclo-descomposicion-estacionalidad" role="tabpanel" hidden>
+        <div class="ciclo-panel" id="ciclo-descomposicion-estacionalidad" role="tabpanel" aria-labelledby="ciclo-descomposicion-estacionalidad-pestana" hidden>
           <div class="ciclo-campo">
             <span class="ciclo-etiqueta">Qué haces</span>
             <p>Quitar la tendencia —restando en el aditivo, dividiendo en el multiplicativo— deja la <strong>serie sin tendencia</strong>: en ella ya solo quedan estacionalidad y ruido. Al promediar todos los eneros de esa serie el ruido se cancela y sobrevive el índice de enero, y así con los doce meses. Esos índices son <strong>fijos</strong> para toda la serie: esa es la limitación central del método clásico.</p>
@@ -3071,7 +3337,7 @@ plt.legend(); plt.show()</code></pre>
             <p>Si los índices no sirven igual al principio y al final de la muestra, la estacionalidad cambia: hay que pasar a STL.</p>
           </div>
         </div>
-        <div class="ciclo-panel" id="ciclo-descomposicion-residuo" role="tabpanel" hidden>
+        <div class="ciclo-panel" id="ciclo-descomposicion-residuo" role="tabpanel" aria-labelledby="ciclo-descomposicion-residuo-pestana" hidden>
           <div class="ciclo-campo">
             <span class="ciclo-etiqueta">Qué haces</span>
             <p>Mirar $\hat{R}_t$: debe parecer ruido, sin ciclos ni abombamientos ni atípicos concentrados. Es la comprobación de que la descomposición hizo su trabajo.</p>
@@ -3218,10 +3484,16 @@ plt.legend(); plt.show()</code></pre>
         <p class="simulador-intro">De arriba abajo: serie observada, tendencia (media móvil
           centrada 2×12), factor estacional (repite cada 12 meses) y residuo. En el modelo multiplicativo, estacional
           y residuo oscilan alrededor de <strong>1</strong>, no de 0.</p>
-        <div class="grafico-wrapper" style="height:120px;"><canvas aria-label="Componente observado" role="img"></canvas></div>
-        <div class="grafico-wrapper" style="height:120px;"><canvas aria-label="Componente tendencia" role="img"></canvas></div>
-        <div class="grafico-wrapper" style="height:120px;"><canvas aria-label="Componente estacional" role="img"></canvas></div>
-        <div class="grafico-wrapper" style="height:120px;"><canvas aria-label="Componente residuo" role="img"></canvas></div>
+        <div class="grafico-pila">
+          <div class="grafico-pila-panel"><canvas role="img"
+            aria-label="Serie observada, en miles de pasajeros: crece de 1949 a 1960 y sus oscilaciones anuales se ensanchan con el nivel"></canvas></div>
+          <div class="grafico-pila-panel"><canvas role="img"
+            aria-label="Tendencia por media móvil centrada 2×12, en la misma escala que la serie: una curva suave y creciente que empieza en julio de 1949 y termina en junio de 1960, sin valores en los seis primeros meses ni en los seis últimos"></canvas></div>
+          <div class="grafico-pila-panel"><canvas role="img"
+            aria-label="Factor estacional: el mismo patrón de doce meses repetido todos los años, que oscila alrededor de 1 con el máximo en julio y el mínimo en noviembre"></canvas></div>
+          <div class="grafico-pila-panel"><canvas role="img"
+            aria-label="Residuo: un factor que oscila alrededor de 1 sin tendencia, más disperso en los primeros y en los últimos años que en los centrales; no tiene valores donde falta la tendencia"></canvas></div>
+        </div>
       </div>
 
       <h3>Cómo se lee una descomposición multiplicativa</h3>
@@ -3476,19 +3748,26 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
 
       <div class="simulador" data-simulador="loess-local">
         <h4><i class="fas fa-crosshairs" aria-hidden="true"></i> El ajuste local, punto a punto</h4>
-        <p class="simulador-intro">La serie gris es la <strong>desestacionalizada en logaritmos</strong>, que es
+        <p class="simulador-intro">La serie morada es la <strong>desestacionalizada en logaritmos</strong>, que es
           exactamente lo que STL suaviza para sacar la tendencia. Mueve el <strong>foco</strong> y mira la ventana:
-          los puntos naranjas son los vecinos que entran en ese ajuste y <em>su tamaño es el peso que reciben</em>;
-          la recta naranja es el ajuste, y el punto verde la altura que se guarda. La curva verde es el rastro de
-          repetir la operación en los 144 meses. Lleva el foco a enero de 1949 o a diciembre de 1960 y fíjate en qué
-          le pasa a la media móvil. Y baja los dos últimos controles a 0: el ajuste local deja de ser Loess y
-          <em>vuelve a ser</em> la media móvil simple del Módulo 5.</p>
+          el panel de arriba la sitúa en la serie entera y el de abajo la amplía. Los discos naranjas son los
+          vecinos que entran en ese ajuste y <em>su tamaño es el peso que reciben</em>;
+          la recta naranja es el ajuste, y el rombo verde oscuro la altura que se guarda. La curva verde oscuro es
+          el rastro de repetir la operación en los 144 meses. Lleva el foco a enero de 1949 o a diciembre de 1960 y
+          fíjate en qué le pasa a la media móvil. Y baja los dos últimos controles a 0: el ajuste local deja de ser
+          Loess y <em>vuelve a ser</em> la media móvil simple del Módulo 5.</p>
         <div class="simulador-controles"></div>
+        <p class="grafico-etiqueta">La serie entera · la franja naranja es la ventana</p>
+        <div class="grafico-wrapper" style="height:170px;">
+          <canvas role="img"
+            aria-label="La serie desestacionalizada en logaritmos, de 1949 a 1960, con la curva Loess superpuesta y una franja que marca la ventana del ajuste"></canvas>
+        </div>
+        <p class="grafico-etiqueta">La ventana, ampliada</p>
         <div class="grafico-wrapper">
           <canvas role="img"
-            aria-label="Ajuste local en un punto: la ventana de vecinos con su peso, la recta ajustada, la curva Loess resultante, la media móvil y la tendencia de STL"></canvas>
+            aria-label="Ampliación de la ventana: los vecinos con un tamaño proporcional a su peso, la recta local, el valor que se guarda y, para comparar, la curva Loess, la media móvil y la tendencia de stl()"></canvas>
         </div>
-        <p class="simulador-lectura"></p>
+        <p class="simulador-lectura" aria-live="polite"></p>
       </div>
 
       <p>Del simulador salen tres lecturas que conviene no dejar pasar. La primera cierra el módulo anterior: al llevar
@@ -3643,11 +3922,18 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
         <h4><i class="fas fa-stream" aria-hidden="true"></i> STL de <code>log(AirPassengers)</code></h4>
         <p class="simulador-intro">Componentes en <strong>escala logarítmica</strong> (por eso
           suman): de arriba abajo, $\log y_t$ observado, tendencia, estacional y residuo. Nota que la tendencia llega
-          hasta los extremos y el residuo no tiene estructura visible.</p>
-        <div class="grafico-wrapper" style="height:120px;"><canvas aria-label="log observado" role="img"></canvas></div>
-        <div class="grafico-wrapper" style="height:120px;"><canvas aria-label="tendencia STL" role="img"></canvas></div>
-        <div class="grafico-wrapper" style="height:120px;"><canvas aria-label="estacional STL" role="img"></canvas></div>
-        <div class="grafico-wrapper" style="height:120px;"><canvas aria-label="residuo STL" role="img"></canvas></div>
+          hasta los extremos. El residuo oscila alrededor de 0 sin tendencia, pero no es ruido puro: es más disperso
+          en los primeros y en los últimos años que en los centrales.</p>
+        <div class="grafico-pila">
+          <div class="grafico-pila-panel"><canvas role="img"
+            aria-label="Logaritmo de la serie observada: crece de forma casi lineal de 1949 a 1960 y sus oscilaciones anuales conservan una anchura parecida"></canvas></div>
+          <div class="grafico-pila-panel"><canvas role="img"
+            aria-label="Tendencia de STL, en la misma escala logarítmica: una curva suave y creciente que cubre la serie entera, de enero de 1949 a diciembre de 1960, sin huecos en los extremos"></canvas></div>
+          <div class="grafico-pila-panel"><canvas role="img"
+            aria-label="Componente estacional de STL en logaritmos: una onda de doce meses idéntica todos los años, alrededor de 0, con el máximo en julio y el mínimo en noviembre"></canvas></div>
+          <div class="grafico-pila-panel"><canvas role="img"
+            aria-label="Residuo de STL en logaritmos: oscila alrededor de 0 sin tendencia, más disperso en los primeros y en los últimos años que en los centrales"></canvas></div>
+        </div>
       </div>
 
       <h3>Cómo se leen los componentes en escala logarítmica</h3>
@@ -3796,7 +4082,7 @@ print(round(res.seasonal["1955-07-01"], 4))      # 0.2164, el julio de la figura
           descomposición clásica multiplicativa del Módulo 6) elimina el diente de sierra mensual y deja la
           tendencia-ciclo junto con el residuo: por eso no es una curva suave.</p>
         <div class="grafico-wrapper">
-          <canvas aria-label="Serie observada y serie desestacionalizada superpuestas" role="img"></canvas>
+          <canvas aria-label="AirPassengers observada y desestacionalizada, en miles de pasajeros: la desestacionalizada sigue la misma subida sin el diente de sierra anual, pero no es una curva lisa, porque conserva las irregularidades del residuo" role="img"></canvas>
         </div>
       </div>
 
@@ -3804,10 +4090,9 @@ print(round(res.seasonal["1955-07-01"], 4))      # 0.2164, el julio de la figura
         <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§4.3" data-modo="narrativa"><a href="#ref-m8-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">Hyndman y Athanasopoulos (2021, §4.3)</a></cite> definen la
         <strong>fuerza de la tendencia</strong> $F_T$ y de la <strong>estacionalidad</strong> $F_S$ a partir de las
         varianzas de los componentes STL (aquí, sobre la escala log):</p>
-      <div class="formula">
-        $$F_T = \max\!\left(0,\; 1 - \frac{\operatorname{Var}(R_t)}{\operatorname{Var}(T_t + R_t)}\right),
-        \qquad
-        F_S = \max\!\left(0,\; 1 - \frac{\operatorname{Var}(R_t)}{\operatorname{Var}(S_t + R_t)}\right)$$
+      <div class="formula formula-par">
+        <div>$$F_T = \max\!\left(0,\; 1 - \frac{\operatorname{Var}(R_t)}{\operatorname{Var}(T_t + R_t)}\right)$$</div>
+        <div>$$F_S = \max\!\left(0,\; 1 - \frac{\operatorname{Var}(R_t)}{\operatorname{Var}(S_t + R_t)}\right)$$</div>
       </div>
       <div class="derivacion">
         <button type="button" class="derivacion-boton" aria-expanded="false" aria-controls="der-fuerza-ft">
@@ -4579,7 +4864,8 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
     (function () {
       const tickLineal = Chart.defaults.scales.linear.ticks.callback;
       Chart.defaults.scales.linear.ticks.callback = function (valor, i, ticks) {
-        return agrupaMiles(tickLineal.call(this, valor, i, ticks));
+        // El negativo, con el signo menos tipográfico de la prosa (−0.05).
+        return agrupaMiles(tickLineal.call(this, valor, i, ticks)).replace(/^-/, '\u2212');
       };
       const cb = Chart.defaults.plugins.tooltip.callbacks;
       const etiqueta = cb.label, titulo = cb.title;
@@ -4593,48 +4879,188 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
       };
     })();
 
-    // Paleta y defaults de la casa para gráficos de líneas.
+    // Paleta de la casa para los gráficos. Cada serie del capítulo lleva UN
+    // color, el mismo en todos los gráficos donde aparece:
+    //   primario   · la serie observada (y_t o log y_t)
+    //   secundario · la tendencia estimada (media móvil, clásica o STL)
+    //   terciario  · el componente estacional
+    //   gris       · el residuo y las referencias (envolventes, la hipótesis aditiva;
+    //                la multiplicativa va en naranja, el color de la tendencia)
+    //   violeta    · la serie desestacionalizada
+    // La única excepción es el simulador del ajuste local (Módulo 7), que
+    // compara tres estimaciones de una misma tendencia y necesita un color
+    // para cada una; su leyenda lo dice.
+    //
+    // El naranja y el gris de las líneas no son el naranja de marca (#FF6600,
+    // 2.94:1 sobre blanco) ni el gris anterior (#94a3b8, 2.56:1), sino los
+    // tonos más próximos que llegan al 3:1 que WCAG 1.4.11 pide a un objeto
+    // gráfico: #FB6400 (3.03:1) y #8795A9 (3.04:1).
     const COLORES_GRAFICO = {
       primario: '#012820',
-      secundario: '#FF6600',
+      secundario: '#FB6400',
       terciario: '#0e7490',
-      gris: '#94a3b8'
+      gris: '#8795A9',
+      violeta: '#7c3aed'
     };
 
-    function crearGraficoLinea(canvas, etiquetas, datasets, opciones = {}) {
+    const REJILLA_GRAFICO = 'rgba(148, 163, 184, 0.2)';
+    const fuenteEje = () => ({ family: 'Montserrat', size: 11 });
+    const fuenteNumero = () => ({ family: 'Fira Code', size: 11 });
+
+    // Título de un eje, con su unidad: ningún gráfico va sin él.
+    function tituloEje(texto) {
+      return {
+        display: true, text: texto, color: '#475569', padding: 4,
+        font: { family: 'Montserrat', size: 11, weight: '600' }
+      };
+    }
+
+    // Mezcla recursiva de opciones. Con Object.assign, pasar `scales` o
+    // `plugins` sustituía el objeto entero de crearGraficoLinea y había que
+    // repetir las fuentes y la rejilla en cada llamada.
+    function fusionarOpciones(base, extra) {
+      Object.keys(extra || {}).forEach(k => {
+        const v = extra[k], b = base[k];
+        const esObjeto = o => o && typeof o === 'object' && !Array.isArray(o);
+        if (esObjeto(v) && esObjeto(b)) fusionarOpciones(b, v);
+        else base[k] = v;
+      });
+      return base;
+    }
+
+    // Eje x de una serie mensual que empieza en enero: rotula SOLO los
+    // eneros, con el año («1949»), y tantos como quepan sin tocarse.
+    //
+    // El salto automático de Chart.js elegía meses arbitrarios («1951-06»)
+    // y, a 375 px, pegaba las etiquetas («1949-011951-06»). Aquí las marcas
+    // se fijan a mano en afterBuildTicks, donde el eje ya conoce su ancho.
+    // `rotulo(i, eje)` permite otro texto (el comparador numera los años).
+    function ejeAnual(rotulo, anchoRotulo) {
+      const texto = rotulo || ((i, eje) => String(eje.getLabelForValue(i)).slice(0, 4));
+      const ancho = anchoRotulo || 40;
+      return {
+        ticks: {
+          font: fuenteEje(), autoSkip: false, maxRotation: 0, minRotation: 0,
+          callback: function (valor) { return texto(valor, this); }
+        },
+        grid: { display: true, drawOnChartArea: false, tickLength: 4, color: '#cbd5e1' },
+        afterBuildTicks: function (eje) {
+          const caben = Math.max(2, Math.floor(eje.width / ancho));
+          const desde = Math.ceil(eje.min / 12) * 12;
+          const anios = Math.floor((eje.max - desde) / 12) + 1;
+          let paso = 1;
+          while (Math.ceil(anios / paso) > caben) paso++;
+          const marcas = [];
+          for (let i = desde; i <= eje.max; i += 12 * paso) marcas.push({ value: i });
+          eje.ticks = marcas;
+        }
+      };
+    }
+
+    // Límites y paso «redondos» (1, 2 o 5 por una potencia de diez) que
+    // envuelven a [min, max] con `maxTramos` tramos como mucho. Sirve para
+    // fijar un eje sin que Chart.js rotule sus extremos con cifras como
+    // 62.6 o 663.4. Es solo el marco del dibujo: no toca ningún dato.
+    function ejeRedondo(min, max, maxTramos) {
+      const rango = (max - min) || Math.abs(max) || 1;
+      const potencia = Math.pow(10, Math.floor(Math.log10(rango / maxTramos)));
+      let paso = 10 * potencia;
+      for (const m of [1, 2, 5, 10]) {
+        const p = m * potencia;
+        if (Math.ceil(max / p - 1e-9) - Math.floor(min / p + 1e-9) <= maxTramos) { paso = p; break; }
+      }
+      const redondea = v => Number(v.toPrecision(12));
+      return {
+        min: redondea(Math.floor(min / paso + 1e-9) * paso),
+        max: redondea(Math.ceil(max / paso - 1e-9) * paso),
+        paso: paso
+      };
+    }
+
+    // Leyenda del lienzo: una muestra de línea con el trazo de cada serie
+    // (continuo, discontinuo, punteado) en lugar de una caja de color.
+    function etiquetasDeLeyenda(chart) {
+      return Chart.defaults.plugins.legend.labels.generateLabels(chart).map(item => {
+        const ds = chart.data.datasets[item.datasetIndex];
+        item.strokeStyle = ds.borderColor;
+        item.fillStyle = ds.borderColor;
+        if (ds.showLine !== false) {
+          item.pointStyle = 'line';
+          item.lineWidth = Math.max(2, ds.borderWidth || 2);
+          item.lineDash = ds.borderDash || [];
+        }
+        return item;
+      });
+    }
+
+    // Leyenda en HTML, fuera del lienzo. La de Chart.js vive DENTRO del
+    // lienzo y en el teléfono llegaba a ocupar la mitad de su alto (118 de
+    // 237 px en el ajuste local). `items`: [{texto, color, tipo}], con tipo
+    // 'linea' (por defecto), 'fina', 'discontinua', 'punteada', 'punto' o
+    // 'rombo'. Devuelve los nodos de texto, por si alguno cambia después.
+    function crearLeyenda(antesDe, items) {
+      const lista = document.createElement('ul');
+      lista.className = 'grafico-leyenda';
+      lista.setAttribute('aria-label', 'Leyenda del gráfico');
+      const textos = items.map(it => {
+        const li = document.createElement('li');
+        const muestra = document.createElement('span');
+        muestra.className = 'grafico-leyenda-muestra grafico-leyenda-' + (it.tipo || 'linea');
+        muestra.style.color = it.color;
+        muestra.setAttribute('aria-hidden', 'true');
+        const texto = document.createElement('span');
+        texto.textContent = it.texto;
+        li.appendChild(muestra);
+        li.appendChild(texto);
+        lista.appendChild(li);
+        return texto;
+      });
+      antesDe.parentNode.insertBefore(lista, antesDe);
+      return textos;
+    }
+
+    function crearGraficoLinea(canvas, etiquetas, datasets, opciones = {}, complementos = []) {
+      // En el teléfono la leyenda se aprieta un punto para caber en menos líneas.
+      const estrecho = canvas.parentNode && canvas.parentNode.clientWidth < 420;
+      const base = {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: {
+            labels: {
+              font: { family: 'Montserrat', size: estrecho ? 11 : 12 },
+              color: '#334155',
+              usePointStyle: true,
+              pointStyleWidth: estrecho ? 20 : 26,
+              boxHeight: 7,
+              padding: estrecho ? 8 : 10,
+              generateLabels: etiquetasDeLeyenda
+            }
+          },
+          tooltip: {
+            backgroundColor: '#012820',
+            titleFont: { family: 'Montserrat' },
+            bodyFont: { family: 'Fira Code' }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { font: fuenteEje(), maxTicksLimit: 12, maxRotation: 0 },
+            grid: { display: false }
+          },
+          y: {
+            ticks: { font: fuenteNumero() },
+            grid: { color: REJILLA_GRAFICO }
+          }
+        }
+      };
       return new Chart(canvas, {
         type: 'line',
         data: { labels: etiquetas, datasets: datasets },
-        options: Object.assign({
-          responsive: true,
-          maintainAspectRatio: false,
-          animation: false,
-          interaction: { mode: 'index', intersect: false },
-          plugins: {
-            legend: {
-              labels: { font: { family: 'Montserrat', size: 12 }, boxWidth: 24 }
-            },
-            tooltip: {
-              backgroundColor: '#012820',
-              titleFont: { family: 'Montserrat' },
-              bodyFont: { family: 'Fira Code' }
-            }
-          },
-          scales: {
-            x: {
-              ticks: {
-                font: { family: 'Montserrat', size: 11 },
-                maxTicksLimit: 12,
-                maxRotation: 0
-              },
-              grid: { display: false }
-            },
-            y: {
-              ticks: { font: { family: 'Fira Code', size: 11 } },
-              grid: { color: 'rgba(148, 163, 184, 0.2)' }
-            }
-          }
-        }, opciones)
+        options: fusionarOpciones(base, opciones),
+        plugins: complementos
       });
     }
 
@@ -4728,12 +5154,25 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
           data: inicial.estacional,
           borderColor: COLORES_GRAFICO.terciario,
           backgroundColor: COLORES_GRAFICO.terciario,
-          borderWidth: 1.5,
+          borderWidth: 2,
           borderDash: [2, 3],
-          pointRadius: 0,
-          hidden: true
+          pointRadius: 0
         }
-      ]);
+      ], {
+        scales: { x: ejeAnual(), y: { title: tituloEje('Valor simulado') } }
+      });
+
+      // El nombre accesible del lienzo cuenta el estado de los controles.
+      const lienzo = raiz.querySelector('canvas');
+      function describir() {
+        const b = params.tendencia, A = params.amplitud, r = params.ruido;
+        lienzo.setAttribute('aria-label',
+          'Diez años de una serie mensual simulada, con su tendencia y su estacionalidad dibujadas aparte: ' +
+          (b === 0 ? 'tendencia horizontal' : `tendencia ${b > 0 ? 'creciente' : 'decreciente'} de pendiente ${b.toFixed(1).replace('-', '\u2212')} por mes`) +
+          (A === 0 ? ', sin estacionalidad' : `, una onda de doce meses de amplitud ${A}`) +
+          (r === 0 ? ' y sin ruido.' : ` y ruido de desviación ${r}.`));
+      }
+      describir();
 
       crearControles(raiz.querySelector('.simulador-controles'), [
         { clave: 'tendencia', etiqueta: 'Pendiente de la tendencia (β)', min: -1, max: 2, paso: 0.1 },
@@ -4745,6 +5184,7 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         grafico.data.datasets[1].data = d.tendencia;
         grafico.data.datasets[2].data = d.estacional;
         grafico.update('none');
+        describir();
       });
 
       return [grafico];
@@ -4764,11 +5204,21 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         backgroundColor: COLORES_GRAFICO.primario,
         borderWidth: 2,
         pointRadius: 0
-      }]);
+      }], {
+        // Una sola serie: la unidad va en el eje y la leyenda sobra.
+        plugins: { legend: { display: false } },
+        scales: { x: ejeAnual(), y: { title: tituloEje('Miles de pasajeros') } }
+      });
       return [g];
     };
 
     // M3 · Gráfico estacional: una línea por año, meses en el eje x
+    //
+    // Doce líneas no caben en una leyenda. El año se lee de dos maneras:
+    // por el color, una rampa de un solo tono que va de claro (el primer
+    // año) a oscuro (el último), y por el rótulo que cada línea lleva al
+    // final, junto a su diciembre. Se rotulan siempre el primer año y el
+    // último, y de los intermedios los que caben sin pisarse.
     SIMULADORES['grafico-estacional'] = function (raiz) {
       const anios = {};
       DATOS_CAP1.fechas.forEach((f, i) => {
@@ -4776,20 +5226,62 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         (anios[anio] = anios[anio] || Array(12).fill(null))[parseInt(mes, 10) - 1] = DATOS_CAP1.observado[i];
       });
       const claves = Object.keys(anios).sort();
+      // De #5F9F90 (3.07:1 sobre blanco, el claro más claro que aún llega a
+      // 3:1) a #012820, el verde de la casa.
+      const CLARO = [95, 159, 144], OSCURO = [1, 40, 32];
       const datasets = claves.map((anio, k) => {
-        const t = k / (claves.length - 1);              // 0 -> naranja, 1 -> verde
-        const color = `rgb(${Math.round(255 - t * 254)}, ${Math.round(102 + t * (40 - 102))}, ${Math.round(t * 32)})`;
+        const t = k / (claves.length - 1);
+        const color = 'rgb(' + CLARO.map((c, j) => Math.round(c + (OSCURO[j] - c) * t)).join(', ') + ')';
         return {
           label: anio,
           data: anios[anio],
           borderColor: color,
           backgroundColor: color,
-          borderWidth: 1.5,
+          borderWidth: 1.8,
           pointRadius: 0
         };
       });
-      const g = crearGraficoLinea(raiz.querySelector('canvas'), MESES, datasets,
-        { plugins: { legend: { display: false } } });
+
+      const rotulosDeAnio = {
+        id: 'rotulosDeAnio',
+        afterDatasetsDraw(chart) {
+          const ctx = chart.ctx;
+          const cand = chart.data.datasets.map((ds, k) => {
+            const puntos = chart.getDatasetMeta(k).data;
+            const p = puntos[puntos.length - 1];
+            return { x: p.x, y: p.y, texto: ds.label };
+          });
+          const puestos = [];
+          [cand[0], cand[cand.length - 1]].concat(cand.slice(1, -1)).forEach(c => {
+            if (puestos.every(q => Math.abs(q.y - c.y) >= 13)) puestos.push(c);
+          });
+          ctx.save();
+          ctx.textAlign = 'left';
+          ctx.textBaseline = 'middle';
+          ctx.fillStyle = '#1e293b';
+          puestos.forEach((c, j) => {
+            ctx.font = (j < 2 ? '700' : '500') + " 11px 'Fira Code', monospace";
+            ctx.fillText(c.texto, c.x + 6, c.y);
+          });
+          ctx.restore();
+        }
+      };
+
+      const g = crearGraficoLinea(raiz.querySelector('canvas'), MESES, datasets, {
+        layout: { padding: { right: 38 } },
+        plugins: { legend: { display: false } },
+        scales: {
+          x: {
+            title: tituloEje('Mes'),
+            ticks: {
+              autoSkip: false,
+              // En el teléfono los doce nombres no caben: se dejan las iniciales.
+              callback: function (valor) { return this.width < 330 ? MESES[valor].charAt(0) : MESES[valor]; }
+            }
+          },
+          y: { title: tituloEje('Miles de pasajeros') }
+        }
+      }, [rotulosDeAnio]);
       return [g];
     };
 
@@ -4832,38 +5324,29 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
       }
 
       // Rango común a los dos paneles, calculado sobre las envolventes
-      // (que acotan a las series) y no sobre las series mismas.
+      // (que acotan a las series) y no sobre las series mismas, y llevado
+      // a cifras redondas: con los extremos crudos el eje salía rotulado
+      // «63.9 … 364.08».
       function limites(d) {
         const todo = d.supAditiva.concat(d.infAditiva, d.supMultipl, d.infMultipl);
         const min = Math.min(...todo), max = Math.max(...todo);
-        const margen = (max - min) * 0.06;
-        return { min: min - margen, max: max + margen };
+        // Un 2 % de aire, para que la envolvente no caiga justo en el borde.
+        const aire = (max - min) * 0.02;
+        return ejeRedondo(min - aire, max + aire, 8);
       }
 
       function opciones(d) {
         const lim = limites(d);
         return {
-          plugins: {
-            legend: {
-              labels: {
-                font: { family: 'Montserrat', size: 11 },
-                boxWidth: 20,
-                // La envolvente son dos series; en la leyenda basta una.
-                filter: item => item.text !== ''
-              }
-            },
-            tooltip: { enabled: false }
-          },
+          // La leyenda es una sola, en HTML, encima de los dos paneles.
+          plugins: { legend: { display: false }, tooltip: { enabled: false } },
           scales: {
-            x: {
-              ticks: { font: { family: 'Montserrat', size: 11 }, autoSkip: false, maxRotation: 0 },
-              grid: { display: false }
-            },
+            x: Object.assign(ejeAnual(i => String(i / 12 + 1), 20), { title: tituloEje('Año') }),
             y: {
               min: lim.min,
               max: lim.max,
-              ticks: { font: { family: 'Fira Code', size: 11 } },
-              grid: { color: 'rgba(148, 163, 184, 0.2)' }
+              title: tituloEje('Valor de la serie'),
+              ticks: { stepSize: lim.paso }
             }
           }
         };
@@ -4873,11 +5356,11 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         return crearGraficoLinea(canvas, etiquetas, [
           {
             label: 'Envolvente', data: sup, borderColor: COLORES_GRAFICO.gris,
-            borderWidth: 1, borderDash: [4, 4], pointRadius: 0
+            borderWidth: 1.5, borderDash: [4, 4], pointRadius: 0
           },
           {
             label: '', data: inf, borderColor: COLORES_GRAFICO.gris,
-            borderWidth: 1, borderDash: [4, 4], pointRadius: 0
+            borderWidth: 1.5, borderDash: [4, 4], pointRadius: 0
           },
           {
             label: 'Tendencia', data: d.T, borderColor: COLORES_GRAFICO.secundario,
@@ -4889,6 +5372,12 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
           }
         ], opciones(d));
       }
+
+      crearLeyenda(raiz.querySelector('.grafico-par'), [
+        { texto: 'Serie', color: COLORES_GRAFICO.primario },
+        { texto: 'Tendencia', color: COLORES_GRAFICO.secundario, tipo: 'fina' },
+        { texto: 'Envolvente de la estacionalidad', color: COLORES_GRAFICO.gris, tipo: 'discontinua' }
+      ]);
 
       const lienzos = raiz.querySelectorAll('canvas');
       const lectura = raiz.querySelector('.simulador-lectura');
@@ -4912,10 +5401,31 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         const ult = N / 12 - 1;
         const a1 = oscilacion(d.aditiva, d.T, 0), a8 = oscilacion(d.aditiva, d.T, ult);
         const m1 = oscilacion(d.multiplicativa, d.T, 0), m8 = oscilacion(d.multiplicativa, d.T, ult);
+        // El máximo del año 1 se mide cuando el nivel ya ha subido dentro
+        // del propio año, y por eso la multiplicativa arranca por encima de
+        // la aditiva aunque las dos valgan lo mismo al nivel de partida. Sin
+        // decirlo, la lectura parecía contradecir a la introducción.
+        const sinDecimalesDeMas = v => String(Math.round(v * 100) / 100);
+        const aclaracion = m1 - a1 > 0.05
+          ? ` La multiplicativa ya queda por encima en el año 1 porque dentro de ese año el nivel sube de ` +
+            `${sinDecimalesDeMas(d.T[0])} a ${sinDecimalesDeMas(d.T[11])}: las dos oscilaciones valen lo mismo, ` +
+            `${params.A.toFixed(1)}, solo al nivel de partida.`
+          : '';
         lectura.innerHTML =
           '<strong>Oscilación estacional máxima, año 1 → año 8:</strong> ' +
           `aditiva, de ${a1.toFixed(1)} a ${a8.toFixed(1)} (×${(a8 / a1).toFixed(2)}); ` +
-          `multiplicativa, de ${m1.toFixed(1)} a ${m8.toFixed(1)} (×${(m8 / m1).toFixed(2)}).`;
+          `multiplicativa, de ${m1.toFixed(1)} a ${m8.toFixed(1)} (×${(m8 / m1).toFixed(2)}).` + aclaracion;
+
+        // El nombre accesible sigue a los controles: con β = 0 la banda
+        // multiplicativa NO se ensancha, y la etiqueta fija decía que sí.
+        const sube = params.beta > 0;
+        lienzos[0].setAttribute('aria-label',
+          `Serie aditiva de ocho años, con pendiente ${params.beta} por mes y amplitud ${params.A}: la banda estacional ` +
+          `conserva la misma anchura de principio a fin` + (sube ? ' mientras la tendencia sube.' : '; la tendencia es horizontal.'));
+        lienzos[1].setAttribute('aria-label',
+          'Serie multiplicativa con la misma tendencia y la misma forma estacional: ' +
+          (sube ? `la banda estacional se ensancha a medida que la tendencia sube, hasta ${(m8 / m1).toFixed(2)} veces la del primer año.`
+                : 'como la tendencia no sube, la banda conserva su anchura y el panel es idéntico al aditivo.'));
       }
       actualizarLectura(d);
 
@@ -4933,6 +5443,7 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
           g.data.datasets[3].data = serie;
           g.options.scales.y.min = lim.min;
           g.options.scales.y.max = lim.max;
+          g.options.scales.y.ticks.stepSize = lim.paso;
           g.update('none');
         });
         actualizarLectura(d);
@@ -4965,20 +5476,24 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
 
       const primero = puntos[0];
       const proporcion = primero.y / primero.x;
-      const xIzq = 100, xDer = 520;
+      // Extremos de las dos rectas de referencia: los del eje, en cifras
+      // redondas (con 520 la última marca salía irregular: 450 → 520).
+      const xIzq = 100, xDer = 500;
 
       const g = crearGraficoLinea(raiz.querySelector('canvas'), null, [
         {
           label: 'Si fuera aditivo',
           data: [{ x: xIzq, y: primero.y }, { x: xDer, y: primero.y }],
           borderColor: COLORES_GRAFICO.gris,
-          borderWidth: 1.5, borderDash: [6, 4], pointRadius: 0
+          // Punteada, y la otra discontinua: el gris y el naranja tienen la
+          // misma luminancia y en escala de grises solo las separa el trazo.
+          borderWidth: 2, borderDash: [2, 3], pointRadius: 0
         },
         {
           label: 'Si fuera multiplicativo',
           data: [{ x: xIzq, y: proporcion * xIzq }, { x: xDer, y: proporcion * xDer }],
           borderColor: COLORES_GRAFICO.secundario,
-          borderWidth: 1.5, borderDash: [6, 4], pointRadius: 0
+          borderWidth: 2, borderDash: [6, 4], pointRadius: 0
         },
         {
           label: 'Años observados',
@@ -4991,12 +5506,10 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         }
       ], {
         interaction: { mode: 'nearest', intersect: true },
+        layout: { padding: { top: 8, right: 10 } },
         plugins: {
-          legend: { labels: { font: { family: 'Montserrat', size: 11 }, boxWidth: 20 } },
+          legend: { display: false },
           tooltip: {
-            backgroundColor: '#012820',
-            titleFont: { family: 'Montserrat' },
-            bodyFont: { family: 'Fira Code' },
             callbacks: {
               title: items => {
                 const p = items[0].raw;
@@ -5014,18 +5527,42 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
           x: {
             type: 'linear',
             min: xIzq, max: xDer,
-            title: { display: true, text: 'Nivel medio del año (miles de pasajeros)', font: { family: 'Montserrat', size: 11 } },
-            ticks: { font: { family: 'Fira Code', size: 11 } },
+            // En un lienzo estrecho el título no cabe en una línea y Chart.js
+            // lo comprime hasta hacerlo ilegible: va en dos.
+            title: tituloEje(raiz.clientWidth < 420
+              ? ['Nivel medio del año', '(miles de pasajeros)'] : 'Nivel medio del año (miles de pasajeros)'),
+            ticks: { font: fuenteNumero(), stepSize: 100, autoSkip: false },
             grid: { display: false }
           },
           y: {
             beginAtZero: true,
-            title: { display: true, text: 'Amplitud estacional (máx − mín)', font: { family: 'Montserrat', size: 11 } },
-            ticks: { font: { family: 'Fira Code', size: 11 } },
-            grid: { color: 'rgba(148, 163, 184, 0.2)' }
+            title: tituloEje('Amplitud: máx − mín (miles)')
           }
         }
-      });
+      }, [{
+        // El primer año y el último van rotulados sobre el punto: en el
+        // teléfono no hay cursor con el que hacer salir la etiqueta.
+        id: 'rotulosDeExtremos',
+        afterDatasetsDraw(chart) {
+          const meta = chart.getDatasetMeta(2), ctx = chart.ctx;
+          ctx.save();
+          ctx.font = "700 11px 'Fira Code', monospace";
+          ctx.fillStyle = '#012820';
+          ctx.textBaseline = 'middle';
+          const a = meta.data[0], z = meta.data[meta.data.length - 1];
+          ctx.textAlign = 'left';
+          ctx.fillText(puntos[0].anio, a.x + 9, a.y + 13);
+          ctx.textAlign = 'right';
+          ctx.fillText(puntos[puntos.length - 1].anio, z.x - 10, z.y);
+          ctx.restore();
+        }
+      }]);
+
+      crearLeyenda(raiz.querySelector('.grafico-wrapper'), [
+        { texto: 'Años observados', color: COLORES_GRAFICO.primario, tipo: 'punto' },
+        { texto: 'Si fuera aditivo', color: COLORES_GRAFICO.gris, tipo: 'punteada' },
+        { texto: 'Si fuera multiplicativo', color: COLORES_GRAFICO.secundario, tipo: 'discontinua' }
+      ]);
 
       const ultimo = puntos[puntos.length - 1];
       raiz.querySelector('.simulador-lectura').innerHTML =
@@ -5054,8 +5591,11 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         `en logaritmos, de ${ampL1.toFixed(3)} a ${ampLN.toFixed(3)} (×${(ampLN / ampL1).toFixed(2)}).`;
 
       return [
-        panelComponente(c[0], DATOS_CAP1.fechas, y, 'Pasajeros (miles)', COLORES_GRAFICO.primario),
-        panelComponente(c[1], DATOS_CAP1.fechas, logY, 'log(miles de pasajeros)', COLORES_GRAFICO.terciario)
+        // Es la misma serie en dos escalas: mismo color en los dos paneles.
+        panelComponente(c[0], DATOS_CAP1.fechas, y,
+          { etiqueta: 'Observada', titulo: 'Miles de pasajeros', color: COLORES_GRAFICO.primario }),
+        panelComponente(c[1], DATOS_CAP1.fechas, logY,
+          { etiqueta: 'log(Observada)', titulo: 'log(miles de pasajeros)', color: COLORES_GRAFICO.primario })
       ];
     };
 
@@ -5083,30 +5623,56 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
     SIMULADORES['media-movil'] = function (raiz) {
       const y = DATOS_CAP1.observado;
       const params = { m: 12 };
-      const g = crearGraficoLinea(raiz.querySelector('canvas'), DATOS_CAP1.fechas, [
+      const lienzo = raiz.querySelector('canvas');
+      const lectura = raiz.querySelector('.simulador-lectura');
+      const rotulo = () => `Media móvil (m=${params.m})`;
+      const g = crearGraficoLinea(lienzo, DATOS_CAP1.fechas, [
         {
           label: 'Observada',
           data: y,
-          borderColor: COLORES_GRAFICO.gris,
-          backgroundColor: COLORES_GRAFICO.gris,
+          borderColor: COLORES_GRAFICO.primario,
+          backgroundColor: COLORES_GRAFICO.primario,
           borderWidth: 1,
           pointRadius: 0
         },
         {
-          label: 'Media móvil',
+          label: rotulo(),
           data: mediaMovilCentrada(y, params.m),
           borderColor: COLORES_GRAFICO.secundario,
           backgroundColor: COLORES_GRAFICO.secundario,
           borderWidth: 2.5,
           pointRadius: 0
         }
-      ]);
+      ], {
+        scales: { x: ejeAnual(), y: { title: tituloEje('Miles de pasajeros') } }
+      });
+
+      // Cuántos valores da la media móvil y cuántos faltan en cada extremo:
+      // se cuentan sobre la propia curva dibujada, no se calculan aparte.
+      function actualizarLectura() {
+        const mm = g.data.datasets[1].data;
+        let ini = 0, fin = 0;
+        while (ini < mm.length && mm[ini] === null) ini++;
+        while (fin < mm.length && mm[mm.length - 1 - fin] === null) fin++;
+        const quedan = mm.length - ini - fin;
+        const tipo = params.m % 2 === 0 ? `media centrada 2×${params.m}` : `media centrada de ${params.m} términos`;
+        if (lectura) {
+          lectura.innerHTML = `<strong>Con m = ${params.m}</strong> (${tipo}) la curva tiene ` +
+            `<strong>${quedan}</strong> de los ${mm.length} valores: ${ini === 1 ? 'falta' : 'faltan'} ${ini} al principio y ${fin} al final.`;
+        }
+        lienzo.setAttribute('aria-label',
+          `AirPassengers de 1949 a 1960 con su media móvil centrada de orden ${params.m} superpuesta: ` +
+          `una curva más lisa que la serie, que no llega a los extremos (le ${ini === 1 ? 'falta 1 mes' : `faltan ${ini} meses`} al principio y ${fin} al final).`);
+      }
+      actualizarLectura();
+
       crearControles(raiz.querySelector('.simulador-controles'), [
         { clave: 'm', etiqueta: 'Orden de la ventana (m)', min: 2, max: 24, paso: 1 }
       ], params, () => {
         g.data.datasets[1].data = mediaMovilCentrada(y, params.m);
-        g.data.datasets[1].label = `Media móvil (m=${params.m})`;
+        g.data.datasets[1].label = rotulo();
         g.update('none');
+        actualizarLectura();
       });
       return [g];
     };
@@ -5209,88 +5775,221 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
 
       let d = calcular();
 
-      const g = crearGraficoLinea(raiz.querySelector('canvas'), fechas, [
+      // Dos lienzos. El de arriba sitúa la ventana en la serie entera; el de
+      // abajo la amplía. En un solo lienzo con los 144 meses, la ventana era
+      // una mancha naranja que tapaba el valor guardado y las cuatro curvas
+      // se montaban en una banda de 1 o 2 px: nada de lo que el texto manda
+      // mirar se distinguía. Los cálculos son los mismos; solo cambia el
+      // encuadre.
+      const C = COLORES_GRAFICO;
+      const lienzos = raiz.querySelectorAll('canvas');
+
+      const textosLeyenda = crearLeyenda(raiz.querySelector('.grafico-etiqueta'), [
+        { texto: 'Desestacionalizada, en log', color: C.violeta, tipo: 'fina' },
+        { texto: 'Loess (la curva que resulta)', color: C.primario },
+        { texto: `Media móvil de ${params.span} meses`, color: C.terciario, tipo: 'discontinua' },
+        { texto: 'Tendencia de stl()', color: C.gris, tipo: 'punteada' },
+        { texto: 'Vecinos de la ventana (tamaño = peso)', color: C.secundario, tipo: 'punto' },
+        { texto: 'Recta local', color: C.secundario },
+        { texto: 'Valor que se guarda', color: C.primario, tipo: 'rombo' }
+      ]);
+
+      // Franja de la ventana y línea del foco, dibujadas bajo las series.
+      const marcaDeVentana = conFranja => ({
+        id: 'marcaDeVentana',
+        beforeDatasetsDraw(chart) {
+          const x = chart.scales.x, a = chart.chartArea, ctx = chart.ctx;
+          const idx = d.aj.idx;
+          ctx.save();
+          if (conFranja) {
+            const x0 = x.getPixelForValue(idx[0]), x1 = x.getPixelForValue(idx[idx.length - 1]);
+            ctx.fillStyle = 'rgba(251, 100, 0, 0.2)';
+            ctx.fillRect(x0, a.top, Math.max(2, x1 - x0), a.bottom - a.top);
+            // El relleno solo da 1.25:1 sobre blanco: los bordes son lo que
+            // delimita la ventana para quien no distingue el tinte.
+            ctx.strokeStyle = C.secundario;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(x0, a.top); ctx.lineTo(x0, a.bottom);
+            ctx.moveTo(x1, a.top); ctx.lineTo(x1, a.bottom);
+            ctx.stroke();
+          }
+          const xf = x.getPixelForValue(d.foco);
+          ctx.strokeStyle = C.secundario;
+          ctx.lineWidth = conFranja ? 1.5 : 1;
+          if (!conFranja) ctx.setLineDash([3, 3]);
+          ctx.beginPath();
+          ctx.moveTo(xf, a.top);
+          ctx.lineTo(xf, a.bottom);
+          ctx.stroke();
+          ctx.restore();
+        }
+      });
+
+      const gEntera = crearGraficoLinea(lienzos[0], fechas, [
+        {
+          label: 'Loess (la curva que resulta)',
+          data: curvaLoess(),
+          borderColor: C.primario,
+          backgroundColor: C.primario,
+          borderWidth: 2,
+          pointRadius: 0
+        },
         {
           label: 'Desestacionalizada, en log',
           data: des,
-          borderColor: COLORES_GRAFICO.gris,
-          backgroundColor: COLORES_GRAFICO.gris,
+          borderColor: C.violeta,
+          backgroundColor: C.violeta,
           borderWidth: 1,
           pointRadius: 0
+        }
+      ], {
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        scales: {
+          x: ejeAnual(),
+          y: { title: tituloEje('log, sin estacionalidad'), ticks: { maxTicksLimit: 5 } }
+        }
+      }, [marcaDeVentana(true)]);
+
+      // Encuadre de la ampliación: la ventana más un margen a cada lado
+      // (menor en el teléfono, donde cada mes ya tiene pocos píxeles), sin
+      // salirse de la serie. El eje vertical se ciñe a lo que queda a la vista.
+      function encuadre(curva, mm) {
+        const k = Math.floor((params.span - 1) / 2);
+        const semi = k + (lienzos[1].parentNode.clientWidth < 420 ? 5 : 12);
+        const ini = Math.max(0, Math.min(d.foco - semi, n - 1 - 2 * semi));
+        const fin = Math.min(n - 1, ini + 2 * semi);
+        let lo = Infinity, hi = -Infinity;
+        [des, stl.tendencia, curva, mm, d.recta].forEach(serie => {
+          for (let i = ini; i <= fin; i++) {
+            const v = serie[i];
+            if (v !== null && v !== undefined) { lo = Math.min(lo, v); hi = Math.max(hi, v); }
+          }
+        });
+        const aire = (hi - lo) * 0.1 || 0.01;
+        return { ini: ini, fin: fin, min: lo - aire, max: hi + aire };
+      }
+
+      const curva0 = curvaLoess(), mm0 = mediaMovilCentrada(des, params.span);
+      const e0 = encuadre(curva0, mm0);
+
+      // `order` decide qué se pinta encima (el menor, arriba): el valor
+      // guardado iba el último de la lista y quedaba DEBAJO de la ventana.
+      const g = crearGraficoLinea(lienzos[1], fechas, [
+        {
+          label: 'Desestacionalizada, en log',
+          data: des,
+          borderColor: C.violeta,
+          backgroundColor: C.violeta,
+          borderWidth: 1,
+          pointRadius: 1.8,
+          order: 7
         },
         {
           label: 'Tendencia de stl()',
           data: stl.tendencia,
-          borderColor: COLORES_GRAFICO.gris,
-          backgroundColor: COLORES_GRAFICO.gris,
-          borderWidth: 1.5,
+          borderColor: C.gris,
+          backgroundColor: C.gris,
+          borderWidth: 2.5,
           borderDash: [2, 3],
-          pointRadius: 0
+          pointRadius: 0,
+          order: 4
         },
         {
           label: 'Media móvil de la misma anchura',
-          data: mediaMovilCentrada(des, params.span),
-          borderColor: COLORES_GRAFICO.terciario,
-          backgroundColor: COLORES_GRAFICO.terciario,
+          data: mm0,
+          borderColor: C.terciario,
+          backgroundColor: C.terciario,
           borderWidth: 2,
           borderDash: [6, 4],
-          pointRadius: 0
+          pointRadius: 0,
+          order: 3
         },
         {
           label: 'Loess (la curva que resulta)',
-          data: curvaLoess(),
-          borderColor: COLORES_GRAFICO.primario,
-          backgroundColor: COLORES_GRAFICO.primario,
+          data: curva0,
+          borderColor: C.primario,
+          backgroundColor: C.primario,
           borderWidth: 2,
-          pointRadius: 0
+          pointRadius: 0,
+          order: 5
         },
         {
           label: 'La ventana, con su peso',
           data: d.puntos,
-          borderColor: 'transparent',
-          backgroundColor: COLORES_GRAFICO.secundario,
-          pointBackgroundColor: COLORES_GRAFICO.secundario,
-          pointRadius: d.radios,
-          showLine: false
+          borderColor: C.secundario,
+          backgroundColor: 'rgba(251, 100, 0, 0.45)',
+          pointBorderColor: C.secundario,
+          pointBackgroundColor: 'rgba(251, 100, 0, 0.45)',
+          pointBorderWidth: 1,
+          // El peso relativo (0 a 1) se recupera del radio que ya calcula
+          // `calcular()`; el tamaño máximo se ajusta a lo que mide un mes
+          // en pantalla, para que los discos vecinos no se fundan.
+          pointRadius: ctx => {
+            const r = d.radios[ctx.dataIndex];
+            if (!r) return 0;
+            const x = ctx.chart.scales.x;
+            const mes = x && x.max > x.min ? x.width / (x.max - x.min) : 10;
+            const tope = Math.max(3.5, Math.min(8, mes * 0.5));
+            return 1.5 + (tope - 1.5) * (r - 2) / 5;
+          },
+          showLine: false,
+          clip: 14,
+          order: 6
         },
         {
           label: 'Recta local',
           data: d.recta,
-          borderColor: COLORES_GRAFICO.secundario,
-          backgroundColor: COLORES_GRAFICO.secundario,
+          borderColor: C.secundario,
+          backgroundColor: C.secundario,
           borderWidth: 2.5,
           pointRadius: 0,
-          spanGaps: false
+          spanGaps: false,
+          order: 2
         },
         {
           label: 'Valor que se guarda',
           data: d.ajustado,
-          borderColor: 'transparent',
-          backgroundColor: COLORES_GRAFICO.primario,
-          pointBackgroundColor: COLORES_GRAFICO.primario,
-          pointRadius: 7,
+          borderColor: '#ffffff',
+          backgroundColor: C.primario,
+          pointBackgroundColor: C.primario,
+          pointBorderColor: '#ffffff',
+          pointBorderWidth: 2,
+          pointRadius: 8,
           pointStyle: 'rectRot',
-          showLine: false
+          showLine: false,
+          // Con el foco en el primer mes o en el último, el rombo cae sobre
+          // el borde del área de dibujo: se le deja salir en vez de cortarlo.
+          clip: 14,
+          order: 1
         }
       ], {
-        // Object.assign es superficial: al pasar `plugins` se reemplaza el
-        // objeto entero de crearGraficoLinea, así que hay que repetir aquí
-        // las fuentes del tooltip y de la leyenda.
-        plugins: {
-          legend: {
-            labels: {
-              font: { family: 'Montserrat', size: 12 },
-              boxWidth: 24,
-              // Los tres apoyos del ajuste se explican en la intro; en la
-              // leyenda solo estorbarían a las cuatro curvas que importan.
-              filter: item => !['La ventana, con su peso', 'Valor que se guarda'].includes(item.text)
-            }
-          },
-          tooltip: {
-            enabled: false
+        layout: { padding: { right: 14 } },
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        scales: {
+          x: Object.assign(ejeAnual(), { min: e0.ini, max: e0.fin }),
+          y: {
+            min: e0.min, max: e0.max,
+            title: tituloEje('log, sin estacionalidad'),
+            // El eje se ciñe a la vista; sin esto Chart.js rotularía sus
+            // extremos, que no son cifras redondas.
+            ticks: { includeBounds: false, maxTicksLimit: 7 }
           }
         }
-      });
+      }, [marcaDeVentana(false)]);
+
+      function describir() {
+        const fecha = fechas[d.foco];
+        const hayMM = g.data.datasets[2].data[d.foco] !== null && g.data.datasets[2].data[d.foco] !== undefined;
+        lienzos[0].setAttribute('aria-label',
+          `La serie desestacionalizada en logaritmos, de 1949 a 1960, con la curva Loess superpuesta; una franja ` +
+          `marca la ventana de ${params.span} meses que se usa para estimar ${fecha}.`);
+        lienzos[1].setAttribute('aria-label',
+          `Ampliación de la ventana alrededor de ${fecha}: los vecinos, dibujados tanto más grandes cuanto más pesan; ` +
+          `${params.grado === 1 ? 'la recta' : 'el nivel'} local que se les ajusta y el valor que se guarda. Para comparar, ` +
+          `la curva Loess, la tendencia de stl() y la media móvil de ${params.span} meses` +
+          (hayMM ? '.' : ', que en este mes no existe porque le faltan vecinos.'));
+      }
 
       const lectura = raiz.querySelector('.simulador-lectura');
 
@@ -5326,14 +6025,24 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         if (cambioDeSpan) {
           g.data.datasets[2].data = mediaMovilCentrada(des, params.span);
           g.data.datasets[2].label = `Media móvil de ${params.span} meses`;
+          textosLeyenda[2].textContent = `Media móvil de ${params.span} meses`;
         }
-        g.data.datasets[3].data = curvaLoess();
+        textosLeyenda[5].textContent = params.grado === 1 ? 'Recta local' : 'Nivel local';
+        const curva = curvaLoess();
+        g.data.datasets[3].data = curva;
         g.data.datasets[4].data = d.puntos;
-        g.data.datasets[4].pointRadius = d.radios;
         g.data.datasets[5].data = d.recta;
         g.data.datasets[6].data = d.ajustado;
+        const e = encuadre(curva, g.data.datasets[2].data);
+        g.options.scales.x.min = e.ini;
+        g.options.scales.x.max = e.fin;
+        g.options.scales.y.min = e.min;
+        g.options.scales.y.max = e.max;
         g.update('none');
+        gEntera.data.datasets[0].data = curva;
+        gEntera.update('none');
         actualizarLectura();
+        describir();
       }
 
       const inputs = crearControles(raiz.querySelector('.simulador-controles'), [
@@ -5352,51 +6061,67 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
 
       g.data.datasets[2].label = `Media móvil de ${params.span} meses`;
       actualizarLectura();
-      return [g];
+      describir();
+      return [gEntera, g];
     };
 
     // Ayudante: dibuja un panel de un componente en un canvas dado.
     //
-    // El eje vertical se ciñe a los datos con un margen del 8 %. Sin
-    // límites explícitos, Chart.js elige marcas redondas, y en un lienzo
-    // de unos 100 px de alto solo caben tres: el panel «Observada» salía
-    // de 0 a 1000 para datos que van de 104 a 622, con la serie aplastada
-    // en la mitad inferior y el tercio de arriba vacío. Como el objeto
-    // `scales` sustituye al de `crearGraficoLinea` —Object.assign es
-    // superficial—, hay que repetir aquí las fuentes y la rejilla.
+    // `op`: { etiqueta, titulo, color, ejeX, limites, referencia }.
     //
-    // Cada panel se escala al suyo, y no al conjunto, porque miden
-    // magnitudes distintas: la tendencia va en pasajeros y el factor
-    // estacional es un número sin unidades que ronda 1.
-    function panelComponente(canvas, etiquetas, datos, etiqueta, color) {
-      const validos = datos.filter(v => v !== null && v !== undefined && !Number.isNaN(v));
-      const min = Math.min(...validos), max = Math.max(...validos);
-      const rango = max - min;
-      // Una serie constante no da rango del que sacar el margen.
-      const margen = rango > 0 ? rango * 0.08 : (Math.abs(max) * 0.05 || 1);
+    // · El panel se identifica por el TÍTULO de su eje vertical, con la
+    //   unidad; no lleva leyenda, que repetía el nombre y se comía un
+    //   tercio del alto (el área de dibujo quedaba en 35 px).
+    // · El eje vertical va entre cifras redondas (`ejeRedondo`) que
+    //   envuelven a los datos, con todas sus marcas. Antes iba de mínimo a
+    //   máximo crudos y Chart.js rotulaba «62.6» y «663.4», sin nada en medio.
+    // · Tiene ANCHO FIJO. Con el ancho que le daba cada panel según sus
+    //   cifras, la misma fecha caía hasta 13 px más a la izquierda en unos
+    //   paneles que en otros, y en una descomposición lo que se lee es
+    //   justo la vertical de fechas.
+    // · `ejeX: false` oculta el eje de tiempo: en una pila de paneles solo
+    //   lo lleva el último.
+    // · `limites` permite que dos paneles en las mismas unidades (la serie
+    //   y su tendencia) compartan escala; `referencia` resalta la línea de
+    //   la rejilla alrededor de la cual oscila el componente (1 o 0).
+    //
+    // Cada panel se escala al suyo, y no al conjunto, cuando miden
+    // magnitudes distintas: la tendencia va en miles de pasajeros y el
+    // factor estacional es un número sin unidades que ronda 1.
+    const ANCHO_EJE_COMPONENTE = 62;
+
+    function limitesDe(...series) {
+      const validos = [].concat(...series).filter(v => v !== null && v !== undefined && !Number.isNaN(v));
+      return ejeRedondo(Math.min(...validos), Math.max(...validos), 6);
+    }
+
+    function panelComponente(canvas, etiquetas, datos, op) {
+      const lim = op.limites || limitesDe(datos);
+      const conEjeX = op.ejeX !== false;
       return crearGraficoLinea(canvas, etiquetas, [{
-        label: etiqueta,
+        label: op.etiqueta,
         data: datos,
-        borderColor: color,
-        backgroundColor: color,
+        borderColor: op.color,
+        backgroundColor: op.color,
         borderWidth: 1.8,
         pointRadius: 0,
         spanGaps: false
       }], {
+        layout: { padding: { top: 7, right: 12, bottom: conEjeX ? 0 : 7 } },
+        plugins: { legend: { display: false } },
         scales: {
-          x: {
-            ticks: {
-              font: { family: 'Montserrat', size: 11 },
-              maxTicksLimit: 12,
-              maxRotation: 0
-            },
-            grid: { display: false }
-          },
+          x: Object.assign(ejeAnual(), { display: conEjeX }),
           y: {
-            min: min - margen,
-            max: max + margen,
-            ticks: { font: { family: 'Fira Code', size: 11 }, maxTicksLimit: 4 },
-            grid: { color: 'rgba(148, 163, 184, 0.2)' }
+            min: lim.min,
+            max: lim.max,
+            title: tituloEje(op.titulo),
+            ticks: { stepSize: lim.paso, autoSkip: false },
+            grid: {
+              tickLength: 4,
+              color: ctx => (op.referencia !== undefined && ctx.tick && Math.abs(ctx.tick.value - op.referencia) < 1e-9)
+                ? 'rgba(71, 85, 105, 0.7)' : REJILLA_GRAFICO
+            },
+            afterFit: eje => { eje.width = ANCHO_EJE_COMPONENTE; }
           }
         }
       });
@@ -5406,11 +6131,17 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
     SIMULADORES['descomp-clasica'] = function (raiz) {
       const c = raiz.querySelectorAll('canvas');
       const f = DATOS_CAP1.fechas, d = DATOS_CAP1.clasica_multiplicativa;
+      // La serie y su tendencia están en las mismas unidades: misma escala.
+      const miles = limitesDe(DATOS_CAP1.observado, d.tendencia);
       return [
-        panelComponente(c[0], f, DATOS_CAP1.observado, 'Observada', COLORES_GRAFICO.primario),
-        panelComponente(c[1], f, d.tendencia, 'Tendencia', COLORES_GRAFICO.secundario),
-        panelComponente(c[2], f, d.estacional, 'Estacional (×)', COLORES_GRAFICO.terciario),
-        panelComponente(c[3], f, d.residuo, 'Residuo (×)', COLORES_GRAFICO.gris)
+        panelComponente(c[0], f, DATOS_CAP1.observado,
+          { etiqueta: 'Observada', titulo: 'Observada (miles)', color: COLORES_GRAFICO.primario, ejeX: false, limites: miles }),
+        panelComponente(c[1], f, d.tendencia,
+          { etiqueta: 'Tendencia', titulo: 'Tendencia (miles)', color: COLORES_GRAFICO.secundario, ejeX: false, limites: miles }),
+        panelComponente(c[2], f, d.estacional,
+          { etiqueta: 'Estacional', titulo: 'Estacional (factor)', color: COLORES_GRAFICO.terciario, ejeX: false, referencia: 1 }),
+        panelComponente(c[3], f, d.residuo,
+          { etiqueta: 'Residuo', titulo: 'Residuo (factor)', color: COLORES_GRAFICO.gris, referencia: 1 })
       ];
     };
 
@@ -5419,11 +6150,16 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
       const c = raiz.querySelectorAll('canvas');
       const f = DATOS_CAP1.fechas, s = DATOS_CAP1.stl_log;
       const logObs = DATOS_CAP1.observado.map(v => Math.log(v));
+      const logs = limitesDe(logObs, s.tendencia);
       return [
-        panelComponente(c[0], f, logObs, 'log(Observada)', COLORES_GRAFICO.primario),
-        panelComponente(c[1], f, s.tendencia, 'Tendencia', COLORES_GRAFICO.secundario),
-        panelComponente(c[2], f, s.estacional, 'Estacional (+)', COLORES_GRAFICO.terciario),
-        panelComponente(c[3], f, s.residuo, 'Residuo (+)', COLORES_GRAFICO.gris)
+        panelComponente(c[0], f, logObs,
+          { etiqueta: 'log(Observada)', titulo: 'log(Observada)', color: COLORES_GRAFICO.primario, ejeX: false, limites: logs }),
+        panelComponente(c[1], f, s.tendencia,
+          { etiqueta: 'Tendencia', titulo: 'Tendencia (log)', color: COLORES_GRAFICO.secundario, ejeX: false, limites: logs }),
+        panelComponente(c[2], f, s.estacional,
+          { etiqueta: 'Estacional', titulo: 'Estacional (log)', color: COLORES_GRAFICO.terciario, ejeX: false, referencia: 0 }),
+        panelComponente(c[3], f, s.residuo,
+          { etiqueta: 'Residuo', titulo: 'Residuo (log)', color: COLORES_GRAFICO.gris, referencia: 0 })
       ];
     };
 
@@ -5435,20 +6171,22 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         {
           label: 'Observada',
           data: y,
-          borderColor: COLORES_GRAFICO.gris,
-          backgroundColor: COLORES_GRAFICO.gris,
+          borderColor: COLORES_GRAFICO.primario,
+          backgroundColor: COLORES_GRAFICO.primario,
           borderWidth: 1,
           pointRadius: 0
         },
         {
           label: 'Desestacionalizada',
           data: ajustada,
-          borderColor: COLORES_GRAFICO.primario,
-          backgroundColor: COLORES_GRAFICO.primario,
-          borderWidth: 2,
+          borderColor: COLORES_GRAFICO.violeta,
+          backgroundColor: COLORES_GRAFICO.violeta,
+          borderWidth: 2.2,
           pointRadius: 0
         }
-      ]);
+      ], {
+        scales: { x: ejeAnual(), y: { title: tituloEje('Miles de pasajeros') } }
+      });
       return [g];
     };
     // ================================================================
@@ -6148,12 +6886,12 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         pregunta: 'Aquí está <code>AirPassengers</code> con la tendencia que estima la descomposición clásica. ¿Por qué la línea naranja <strong>no llega</strong> a los extremos?',
         pista: 'No es un problema de los datos: la serie está completa, sin huecos. Piensa en cómo se calcula cada punto de esa línea naranja y qué necesita a su alrededor.',
         dibujar: canvas => crearGraficoLinea(canvas, DATOS_CAP1.fechas, [
-          { label: 'Observada', data: DATOS_CAP1.observado, borderColor: COLORES_GRAFICO.gris,
-            backgroundColor: COLORES_GRAFICO.gris, borderWidth: 1, pointRadius: 0 },
+          { label: 'Observada', data: DATOS_CAP1.observado, borderColor: COLORES_GRAFICO.primario,
+            backgroundColor: COLORES_GRAFICO.primario, borderWidth: 1, pointRadius: 0 },
           { label: 'Tendencia (media móvil 2×12)', data: DATOS_CAP1.clasica_multiplicativa.tendencia,
             borderColor: COLORES_GRAFICO.secundario, backgroundColor: COLORES_GRAFICO.secundario,
             borderWidth: 2.5, pointRadius: 0, spanGaps: false }
-        ]),
+        ], { scales: { x: ejeAnual(), y: { title: tituloEje('Miles de pasajeros') } } }),
         opciones: [
           {
             texto: 'Porque una media móvil centrada de orden 12 necesita 6 meses a cada lado, y en los extremos no existen.',
