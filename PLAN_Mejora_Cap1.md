@@ -13,7 +13,7 @@ prometa lo que no muestra, con gráficas que se lean y con práctica para cada o
 declara. Es la primera aplicación del sistema de [[PLAN_Gestion_Documental]] a un capítulo entero
 y el molde para los otros cinco.
 
-**Estado: aprobado por Javier el 2026-11-10 (D1–D9). R1 publicada y R2 hecha el 2026-11-11; sigue R3.** Lo que sigue es el diagnóstico y el plan;
+**Estado: aprobado por Javier el 2026-11-10 (D1–D9). R1 y R2 publicadas el 2026-11-11; sigue R3.** Lo que sigue es el diagnóstico y el plan;
 las rondas se registran en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-10
@@ -129,7 +129,7 @@ Cada una lleva mi recomendación; las decide Javier.
   Loess con la convención de pesos de `stl()` (R3), la cuarta limitación del método clásico (R3), y las
   preguntas 2, 3 y 6 del quiz y el ejercicio 1, que se corrigieron en lo falso pero siguen por rehacer (R5).
 
-- **R2 · gráficas — hecha el 2026-11-11.** De los 63 problemas de las 14 fichas: 52 arreglados, 2 en parte,
+- **R2 · gráficas — hecha y PUBLICADA el 2026-11-11** (`main` `ad2840f` · gh-pages `9796360`). De los 63 problemas de las 14 fichas: 52 arreglados, 2 en parte,
   4 que ya había resuelto R1 y 5 sin tocar (exigen cambiar un cálculo o son de R3). Los 21 lienzos, el mapa
   y el ciclo se recapturaron a 1200, 800 y 375 px: sin desbordes ni fechas montadas; los paneles de las
   descomposiciones pasan de 35 a 130 px de alto. Seis reglas de CSS fueron también a la plantilla y la guía
