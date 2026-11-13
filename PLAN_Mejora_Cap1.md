@@ -13,7 +13,7 @@ prometa lo que no muestra, con gráficas que se lean y con práctica para cada o
 declara. Es la primera aplicación del sistema de [[PLAN_Gestion_Documental]] a un capítulo entero
 y el molde para los otros cinco.
 
-**Estado: aprobado por Javier el 2026-11-10 (D1–D9). R1 y R2 publicadas el 2026-11-11; R3 y R3-bis publicadas el 13; sigue R4.** Lo que sigue es el diagnóstico y el plan;
+**Estado: aprobado por Javier el 2026-11-10 (D1–D9). R1 y R2 publicadas el 2026-11-11; R3, R3-bis y R4 publicadas el 13; sigue R5.** Lo que sigue es el diagnóstico y el plan;
 las rondas se registran en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-10
@@ -163,6 +163,41 @@ Cada una lleva mi recomendación; las decide Javier.
   ningún módulo perdió texto. A criterio de Javier quedan dos cosas menores: los rótulos «Describir» y
   «Descomponer» los propuso la sesión, y por debajo de 768 px no hay índice lateral, así que en el
   teléfono la señal de las dos sesiones es solo la frase de la apertura.
+
+- **R4 · fuentes — hecha y PUBLICADA el 2026-11-13** (`main` `8081beb` · gh-pages `a63e861`). Las 28
+  afirmaciones de prioridad alta quedan marcadas, citadas a la vista y registradas: 32 entradas en
+  `bibliografia/contraste/cap1.yml`, 28 `respaldada`, 4 `con-matiz`, 0 `pendiente`. El capítulo pasa de
+  3 a 36 citas visibles y los módulos 1, 3, 4 y 5 estrenan su lista de fuentes. Ninguna cifra cambió.
+
+  Antes hubo que dar de alta en Zotero, transcritas de la portada, las cuatro obras sin identificador
+  que resuelva —Cleveland et al. (1990), Guerrero (2003), Box y Jenkins (1970) y R—: el RIS queda
+  versionado en `bibliografia/transcripciones/sin-identificador.ris` con la procedencia de cada campo.
+  La biblioteca pasó de 23 a 27 obras. El artículo de STL es un escaneo sin capa de texto, así que
+  `extrae_fuente.py` estrenó `--ocr`; y `--doc` guarda las instantáneas de la ayuda de R con su versión.
+
+  **Lo que la lectura de las fuentes obligó a cambiar en la prosa:** el desarrollo del acrónimo STL (la
+  forma que estaba no la escribe ninguna fuente); «Loess» ya no es «locally estimated scatterplot
+  smoothing», que no aparece en ninguna fuente leída; «muchos textos agrupan tendencia y ciclo» vuelve a
+  voz impersonal, que es lo que dice FPP3 («we usually»); se retira «producción» de las estadísticas
+  oficiales desestacionalizadas y «o PIB» de la retroalimentación de la autoevaluación; las dos pasadas
+  de STL son el defecto solo con la robustez apagada (`inner = if(robust) 1 else 2`); y el ciclo dura
+  «al menos dos años», como la fuente, no «varios años».
+
+  **El verificador independiente encontró 21 problemas en lo ya corregido**, entre ellos una cita de
+  Shumway y Stoffer que glosaba *lowess* y no *loess* (en todo el texto de ese libro «loess» no aparece
+  ni una vez), un localizador que mandaba al estudiante a la sección equivocada y cuatro citas colocadas
+  donde rompen la sintaxis. La sesión maestra comprobó los decisivos en las fuentes, encargó la
+  corrección y cerró a mano los cuatro veredictos que esperaban lectura suya. El detalle está en
+  `diagnostico/cap1/R4_cambios.md`.
+
+  **Queda anotado, a criterio de Javier:** (a) el capítulo explica `s.degree = 0` con una razón propia y
+  el artículo original usa grado 1 en las subseries —el 0 es decisión de R—, así que la marca se recortó
+  a los valores y la derivación no se reescribió; (b) la afirmación del PIB quedó corregida pero sin
+  registrar, porque vive en una cadena de JavaScript y el auditor no lee `data-afirma` dentro de
+  `<script>`; (c) la extensión del vocabulario de localizadores para las páginas de ayuda de R es local
+  de Series y habría que decidir si sube a la norma común, que escribe la sesión de Muestreo; (d) el
+  tope de 400 palabras citadas por obra deja a FPP3 en 393. Siguen sin marcar las 75 filas restantes
+  del inventario (prioridad media y baja).
 
 ## 5. Criterios de aceptación
 
