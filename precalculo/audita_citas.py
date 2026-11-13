@@ -89,8 +89,15 @@ RE_ID = re.compile(r"^c(\d+)-m(\d+)-(\d{2,})$")
 # (Vault/Estandar/Capa de fuentes.md). Varios se separan con «; »; los rangos de
 # página llevan raya corta. La edición nunca va aquí: va en la clave de la obra.
 _NUM = r"\d+(?:\.\d+)*[a-z]?"
+# Una página de ayuda de R no tiene secciones numeradas ni páginas: sus secciones
+# llevan nombre («Details:», «Usage:»…). Para esas instantáneas el localizador es
+# «§Details», y F05 acota la búsqueda a esa sección (ronda R4 del capítulo 1,
+# 2026-11-13). Es una extensión local del vocabulario de la norma común.
+SECCIONES_R = ("Description", "Usage", "Arguments", "Format", "Details", "Value",
+               "Source", "References")
+_SEC_R = "|".join(SECCIONES_R)
 RE_LOCALIZADOR = re.compile(
-    rf"(?:cap\. \d+|§{_NUM}|ejemplo {_NUM}|ejercicio {_NUM}|problema {_NUM}|ec\. {_NUM}"
+    rf"(?:cap\. \d+|§{_NUM}|§(?:{_SEC_R})|ejemplo {_NUM}|ejercicio {_NUM}|problema {_NUM}|ec\. {_NUM}"
     rf"|tabla {_NUM}|fig\. {_NUM}|p\. \d+|pp\. \d+–\d+|ap\. [A-Z0-9]+)"
 )
 
@@ -317,6 +324,18 @@ def seccion_de(texto: str, loc: str) -> tuple[str, str | None]:
     FPP3 es un capítulo entero: sin esto, «§3.6» y «§4.3» serían indistinguibles
     y el localizador no estaría comprobado, solo el capítulo.
     """
+    r = re.search(rf"§({_SEC_R})(?![A-Za-z])", loc or "")
+    if r:
+        # Ayuda de R: la sección empieza en la línea «Details:» y acaba en el
+        # siguiente encabezado del mismo estilo («Value:», «Author(s):»).
+        nombre = r.group(1)
+        lineas = texto.splitlines()
+        inicio = next((i for i, l in enumerate(lineas) if l.rstrip() == nombre + ":"), None)
+        if inicio is None:
+            return "", nombre
+        fin = next((i for i in range(inicio + 1, len(lineas))
+                    if re.fullmatch(r"[A-Z][A-Za-z() ]*:", lineas[i].rstrip())), len(lineas))
+        return "\n".join(lineas[inicio:fin]), None
     m = re.search(r"§\s*(\d+(?:\.\d+)*)", loc or "")
     if not m:
         return texto, None

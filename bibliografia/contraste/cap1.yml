@@ -10,9 +10,317 @@
 # y otro con Sonnet 5.5, que recibieron la afirmación y el texto de la fuente,
 # no el veredicto esperado. Coincidieron en las cinco; donde uno fue más
 # estricto (c1-m6-01) se registra el veredicto estricto.
+#
+# Ronda R4 «fuentes» (2026-11-13): 28 afirmaciones de prioridad alta del
+# inventario (cap1_inventario.tsv), contrastadas por dos verificadores de
+# contexto limpio —lote R4a: FPP3, Cryer y Chan, Shumway y Stoffer, Hamilton;
+# lote R4b: Cleveland et al. (1990) y la ayuda de R—. El redactor de la R4 marcó
+# el HTML, comprobó cada cita con grep contra la caché y escribió estas entradas;
+# donde ajustó la prosa, la nota lo dice y el veredicto NO se sube: lo confirma
+# el verificador posterior. Las ayudas de R se registran como instantáneas
+# (clase WEB) y su localizador es la sección de la página: «§Details», «§Usage».
+# Las citas de FPP3 son tramos más cortos de los que dio el verificador: hubo
+# que recortarlas para no pasar del tope de 400 palabras citadas por obra (F11).
+# Corrección de la R4 (mismo día), tras la verificación independiente: c1-m4-02
+# absorbe a c1-m4-03 y c1-m4-04 (la lista de componentes es una sola afirmación),
+# nace c1-m7-23 (el nombre completo de Loess) y suben c1-m1-04 y c1-m8-03, que
+# comprobó la sesión maestra; baja c1-m7-05. Cada nota cuenta su historia.
 capitulo: 1
 archivo: Htmls_Series/capitulo-1-componentes-descomposicion.html
 afirmaciones:
+
+- id: c1-m1-01
+  tipo: definicion
+  afirmacion: "Una serie de tiempo es una sucesión de observaciones de una misma variable, registradas en instantes ordenados y, por lo general, equiespaciados."
+  hash_texto: 347e934a47afe986
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§1.4"
+    clase: WEB
+    instantanea: intro
+    cita: "observed at regular intervals of time"
+  - clave: shumway2011time
+    loc: "p. 11; §1.3"
+    clase: PDF
+    pagina_pdf: 24
+    cita: "according to the order they are obtained in time"
+  - clave: shumway2011time
+    loc: "p. 11; §1.3"
+    clase: PDF
+    pagina_pdf: 24
+    cita: "sampled at equally spaced points"
+  nota: >-
+    Lo que las citas sostienen y lo que no. La de FPP3 §1.4 —«observed at regular intervals of time»— no es
+    una definición: es una declaración de alcance del libro («In this book, we will only consider time series
+    that are…»), que respalda el registro a intervalos regulares. Las dos de Shumway y Stoffer §1.3 respaldan
+    la indexación por el orden temporal y el muestreo equiespaciado, pero presentan la serie como una
+    colección de variables aleatorias, no como la sucesión de valores observados del capítulo. Ninguna de las
+    tres cubre lo univariante («de una misma variable»): eso lo pone el capítulo. FPP3 se limita a intervalos
+    regulares, y el capítulo dice «por lo general, equiespaciados». La cita visible es la de FPP3. Único
+    cambio de prosa: el paréntesis final «(cada mes, cada día, cada hora)» pasó a dos puntos, para que la
+    cita no quedara pegada a otro paréntesis.
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: subagente verificador de la ronda R4 (Opus 5.5), contexto limpio · lote R4a
+  fecha: 2026-11-13
+
+- id: c1-m1-04
+  tipo: dato
+  afirmacion: "AirPassengers: pasajeros mensuales de aerolíneas internacionales, en miles, de 1949 a 1960; es la serie clásica del curso."
+  hash_texto: eb585ae1f12cb2f7
+  veredicto: respaldada
+  fuentes:
+  - clave: rcoreteam2026r
+    loc: "§Description; §Format"
+    clase: WEB
+    instantanea: AirPassengers
+    cita: "international airline passengers, 1949 to 1960."
+  - clave: rcoreteam2026r
+    loc: "§Description"
+    clase: WEB
+    instantanea: AirPassengers
+    cita: "The classic Box & Jenkins airline data."
+  - clave: rcoreteam2026r
+    loc: "§Format"
+    clase: WEB
+    instantanea: AirPassengers
+    cita: "A monthly time series, in thousands."
+  nota: >-
+    La ayuda de R (R 4.6.0, datasets 4.6.0) sostiene la frase entera: totales mensuales de pasajeros de
+    aerolíneas internacionales, de 1949 a 1960 y «the classic Box & Jenkins airline data» en la sección
+    Description, y «in thousands» en la sección Format; por eso la cita visible lleva las dos secciones. Las
+    citas las localizó el redactor de la R4 y las comprobó la sesión maestra contra la instantánea, que es
+    quien subió el veredicto a «respaldada». El verificador del lote R4a había leído solo Cryer y Chan y dio
+    «con-matiz»: ese libro llama clásica a la serie (p. 247, ejercicio 10.9), pero fecha su archivo airpass
+    en 01/1960–12/1971 (p. 104, ejercicio 5.13, y la lista de datos de la p. 471), que no es el rango del
+    capítulo. Por eso Cryer y Chan no figura entre las fuentes: no sostiene la frase marcada y en las fechas
+    la contradice; el capítulo usa el conjunto de datos de R. «De este curso» es afirmación propia. Cambio de
+    prosa: «en miles (1949–1960)» pasó a «en miles, de 1949 a 1960», para no encadenar dos paréntesis con la
+    cita.
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: sesión maestra de la ronda R4, que comprobó la frase contra la instantánea el 2026-11-13
+  fecha: 2026-11-13
+
+- id: c1-m3-08
+  tipo: regla
+  afirmacion: "El abanico que se abre en el gráfico estacional es la señal de un modelo multiplicativo."
+  hash_texto: fba13dffc31eb224
+  veredicto: con-matiz
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§3.2"
+    clase: WEB
+    instantanea: decomposition
+    cita: "then a multiplicative decomposition is more appropriate"
+  nota: >-
+    FPP3 §3.2 respalda la conclusión —si la variación estacional es proporcional al nivel, el modelo es
+    multiplicativo—, pero no la regla de lectura del gráfico estacional: §2.4 describe gg_season sin hablar
+    de líneas paralelas ni de un abanico. Traducir el criterio a esa imagen es aportación del capítulo, que
+    no la atribuye a nadie. Por eso la marca empieza en «Esa forma es la señal de un modelo multiplicativo»:
+    la oración anterior, la que enseña a leer el abanico, queda fuera de la huella y la cita visible ya no la
+    respalda a la vista. El matiz que queda es que «esa forma» remite a una imagen que la fuente no describe.
+    No se tocó la prosa.
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: subagente verificador de la ronda R4 (Opus 5.5), contexto limpio · lote R4a
+  fecha: 2026-11-13
+
+- id: c1-m4-02
+  tipo: definicion
+  afirmacion: "La lista de los cuatro componentes: tendencia, estacionalidad y ciclo, definidos como en FPP3 §2.3, y el ruido, que define el capítulo."
+  hash_texto: 8186715b4b7c3b99
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§2.3"
+    clase: WEB
+    instantanea: graphics
+    cita: "long-term increase or decrease in the data"
+  - clave: hyndman2021forecasting
+    loc: "§2.3"
+    clase: WEB
+    instantanea: graphics
+    cita: "Seasonality is always of a fixed and known period."
+  - clave: hyndman2021forecasting
+    loc: "§2.3"
+    clase: WEB
+    instantanea: graphics
+    cita: "that are not of a fixed frequency"
+  - clave: hyndman2021forecasting
+    loc: "§2.3"
+    clase: WEB
+    instantanea: graphics
+    cita: "usually due to economic conditions"
+  - clave: cryer2008time
+    loc: "p. 28; §3.1"
+    clase: PDF
+    pagina_pdf: 41
+    cita: "Many authors use the word trend only for a slowly changing mean"
+  nota: >-
+    FUSIÓN DE IDENTIFICADORES: esta entrada absorbe a c1-m4-03 (estacionalidad) y c1-m4-04 (ciclo), que se
+    registraron por separado y se retiraron en la corrección de la R4 por decisión de la sesión maestra: las
+    tres viñetas llevaban la misma cita, idéntica, tres veces seguidas. La marca va ahora en la lista entera
+    y la cita visible, una sola, al final de la viñeta de la tendencia. Las tres las contrastó el verificador
+    del lote R4a, una por una, y las tres salieron «respaldada». FPP3 §2.3 define los TRES PRIMEROS
+    componentes: la tendencia como aumento o descenso de largo plazo, la estacionalidad con período fijo y
+    conocido, y el ciclo como subidas y bajadas sin frecuencia fija, ligadas por lo general a las condiciones
+    económicas. El CUARTO, el ruido, lo define el capítulo y la cita no lo cubre, aunque la huella sí lo
+    vigila por estar en la misma lista. Lo que el capítulo no recoge: que la tendencia no tiene por qué ser
+    lineal y puede «cambiar de dirección», que una serie puede tener más de un patrón estacional, y que Cryer
+    y Chan advierten de que el uso de la palabra tendencia varía entre autores. Cambio de prosa: la viñeta
+    del ciclo decía «ciclos económicos de varios años» y tres párrafos después el capítulo dice «al menos dos
+    años» citando la misma sección; la fuente solo dice «usually at least 2 years», así que a la viñeta se le
+    quitó la cifra («p. ej. los ciclos económicos»). Los paréntesis de las viñetas, que la primera pasada
+    había cambiado por rayas, vuelven a su forma original.
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: subagente verificador de la ronda R4 (Opus 5.5), contexto limpio · lote R4a
+  fecha: 2026-11-13
+
+- id: c1-m4-06
+  tipo: resultado
+  afirmacion: "Al descomponer una serie suele agruparse tendencia y ciclo en un solo componente tendencia-ciclo, al que a menudo se llama simplemente tendencia."
+  hash_texto: 2f8b0406271b3fe3
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "cap. 3"
+    clase: WEB
+    instantanea: decomposition
+    cita: "we usually combine the trend and cycle into a single trend-cycle component (often just called the trend for simplicity)"
+  nota: >-
+    Historia de la frase. El verificador del lote R4a leyó «Muchos textos agrupan tendencia y ciclo en un
+    solo término tendencia-ciclo» y dio «con-matiz»: la práctica está en la entrada del cap. 3 de FPP3, pero
+    ninguna fuente leída sostiene que lo hagan «muchos textos». La primera pasada de la R4 la reescribió
+    atribuyéndola a los dos autores con cita narrativa, y el verificador independiente lo objetó: la fuente
+    no dice que lo hagan ellos, dice que es lo habitual («we usually»), y la cita registrada recortaba justo
+    esas dos palabras. La frase vigente vuelve a la voz impersonal y dice lo que dice la fuente, incluido que
+    al componente se le suele llamar simplemente tendencia. La frase nueva la escribió el redactor de la R4 y la comprobó la sesión
+    maestra contra la instantánea de FPP3 (decomposition.txt, entrada del cap. 3): dice lo que dice la
+    fuente, en voz impersonal y con el «often just called the trend» incluido, así que el veredicto sube a
+    «respaldada».
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: sesión maestra de la ronda R4, que comprobó la frase contra la instantánea el 2026-11-13
+  fecha: 2026-11-13
+
+- id: c1-m4-07
+  tipo: resultado
+  afirmacion: "Las fluctuaciones cíclicas no tienen duración fija y suelen durar al menos dos años; un ciclo largo del que solo se ve un tramo es indistinguible de una tendencia."
+  hash_texto: 096a8fbbffb3105c
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§2.3"
+    clase: WEB
+    instantanea: graphics
+    cita: "is usually at least 2 years"
+  - clave: hyndman2021forecasting
+    loc: "§2.3"
+    clase: WEB
+    instantanea: graphics
+    cita: "part of a long cycle"
+  nota: >-
+    El texto del inventario («un ciclo económico de siete u ocho años cabría ahí una vez y media») ya no está
+    en el capítulo: lo retiró una ronda anterior. Se marcó la frase vigente del mismo párrafo, que es la que
+    el verificador leyó y respaldó con FPP3 §2.3, incluido el ejemplo de los bonos del Tesoro, donde un ciclo
+    largo visto en una ventana corta parece tendencia. La cifra retirada no la sostenía ninguna fuente leída.
+    Que AirPassengers cubra doce años, y que en ella quepan pocos ciclos, lo pone el capítulo y queda fuera
+    de la marca.
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: subagente verificador de la ronda R4 (Opus 5.5), contexto limpio · lote R4a
+  fecha: 2026-11-13
+
+- id: c1-m4-10
+  tipo: definicion
+  afirmacion: "Los componentes se combinan de forma aditiva o multiplicativa."
+  hash_texto: a3c1d452148ae518
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§3.2"
+    clase: WEB
+    instantanea: decomposition
+    cita: "additive decomposition, then we can write y_{t} = S_{t} + T_{t} + R_t"
+  - clave: hyndman2021forecasting
+    loc: "§3.2"
+    clase: WEB
+    instantanea: decomposition
+    cita: "y_{t} = S_{t} \\times T_{t} \\times R_t"
+  nota: >-
+    FPP3 §3.2 escribe las dos ecuaciones que el capítulo pone a continuación de la frase marcada; el orden de
+    los sumandos y de los factores difiere, sin consecuencia. El puntero del inventario a Shumway y Stoffer,
+    p. 2, no sirve: esa página trata del dominio del tiempo frente al de la frecuencia.
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: subagente verificador de la ronda R4 (Opus 5.5), contexto limpio · lote R4a
+  fecha: 2026-11-13
+
+- id: c1-m4-11
+  tipo: regla
+  afirmacion: "El modelo aditivo conviene cuando la amplitud estacional, o la variación alrededor de la tendencia, no depende del nivel; el multiplicativo, cuando es proporcional al nivel."
+  hash_texto: b0ac245d50993cc9
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§3.2"
+    clase: WEB
+    instantanea: decomposition
+    cita: "does not vary with the level"
+  - clave: hyndman2021forecasting
+    loc: "§3.2"
+    clase: WEB
+    instantanea: decomposition
+    cita: "proportional to the level"
+  nota: >-
+    El criterio del capítulo coincide con FPP3 §3.2, incluida la mención de la variación alrededor de la
+    tendencia además de la amplitud estacional. El texto del inventario era una versión anterior de la frase
+    («amplitud constante» / «crece con el nivel»); se marcó la vigente, que es la que leyó el verificador.
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: subagente verificador de la ronda R4 (Opus 5.5), contexto limpio · lote R4a
+  fecha: 2026-11-13
+
+- id: c1-m5-01
+  tipo: definicion
+  afirmacion: "Media móvil de orden m; para m impar, el promedio de los m = 2k + 1 valores centrados en t."
+  hash_texto: 1b73885cec01e43d
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§3.3"
+    clase: WEB
+    instantanea: decomposition
+    cita: "moving average of order m can be written as \\hat{T}_{t} = \\frac{1}{m} \\sum_{j=-k}^k y_{t+j}"
+  - clave: shumway2011time
+    loc: "p. 71; §2.4; ec. 2.50"
+    clase: PDF
+    pagina_pdf: 84
+    cita: "the weights, a−k , . . . , a0 , . . . , ak , we used were all the same"
+  nota: >-
+    La fórmula y la condición m = 2k + 1 son las de FPP3 §3.3 (su ecuación 3.2), y Shumway y Stoffer
+    describen la misma media móvil simétrica de pesos iguales. El verificador escribió el localizador como
+    «§3.3; ec. 3.2»; aquí se deja «§3.3», que es donde está la ecuación 3.2 en la instantánea, para que la
+    cita visible sea más corta.
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: subagente verificador de la ronda R4 (Opus 5.5), contexto limpio · lote R4a
+  fecha: 2026-11-13
+
+- id: c1-m5-02
+  tipo: definicion
+  afirmacion: "Con m par se promedian dos ventanas consecutivas de orden m, lo que equivale a usar m + 1 valores con los dos extremos a medio peso."
+  hash_texto: d4e73363c794ec7d
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§3.3"
+    clase: WEB
+    instantanea: decomposition
+    cita: "weighted moving average of order m + 1"
+  nota: >-
+    Por el tope de palabras citadas de FPP3 (F11) se registra una sola de las dos citas del verificador; la
+    otra («The first value in the 2x4-MA column is the average of these two») respaldaba la primera mitad.
+    FPP3 §3.3 sostiene las dos mitades: que la 2×m-MA es el promedio de dos ventanas consecutivas de orden m,
+    y que equivale a una media ponderada de orden m + 1 con pesos 1/m salvo los extremos, que llevan 1/(2m):
+    los «extremos a media ración» del capítulo.
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: subagente verificador de la ronda R4 (Opus 5.5), contexto limpio · lote R4a
+  fecha: 2026-11-13
 
 - id: c1-m6-01
   tipo: resultado
@@ -59,7 +367,7 @@ afirmaciones:
 - id: c1-m6-02
   tipo: atribucion
   afirmacion: FPP3 da una cuarta limitación del método clásico —la tendencia suaviza de más las subidas y caídas rápidas— y STL la atenúa al dejar elegir la suavidad de la tendencia.
-  hash_texto: 710fd3f3a8eaaa44
+  hash_texto: 41f55b7ebb1c4294
   veredicto: respaldada
   fuentes:
   - clave: hyndman2021forecasting
@@ -77,38 +385,237 @@ afirmaciones:
     verificador de corrección señaló que atribuía a la fuente sin registro, y se registró el 2026-11-13. La
     fuente dice que la tendencia «suaviza de más», sin cuantificarlo, y que el usuario controla la suavidad
     en STL; que eso «la atenúa» es la lectura del capítulo, razonable pero no literal en la fuente.
+    Corrección de la R4 (2026-11-13): se pusieron las dos citas visibles que faltaban (§3.4 y §3.6); la prosa
+    no cambió, y la huella sí, por el espacio que deja la primera cita antes del punto.
   redactado_por: subagente redactor de la ronda R3 (Fable 5.2)
   verificado_por: subagente verificador de corrección de la ronda R3 (Opus 5.5), contexto limpio
   fecha: 2026-11-13
 
+- id: c1-m6-09
+  tipo: definicion
+  afirmacion: "Quitar la tendencia —restando o dividiendo— deja la serie sin tendencia, y el índice de cada mes sale de promediar esa serie por posición."
+  hash_texto: 9feaf0d92e1cacd3
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§3.4"
+    clase: WEB
+    instantanea: decomposition
+    cita: "detrended series: y_t - \\hat{T}_t."
+  - clave: hyndman2021forecasting
+    loc: "§3.4"
+    clase: WEB
+    instantanea: decomposition
+    cita: "detrended series: y_t / \\hat{T}_t."
+  - clave: hyndman2021forecasting
+    loc: "§3.4"
+    clase: WEB
+    instantanea: decomposition
+    cita: "average the detrended values for that season"
+  nota: >-
+    FPP3 §3.4 da el paso 2 en las dos escalas —restar en la aditiva, dividir en la multiplicativa: de ahí las
+    dos primeras citas— y el paso 3 como el promedio por posición. Dos cosas son del capítulo y no de la
+    fuente. Que en la serie sin tendencia «ya solo quedan estacionalidad y ruido» no lo dice con esas
+    palabras: se sigue del modelo que §3.2 escribe. Y el mecanismo —«el ruido se cancela y sobrevive el
+    índice de enero»— tampoco: la fuente solo dice «simply average the detrended values for that season». La
+    marca termina en «y así con los doce meses»; la frase siguiente, sobre la rigidez de los índices, queda
+    fuera (está cubierta por c1-m6-01).
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: subagente verificador de la ronda R4 (Opus 5.5), contexto limpio · lote R4a
+  fecha: 2026-11-13
+
+- id: c1-m6-13
+  tipo: definicion
+  afirmacion: "La tabla «El método en símbolos»: los pasos de la descomposición clásica en notación, en paralelo para el modelo aditivo y el multiplicativo, que solo difieren en la operación."
+  hash_texto: c7dadbda0c90d509
+  veredicto: con-matiz
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§3.4"
+    clase: WEB
+    instantanea: decomposition
+    cita: "using a 2 \\times m-MA."
+  - clave: hyndman2021forecasting
+    loc: "§3.4"
+    clase: WEB
+    instantanea: decomposition
+    cita: "adjusted to ensure that they add to m."
+  - clave: hyndman2021forecasting
+    loc: "§3.4"
+    clase: WEB
+    instantanea: decomposition
+    cita: "dividing out the estimated seasonal and trend-cycle components"
+  nota: >-
+    FPP3 §3.4 respalda el contenido de cada fila —tendencia por media móvil, serie sin tendencia, promedio
+    por posición, ajuste de los índices y residuo— en las dos columnas. El matiz, que el capítulo no oculta
+    porque no atribuye la tabla a nadie: la numeración no coincide (el paso 1 de FPP3 es la tendencia; el del
+    capítulo es elegir la escala, que FPP3 trata en §3.2), y FPP3 enuncia la condición de los índices pero no
+    escribe las fórmulas de normalización ni el recuento n_k, que son construcciones del capítulo. No se tocó
+    la prosa. La afirmación del inventario era el rótulo de la tabla, que solo ven los lectores de pantalla:
+    la marca envuelve la tabla entera y el párrafo que la lee («Leída en horizontal…»), de modo que la huella
+    vigila también las fórmulas, y la cita visible va en ese párrafo.
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: subagente verificador de la ronda R4 (Opus 5.5), contexto limpio · lote R4a
+  fecha: 2026-11-13
+
+- id: c1-m6-14
+  tipo: resultado
+  afirmacion: "Los índices multiplicativos promedian 1: es la condición que impone la normalización."
+  hash_texto: 756010e32fcdcb51
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§3.4"
+    clase: WEB
+    instantanea: decomposition
+    cita: "adjusted to ensure that they add to m."
+  nota: >-
+    FPP3 §3.4 impone que los índices multiplicativos sumen m —con m = 12, media 1—. La marca termina en «…la
+    condición de la última fila de la tabla»: que el reescalado del paso 3c esté puesto para imponerla es
+    construcción del capítulo (FPP3 enuncia la condición sin decir cómo se impone) y quedó fuera de la huella
+    en la corrección de la R4. Fuera quedan también la cifra 12.0001, que sale de R, y la condición aditiva.
+    El verificador dio además la cita de la condición aditiva («…adjusted to ensure that they add to zero»),
+    que se retiró porque la frase marcada solo habla del caso multiplicativo y por el tope de palabras
+    citadas de FPP3 (F11).
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: subagente verificador de la ronda R4 (Opus 5.5), contexto limpio · lote R4a
+  fecha: 2026-11-13
+
+- id: c1-m6-20
+  tipo: definicion
+  afirmacion: "El encadenamiento se llama descomposición clásica y arranca con una media móvil del orden del período."
+  hash_texto: 737005f39de3ee8c
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§3.3; §3.4"
+    clase: WEB
+    instantanea: decomposition
+    cita: "first step in a classical decomposition is to use a moving average"
+  - clave: hyndman2021forecasting
+    loc: "§3.4"
+    clase: WEB
+    instantanea: decomposition
+    cita: "\\hat{T}_t using a 2 \\times m-MA."
+  nota: >-
+    CAMBIO DE IDENTIFICADOR: en el inventario esta afirmación es c1-m6-02, pero ese id ya estaba registrado
+    desde la R3 para la cuarta limitación del método clásico; aquí lleva c1-m6-20, el primero libre del
+    módulo. El verificador la contrastó con el id del inventario y avisó del choque. FPP3 §3.3 y §3.4
+    respaldan que el primer paso del método clásico es la media móvil del orden del período. La frase
+    siguiente del capítulo, que describe el procedimiento como un bucle gobernado por el residuo, es
+    organización propia y queda fuera de la marca. La cita visible lleva las dos secciones: que el método
+    arranca con una media móvil lo dice §3.3 («The first step in a classical decomposition is to use a moving
+    average method…»), y §3.4 es la sección del método, donde el paso 1 usa la 2×m-MA.
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: subagente verificador de la ronda R4 (Opus 5.5), contexto limpio · lote R4a
+  fecha: 2026-11-13
+
 - id: c1-m7-01
   tipo: atribucion
-  afirmacion: STL se desarrolla como «Seasonal-Trend decomposition using Loess».
-  hash_texto: 44b1b14f86516427
-  veredicto: pendiente
-  motivo: >-
-    Falta leer la fuente original, Cleveland et al. (1990), que no tiene DOI y aún no está en la biblioteca:
-    su PDF está en el archivo del Journal of Official Statistics (Statistics Sweden) y descargarlo requiere
-    el permiso de Javier. Lo ya leído no coincide con el capítulo: FPP3 §3.6 desarrolla el acrónimo como
-    «Seasonal and Trend decomposition using Loess» y atribuye el método a Cleveland et al. (1990), cuyo
-    título es «STL: A seasonal-trend decomposition procedure based on loess». La forma del capítulo mezcla
-    las dos. Queda además por resolver el rango de páginas: FPP3 da 3–33 y OpenAlex 3–73.
-  redactado_por: sesión maestra (Fable 5.2)
-  fecha: 2026-11-10
+  afirmacion: "STL se desarrolla como «Seasonal and Trend decomposition using Loess»."
+  hash_texto: a7975059229c1459
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§3.6"
+    clase: WEB
+    instantanea: decomposition
+    cita: "“Seasonal and Trend decomposition using Loess”"
+  - clave: rcoreteam2026r
+    loc: "§Description"
+    clase: WEB
+    instantanea: stl
+    cita: "components using ‘loess’, acronym STL."
+  nota: >-
+    Estaba «pendiente» desde el piloto. El capítulo escribía «Seasonal-Trend decomposition using Loess», y el
+    verificador, ya con el artículo original leído, confirmó que ninguna fuente escribe esa cadena: mezclaba
+    el guion del título original con el «using Loess» de FPP3. Qué dice cada una: el artículo de Cleveland et
+    al. (1990) nunca desarrolla el acrónimo en prosa, solo en su título; FPP3 §3.6 dice «STL is an acronym for
+    “Seasonal and Trend decomposition using Loess”»; y la ayuda de stl() habla de descomponer «using 'loess',
+    acronym STL». SE CORRIGIÓ LA PROSA: el capítulo copia ahora la forma de FPP3, que es la única fuente que
+    desarrolla el acrónimo en una frase, y la cita. Lo del título del artículo, que era el matiz de esta
+    entrada, ya no vive aquí: la verificación independiente de la R4 pidió decirlo en el capítulo, porque la
+    lista de fuentes del módulo imprime ese título a dos pantallas de la forma de FPP3, y la sesión maestra lo
+    sacó a frase propia con su propia entrada, c1-m7-24. Sin ese matiz la frase marcada dice exactamente lo
+    que dice su fuente: la sesión maestra la comprobó contra la instantánea y subió el veredicto a
+    «respaldada». Sobre el rango de páginas que el piloto dejó abierto: la portada del PDF dice pp. 3–73, que
+    incluye los comentarios publicados; FPP3 cita 3–33, solo el artículo.
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: sesión maestra de la ronda R4, que comprobó la frase contra la instantánea el 2026-11-13
+  fecha: 2026-11-13
+
+- id: c1-m7-24
+  tipo: atribucion
+  afirmacion: "El artículo original titula el método con guion y «Based on Loess»: «STL: A Seasonal-Trend Decomposition Procedure Based on Loess»."
+  hash_texto: a65094ba7ef844ff
+  veredicto: respaldada
+  fuentes:
+  - clave: cleveland1990stl
+    loc: "p. 3"
+    clase: PDF
+    pagina_pdf: 1
+    cita: "STL: A Seasonal-Trend Decomposition"
+  - clave: cleveland1990stl
+    loc: "p. 3"
+    clase: PDF
+    pagina_pdf: 1
+    cita: "Procedure Based on Loess"
+  nota: >-
+    ENTRADA NUEVA de la verificación independiente de la R4; no está en el inventario. El capítulo desarrolla
+    el acrónimo con la forma de FPP3 (c1-m7-01) y la lista de fuentes del módulo imprime el título del
+    artículo, con guion y «Based on», a dos pantallas de distancia: un estudiante atento lo lee como una
+    errata. El redactor de la R4 escribió el aviso como inciso dentro de la primera frase del módulo, y así
+    quedaban cuarenta y cuatro palabras y tres incisos entre el sujeto «STL» y su verbo. La sesión maestra lo
+    sacó a frase propia, con su marca y su cita, y comprobó el título contra la portada del PDF (página 1 del
+    escaneo, página impresa 3). El OCR parte el título en dos renglones, de ahí las dos citas literales.
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2); la sesión maestra la sacó a frase propia
+  verificado_por: sesión maestra de la ronda R4, que comprobó el título contra la portada del PDF el 2026-11-13
+  fecha: 2026-11-13
 
 - id: c1-m7-02
   tipo: resultado
-  afirmacion: En STL la robustez es una opción aparte, cuesta un segundo bucle y en stl() viene desactivada.
-  hash_texto: 79d04e41cf38cda3
-  veredicto: pendiente
-  motivo: >-
-    FPP3 §3.6 solo respalda la primera de las tres partes: que es opcional («the user can specify a robust
-    decomposition»). No habla de bucles ni de iteraciones, y nunca menciona stats::stl() ni su valor por
-    defecto (describe STL() de fable). El segundo bucle hay que contrastarlo con Cleveland et al. (1990) y
-    el valor por defecto con la ayuda de R (?stl), que aún no tiene instantánea ni obra en la biblioteca.
-    Se había puesto una cita a FPP3 y se retiró: habría respaldado a la vista más de lo que la fuente dice.
-  redactado_por: sesión maestra (Fable 5.2)
-  fecha: 2026-11-10
+  afirmacion: "En STL la robustez es una opción aparte, cuesta un segundo bucle y en stl() viene desactivada."
+  hash_texto: ce201e50fc4daddd
+  veredicto: respaldada
+  fuentes:
+  - clave: cleveland1990stl
+    loc: "§3.3"
+    clase: PDF
+    pagina_pdf: 12
+    cita: "The STL robust estimation is needed when"
+  - clave: cleveland1990stl
+    loc: "§3.3"
+    clase: PDF
+    pagina_pdf: 12
+    cita: "consists of the inner loop."
+  - clave: cleveland1990stl
+    loc: "§2.2"
+    clase: PDF
+    pagina_pdf: 4
+    cita: "an inner loop nested inside an outer loop. In"
+  - clave: rcoreteam2026r
+    loc: "§Usage"
+    clase: WEB
+    instantanea: stl
+    cita: "robust = FALSE,"
+  - clave: rcoreteam2026r
+    loc: "§Usage"
+    clase: WEB
+    instantanea: stl
+    cita: "outer = if(robust) 15 else 0,"
+  nota: >-
+    Estaba «pendiente» desde el piloto, a falta del artículo original y de la ayuda de R. Las tres partes
+    quedan respaldadas, cada una por su fuente. Opcional: §3.3 del artículo dice que la estimación robusta
+    hace falta cuando hay comportamiento no gaussiano y que, si no, se pueden omitir las iteraciones de
+    robustez. Segundo bucle: §2.2 define el bucle exterior, y §3.3 dice que sin robustez STL consiste en el
+    bucle interior. Por defecto: lo dice la ayuda de stl(), robust = FALSE y outer = 0. Las 15 vueltas con
+    robust = TRUE son de R; el artículo recomienda 5 o 10. El verificador dio además la cita «the robustness
+    iterations and set ,,,= 0;in», que está en el texto de la caché pero con el subíndice n_o destrozado por
+    el OCR: se dejó fuera por ilegible, y lo que decía lo cubren las otras dos de §3.3. La prosa no cambió;
+    la huella sí, porque la cita del artículo va en mitad de la frase y deja un espacio antes de la coma.
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: subagente verificador de la ronda R4 (Opus 5.5), contexto limpio · lote R4b
+  fecha: 2026-11-13
 
 - id: c1-m7-03
   tipo: resultado
@@ -134,6 +641,362 @@ afirmaciones:
   verificado_por: subagentes verificadores, Opus 5.5 y Sonnet 5.5, contexto limpio
   fecha: 2026-11-10
 
+- id: c1-m7-05
+  tipo: definicion
+  afirmacion: "Loess es una regresión local: para dar el valor en t toma los puntos más próximos, les ajusta una recta por mínimos cuadrados y se queda con su altura en t."
+  hash_texto: 7335303e17e96839
+  veredicto: con-matiz
+  fuentes:
+  - clave: cleveland1990stl
+    loc: "§2.1"
+    clase: PDF
+    pagina_pdf: 4
+    cita: "x; that are closest to x are selected and each"
+  - clave: cleveland1990stl
+    loc: "§2.1"
+    clase: PDF
+    pagina_pdf: 4
+    cita: "fitting is locally-linear or locally-quadratic."
+  - clave: cleveland1990stl
+    loc: "§2.1"
+    clase: PDF
+    pagina_pdf: 4
+    cita: "locally-fitted polynomial at x is g(x). In this"
+  - clave: cleveland1990stl
+    loc: "§2.1"
+    clase: PDF
+    pagina_pdf: 4
+    cita: "increase in distance from x and become zero"
+  nota: >-
+    §2.1 del artículo dice las cuatro cosas de la frase: se eligen los q valores más próximos a x, se ajusta
+    un polinomio local, el valor devuelto es el del polinomio en x, y los pesos se anulan en el q-ésimo punto
+    más lejano. EL MATIZ: la frase dice «les ajusta una recta por mínimos cuadrados», y el artículo dice
+    polinomio de grado 1 o 2 («locally-linear or locally-quadratic») por mínimos cuadrados PONDERADOS. La
+    recta es el caso que usa el capítulo, y lo de ponderados lo dice el propio capítulo tres párrafos
+    después, como remate de la explicación; aquí todavía no. Por eso el verificador independiente bajó el
+    veredicto de «respaldada» a «con-matiz». Historia del nombre: el capítulo desarrollaba Loess como
+    «locally estimated scatterplot smoothing», que no está en ninguna fuente leída; la primera pasada de la
+    R4 lo cambió aquí por «regresión local ponderada, locally weighted regression», y eso adelantaba la
+    palabra que el capítulo revela después. En la corrección, esta primera mención glosa solo «una regresión
+    local» y el nombre completo pasó al párrafo de «ponderada», con su propia entrada, c1-m7-23. Se retiró la
+    cita de Shumway y Stoffer (pie de la figura 2.14) que el redactor había añadido: glosa lowess, que es
+    otro suavizador, y en el texto en caché de ese libro la palabra «loess» no aparece.
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: subagente verificador de la ronda R4 (Opus 5.5), contexto limpio · lote R4b
+  fecha: 2026-11-13
+
+- id: c1-m7-06
+  tipo: dato
+  afirmacion: "En stl(), t.window es la anchura de la ventana de Loess con que se suaviza la tendencia."
+  hash_texto: 1f1277fdf8850944
+  veredicto: respaldada
+  fuentes:
+  - clave: rcoreteam2026r
+    loc: "§Arguments"
+    clase: WEB
+    instantanea: stl
+    cita: "t.window: the span (in lags) of the loess window for trend extraction,"
+  nota: >-
+    La frase del inventario («es lo que en R se pasa como t.window para la tendencia y s.window para lo
+    estacional») ya no está: la R3-bis repartió su contenido entre los pasos 1 y 2 de «El método, paso a
+    paso». Aquí se marca el paso 2, que dice lo de t.window; lo de s.window está en el paso 1, dentro de
+    c1-m7-15, adonde se llevó la cita correspondiente del verificador. La ayuda de stl() respalda
+    literalmente que t.window es la anchura de la ventana de Loess para la tendencia. Dice «in lags»: el «en
+    meses» del capítulo es su lectura para una serie mensual. El artículo no usa ese nombre —allí el
+    parámetro es n_t—.
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: subagente verificador de la ronda R4 (Opus 5.5), contexto limpio · lote R4b
+  fecha: 2026-11-13
+
+- id: c1-m7-07
+  tipo: dato
+  afirmacion: "Grados por defecto de stl(): t.degree = 1 para la tendencia y s.degree = 0 para lo estacional."
+  hash_texto: 6e6baa1655f57bb8
+  veredicto: respaldada
+  fuentes:
+  - clave: rcoreteam2026r
+    loc: "§Usage"
+    clase: WEB
+    instantanea: stl
+    cita: "stl(x, s.window, s.degree = 0,"
+  - clave: rcoreteam2026r
+    loc: "§Usage"
+    clase: WEB
+    instantanea: stl
+    cita: "t.window = NULL, t.degree = 1,"
+  - clave: cleveland1990stl
+    loc: "§2.3"
+    clase: PDF
+    pagina_pdf: 5
+    cita: "smoothed by loess with q = m, andd = 1."
+  nota: >-
+    Los dos valores por defecto están en la línea de uso de la ayuda de stl(): s.degree = 0 y t.degree = 1.
+    La marca cubre solo la primera oración del párrafo de cierre del desarrollo («Los dos grados por defecto…
+    responden a dos problemas distintos»); las dos razones que vienen después quedaron FUERA de la huella en
+    la corrección de la R4, porque la fuente respalda los valores y no las razones. Para el docente: el
+    párrafo explica s.degree = 0 diciendo que las subseries son cortas y que «pedirles una pendiente sería
+    pedirle demasiado a doce puntos». Esa razón es del capítulo. El artículo original, en §2.3, paso 2,
+    suaviza las subseries de ciclo con d = 1 (tercera cita; «andd» es como el OCR dejó «and d»): el 0 es una
+    decisión de la implementación de R, no del artículo. La derivación no se reescribió: es una decisión que
+    queda planteada. Los valores 1 y 0 aparecen en las oraciones de fuera de la marca; dentro queda la
+    afirmación de que son los de la línea de uso. Cambio de prosa: la cita partía sujeto y verbo, y pasó a un
+    inciso («—los que trae la línea de uso de stl()…—»).
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: subagente verificador de la ronda R4 (Opus 5.5), contexto limpio · lote R4b
+  fecha: 2026-11-13
+
+- id: c1-m7-08
+  tipo: definicion
+  afirmacion: "Los pesos de la ventana los da la función tricúbica, que vale 1 sobre el punto estimado y se anula en el borde."
+  hash_texto: ea3ff0dd1d401650
+  veredicto: respaldada
+  fuentes:
+  - clave: cleveland1990stl
+    loc: "§2.1"
+    clase: PDF
+    pagina_pdf: 4
+    cita: "tricube weight function:"
+  - clave: cleveland1990stl
+    loc: "§2.1"
+    clase: PDF
+    pagina_pdf: 4
+    cita: "Thus the x, close to x have the largest"
+  - clave: cleveland1990stl
+    loc: "§2.1"
+    clase: PDF
+    pagina_pdf: 4
+    cita: "increase in distance from x and become zero"
+  - clave: cleveland1990stl
+    loc: "§2.1"
+    clase: PDF
+    pagina_pdf: 4
+    cita: "at the qth farthest point."
+  nota: >-
+    El nombre y la forma son del artículo: «tricube weight function», peso máximo sobre x, que decrece con la
+    distancia y se anula en el q-ésimo punto más lejano, es decir, en el borde de la ventana. La fórmula del
+    capítulo coincide con la ecuación de la página impresa 6, que el OCR destroza y el verificador leyó sobre
+    la imagen de la página: W(u) = (1 − u³)³ para 0 ≤ u < 1 y 0 para u ≥ 1. No hay cita literal posible de la
+    fórmula.
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: subagente verificador de la ronda R4 (Opus 5.5), contexto limpio · lote R4b
+  fecha: 2026-11-13
+
+- id: c1-m7-10
+  tipo: regla
+  afirmacion: "stl() deduce la ventana de tendencia del período y de la ventana estacional: el impar inmediato al techo de 1.5·m / (1 − 1.5/s.window)."
+  hash_texto: 203b57511fc46834
+  veredicto: respaldada
+  fuentes:
+  - clave: rcoreteam2026r
+    loc: "§Arguments"
+    clase: WEB
+    instantanea: stl
+    cita: "‘nextodd(ceiling((1.5*period) / (1-(1.5/s.window))))’, is"
+  - clave: cleveland1990stl
+    loc: "p. 20"
+    clase: PDF
+    pagina_pdf: 18
+    cita: "to be the smallest odd integer satisfying the"
+  - clave: cleveland1990stl
+    loc: "p. 20"
+    clase: PDF
+    pagina_pdf: 18
+    cita: "chosen to be 35; the right side of the"
+  nota: >-
+    La ayuda de stl() da la regla carácter por carácter, incluidos el techo y el impar inmediato. El artículo
+    respalda la misma regla en prosa —n_t es el menor entero impar que satisface la desigualdad con 1.5 n_p—
+    y la ilustra con el CO2 mensual: con n_s = 35 el lado derecho da 18.8 y n_t = 19, el mismo 19 del
+    capítulo, aunque allí sale de otra ventana estacional. La desigualdad impresa es ilegible en el OCR.
+    Corrección posterior a la verificación independiente de la R4 (2026-11-13): la cita partía «la regla» de
+    su complemento; la frase dice ahora «con la regla que da su ayuda (…): tomar el impar inmediato de». No
+    cambia lo que afirma. Cita sustituida: el verificador dio «chosen to be 35; the right side of the
+    inequal-», que acaba en un guion de corte de renglón y el auditor no la encuentra al unir la palabra
+    partida; se dejó el mismo tramo sin «inequal-».
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: subagente verificador de la ronda R4 (Opus 5.5), contexto limpio · lote R4b
+  fecha: 2026-11-13
+
+- id: c1-m7-15
+  tipo: resultado
+  afirmacion: "El componente estacional se obtiene suavizando con Loess cada subserie de un mismo mes; s.window es la anchura de ese suavizado y con \"periodic\" se sustituye por la media."
+  hash_texto: 709c9e8b8f8d1661
+  veredicto: respaldada
+  fuentes:
+  - clave: cleveland1990stl
+    loc: "§2.2; §2.3"
+    clase: PDF
+    pagina_pdf: 5
+    cita: "cycle-subseries of the detrended series is"
+  - clave: cleveland1990stl
+    loc: "§2.2"
+    clase: PDF
+    pagina_pdf: 5
+    cita: "subseries as cycle-subseries."
+  - clave: cleveland1990stl
+    loc: "§2.2"
+    clase: PDF
+    pagina_pdf: 5
+    cita: "January values, the second is the February"
+  - clave: rcoreteam2026r
+    loc: "§Details"
+    clase: WEB
+    instantanea: stl
+    cita: "sub-series (the series of all January values, ...); if ‘s.window ="
+  - clave: rcoreteam2026r
+    loc: "§Details"
+    clase: WEB
+    instantanea: stl
+    cita: "\"periodic\"’ smoothing is effectively replaced by taking the mean."
+  - clave: rcoreteam2026r
+    loc: "§Arguments"
+    clase: WEB
+    instantanea: stl
+    cita: "lags) of the loess window for seasonal extraction, which"
+  - clave: hyndman2021forecasting
+    loc: "§3.6"
+    clase: WEB
+    instantanea: decomposition
+    cita: "periodic season(window='periodic') (i.e., identical across years)"
+  nota: >-
+    El artículo nombra y define las subseries de enero, de febrero, etc. («cycle-subseries»), y el paso 2 de
+    su bucle interior las suaviza por separado con Loess. La ayuda de stl() lo repite y añade que con
+    s.window = "periodic" el suavizado se sustituye por la media de cada subserie; el artículo no describe
+    ese caso, que es una comodidad de R. La frase del inventario («no se ajusta sobre la serie entera, sino
+    sobre cada subserie de ciclo») sigue en el cierre del desarrollo, dentro de c1-m7-07; aquí se marca el
+    paso 1 de «El método, paso a paso», que es donde el lector lo encuentra primero y dice lo mismo. La
+    última cita viene del veredicto de c1-m7-06, porque lo de s.window quedó en este paso. La ayuda dice «in
+    lags»: el «en años» del capítulo es su lectura (un rezago de la subserie de un mes es un año). Corrección
+    posterior a la verificación independiente de la R4 (2026-11-13): la cita visible del artículo lleva ahora
+    las dos secciones, porque §2.2 define las subseries de ciclo y es §2.3, paso 2, la que las suaviza con
+    Loess. Y «el patrón queda fijo» no está en la ayuda de R, que solo dice que el suavizado se sustituye por
+    la media: que con "periodic" el componente estacional es idéntico de un año a otro lo dice FPP3 §3.6, y
+    se añadió esa cita, visible y literal. FPP3 habla de season(window = 'periodic') en STL() de fable, no de
+    stl(); el argumento es el mismo.
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: subagente verificador de la ronda R4 (Opus 5.5), contexto limpio · lote R4b
+  fecha: 2026-11-13
+
+- id: c1-m7-16
+  tipo: resultado
+  afirmacion: "Los pasos de estacionalidad y tendencia se repiten unas pocas veces: dos pasadas por defecto, con la opción robusta apagada."
+  hash_texto: 3d9319bd40a12467
+  veredicto: respaldada
+  fuentes:
+  - clave: rcoreteam2026r
+    loc: "§Usage"
+    clase: WEB
+    instantanea: stl
+    cita: "inner = if(robust)  1 else 2,"
+  - clave: rcoreteam2026r
+    loc: "§Arguments"
+    clase: WEB
+    instantanea: stl
+    cita: "inner: integer; the number of ‘inner’ (backfitting) iterations;"
+  - clave: rcoreteam2026r
+    loc: "§Arguments"
+    clase: WEB
+    instantanea: stl
+    cita: "usually very few (2) iterations suffice."
+  - clave: cleveland1990stl
+    loc: "§2.2"
+    clase: PDF
+    pagina_pdf: 4
+    cita: "STL consists of two recursive procedures:"
+  - clave: cleveland1990stl
+    loc: "§2.2"
+    clase: PDF
+    pagina_pdf: 4
+    cita: "an inner loop nested inside an outer loop. In"
+  - clave: cleveland1990stl
+    loc: "§2.3"
+    clase: PDF
+    pagina_pdf: 5
+    cita: "Each pass of the inner loop consists of"
+  - clave: cleveland1990stl
+    loc: "§2.2"
+    clase: PDF
+    pagina_pdf: 4
+    cita: "loop followed by a computation of"
+  nota: >-
+    La frase del inventario («Son dos bucles, uno dentro de otro: el interior alterna estacionalidad y
+    tendencia hasta que se estabilizan…») ya no está: la R3 y la R3-bis la repartieron entre el paso 4 de «El
+    método, paso a paso» y el párrafo del bucle exterior. Se marca el paso 4. El verificador del lote R4b dio
+    «con-matiz» a la frase vieja, por el «hasta que se estabilizan» (el número de pasadas interiores es fijo,
+    no un criterio de parada). EL MATIZ VIVO lo señaló el verificador independiente: la línea de uso de stl()
+    dice inner = if(robust) 1 else 2, de modo que las dos pasadas son el valor por defecto SOLO con robust =
+    FALSE; con la opción robusta es una pasada por cada vuelta del bucle exterior, y el capítulo enseña a
+    encender esa opción dos pantallas más abajo. La frase decía «dos pasadas, por defecto», sin esa
+    condición. SE CORRIGIÓ LA PROSA: «dos pasadas por defecto, con la opción robusta apagada», y la cita
+    visible pasó a §Usage, que es donde está el valor. La frase nueva la escribió el redactor y la comprobó la sesión maestra
+    contra la instantánea (stl.txt, línea de uso «inner = if(robust)  1 else 2»): la condición que faltaba
+    está ahora escrita, así que el veredicto sube a «respaldada». El artículo respalda la estructura de dos
+    bucles anidados (§2.2); la entrada «inner» de los argumentos dice que bastan muy pocas pasadas, y su
+    segunda cita es la continuación de la que dio el verificador. El bucle exterior lo cubre c1-m7-02. Cita
+    sustituida: «loop followed by a computation of robust-» acababa en un guion de corte de renglón; se dejó
+    sin «robust-».
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: sesión maestra de la ronda R4, que comprobó la frase contra la instantánea el 2026-11-13
+  fecha: 2026-11-13
+
+- id: c1-m7-18
+  tipo: definicion
+  afirmacion: "El recorte de pesos lo fija la función bicuadrada, medida en unidades de seis veces la mediana de los residuos absolutos."
+  hash_texto: b74fa2fd74eaedc2
+  veredicto: respaldada
+  fuentes:
+  - clave: cleveland1990stl
+    loc: "§2.4"
+    clase: PDF
+    pagina_pdf: 6
+    cita: "where B is the bisquare weight function:"
+  - clave: cleveland1990stl
+    loc: "§2.4"
+    clase: PDF
+    pagina_pdf: 6
+    cita: "h = 6 median(|R,|)."
+  - clave: cleveland1990stl
+    loc: "§2.4"
+    clase: PDF
+    pagina_pdf: 6
+    cita: "will have a small or zero weight. Let"
+  - clave: cleveland1990stl
+    loc: "§2.4"
+    clase: PDF
+    pagina_pdf: 6
+    cita: "in the data that results in a very large |R,|"
+  nota: >-
+    El artículo da las tres piezas de la frase: el nombre («bisquare weight function»), la unidad de medida
+    —h es seis veces la mediana de los residuos absolutos— y el corte, porque un atípico con residuo grande
+    recibe un peso pequeño o nulo. La fórmula del capítulo coincide con la ecuación impresa, que el OCR
+    destroza y el verificador leyó sobre la imagen: B(u) = (1 − u²)² para 0 ≤ u < 1 y 0 para u > 1. En las
+    citas, «|R,|» es como el OCR dejó |R_v|.
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: subagente verificador de la ronda R4 (Opus 5.5), contexto limpio · lote R4b
+  fecha: 2026-11-13
+
+- id: c1-m7-23
+  tipo: definicion
+  afirmacion: "El nombre completo de Loess: regresión local ponderada (locally weighted regression)."
+  hash_texto: 74ea97ed124bb5bd
+  veredicto: respaldada
+  fuentes:
+  - clave: cleveland1990stl
+    loc: "p. 5"
+    clase: PDF
+    pagina_pdf: 3
+    cita: "weighted regression, or loess (Cleveland and"
+  nota: >-
+    ENTRADA NUEVA de la corrección de la R4; no está en el inventario (c1-m7-23 es el primer id libre del
+    módulo). Sale de c1-m7-05: el verificador del lote R4b anotó allí que el artículo presenta el suavizador
+    como «locally-weighted regression, or loess», y el verificador independiente precisó dónde: al final del
+    §1, en la página impresa 5, y no en §2.1. El desarrollo del nombre se llevó al párrafo que revela la
+    palabra «ponderada», y con él la cita, de ahí esta entrada. En el texto de la caché «locally-» queda a
+    final de renglón, así que la cita literal empieza en «weighted»; el capítulo lo escribe sin guion. La frase la escribió el redactor de la R4 y la comprobó la sesión maestra
+    contra el texto de la caché (p0003.txt, página impresa 5).
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: sesión maestra de la ronda R4, que comprobó la frase contra el texto en caché el 2026-11-13
+  fecha: 2026-11-13
+
 - id: c1-m8-01
   tipo: atribucion
   afirmacion: FPP3 define la fuerza de la tendencia y de la estacionalidad con las varianzas de los componentes STL.
@@ -158,3 +1021,60 @@ afirmaciones:
   redactado_por: sesión maestra (Fable 5.2)
   verificado_por: subagentes verificadores, Opus 5.5 y Sonnet 5.5, contexto limpio
   fecha: 2026-11-10
+
+- id: c1-m8-02
+  tipo: definicion
+  afirmacion: "La serie desestacionalizada retira el componente estacional y deja tendencia y residuo: y − S en el modelo aditivo, y / S en el multiplicativo."
+  hash_texto: db0ededae2d1e1bc
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§3.2"
+    clase: WEB
+    instantanea: decomposition
+    cita: "the resulting values are the “seasonally adjusted” data."
+  - clave: hyndman2021forecasting
+    loc: "§3.2"
+    clase: WEB
+    instantanea: decomposition
+    cita: "contain the remainder component as well as the trend-cycle"
+  nota: >-
+    FPP3 §3.2 respalda la definición, las dos fórmulas y el punto fino de que la serie ajustada conserva el
+    residuo además de la tendencia-ciclo. FPP3 añade una advertencia que el párrafo marcado no recoge: por
+    eso la serie ajustada no es suave y sus giros pueden engañar (el capítulo lo dice en la entradilla del
+    gráfico siguiente).
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: subagente verificador de la ronda R4 (Opus 5.5), contexto limpio · lote R4a
+  fecha: 2026-11-13
+
+- id: c1-m8-03
+  tipo: historica
+  afirmacion: "La serie desestacionalizada es lo que reportan muchas estadísticas oficiales, como las de desempleo."
+  hash_texto: 585a1ce7b72c0c11
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§3.2"
+    clase: WEB
+    instantanea: decomposition
+    cita: "monthly unemployment data are usually seasonally adjusted"
+  - clave: hyndman2021forecasting
+    loc: "§3.5"
+    clase: WEB
+    instantanea: decomposition
+    cita: "decomposition procedures which are used for seasonal adjustment"
+  nota: >-
+    El verificador del lote R4a leyó «muchas estadísticas oficiales —desempleo, producción—» y dio
+    «con-matiz», porque FPP3 no dice nada de la «producción». La primera pasada de la R4 la retiró y dejó
+    «las de desempleo, por ejemplo». La sesión maestra comprobó la frase vigente y subió el veredicto: FPP3
+    §3.2 dice que los datos mensuales de desempleo se suelen desestacionalizar y que lo mismo ocurre con los
+    de empleo «and many other economic series», y §3.5 que las oficinas de estadística tienen procedimientos
+    propios de ajuste estacional; eso sostiene «muchas» y «las de desempleo». La única reserva: la fuente da
+    como finalidad «highlight variation due to the underlying state of the economy», y el capítulo dice
+    «comparar meses sin el vaivén estacional», que es su manera de decirlo. La retroalimentación de la
+    autoevaluación del Módulo 9 decía «las cifras oficiales de empleo o PIB» (c1-m8-13 del inventario): el
+    PIB tampoco está en FPP3 y se retiró en la corrección; esa frase vive en una cadena de JavaScript que el
+    auditor no lee, de modo que no puede llevar marca ni entrada propia.
+  redactado_por: subagente redactor de la ronda R4 (Fable 5.2)
+  verificado_por: sesión maestra de la ronda R4, que comprobó la frase contra la instantánea el 2026-11-13
+  fecha: 2026-11-13

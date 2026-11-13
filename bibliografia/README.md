@@ -57,7 +57,10 @@ alta a mano en Zotero copiando la portada, y se anota `origen: portada`.
 Los localizadores usan el vocabulario cerrado de la norma común de los cuatro cursos
 (`Vault/Estandar/Capa de fuentes.md`): `§3.4` · `cap. 3` · `p. 15` · `pp. 15–17` · `tabla 3.1` ·
 `fig. 3.1` · `ec. 3.3` · `ejemplo 3.2` · `ejercicio 3.12` · `problema 2.28` · `ap. A`; varios se
-separan con «; ». Las citas de segunda mano (`data-via`) de esa norma aún no están implementadas
+separan con «; ». Una página de ayuda de R no tiene secciones numeradas: su localizador es el
+nombre de la sección (`§Description` · `§Usage` · `§Arguments` · `§Format` · `§Details` · `§Value` ·
+`§Source` · `§References`), una extensión local de ese vocabulario que el auditor acota igual que
+una sección de FPP3 (ronda R4 del capítulo 1). Las citas de segunda mano (`data-via`) de esa norma aún no están implementadas
 aquí: no se ha necesitado ninguna.
 
 Veredictos: `respaldada` · `con-matiz` (la fuente apoya la idea pero difiere en un detalle; la

@@ -11,6 +11,11 @@ registro de contraste dice haber leído.
 
 Dos clases de fuente:
 
+  · PDF escaneado          → `--ocr`: pdftoppm a 300 ppp y tesseract por página.
+                             El texto sale con erratas de reconocimiento, así que una cita
+                             literal correcta puede no coincidir: hay que copiarla del texto
+                             extraído y preferir tramos que hayan salido limpios. Queda
+                             anotado en `ejemplares.yml` como `texto_por: ocr`.
   · PDF adjunto en Zotero  → `pdftotext -layout`, un archivo por página:
                              bibliografia/_local/texto/<clave>/p0001.txt
                              Si la obra no tiene PDF adjunto en Zotero, se
@@ -21,6 +26,12 @@ Dos clases de fuente:
                              el del ejemplar registrado.
   · página web (FPP3)      → instantánea en texto plano:
                              bibliografia/_local/web/<clave>/<nombre>.txt
+  · ayuda de R             → `--doc CLAVE TEMA`: la página de ayuda tal como la
+                             imprime R, en el mismo sitio que una instantánea web. Queda
+                             anotada con la versión de R y de su paquete, no con una URL:
+                             la ayuda cambia de una versión a otra, y por eso la versión
+                             es la referencia (el capítulo 4 ya se topó con que
+                             `?AirPassengers` cita 1976 en R 4.3.3 y 1994 en R 4.6).
 
 `bibliografia/_local/` está ignorado por git: el repo es público y los libros
 tienen derechos de autor. Lo que SÍ se versiona es la huella de lo que se leyó:
@@ -37,6 +48,7 @@ Uso:  python3 precalculo/extrae_fuente.py                    # todos los PDF
       python3 precalculo/extrae_fuente.py --clave cryer2008time
       python3 precalculo/extrae_fuente.py --web hyndman2021forecasting \\
               https://otexts.com/fpp3/stlfeatures.html
+      python3 precalculo/extrae_fuente.py --doc rcore2026r stl
       python3 precalculo/extrae_fuente.py --web CLAVE URL --desde archivo.html
               (si la página no abre desde aquí: se guarda con el navegador)
 
@@ -108,16 +120,42 @@ def pdf_de(clave: str, obra: dict) -> pathlib.Path | None:
     return ruta if ruta.is_file() else None
 
 
-def extrae_pdf(clave: str, pdf: pathlib.Path) -> dict | None:
+def ocr(pdf: pathlib.Path, paginas: int) -> list[str]:
+    """Texto por página de un PDF sin capa de texto, con tesseract."""
+    import tempfile
+    hojas = []
+    with tempfile.TemporaryDirectory() as tmp:
+        subprocess.run(["pdftoppm", "-r", "300", "-gray", "-png", str(pdf), f"{tmp}/p"], check=True)
+        for n in range(1, paginas + 1):
+            img = sorted(pathlib.Path(tmp).glob(f"p-*{n}.png"))
+            img = [i for i in pathlib.Path(tmp).glob("p-*.png") if int(i.stem.split("-")[-1]) == n]
+            if not img:
+                hojas.append("")
+                continue
+            r = subprocess.run(["tesseract", str(img[0]), "-", "-l", "eng", "--psm", "6"],
+                               capture_output=True)
+            hojas.append(r.stdout.decode("utf-8", "replace"))
+            print(f"       OCR página {n}/{paginas}", end="\r", flush=True)
+    print()
+    return hojas
+
+
+def extrae_pdf(clave: str, pdf: pathlib.Path, con_ocr: bool = False) -> dict | None:
     info = subprocess.run(["pdfinfo", str(pdf)], capture_output=True, text=True).stdout
     paginas = int(re.search(r"^Pages:\s+(\d+)", info, re.M).group(1))
-    texto = subprocess.run(
-        ["pdftotext", "-layout", "-enc", "UTF-8", str(pdf), "-"],
-        capture_output=True, check=True,
-    ).stdout.decode("utf-8", "replace")
-    hojas = texto.split("\f")
-    if hojas and not hojas[-1].strip():
-        hojas = hojas[:-1]
+    if con_ocr:
+        hojas = ocr(pdf, paginas)
+    else:
+        texto = subprocess.run(
+            ["pdftotext", "-layout", "-enc", "UTF-8", str(pdf), "-"],
+            capture_output=True, check=True,
+        ).stdout.decode("utf-8", "replace")
+        hojas = texto.split("\f")
+        if hojas and not hojas[-1].strip():
+            hojas = hojas[:-1]
+        if not any(h.strip() for h in hojas):
+            print(f"AVISO  {clave}: el PDF no tiene capa de texto; hace falta --ocr")
+            return None
     destino = LOCAL / "texto" / clave
     destino.mkdir(parents=True, exist_ok=True)
     for viejo in destino.glob("p*.txt"):
@@ -134,10 +172,11 @@ def extrae_pdf(clave: str, pdf: pathlib.Path) -> dict | None:
         "sha256": huella,
         "paginas": paginas,
         "paginas_sin_texto": vacias,
+        "texto_por": "ocr" if con_ocr else "pdftotext",
     }
 
 
-def extrae_pdfs(solo: str | None) -> int:
+def extrae_pdfs(solo: str | None, con_ocr: bool = False) -> int:
     obras = candado()
     ruta = BIB / "ejemplares.yml"
     previo = lee_yaml(ruta)
@@ -152,7 +191,7 @@ def extrae_pdfs(solo: str | None) -> int:
             if clave in previo:               # el PDF no está aquí, pero la ficha se conserva
                 nuevo[clave] = previo[clave]
             continue
-        ficha = extrae_pdf(clave, pdf)
+        ficha = extrae_pdf(clave, pdf, con_ocr=con_ocr)
         for campo in MANUALES:
             ficha[campo] = (previo.get(clave) or {}).get(campo)
         nuevo[clave] = ficha
@@ -164,6 +203,51 @@ def extrae_pdfs(solo: str | None) -> int:
         "# el guion los respeta.\n"
     ))
     print(f"OK     bibliografia/ejemplares.yml: {len(nuevo)} ejemplares")
+    return 0
+
+
+def extrae_doc_r(clave: str, tema: str) -> int:
+    """Instantánea de una página de ayuda de R, con la versión que la imprimió."""
+    if clave not in candado():
+        sys.exit(f"FALLA  «{clave}» no está en la biblioteca del curso")
+    # El paquete se deduce del archivo de ayuda: `environment(get(...))` sirve para
+    # una función pero falla con un conjunto de datos, que no lo es.
+    guion = r"""
+      h <- utils:::.getHelpFile(help("%s"))
+      ruta <- attr(h, "Rdfile")
+      paq <- if (is.null(ruta)) "" else basename(dirname(dirname(ruta)))
+      ver <- if (nzchar(paq)) tryCatch(paste(paq, utils::packageVersion(paq)),
+                                       error = function(e) paq) else ""
+      cat("@@VERSION@@", R.version.string, if (nzchar(ver)) paste("·", ver) else "", "
+")
+      tools::Rd2txt(h, options = list(underline_titles = FALSE))
+    """ % tema
+    r = subprocess.run(["Rscript", "-e", guion], capture_output=True)
+    if r.returncode != 0:
+        sys.exit(f"FALLA  R no pudo imprimir la ayuda de «{tema}»: {r.stderr.decode()[:300]}")
+    salida = r.stdout.decode("utf-8", "replace")
+    if not salida.startswith("@@VERSION@@"):
+        sys.exit(f"FALLA  la salida de R para «{tema}» no trae la línea de versión")
+    version, _, cuerpo = salida.partition("\n")
+    plano = cuerpo.encode("utf-8")
+    destino = LOCAL / "web" / clave
+    destino.mkdir(parents=True, exist_ok=True)
+    (destino / f"{tema}.txt").write_bytes(plano)
+
+    ruta = BIB / "instantaneas.yml"
+    registro = lee_yaml(ruta)
+    registro.setdefault(clave, {})[tema] = {
+        "origen": f"ayuda de R: help({tema})",
+        "version": " ".join(version.replace("@@VERSION@@", "").split()),
+        "consulta": dt.date.today().isoformat(),
+        "sha256": sha256_bytes(plano),
+        "palabras": len(plano.split()),
+    }
+    escribe_yaml(ruta, registro, (
+        "# Páginas web y ayudas de R leídas: de dónde salieron, cuándo y la huella del\n"
+        "# texto guardado. El texto vive en bibliografia/_local/web/ (fuera de git).\n"
+    ))
+    print(f"OK     {clave}/{tema}: {len(plano.split())} palabras · {registro[clave][tema]['version']}")
     return 0
 
 
@@ -211,14 +295,20 @@ def extrae_web(clave: str, url: str, desde: str | None, nombre: str | None) -> i
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[1])
     ap.add_argument("--clave", help="extrae solo el PDF de esta obra")
+    ap.add_argument("--ocr", action="store_true",
+                    help="el PDF es un escaneo sin capa de texto: pdftoppm + tesseract")
     ap.add_argument("--web", nargs=2, metavar=("CLAVE", "URL"),
                     help="guarda la instantánea de una página web")
     ap.add_argument("--desde", help="con --web: HTML ya descargado, en vez de pedirlo")
     ap.add_argument("--nombre", help="con --web: nombre de la instantánea (por defecto, el de la URL)")
+    ap.add_argument("--doc", nargs=2, metavar=("CLAVE", "TEMA"),
+                    help="instantánea de una página de ayuda de R")
     args = ap.parse_args()
+    if args.doc:
+        return extrae_doc_r(args.doc[0], args.doc[1])
     if args.web:
         return extrae_web(args.web[0], args.web[1], args.desde, args.nombre)
-    return extrae_pdfs(args.clave)
+    return extrae_pdfs(args.clave, con_ocr=args.ocr)
 
 
 if __name__ == "__main__":
