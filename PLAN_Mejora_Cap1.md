@@ -13,7 +13,7 @@ prometa lo que no muestra, con gráficas que se lean y con práctica para cada o
 declara. Es la primera aplicación del sistema de [[PLAN_Gestion_Documental]] a un capítulo entero
 y el molde para los otros cinco.
 
-**Estado: aprobado por Javier el 2026-11-10 (D1–D9). R1 y R2 publicadas el 2026-11-11; R3 hecha y corregida el 13, sin publicar; sigue R4.** Lo que sigue es el diagnóstico y el plan;
+**Estado: aprobado por Javier el 2026-11-10 (D1–D9). R1 y R2 publicadas el 2026-11-11; R3 publicada el 13; en curso R3-bis (orden del M7 y dos sesiones de lectura); sigue R4.** Lo que sigue es el diagnóstico y el plan;
 las rondas se registran en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-10
@@ -139,7 +139,7 @@ Cada una lleva mi recomendación; las decide Javier.
   mapa estacional en la prosa, el eje que se reescala en `construye-tu-serie` y por qué el residuo de STL
   es más disperso en los extremos.
 
-- **R3 · estructura — hecha el 2026-11-11, corregida el 13.** El M3 estrena los gráficos de subseries y
+- **R3 · estructura — hecha el 2026-11-11, corregida y PUBLICADA el 13** (`main` `7fde824` · gh-pages `357981f`). El M3 estrena los gráficos de subseries y
   de rezagos que el capítulo prometía; el simulador de Loess pasa a la convención de `stl()`; STL se
   enuncia en cinco pasos y su simulador deja ver la flexibilidad y la robustez (ocho variantes calculadas
   en R); el M6 enseña el resultado antes que los símbolos y dibuja la aditiva; el M8 recibe la lectura en
@@ -150,6 +150,13 @@ Cada una lleva mi recomendación; las decide Javier.
   antes de que aparezca la primera descomposición STL, y los módulos 6 y 7 se le hacen de unos 30 min
   cada uno. Las dos cosas piden una decisión de Javier (reordenar el M7 o partirlo), y el capítulo
   declara ahora 129 min frente a los 88 de antes de la Fase 1.
+
+- **R3-bis · el M7 y la carga — decidido por Javier el 2026-11-13.** Dos encargos que salieron de la
+  relectura del estudiante: (a) **reordenar dentro del M7**, para que la descomposición STL completa y
+  su para qué vayan antes que Loess, los pesos y la robustez, sin partir el módulo ni renumerar; (b)
+  **marcar dos sesiones de lectura**, con el corte tras el M5 (descripción | descomposición), como señal
+  en la portada y en el índice del capítulo, sin tocar contenido. Javier descartó recortar párrafos: el
+  criterio del curso dice que manda la comprensión y el tamaño no es criterio.
 
 ## 5. Criterios de aceptación
 
