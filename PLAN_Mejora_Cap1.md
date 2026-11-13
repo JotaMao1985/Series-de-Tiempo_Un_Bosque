@@ -13,7 +13,7 @@ prometa lo que no muestra, con gráficas que se lean y con práctica para cada o
 declara. Es la primera aplicación del sistema de [[PLAN_Gestion_Documental]] a un capítulo entero
 y el molde para los otros cinco.
 
-**Estado: aprobado por Javier el 2026-11-10 (D1–D9). R1 y R2 publicadas el 2026-11-11; R3 publicada el 13; en curso R3-bis (orden del M7 y dos sesiones de lectura); sigue R4.** Lo que sigue es el diagnóstico y el plan;
+**Estado: aprobado por Javier el 2026-11-10 (D1–D9). R1 y R2 publicadas el 2026-11-11; R3 y R3-bis publicadas el 13; sigue R4.** Lo que sigue es el diagnóstico y el plan;
 las rondas se registran en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-10
@@ -151,12 +151,18 @@ Cada una lleva mi recomendación; las decide Javier.
   cada uno. Las dos cosas piden una decisión de Javier (reordenar el M7 o partirlo), y el capítulo
   declara ahora 129 min frente a los 88 de antes de la Fase 1.
 
-- **R3-bis · el M7 y la carga — decidido por Javier el 2026-11-13.** Dos encargos que salieron de la
+- **R3-bis · el M7 y la carga — hecha y PUBLICADA el 2026-11-13** (`main` `da3dfee` · gh-pages `7f0b2bb`). Decidida por Javier ese día. Dos encargos que salieron de la
   relectura del estudiante: (a) **reordenar dentro del M7**, para que la descomposición STL completa y
   su para qué vayan antes que Loess, los pesos y la robustez, sin partir el módulo ni renumerar; (b)
   **marcar dos sesiones de lectura**, con el corte tras el M5 (descripción | descomposición), como señal
   en la portada y en el índice del capítulo, sin tocar contenido. Javier descartó recortar párrafos: el
   criterio del curso dice que manda la comprensión y el tamaño no es criterio.
+
+  El M7 quedó: qué es STL y sus cinco pasos · las tres respuestas a la vista, con el simulador y el
+  código · por dentro (ajuste local, pesos) · la versión robusta. Se comprobó palabra por palabra que
+  ningún módulo perdió texto. A criterio de Javier quedan dos cosas menores: los rótulos «Describir» y
+  «Descomponer» los propuso la sesión, y por debajo de 768 px no hay índice lateral, así que en el
+  teléfono la señal de las dos sesiones es solo la frase de la apertura.
 
 ## 5. Criterios de aceptación
 
