@@ -1,0 +1,29 @@
+[
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html#modulo-7",
+  "ancho": 1200,
+  "pasos": [
+   {
+    "js": "(async () => { const out=[]; for (let n=1;n<=9;n++){ loadModule(n); await new Promise(r=>setTimeout(r,1100)); const W=1200; const mc=mainContent; const lim=mc.closest('main').getBoundingClientRect().right; const mal=[...mc.querySelectorAll('*')].filter(el=>{const r=el.getBoundingClientRect(); if(!r.width||r.right<=Math.min(W,lim)+1) return false; let p=el.parentElement; while(p&&p!==document.body){ const o=getComputedStyle(p).overflowX; if(o!=='visible'&&p!==mc.closest('main')) return false; p=p.parentElement;} return true;}).map(el=>el.tagName+'.'+String(el.className).slice(0,30)+':'+Math.round(el.getBoundingClientRect().right)); out.push([n, document.documentElement.scrollWidth, mc.querySelectorAll('.katex-error').length, mal.slice(0,4)]); } return out; })()"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html#modulo-7",
+  "ancho": 800,
+  "pasos": [
+   {
+    "js": "(async () => { const out=[]; for (let n=1;n<=9;n++){ loadModule(n); await new Promise(r=>setTimeout(r,1100)); const W=800; const mc=mainContent; const lim=mc.closest('main').getBoundingClientRect().right; const mal=[...mc.querySelectorAll('*')].filter(el=>{const r=el.getBoundingClientRect(); if(!r.width||r.right<=Math.min(W,lim)+1) return false; let p=el.parentElement; while(p&&p!==document.body){ const o=getComputedStyle(p).overflowX; if(o!=='visible'&&p!==mc.closest('main')) return false; p=p.parentElement;} return true;}).map(el=>el.tagName+'.'+String(el.className).slice(0,30)+':'+Math.round(el.getBoundingClientRect().right)); out.push([n, document.documentElement.scrollWidth, mc.querySelectorAll('.katex-error').length, mal.slice(0,4)]); } return out; })()"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html#modulo-7",
+  "ancho": 375,
+  "pasos": [
+   {
+    "js": "(async () => { const out=[]; for (let n=1;n<=9;n++){ loadModule(n); await new Promise(r=>setTimeout(r,1100)); const W=375; const mc=mainContent; const lim=mc.closest('main').getBoundingClientRect().right; const mal=[...mc.querySelectorAll('*')].filter(el=>{const r=el.getBoundingClientRect(); if(!r.width||r.right<=Math.min(W,lim)+1) return false; let p=el.parentElement; while(p&&p!==document.body){ const o=getComputedStyle(p).overflowX; if(o!=='visible'&&p!==mc.closest('main')) return false; p=p.parentElement;} return true;}).map(el=>el.tagName+'.'+String(el.className).slice(0,30)+':'+Math.round(el.getBoundingClientRect().right)); out.push([n, document.documentElement.scrollWidth, mc.querySelectorAll('.katex-error').length, mal.slice(0,4)]); } return out; })()"
+   }
+  ]
+ }
+]
