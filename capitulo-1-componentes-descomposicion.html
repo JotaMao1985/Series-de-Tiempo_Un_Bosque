@@ -2851,9 +2851,9 @@
 
       <div class="definition">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: serie de tiempo (<em>time series</em>)</h4>
-        <p>Una <strong>serie de tiempo</strong> es una sucesión de observaciones $y_1, y_2, \ldots, y_T$ de una misma
-          variable, registradas en instantes de tiempo ordenados y, por lo general, equiespaciados (cada mes, cada
-          día, cada hora). El subíndice $t$ indica el orden temporal; $T$ es el número total de observaciones.</p>
+        <p><span data-afirma="c1-m1-01">Una <strong>serie de tiempo</strong> es una sucesión de observaciones $y_1, y_2, \ldots, y_T$ de una misma
+          variable, registradas en instantes de tiempo ordenados y, por lo general, equiespaciados: cada mes, cada
+          día, cada hora <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§1.4"><a href="#ref-m1-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §1.4)</a></cite></span>. El subíndice $t$ indica el orden temporal; $T$ es el número total de observaciones.</p>
       </div>
 
       <p>La diferencia esencial con los datos de <em>corte transversal</em> (una muestra de individuos observados una
@@ -2874,8 +2874,8 @@
 
       <div class="simulador" data-simulador="serie-airpassengers">
         <h4><i class="fas fa-chart-line" aria-hidden="true"></i> La serie <code>AirPassengers</code></h4>
-        <p class="simulador-intro">Pasajeros mensuales de aerolíneas internacionales, en miles
-          (1949–1960). Es la serie clásica de este curso: se ve una <em>tendencia</em> creciente y un patrón que se
+        <p class="simulador-intro"><span data-afirma="c1-m1-04">Pasajeros mensuales de aerolíneas internacionales, en miles,
+          de 1949 a 1960 <cite class="cita" data-ref="rcoreteam2026r" data-loc="§Description; §Format"><a href="#ref-m1-rcoreteam2026r" title="R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/">(R Core Team, 2026, §Description; §Format)</a></cite>. Es la serie clásica de este curso</span>: se ve una <em>tendencia</em> creciente y un patrón que se
           repite cada 12 meses cuya amplitud aumenta con el nivel.</p>
         <div class="grafico-wrapper">
           <canvas aria-label="AirPassengers, en miles de pasajeros al mes, de 1949 a 1960: la serie sube de forma sostenida y repite cada doce meses un pico a mitad de año, más alto cuanto mayor es el nivel" role="img"></canvas>
@@ -2888,6 +2888,16 @@
           estructura es el primer paso antes de alimentar cualquier modelo de pronóstico o de aprendizaje automático.
         </p>
       </div>
+
+      <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
+        <h4>Fuentes citadas en este módulo</h4>
+        <!--FUENTES-MODULO:inicio-->
+        <ul class="lista-fuentes">
+          <li id="ref-m1-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+          <li id="ref-m1-rcoreteam2026r">R Core Team. (2026). <em>R: A Language and Environment for Statistical Computing</em> (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. <a target="_blank" rel="noopener" href="https://www.R-project.org/">https://www.R-project.org/</a></li>
+        </ul>
+        <!--FUENTES-MODULO:fin-->
+      </aside>
     </div>
   </template>
 
@@ -3105,7 +3115,8 @@ as_tsibble(ventas, index = mes, key = tienda)   # las cinco series, cada una la 
       <div class="note">
         <p><strong>Cómo leer el abanico:</strong> en el gráfico estacional, líneas casi paralelas indican
           estacionalidad estable; un abanico que se abre —como el de <code>AirPassengers</code>— indica que la
-          estacionalidad crece con el nivel de la serie. Esa forma es la señal de un modelo <em>multiplicativo</em>,
+          estacionalidad crece con el nivel de la serie. <span data-afirma="c1-m3-08">Esa forma es la señal de un modelo <em>multiplicativo</em>
+          <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.2"><a href="#ref-m3-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §3.2)</a></cite></span>,
           y de aquí en adelante reaparece dos veces: el <strong>Módulo 4</strong> deja de fiarse del ojo y mide
           cuánto se abre el abanico, y el <strong>Módulo 6</strong> convierte esa medida en la primera decisión de
           la descomposición.</p>
@@ -3244,6 +3255,15 @@ plt.show()</code></pre>
           serie se parece a sí misma doce meses atrás, y el Capítulo 2 le pondrá número. Ninguno de los cuatro estima
           nada todavía: señalan lo que habrá que estimar.</p>
       </div>
+
+      <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
+        <h4>Fuentes citadas en este módulo</h4>
+        <!--FUENTES-MODULO:inicio-->
+        <ul class="lista-fuentes">
+          <li id="ref-m3-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+        </ul>
+        <!--FUENTES-MODULO:fin-->
+      </aside>
     </div>
   </template>
 
@@ -3270,26 +3290,29 @@ plt.show()</code></pre>
 
       <p>Los patrones que revelan esos gráficos tienen nombre, y son cuatro. Conviene pensar una serie como la
         superposición de <strong>componentes no observables</strong>: no se miden por separado, se estiman.</p>
-      <ul>
-        <li><strong>Tendencia</strong> ($T_t$): movimiento de largo plazo, creciente o decreciente.</li>
+      <ul data-afirma="c1-m4-02">
+        <li><strong>Tendencia</strong> ($T_t$): movimiento de largo plazo, creciente o decreciente
+          <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§2.3"><a href="#ref-m4-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §2.3)</a></cite>.</li>
         <li><strong>Estacionalidad</strong> ($S_t$): patrón que se repite con período <em>fijo y conocido</em> (12
           meses, 7 días…).</li>
-        <li><strong>Ciclo</strong> ($C_t$): oscilaciones de duración variable y no fija (p. ej. ciclos económicos de
-          varios años).</li>
+        <li><strong>Ciclo</strong> ($C_t$): oscilaciones de duración variable y no fija (p. ej. los ciclos
+          económicos).</li>
         <li><strong>Ruido</strong> ($R_t$): la parte irregular e impredecible que queda al final.</li>
       </ul>
 
       <div class="warning">
         <p><strong>Error común — ciclo ≠ estacionalidad.</strong> La estacionalidad tiene período fijo y conocido (si
-          los datos son mensuales, se repite cada 12). El ciclo sube y baja con duración variable y desconocida. Muchos
-          textos agrupan tendencia y ciclo en un solo término <em>tendencia-ciclo</em> $T_t$.</p>
+          los datos son mensuales, se repite cada 12). El ciclo sube y baja con duración variable y desconocida. <span data-afirma="c1-m4-06">Al
+          descomponer una serie suele agruparse tendencia y ciclo en un solo componente
+          <em>tendencia-ciclo</em> $T_t$, al que a menudo se llama simplemente tendencia
+          <cite class="cita" data-ref="hyndman2021forecasting" data-loc="cap. 3"><a href="#ref-m4-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, cap. 3)</a></cite></span>.</p>
       </div>
 
       <p>Esa fusión no es pereza de notación, y explica por qué el ciclo casi no volverá a aparecer en el capítulo.
-        Para reconocer un ciclo hacen falta muchas repeticiones, y <code>AirPassengers</code> cubre doce años: las
+        Para reconocer un ciclo hacen falta muchas repeticiones, y <code>AirPassengers</code> cubre doce años: <span data-afirma="c1-m4-07">las
         fluctuaciones cíclicas no tienen una duración fija y suelen durar al menos dos años, de modo que en una serie
         tan corta caben pocas, y un ciclo largo del que solo se ve un tramo es indistinguible de una tendencia que
-        sube. Por eso los métodos prácticos —la descomposición clásica y STL de los módulos siguientes incluidas— no separan
+        sube <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§2.3"><a href="#ref-m4-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §2.3)</a></cite></span>. Por eso los métodos prácticos —la descomposición clásica y STL de los módulos siguientes incluidas— no separan
         $T_t$ de $C_t$: estiman un único componente <strong>tendencia-ciclo</strong> que absorbe a los dos. Cuando en
         adelante se hable de «la tendencia», será en realidad esa mezcla.</p>
 
@@ -3301,13 +3324,15 @@ plt.show()</code></pre>
 
       <h3>Suma o producto</h3>
 
-      <p>Los componentes se combinan de forma <strong>aditiva</strong> o <strong>multiplicativa</strong>:</p>
+      <p><span data-afirma="c1-m4-10">Los componentes se combinan de forma <strong>aditiva</strong> o <strong>multiplicativa</strong>
+        <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.2"><a href="#ref-m4-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §3.2)</a></cite></span>:</p>
       <div class="formula">
         $$\underbrace{y_t = T_t + S_t + R_t}_{\text{aditivo}} \qquad\qquad
         \underbrace{y_t = T_t \times S_t \times R_t}_{\text{multiplicativo}}$$
       </div>
-      <p>El modelo aditivo conviene cuando la amplitud estacional —o la variación alrededor de la tendencia— <em>no
-        depende del nivel</em> de la serie; el multiplicativo, cuando es <em>proporcional al nivel</em>.</p>
+      <p><span data-afirma="c1-m4-11">El modelo aditivo conviene cuando la amplitud estacional —o la variación alrededor de la tendencia— <em>no
+        depende del nivel</em> de la serie; el multiplicativo, cuando es <em>proporcional al nivel</em>
+        <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.2"><a href="#ref-m4-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §3.2)</a></cite></span>.</p>
 
       <p>Escrita así, la diferencia es un signo. Vista, es otra cosa: dos series pueden compartir exactamente la
         misma tendencia y exactamente el mismo patrón estacional y acabar teniendo formas distintas, según se sumen
@@ -3462,6 +3487,15 @@ plt.show()</code></pre>
       <p>Nombrar los componentes, sin embargo, no es separarlos. En el simulador vienen etiquetados porque se
         construyeron uno a uno; en una serie real se observa solo la suma, y hay que recuperar las partes a partir de
         ella. De eso trata el resto del capítulo, empezando por el más accesible de los cuatro: la tendencia.</p>
+
+      <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
+        <h4>Fuentes citadas en este módulo</h4>
+        <!--FUENTES-MODULO:inicio-->
+        <ul class="lista-fuentes">
+          <li id="ref-m4-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+        </ul>
+        <!--FUENTES-MODULO:fin-->
+      </aside>
     </div>
   </template>
 
@@ -3489,14 +3523,16 @@ plt.show()</code></pre>
       <p>En el gráfico de <code>AirPassengers</code>, tendencia, estacionalidad y ruido aparecen a la vez, y la
         tendencia queda tapada por el vaivén anual y por las sacudidas. Para verla hay que apagar lo demás, y la manera más simple de
         conseguirlo es promediar cada punto con sus vecinos: lo que se pone de acuerdo sobrevive al promedio, y lo que
-        oscila se cancela. Eso es una <strong>media móvil</strong> de orden $m$. Para $m$ impar:</p>
+        oscila se cancela. <span data-afirma="c1-m5-01">Eso es una <strong>media móvil</strong> de orden $m$
+        <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.3"><a href="#ref-m5-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §3.3)</a></cite>. Para $m$ impar</span>:</p>
       <div class="formula">
         $$\hat{T}_t = \frac{1}{m} \sum_{j=-k}^{k} y_{t+j}, \qquad m = 2k+1$$
       </div>
       <p>Con $m$ par —el caso de los datos mensuales, donde interesa $m=12$— aparece un estorbo: una ventana de doce
         meses <em>no tiene centro</em>. Colocada entre junio y julio, la media queda a medio camino entre dos meses y
-        no hay fecha a la que asignarla. La salida es promediar dos ventanas consecutivas, la de enero a diciembre y
-        la de febrero a enero, lo que en la práctica equivale a usar trece meses con los dos extremos a media ración.
+        no hay fecha a la que asignarla. <span data-afirma="c1-m5-02">La salida es promediar dos ventanas consecutivas, la de enero a diciembre y
+        la de febrero a enero, lo que en la práctica equivale a usar trece meses con los dos extremos a media ración
+        <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.3"><a href="#ref-m5-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §3.3)</a></cite></span>.
         Es la <strong>media móvil centrada</strong> $2\times m$:</p>
 
       <div class="formula">
@@ -3594,6 +3630,15 @@ plt.legend(); plt.show()</code></pre>
       <p>Ese cálculo, tan modesto que cabe en un par de líneas, es más importante de lo que parece: <strong>ya es el primer
         paso de un método completo</strong>. Con la tendencia estimada, quitarla de la serie deja al descubierto lo que
         faltaba —la estacionalidad y el residuo—, y ese encadenamiento tiene nombre propio.</p>
+
+      <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
+        <h4>Fuentes citadas en este módulo</h4>
+        <!--FUENTES-MODULO:inicio-->
+        <ul class="lista-fuentes">
+          <li id="ref-m5-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+        </ul>
+        <!--FUENTES-MODULO:fin-->
+      </aside>
     </div>
   </template>
 
@@ -3618,8 +3663,8 @@ plt.legend(); plt.show()</code></pre>
         </div>
       </div>
 
-      <p>Ese encadenamiento se llama <strong>descomposición clásica</strong>, y arranca justo donde terminó el módulo
-        anterior: con una media móvil del orden del período. Lo que no se aprecia al enumerar sus pasos en fila es que
+      <p><span data-afirma="c1-m6-20">Ese encadenamiento se llama <strong>descomposición clásica</strong>, y arranca justo donde terminó el módulo
+        anterior: con una media móvil del orden del período <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.3; §3.4"><a href="#ref-m6-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §3.3; §3.4)</a></cite></span>. Lo que no se aprecia al enumerar sus pasos en fila es que
         no forman una receta sino un <em>bucle</em>; el último de ellos —mirar el residuo— es el que dicta si hay que
         volver atrás, y a cuál de los anteriores. El recorrido siguiente los presenta uno a uno, cada cual con la señal
         que obliga a retroceder.</p>
@@ -3691,7 +3736,7 @@ plt.legend(); plt.show()</code></pre>
         <div class="ciclo-panel" id="ciclo-descomposicion-estacionalidad" role="tabpanel" aria-labelledby="ciclo-descomposicion-estacionalidad-pestana" hidden>
           <div class="ciclo-campo">
             <span class="ciclo-etiqueta">Qué haces</span>
-            <p>Quitar la tendencia —restando en el aditivo, dividiendo en el multiplicativo— deja la <strong>serie sin tendencia</strong>: en ella ya solo quedan estacionalidad y ruido. Al promediar todos los eneros de esa serie el ruido se cancela y sobrevive el índice de enero, y así con los doce meses. Esos índices son <strong>fijos</strong> para toda la serie: esa es la limitación central del método clásico.</p>
+            <p><span data-afirma="c1-m6-09">Quitar la tendencia —restando en el aditivo, dividiendo en el multiplicativo— deja la <strong>serie sin tendencia</strong>: en ella ya solo quedan estacionalidad y ruido. Al promediar todos los eneros de esa serie el ruido se cancela y sobrevive el índice de enero, y así con los doce meses <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.4"><a href="#ref-m6-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §3.4)</a></cite></span>. Esos índices son <strong>fijos</strong> para toda la serie: esa es la limitación central del método clásico.</p>
           </div>
           <div class="ciclo-campo">
             <span class="ciclo-etiqueta">Con qué</span>
@@ -3851,59 +3896,61 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
         $\bar s = \frac{1}{m}\sum_{j=1}^{m} \tilde s_j$. El paso 1 no aparece en la tabla porque no se calcula: se
         decide, y es lo que separa sus dos columnas.</p>
 
-      <table>
-        <caption class="sr-only">Los cuatro pasos de la descomposición clásica escritos en notación, comparando el
-          modelo aditivo con el multiplicativo</caption>
-        <thead>
-          <tr>
-            <th scope="col">Paso</th>
-            <th scope="col">Aditivo · $y_t = T_t + S_t + R_t$</th>
-            <th scope="col">Multiplicativo · $y_t = T_t \times S_t \times R_t$</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row">2 · Tendencia</th>
-            <td colspan="2">$\hat{T}_t$, la media móvil centrada del Módulo 5: la $2\times m$ si $m$ es par, la de
-              orden $m$ si es impar. Es el único paso que no depende de la escala.</td>
-          </tr>
-          <tr>
-            <th scope="row">3a · Serie sin tendencia</th>
-            <td>$d_t = y_t - \hat{T}_t$</td>
-            <td>$d_t = y_t \,/\, \hat{T}_t$</td>
-          </tr>
-          <tr>
-            <th scope="row">3b · Índice bruto</th>
-            <td colspan="2">$\tilde s_k = \dfrac{1}{n_k} \sum_{t \in J_k} d_t$ &nbsp;— esto es «promediar todos los
-              eneros». La fórmula es idéntica en las dos columnas; lo que cambia es qué se está promediando.</td>
-          </tr>
-          <tr>
-            <th scope="row">3c · Normalización</th>
-            <td>$\hat{S}_k = \tilde s_k - \bar s$</td>
-            <td>$\hat{S}_k = \tilde s_k \,/\, \bar s$</td>
-          </tr>
-          <tr>
-            <th scope="row">3d · Índice repetido</th>
-            <td colspan="2">$\hat{S}_t = \hat{S}_{k(t)}$ &nbsp;— el mismo valor cada año. Ahí está, en un subíndice,
-              toda la rigidez del método clásico.</td>
-          </tr>
-          <tr>
-            <th scope="row">4 · Residuo</th>
-            <td>$\hat{R}_t = y_t - \hat{T}_t - \hat{S}_t$</td>
-            <td>$\hat{R}_t = y_t \,/\, (\hat{T}_t \hat{S}_t)$</td>
-          </tr>
-          <tr>
-            <th scope="row">Condición resultante</th>
-            <td>$\sum_{k=1}^{m} \hat{S}_k = 0$</td>
-            <td>$\sum_{k=1}^{m} \hat{S}_k = m$ &nbsp;(media 1)</td>
-          </tr>
-        </tbody>
-      </table>
+      <div data-afirma="c1-m6-13">
+        <table>
+          <caption class="sr-only">Los cuatro pasos de la descomposición clásica escritos en notación, comparando el
+            modelo aditivo con el multiplicativo</caption>
+          <thead>
+            <tr>
+              <th scope="col">Paso</th>
+              <th scope="col">Aditivo · $y_t = T_t + S_t + R_t$</th>
+              <th scope="col">Multiplicativo · $y_t = T_t \times S_t \times R_t$</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">2 · Tendencia</th>
+              <td colspan="2">$\hat{T}_t$, la media móvil centrada del Módulo 5: la $2\times m$ si $m$ es par, la de
+                orden $m$ si es impar. Es el único paso que no depende de la escala.</td>
+            </tr>
+            <tr>
+              <th scope="row">3a · Serie sin tendencia</th>
+              <td>$d_t = y_t - \hat{T}_t$</td>
+              <td>$d_t = y_t \,/\, \hat{T}_t$</td>
+            </tr>
+            <tr>
+              <th scope="row">3b · Índice bruto</th>
+              <td colspan="2">$\tilde s_k = \dfrac{1}{n_k} \sum_{t \in J_k} d_t$ &nbsp;— esto es «promediar todos los
+                eneros». La fórmula es idéntica en las dos columnas; lo que cambia es qué se está promediando.</td>
+            </tr>
+            <tr>
+              <th scope="row">3c · Normalización</th>
+              <td>$\hat{S}_k = \tilde s_k - \bar s$</td>
+              <td>$\hat{S}_k = \tilde s_k \,/\, \bar s$</td>
+            </tr>
+            <tr>
+              <th scope="row">3d · Índice repetido</th>
+              <td colspan="2">$\hat{S}_t = \hat{S}_{k(t)}$ &nbsp;— el mismo valor cada año. Ahí está, en un subíndice,
+                toda la rigidez del método clásico.</td>
+            </tr>
+            <tr>
+              <th scope="row">4 · Residuo</th>
+              <td>$\hat{R}_t = y_t - \hat{T}_t - \hat{S}_t$</td>
+              <td>$\hat{R}_t = y_t \,/\, (\hat{T}_t \hat{S}_t)$</td>
+            </tr>
+            <tr>
+              <th scope="row">Condición resultante</th>
+              <td>$\sum_{k=1}^{m} \hat{S}_k = 0$</td>
+              <td>$\sum_{k=1}^{m} \hat{S}_k = m$ &nbsp;(media 1)</td>
+            </tr>
+          </tbody>
+        </table>
 
-      <p>Leída en horizontal, la tabla dice que los dos modelos <em>se ejecutan igual</em>: los mismos cuatro pasos,
-        en el mismo orden, con las mismas cantidades intermedias. Lo único que cambia es la operación —restar y sumar
-        a la izquierda, dividir y multiplicar a la derecha—, y de ahí se desprende todo lo demás, incluida la
-        condición de la última fila.</p>
+        <p>Leída en horizontal, la tabla dice que los dos modelos <em>se ejecutan igual</em>: los mismos cuatro pasos,
+          en el mismo orden, con las mismas cantidades intermedias <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.4"><a href="#ref-m6-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §3.4)</a></cite>. Lo único que cambia es la operación —restar y sumar
+          a la izquierda, dividir y multiplicar a la derecha—, y de ahí se desprende todo lo demás, incluida la
+          condición de la última fila.</p>
+      </div>
 
       <p>De los cuatro pasos, el que más extraña es el 3c, porque parece un tecnicismo prescindible: los índices ya
         estaban calculados en 3b y el reescalado apenas los mueve. Sin él, sin embargo, los índices quedan
@@ -3960,8 +4007,8 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
       </div>
 
       <div class="note">
-        <p><strong>Los doce índices promedian 1, y no es casualidad:</strong> es la condición de la última fila de la
-          tabla, y el reescalado del paso 3c está puesto justamente para imponerla. Los de este capítulo suman
+        <p><span data-afirma="c1-m6-14"><strong>Los doce índices promedian 1, y no es casualidad:</strong> es la condición de la última fila de la
+          tabla <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.4"><a href="#ref-m6-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §3.4)</a></cite></span>, y el reescalado del paso 3c está puesto justamente para imponerla. Los de este capítulo suman
           12.0001 sobre doce meses —ese 0.0001 es el redondeo a cuatro decimales, no una holgura del método—. En la
           descomposición aditiva la condición equivalente es que <em>sumen</em> 0.</p>
       </div>
@@ -4063,7 +4110,8 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
           <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.4"><a href="#ref-m6-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §3.4)</a></cite></span>. La descomposición STL (Módulo 7) responde
           a las tres, la última solo cuando se activa su opción robusta. <span data-afirma="c1-m6-02">La misma fuente anota una cuarta
           limitación, que este capítulo no desarrolla: la tendencia por media móvil suaviza de más las subidas y las
-          caídas rápidas de la serie. STL la atenúa, porque deja elegir la suavidad de la tendencia</span>.</p>
+          caídas rápidas de la serie <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.4"><a href="#ref-m6-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §3.4)</a></cite>. STL la atenúa, porque deja elegir la suavidad de la tendencia
+          <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.6"><a href="#ref-m6-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §3.6)</a></cite></span>.</p>
       </div>
 
       <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
@@ -4098,9 +4146,12 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
         </div>
       </div>
 
-      <p><span data-afirma="c1-m7-01"><strong>STL</strong> (<em>Seasonal-Trend decomposition using Loess</em>)</span> responde a esas tres debilidades una
+      <p><span data-afirma="c1-m7-01"><strong>STL</strong> (<em>Seasonal and Trend decomposition using Loess</em>;
+        <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.6" data-modo="suelta"><a href="#ref-m7-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">Hyndman y Athanasopoulos, 2021, §3.6</a></cite>)</span> responde a esas tres debilidades una
         por una —a la tercera, solo si se le pide—, y lo consigue cambiando la herramienta de fondo: en lugar de promediar ventanas fijas, ajusta curvas
-        locales por regresión ponderada (Loess). Antes de abrir esa herramienta conviene saber qué hace el método
+        locales por regresión ponderada (Loess). <span data-afirma="c1-m7-24">El artículo que lo introdujo escribe el nombre
+        con guion y «based on»: <em>A Seasonal-Trend Decomposition Procedure Based on Loess</em>
+        <cite class="cita" data-ref="cleveland1990stl" data-loc="p. 3"><a href="#ref-m7-cleveland1990stl" title="Cleveland, R. B., Cleveland, W. S., McRae, J. E., y Terpenning, I. (1990). STL: A Seasonal-Trend Decomposition Procedure Based on Loess. Journal of Official Statistics, 6(1), 3-73. https://www.scb.se/contentassets/ca21efb41fee47d293bbee5bf7be7fb3/stl-a-seasonal-trend-decomposition-procedure-based-on-loess.pdf">(Cleveland et al., 1990, p. 3)</a></cite></span>. Antes de abrir esa herramienta conviene saber qué hace el método
         con ella y verlo funcionar: el módulo enseña primero la descomposición, y deja para después el ajuste
         local, sus pesos y la opción robusta.</p>
 
@@ -4111,22 +4162,25 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
 
       <ol class="derivacion-pasos pasos-metodo">
         <li>
-          <p><strong>Estacionalidad.</strong> La serie se parte en sus doce <strong>subseries</strong> —todos los
+          <p><span data-afirma="c1-m7-15"><strong>Estacionalidad.</strong> La serie se parte en sus doce <strong>subseries</strong> —todos los
             eneros, todos los febreros…: los paneles del gráfico de subseries del Módulo 3— y cada una se suaviza
-            con Loess. La anchura de ese suavizado, en años, es <code>s.window</code>: con un número impar, como
+            con Loess <cite class="cita" data-ref="cleveland1990stl" data-loc="§2.2; §2.3"><a href="#ref-m7-cleveland1990stl" title="Cleveland, R. B., Cleveland, W. S., McRae, J. E., y Terpenning, I. (1990). STL: A Seasonal-Trend Decomposition Procedure Based on Loess. Journal of Official Statistics, 6(1), 3-73. https://www.scb.se/contentassets/ca21efb41fee47d293bbee5bf7be7fb3/stl-a-seasonal-trend-decomposition-procedure-based-on-loess.pdf">(Cleveland et al., 1990, §2.2; §2.3)</a></cite>. La anchura de ese suavizado, en años, es <code>s.window</code>: con un número impar, como
             11, el valor de cada mes puede cambiar de un año a otro; con <code>"periodic"</code> el suavizado se
-            sustituye por la media de la subserie y el patrón queda fijo.</p>
+            sustituye por la media de la subserie <cite class="cita" data-ref="rcoreteam2026r" data-loc="§Details"><a href="#ref-m7-rcoreteam2026r" title="R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/">(R Core Team, 2026, §Details)</a></cite> y el patrón queda fijo
+            <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.6"><a href="#ref-m7-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §3.6)</a></cite></span>.</p>
         </li>
         <li>
-          <p><strong>Tendencia.</strong> A la serie se le quitan esos valores estacionales, y lo que queda —la
-            serie desestacionalizada— se suaviza con Loess. Su anchura, en meses, es <code>t.window</code>.</p>
+          <p><span data-afirma="c1-m7-06"><strong>Tendencia.</strong> A la serie se le quitan esos valores estacionales, y lo que queda —la
+            serie desestacionalizada— se suaviza con Loess. Su anchura, en meses, es <code>t.window</code>
+            <cite class="cita" data-ref="rcoreteam2026r" data-loc="§Arguments"><a href="#ref-m7-rcoreteam2026r" title="R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/">(R Core Team, 2026, §Arguments)</a></cite></span>.</p>
         </li>
         <li>
           <p><strong>Reparto del nivel.</strong> El nivel general se retira del componente estacional y se suma a
             la tendencia: así la estacionalidad oscila alrededor de cero.</p>
         </li>
         <li>
-          <p><strong>Repetición.</strong> Los pasos 1 a 3 se repiten unas pocas veces —dos pasadas, por defecto—.
+          <p><span data-afirma="c1-m7-16"><strong>Repetición.</strong> Los pasos 1 a 3 se repiten unas pocas veces —dos pasadas por defecto, con la opción robusta
+            apagada— <cite class="cita" data-ref="rcoreteam2026r" data-loc="§Usage"><a href="#ref-m7-rcoreteam2026r" title="R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/">(R Core Team, 2026, §Usage)</a></cite></span>.
             En la segunda, el paso 1 ya no parte de la serie tal cual, sino de la serie sin la tendencia recién
             estimada.</p>
         </li>
@@ -4259,10 +4313,10 @@ print((rob.weights &lt; 1e-8).sum())                                           #
         vecinos cercanos y a los lejanos, responde con un <strong>promedio</strong>, y exige la ventana
         <strong>completa y centrada</strong>. Ninguna es obligatoria, y aflojar las tres da otro suavizador.</p>
 
-      <p><strong>Loess</strong> (<em>locally estimated scatterplot smoothing</em>) estima la tendencia <strong>un
+      <p><span data-afirma="c1-m7-05"><strong>Loess</strong> —una regresión local— estima la tendencia <strong>un
         instante a la vez</strong>. Para dar el valor en $t$ no mira la serie entera: toma los puntos más próximos a
         $t$, les ajusta una recta por mínimos cuadrados, se queda con la altura de esa recta justo en $t$ y descarta
-        todo lo demás. Después repite la operación en $t+1$, y así hasta el final. La curva que acaba dibujándose no
+        todo lo demás <cite class="cita" data-ref="cleveland1990stl" data-loc="§2.1"><a href="#ref-m7-cleveland1990stl" title="Cleveland, R. B., Cleveland, W. S., McRae, J. E., y Terpenning, I. (1990). STL: A Seasonal-Trend Decomposition Procedure Based on Loess. Journal of Official Statistics, 6(1), 3-73. https://www.scb.se/contentassets/ca21efb41fee47d293bbee5bf7be7fb3/stl-a-seasonal-trend-decomposition-procedure-based-on-loess.pdf">(Cleveland et al., 1990, §2.1)</a></cite></span>. Después repite la operación en $t+1$, y así hasta el final. La curva que acaba dibujándose no
         es ninguna de esas rectas: es el rastro que dejan sus puntos centrales.</p>
 
       <p>Cuántos vecinos entran en cada ajuste es la anchura de la ventana, o <strong>span</strong>: el
@@ -4270,9 +4324,10 @@ print((rob.weights &lt; 1e-8).sum())                                           #
         resulta de <strong>19 meses</strong>. Lo que se ajusta dentro es una recta (grado 1), no un nivel
         (grado 0).</p>
 
-      <p>Falta la palabra que hace el trabajo de verdad: <em>ponderada</em>. Dentro de la ventana los vecinos no
-        cuentan igual, y de eso se encarga la función <strong>tricúbica</strong>, que vale 1 sobre el punto que se está
-        estimando y cae hasta anularse en el borde:</p>
+      <p>Falta la palabra que hace el trabajo de verdad: <em>ponderada</em>. <span data-afirma="c1-m7-23">Con su nombre completo, Loess es
+        una regresión local ponderada (<em>locally weighted regression</em>; <cite class="cita" data-ref="cleveland1990stl" data-loc="p. 5" data-modo="suelta"><a href="#ref-m7-cleveland1990stl" title="Cleveland, R. B., Cleveland, W. S., McRae, J. E., y Terpenning, I. (1990). STL: A Seasonal-Trend Decomposition Procedure Based on Loess. Journal of Official Statistics, 6(1), 3-73. https://www.scb.se/contentassets/ca21efb41fee47d293bbee5bf7be7fb3/stl-a-seasonal-trend-decomposition-procedure-based-on-loess.pdf">Cleveland et al., 1990, p. 5</a></cite>)</span>. Dentro de la ventana los vecinos no
+        cuentan igual, y <span data-afirma="c1-m7-08">de eso se encarga la función <strong>tricúbica</strong>, que vale 1 sobre el punto que se está
+        estimando y cae hasta anularse en el borde <cite class="cita" data-ref="cleveland1990stl" data-loc="§2.1"><a href="#ref-m7-cleveland1990stl" title="Cleveland, R. B., Cleveland, W. S., McRae, J. E., y Terpenning, I. (1990). STL: A Seasonal-Trend Decomposition Procedure Based on Loess. Journal of Official Statistics, 6(1), 3-73. https://www.scb.se/contentassets/ca21efb41fee47d293bbee5bf7be7fb3/stl-a-seasonal-trend-decomposition-procedure-based-on-loess.pdf">(Cleveland et al., 1990, §2.1)</a></cite></span>:</p>
 
       <div class="formula">
         $$w(u) = \left(1 - |u|^3\right)^3, \qquad u = \frac{\text{distancia a } t}{\text{radio de la ventana}}$$
@@ -4389,8 +4444,8 @@ print((rob.weights &lt; 1e-8).sum())                                           #
                 cuyo interés está justo en llegar bien a los extremos.</p>
             </li>
             <li>
-              <p>Falta de dónde sale la ventana de 19. <code>stl()</code> no la inventa: la deduce del período $m$ y de
-                la ventana estacional, con la regla de tomar el impar inmediato de</p>
+              <p>Falta de dónde sale la ventana de 19. <span data-afirma="c1-m7-10"><code>stl()</code> no la inventa: la deduce del período $m$ y de
+                la ventana estacional, con la regla que da su ayuda <cite class="cita" data-ref="rcoreteam2026r" data-loc="§Arguments"><a href="#ref-m7-rcoreteam2026r" title="R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/">(R Core Team, 2026, §Arguments)</a></cite>: tomar el impar inmediato de</span></p>
               $$t.window = \left\lceil \frac{1.5\,m}{1 - 1.5 / s.window} \right\rceil$$
               <p>Con $m = 12$ y <code>s.window = "periodic"</code>, que en la práctica vale $10n+1 = 1441$, la fracción
                 da 18.02, el techo la sube a <strong>19</strong> y 19 ya es impar. Que la ventana salga del orden de
@@ -4409,7 +4464,8 @@ print((rob.weights &lt; 1e-8).sum())                                           #
                 menos de una diezmillonésima.</p>
             </li>
           </ol>
-          <p class="derivacion-resultado">Los dos grados por defecto responden a dos problemas distintos.
+          <p class="derivacion-resultado"><span data-afirma="c1-m7-07">Los dos grados por defecto —los que trae la línea de uso de <code>stl()</code>
+            <cite class="cita" data-ref="rcoreteam2026r" data-loc="§Usage"><a href="#ref-m7-rcoreteam2026r" title="R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/">(R Core Team, 2026, §Usage)</a></cite>— responden a dos problemas distintos</span>.
             <strong>$t.degree = 1$</strong> porque la tendencia se estima en toda la serie, extremos incluidos, y ahí
             la recta es lo que evita el sesgo. <strong>$s.degree = 0$</strong> porque el componente estacional no se
             ajusta sobre la serie, sino sobre cada <em>subserie</em> de un mismo mes —los doce eneros, los doce
@@ -4420,8 +4476,8 @@ print((rob.weights &lt; 1e-8).sum())                                           #
       <h3>La versión robusta, y por qué no viene puesta</h3>
 
       <p>Las dos primeras respuestas salen solas del ajuste local. La tercera, no. <span data-afirma="c1-m7-02">La resistencia a los atípicos es
-        una <strong>opción aparte</strong>, cuesta un segundo bucle, y en <code>stl()</code> viene
-        <strong>desactivada por defecto</strong></span>.</p>
+        una <strong>opción aparte</strong>, cuesta un segundo bucle <cite class="cita" data-ref="cleveland1990stl" data-loc="§3.3"><a href="#ref-m7-cleveland1990stl" title="Cleveland, R. B., Cleveland, W. S., McRae, J. E., y Terpenning, I. (1990). STL: A Seasonal-Trend Decomposition Procedure Based on Loess. Journal of Official Statistics, 6(1), 3-73. https://www.scb.se/contentassets/ca21efb41fee47d293bbee5bf7be7fb3/stl-a-seasonal-trend-decomposition-procedure-based-on-loess.pdf">(Cleveland et al., 1990, §3.3)</a></cite>, y en <code>stl()</code> viene
+        <strong>desactivada por defecto</strong> <cite class="cita" data-ref="rcoreteam2026r" data-loc="§Usage"><a href="#ref-m7-rcoreteam2026r" title="R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/">(R Core Team, 2026, §Usage)</a></cite></span>.</p>
 
       <p>El mecanismo cabe en una frase: <em>desconfiar de lo que no se supo explicar</em>. Hecha una primera
         descomposición, se miran los residuos. Un punto con un residuo enorme es un punto que el ajuste no ha sabido
@@ -4440,8 +4496,8 @@ print((rob.weights &lt; 1e-8).sum())                                           #
         <div class="derivacion-panel" id="der-robustez" hidden>
           <ol class="derivacion-pasos">
             <li>
-              <p>El recorte no es gradual sino con corte, y lo fija la función <strong>bicuadrada</strong>, medida en
-                unidades de seis veces la mediana de los residuos absolutos:</p>
+              <p><span data-afirma="c1-m7-18">El recorte no es gradual sino con corte, y lo fija la función <strong>bicuadrada</strong>, medida en
+                unidades de seis veces la mediana de los residuos absolutos <cite class="cita" data-ref="cleveland1990stl" data-loc="§2.4"><a href="#ref-m7-cleveland1990stl" title="Cleveland, R. B., Cleveland, W. S., McRae, J. E., y Terpenning, I. (1990). STL: A Seasonal-Trend Decomposition Procedure Based on Loess. Journal of Official Statistics, 6(1), 3-73. https://www.scb.se/contentassets/ca21efb41fee47d293bbee5bf7be7fb3/stl-a-seasonal-trend-decomposition-procedure-based-on-loess.pdf">(Cleveland et al., 1990, §2.4)</a></cite></span>:</p>
               <div class="formula formula-par">
                 <div>$$\rho_t = \begin{cases} \left(1 - u^2\right)^2 & u < 1 \\[2pt] 0 & u \geq 1 \end{cases}$$</div>
                 <div>$$u = \frac{\left|\hat{R}_t\right|}{6\,\operatorname{mediana}\left|\hat{R}\right|}$$</div>
@@ -4497,7 +4553,9 @@ print((rob.weights &lt; 1e-8).sum())                                           #
         <h4>Fuentes citadas en este módulo</h4>
         <!--FUENTES-MODULO:inicio-->
         <ul class="lista-fuentes">
+          <li id="ref-m7-cleveland1990stl">Cleveland, R. B., Cleveland, W. S., McRae, J. E., y Terpenning, I. (1990). STL: A Seasonal-Trend Decomposition Procedure Based on Loess. <em>Journal of Official Statistics</em>, <em>6</em>(1), 3-73. <a target="_blank" rel="noopener" href="https://www.scb.se/contentassets/ca21efb41fee47d293bbee5bf7be7fb3/stl-a-seasonal-trend-decomposition-procedure-based-on-loess.pdf">https://www.scb.se/contentassets/ca21efb41fee47d293bbee5bf7be7fb3/stl-a-seasonal-trend-decomposition-procedure-based-on-loess.pdf</a></li>
           <li id="ref-m7-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+          <li id="ref-m7-rcoreteam2026r">R Core Team. (2026). <em>R: A Language and Environment for Statistical Computing</em> (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. <a target="_blank" rel="noopener" href="https://www.R-project.org/">https://www.R-project.org/</a></li>
         </ul>
         <!--FUENTES-MODULO:fin-->
       </aside>
@@ -4566,12 +4624,14 @@ print((rob.weights &lt; 1e-8).sum())                                           #
 
       <h3>La serie desestacionalizada</h3>
 
-      <p>La primera de las dos cosas da la <strong>serie desestacionalizada</strong> (<em>seasonally adjusted</em>),
+      <p><span data-afirma="c1-m8-02">La primera de las dos cosas da la <strong>serie desestacionalizada</strong> (<em>seasonally adjusted</em>),
         que retira el componente estacional para dejar a la vista tendencia y residuo. En el modelo aditivo,
-        $y_t^{\text{aj}} = y_t - \hat{S}_t$; en el multiplicativo, $y_t^{\text{aj}} = y_t / \hat{S}_t$. Con la STL en
+        $y_t^{\text{aj}} = y_t - \hat{S}_t$; en el multiplicativo, $y_t^{\text{aj}} = y_t / \hat{S}_t$
+        <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.2"><a href="#ref-m8-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §3.2)</a></cite></span>. Con la STL en
         logaritmos las dos son la misma operación: restar $\hat{S}_t$ a $\log y_t$ y deshacer el logaritmo es dividir
-        $y_t$ entre $\exp(\hat{S}_t)$. Para julio de 1955, $364 / 1.2416 = 293.2$ mil pasajeros. Es lo que reportan
-        muchas estadísticas oficiales —desempleo, producción— para comparar meses sin el vaivén estacional.</p>
+        $y_t$ entre $\exp(\hat{S}_t)$. Para julio de 1955, $364 / 1.2416 = 293.2$ mil pasajeros. <span data-afirma="c1-m8-03">Es lo que reportan
+        muchas estadísticas oficiales —las de desempleo, por ejemplo— para comparar meses sin el vaivén estacional
+        <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.2"><a href="#ref-m8-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §3.2)</a></cite></span>.</p>
 
       <div class="simulador" data-simulador="desestacionalizada">
         <h4><i class="fas fa-adjust" aria-hidden="true"></i> Serie observada vs. desestacionalizada</h4>
@@ -5056,7 +5116,9 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         <h3 style="margin-top:1.5rem;"><i class="fas fa-quote-right mr-2" aria-hidden="true"></i>Referencias citadas en este capítulo</h3>
         <!--REFERENCIAS-CAPITULO:inicio-->
         <ul class="lista-fuentes">
+          <li id="ref-cleveland1990stl">Cleveland, R. B., Cleveland, W. S., McRae, J. E., y Terpenning, I. (1990). STL: A Seasonal-Trend Decomposition Procedure Based on Loess. <em>Journal of Official Statistics</em>, <em>6</em>(1), 3-73. <a target="_blank" rel="noopener" href="https://www.scb.se/contentassets/ca21efb41fee47d293bbee5bf7be7fb3/stl-a-seasonal-trend-decomposition-procedure-based-on-loess.pdf">https://www.scb.se/contentassets/ca21efb41fee47d293bbee5bf7be7fb3/stl-a-seasonal-trend-decomposition-procedure-based-on-loess.pdf</a></li>
           <li id="ref-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+          <li id="ref-rcoreteam2026r">R Core Team. (2026). <em>R: A Language and Environment for Statistical Computing</em> (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. <a target="_blank" rel="noopener" href="https://www.R-project.org/">https://www.R-project.org/</a></li>
         </ul>
         <!--REFERENCIAS-CAPITULO:fin-->
       </div>
@@ -8168,7 +8230,7 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
           {
             texto: 'Para comparar períodos consecutivos sin que el patrón anual enmascare el movimiento de fondo.',
             correcta: true,
-            retro: 'Es justo el uso que le dan las cifras oficiales de empleo o PIB: sin ajustar, la caída de enero frente a diciembre diría poco, porque enero siempre cae. Ajustada, la comparación ya no arrastra el patrón anual. Pero la serie ajustada conserva el residuo, así que una subida o una bajada de un mes al siguiente todavía puede engañar: para leer cambios de rumbo conviene mirar la tendencia-ciclo.'
+            retro: 'Es justo el uso que le dan las cifras oficiales de empleo: sin ajustar, la caída de enero frente a diciembre diría poco, porque enero siempre cae. Ajustada, la comparación ya no arrastra el patrón anual. Pero la serie ajustada conserva el residuo, así que una subida o una bajada de un mes al siguiente todavía puede engañar: para leer cambios de rumbo conviene mirar la tendencia-ciclo.'
           },
           {
             texto: 'Para eliminar la tendencia de la serie.',
