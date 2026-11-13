@@ -1,0 +1,174 @@
+===== A. Los pasos de stl(), comprobados ejecutando =====
+win: 1441 19 13  deg: 0 1 1  jump: 145 2 2  inner:  outer: 
+A1. inner = 1: estacional de stl() frente a (media de cada mes - media general):
+          [,1]    [,2]    [,3]    [,4]   [,5]   [,6]   [,7]  [,8]   [,9]   [,10]   [,11]   [,12]
+stl    -0.1408 -0.1528 -0.0125 -0.0337 -0.026 0.1062 0.2202 0.221 0.0865 -0.0416 -0.1753 -0.0513
+medias -0.1408 -0.1528 -0.0125 -0.0337 -0.026 0.1062 0.2202 0.221 0.0865 -0.0416 -0.1753 -0.0513
+    max |dif| = 1.09382e-07 
+A2. inner = 2: estacional de stl() frente a (media de cada mes de la serie sin la tendencia de la pasada 1, centrada):
+          [,1]   [,2]   [,3]   [,4]   [,5]   [,6]   [,7]   [,8]   [,9]   [,10]   [,11]   [,12]
+stl    -0.0916 -0.114 0.0159 -0.014 -0.015 0.1098 0.2164 0.2096 0.0675 -0.0702 -0.2135 -0.1006
+medias -0.0916 -0.114 0.0159 -0.014 -0.015 0.1098 0.2164 0.2096 0.0675 -0.0702 -0.2135 -0.1006
+    max |dif| = 1.85935e-08 
+    (y frente a las medias de la serie SIN quitar tendencia: max |dif| = 0.0492864 )
+A3. suma de los 12 valores estacionales (periodic): 1.4647e-08 
+    s.window = 11: media del componente estacional por anio (debe rondar 0):
+   1949    1950    1951    1952    1953    1954    1955    1956    1957    1958    1959    1960 
+0.00008 0.00010 0.00002 0.00016 0.00055 0.00081 0.00084 0.00070 0.00043 0.00021 0.00019 0.00013 
+A4. max |x - S - T - R| = 0 
+A6. pasadas: sin robust inner/outer = ; con robust = 
+    s.window = 11 -> win: 11 21 13  jump: 2 3 2 
+    s.window = 11 con t.window = 19 frente a 21: max |dif| estacional = 0.00264597  tendencia = 0.00497742 
+
+===== B. Flexibilidad: periodic frente a s.window = 11 (serie original) =====
+Julio estacional, periodic (log): 0.2164  exp: 1.2416 
+Julio estacional, s.window = 11 (log), 1949..1960:
+ [1] 0.1859 0.1880 0.1900 0.1941 0.1987 0.2112 0.2235 0.2318 0.2399 0.2422 0.2447 0.2461
+  en % sobre la tendencia (exp - 1):
+ [1] 20.4 20.7 20.9 21.4 22.0 23.5 25.0 26.1 27.1 27.4 27.7 27.9
+  recorrido (log): 0.0602 
+  con t.window = 19: % 1949 y 1960: 20.6 27.9 
+Recorrido de cada mes con s.window = 11 (log):
+     1      2      3      4      5      6      7      8      9     10     11     12 
+0.0063 0.0666 0.0637 0.0276 0.0117 0.0379 0.0602 0.0544 0.0040 0.0077 0.0036 0.0205 
+Cocientes clasicos de julio (y / media movil), 1949-1959, para comparar el sentido:
+ [1] 1.167 1.206 1.162 1.161 1.172 1.256 1.274 1.253 1.259 1.286 1.272    NA
+
+===== C. Por que el residuo de la STL periodica es mas disperso en los extremos =====
+sd del residuo por anio, periodic:
+  1949   1950   1951   1952   1953   1954   1955   1956   1957   1958   1959   1960 
+0.0370 0.0416 0.0471 0.0372 0.0350 0.0245 0.0171 0.0141 0.0194 0.0407 0.0252 0.0421 
+sd del residuo por anio, s.window = 11:
+  1949   1950   1951   1952   1953   1954   1955   1956   1957   1958   1959   1960 
+0.0195 0.0316 0.0328 0.0326 0.0282 0.0247 0.0156 0.0111 0.0126 0.0286 0.0151 0.0282 
+media de las sd anuales por tramo, periodic:
+primeros_49_53   centro_54_57  ultimos_58_60 
+        0.0396         0.0188         0.0360 
+media de las sd anuales por tramo, s.window = 11:
+primeros_49_53   centro_54_57  ultimos_58_60 
+        0.0289         0.0160         0.0240 
+razon extremos/centro: periodic 2.04  s.window = 11 1.69 
+sd global: periodic 0.0328  s.window = 11 0.0247 
+Residuo de julio por anio, periodic:
+ [1] -0.0601 -0.0182 -0.0574 -0.0565 -0.0493  0.0185  0.0347  0.0176  0.0223  0.0431  0.0342  0.0552
+Residuo de julio por anio, s.window = 11:
+ [1] -0.0284  0.0058 -0.0330 -0.0375 -0.0301  0.0236  0.0287  0.0037  0.0030  0.0181  0.0096  0.0273
+Residuo periodic: media por mes, 1949-1953 / 1954-1957 / 1958-1960:
+          1       2       3       4       5       6       7       8       9      10      11      12
+ini -0.0028  0.0556  0.0461  0.0227 -0.0054 -0.0277 -0.0483 -0.0341 -0.0049 -0.0060 -0.0050  0.0080
+cen  0.0080 -0.0288 -0.0048 -0.0018  0.0053  0.0220  0.0233 -0.0032  0.0023 -0.0072 -0.0019  0.0004
+fin  0.0057 -0.0403 -0.0543 -0.0224  0.0116  0.0191  0.0442  0.0498 -0.0125  0.0024 -0.0062 -0.0281
+  correlacion entre el patron medio de los primeros anios y el de los ultimos: -0.932 
+  parte de la varianza del residuo que es patron mensual repetido dentro del tramo: ini 0.566  cen 0.457  fin 0.72 
+  S(11) - S(periodic): sd por anio:
+  1949   1950   1951   1952   1953   1954   1955   1956   1957   1958   1959   1960 
+0.0216 0.0204 0.0191 0.0166 0.0141 0.0076 0.0076 0.0105 0.0150 0.0165 0.0181 0.0191 
+  T(11) - T(periodic): max |dif| = 0.0139 
+  sd por anio de [R(periodic) - (S(11) - S(periodic))] :
+  1949   1950   1951   1952   1953   1954   1955   1956   1957   1958   1959   1960 
+0.0184 0.0319 0.0311 0.0314 0.0268 0.0244 0.0158 0.0105 0.0116 0.0278 0.0143 0.0281 
+ACF del residuo, rezagos 1 y 12: periodic 0.371 0.341  s.window = 11 0.21 -0.054  banda 0.163 
+
+===== D. Robustez: julio de 1955 x 1.5 =====
+                 S_jul49.seasonal S_jul55.seasonal S_jul60.seasonal idx55.seasonal T_jul55.trend expT55.trend R_jul55.remainder   maxR  minRes maxRes
+limpia_per_norob           0.2164           0.2164           0.2164         1.2416        5.6460      283.164            0.0347 0.1050 -0.1050 0.0865
+limpia_per_rob             0.2281           0.2281           0.2281         1.2562        5.6456      283.053            0.0235 0.1255 -0.1255 0.1233
+limpia_11_norob            0.1859           0.2235           0.2461         1.2504        5.6450      282.884            0.0287 0.0801 -0.0801 0.0668
+limpia_11_rob              0.1920           0.2297           0.2464         1.2582        5.6451      282.901            0.0224 0.1008 -0.1002 0.1008
+cont_per_norob             0.2473           0.2473           0.2473         1.2806        5.6845      294.281            0.3708 0.3708 -0.1025 0.3708
+cont_per_rob               0.2198           0.2198           0.2198         1.2458        5.6425      282.157            0.4404 0.4404 -0.1265 0.4404
+cont_11_norob              0.2144           0.2875           0.2858         1.3331        5.6798      292.899            0.3353 0.3353 -0.0791 0.3353
+cont_11_rob                0.1828           0.2216           0.2444         1.2480        5.6424      282.130            0.4387 0.4387 -0.1012 0.4387
+                 peso0 peso_menor_05    w79
+limpia_per_norob     0             0 1.0000
+limpia_per_rob       4            18 0.8967
+limpia_11_norob      0             0 1.0000
+limpia_11_rob        5            17 0.8357
+cont_per_norob       0             0 1.0000
+cont_per_rob         5            15 0.0000
+cont_11_norob        0             0 1.0000
+cont_11_rob          4            15 0.0000
+Rangos por componente en las 8 variantes (para fijar ejes):
+                      S1     S2     T1     T2      R1     R2
+limpia_per_norob -0.2135 0.2164 4.8294 6.2048 -0.1050 0.0865
+limpia_per_rob   -0.2149 0.2281 4.8031 6.2027 -0.1255 0.1233
+limpia_11_norob  -0.2188 0.2461 4.8155 6.1990 -0.0801 0.0668
+limpia_11_rob    -0.2183 0.2464 4.8069 6.2028 -0.1002 0.1008
+cont_per_norob   -0.2163 0.2473 4.8300 6.2042 -0.1025 0.3708
+cont_per_rob     -0.2144 0.2198 4.8023 6.2023 -0.1265 0.4404
+cont_11_norob    -0.2227 0.2877 4.8155 6.1982 -0.0791 0.3353
+cont_11_rob      -0.2185 0.2444 4.8087 6.2024 -0.1012 0.4387
+Tendencia alrededor de julio de 1955 (obs 73..85), limpia / contaminada sin robust / contaminada con robust (periodic):
+             [,1]   [,2]   [,3]   [,4]   [,5]   [,6]   [,7]   [,8]   [,9]  [,10]  [,11]  [,12]  [,13]
+limpia     5.5574 5.5726 5.5878 5.6026 5.6173 5.6317 5.6460 5.6600 5.6740 5.6874 5.7008 5.7137 5.7266
+cont_norob 5.5715 5.5946 5.6176 5.6362 5.6547 5.6696 5.6845 5.6980 5.7114 5.7210 5.7306 5.7356 5.7407
+cont_rob   5.5565 5.5709 5.5852 5.5995 5.6139 5.6282 5.6425 5.6566 5.6707 5.6846 5.6985 5.7119 5.7254
+  max |T cont_norob - T limpia| = 0.0385 en obs 79 ; max |T cont_rob - T limpia_rob| = 0.0032 ; max |T cont_rob - T limpia_norob| = 0.0271 
+  indice de julio (exp): limpia sin robust 1.2416 -> cont sin robust 1.2806 ; limpia con robust 1.2562 -> cont con robust 1.2458 
+  log(1.5) = 0.4055 
+  observaciones con peso 0, cont_per_rob: 2 26 38 79 135  limpia_per_rob: 2 26 38 135 
+
+===== E. Clasica aditiva junto a la multiplicativa =====
+aditiva: indices (figure):
+ [1] -24.75 -36.19  -2.24  -8.04  -4.51  35.40  63.83  62.82  16.52 -20.64 -53.59 -28.62
+  julio 1955: y 364  T 285.75  S 63.83  R 14.42 
+  sd del residuo aditivo por anio:
+1949 1950 1951 1952 1953 1954 1955 1956 1957 1958 1959 1960 
+30.5 20.7 22.4 17.0 14.5  5.6  6.1 10.0 17.2 29.4 29.4 25.4 
+  identidad y = T + T(S-1) + (y - TS): max |dif| = 4.26326e-14 
+  sd del residuo multiplicativo EN MILES (y - T*S) por anio:
+1949 1950 1951 1952 1953 1954 1955 1956 1957 1958 1959 1960 
+ 4.2  5.5  8.6  7.1  8.4  5.4  5.4  4.6  8.2 18.4 12.8 22.3 
+  sd del residuo multiplicativo (factor) por anio:
+  1949   1950   1951   1952   1953   1954   1955   1956   1957   1958   1959   1960 
+0.0278 0.0420 0.0481 0.0382 0.0361 0.0244 0.0172 0.0131 0.0215 0.0442 0.0279 0.0479 
+  rangos: S aditiva -53.6 63.8  S mult en miles -88.6 97.6  R aditiva -44 61.1  R mult miles -49.6 37 
+  sd global: R aditiva 19.34  R mult miles 9.91 
+  julio: efecto estacional mult en miles T*(S-1), 1949..1960:
+ [1] 28.7 31.9 38.8 44.9 51.1 54.5 64.7 74.7 83.7 86.5 97.6   NA
+  julio: residuo aditivo, 1949..1960:
+ [1] -42.6 -34.7 -36.1 -31.9 -25.2  -2.3  14.4  19.6  31.7  45.3  53.5    NA
+  residuo aditivo, media por mes 1949-1953 y 1956-1960:
+        1     2     3    4    5     6     7     8    9   10    11    12
+ini   9.7  24.9  12.6  7.8  1.3 -20.5 -34.1 -30.4 -7.0  6.9  18.1  11.7
+fin -10.5 -20.8 -12.3 -8.5 -2.5  17.0  37.5  40.7  7.3 -9.9 -22.9 -17.1
+  ACF del residuo, rezago 12: aditiva 0.674  multiplicativa 0.294 
+
+===== F. M8: desestacionalizada con STL frente a la clasica; fuerzas =====
+aj STL = exp(log y - S) = exp(T + R): max |dif| = 3.97904e-13 
+max |aj STL - aj clasica| = 6.14 en obs 139 ( 1960.5 ) ; media |dif| = 2.21 
+  en %: max 1.21 
+  julio 1955: aj STL 293.2  aj clasica 296.8 
+  indices exp(S) STL: 0.9124 0.8922 1.016 0.9861 0.9851 1.116 1.2416 1.2332 1.0698 0.9322 0.8077 0.9043 
+  indices clasicos: 0.9102 0.8836 1.0074 0.9759 0.9814 1.1128 1.2266 1.2199 1.0605 0.9218 0.8012 0.8988 
+Fuerzas con s.window = 'periodic':
+                        FT     FS
+log(AirPassengers)  0.9940 0.9368
+co2                 0.9997 0.9841
+nottem              0.2055 0.9438
+USAccDeaths         0.7991 0.9426
+mdeaths             0.3204 0.8799
+ldeaths             0.2639 0.8847
+UKDriverDeaths      0.7474 0.7812
+log(UKgas)          0.9350 0.8450
+sunspots            0.9073 0.0050
+log(JohnsonJohnson) 0.9943 0.6082
+ruido               0.1852 0.0822
+Fuerzas con s.window = 11:
+                        FT     FS
+log(AirPassengers)  0.9966 0.9645
+co2                 0.9998 0.9898
+nottem              0.2240 0.9534
+USAccDeaths         0.8025 0.9448
+mdeaths             0.3191 0.8840
+ldeaths             0.2614 0.8883
+UKDriverDeaths      0.7672 0.8080
+log(UKgas)          0.9881 0.9739
+sunspots            0.9223 0.2165
+log(JohnsonJohnson) 0.9977 0.8452
+ruido               0.1893 0.2077
+Ruido blanco: 200 simulaciones de 144 normales, periodic: cuantiles de FT y FS
+       FT    FS
+5%  0.060 0.035
+50% 0.115 0.081
+95% 0.181 0.145

@@ -1,0 +1,76 @@
+serie incrustada == datasets::AirPassengers: TRUE ; n = 144 
+
+== 1. Gráfico de subseries: una serie de 12 años por mes ==
+ mes media y1949 y1960 subida razon min max bajadas
+ Ene 241.8   112   417    305  3.72 112 417       0
+ Feb 235.0   118   391    273  3.31 118 391       1
+ Mar 270.2   132   419    287  3.17 132 419       1
+ Abr 267.1   129   461    332  3.57 129 461       1
+ May 271.8   121   472    351  3.90 121 472       0
+ Jun 311.7   135   535    400  3.96 135 535       0
+ Jul 351.3   148   622    474  4.20 148 622       0
+ Ago 351.1   148   606    458  4.09 148 606       0
+ Sep 302.4   136   508    372  3.74 136 508       0
+ Oct 266.6   119   461    342  3.87 119 461       0
+ Nov 232.8   104   390    286  3.75 104 390       0
+ Dic 261.8   118   432    314  3.66 118 432       0
+mes de media más alta: Jul 351.3 ; de media más baja: Nov 232.8 
+orden de las medias (de mayor a menor): Jul > Ago > Jun > Sep > May > Mar > Abr > Oct > Dic > Ene > Feb > Nov 
+media de toda la serie: 280.3 ; meses con media por encima: Jun, Jul, Ago, Sep 
+mes que más sube de 1949 a 1960: Jul 474 ; el que menos: Feb 273 
+razón 1960/1949: de 3.17 ( Mar ) a 4.20 ( Jul )
+subseries que suben todos los años (ninguna bajada): Ene, May, Jun, Jul, Ago, Sep, Oct, Nov, Dic 
+bajadas de un año al siguiente, por mes y año de llegada:
+   Feb : 1954 
+   Mar : 1954 
+   Abr : 1954 
+total de pares (mes, año) en que el mes baja respecto del mismo mes del año anterior: 3 de 132 ; iguales: 2 
+máximo del año: julio en 7 años, agosto en 5 
+mínimo del año: noviembre en 6 años; otros: Ene, Feb 
+
+== 2. Gráfico de rezagos: y_t frente a y_{t-k}, k = 1..12 ==
+  k pares    cor encima igual debajo dist_media verano_n verano_encima    r_k
+  1   143 0.9602     78     4     61       25.9       24            17 0.9480
+  2   142 0.8957     86     2     54       41.0       24            24 0.8756
+  3   141 0.8374     91     1     49       50.1       24            24 0.8067
+  4   140 0.7977     88     0     52       58.7       24            24 0.7526
+  5   139 0.7859     84     0     55       60.9       24            24 0.7138
+  6   138 0.7839     82     1     55       58.6       24            24 0.6817
+  7   137 0.7846     68     0     69       56.8       23            23 0.6629
+  8   136 0.7922     77     1     58       54.3       22            22 0.6556
+  9   135 0.8279     84     0     51       47.5       22            22 0.6709
+ 10   134 0.8827     90     2     42       42.0       22            22 0.7027
+ 11   133 0.9497    105     3     25       35.3       22            22 0.7432
+ 12   132 0.9905    127     2      3       32.0       22            22 0.7604
+correlación a 3 decimales, k = 1..12: 0.960 0.896 0.837 0.798 0.786 0.784 0.785 0.792 0.828 0.883 0.950 0.991 
+correlación más alta: k = 12 0.991 ; más baja: k = 6 0.784 
+orden de k por correlación (de mayor a menor): 12 1 11 2 10 3 9 4 8 5 7 6 
+la correlación baja de k = 1 a k = 6 sin excepción: TRUE ; y sube de k = 6 a k = 12 sin excepción: TRUE 
+k = 12: pares 132 ; por encima de la diagonal 127 ; por debajo 3 ; iguales 2 
+   meses por debajo o iguales al mismo mes del año anterior: 1954-02, 1954-03, 1954-04, 1958-04, 1958-09 
+   cociente y_t / y_{t-12}: mínimo 0.959 máximo 1.376 mediana 1.134 
+k = 6: julio y agosto (y_t) frente a enero y febrero (y_{t-6}): por encima de la diagonal 24 de 24 
+k = 6: enero y febrero (y_t) frente a julio y agosto (y_{t-6}): por debajo de la diagonal 22 de 22 
+puntos con y_t en julio o agosto, por k: n = 24 24 24 24 24 24 23 22 22 22 22 22 
+   de ellos por encima de la diagonal:       17 24 24 24 24 24 23 22 22 22 22 22 
+rango de los ejes: mínimo de la serie 104 ; máximo 622 
+
+== 3. Los bloques de código del Módulo 3 corren (feasts; fpp3 no está instalado) ==
+Warning messages:
+1: `autoplot.tbl_ts()` was deprecated in fabletools 0.6.0.
+i Please use `ggtime::autoplot.tbl_ts()` instead.
+i Graphics functions have been moved to the {ggtime} package. Please use
+  `library(ggtime)` instead. 
+2: `gg_season()` was deprecated in feasts 0.4.2.
+i Please use `ggtime::gg_season()` instead.
+i Graphics functions have been moved to the {ggtime} package. Please use
+  `library(ggtime)` instead. 
+3: `gg_subseries()` was deprecated in feasts 0.4.2.
+i Please use `ggtime::gg_subseries()` instead.
+i Graphics functions have been moved to the {ggtime} package. Please use
+  `library(ggtime)` instead. 
+4: `gg_lag()` was deprecated in feasts 0.4.2.
+i Please use `ggtime::gg_lag()` instead.
+i Graphics functions have been moved to the {ggtime} package. Please use
+  `library(ggtime)` instead. 
+autoplot, gg_season, gg_subseries y gg_lag(geom = 'point', lags = 1:12): sin error 

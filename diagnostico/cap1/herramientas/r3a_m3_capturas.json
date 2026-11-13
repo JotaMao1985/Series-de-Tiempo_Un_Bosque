@@ -1,0 +1,131 @@
+[
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 1200,
+  "modulo": 3,
+  "pasos": [
+   {
+    "js": "(() => { const W = document.documentElement.clientWidth; const fuera = [...mainContent.querySelectorAll('.simulador, .simulador *, .mapa-estacional')].filter(el => { const r = el.getBoundingClientRect(); return r.width && r.right > W + 1; }).map(el => el.tagName + '.' + String(el.className).slice(0, 30)); return { ancho: W, docSw: document.documentElement.scrollWidth, fuera: fuera.slice(0, 5), katexError: document.querySelectorAll('.katex-error').length, lienzos: [...mainContent.querySelectorAll('canvas')].map(c => { const r = c.getBoundingClientRect(), p = c.parentNode.getBoundingClientRect(); const ch = Chart.getChart(c); return { sim: c.closest('[data-simulador]').dataset.simulador, w: Math.round(r.width), h: Math.round(r.height), cajaW: Math.round(p.width), cajaH: Math.round(p.height), area: ch ? [Math.round(ch.chartArea.width), Math.round(ch.chartArea.height)] : null, ticksX: ch ? ch.scales.x.ticks.map(t => t.label).join('|') : null, ticksY: ch ? ch.scales.y.ticks.map(t => t.label).join('|') : null }; }) }; })()"
+   },
+   {
+    "sel": ".mapa-estacional",
+    "archivo": "m3-mapa-estacional-escritorio.png"
+   },
+   {
+    "sel": "[data-simulador=\"grafico-estacional\"]",
+    "archivo": "m3-grafico-estacional-escritorio.png"
+   },
+   {
+    "sel": "[data-simulador=\"subseries-estacionales\"]",
+    "archivo": "m3-subseries-escritorio.png"
+   },
+   {
+    "sel": "[data-simulador=\"grafico-rezagos\"]",
+    "archivo": "m3-rezagos-k1-escritorio.png"
+   },
+   {
+    "js": "(() => { const inp = document.querySelector('[data-simulador=\"grafico-rezagos\"] input[type=range]'); inp.value = 6; inp.dispatchEvent(new Event('input', { bubbles: true })); return document.querySelector('[data-simulador=\"grafico-rezagos\"] .simulador-lectura').textContent; })()"
+   },
+   {
+    "sel": "[data-simulador=\"grafico-rezagos\"]",
+    "archivo": "m3-rezagos-k6-escritorio.png"
+   },
+   {
+    "js": "(() => { const inp = document.querySelector('[data-simulador=\"grafico-rezagos\"] input[type=range]'); inp.value = 12; inp.dispatchEvent(new Event('input', { bubbles: true })); return document.querySelector('[data-simulador=\"grafico-rezagos\"] .simulador-lectura').textContent; })()"
+   },
+   {
+    "sel": "[data-simulador=\"grafico-rezagos\"]",
+    "archivo": "m3-rezagos-k12-escritorio.png"
+   },
+   {
+    "js": "(() => { const W = document.documentElement.clientWidth; const fuera = [...mainContent.querySelectorAll('.simulador, .simulador *, .mapa-estacional')].filter(el => { const r = el.getBoundingClientRect(); return r.width && r.right > W + 1; }).map(el => el.tagName + '.' + String(el.className).slice(0, 30)); return { ancho: W, docSw: document.documentElement.scrollWidth, fuera: fuera.slice(0, 5), katexError: document.querySelectorAll('.katex-error').length, lienzos: [...mainContent.querySelectorAll('canvas')].map(c => { const r = c.getBoundingClientRect(), p = c.parentNode.getBoundingClientRect(); const ch = Chart.getChart(c); return { sim: c.closest('[data-simulador]').dataset.simulador, w: Math.round(r.width), h: Math.round(r.height), cajaW: Math.round(p.width), cajaH: Math.round(p.height), area: ch ? [Math.round(ch.chartArea.width), Math.round(ch.chartArea.height)] : null, ticksX: ch ? ch.scales.x.ticks.map(t => t.label).join('|') : null, ticksY: ch ? ch.scales.y.ticks.map(t => t.label).join('|') : null }; }) }; })()"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 800,
+  "modulo": 3,
+  "pasos": [
+   {
+    "js": "(() => { const W = document.documentElement.clientWidth; const fuera = [...mainContent.querySelectorAll('.simulador, .simulador *, .mapa-estacional')].filter(el => { const r = el.getBoundingClientRect(); return r.width && r.right > W + 1; }).map(el => el.tagName + '.' + String(el.className).slice(0, 30)); return { ancho: W, docSw: document.documentElement.scrollWidth, fuera: fuera.slice(0, 5), katexError: document.querySelectorAll('.katex-error').length, lienzos: [...mainContent.querySelectorAll('canvas')].map(c => { const r = c.getBoundingClientRect(), p = c.parentNode.getBoundingClientRect(); const ch = Chart.getChart(c); return { sim: c.closest('[data-simulador]').dataset.simulador, w: Math.round(r.width), h: Math.round(r.height), cajaW: Math.round(p.width), cajaH: Math.round(p.height), area: ch ? [Math.round(ch.chartArea.width), Math.round(ch.chartArea.height)] : null, ticksX: ch ? ch.scales.x.ticks.map(t => t.label).join('|') : null, ticksY: ch ? ch.scales.y.ticks.map(t => t.label).join('|') : null }; }) }; })()"
+   },
+   {
+    "sel": ".mapa-estacional",
+    "archivo": "m3-mapa-estacional-800.png"
+   },
+   {
+    "sel": "[data-simulador=\"grafico-estacional\"]",
+    "archivo": "m3-grafico-estacional-800.png"
+   },
+   {
+    "sel": "[data-simulador=\"subseries-estacionales\"]",
+    "archivo": "m3-subseries-800.png"
+   },
+   {
+    "sel": "[data-simulador=\"grafico-rezagos\"]",
+    "archivo": "m3-rezagos-k1-800.png"
+   },
+   {
+    "js": "(() => { const inp = document.querySelector('[data-simulador=\"grafico-rezagos\"] input[type=range]'); inp.value = 6; inp.dispatchEvent(new Event('input', { bubbles: true })); return document.querySelector('[data-simulador=\"grafico-rezagos\"] .simulador-lectura').textContent; })()"
+   },
+   {
+    "sel": "[data-simulador=\"grafico-rezagos\"]",
+    "archivo": "m3-rezagos-k6-800.png"
+   },
+   {
+    "js": "(() => { const inp = document.querySelector('[data-simulador=\"grafico-rezagos\"] input[type=range]'); inp.value = 12; inp.dispatchEvent(new Event('input', { bubbles: true })); return document.querySelector('[data-simulador=\"grafico-rezagos\"] .simulador-lectura').textContent; })()"
+   },
+   {
+    "sel": "[data-simulador=\"grafico-rezagos\"]",
+    "archivo": "m3-rezagos-k12-800.png"
+   },
+   {
+    "js": "(() => { const W = document.documentElement.clientWidth; const fuera = [...mainContent.querySelectorAll('.simulador, .simulador *, .mapa-estacional')].filter(el => { const r = el.getBoundingClientRect(); return r.width && r.right > W + 1; }).map(el => el.tagName + '.' + String(el.className).slice(0, 30)); return { ancho: W, docSw: document.documentElement.scrollWidth, fuera: fuera.slice(0, 5), katexError: document.querySelectorAll('.katex-error').length, lienzos: [...mainContent.querySelectorAll('canvas')].map(c => { const r = c.getBoundingClientRect(), p = c.parentNode.getBoundingClientRect(); const ch = Chart.getChart(c); return { sim: c.closest('[data-simulador]').dataset.simulador, w: Math.round(r.width), h: Math.round(r.height), cajaW: Math.round(p.width), cajaH: Math.round(p.height), area: ch ? [Math.round(ch.chartArea.width), Math.round(ch.chartArea.height)] : null, ticksX: ch ? ch.scales.x.ticks.map(t => t.label).join('|') : null, ticksY: ch ? ch.scales.y.ticks.map(t => t.label).join('|') : null }; }) }; })()"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 375,
+  "modulo": 3,
+  "pasos": [
+   {
+    "js": "(() => { const W = document.documentElement.clientWidth; const fuera = [...mainContent.querySelectorAll('.simulador, .simulador *, .mapa-estacional')].filter(el => { const r = el.getBoundingClientRect(); return r.width && r.right > W + 1; }).map(el => el.tagName + '.' + String(el.className).slice(0, 30)); return { ancho: W, docSw: document.documentElement.scrollWidth, fuera: fuera.slice(0, 5), katexError: document.querySelectorAll('.katex-error').length, lienzos: [...mainContent.querySelectorAll('canvas')].map(c => { const r = c.getBoundingClientRect(), p = c.parentNode.getBoundingClientRect(); const ch = Chart.getChart(c); return { sim: c.closest('[data-simulador]').dataset.simulador, w: Math.round(r.width), h: Math.round(r.height), cajaW: Math.round(p.width), cajaH: Math.round(p.height), area: ch ? [Math.round(ch.chartArea.width), Math.round(ch.chartArea.height)] : null, ticksX: ch ? ch.scales.x.ticks.map(t => t.label).join('|') : null, ticksY: ch ? ch.scales.y.ticks.map(t => t.label).join('|') : null }; }) }; })()"
+   },
+   {
+    "sel": ".mapa-estacional",
+    "archivo": "m3-mapa-estacional-movil.png"
+   },
+   {
+    "sel": "[data-simulador=\"grafico-estacional\"]",
+    "archivo": "m3-grafico-estacional-movil.png"
+   },
+   {
+    "sel": "[data-simulador=\"subseries-estacionales\"]",
+    "archivo": "m3-subseries-movil.png"
+   },
+   {
+    "sel": "[data-simulador=\"grafico-rezagos\"]",
+    "archivo": "m3-rezagos-k1-movil.png"
+   },
+   {
+    "js": "(() => { const inp = document.querySelector('[data-simulador=\"grafico-rezagos\"] input[type=range]'); inp.value = 6; inp.dispatchEvent(new Event('input', { bubbles: true })); return document.querySelector('[data-simulador=\"grafico-rezagos\"] .simulador-lectura').textContent; })()"
+   },
+   {
+    "sel": "[data-simulador=\"grafico-rezagos\"]",
+    "archivo": "m3-rezagos-k6-movil.png"
+   },
+   {
+    "js": "(() => { const inp = document.querySelector('[data-simulador=\"grafico-rezagos\"] input[type=range]'); inp.value = 12; inp.dispatchEvent(new Event('input', { bubbles: true })); return document.querySelector('[data-simulador=\"grafico-rezagos\"] .simulador-lectura').textContent; })()"
+   },
+   {
+    "sel": "[data-simulador=\"grafico-rezagos\"]",
+    "archivo": "m3-rezagos-k12-movil.png"
+   },
+   {
+    "js": "(() => { const W = document.documentElement.clientWidth; const fuera = [...mainContent.querySelectorAll('.simulador, .simulador *, .mapa-estacional')].filter(el => { const r = el.getBoundingClientRect(); return r.width && r.right > W + 1; }).map(el => el.tagName + '.' + String(el.className).slice(0, 30)); return { ancho: W, docSw: document.documentElement.scrollWidth, fuera: fuera.slice(0, 5), katexError: document.querySelectorAll('.katex-error').length, lienzos: [...mainContent.querySelectorAll('canvas')].map(c => { const r = c.getBoundingClientRect(), p = c.parentNode.getBoundingClientRect(); const ch = Chart.getChart(c); return { sim: c.closest('[data-simulador]').dataset.simulador, w: Math.round(r.width), h: Math.round(r.height), cajaW: Math.round(p.width), cajaH: Math.round(p.height), area: ch ? [Math.round(ch.chartArea.width), Math.round(ch.chartArea.height)] : null, ticksX: ch ? ch.scales.x.ticks.map(t => t.label).join('|') : null, ticksY: ch ? ch.scales.y.ticks.map(t => t.label).join('|') : null }; }) }; })()"
+   }
+  ]
+ }
+]

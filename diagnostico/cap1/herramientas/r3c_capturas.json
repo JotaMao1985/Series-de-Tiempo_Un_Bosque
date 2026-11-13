@@ -1,0 +1,404 @@
+[
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 1200,
+  "modulo": 3,
+  "pasos": [
+   {
+    "sel": "[data-simulador=\"grafico-rezagos\"]",
+    "archivo": "B3-B4-rezagos-k1-1200.png"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"grafico-rezagos\"]'); const i = r.querySelector('input[type=range]'); i.value = 6; i.dispatchEvent(new Event('input', { bubbles: true })); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "sel": "[data-simulador=\"grafico-rezagos\"]",
+    "archivo": "B3-B4-rezagos-k6-1200.png"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"grafico-rezagos\"]'); const i = r.querySelector('input[type=range]'); i.value = 12; i.dispatchEvent(new Event('input', { bubbles: true })); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "sel": "[data-simulador=\"grafico-rezagos\"]",
+    "archivo": "B3-B4-rezagos-k12-1200.png"
+   },
+   {
+    "sel": "[data-simulador=\"subseries-estacionales\"] .simulador-lectura",
+    "archivo": "B6-lectura-subseries-1200.png"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 1200,
+  "modulo": 6,
+  "pasos": [
+   {
+    "sel": "[data-simulador=\"escala-aditiva\"] .simulador-lectura",
+    "archivo": "B6-lectura-escala-aditiva-1200.png"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 1200,
+  "modulo": 7,
+  "pasos": [
+   {
+    "sel": "ol.pasos-metodo",
+    "archivo": "B6-pasos-stl-1200.png"
+   },
+   {
+    "sel": "[data-simulador=\"descomp-stl\"]",
+    "archivo": "B5-stl-partida-1200.png"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"descomp-stl\"]'); r.querySelectorAll('input[type=radio]')[1].click(); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "sel": "[data-simulador=\"descomp-stl\"]",
+    "archivo": "B5-stl-s11-1200.png"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"descomp-stl\"]'); r.querySelectorAll('input[type=radio]')[5].click(); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "sel": "[data-simulador=\"descomp-stl\"]",
+    "archivo": "B2-B5-stl-s11-robust-1200.png"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"descomp-stl\"]'); r.querySelectorAll('input[type=radio]')[0].click(); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"descomp-stl\"]'); r.querySelectorAll('input[type=radio]')[3].click(); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"descomp-stl\"]'); r.querySelectorAll('input[type=radio]')[4].click(); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "sel": "[data-simulador=\"descomp-stl\"]",
+    "archivo": "B5-stl-atipico-norob-1200.png"
+   },
+   {
+    "sel": "[data-simulador=\"loess-local\"] .simulador-lectura",
+    "archivo": "B6-lectura-loess-1200.png"
+   },
+   {
+    "js": "(() => { const b = document.querySelector('[aria-controls=\"der-robustez\"]'); if (b.getAttribute('aria-expanded') !== 'true') b.click(); return 'abierto ' + b.getAttribute('aria-controls'); })()",
+    "espera": 600
+   },
+   {
+    "sel": "#der-robustez .formula",
+    "archivo": "B7-m7-bicuadrada-1200.png"
+   },
+   {
+    "js": "(() => { const f = document.querySelector('#der-robustez .formula'); f.scrollLeft = f.scrollWidth; return [f.scrollLeft, f.scrollWidth, f.clientWidth]; })()"
+   },
+   {
+    "sel": "#der-robustez .formula",
+    "archivo": "B7-m7-bicuadrada-desplazada-1200.png"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 1200,
+  "modulo": 8,
+  "pasos": [
+   {
+    "sel": "#content-area table",
+    "archivo": "B1-tabla-fuerzas-1200.png"
+   },
+   {
+    "js": "(() => { const t = document.querySelector('#content-area table'); let c = t; while (c && !/auto|scroll/.test(getComputedStyle(c).overflowX)) c = c.parentElement; if (c) c.scrollLeft = c.scrollWidth; return c ? [c.scrollLeft, c.scrollWidth, c.clientWidth] : null; })()"
+   },
+   {
+    "sel": "#content-area table",
+    "archivo": "B1-tabla-fuerzas-desplazada-1200.png"
+   },
+   {
+    "js": "(() => { const b = document.querySelector('[aria-controls=\"der-fuerza-ft\"]'); if (b.getAttribute('aria-expanded') !== 'true') b.click(); return 'abierto ' + b.getAttribute('aria-controls'); })()",
+    "espera": 600
+   },
+   {
+    "sel": "#der-fuerza-ft",
+    "archivo": "B7-m8-desarrollo-ft-1200.png"
+   },
+   {
+    "js": "(() => [...document.querySelectorAll('#der-fuerza-ft .katex-display')].map(d => { let c = d; while (c && !/auto|scroll/.test(getComputedStyle(c).overflowX)) c = c.parentElement; if (c) c.scrollLeft = c.scrollWidth; return c ? [c.scrollLeft, c.scrollWidth, c.clientWidth] : null; }))()"
+   },
+   {
+    "sel": "#der-fuerza-ft",
+    "archivo": "B7-m8-desarrollo-ft-desplazado-1200.png"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 800,
+  "modulo": 3,
+  "pasos": [
+   {
+    "sel": "[data-simulador=\"grafico-rezagos\"]",
+    "archivo": "B3-B4-rezagos-k1-800.png"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"grafico-rezagos\"]'); const i = r.querySelector('input[type=range]'); i.value = 6; i.dispatchEvent(new Event('input', { bubbles: true })); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "sel": "[data-simulador=\"grafico-rezagos\"]",
+    "archivo": "B3-B4-rezagos-k6-800.png"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"grafico-rezagos\"]'); const i = r.querySelector('input[type=range]'); i.value = 12; i.dispatchEvent(new Event('input', { bubbles: true })); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "sel": "[data-simulador=\"grafico-rezagos\"]",
+    "archivo": "B3-B4-rezagos-k12-800.png"
+   },
+   {
+    "sel": "[data-simulador=\"subseries-estacionales\"] .simulador-lectura",
+    "archivo": "B6-lectura-subseries-800.png"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 800,
+  "modulo": 6,
+  "pasos": [
+   {
+    "sel": "[data-simulador=\"escala-aditiva\"] .simulador-lectura",
+    "archivo": "B6-lectura-escala-aditiva-800.png"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 800,
+  "modulo": 7,
+  "pasos": [
+   {
+    "sel": "ol.pasos-metodo",
+    "archivo": "B6-pasos-stl-800.png"
+   },
+   {
+    "sel": "[data-simulador=\"descomp-stl\"]",
+    "archivo": "B5-stl-partida-800.png"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"descomp-stl\"]'); r.querySelectorAll('input[type=radio]')[1].click(); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "sel": "[data-simulador=\"descomp-stl\"]",
+    "archivo": "B5-stl-s11-800.png"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"descomp-stl\"]'); r.querySelectorAll('input[type=radio]')[5].click(); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "sel": "[data-simulador=\"descomp-stl\"]",
+    "archivo": "B2-B5-stl-s11-robust-800.png"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"descomp-stl\"]'); r.querySelectorAll('input[type=radio]')[0].click(); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"descomp-stl\"]'); r.querySelectorAll('input[type=radio]')[3].click(); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"descomp-stl\"]'); r.querySelectorAll('input[type=radio]')[4].click(); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "sel": "[data-simulador=\"descomp-stl\"]",
+    "archivo": "B5-stl-atipico-norob-800.png"
+   },
+   {
+    "sel": "[data-simulador=\"loess-local\"] .simulador-lectura",
+    "archivo": "B6-lectura-loess-800.png"
+   },
+   {
+    "js": "(() => { const b = document.querySelector('[aria-controls=\"der-robustez\"]'); if (b.getAttribute('aria-expanded') !== 'true') b.click(); return 'abierto ' + b.getAttribute('aria-controls'); })()",
+    "espera": 600
+   },
+   {
+    "sel": "#der-robustez .formula",
+    "archivo": "B7-m7-bicuadrada-800.png"
+   },
+   {
+    "js": "(() => { const f = document.querySelector('#der-robustez .formula'); f.scrollLeft = f.scrollWidth; return [f.scrollLeft, f.scrollWidth, f.clientWidth]; })()"
+   },
+   {
+    "sel": "#der-robustez .formula",
+    "archivo": "B7-m7-bicuadrada-desplazada-800.png"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 800,
+  "modulo": 8,
+  "pasos": [
+   {
+    "sel": "#content-area table",
+    "archivo": "B1-tabla-fuerzas-800.png"
+   },
+   {
+    "js": "(() => { const t = document.querySelector('#content-area table'); let c = t; while (c && !/auto|scroll/.test(getComputedStyle(c).overflowX)) c = c.parentElement; if (c) c.scrollLeft = c.scrollWidth; return c ? [c.scrollLeft, c.scrollWidth, c.clientWidth] : null; })()"
+   },
+   {
+    "sel": "#content-area table",
+    "archivo": "B1-tabla-fuerzas-desplazada-800.png"
+   },
+   {
+    "js": "(() => { const b = document.querySelector('[aria-controls=\"der-fuerza-ft\"]'); if (b.getAttribute('aria-expanded') !== 'true') b.click(); return 'abierto ' + b.getAttribute('aria-controls'); })()",
+    "espera": 600
+   },
+   {
+    "sel": "#der-fuerza-ft",
+    "archivo": "B7-m8-desarrollo-ft-800.png"
+   },
+   {
+    "js": "(() => [...document.querySelectorAll('#der-fuerza-ft .katex-display')].map(d => { let c = d; while (c && !/auto|scroll/.test(getComputedStyle(c).overflowX)) c = c.parentElement; if (c) c.scrollLeft = c.scrollWidth; return c ? [c.scrollLeft, c.scrollWidth, c.clientWidth] : null; }))()"
+   },
+   {
+    "sel": "#der-fuerza-ft",
+    "archivo": "B7-m8-desarrollo-ft-desplazado-800.png"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 375,
+  "modulo": 3,
+  "pasos": [
+   {
+    "sel": "[data-simulador=\"grafico-rezagos\"]",
+    "archivo": "B3-B4-rezagos-k1-375.png"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"grafico-rezagos\"]'); const i = r.querySelector('input[type=range]'); i.value = 6; i.dispatchEvent(new Event('input', { bubbles: true })); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "sel": "[data-simulador=\"grafico-rezagos\"]",
+    "archivo": "B3-B4-rezagos-k6-375.png"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"grafico-rezagos\"]'); const i = r.querySelector('input[type=range]'); i.value = 12; i.dispatchEvent(new Event('input', { bubbles: true })); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "sel": "[data-simulador=\"grafico-rezagos\"]",
+    "archivo": "B3-B4-rezagos-k12-375.png"
+   },
+   {
+    "sel": "[data-simulador=\"subseries-estacionales\"] .simulador-lectura",
+    "archivo": "B6-lectura-subseries-375.png"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 375,
+  "modulo": 6,
+  "pasos": [
+   {
+    "sel": "[data-simulador=\"escala-aditiva\"] .simulador-lectura",
+    "archivo": "B6-lectura-escala-aditiva-375.png"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 375,
+  "modulo": 7,
+  "pasos": [
+   {
+    "sel": "ol.pasos-metodo",
+    "archivo": "B6-pasos-stl-375.png"
+   },
+   {
+    "sel": "[data-simulador=\"descomp-stl\"]",
+    "archivo": "B5-stl-partida-375.png"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"descomp-stl\"]'); r.querySelectorAll('input[type=radio]')[1].click(); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "sel": "[data-simulador=\"descomp-stl\"]",
+    "archivo": "B5-stl-s11-375.png"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"descomp-stl\"]'); r.querySelectorAll('input[type=radio]')[5].click(); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "sel": "[data-simulador=\"descomp-stl\"]",
+    "archivo": "B2-B5-stl-s11-robust-375.png"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"descomp-stl\"]'); r.querySelectorAll('input[type=radio]')[0].click(); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"descomp-stl\"]'); r.querySelectorAll('input[type=radio]')[3].click(); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"descomp-stl\"]'); r.querySelectorAll('input[type=radio]')[4].click(); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "sel": "[data-simulador=\"descomp-stl\"]",
+    "archivo": "B5-stl-atipico-norob-375.png"
+   },
+   {
+    "sel": "[data-simulador=\"loess-local\"] .simulador-lectura",
+    "archivo": "B6-lectura-loess-375.png"
+   },
+   {
+    "js": "(() => { const b = document.querySelector('[aria-controls=\"der-robustez\"]'); if (b.getAttribute('aria-expanded') !== 'true') b.click(); return 'abierto ' + b.getAttribute('aria-controls'); })()",
+    "espera": 600
+   },
+   {
+    "sel": "#der-robustez .formula",
+    "archivo": "B7-m7-bicuadrada-375.png"
+   },
+   {
+    "js": "(() => { const f = document.querySelector('#der-robustez .formula'); f.scrollLeft = f.scrollWidth; return [f.scrollLeft, f.scrollWidth, f.clientWidth]; })()"
+   },
+   {
+    "sel": "#der-robustez .formula",
+    "archivo": "B7-m7-bicuadrada-desplazada-375.png"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 375,
+  "modulo": 8,
+  "pasos": [
+   {
+    "sel": "#content-area table",
+    "archivo": "B1-tabla-fuerzas-375.png"
+   },
+   {
+    "js": "(() => { const t = document.querySelector('#content-area table'); let c = t; while (c && !/auto|scroll/.test(getComputedStyle(c).overflowX)) c = c.parentElement; if (c) c.scrollLeft = c.scrollWidth; return c ? [c.scrollLeft, c.scrollWidth, c.clientWidth] : null; })()"
+   },
+   {
+    "sel": "#content-area table",
+    "archivo": "B1-tabla-fuerzas-desplazada-375.png"
+   },
+   {
+    "js": "(() => { const b = document.querySelector('[aria-controls=\"der-fuerza-ft\"]'); if (b.getAttribute('aria-expanded') !== 'true') b.click(); return 'abierto ' + b.getAttribute('aria-controls'); })()",
+    "espera": 600
+   },
+   {
+    "sel": "#der-fuerza-ft",
+    "archivo": "B7-m8-desarrollo-ft-375.png"
+   },
+   {
+    "js": "(() => [...document.querySelectorAll('#der-fuerza-ft .katex-display')].map(d => { let c = d; while (c && !/auto|scroll/.test(getComputedStyle(c).overflowX)) c = c.parentElement; if (c) c.scrollLeft = c.scrollWidth; return c ? [c.scrollLeft, c.scrollWidth, c.clientWidth] : null; }))()"
+   },
+   {
+    "sel": "#der-fuerza-ft",
+    "archivo": "B7-m8-desarrollo-ft-desplazado-375.png"
+   }
+  ]
+ }
+]

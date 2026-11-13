@@ -13,7 +13,7 @@ prometa lo que no muestra, con gráficas que se lean y con práctica para cada o
 declara. Es la primera aplicación del sistema de [[PLAN_Gestion_Documental]] a un capítulo entero
 y el molde para los otros cinco.
 
-**Estado: aprobado por Javier el 2026-11-10 (D1–D9). R1 y R2 publicadas el 2026-11-11; sigue R3.** Lo que sigue es el diagnóstico y el plan;
+**Estado: aprobado por Javier el 2026-11-10 (D1–D9). R1 y R2 publicadas el 2026-11-11; R3 hecha y corregida el 13, sin publicar; sigue R4.** Lo que sigue es el diagnóstico y el plan;
 las rondas se registran en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-10
@@ -107,11 +107,11 @@ Cada una lleva mi recomendación; las decide Javier.
 | T2.1 ✅ | R2 | Arreglos de una vez: `.grafico-par`, marcas de fecha, `panelComponente`, `.simulador h4`, contraste, títulos de eje | M | R1 |
 | T2.2 ✅ | R2 | Específicos: fórmula $F_T$/$F_S$, gráfico estacional del M3, `loess-local`, mapa estacional a 375 px | M | T2.1 |
 | T2.3 ✅ | R2 | Accesibilidad: `aria-label` que describa, `aria-live` en las lecturas | S | T2.1 |
-| T3.1 | R3 | M3: gráficos de subseries y de rezagos, con sus datos desde R | M | R1 |
-| T3.2 | R3 | M7: STL como secuencia de pasos; figura con la robustez y la flexibilidad a la vista; recibe el anticipo del M5 | L | R1 |
-| T3.3 | R3 | M8: recibe la lectura en logaritmos y el contraste de fuerzas; gana código y una referencia para «muy fuertes» | M | T3.2 |
-| T3.4 | R3 | M6: el resultado antes que los símbolos; la aditiva, dibujada | M | R1 |
-| T3.5 | R3 | Vocabulario de «ciclo»; transiciones M1→M2 y M7→M8; resumen del M9; duraciones; tarjeta de la portada | S | T3.1–T3.4 |
+| T3.1 ✅ | R3 | M3: gráficos de subseries y de rezagos, con sus datos desde R | M | R1 |
+| T3.2 ✅ | R3 | M7: STL como secuencia de pasos; figura con la robustez y la flexibilidad a la vista; recibe el anticipo del M5 | L | R1 |
+| T3.3 ✅ | R3 | M8: recibe la lectura en logaritmos y el contraste de fuerzas; gana código y una referencia para «muy fuertes» | M | T3.2 |
+| T3.4 ✅ | R3 | M6: el resultado antes que los símbolos; la aditiva, dibujada | M | R1 |
+| T3.5 ✅ | R3 | Vocabulario de «ciclo»; transiciones M1→M2 y M7→M8; resumen del M9; duraciones; tarjeta de la portada | S | T3.1–T3.4 |
 | T4.1 | R4 | Biblioteca: Cleveland et al. (1990), R y sus paquetes, y lo que haga falta para ciclos económicos y oficinas de estadística | M | permiso de descarga |
 | T4.2 | R4 | Contrastar alta y media (70), marcar, citar y registrar; lecturas del M9 con secciones exactas | L | R3, T4.1 |
 | T5.1 | R5 | Rehacer el ejercicio 1; mejorar el 2 y el 3 | M | R3 |
@@ -138,6 +138,18 @@ Cada una lleva mi recomendación; las decide Javier.
   lectura nueva en el simulador del M5. Detalle: `diagnostico/cap1/R2_cambios.md`. Para R3: presentar el
   mapa estacional en la prosa, el eje que se reescala en `construye-tu-serie` y por qué el residuo de STL
   es más disperso en los extremos.
+
+- **R3 · estructura — hecha el 2026-11-11, corregida el 13.** El M3 estrena los gráficos de subseries y
+  de rezagos que el capítulo prometía; el simulador de Loess pasa a la convención de `stl()`; STL se
+  enuncia en cinco pasos y su simulador deja ver la flexibilidad y la robustez (ocho variantes calculadas
+  en R); el M6 enseña el resultado antes que los símbolos y dibuja la aditiva; el M8 recibe la lectura en
+  logaritmos, gana código y una tabla de referencia; «ciclo» queda solo para el componente. Tres
+  verificadores independientes dieron 16 puntos a corregir: 15 corregidos y 1 en parte (el área del
+  gráfico de rezagos queda a 1.5 % de ser cuadrada). Detalle: `diagnostico/cap1/R3_cambios.md`.
+  **Lo que R3 no resolvió, y el lector estudiante sigue señalando:** el M7 explica Loess y la robustez
+  antes de que aparezca la primera descomposición STL, y los módulos 6 y 7 se le hacen de unos 30 min
+  cada uno. Las dos cosas piden una decisión de Javier (reordenar el M7 o partirlo), y el capítulo
+  declara ahora 129 min frente a los 88 de antes de la Fase 1.
 
 ## 5. Criterios de aceptación
 

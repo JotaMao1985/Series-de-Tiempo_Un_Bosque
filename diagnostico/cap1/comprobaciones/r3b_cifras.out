@@ -1,0 +1,72 @@
+===== M7 · los pasos de stl(), comprobados =====
+stl(lx, 'periodic'): ventanas 1441 19 13 | grados 0 1 1 | saltos 145 2 2 | pasadas interiores 2 | vueltas exteriores 0 
+con robust = TRUE:   pasadas interiores 1 | vueltas exteriores 15 
+Paso 1 con 'periodic' = media de cada subserie (una pasada): max |S - (media del mes - media general)| = 1.09e-07 
+Paso 4: en la segunda pasada el paso 1 parte de la serie SIN la tendencia de la primera: max |S - medias centradas| = 1.86e-08  (frente a las medias de la serie tal cual: 0.0493 )
+Paso 3: suma de los doce valores estacionales ('periodic') = 1.46e-08 
+        s.window = 11: media anual del componente estacional, de 2.3e-05 a 0.00084 
+Paso 5: max |log y - S - T - R| = 0 
+Tendencia sin huecos: NA en la tendencia de stl() = 0 ; en la de decompose() = 12 
+
+===== M7 · la ventana estacional =====
+julio, 'periodic': + 24.2 % los doce anios (recorrido 0 )
+julio, s.window = 11, 1949..1960 (%): 20.4 20.7 20.9 21.4 22 23.5 25 26.1 27.1 27.4 27.7 27.9 
+  exp(S) de julio en 1949 y 1960: 1.204 1.279 
+residuo de julio, 'periodic', 1949..1960: -0.0601 -0.0182 -0.0574 -0.0565 -0.0493 0.0185 0.0347 0.0176 0.0223 0.0431 0.0342 0.0552 
+  negativos: 1949 1950 1951 1952 1953 | positivos: 1954 1955 1956 1957 1958 1959 1960 
+sd del residuo por tramo, 'periodic'  : 0.0396 0.0188 0.036 
+sd del residuo por tramo, s.window 11 : 0.0289 0.016 0.0239 
+  bajada relativa por tramo: 27 15 34 %
+sd del residuo por tramo, s.window 7 : 0.024 0.0138 0.0195  razon extremos/centro: 1.61 
+sd del residuo por tramo, s.window 9 : 0.0264 0.0157 0.0216  razon extremos/centro: 1.57 
+sd del residuo por tramo, s.window 13 : 0.0303 0.0165 0.0255  razon extremos/centro: 1.72 
+sd del residuo por tramo, s.window 21 : 0.0354 0.0182 0.0318  razon extremos/centro: 1.88 
+  razon extremos/centro: 'periodic' 2.04  11: 1.69 
+residuo 'periodic': correlacion entre el patron mensual medio de 1949-1953 y el de 1958-1960 = -0.93 
+pico de mitad de anio (max de julio y agosto), s.window = 11: 1949 0.1859  1960 0.2461 
+
+===== M7 · el atipico =====
+julio de 1955: 364 -> 546 ; log(1.5) = 0.4055 
+                                 jul_pct.seasonal T55.trend R55.remainder peso0    w55
+limpia, sin robust                           24.2     283.2        0.0347     0 1.0000
+inflada, sin robust                          28.1     294.3        0.3708     0 1.0000
+limpia, robust                               25.6     283.1        0.0235     4 0.8967
+inflada, robust                              24.6     282.2        0.4404     5 0.0000
+inflada, s.window 11, sin robust             33.3     292.9        0.3353     0 1.0000
+inflada, s.window 11, robust                 24.8     282.1        0.4387     4 0.0000
+sin robust, lo que cambia en julio de 1955 respecto de la serie limpia: S 0.0309  T 0.0385  R 0.336  suma 0.4055 
+pico de mitad de anio en las variantes s.window = 11 (1949 -> 1960):
+   inflada sin robust : 0.2144 -> 0.2858 
+   inflada robust : 0.1828 -> 0.2444 
+   limpia robust : 0.192 -> 0.2464 
+residuo mas disperso en los extremos que en el centro, en las cuatro variantes sin atipico:
+  s.window periodic  robust FALSE : 0.0396 0.0188 0.036 
+  s.window periodic  robust TRUE : 0.0458 0.0158 0.0354 
+  s.window 11  robust FALSE : 0.0289 0.016 0.0239 
+  s.window 11  robust TRUE : 0.033 0.0163 0.0275 
+
+===== M6 · la aditiva junto a la multiplicativa, en miles =====
+identidad y = T + T(S - 1) + (y - TS): max |dif| = 4.26e-14 
+sd anual del residuo, aditiva       : 30.5 20.7 22.4 17 14.5 5.6 6.1 10 17.2 29.4 29.4 25.4 
+sd anual del residuo, multiplicativa: 4.2 5.5 8.6 7.1 8.4 5.4 5.4 4.6 8.2 18.4 12.8 22.3 
+  la aditiva es mayor en 12 de 12 anios
+anchura de la banda estacional (max - min del anio), aditiva: 117.4 todos los anios; multiplicativa, 1950 y 1959: 62.1 186.2 
+rangos: S aditiva -53.6 63.8 | S mult -88.6 97.6 | R aditiva -44 61.1 | R mult -49.6 37 
+residuo aditivo de julio, 1949..1959: -42.6 -34.7 -36.1 -31.9 -25.2 -2.3 14.4 19.6 31.7 45.3 53.5 NA 
+
+===== M8 · de logaritmos a miles; desestacionalizada; fuerzas =====
+julio de 1955 en log: log y 5.8972 = T 5.646 + S 0.2164 + R 0.0347 
+  exp: T 283.16  S 1.2416  R 1.0353 ; septiembre: S 0.0675 -> 7 %
+desestacionalizada, julio de 1955: 364 / exp(S) = 293.2 ; con el indice clasico: 296.8 
+  mayor diferencia entre las dos: 6.1 mil ( 1.2 % ) en 1960 mes 7 
+  log y - S = T + R: max |dif| = 0 
+fuerzas, s.window = 'periodic' (3 decimales):
+  log(AirPassengers)   FT = 0.994  FS = 0.937
+  nottem               FT = 0.205  FS = 0.944
+  sunspots             FT = 0.907  FS = 0.005
+  co2                  FT = 1.000  FS = 0.984
+  USAccDeaths          FT = 0.799  FS = 0.943
+  log(AirPassengers), s.window = 11: FT = 0.997  FS = 0.964
+  ruido puro, 200 series de 144 normales (semilla 20948): mediana FT = 0.12  FS = 0.08 ; 5 % y 95 %: FT 0.06 0.19  FS 0.04 0.16 ; minimo FT 0.025  FS 0.015 
+?nottem  : Average Monthly Temperatures at Nottingham, 1920-1939  | inicio 1920 1 fin 1939 12 frecuencia 12 
+?sunspots: Monthly Sunspot Numbers, 1749-1983  | inicio 1749 1 fin 1983 12 frecuencia 12 

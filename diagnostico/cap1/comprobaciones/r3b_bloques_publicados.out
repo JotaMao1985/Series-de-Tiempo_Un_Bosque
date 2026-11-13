@@ -1,0 +1,154 @@
+======================================================================
+M7 · R · STL, con las dos respuestas encendidas al final
+----------------------------------------------------------------------
+# STL sobre log(AirPassengers): componentes aditivos en escala log
+library(fpp3)
+as_tsibble(log(AirPassengers)) |>
+  # window = 19 es justo lo que STL calcula solo con m = 12 y
+  # season(window = "periodic"); se escribe para que se vea. Con la ventana
+  # estacional por defecto de STL(), que es 11, calcularia 21; y con
+  # trend(window = 21) esta figura sale distinta: S_julio = 1.2405.
+  model(stl = STL(value ~ trend(window = 19) + season(window = "periodic"))) |>
+  components() |>
+  autoplot()
+
+# R base tambien trae STL, y ahi, con s.window = "periodic", el 19 sale solo:
+plot(stl(log(AirPassengers), s.window = "periodic"))
+
+# Las dos respuestas apagadas se encienden con un argumento cada una
+s11 <- stl(log(AirPassengers), s.window = 11)
+rob <- stl(log(AirPassengers), s.window = "periodic", robust = TRUE)
+round(exp(s11$time.series[c(7, 139), "seasonal"]), 3)    # julio: 1.204 y 1.279
+sum(rob$weights < 1e-8)                                  # 4 sin peso
+----------------------------------------------------------------------
+SALIDA:
+[1] 1.204 1.279
+[1] 4
+s11: ventanas 11 21 13 | rob: pasadas 1 y vueltas 15
+codigo de salida: 0 | stderr (sin el aviso de autoplot en desuso): ['Warning message:']
+======================================================================
+M7 · Python · STL, con las dos respuestas encendidas al final
+----------------------------------------------------------------------
+# STL sobre log(AirPassengers), con ajustes equivalentes a los del bloque de R:
+# estacionalidad periodica, ventana de tendencia de 19 y sin robustez.
+# No es identico: R evalua el ajuste local a saltos e interpola, y statsmodels
+# lo hace en cada punto. La diferencia es menor de 0.001 en el componente
+# estacional y de 0.003 en la tendencia.
+import numpy as np
+from statsmodels.tsa.seasonal import STL
+
+n = len(pasajeros)
+stl = STL(np.log(pasajeros), period=12,
+          seasonal=10 * n + 1, seasonal_deg=0,   # lo que R llama s.window = "periodic"
+          trend=19, robust=False)
+res = stl.fit(inner_iter=2, outer_iter=0)        # las pasadas que da stl() en R
+res.plot()
+
+print(round(res.seasonal["1955-07-01"], 4))      # 0.2164, el julio de la figura
+
+# Las dos respuestas apagadas, encendidas: s.window = 11 y robust = TRUE
+s11 = STL(np.log(pasajeros), period=12, seasonal=11, seasonal_deg=0,
+          trend=21).fit(inner_iter=2, outer_iter=0)
+rob = STL(np.log(pasajeros), period=12, seasonal=10 * n + 1, seasonal_deg=0,
+          trend=19, robust=True).fit(inner_iter=1, outer_iter=15)
+print(np.exp(s11.seasonal[["1949-07-01", "1960-07-01"]]).round(3).values)   # [1.204 1.279]
+print((rob.weights < 1e-8).sum())                                           # 4
+----------------------------------------------------------------------
+SALIDA:
+0.2164
+[1.204 1.279]
+4
+indice de julio con robust: 1.2561
+codigo de salida: 0 | stderr: nada
+======================================================================
+M8 · R · desestacionalizada y fuerzas
+----------------------------------------------------------------------
+# La STL de partida del Modulo 7, sobre el logaritmo (R base)
+st <- stl(log(AirPassengers), s.window = "periodic")$time.series
+Tt <- st[, "trend"]; St <- st[, "seasonal"]; Rt <- st[, "remainder"]
+
+# Serie desestacionalizada, de vuelta en miles de pasajeros: y / exp(S)
+ajustada <- AirPassengers / exp(St)
+round(window(ajustada, start = c(1955, 7), end = c(1955, 7)), 1)   # 293.2
+plot(AirPassengers, col = "grey50"); lines(ajustada, lwd = 2)
+
+# Fuerza de la tendencia y de la estacionalidad
+FT <- max(0, 1 - var(Rt) / var(Tt + Rt))
+FS <- max(0, 1 - var(Rt) / var(St + Rt))
+round(c(FT = FT, FS = FS), 3)
+#>    FT    FS
+#> 0.994 0.937
+
+# Con tidyverts: components() trae la columna season_adjust, y feat_stl() da
+# las fuerzas con su propia STL (s.window = 11): 0.997 y 0.964
+library(fpp3)
+pasajeros <- as_tsibble(log(AirPassengers))
+pasajeros |>
+  model(STL(value ~ trend(window = 19) + season(window = "periodic"))) |>
+  components() |>
+  mutate(ajustada = exp(season_adjust))
+pasajeros |> features(value, feat_stl)
+----------------------------------------------------------------------
+SALIDA:
+Jul
+1955 293.2
+   FT    FS 
+0.994 0.937 
+# A dable: 144 x 8 [1M]
+# Key:     .model [1]
+# :        value = trend + season_year + remainder
+   .model         index value trend season_year remainder season_adjust ajustada
+   <chr>          <mth> <dbl> <dbl>       <dbl>     <dbl>         <dbl>    <dbl>
+ 1 "STL(value… 1949 Jan  4.72  4.83     -0.0916 -0.0192            4.81     123.
+ 2 "STL(value… 1949 Feb  4.77  4.83     -0.114   0.0543            4.88     132.
+ 3 "STL(value… 1949 Mar  4.88  4.83      0.0159  0.0356            4.87     130.
+ 4 "STL(value… 1949 Apr  4.86  4.83     -0.0140  0.0405            4.87     131.
+ 5 "STL(value… 1949 May  4.80  4.84     -0.0150 -0.0246            4.81     123.
+ 6 "STL(value… 1949 Jun  4.91  4.84      0.110  -0.0427            4.80     121.
+ 7 "STL(value… 1949 Jul  5.00  4.84      0.216  -0.0601            4.78     119.
+ 8 "STL(value… 1949 Aug  5.00  4.84      0.210  -0.0559            4.79     120.
+ 9 "STL(value… 1949 Sep  4.91  4.85      0.0675 -0.000827          4.85     127.
+10 "STL(value… 1949 Oct  4.78  4.85     -0.0702 -0.00151           4.85     128.
+# ℹ 134 more rows
+# A tibble: 1 × 9
+  trend_strength seasonal_strength_year seasonal_peak_year seasonal_trough_year
+           <dbl>                  <dbl>              <dbl>                <dbl>
+1          0.997                  0.964                  7                   11
+# ℹ 5 more variables: spikiness <dbl>, linearity <dbl>, curvature <dbl>,
+#   stl_e_acf1 <dbl>, stl_e_acf10 <dbl>
+max |ajustada - exp(T + R)| = 3.979039e-13 
+tidyverts: ajustada de julio de 1955 = 293.2 | max |dif| con la de R base = 3.979039e-13 
+feat_stl: trend_strength = 0.997  seasonal_strength_year = 0.964
+codigo de salida: 0 | stderr (sin el aviso de autoplot en desuso): nada
+======================================================================
+M8 · Python · desestacionalizada y fuerzas
+----------------------------------------------------------------------
+# La STL de partida del Modulo 7, sobre el logaritmo
+import numpy as np
+from statsmodels.tsa.seasonal import STL
+
+n = len(pasajeros)
+res = STL(np.log(pasajeros), period=12, seasonal=10 * n + 1, seasonal_deg=0,
+          trend=19, robust=False).fit(inner_iter=2, outer_iter=0)
+
+# Serie desestacionalizada, de vuelta en miles de pasajeros: y / exp(S)
+ajustada = pasajeros / np.exp(res.seasonal)
+print(round(ajustada["1955-07-01"], 1))          # 293.2
+
+# Fuerza de la tendencia y de la estacionalidad
+FT = max(0, 1 - res.resid.var() / (res.trend + res.resid).var())
+FS = max(0, 1 - res.resid.var() / (res.seasonal + res.resid).var())
+print(round(FT, 3), round(FS, 3))                # 0.994 0.937
+
+import matplotlib.pyplot as plt
+pasajeros.plot(label="observada", color="grey")
+ajustada.plot(label="desestacionalizada")
+plt.legend(); plt.show()
+----------------------------------------------------------------------
+SALIDA:
+293.2
+0.994 0.937
+FT, FS sin redondear: 0.9940266097904618 0.9369222058383758
+codigo de salida: 0 | stderr: nada
+======================================================================
+bloques con error: 0

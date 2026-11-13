@@ -1,0 +1,199 @@
+== 1. Pesos tricúbicos en una ventana de 19 meses ==
+radio = 9 (stl(), y ahora el simulador): u = 3/9, 6/9, 9/9 -> 0.8930 0.3485 0.0000 
+   con más decimales: 0.8929533100 0.3484733018 0.0000000000 
+radio = 10 (convención anterior): u = 0.3, 0.6, 0.9 -> 0.9212 0.4819 0.0199  ; 1/w(0.9) = 50.2 
+ventana del foco 72 ( 1954-12 ): de 1954-03 a 1955-09 ; radio = 9 
+pesos de esa ventana (distancias 0..9): 1.0000 0.9959 0.9674 0.8930 0.7591 0.5688 0.3485 0.1484 0.0264 0.0000 
+vecinos con peso > 0: 17 de 19 ; 1/w a 6 meses = 2.87 ; w(3 meses)/w(6 meses) = 2.56 
+ventana del foco 1 ( 1949-01 ): de 1949-01 a 1950-07 ; radio = 18 ; peso del vecino más lejano = 0.0000 
+ventana del foco 144 ( 1960-12 ): de 1959-06 a 1960-12 ; radio = 18 
+
+== 2. Las cifras que la prosa toma del simulador (span 19) ==
+-- convención anterior (radio + 1) --
+1954-12 (foco  72) radio+1 | grado 1 tricubo 5.5439 | grado 0 tricubo 5.5439 | dif 0.0000 | grado 0 planos 5.5482 | grado 1 planos 5.5482 | media movil 19 5.5482 | stl() 5.5432
+1960-12 (foco 144) radio+1 | grado 1 tricubo 6.2043 | grado 0 tricubo 6.1545 | dif 0.0498 | grado 0 planos 6.1296 | grado 1 planos 6.1989 | media movil 19   NA   | stl() 6.2048
+1949-01 (foco   1) radio+1 | grado 1 tricubo 4.8266 | grado 0 tricubo 4.8409 | dif 0.0143 | grado 0 planos 4.8595 | grado 1 planos 4.8162 | media movil 19   NA   | stl() 4.8294
+-- convención de stl() (radio = distancia al vecino más lejano): la del simulador desde R3 --
+1954-12 (foco  72) radio   | grado 1 tricubo 5.5428 | grado 0 tricubo 5.5428 | dif 0.0000 | grado 0 planos 5.5482 | grado 1 planos 5.5482 | media movil 19 5.5482 | stl() 5.5432
+1960-12 (foco 144) radio   | grado 1 tricubo 6.2048 | grado 0 tricubo 6.1573 | dif 0.0475 | grado 0 planos 6.1296 | grado 1 planos 6.1989 | media movil 19   NA   | stl() 6.2048
+1949-01 (foco   1) radio   | grado 1 tricubo 4.8294 | grado 0 tricubo 4.8390 | dif 0.0096 | grado 0 planos 4.8595 | grado 1 planos 4.8162 | media movil 19   NA   | stl() 4.8294
+1954-12 (foco  72) radio   | grado 1 tricubo 5.5428 | grado 0 tricubo 5.5428 | dif 0.0000 | grado 0 planos 5.5482 | grado 1 planos 5.5482 | media movil 19 5.5482 | stl() 5.5432
+dic-1954: |grado 1 - grado 0| = 0  (misma cifra con todos los decimales: TRUE )
+1960-12 (foco 144) radio   | grado 1 tricubo 6.2048 | grado 0 tricubo 6.1573 | dif 0.0475 | grado 0 planos 6.1296 | grado 1 planos 6.1989 | media movil 19   NA   | stl() 6.2048
+dic-1960: grado 0 - grado 1 = -0.0475 (el nivel queda por DEBAJO de la recta) ; recta - stl() = -0.0000 ; nivel - stl() = -0.0475 
+1949-01 (foco   1) radio   | grado 1 tricubo 4.8294 | grado 0 tricubo 4.8390 | dif 0.0096 | grado 0 planos 4.8595 | grado 1 planos 4.8162 | media movil 19   NA   | stl() 4.8294
+ene-1949: grado 0 - grado 1 = 0.0096 ; recta - stl() = 0.0000 
+media móvil de 19: primeros y últimos NA = 9 y 9 
+
+== 3. La curva del simulador frente a la tendencia de stl() ==
+frente a la tendencia incrustada (stl por defecto, 4 decimales):
+  antes (radio + 1): máx |dif| = 0.0045 en 1953-03 ; media = 0.0015 ; meses que coinciden a 4 decimales: 5 de 144
+  ahora (radio)    : máx |dif| = 0.0024 en 1949-10 ; media = 0.0002 ; meses que coinciden a 4 decimales: 71 de 144
+  ahora, en los 73 meses en que stl() ajusta (1, 3, …, 143 y 144): máx |dif| = 6.4e-05 ; coinciden a 4 decimales: 66 
+  ahora, en los 71 meses que stl() interpola (2, 4, …, 142): máx |dif| = 0.0024 en 1949-10 ; media = 0.0005 ; coinciden a 4 decimales: 5 
+  ahora, |dif| > 0.0005 en 24 meses; > 0.001 en 10 ; > 0.002 en 1 
+  los cinco mayores: 1949-10 0.0024 1952-12 0.0012 1953-12 0.0012 1957-08 0.0012 1950-08 0.0011 
+
+== 4. Contra stl() calculado de nuevo ==
+stl por defecto: ventanas (s, t, l) = 1441 19 13 ; saltos (s, t, l) = 145 2 2 ; inner = 2 outer = 0 
+incrustado == round(stl por defecto, 4): TRUE TRUE 
+(a) simulador - stl(t.jump = 2, por defecto):          máx |dif| = 0.00235 en 1949-10 
+(b) ajuste local sobre lx - S de stl por defecto, sin redondear, frente a su tendencia:
+      en los meses en que stl() ajusta: máx |dif| = 2.93e-08 
+      en los que interpola            : máx |dif| = 0.00236 
+(c) stl(t.jump = 1): ajuste local sobre su lx - S frente a su tendencia: máx |dif| = 2.9e-08 
+    y con la convención anterior (radio + 1):                              máx |dif| = 0.00478 
+(d) simulador - stl(t.jump = 1): máx |dif| = 0.000206 en 1960-12 ; coinciden a 4 decimales: 114 de 144
+    máx |tendencia(t.jump = 2) - tendencia(t.jump = 1)| = 0.00238 en 1949-10 
+    máx |estacional(t.jump = 2) - estacional(t.jump = 1)| = 0.000724 
+    dic-1960: stl por defecto 6.2048 ; stl(t.jump = 1) 6.2046 ; simulador 6.2048 
+    dic-1954: stl por defecto 5.5432 ; stl(t.jump = 1) 5.5428 ; simulador 5.5428 
+    ene-1949: stl por defecto 4.8294 ; stl(t.jump = 1) 4.8296 ; simulador 4.8294 
+(e) en los meses pares, |stl - media de los dos ajustes vecinos del simulador|: máx = 5.83e-05 (si es ~1e-4, stl() interpola en línea recta)
+
+== 5. Tabla completa: foco, simulador (grado 1, tricubo, span 19) y stl() ==
+   fecha simulador    stl     dif stl_ajusta
+ 1949-01    4.8294 4.8294  0.0000  s\303\255
+ 1949-02    4.8301 4.8304 -0.0003  interpola
+ 1949-03    4.8314 4.8313  0.0001  s\303\255
+ 1949-04    4.8331 4.8334 -0.0003  interpola
+ 1949-05    4.8354 4.8354  0.0000  s\303\255
+ 1949-06    4.8381 4.8382 -0.0001  interpola
+ 1949-07    4.8409 4.8409  0.0000  s\303\255
+ 1949-08    4.8437 4.8435  0.0002  interpola
+ 1949-09    4.8460 4.8460  0.0000  s\303\255
+ 1949-10    4.8485 4.8509 -0.0024  interpola
+ 1949-11    4.8558 4.8558 -0.0000  s\303\255
+ 1949-12    4.8642 4.8646 -0.0004  interpola
+ 1950-01    4.8734 4.8734  0.0000  s\303\255
+ 1950-02    4.8832 4.8833 -0.0001  interpola
+ 1950-03    4.8932 4.8931  0.0001  s\303\255
+ 1950-04    4.9030 4.9032 -0.0002  interpola
+ 1950-05    4.9132 4.9132 -0.0000  s\303\255
+ 1950-06    4.9245 4.9254 -0.0009  interpola
+ 1950-07    4.9376 4.9376  0.0000  s\303\255
+ 1950-08    4.9533 4.9544 -0.0011  interpola
+ 1950-09    4.9712 4.9712 -0.0000  s\303\255
+ 1950-10    4.9912 4.9917 -0.0005  interpola
+ 1950-11    5.0121 5.0121  0.0000  s\303\255
+ 1950-12    5.0322 5.0311  0.0011  interpola
+ 1951-01    5.0500 5.0501 -0.0001  s\303\255
+ 1951-02    5.0656 5.0650  0.0006  interpola
+ 1951-03    5.0800 5.0800  0.0000  s\303\255
+ 1951-04    5.0940 5.0939  0.0001  interpola
+ 1951-05    5.1078 5.1078  0.0000  s\303\255
+ 1951-06    5.1214 5.1211  0.0003  interpola
+ 1951-07    5.1343 5.1343 -0.0000  s\303\255
+ 1951-08    5.1464 5.1461  0.0003  interpola
+ 1951-09    5.1580 5.1580 -0.0000  s\303\255
+ 1951-10    5.1695 5.1699 -0.0004  interpola
+ 1951-11    5.1817 5.1817  0.0000  s\303\255
+ 1951-12    5.1947 5.1948 -0.0001  interpola
+ 1952-01    5.2079 5.2079 -0.0000  s\303\255
+ 1952-02    5.2209 5.2205  0.0004  interpola
+ 1952-03    5.2331 5.2331  0.0000  s\303\255
+ 1952-04    5.2446 5.2444  0.0002  interpola
+ 1952-05    5.2557 5.2557 -0.0000  s\303\255
+ 1952-06    5.2667 5.2669 -0.0002  interpola
+ 1952-07    5.2781 5.2781  0.0000  s\303\255
+ 1952-08    5.2908 5.2919 -0.0011  interpola
+ 1952-09    5.3056 5.3057 -0.0001  s\303\255
+ 1952-10    5.3226 5.3230 -0.0004  interpola
+ 1952-11    5.3404 5.3404  0.0000  s\303\255
+ 1952-12    5.3570 5.3558  0.0012  interpola
+ 1953-01    5.3711 5.3712 -0.0001  s\303\255
+ 1953-02    5.3828 5.3817  0.0011  interpola
+ 1953-03    5.3922 5.3922  0.0000  s\303\255
+ 1953-04    5.3995 5.3985  0.0010  interpola
+ 1953-05    5.4047 5.4047  0.0000  s\303\255
+ 1953-06    5.4079 5.4068  0.0011  interpola
+ 1953-07    5.4089 5.4089 -0.0000  s\303\255
+ 1953-08    5.4081 5.4078  0.0003  interpola
+ 1953-09    5.4067 5.4067  0.0000  s\303\255
+ 1953-10    5.4060 5.4070 -0.0010  interpola
+ 1953-11    5.4073 5.4073 -0.0000  s\303\255
+ 1953-12    5.4114 5.4126 -0.0012  interpola
+ 1954-01    5.4180 5.4180 -0.0000  s\303\255
+ 1954-02    5.4257 5.4258 -0.0001  interpola
+ 1954-03    5.4337 5.4337 -0.0000  s\303\255
+ 1954-04    5.4421 5.4427 -0.0006  interpola
+ 1954-05    5.4517 5.4517 -0.0000  s\303\255
+ 1954-06    5.4628 5.4636 -0.0008  interpola
+ 1954-07    5.4755 5.4755 -0.0000  s\303\255
+ 1954-08    5.4889 5.4890 -0.0001  interpola
+ 1954-09    5.5024 5.5024  0.0000  s\303\255
+ 1954-10    5.5157 5.5157  0.0000  interpola
+ 1954-11    5.5289 5.5289  0.0000  s\303\255
+ 1954-12    5.5428 5.5432 -0.0004  interpola
+ 1955-01    5.5574 5.5574  0.0000  s\303\255
+ 1955-02    5.5725 5.5726 -0.0001  interpola
+ 1955-03    5.5878 5.5878 -0.0000  s\303\255
+ 1955-04    5.6028 5.6026  0.0002  interpola
+ 1955-05    5.6173 5.6173  0.0000  s\303\255
+ 1955-06    5.6317 5.6317  0.0000  interpola
+ 1955-07    5.6460 5.6460  0.0000  s\303\255
+ 1955-08    5.6602 5.6600  0.0002  interpola
+ 1955-09    5.6740 5.6740  0.0000  s\303\255
+ 1955-10    5.6876 5.6874  0.0002  interpola
+ 1955-11    5.7008 5.7008 -0.0000  s\303\255
+ 1955-12    5.7138 5.7137  0.0001  interpola
+ 1956-01    5.7266 5.7266 -0.0000  s\303\255
+ 1956-02    5.7390 5.7387  0.0003  interpola
+ 1956-03    5.7508 5.7508  0.0000  s\303\255
+ 1956-04    5.7618 5.7613  0.0005  interpola
+ 1956-05    5.7717 5.7717  0.0000  s\303\255
+ 1956-06    5.7809 5.7806  0.0003  interpola
+ 1956-07    5.7894 5.7894  0.0000  s\303\255
+ 1956-08    5.7975 5.7974  0.0001  interpola
+ 1956-09    5.8055 5.8055 -0.0000  s\303\255
+ 1956-10    5.8135 5.8137 -0.0002  interpola
+ 1956-11    5.8220 5.8220 -0.0000  s\303\255
+ 1956-12    5.8312 5.8317 -0.0005  interpola
+ 1957-01    5.8413 5.8413 -0.0000  s\303\255
+ 1957-02    5.8524 5.8526 -0.0002  interpola
+ 1957-03    5.8639 5.8639  0.0000  s\303\255
+ 1957-04    5.8754 5.8750  0.0004  interpola
+ 1957-05    5.8861 5.8861 -0.0000  s\303\255
+ 1957-06    5.8956 5.8947  0.0009  interpola
+ 1957-07    5.9033 5.9034 -0.0001  s\303\255
+ 1957-08    5.9090 5.9078  0.0012  interpola
+ 1957-09    5.9122 5.9122  0.0000  s\303\255
+ 1957-10    5.9134 5.9129  0.0005  interpola
+ 1957-11    5.9136 5.9136  0.0000  s\303\255
+ 1957-12    5.9140 5.9146 -0.0006  interpola
+ 1958-01    5.9155 5.9155  0.0000  s\303\255
+ 1958-02    5.9182 5.9185 -0.0003  interpola
+ 1958-03    5.9215 5.9215 -0.0000  s\303\255
+ 1958-04    5.9250 5.9250  0.0000  interpola
+ 1958-05    5.9285 5.9285 -0.0000  s\303\255
+ 1958-06    5.9323 5.9327 -0.0004  interpola
+ 1958-07    5.9369 5.9369  0.0000  s\303\255
+ 1958-08    5.9428 5.9433 -0.0005  interpola
+ 1958-09    5.9497 5.9497  0.0000  s\303\255
+ 1958-10    5.9573 5.9574 -0.0001  interpola
+ 1958-11    5.9651 5.9651 -0.0000  s\303\255
+ 1958-12    5.9730 5.9733 -0.0003  interpola
+ 1959-01    5.9816 5.9816 -0.0000  s\303\255
+ 1959-02    5.9913 5.9920 -0.0007  interpola
+ 1959-03    6.0025 6.0025  0.0000  s\303\255
+ 1959-04    6.0151 6.0156 -0.0005  interpola
+ 1959-05    6.0288 6.0288 -0.0000  s\303\255
+ 1959-06    6.0426 6.0422  0.0004  interpola
+ 1959-07    6.0556 6.0556  0.0000  s\303\255
+ 1959-08    6.0668 6.0659  0.0009  interpola
+ 1959-09    6.0761 6.0761  0.0000  s\303\255
+ 1959-10    6.0844 6.0841  0.0003  interpola
+ 1959-11    6.0921 6.0922 -0.0001  s\303\255
+ 1959-12    6.1002 6.1005 -0.0003  interpola
+ 1960-01    6.1088 6.1088  0.0000  s\303\255
+ 1960-02    6.1179 6.1179 -0.0000  interpola
+ 1960-03    6.1270 6.1270  0.0000  s\303\255
+ 1960-04    6.1364 6.1358  0.0006  interpola
+ 1960-05    6.1446 6.1446  0.0000  s\303\255
+ 1960-06    6.1529 6.1530 -0.0001  interpola
+ 1960-07    6.1614 6.1614 -0.0000  s\303\255
+ 1960-08    6.1701 6.1701 -0.0000  interpola
+ 1960-09    6.1789 6.1789  0.0000  s\303\255
+ 1960-10    6.1877 6.1876  0.0001  interpola
+ 1960-11    6.1963 6.1963  0.0000  s\303\255
+ 1960-12    6.2048 6.2048 -0.0000  s\303\255

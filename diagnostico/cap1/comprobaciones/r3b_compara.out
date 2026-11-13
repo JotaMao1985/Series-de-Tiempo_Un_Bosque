@@ -1,0 +1,80 @@
+OK    DATOS_CAP1 es identica a la de antes de la ronda (9018 caracteres)
+OK    DATOS_CAP1_STL del capitulo = precalculo/salidas/cap1_stl_variantes.js (36510 caracteres)
+OK    ... y = cap1_stl_variantes.json
+OK    variante de partida · tendencia = DATOS_CAP1.stl_log.tendencia (144 valores)
+OK    variante de partida · estacional = DATOS_CAP1.stl_log.estacional (144 valores)
+OK    variante de partida · residuo = DATOS_CAP1.stl_log.residuo (144 valores)
+OK    ocho variantes, 144 valores por componente
+OK    desestacionalizada incrustada (R, 1 decimal) frente a y / exp(S) con el S incrustado a 4 decimales: max |dif| = 0.065
+OK    desestacionalizada incrustada = AirPassengers / exp(S) recalculada ahora en R, punto a punto (144 de 144)
+OK    clasica aditiva incrustada = decompose(type = 'additive') recalculada ahora (estacional y residuo, 144 + 144)
+OK    multiplicativa en miles incrustada = T(S - 1) e y - TS recalculadas ahora (144 + 144)
+
+OK    M7 · en el capitulo: «julio, un 24.2&nbsp;% por encima de la tendencia»
+OK          en r3b_cifras.out: «julio, 'periodic': + 24.2 % los doce anios»
+OK    M7 · en el capitulo: «julio pasa de +20.4&nbsp;% en 1949 a +27.9&nbsp;% en»
+OK          en r3b_cifras.out: «julio, s.window = 11, 1949..1960 (%): 20.4 20.7 20.9 21.4 22 23.5 25 26.1 27.1 27.4 27.7 27.9»
+OK    M7 · en el capitulo: «negativo los cinco  primeros años y positivo los siete últimos»
+OK          en r3b_cifras.out: «negativos: 1949 1950 1951 1952 1953 | positivos: 1954 1955 1956 1957 1958 1959 1960»
+OK    M7 · en el capitulo: «0.040 en 1949–1953 y de 0.036 en 1958–1960, frente a 0.019»
+OK          en r3b_cifras.out: «sd del residuo por tramo, 'periodic'  : 0.0396 0.0188 0.036»
+OK    M7 · en el capitulo: «bajan a 0.029 y 0.024 las de los extremos y a 0.016 la del»
+OK          en r3b_cifras.out: «sd del residuo por tramo, s.window 11 : 0.0289 0.016 0.0239»
+OK    M7 · en el capitulo: «tampoco con ventanas más estrechas»
+OK          en r3b_cifras.out: «sd del residuo por tramo, s.window 7 : 0.024 0.0138 0.0195  razon extremos/centro: 1.61»
+OK    M7 · en el capitulo: «el logaritmo de ese mes sube 0.4055»
+OK          en r3b_cifras.out: «log(1.5) = 0.4055»
+OK    M7 · en el capitulo: «sube de +24.2&nbsp;% a +28.1&nbsp;%, la tendencia de ese mes pasa de 283.2 a 294.3»
+OK          en r3b_cifras.out: «inflada, sin robust                          28.1     294.3        0.3708»
+OK    M7 · en el capitulo: «y su residuo queda en 0.3708»
+OK          en r3b_cifras.out: «limpia, sin robust                           24.2     283.2        0.0347»
+OK    M7 · en el capitulo: «—+24.6&nbsp;% y 282.2 mil—»
+OK          en r3b_cifras.out: «inflada, robust                              24.6     282.2        0.4404     5 0.0000»
+OK    M7 · en el capitulo: «el dato, 0.4404»
+OK          en r3b_cifras.out: «inflada, robust                              24.6     282.2        0.4404»
+OK    M7 · en el capitulo: «de 12 observaciones sin estimar a <strong>ninguna</strong>»
+OK          en r3b_cifras.out: «NA en la tendencia de stl() = 0 ; en la de decompose() = 12»
+OK    M7 · en el capitulo: «—dos pasadas, por defecto—»
+OK          en r3b_cifras.out: «pasadas interiores 2 | vueltas exteriores 0»
+OK    M7 · en el capitulo: «da 15 vueltas, cada una con una sola  pasada»
+OK          en r3b_cifras.out: «con robust = TRUE:   pasadas interiores 1 | vueltas exteriores 15»
+OK    M7 · en el capitulo: «sino de la serie sin la tendencia recién      estimada»
+OK          en r3b_cifras.out: «max |S - medias centradas| = 1.86e-08»
+OK    M7 · en el capitulo: «así la estacionalidad oscila alrededor de cero»
+OK          en r3b_cifras.out: «suma de los doce valores estacionales ('periodic') = 1.46e-08»
+OK    M7 · en el capitulo: «# julio: 1.204 y 1.279»
+OK          en r3b_bloques_publicados.out: «[1] 1.204 1.279»
+OK    M7 · en el capitulo: «# [1.204 1.279]»
+OK          en r3b_bloques_publicados.out: «[1.204 1.279]»
+OK    M7 · en el capitulo: «# 4 sin peso»
+OK          en r3b_bloques_publicados.out: «[1] 4 / s11: ventanas 11 21 13»
+OK    M6 · en el capitulo: «entre unos 54 por debajo y 64 por encima»
+OK          en r3b_cifras.out: «rangos: S aditiva -53.6 63.8»
+OK          en r3b_cifras.out: «sd anual del residuo, multiplicativa: 4.2 5.5 8.6 7.1 8.4 5.4 5.4 4.6 8.2 18.4 12.8 22.3»
+OK          en r3b_cifras.out: «la aditiva es mayor en 12 de 12 anios»
+OK    M8 · en el capitulo: «$364 / 1.2416 = 293.2$ mil pasajeros»
+OK          en r3b_cifras.out: «desestacionalizada, julio de 1955: 364 / exp(S) = 293.2 ; con el indice clasico: 296.8»
+OK    M8 · en el capitulo: «296.8 en vez de 293.2, y la mayor diferencia entre las dos series ajustadas es de 6.1 mil pasaj»
+OK          en r3b_cifras.out: «mayor diferencia entre las dos: 6.1 mil ( 1.2 % ) en 1960 mes 7»
+OK    M8 · en el capitulo: «<td>0.994</td><td>0.937</td>»
+OK          en r3b_cifras.out: «log(AirPassengers)   FT = 0.994  FS = 0.937»
+OK    M8 · en el capitulo: «<td>0.205</td><td>0.944</td>»
+OK          en r3b_cifras.out: «nottem               FT = 0.205  FS = 0.944»
+OK    M8 · en el capitulo: «<td>0.907</td><td>0.005</td>»
+OK          en r3b_cifras.out: «sunspots             FT = 0.907  FS = 0.005»
+OK    M8 · en el capitulo: «<td>0.12</td><td>0.08</td>»
+OK          en r3b_cifras.out: «mediana FT = 0.12  FS = 0.08»
+OK    M8 · en el capitulo: «temperatura media mensual en Nottingham, 1920–1939»
+OK          en r3b_cifras.out: «Average Monthly Temperatures at Nottingham, 1920-1939»
+OK    M8 · en el capitulo: «manchas solares mensuales, 1749–1983»
+OK          en r3b_cifras.out: «Monthly Sunspot Numbers, 1749-1983»
+OK    M8 · en el capitulo: «misma serie en logaritmos salen 0.997 y 0.964»
+OK          en r3b_bloques_publicados.out: «feat_stl: trend_strength = 0.997  seasonal_strength_year = 0.964»
+OK    M8 · en el capitulo: «#> 0.994 0.937»
+OK          en r3b_bloques_publicados.out: «   FT    FS  / 0.994 0.937»
+OK    M8 · en el capitulo: «print(round(FT, 3), round(FS, 3))  # 0.994 0.937»
+OK          en r3b_bloques_publicados.out: «293.2 / 0.994 0.937»
+OK    M8 · en el capitulo: «Ni siquiera el ruido puro da cero»
+OK          en r3b_cifras.out: «minimo FT 0.025  FS 0.015»
+
+fallos: 0

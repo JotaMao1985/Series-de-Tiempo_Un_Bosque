@@ -1,0 +1,245 @@
+[
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 1200,
+  "modulo": 3,
+  "pasos": [
+   {
+    "js": "(() => {\n  const r1 = x => Math.round(x * 10) / 10;\n  const cv = document.querySelector('[data-simulador=\"grafico-rezagos\"] canvas'), ch = Chart.getChart(cv), a = ch.chartArea;\n  const x = ch.scales.x, y = ch.scales.y;\n  // pendiente en pantalla de la recta y_t = y_{t-k}: 45 grados si el área es cuadrada\n  const dx = x.getPixelForValue(x.max) - x.getPixelForValue(x.min), dy = y.getPixelForValue(y.min) - y.getPixelForValue(y.max);\n  const w = cv.parentElement.getBoundingClientRect();\n  return { ancho: document.documentElement.clientWidth, caja: [r1(w.width), r1(w.height)], lienzo: [cv.clientWidth, cv.clientHeight],\n    area: [r1(a.width), r1(a.height)], ejeX: [x.min, x.max], ejeY: [y.min, y.max],\n    anguloDiagonal: r1(Math.atan2(dy, dx) * 180 / Math.PI),\n    series: ch.data.datasets.map(d => ({ label: d.label, forma: d.pointStyle || 'circle', radio: d.pointRadius, n: d.data.length })),\n    leyenda: [...cv.closest('.simulador').querySelectorAll('.grafico-leyenda li')].map(li => li.textContent.trim() + ' [' + li.querySelector('span').className.replace('grafico-leyenda-muestra', '').trim() + ']'),\n    aria: cv.getAttribute('aria-label') };\n})()"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"grafico-rezagos\"]'); const i = r.querySelector('input[type=range]'); i.value = 12; i.dispatchEvent(new Event('input', { bubbles: true })); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "js": "(() => {\n  const r1 = x => Math.round(x * 10) / 10;\n  const cv = document.querySelector('[data-simulador=\"grafico-rezagos\"] canvas'), ch = Chart.getChart(cv), a = ch.chartArea;\n  const x = ch.scales.x, y = ch.scales.y;\n  // pendiente en pantalla de la recta y_t = y_{t-k}: 45 grados si el área es cuadrada\n  const dx = x.getPixelForValue(x.max) - x.getPixelForValue(x.min), dy = y.getPixelForValue(y.min) - y.getPixelForValue(y.max);\n  const w = cv.parentElement.getBoundingClientRect();\n  return { ancho: document.documentElement.clientWidth, caja: [r1(w.width), r1(w.height)], lienzo: [cv.clientWidth, cv.clientHeight],\n    area: [r1(a.width), r1(a.height)], ejeX: [x.min, x.max], ejeY: [y.min, y.max],\n    anguloDiagonal: r1(Math.atan2(dy, dx) * 180 / Math.PI),\n    series: ch.data.datasets.map(d => ({ label: d.label, forma: d.pointStyle || 'circle', radio: d.pointRadius, n: d.data.length })),\n    leyenda: [...cv.closest('.simulador').querySelectorAll('.grafico-leyenda li')].map(li => li.textContent.trim() + ' [' + li.querySelector('span').className.replace('grafico-leyenda-muestra', '').trim() + ']'),\n    aria: cv.getAttribute('aria-label') };\n})()"
+   },
+   {
+    "js": "(() => {\n  const m = sel => [...mainContent.querySelectorAll(sel)].map(p => ({ en: (p.closest('[data-simulador]') || {dataset:{}}).dataset.simulador || sel, ancho: Math.round(p.getBoundingClientRect().width), alineacion: getComputedStyle(p).textAlign }));\n  return { ancho: document.documentElement.clientWidth, lecturas: m('.simulador-lectura'), pasos: m('ol.pasos-metodo > li > p').slice(0, 2) };\n})()"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 1200,
+  "modulo": 6,
+  "pasos": [
+   {
+    "js": "(() => {\n  const m = sel => [...mainContent.querySelectorAll(sel)].map(p => ({ en: (p.closest('[data-simulador]') || {dataset:{}}).dataset.simulador || sel, ancho: Math.round(p.getBoundingClientRect().width), alineacion: getComputedStyle(p).textAlign }));\n  return { ancho: document.documentElement.clientWidth, lecturas: m('.simulador-lectura'), pasos: m('ol.pasos-metodo > li > p').slice(0, 2) };\n})()"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 1200,
+  "modulo": 7,
+  "pasos": [
+   {
+    "js": "(() => {\n  const m = sel => [...mainContent.querySelectorAll(sel)].map(p => ({ en: (p.closest('[data-simulador]') || {dataset:{}}).dataset.simulador || sel, ancho: Math.round(p.getBoundingClientRect().width), alineacion: getComputedStyle(p).textAlign }));\n  return { ancho: document.documentElement.clientWidth, lecturas: m('.simulador-lectura'), pasos: m('ol.pasos-metodo > li > p').slice(0, 2) };\n})()"
+   },
+   {
+    "js": "(() => { const b = document.querySelector('[aria-controls=\"der-robustez\"]'); if (b.getAttribute('aria-expanded') !== 'true') b.click(); return 'abierto ' + b.getAttribute('aria-controls'); })()",
+    "espera": 600
+   },
+   {
+    "js": "(() => {\n  const r1 = x => Math.round(x * 10) / 10;\n  const W = document.documentElement.clientWidth;\n  const sel = \"#der-robustez .katex-display\";\n  return [...mainContent.querySelectorAll(sel)].map(d => {\n    const k = d.querySelector('.katex-html') || d.querySelector('.katex') || d;\n    // la caja que se desplaza: el primer ancestro (o el propio elemento) con overflow-x auto o scroll\n    let caja = d; while (caja && caja !== mainContent && !/auto|scroll/.test(getComputedStyle(caja).overflowX)) caja = caja.parentElement;\n    const tiene = caja && caja !== mainContent;\n    const kr = k.getBoundingClientRect(), dr = (tiene ? caja : d).getBoundingClientRect();\n    // lo que recorta sin desplazar: un ancestro con overflow hidden por el que el contenido sobresale\n    let rec = d.parentElement, cortada = false;\n    while (rec && rec !== document.body) { const cs = getComputedStyle(rec); if (/hidden|clip/.test(cs.overflowX) && kr.right > rec.getBoundingClientRect().right + 1 && !(tiene && rec.contains(caja) && rec !== caja)) { cortada = true; break; } rec = rec.parentElement; }\n    return { formula: d.textContent.replace(/\\s+/g, ' ').slice(0, 34), anchoFormula: r1(k.scrollWidth), cajaQueDesplaza: tiene ? (caja.className || caja.tagName).toString().slice(0, 30) : null,\n      cajaCw: tiene ? caja.clientWidth : null, cajaSw: tiene ? caja.scrollWidth : null,\n      seDesplaza: tiene ? caja.scrollWidth > caja.clientWidth + 1 : false,\n      sobresaleDeLaPagina: kr.right > W + 1 && !tiene, cortadaSinDesplazamiento: !tiene && k.scrollWidth > d.clientWidth + 1,\n      sombra: tiene ? getComputedStyle(caja).backgroundAttachment : null };\n  });\n})()"
+   },
+   {
+    "js": "(() => {\n  const sim = document.querySelector('[data-simulador=\"descomp-stl\"]');\n  const ch = Chart.getChart(sim.querySelectorAll('canvas')[2]);\n  return { series: ch.data.datasets.map((d, i) => ({ label: d.label, color: d.borderColor, grosor: d.borderWidth, trazo: d.borderDash || null, orden: d.order, visible: ch.isDatasetVisible(i) })),\n    leyenda: [...sim.querySelectorAll('.grafico-leyenda li')].map(li => li.textContent.trim() + (li.hidden ? ' (oculta)' : '')),\n    lectura: sim.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(),\n    aria: sim.querySelectorAll('canvas')[2].getAttribute('aria-label') };\n})()"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"descomp-stl\"]'); r.querySelectorAll('input[type=radio]')[1].click(); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "js": "(() => {\n  const sim = document.querySelector('[data-simulador=\"descomp-stl\"]');\n  const ch = Chart.getChart(sim.querySelectorAll('canvas')[2]);\n  return { series: ch.data.datasets.map((d, i) => ({ label: d.label, color: d.borderColor, grosor: d.borderWidth, trazo: d.borderDash || null, orden: d.order, visible: ch.isDatasetVisible(i) })),\n    leyenda: [...sim.querySelectorAll('.grafico-leyenda li')].map(li => li.textContent.trim() + (li.hidden ? ' (oculta)' : '')),\n    lectura: sim.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(),\n    aria: sim.querySelectorAll('canvas')[2].getAttribute('aria-label') };\n})()"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"descomp-stl\"]'); r.querySelectorAll('input[type=radio]')[5].click(); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "js": "(() => {\n  const sim = document.querySelector('[data-simulador=\"descomp-stl\"]');\n  const ch = Chart.getChart(sim.querySelectorAll('canvas')[2]);\n  return { series: ch.data.datasets.map((d, i) => ({ label: d.label, color: d.borderColor, grosor: d.borderWidth, trazo: d.borderDash || null, orden: d.order, visible: ch.isDatasetVisible(i) })),\n    leyenda: [...sim.querySelectorAll('.grafico-leyenda li')].map(li => li.textContent.trim() + (li.hidden ? ' (oculta)' : '')),\n    lectura: sim.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(),\n    aria: sim.querySelectorAll('canvas')[2].getAttribute('aria-label') };\n})()"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 1200,
+  "modulo": 8,
+  "pasos": [
+   {
+    "js": "(() => {\n  const r1 = x => Math.round(x * 10) / 10;\n  const t = [...mainContent.querySelectorAll('table')].find(x => /cuatro series/.test(x.caption ? x.caption.textContent : ''));\n  let caja = t; while (caja && caja !== mainContent && !/auto|scroll/.test(getComputedStyle(caja).overflowX)) caja = caja.parentElement;\n  const tiene = caja && caja !== mainContent;\n  const col = t.parentElement.closest('#content-area, .derivacion-panel') || t.parentElement;\n  const cr = (tiene ? caja : t).getBoundingClientRect();\n  const celdas = [...t.querySelectorAll('th, td')];\n  const fuera = celdas.filter(c => c.getBoundingClientRect().right > cr.right + 1).length;\n  return { ancho: document.documentElement.clientWidth, columna: t.parentElement.clientWidth, display: getComputedStyle(t).display,\n    tablaCw: t.clientWidth, tablaSw: t.scrollWidth, cajaQueDesplaza: tiene ? (caja === t ? 'la propia tabla' : caja.className) : null,\n    cajaCw: tiene ? caja.clientWidth : null, cajaSw: tiene ? caja.scrollWidth : null,\n    seDesplaza: tiene ? caja.scrollWidth > caja.clientWidth + 1 : false,\n    celdasFueraDeLaCaja: fuera + ' de ' + celdas.length,\n    cuartaColumna: (() => { const c = t.querySelector('tbody tr td:nth-child(4)').getBoundingClientRect(); return { izq: r1(c.left), der: r1(c.right), limite: r1(cr.right) }; })(),\n    sombra: tiene ? getComputedStyle(caja).backgroundAttachment : null,\n    otrasTablas: [...mainContent.querySelectorAll('table')].filter(x => x !== t).map(x => ({ cw: x.clientWidth, sw: x.scrollWidth, display: getComputedStyle(x).display })) };\n})()"
+   },
+   {
+    "js": "(() => { const b = document.querySelector('[aria-controls=\"der-fuerza-ft\"]'); if (b.getAttribute('aria-expanded') !== 'true') b.click(); return 'abierto ' + b.getAttribute('aria-controls'); })()",
+    "espera": 600
+   },
+   {
+    "js": "(() => {\n  const r1 = x => Math.round(x * 10) / 10;\n  const W = document.documentElement.clientWidth;\n  const sel = \"#der-fuerza-ft .katex-display\";\n  return [...mainContent.querySelectorAll(sel)].map(d => {\n    const k = d.querySelector('.katex-html') || d.querySelector('.katex') || d;\n    // la caja que se desplaza: el primer ancestro (o el propio elemento) con overflow-x auto o scroll\n    let caja = d; while (caja && caja !== mainContent && !/auto|scroll/.test(getComputedStyle(caja).overflowX)) caja = caja.parentElement;\n    const tiene = caja && caja !== mainContent;\n    const kr = k.getBoundingClientRect(), dr = (tiene ? caja : d).getBoundingClientRect();\n    // lo que recorta sin desplazar: un ancestro con overflow hidden por el que el contenido sobresale\n    let rec = d.parentElement, cortada = false;\n    while (rec && rec !== document.body) { const cs = getComputedStyle(rec); if (/hidden|clip/.test(cs.overflowX) && kr.right > rec.getBoundingClientRect().right + 1 && !(tiene && rec.contains(caja) && rec !== caja)) { cortada = true; break; } rec = rec.parentElement; }\n    return { formula: d.textContent.replace(/\\s+/g, ' ').slice(0, 34), anchoFormula: r1(k.scrollWidth), cajaQueDesplaza: tiene ? (caja.className || caja.tagName).toString().slice(0, 30) : null,\n      cajaCw: tiene ? caja.clientWidth : null, cajaSw: tiene ? caja.scrollWidth : null,\n      seDesplaza: tiene ? caja.scrollWidth > caja.clientWidth + 1 : false,\n      sobresaleDeLaPagina: kr.right > W + 1 && !tiene, cortadaSinDesplazamiento: !tiene && k.scrollWidth > d.clientWidth + 1,\n      sombra: tiene ? getComputedStyle(caja).backgroundAttachment : null };\n  });\n})()"
+   },
+   {
+    "js": "(() => {\n  const r1 = x => Math.round(x * 10) / 10;\n  const W = document.documentElement.clientWidth;\n  const sel = \".formula .katex-display\";\n  return [...mainContent.querySelectorAll(sel)].map(d => {\n    const k = d.querySelector('.katex-html') || d.querySelector('.katex') || d;\n    // la caja que se desplaza: el primer ancestro (o el propio elemento) con overflow-x auto o scroll\n    let caja = d; while (caja && caja !== mainContent && !/auto|scroll/.test(getComputedStyle(caja).overflowX)) caja = caja.parentElement;\n    const tiene = caja && caja !== mainContent;\n    const kr = k.getBoundingClientRect(), dr = (tiene ? caja : d).getBoundingClientRect();\n    // lo que recorta sin desplazar: un ancestro con overflow hidden por el que el contenido sobresale\n    let rec = d.parentElement, cortada = false;\n    while (rec && rec !== document.body) { const cs = getComputedStyle(rec); if (/hidden|clip/.test(cs.overflowX) && kr.right > rec.getBoundingClientRect().right + 1 && !(tiene && rec.contains(caja) && rec !== caja)) { cortada = true; break; } rec = rec.parentElement; }\n    return { formula: d.textContent.replace(/\\s+/g, ' ').slice(0, 34), anchoFormula: r1(k.scrollWidth), cajaQueDesplaza: tiene ? (caja.className || caja.tagName).toString().slice(0, 30) : null,\n      cajaCw: tiene ? caja.clientWidth : null, cajaSw: tiene ? caja.scrollWidth : null,\n      seDesplaza: tiene ? caja.scrollWidth > caja.clientWidth + 1 : false,\n      sobresaleDeLaPagina: kr.right > W + 1 && !tiene, cortadaSinDesplazamiento: !tiene && k.scrollWidth > d.clientWidth + 1,\n      sombra: tiene ? getComputedStyle(caja).backgroundAttachment : null };\n  });\n})()"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 800,
+  "modulo": 3,
+  "pasos": [
+   {
+    "js": "(() => {\n  const r1 = x => Math.round(x * 10) / 10;\n  const cv = document.querySelector('[data-simulador=\"grafico-rezagos\"] canvas'), ch = Chart.getChart(cv), a = ch.chartArea;\n  const x = ch.scales.x, y = ch.scales.y;\n  // pendiente en pantalla de la recta y_t = y_{t-k}: 45 grados si el área es cuadrada\n  const dx = x.getPixelForValue(x.max) - x.getPixelForValue(x.min), dy = y.getPixelForValue(y.min) - y.getPixelForValue(y.max);\n  const w = cv.parentElement.getBoundingClientRect();\n  return { ancho: document.documentElement.clientWidth, caja: [r1(w.width), r1(w.height)], lienzo: [cv.clientWidth, cv.clientHeight],\n    area: [r1(a.width), r1(a.height)], ejeX: [x.min, x.max], ejeY: [y.min, y.max],\n    anguloDiagonal: r1(Math.atan2(dy, dx) * 180 / Math.PI),\n    series: ch.data.datasets.map(d => ({ label: d.label, forma: d.pointStyle || 'circle', radio: d.pointRadius, n: d.data.length })),\n    leyenda: [...cv.closest('.simulador').querySelectorAll('.grafico-leyenda li')].map(li => li.textContent.trim() + ' [' + li.querySelector('span').className.replace('grafico-leyenda-muestra', '').trim() + ']'),\n    aria: cv.getAttribute('aria-label') };\n})()"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"grafico-rezagos\"]'); const i = r.querySelector('input[type=range]'); i.value = 12; i.dispatchEvent(new Event('input', { bubbles: true })); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "js": "(() => {\n  const r1 = x => Math.round(x * 10) / 10;\n  const cv = document.querySelector('[data-simulador=\"grafico-rezagos\"] canvas'), ch = Chart.getChart(cv), a = ch.chartArea;\n  const x = ch.scales.x, y = ch.scales.y;\n  // pendiente en pantalla de la recta y_t = y_{t-k}: 45 grados si el área es cuadrada\n  const dx = x.getPixelForValue(x.max) - x.getPixelForValue(x.min), dy = y.getPixelForValue(y.min) - y.getPixelForValue(y.max);\n  const w = cv.parentElement.getBoundingClientRect();\n  return { ancho: document.documentElement.clientWidth, caja: [r1(w.width), r1(w.height)], lienzo: [cv.clientWidth, cv.clientHeight],\n    area: [r1(a.width), r1(a.height)], ejeX: [x.min, x.max], ejeY: [y.min, y.max],\n    anguloDiagonal: r1(Math.atan2(dy, dx) * 180 / Math.PI),\n    series: ch.data.datasets.map(d => ({ label: d.label, forma: d.pointStyle || 'circle', radio: d.pointRadius, n: d.data.length })),\n    leyenda: [...cv.closest('.simulador').querySelectorAll('.grafico-leyenda li')].map(li => li.textContent.trim() + ' [' + li.querySelector('span').className.replace('grafico-leyenda-muestra', '').trim() + ']'),\n    aria: cv.getAttribute('aria-label') };\n})()"
+   },
+   {
+    "js": "(() => {\n  const m = sel => [...mainContent.querySelectorAll(sel)].map(p => ({ en: (p.closest('[data-simulador]') || {dataset:{}}).dataset.simulador || sel, ancho: Math.round(p.getBoundingClientRect().width), alineacion: getComputedStyle(p).textAlign }));\n  return { ancho: document.documentElement.clientWidth, lecturas: m('.simulador-lectura'), pasos: m('ol.pasos-metodo > li > p').slice(0, 2) };\n})()"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 800,
+  "modulo": 6,
+  "pasos": [
+   {
+    "js": "(() => {\n  const m = sel => [...mainContent.querySelectorAll(sel)].map(p => ({ en: (p.closest('[data-simulador]') || {dataset:{}}).dataset.simulador || sel, ancho: Math.round(p.getBoundingClientRect().width), alineacion: getComputedStyle(p).textAlign }));\n  return { ancho: document.documentElement.clientWidth, lecturas: m('.simulador-lectura'), pasos: m('ol.pasos-metodo > li > p').slice(0, 2) };\n})()"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 800,
+  "modulo": 7,
+  "pasos": [
+   {
+    "js": "(() => {\n  const m = sel => [...mainContent.querySelectorAll(sel)].map(p => ({ en: (p.closest('[data-simulador]') || {dataset:{}}).dataset.simulador || sel, ancho: Math.round(p.getBoundingClientRect().width), alineacion: getComputedStyle(p).textAlign }));\n  return { ancho: document.documentElement.clientWidth, lecturas: m('.simulador-lectura'), pasos: m('ol.pasos-metodo > li > p').slice(0, 2) };\n})()"
+   },
+   {
+    "js": "(() => { const b = document.querySelector('[aria-controls=\"der-robustez\"]'); if (b.getAttribute('aria-expanded') !== 'true') b.click(); return 'abierto ' + b.getAttribute('aria-controls'); })()",
+    "espera": 600
+   },
+   {
+    "js": "(() => {\n  const r1 = x => Math.round(x * 10) / 10;\n  const W = document.documentElement.clientWidth;\n  const sel = \"#der-robustez .katex-display\";\n  return [...mainContent.querySelectorAll(sel)].map(d => {\n    const k = d.querySelector('.katex-html') || d.querySelector('.katex') || d;\n    // la caja que se desplaza: el primer ancestro (o el propio elemento) con overflow-x auto o scroll\n    let caja = d; while (caja && caja !== mainContent && !/auto|scroll/.test(getComputedStyle(caja).overflowX)) caja = caja.parentElement;\n    const tiene = caja && caja !== mainContent;\n    const kr = k.getBoundingClientRect(), dr = (tiene ? caja : d).getBoundingClientRect();\n    // lo que recorta sin desplazar: un ancestro con overflow hidden por el que el contenido sobresale\n    let rec = d.parentElement, cortada = false;\n    while (rec && rec !== document.body) { const cs = getComputedStyle(rec); if (/hidden|clip/.test(cs.overflowX) && kr.right > rec.getBoundingClientRect().right + 1 && !(tiene && rec.contains(caja) && rec !== caja)) { cortada = true; break; } rec = rec.parentElement; }\n    return { formula: d.textContent.replace(/\\s+/g, ' ').slice(0, 34), anchoFormula: r1(k.scrollWidth), cajaQueDesplaza: tiene ? (caja.className || caja.tagName).toString().slice(0, 30) : null,\n      cajaCw: tiene ? caja.clientWidth : null, cajaSw: tiene ? caja.scrollWidth : null,\n      seDesplaza: tiene ? caja.scrollWidth > caja.clientWidth + 1 : false,\n      sobresaleDeLaPagina: kr.right > W + 1 && !tiene, cortadaSinDesplazamiento: !tiene && k.scrollWidth > d.clientWidth + 1,\n      sombra: tiene ? getComputedStyle(caja).backgroundAttachment : null };\n  });\n})()"
+   },
+   {
+    "js": "(() => {\n  const sim = document.querySelector('[data-simulador=\"descomp-stl\"]');\n  const ch = Chart.getChart(sim.querySelectorAll('canvas')[2]);\n  return { series: ch.data.datasets.map((d, i) => ({ label: d.label, color: d.borderColor, grosor: d.borderWidth, trazo: d.borderDash || null, orden: d.order, visible: ch.isDatasetVisible(i) })),\n    leyenda: [...sim.querySelectorAll('.grafico-leyenda li')].map(li => li.textContent.trim() + (li.hidden ? ' (oculta)' : '')),\n    lectura: sim.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(),\n    aria: sim.querySelectorAll('canvas')[2].getAttribute('aria-label') };\n})()"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"descomp-stl\"]'); r.querySelectorAll('input[type=radio]')[1].click(); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "js": "(() => {\n  const sim = document.querySelector('[data-simulador=\"descomp-stl\"]');\n  const ch = Chart.getChart(sim.querySelectorAll('canvas')[2]);\n  return { series: ch.data.datasets.map((d, i) => ({ label: d.label, color: d.borderColor, grosor: d.borderWidth, trazo: d.borderDash || null, orden: d.order, visible: ch.isDatasetVisible(i) })),\n    leyenda: [...sim.querySelectorAll('.grafico-leyenda li')].map(li => li.textContent.trim() + (li.hidden ? ' (oculta)' : '')),\n    lectura: sim.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(),\n    aria: sim.querySelectorAll('canvas')[2].getAttribute('aria-label') };\n})()"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"descomp-stl\"]'); r.querySelectorAll('input[type=radio]')[5].click(); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "js": "(() => {\n  const sim = document.querySelector('[data-simulador=\"descomp-stl\"]');\n  const ch = Chart.getChart(sim.querySelectorAll('canvas')[2]);\n  return { series: ch.data.datasets.map((d, i) => ({ label: d.label, color: d.borderColor, grosor: d.borderWidth, trazo: d.borderDash || null, orden: d.order, visible: ch.isDatasetVisible(i) })),\n    leyenda: [...sim.querySelectorAll('.grafico-leyenda li')].map(li => li.textContent.trim() + (li.hidden ? ' (oculta)' : '')),\n    lectura: sim.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(),\n    aria: sim.querySelectorAll('canvas')[2].getAttribute('aria-label') };\n})()"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 800,
+  "modulo": 8,
+  "pasos": [
+   {
+    "js": "(() => {\n  const r1 = x => Math.round(x * 10) / 10;\n  const t = [...mainContent.querySelectorAll('table')].find(x => /cuatro series/.test(x.caption ? x.caption.textContent : ''));\n  let caja = t; while (caja && caja !== mainContent && !/auto|scroll/.test(getComputedStyle(caja).overflowX)) caja = caja.parentElement;\n  const tiene = caja && caja !== mainContent;\n  const col = t.parentElement.closest('#content-area, .derivacion-panel') || t.parentElement;\n  const cr = (tiene ? caja : t).getBoundingClientRect();\n  const celdas = [...t.querySelectorAll('th, td')];\n  const fuera = celdas.filter(c => c.getBoundingClientRect().right > cr.right + 1).length;\n  return { ancho: document.documentElement.clientWidth, columna: t.parentElement.clientWidth, display: getComputedStyle(t).display,\n    tablaCw: t.clientWidth, tablaSw: t.scrollWidth, cajaQueDesplaza: tiene ? (caja === t ? 'la propia tabla' : caja.className) : null,\n    cajaCw: tiene ? caja.clientWidth : null, cajaSw: tiene ? caja.scrollWidth : null,\n    seDesplaza: tiene ? caja.scrollWidth > caja.clientWidth + 1 : false,\n    celdasFueraDeLaCaja: fuera + ' de ' + celdas.length,\n    cuartaColumna: (() => { const c = t.querySelector('tbody tr td:nth-child(4)').getBoundingClientRect(); return { izq: r1(c.left), der: r1(c.right), limite: r1(cr.right) }; })(),\n    sombra: tiene ? getComputedStyle(caja).backgroundAttachment : null,\n    otrasTablas: [...mainContent.querySelectorAll('table')].filter(x => x !== t).map(x => ({ cw: x.clientWidth, sw: x.scrollWidth, display: getComputedStyle(x).display })) };\n})()"
+   },
+   {
+    "js": "(() => { const b = document.querySelector('[aria-controls=\"der-fuerza-ft\"]'); if (b.getAttribute('aria-expanded') !== 'true') b.click(); return 'abierto ' + b.getAttribute('aria-controls'); })()",
+    "espera": 600
+   },
+   {
+    "js": "(() => {\n  const r1 = x => Math.round(x * 10) / 10;\n  const W = document.documentElement.clientWidth;\n  const sel = \"#der-fuerza-ft .katex-display\";\n  return [...mainContent.querySelectorAll(sel)].map(d => {\n    const k = d.querySelector('.katex-html') || d.querySelector('.katex') || d;\n    // la caja que se desplaza: el primer ancestro (o el propio elemento) con overflow-x auto o scroll\n    let caja = d; while (caja && caja !== mainContent && !/auto|scroll/.test(getComputedStyle(caja).overflowX)) caja = caja.parentElement;\n    const tiene = caja && caja !== mainContent;\n    const kr = k.getBoundingClientRect(), dr = (tiene ? caja : d).getBoundingClientRect();\n    // lo que recorta sin desplazar: un ancestro con overflow hidden por el que el contenido sobresale\n    let rec = d.parentElement, cortada = false;\n    while (rec && rec !== document.body) { const cs = getComputedStyle(rec); if (/hidden|clip/.test(cs.overflowX) && kr.right > rec.getBoundingClientRect().right + 1 && !(tiene && rec.contains(caja) && rec !== caja)) { cortada = true; break; } rec = rec.parentElement; }\n    return { formula: d.textContent.replace(/\\s+/g, ' ').slice(0, 34), anchoFormula: r1(k.scrollWidth), cajaQueDesplaza: tiene ? (caja.className || caja.tagName).toString().slice(0, 30) : null,\n      cajaCw: tiene ? caja.clientWidth : null, cajaSw: tiene ? caja.scrollWidth : null,\n      seDesplaza: tiene ? caja.scrollWidth > caja.clientWidth + 1 : false,\n      sobresaleDeLaPagina: kr.right > W + 1 && !tiene, cortadaSinDesplazamiento: !tiene && k.scrollWidth > d.clientWidth + 1,\n      sombra: tiene ? getComputedStyle(caja).backgroundAttachment : null };\n  });\n})()"
+   },
+   {
+    "js": "(() => {\n  const r1 = x => Math.round(x * 10) / 10;\n  const W = document.documentElement.clientWidth;\n  const sel = \".formula .katex-display\";\n  return [...mainContent.querySelectorAll(sel)].map(d => {\n    const k = d.querySelector('.katex-html') || d.querySelector('.katex') || d;\n    // la caja que se desplaza: el primer ancestro (o el propio elemento) con overflow-x auto o scroll\n    let caja = d; while (caja && caja !== mainContent && !/auto|scroll/.test(getComputedStyle(caja).overflowX)) caja = caja.parentElement;\n    const tiene = caja && caja !== mainContent;\n    const kr = k.getBoundingClientRect(), dr = (tiene ? caja : d).getBoundingClientRect();\n    // lo que recorta sin desplazar: un ancestro con overflow hidden por el que el contenido sobresale\n    let rec = d.parentElement, cortada = false;\n    while (rec && rec !== document.body) { const cs = getComputedStyle(rec); if (/hidden|clip/.test(cs.overflowX) && kr.right > rec.getBoundingClientRect().right + 1 && !(tiene && rec.contains(caja) && rec !== caja)) { cortada = true; break; } rec = rec.parentElement; }\n    return { formula: d.textContent.replace(/\\s+/g, ' ').slice(0, 34), anchoFormula: r1(k.scrollWidth), cajaQueDesplaza: tiene ? (caja.className || caja.tagName).toString().slice(0, 30) : null,\n      cajaCw: tiene ? caja.clientWidth : null, cajaSw: tiene ? caja.scrollWidth : null,\n      seDesplaza: tiene ? caja.scrollWidth > caja.clientWidth + 1 : false,\n      sobresaleDeLaPagina: kr.right > W + 1 && !tiene, cortadaSinDesplazamiento: !tiene && k.scrollWidth > d.clientWidth + 1,\n      sombra: tiene ? getComputedStyle(caja).backgroundAttachment : null };\n  });\n})()"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 375,
+  "modulo": 3,
+  "pasos": [
+   {
+    "js": "(() => {\n  const r1 = x => Math.round(x * 10) / 10;\n  const cv = document.querySelector('[data-simulador=\"grafico-rezagos\"] canvas'), ch = Chart.getChart(cv), a = ch.chartArea;\n  const x = ch.scales.x, y = ch.scales.y;\n  // pendiente en pantalla de la recta y_t = y_{t-k}: 45 grados si el área es cuadrada\n  const dx = x.getPixelForValue(x.max) - x.getPixelForValue(x.min), dy = y.getPixelForValue(y.min) - y.getPixelForValue(y.max);\n  const w = cv.parentElement.getBoundingClientRect();\n  return { ancho: document.documentElement.clientWidth, caja: [r1(w.width), r1(w.height)], lienzo: [cv.clientWidth, cv.clientHeight],\n    area: [r1(a.width), r1(a.height)], ejeX: [x.min, x.max], ejeY: [y.min, y.max],\n    anguloDiagonal: r1(Math.atan2(dy, dx) * 180 / Math.PI),\n    series: ch.data.datasets.map(d => ({ label: d.label, forma: d.pointStyle || 'circle', radio: d.pointRadius, n: d.data.length })),\n    leyenda: [...cv.closest('.simulador').querySelectorAll('.grafico-leyenda li')].map(li => li.textContent.trim() + ' [' + li.querySelector('span').className.replace('grafico-leyenda-muestra', '').trim() + ']'),\n    aria: cv.getAttribute('aria-label') };\n})()"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"grafico-rezagos\"]'); const i = r.querySelector('input[type=range]'); i.value = 12; i.dispatchEvent(new Event('input', { bubbles: true })); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "js": "(() => {\n  const r1 = x => Math.round(x * 10) / 10;\n  const cv = document.querySelector('[data-simulador=\"grafico-rezagos\"] canvas'), ch = Chart.getChart(cv), a = ch.chartArea;\n  const x = ch.scales.x, y = ch.scales.y;\n  // pendiente en pantalla de la recta y_t = y_{t-k}: 45 grados si el área es cuadrada\n  const dx = x.getPixelForValue(x.max) - x.getPixelForValue(x.min), dy = y.getPixelForValue(y.min) - y.getPixelForValue(y.max);\n  const w = cv.parentElement.getBoundingClientRect();\n  return { ancho: document.documentElement.clientWidth, caja: [r1(w.width), r1(w.height)], lienzo: [cv.clientWidth, cv.clientHeight],\n    area: [r1(a.width), r1(a.height)], ejeX: [x.min, x.max], ejeY: [y.min, y.max],\n    anguloDiagonal: r1(Math.atan2(dy, dx) * 180 / Math.PI),\n    series: ch.data.datasets.map(d => ({ label: d.label, forma: d.pointStyle || 'circle', radio: d.pointRadius, n: d.data.length })),\n    leyenda: [...cv.closest('.simulador').querySelectorAll('.grafico-leyenda li')].map(li => li.textContent.trim() + ' [' + li.querySelector('span').className.replace('grafico-leyenda-muestra', '').trim() + ']'),\n    aria: cv.getAttribute('aria-label') };\n})()"
+   },
+   {
+    "js": "(() => {\n  const m = sel => [...mainContent.querySelectorAll(sel)].map(p => ({ en: (p.closest('[data-simulador]') || {dataset:{}}).dataset.simulador || sel, ancho: Math.round(p.getBoundingClientRect().width), alineacion: getComputedStyle(p).textAlign }));\n  return { ancho: document.documentElement.clientWidth, lecturas: m('.simulador-lectura'), pasos: m('ol.pasos-metodo > li > p').slice(0, 2) };\n})()"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 375,
+  "modulo": 6,
+  "pasos": [
+   {
+    "js": "(() => {\n  const m = sel => [...mainContent.querySelectorAll(sel)].map(p => ({ en: (p.closest('[data-simulador]') || {dataset:{}}).dataset.simulador || sel, ancho: Math.round(p.getBoundingClientRect().width), alineacion: getComputedStyle(p).textAlign }));\n  return { ancho: document.documentElement.clientWidth, lecturas: m('.simulador-lectura'), pasos: m('ol.pasos-metodo > li > p').slice(0, 2) };\n})()"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 375,
+  "modulo": 7,
+  "pasos": [
+   {
+    "js": "(() => {\n  const m = sel => [...mainContent.querySelectorAll(sel)].map(p => ({ en: (p.closest('[data-simulador]') || {dataset:{}}).dataset.simulador || sel, ancho: Math.round(p.getBoundingClientRect().width), alineacion: getComputedStyle(p).textAlign }));\n  return { ancho: document.documentElement.clientWidth, lecturas: m('.simulador-lectura'), pasos: m('ol.pasos-metodo > li > p').slice(0, 2) };\n})()"
+   },
+   {
+    "js": "(() => { const b = document.querySelector('[aria-controls=\"der-robustez\"]'); if (b.getAttribute('aria-expanded') !== 'true') b.click(); return 'abierto ' + b.getAttribute('aria-controls'); })()",
+    "espera": 600
+   },
+   {
+    "js": "(() => {\n  const r1 = x => Math.round(x * 10) / 10;\n  const W = document.documentElement.clientWidth;\n  const sel = \"#der-robustez .katex-display\";\n  return [...mainContent.querySelectorAll(sel)].map(d => {\n    const k = d.querySelector('.katex-html') || d.querySelector('.katex') || d;\n    // la caja que se desplaza: el primer ancestro (o el propio elemento) con overflow-x auto o scroll\n    let caja = d; while (caja && caja !== mainContent && !/auto|scroll/.test(getComputedStyle(caja).overflowX)) caja = caja.parentElement;\n    const tiene = caja && caja !== mainContent;\n    const kr = k.getBoundingClientRect(), dr = (tiene ? caja : d).getBoundingClientRect();\n    // lo que recorta sin desplazar: un ancestro con overflow hidden por el que el contenido sobresale\n    let rec = d.parentElement, cortada = false;\n    while (rec && rec !== document.body) { const cs = getComputedStyle(rec); if (/hidden|clip/.test(cs.overflowX) && kr.right > rec.getBoundingClientRect().right + 1 && !(tiene && rec.contains(caja) && rec !== caja)) { cortada = true; break; } rec = rec.parentElement; }\n    return { formula: d.textContent.replace(/\\s+/g, ' ').slice(0, 34), anchoFormula: r1(k.scrollWidth), cajaQueDesplaza: tiene ? (caja.className || caja.tagName).toString().slice(0, 30) : null,\n      cajaCw: tiene ? caja.clientWidth : null, cajaSw: tiene ? caja.scrollWidth : null,\n      seDesplaza: tiene ? caja.scrollWidth > caja.clientWidth + 1 : false,\n      sobresaleDeLaPagina: kr.right > W + 1 && !tiene, cortadaSinDesplazamiento: !tiene && k.scrollWidth > d.clientWidth + 1,\n      sombra: tiene ? getComputedStyle(caja).backgroundAttachment : null };\n  });\n})()"
+   },
+   {
+    "js": "(() => {\n  const sim = document.querySelector('[data-simulador=\"descomp-stl\"]');\n  const ch = Chart.getChart(sim.querySelectorAll('canvas')[2]);\n  return { series: ch.data.datasets.map((d, i) => ({ label: d.label, color: d.borderColor, grosor: d.borderWidth, trazo: d.borderDash || null, orden: d.order, visible: ch.isDatasetVisible(i) })),\n    leyenda: [...sim.querySelectorAll('.grafico-leyenda li')].map(li => li.textContent.trim() + (li.hidden ? ' (oculta)' : '')),\n    lectura: sim.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(),\n    aria: sim.querySelectorAll('canvas')[2].getAttribute('aria-label') };\n})()"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"descomp-stl\"]'); r.querySelectorAll('input[type=radio]')[1].click(); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "js": "(() => {\n  const sim = document.querySelector('[data-simulador=\"descomp-stl\"]');\n  const ch = Chart.getChart(sim.querySelectorAll('canvas')[2]);\n  return { series: ch.data.datasets.map((d, i) => ({ label: d.label, color: d.borderColor, grosor: d.borderWidth, trazo: d.borderDash || null, orden: d.order, visible: ch.isDatasetVisible(i) })),\n    leyenda: [...sim.querySelectorAll('.grafico-leyenda li')].map(li => li.textContent.trim() + (li.hidden ? ' (oculta)' : '')),\n    lectura: sim.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(),\n    aria: sim.querySelectorAll('canvas')[2].getAttribute('aria-label') };\n})()"
+   },
+   {
+    "js": "(() => { const r = document.querySelector('[data-simulador=\"descomp-stl\"]'); r.querySelectorAll('input[type=radio]')[5].click(); return r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(); })()"
+   },
+   {
+    "js": "(() => {\n  const sim = document.querySelector('[data-simulador=\"descomp-stl\"]');\n  const ch = Chart.getChart(sim.querySelectorAll('canvas')[2]);\n  return { series: ch.data.datasets.map((d, i) => ({ label: d.label, color: d.borderColor, grosor: d.borderWidth, trazo: d.borderDash || null, orden: d.order, visible: ch.isDatasetVisible(i) })),\n    leyenda: [...sim.querySelectorAll('.grafico-leyenda li')].map(li => li.textContent.trim() + (li.hidden ? ' (oculta)' : '')),\n    lectura: sim.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim(),\n    aria: sim.querySelectorAll('canvas')[2].getAttribute('aria-label') };\n})()"
+   }
+  ]
+ },
+ {
+  "url": "http://localhost:8731/capitulo-1-componentes-descomposicion.html",
+  "ancho": 375,
+  "modulo": 8,
+  "pasos": [
+   {
+    "js": "(() => {\n  const r1 = x => Math.round(x * 10) / 10;\n  const t = [...mainContent.querySelectorAll('table')].find(x => /cuatro series/.test(x.caption ? x.caption.textContent : ''));\n  let caja = t; while (caja && caja !== mainContent && !/auto|scroll/.test(getComputedStyle(caja).overflowX)) caja = caja.parentElement;\n  const tiene = caja && caja !== mainContent;\n  const col = t.parentElement.closest('#content-area, .derivacion-panel') || t.parentElement;\n  const cr = (tiene ? caja : t).getBoundingClientRect();\n  const celdas = [...t.querySelectorAll('th, td')];\n  const fuera = celdas.filter(c => c.getBoundingClientRect().right > cr.right + 1).length;\n  return { ancho: document.documentElement.clientWidth, columna: t.parentElement.clientWidth, display: getComputedStyle(t).display,\n    tablaCw: t.clientWidth, tablaSw: t.scrollWidth, cajaQueDesplaza: tiene ? (caja === t ? 'la propia tabla' : caja.className) : null,\n    cajaCw: tiene ? caja.clientWidth : null, cajaSw: tiene ? caja.scrollWidth : null,\n    seDesplaza: tiene ? caja.scrollWidth > caja.clientWidth + 1 : false,\n    celdasFueraDeLaCaja: fuera + ' de ' + celdas.length,\n    cuartaColumna: (() => { const c = t.querySelector('tbody tr td:nth-child(4)').getBoundingClientRect(); return { izq: r1(c.left), der: r1(c.right), limite: r1(cr.right) }; })(),\n    sombra: tiene ? getComputedStyle(caja).backgroundAttachment : null,\n    otrasTablas: [...mainContent.querySelectorAll('table')].filter(x => x !== t).map(x => ({ cw: x.clientWidth, sw: x.scrollWidth, display: getComputedStyle(x).display })) };\n})()"
+   },
+   {
+    "js": "(() => { const b = document.querySelector('[aria-controls=\"der-fuerza-ft\"]'); if (b.getAttribute('aria-expanded') !== 'true') b.click(); return 'abierto ' + b.getAttribute('aria-controls'); })()",
+    "espera": 600
+   },
+   {
+    "js": "(() => {\n  const r1 = x => Math.round(x * 10) / 10;\n  const W = document.documentElement.clientWidth;\n  const sel = \"#der-fuerza-ft .katex-display\";\n  return [...mainContent.querySelectorAll(sel)].map(d => {\n    const k = d.querySelector('.katex-html') || d.querySelector('.katex') || d;\n    // la caja que se desplaza: el primer ancestro (o el propio elemento) con overflow-x auto o scroll\n    let caja = d; while (caja && caja !== mainContent && !/auto|scroll/.test(getComputedStyle(caja).overflowX)) caja = caja.parentElement;\n    const tiene = caja && caja !== mainContent;\n    const kr = k.getBoundingClientRect(), dr = (tiene ? caja : d).getBoundingClientRect();\n    // lo que recorta sin desplazar: un ancestro con overflow hidden por el que el contenido sobresale\n    let rec = d.parentElement, cortada = false;\n    while (rec && rec !== document.body) { const cs = getComputedStyle(rec); if (/hidden|clip/.test(cs.overflowX) && kr.right > rec.getBoundingClientRect().right + 1 && !(tiene && rec.contains(caja) && rec !== caja)) { cortada = true; break; } rec = rec.parentElement; }\n    return { formula: d.textContent.replace(/\\s+/g, ' ').slice(0, 34), anchoFormula: r1(k.scrollWidth), cajaQueDesplaza: tiene ? (caja.className || caja.tagName).toString().slice(0, 30) : null,\n      cajaCw: tiene ? caja.clientWidth : null, cajaSw: tiene ? caja.scrollWidth : null,\n      seDesplaza: tiene ? caja.scrollWidth > caja.clientWidth + 1 : false,\n      sobresaleDeLaPagina: kr.right > W + 1 && !tiene, cortadaSinDesplazamiento: !tiene && k.scrollWidth > d.clientWidth + 1,\n      sombra: tiene ? getComputedStyle(caja).backgroundAttachment : null };\n  });\n})()"
+   },
+   {
+    "js": "(() => {\n  const r1 = x => Math.round(x * 10) / 10;\n  const W = document.documentElement.clientWidth;\n  const sel = \".formula .katex-display\";\n  return [...mainContent.querySelectorAll(sel)].map(d => {\n    const k = d.querySelector('.katex-html') || d.querySelector('.katex') || d;\n    // la caja que se desplaza: el primer ancestro (o el propio elemento) con overflow-x auto o scroll\n    let caja = d; while (caja && caja !== mainContent && !/auto|scroll/.test(getComputedStyle(caja).overflowX)) caja = caja.parentElement;\n    const tiene = caja && caja !== mainContent;\n    const kr = k.getBoundingClientRect(), dr = (tiene ? caja : d).getBoundingClientRect();\n    // lo que recorta sin desplazar: un ancestro con overflow hidden por el que el contenido sobresale\n    let rec = d.parentElement, cortada = false;\n    while (rec && rec !== document.body) { const cs = getComputedStyle(rec); if (/hidden|clip/.test(cs.overflowX) && kr.right > rec.getBoundingClientRect().right + 1 && !(tiene && rec.contains(caja) && rec !== caja)) { cortada = true; break; } rec = rec.parentElement; }\n    return { formula: d.textContent.replace(/\\s+/g, ' ').slice(0, 34), anchoFormula: r1(k.scrollWidth), cajaQueDesplaza: tiene ? (caja.className || caja.tagName).toString().slice(0, 30) : null,\n      cajaCw: tiene ? caja.clientWidth : null, cajaSw: tiene ? caja.scrollWidth : null,\n      seDesplaza: tiene ? caja.scrollWidth > caja.clientWidth + 1 : false,\n      sobresaleDeLaPagina: kr.right > W + 1 && !tiene, cortadaSinDesplazamiento: !tiene && k.scrollWidth > d.clientWidth + 1,\n      sombra: tiene ? getComputedStyle(caja).backgroundAttachment : null };\n  });\n})()"
+   }
+  ]
+ }
+]

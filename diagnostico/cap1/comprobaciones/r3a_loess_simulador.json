@@ -1,0 +1,16 @@
+[
+ {"url":"http://localhost:8731/capitulo-1-componentes-descomposicion.html","ancho":1200,"modulo":7,"pasos":[
+   {"js":"(() => { window.__sim = (pasos) => { const r = document.querySelector('[data-simulador=\"loess-local\"]'); const inp = r.querySelectorAll('input[type=range]'); pasos.forEach(([i, v]) => { inp[i].value = v; inp[i].dispatchEvent(new Event('input', { bubbles: true })); }); return { controles: [...r.querySelectorAll('output')].map(o => o.textContent), lectura: r.querySelector('.simulador-lectura').textContent.replace(/\\s+/g, ' ').trim() }; }; return 'ok'; })()"},
+   {"js":"({estado: 'inicial', r: __sim([])})"},
+   {"js":"({estado: 'foco 72, grado 0, tricubo', r: __sim([[2, 0]])})"},
+   {"js":"({estado: 'foco 72, grado 0, planos', r: __sim([[3, 0]])})"},
+   {"js":"({estado: 'foco 72, grado 1, planos', r: __sim([[2, 1]])})"},
+   {"js":"({estado: 'foco 144, grado 1, tricubo', r: __sim([[0, 144], [3, 1]])})"},
+   {"js":"({estado: 'foco 144, grado 0, tricubo', r: __sim([[2, 0]])})"},
+   {"js":"({estado: 'foco 144, grado 0, planos', r: __sim([[3, 0]])})"},
+   {"js":"({estado: 'foco 1, grado 1, tricubo', r: __sim([[0, 1], [2, 1], [3, 1]])})"},
+   {"js":"({estado: 'foco 1, grado 0, tricubo', r: __sim([[2, 0]])})"},
+   {"js":"(() => { __sim([[0, 72], [1, 19], [2, 1], [3, 1]]); const g = Chart.getChart(document.querySelectorAll('[data-simulador=\"loess-local\"] canvas')[1]); const curva = g.data.datasets[3].data, stl = DATOS_CAP1.stl_log.tendencia; const dif = curva.map((v, i) => Math.abs(v - stl[i])); const mx = Math.max(...dif); const ajusta = i => i % 2 === 0 || i === 143; return { estado: 'curva Loess (span 19, grado 1, tricubo) frente a stl_log.tendencia', maxDif: +mx.toFixed(6), en: DATOS_CAP1.fechas[dif.indexOf(mx)], igualesA4: curva.filter((v, i) => v.toFixed(4) === stl[i].toFixed(4)).length, maxDifDondeAjusta: +Math.max(...dif.filter((v, i) => ajusta(i))).toExponential(2), igualesA4DondeAjusta: curva.filter((v, i) => ajusta(i) && v.toFixed(4) === stl[i].toFixed(4)).length, nAjusta: curva.filter((v, i) => ajusta(i)).length, maxDifDondeInterpola: +Math.max(...dif.filter((v, i) => !ajusta(i))).toFixed(6), curva: curva.map(v => v.toFixed(4)).join(' ') }; })()"},
+   {"js":"(() => { const a = ajusteLocal(DATOS_CAP1.stl_log.tendencia.map((t, i) => t + DATOS_CAP1.stl_log.residuo[i]), 71, 19, 1, true); return { estado: 'pesos de la ventana del foco 72', idx: [a.idx[0], a.idx[a.idx.length - 1]], pesos: a.pesos.map(w => w.toFixed(4)).join(' '), conPeso: a.pesos.filter(w => w > 0).length }; })()"}
+ ]}
+]

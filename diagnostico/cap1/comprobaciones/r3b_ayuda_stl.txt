@@ -1,0 +1,148 @@
+_S_e_a_s_o_n_a_l _D_e_c_o_m_p_o_s_i_t_i_o_n _o_f _T_i_m_e _S_e_r_i_e_s _b_y _L_o_e_s_s
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Decompose a time series into seasonal, trend and irregular
+     components using 'loess', acronym STL.
+
+_U_s_a_g_e:
+
+     stl(x, s.window, s.degree = 0,
+         t.window = NULL, t.degree = 1,
+         l.window = nextodd(period), l.degree = t.degree,
+         s.jump = ceiling(s.window/10),
+         t.jump = ceiling(t.window/10),
+         l.jump = ceiling(l.window/10),
+         robust = FALSE,
+         inner = if(robust)  1 else 2,
+         outer = if(robust) 15 else 0,
+         na.action = na.fail)
+     
+_A_r_g_u_m_e_n_t_s:
+
+       x: univariate time series to be decomposed.  This should be an
+          object of class '"ts"' with a frequency greater than one.
+
+s.window: either the character string '"periodic"' or the span (in
+          lags) of the loess window for seasonal extraction, which
+          should be odd and at least 7, according to Cleveland,
+          Cleveland, McRae, and Terpenning (1990).  This has no
+          default.
+
+s.degree: degree of locally-fitted polynomial in seasonal extraction.
+          Should be zero or one.
+
+t.window: the span (in lags) of the loess window for trend extraction,
+          which should be odd.  If 'NULL', the default,
+          'nextodd(ceiling((1.5*period) / (1-(1.5/s.window))))', is
+          taken.
+
+t.degree: degree of locally-fitted polynomial in trend extraction.
+          Should be zero or one.
+
+l.window: the span (in lags) of the loess window of the low-pass filter
+          used for each subseries.  Defaults to the smallest odd
+          integer greater than or equal to 'frequency(x)' which is
+          recommended since it prevents competition between the trend
+          and seasonal components.  If not an odd integer its given
+          value is increased to the next odd one.
+
+l.degree: degree of locally-fitted polynomial for the subseries
+          low-pass filter.  Must be 0 or 1.
+
+s.jump, t.jump, l.jump: integers at least one to increase speed of the
+          respective smoother.  Linear interpolation happens between
+          every '*.jump'-th value.
+
+  robust: logical indicating if robust fitting be used in the 'loess'
+          procedure.
+
+   inner: integer; the number of 'inner' (backfitting) iterations;
+          usually very few (2) iterations suffice.
+
+   outer: integer; the number of 'outer' robustness iterations.
+
+na.action: action on missing values.
+
+_D_e_t_a_i_l_s:
+
+     The seasonal component is found by _loess_ smoothing the seasonal
+     sub-series (the series of all January values, ...); if 's.window =
+     "periodic"' smoothing is effectively replaced by taking the mean.
+     The seasonal values are removed, and the remainder smoothed to
+     find the trend. The overall level is removed from the seasonal
+     component and added to the trend component. This process is
+     iterated a few times.  The 'remainder' component is the residuals
+     from the seasonal plus trend fit.
+
+     Several methods for the resulting class '"stl"' objects, see,
+     'plot.stl'.
+
+_V_a_l_u_e:
+
+     'stl' returns an object of class '"stl"' with components
+
+time.series: a multiple time series with columns 'seasonal', 'trend'
+          and 'remainder'.
+
+ weights: the final robust weights (all one if fitting is not done
+          robustly).
+
+    call: the matched call.
+
+     win: integer (length 3 vector) with the spans used for the '"s"',
+          '"t"', and '"l"' smoothers.
+
+     deg: integer (length 3) vector with the polynomial degrees for
+          these smoothers.
+
+    jump: integer (length 3) vector with the 'jumps' (skips) used for
+          these smoothers.
+
+      ni: number of *i*nner iterations
+
+      no: number of *o*uter robustness iterations
+
+_A_u_t_h_o_r(_s):
+
+     B.D. Ripley; Fortran code by Cleveland et al. (1990) from
+     'netlib'.
+
+_R_e_f_e_r_e_n_c_e_s:
+
+     Cleveland RB, Cleveland WS, McRae JE, Terpenning I (1990). "STL: A
+     Seasonal-Trend Decomposition Procedure Based on Loess." _Journal
+     of Official Statistics_, *6*, 3-73.
+
+_S_e_e _A_l_s_o:
+
+     'plot.stl' for 'stl' methods; 'loess' in package 'stats' (which is
+     not actually used in 'stl').
+
+     'StructTS' for different kind of decomposition.
+
+_E_x_a_m_p_l_e_s:
+
+     require(graphics)
+     
+     plot(stl(nottem, "per"))
+     plot(stl(nottem, s.window = 7, t.window = 50, t.jump = 1))
+     
+     plot(stllc <- stl(log(co2), s.window = 21))
+     summary(stllc)
+     ## linear trend, strict period.
+     plot(stl(log(co2), s.window = "per", t.window = 1000))
+     
+     ## Two STL plotted side by side :
+             stmd <- stl(mdeaths, s.window = "per") # non-robust
+     summary(stmR <- stl(mdeaths, s.window = "per", robust = TRUE))
+     op <- par(mar = c(0, 4, 0, 3), oma = c(5, 0, 4, 0), mfcol = c(4, 2))
+     plot(stmd, set.pars = NULL, labels  =  NULL,
+          main = "stl(mdeaths, s.w = \"per\",  robust = FALSE / TRUE )")
+     plot(stmR, set.pars = NULL)
+     # mark the 'outliers' :
+     (iO <- which(stmR $ weights  < 1e-8)) # 10 were considered outliers
+     sts <- stmR$time.series
+     points(time(sts)[iO], 0.8* sts[,"remainder"][iO], pch = 4, col = "red")
+     par(op)   # reset
+     
