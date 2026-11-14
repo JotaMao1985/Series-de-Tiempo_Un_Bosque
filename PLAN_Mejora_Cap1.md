@@ -199,16 +199,71 @@ Cada una lleva mi recomendación; las decide Javier.
   tope de 400 palabras citadas por obra deja a FPP3 en 393. Siguen sin marcar las 75 filas restantes
   del inventario (prioridad media y baja).
 
+- **R5 · práctica — hecha y PUBLICADA el 2026-11-14** (`main` `7e85896` · gh-pages `03d0ce6`). Con ella
+  se cierran las cinco rondas del plan. El capítulo pasa de 3 ejercicios a 8 y **deja de contestarse
+  solo**: tres defectos se repetían en todo el material y los tres eran de la misma familia. Elegir
+  siempre la opción más larga acertaba los cinco ítems de una sola respuesta (ahora, 1 de 6, medido en
+  `r5_longitudes.out`); las pistas afirmaban su propia premisa, así que el segundo intento era gratis;
+  y tres retroalimentaciones del quiz —que va justo antes de los ejercicios— imprimían el resultado de
+  los ejercicios 1 y 2 antes de que el estudiante llegara a ellos. Esas tres las había escrito esta
+  misma ronda al «mejorar» los distractores.
+
+  **Dos defectos que un estudiante habría sufrido en silencio.** La pregunta de la media móvil 2×4
+  contaba «0.13» como fallo (tolerancia 0.0005), gastaba el primer intento y la retroalimentación no
+  decía por qué: quien entendía y redondeaba a dos decimales quedaba castigado. Ahora la tolerancia es
+  0.0051 —0.005 falla en coma flotante—, se aceptan fracciones («1/8») y el acierto explica el
+  redondeo. Y el M7 enseñaba que con la robustez «los demás componentes casi no se enteran»
+  comparando contra la línea base sin robustez, que es la comparación que el ejercicio 3 declara
+  inválida dos módulos después: contra su propia línea base el índice contaminado **baja** un 0.82 %.
+  Medidos los cuatro índices en R (limpia 1.2416/1.2562, contaminada 1.2806/1.2458), la cifra quedó en
+  +25.6 % y 283.1 mil.
+
+  **Cinco módulos que explicaban sin hacer practicar ya tienen práctica** (M2, M3, M6, M7 y M8, con
+  `UKgas`, `nottem`, `mdeaths` y `fdeaths`), sin clase nueva de Tailwind ni regla CSS nueva. El del M6
+  es el que importaba: el capítulo llama al paso 4 el núcleo del método —leer el residuo y decidir a
+  qué paso volver— y nadie lo ejercitaba. El ejercicio 1 se rehízo para que enunciado y solución
+  hablen de la misma serie, y las preguntas 2, 3 y 6 del quiz quedan rehechas, como R1 dejó pedido.
+
+  **El verificador de bloques corre por fin sobre el capítulo 1: 206 de 206.** Antes no corría —faltaba
+  `fpp3`, que se instaló con permiso de Javier, y la sesión de Python se colgaba abriendo ventanas
+  (`MPLBACKEND=Agg`)— y las cifras de las soluciones quedaban fuera de su alcance por ir en comentarios
+  sueltos. Toda cifra que el capítulo presenta como salida de R es ahora la salida de R, comprobada en
+  cada ejecución. Los minutos declarados por módulo subieron de 129 a 161 con los ejercicios dentro
+  (sesiones de 72 y 89 min).
+
+  **El verificador independiente encontró 17 problemas en lo ya corregido**: 16 arreglados y 1 que era
+  decisión de Javier —el reparto de las dos sesiones de lectura pasa de 34/66 a 33/67, un punto, y él
+  decidió dejar el corte donde está—. El detalle está en `diagnostico/cap1/R5_cambios.md`.
+
+  **Queda anotado, a criterio de Javier:** (a) los módulos 1, 4 y 5 siguen sin ejercicio propio (hueco
+  7 del diagnóstico, fuera de D8); (b) lo que el capítulo dice de `co2`, `nottem`, `UKgas`, `mdeaths`,
+  `fdeaths`, `USAccDeaths` y `Gas` va como texto propio, leído en la ayuda de R pero sin `data-afirma`:
+  tratarlo como `c1-m1-04` exige dar de alta `tsibbledata` en Zotero y un verificador que no redactó;
+  (c) tres cambios del motor del quiz —el campo `datos`, el selector que despliega el código del
+  enunciado y la lectura de fracciones— viven solo en el capítulo 1, porque la plantilla no se tocó;
+  (d) `precalculo/genera_soluciones.R` y `salidas/inventario_items.json` conservan las soluciones y los
+  enunciados viejos del capítulo 1: ningún verificador los lee, pero conviene saberlo si se rehace el
+  preparcial.
+
 ## 5. Criterios de aceptación
 
-- [ ] Cada uno de los 13 errores tiene su comprobación en R en `diagnostico/cap1/comprobaciones/`
-      y deja de reproducirse.
+- [x] Cada uno de los 13 errores tiene su comprobación en R en `diagnostico/cap1/comprobaciones/`
+      y deja de reproducirse (79 archivos de comprobación al cerrar la R5).
 - [ ] Un segundo par académico, que no vio el primero, no encuentra errores nuevos en lo corregido.
-- [ ] `audita_citas.py --cierre` en verde: nada pendiente en prioridad alta ni media.
+      Cada ronda tuvo su verificador independiente de contexto limpio —21 problemas en la R4, 17 en la
+      R5—, pero nadie ha releído el capítulo entero ya corregido.
+- [ ] `audita_citas.py --cierre` en verde: nada pendiente en prioridad alta ni media. En verde para
+      lo registrado (0 `pendiente`), pero solo están marcadas las 28 afirmaciones de prioridad alta:
+      siguen sin marcar las 75 filas restantes del inventario.
 - [ ] Los 22 gráficos vuelven a capturarse a 1200, 800 y 375 px sin desbordes ni fechas montadas.
-- [ ] Cada objetivo de módulo tiene al menos una práctica dentro del capítulo.
-- [ ] `verifica_todo.py` en verde, con `cuenta_sitio.py` incluido.
-- [ ] La duración declarada de cada módulo dista menos de 3 min de la estimada.
+      Hecho en la R2; después la R3 añadió lienzos (subseries, rezagos, STL) y no se ha repetido la
+      pasada completa de las tres anchuras sobre el capítulo tal como está hoy.
+- [ ] Cada objetivo de módulo tiene al menos una práctica dentro del capítulo. La R5 dio ejercicio
+      propio al M2, M3, M6, M7 y M8; el M1, el M4 y el M5 siguen sin él (hueco 7, fuera de D8).
+- [x] `verifica_todo.py` en verde, con `cuenta_sitio.py` incluido: los 11 verificadores, antes y
+      después de publicar la R5.
+- [x] La duración declarada de cada módulo dista menos de 3 min de la estimada: con los ejercicios
+      abiertos, el peor desajuste es de 0.8 min (`r5_minutos.out`).
 
 ## 6. Riesgos
 
@@ -223,11 +278,21 @@ Cada una lleva mi recomendación; las decide Javier.
 
 ## 7. Preguntas abiertas
 
-1. ¿Apruebas D1–D9 tal como están?
-2. ¿Permiso para descargar el PDF de Cleveland et al. (1990) desde scb.se (2,8 MB)?
-3. ¿Instalo `fpp3` en R para que corra el verificador de bloques, o lo instalas tú?
-4. Del Checkpoint 0 siguen abiertas: el pie de referencias en los seis capítulos, el año de
-   Box et al. y la edición de Shumway y Stoffer.
+Las tres primeras quedaron resueltas durante las rondas: Javier aprobó D1–D9, autorizó la descarga
+del PDF de Cleveland et al. (1990) —que es un escaneo sin capa de texto, así que su contraste se hizo
+leyéndolo— y autorizó instalar `fpp3`, que atrae `ggtime` y dejó correr el verificador de bloques.
+
+Siguen abiertas:
+
+1. Del Checkpoint 0: el pie de referencias en los otros cinco capítulos, el año de Box et al.
+   (2015 o 2016), la edición de Shumway y Stoffer (4.ª o 5.ª), la procedencia de los tres PDF
+   admitidos y el `git init` del vault.
+2. Las 75 filas de prioridad media y baja del inventario de afirmaciones, sin marcar ni registrar.
+3. Si el vocabulario de localizadores para las páginas de ayuda de R sube a la norma común de los
+   cuatro cursos (lo escribe la sesión de Muestreo) y si `data-via` —citas de segunda mano— se
+   implementa.
+4. Si los tres cambios del motor del quiz que viven solo en el capítulo 1 pasan a la plantilla, con
+   lo que heredarían los otros capítulos.
 
 ## 8. Enlaces
 
