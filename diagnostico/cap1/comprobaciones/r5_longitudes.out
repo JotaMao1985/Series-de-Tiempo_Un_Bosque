@@ -1,0 +1,78 @@
+
+=== ANTES de la R5 (HEAD) ===
+ítem tipo      longitudes (✔ = correcta)                    correcta más larga media dist.  ¿la correcta es la más larga?
+Q1   opcion    63  107✔  67  54                                  107       107        61.3  SÍ
+Q2   opcion    32  49  46  62✔                                    62        62        42.3  SÍ
+Q3   numerica  (sin opciones)
+Q4   grafico   103✔  52  75  57                                  103       103        61.3  SÍ
+Q5   multiple  52  62✔  58✔  75  48✔                               -        75        63.5  (múltiple) media correctas 56.0 · media falsas 63.5
+Q6   numerica  (sin opciones)
+Q7   opcion    64  63  103✔  69                                  103       103        65.3  SÍ
+Q8   opcion    75  93✔  39  35                                    93        93        49.7  SÍ
+-> eligiendo siempre la opción más larga se aciertan 5 de 5 ítems de una sola respuesta
+   Q1    63  El ciclo siempre dura más de un año y la estacionalidad, menos.
+   Q1 ✔ 107  La estacionalidad se repite con un período fijo y conocido; el ciclo, con duración variable e impredecible.
+   Q1    67  La estacionalidad se aprecia en el gráfico de tiempo y el ciclo no.
+   Q1    54  Son sinónimos; en la práctica se usan indistintamente.
+   Q2    32  Aditiva sobre la serie original.
+   Q2    49  Da igual: las dos ajustan prácticamente lo mismo.
+   Q2    46  Ninguna: primero hay que diferenciar la serie.
+   Q2 ✔  62  Multiplicativa, o equivalentemente aditiva sobre el logaritmo.
+   Q4 ✔ 103  Porque una media móvil centrada de orden 12 necesita 6 meses a cada lado, y en los extremos no existen.
+   Q4    52  Porque a la serie le faltan datos en 1949 y en 1960.
+   Q4    75  Porque la descomposición descarta el primer y el último año por convención.
+   Q4    57  Porque el gráfico está recortado; los valores sí existen.
+   Q5    52  No necesita que se le declare el período estacional.
+   Q5 ✔  62  Permite que el patrón estacional cambie a lo largo del tiempo.
+   Q5 ✔  58  Estima la tendencia también en los extremos, sin dejar NA.
+   Q5    75  Evita tener que transformar la serie cuando la amplitud crece con el nivel.
+   Q5 ✔  48  Con robust = TRUE, resiste los valores atípicos.
+   Q7    64  La tendencia explica el 99.4 % de la varianza total de la serie.
+   Q7    63  La estacionalidad es débil, porque 0.937 está por debajo de FT.
+   Q7 ✔ 103  Los dos componentes dominan claramente sobre el residuo: un valor cercano a 1 indica componente fuerte.
+   Q7    69  Como FT > FS, conviene descartar el componente estacional al modelar.
+   Q8    75  Para pronosticar directamente, ya que no hay que modelar la estacionalidad.
+   Q8 ✔  93  Para comparar períodos consecutivos sin que el patrón anual enmascare el movimiento de fondo.
+   Q8    39  Para eliminar la tendencia de la serie.
+   Q8    35  Para eliminar los valores atípicos.
+
+=== DESPUÉS de la R5 (archivo de trabajo) ===
+ítem tipo      longitudes (✔ = correcta)                    correcta más larga media dist.  ¿la correcta es la más larga?
+Q1   opcion    71  75✔  80  81                                    75        81        77.3  no
+Q2   opcion    75  70  74  71✔                                    71        75        73.0  no
+Q3   numerica  (sin opciones)
+Q4   grafico   78✔  74  70  75                                    78        78        73.0  SÍ
+Q5   multiple  64  63✔  58✔  65  60✔                               -        65        64.5  (múltiple) media correctas 60.3 · media falsas 64.5
+Q6   opcion    56  58  57✔  51                                    57        58        55.0  no
+Q7   opcion    64  64  69✔  73                                    69        73        67.0  no
+Q8   opcion    64  61✔  66  70                                    61        70        66.7  no
+-> eligiendo siempre la opción más larga se aciertan 1 de 6 ítems de una sola respuesta
+   Q1    71  El ciclo dura siempre más de un año, y la estacionalidad, menos de uno.
+   Q1 ✔  75  La estacionalidad tiene un período fijo y conocido, y el ciclo no lo tiene.
+   Q1    80  La estacionalidad se ve en el gráfico de tiempo, y el ciclo solo al descomponer.
+   Q1    81  Son lo mismo a dos escalas: un vaivén que vuelve cada 12 meses es un ciclo anual.
+   Q2    75  Aditiva: la amplitud no depende del nivel, que es lo que supone ese modelo.
+   Q2    70  Cualquiera de las dos: aditiva y multiplicativa ajustan casi lo mismo.
+   Q2    74  Ninguna todavía: antes hay que diferenciar la serie y quitar la tendencia.
+   Q2 ✔  71  Multiplicativa: la amplitud se mantiene cerca del 30 % del nivel medio.
+   Q4 ✔  78  Porque cada punto promedia seis meses a cada lado, y en los bordes no los hay.
+   Q4    74  Porque a la serie le faltan datos al principio de 1949 y al final de 1960.
+   Q4    70  Porque la descomposición descarta por norma el primer año y el último.
+   Q4    75  Porque cada punto promedia los doce meses anteriores, y en 1949 no los hay.
+   Q5    64  No necesita que se le declare el período estacional de la serie.
+   Q5 ✔  63  Permite que el patrón estacional cambie a lo largo de los años.
+   Q5 ✔  58  Estima la tendencia también en los extremos, sin dejar NA.
+   Q5    65  Evita transformar la serie cuando la amplitud crece con el nivel.
+   Q5 ✔  60  Con robust = TRUE, resiste los valores atípicos de la serie.
+   Q6    56  USAccDeaths, las muertes accidentales en Estados Unidos.
+   Q6    58  log(AirPassengers), los pasajeros de avión, en logaritmos.
+   Q6 ✔  57  co2, la concentración de CO₂ medida en Mauna Loa, en ppm.
+   Q6    51  nottem, la temperatura media mensual en Nottingham.
+   Q7    64  La tendencia explica el 99.4 % de la varianza total de la serie.
+   Q7    64  La estacionalidad es débil, porque 0.937 queda por debajo de FT.
+   Q7 ✔  69  Los dos componentes pesan mucho más que el residuo: ambas rozan el 1.
+   Q7    73  La descomposición es correcta: con fuerzas así, el residuo es solo ruido.
+   Q8    64  Para pronosticar sin tener que ocuparse ya de la estacionalidad.
+   Q8 ✔  61  Para comparar meses seguidos sin que el patrón anual lo tape.
+   Q8    66  Para quitar la tendencia y dejar a la vista el vaivén de cada año.
+   Q8    70  Para quedarse solo con la tendencia: una curva suave, sin sobresaltos.

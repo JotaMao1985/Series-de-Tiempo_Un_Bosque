@@ -1,0 +1,235 @@
+
+============================================================================
+0 · Entorno y series
+============================================================================
+[ENT-01] R version 4.6.0 (2026-04-24)
+[ENT-02] fpp3 1.0.3 · tsibble 1.2.0 · feasts 0.5.0 · ggtime 0.2.0
+[ENT-03] locale: C
+[ENT-04] UKgas: paquete datasets ; n = 108 ; frecuencia 4 ; de 1960-1 a 1986-4
+[ENT-04] nottem: paquete datasets ; n = 240 ; frecuencia 12 ; de 1920-1 a 1939-12
+[ENT-04] mdeaths: paquete datasets ; n = 72 ; frecuencia 12 ; de 1974-1 a 1979-12
+[ENT-04] fdeaths: paquete datasets ; n = 72 ; frecuencia 12 ; de 1974-1 a 1979-12
+
+--- que es cada serie, segun la ayuda de R ---
+[ENT-05 ?UKgas] UK Quarterly Gas Consumption
+[ENT-05 ?UKgas] Description:
+[ENT-05 ?UKgas]      Quarterly UK gas consumption from 1960Q1 to 1986Q4, in millions of
+[ENT-05 ?UKgas]      therms.
+[ENT-05 ?nottem] Average Monthly Temperatures at Nottingham, 1920-1939
+[ENT-05 ?nottem] Description:
+[ENT-05 ?nottem]      A time series object containing average air temperatures at
+[ENT-05 ?nottem]      Nottingham Castle in degrees Fahrenheit for 20 years.
+[ENT-05 ?UKLungDeaths] Monthly Deaths from Lung Diseases in the UK
+[ENT-05 ?UKLungDeaths] Description:
+[ENT-05 ?UKLungDeaths]      Three time series giving the monthly deaths from bronchitis,
+[ENT-05 ?UKLungDeaths]      emphysema and asthma in the UK, 1974-1979, both sexes ('ldeaths'),
+[ENT-05 ?UKLungDeaths]      males ('mdeaths') and females ('fdeaths').
+
+============================================================================
+M2 · construir el objeto: indice, intervalo y clave (mdeaths + fdeaths)
+============================================================================
+--- BLOQUE del enunciado: la tabla cruda ---
+--- BLOQUE de la solucion ---
+Error in validate_tsibble(data = tbl, key = key_vars, key_data = key_data,  : 
+  A valid tsibble must have distinct rows identified by key and index.
+i Please use `duplicates()` to check the duplicated rows.
+[1] 144
+[1] 0
+# A tsibble: 144 x 3 [1D]
+# Key:       sexo [2]
+  mes        sexo    muertes
+  <date>     <chr>     <dbl>
+1 1974-01-01 hombres    2134
+2 1974-02-01 hombres    1863
+# i 142 more rows
+[1] TRUE TRUE
+# A tsibble: 144 x 3 [1M]
+# Key:       sexo [2]
+       mes sexo    muertes
+     <mth> <chr>     <dbl>
+1 1974 Jan hombres    2134
+2 1974 Feb hombres    1863
+# i 142 more rows
+[1] FALSE FALSE
+--- fin del BLOQUE ---
+
+--- la misma salida en una sesion UTF-8 (la de RStudio), que es la que copia el capitulo ---
+[M2-00 en_US.UTF-8] Error in validate_tsibble(data = tbl, key = key_vars, key_data = key_data,  : 
+[M2-00 en_US.UTF-8]   A valid tsibble must have distinct rows identified by key and index.
+[M2-00 en_US.UTF-8] ℹ Please use `duplicates()` to check the duplicated rows.
+[M2-00 en_US.UTF-8] [1] 144
+[M2-00 en_US.UTF-8] [1] 0
+[M2-00 en_US.UTF-8] # A tsibble: 144 x 3 [1D]
+[M2-00 en_US.UTF-8] # Key:       sexo [2]
+[M2-00 en_US.UTF-8]   mes        sexo    muertes
+[M2-00 en_US.UTF-8]   <date>     <chr>     <dbl>
+[M2-00 en_US.UTF-8] 1 1974-01-01 hombres    2134
+[M2-00 en_US.UTF-8] 2 1974-02-01 hombres    1863
+[M2-00 en_US.UTF-8] # ℹ 142 more rows
+[M2-00 en_US.UTF-8] [1] TRUE TRUE
+[M2-00 en_US.UTF-8] # A tsibble: 144 x 3 [1M]
+[M2-00 en_US.UTF-8] # Key:       sexo [2]
+[M2-00 en_US.UTF-8]        mes sexo    muertes
+[M2-00 en_US.UTF-8]      <mth> <chr>     <dbl>
+[M2-00 en_US.UTF-8] 1 1974 Jan hombres    2134
+[M2-00 en_US.UTF-8] 2 1974 Feb hombres    1863
+[M2-00 en_US.UTF-8] # ℹ 142 more rows
+[M2-00 en_US.UTF-8] [1] FALSE FALSE
+[M2-01] crudo: 144 filas x 3 columnas ; clase de `mes`: Date ; filas con mes == 1974-01-01: 2
+[M2-02] meses distintos: 72 ; valores de `sexo`: hombres, mujeres ; 72 x 2 = 144
+[M2-03] dias entre fechas consecutivas de `mes` (una serie): 28, 29, 30, 31
+[M2-04] con [1D], dias que el objeto espera entre 1974-01-01 y 1979-12-01: 2161 por serie ; hay 72
+[M2-05] intervalo de `diario`: 1D ; de `muertes`: 1M
+[M2-06] la via de R base: class(cbind(mdeaths, fdeaths)) = mts ts matrix array ; frequency = 12 ; dim = 72 x 2
+[M2-08] una STL sobre `diario` (el objeto [1D]): 2 errors (1 unique) encountered for STL(muertes) [2] .data contains implicit gaps in time. You should check your data and convert implicit gaps into explicit missing values using `tsibble::fill_gaps()` if required. 
+[M2-09] la misma STL sobre `muertes` (el objeto [1M]): 2 modelos ajustados, clase stl_decomposition
+[M2-10] duplicates(crudo, index = mes): clase tbl_df ; filas 144 de 144 ; con la clave: 0
+[M2-11] lo que nombra ahora la prosa del M2: clase del indice de as_tsibble(AirPassengers) = yearmonth ; intervalo = 1M ; existen yearmonth(), yearquarter() y yearweek(): TRUE TRUE TRUE ; yearmonth(as.Date('1974-01-01')) = 1974 Jan
+[M2-07] primer dato de cada serie: hombres 2134 ; mujeres 901
+
+============================================================================
+M3 · subseries y rezagos de nottem
+============================================================================
+--- BLOQUE de la solucion ---
+  anio mes valor desvio
+1 1929   2  31.3   -7.9
+2 1934  12  45.8    6.3
+[1] -0.018 -0.896  0.921
+--- fin del BLOQUE ---
+
+[M3-01] gg_subseries() y gg_lag() sobre nottem se dibujan sin error ni aviso (los avisos saldrian encima de esta linea)
+[M3-02] media de cada mes, ene..dic: 39.7 39.2 42.2 46.3 52.6 58.0 61.9 60.5 56.5 49.5 42.6 39.5
+[M3-03] minimo de toda la serie: 31.3 (obs. 110 = 1929-2) ; maximo: 66.5 ; recorrido 35.2
+[M3-04] febrero de 1929: 31.3 ; media de febrero 39.2 ; desvio -7.9 ; segundo febrero mas frio: 35
+[M3-05] diciembre de 1934: 45.8 ; media de diciembre 39.5 ; desvio +6.3 ; media de abril 46.3 ; meses de la serie con valor entre 44.8 y 46.8: 14
+[M3-06] los cinco desvios mas grandes en valor absoluto: 1929-2 -7.9 ; 1923-11 -6.3 ; 1934-12 +6.3 ; 1922-8 -6.2 ; 1923-6 -5.3
+[M3-07] correlacion de la nube en los doce rezagos: 1:+0.812  2:+0.456  3:-0.018  4:-0.469  5:-0.783  6:-0.896  7:-0.778  8:-0.458  9:-0.010  10:+0.443  11:+0.792  12:+0.921
+[M3-08] medias anuales de nottem: minima 47.3 ; maxima 50.7
+[M3-09] en AirPassengers (lo que dice el Modulo 3): rezago 6 = 0.784 ; rezago 12 = 0.991
+[M3-10] pares de la nube: rezago 3 = 237 ; rezago 6 = 234 ; rezago 12 = 228
+
+============================================================================
+M6 · leer el residuo de UKgas y decidir a que paso volver
+============================================================================
+--- BLOQUE de la solucion ---
+ 1961  1975  1985 
+114.1  18.8 210.6 
+ 1961  1975  1985 
+0.162 0.072 0.195 
+1961 1966 1971 1976 1981 1986 
+0.90 0.93 1.03 1.08 1.08 1.11 
+--- fin del BLOQUE ---
+
+[M6-01] UKgas: n = 108 trimestres, de 1960-T1 a 1986-T4 ; residuos sin valor (NA): 4 (obs. 1 2 107 108)
+[M6-02] sd anual del residuo ADITIVO, 1960..1986:
+ 1960  1961  1962  1963  1964  1965  1966  1967  1968  1969  1970  1971  1972 
+115.3 114.1 112.2 108.7 111.4 110.3 107.1 110.0 106.7 102.2 129.7  63.2  68.2 
+ 1973  1974  1975  1976  1977  1978  1979  1980  1981  1982  1983  1984  1985 
+ 51.0  29.7  18.8  48.8  40.6  58.0 115.7 145.3 147.3 163.1 154.7 187.7 210.6 
+ 1986 
+245.5 
+[M6-03]   1960 = 115.3 ; 1975 = 18.8 ; 1986 = 245.5 ; minimo = 18.8 (1975) ; 1985/1975 = 11.2 ; 1961/1975 = 6.1
+[M6-04] componente estacional aditivo, T1..T4: +175.1 -36.1 -169.0 +30.0 ; vaiven fijo = 344.1
+[M6-05] nivel medio y amplitud: 1961 = 121.7 / 75.3 ; 1975 = 350.2 / 313.8 ; 1985 = 672.8 / 805.2
+[M6-06] residuo ADITIVO del primer trimestre: 1961 = -138 ; 1975 = -32 ; 1985 = +259 ; negativos hasta 1975 ; n.o de negativos 1961-1975: 15 de 15 ; n.o de positivos 1978-1986: 9 de 9
+[M6-07] sd anual del residuo MULTIPLICATIVO en unidades (y - T x S), 1960..1986:
+ 1960  1961  1962  1963  1964  1965  1966  1967  1968  1969  1970  1971  1972 
+ 16.0  16.5  19.1  17.7  20.5  22.1  21.7  29.2  33.6  33.9  65.3  12.3  36.0 
+ 1973  1974  1975  1976  1977  1978  1979  1980  1981  1982  1983  1984  1985 
+ 31.5  31.2  20.0  58.1  34.4  29.5  71.8 111.7 106.6 112.4  89.8 118.3 120.3 
+ 1986 
+141.3 
+[M6-08]   aditiva / multiplicativa: 1961 = 6.9 veces ; 1975 = 0.94 ; 1985 = 1.75
+[M6-08b]   residuo multiplicativo en unidades, 1985 / 1975 = 6 veces
+[M6-09] sd anual del residuo MULTIPLICATIVO como cociente, 1960..1986:
+ 1960  1961  1962  1963  1964  1965  1966  1967  1968  1969  1970  1971  1972 
+0.200 0.162 0.163 0.163 0.164 0.177 0.168 0.204 0.209 0.196 0.426 0.055 0.122 
+ 1973  1974  1975  1976  1977  1978  1979  1980  1981  1982  1983  1984  1985 
+0.099 0.092 0.072 0.169 0.120 0.095 0.170 0.234 0.235 0.231 0.203 0.224 0.195 
+ 1986 
+0.163 
+[M6-09b]   como cociente: 1961 = 0.162 ; 1975 = 0.072 ; 1985 = 0.195 ; 1985/1975 = 2.7 veces (en la aditiva, 11.2)
+[M6-10]   de los 27 anios, entre 0.16 y 0.24: 19 ; 1970 = 0.426 ; minimo = 0.055 (1971)
+[M6-11] indices multiplicativos, T1..T4: 1.454 0.956 0.558 1.032
+[M6-12] residuo MULTIPLICATIVO del primer trimestre, 1960..1986:
+1960 1961 1962 1963 1964 1965 1966 1967 1968 1969 1970 1971 1972 1973 1974 1975 
+  NA 0.90 0.91 0.94 0.91 0.91 0.93 0.90 0.92 0.94 0.88 1.03 0.91 0.93 0.98 0.97 
+1976 1977 1978 1979 1980 1981 1982 1983 1984 1985 1986 
+1.08 0.98 1.04 1.13 1.15 1.08 1.12 1.08 1.14 1.15 1.11 
+[M6-13]   por debajo de 1 en 10 de los 10 anios de 1961 a 1970 ; por encima de 1 en 9 de los 9 de 1978 a 1986
+[M6-14]   y el del tercer trimestre va al reves: 1961 = 1.24 ; 1976 = 0.80 ; 1985 = 0.74
+
+============================================================================
+M7 · STL sobre log(UKgas): s.window = "periodic" frente a un numero
+============================================================================
+--- BLOQUE de la solucion ---
+           1960  1986
+periodic  1.542 1.542
+ventana_7 1.362 1.850
+logaritmo    factor 
+    0.615     1.850 
+          1960-70 1971-77 1978-86
+periodic       11       5       0
+ventana_7       7       4       4
+          1960-72 1973-86
+periodic   -0.094   0.090
+ventana_7  -0.003   0.002
+--- fin del BLOQUE ---
+
+[M7-01] obs. 105 = 1986-T1 ; obs. 1 = 1960-T1 ; primeros trimestres: 27 (el 1.o es 1960 y el 27.o es 1986)
+[M7-02] lectura apresurada del T1 de 1986: +61.5 % ; lectura correcta: +85.0 %
+[M7-03] factor del T3 (ventana 7): 1960 = 0.703 ; 1986 = 0.460 ; con periodic, fijo en 0.579
+[M7-04] dispersion del residuo: periodic / ventana 7 = 2.8 veces
+[M7-05] s.window = 5 : factor T1 1960 = 1.351 ; 1986 = 1.855 ; sd del residuo = 0.044
+[M7-05] s.window = 7 : factor T1 1960 = 1.362 ; 1986 = 1.850 ; sd del residuo = 0.054
+[M7-05] s.window = 9 : factor T1 1960 = 1.366 ; 1986 = 1.843 ; sd del residuo = 0.060
+[M7-05] s.window = 11: factor T1 1960 = 1.369 ; 1986 = 1.826 ; sd del residuo = 0.063
+[M7-05] s.window = 13: factor T1 1960 = 1.371 ; 1986 = 1.811 ; sd del residuo = 0.066
+[M7-06] residuo del primer trimestre con periodic, 1960..1986:
+ 1960  1961  1962  1963  1964  1965  1966  1967  1968  1969  1970  1971  1972 
+-0.13 -0.12 -0.11 -0.07 -0.11 -0.10 -0.09 -0.12 -0.09 -0.07 -0.14  0.04 -0.11 
+ 1973  1974  1975  1976  1977  1978  1979  1980  1981  1982  1983  1984  1985 
+-0.08 -0.02 -0.03  0.10 -0.01  0.05  0.15  0.18  0.12  0.17  0.12  0.18  0.18 
+ 1986 
+ 0.14 
+[M7-06b]   negativo en 16 de los 27 anios y positivo en 11 ; anios negativos despues de 1970: 1972 1973 1974 1975 1977 ; ultimo anio negativo: 1977 ; anios por tramo: 1960-70:11  1971-77:7  1978-86:9
+[M7-06c]   en los 13 primeros anios (1960-1972): 12 negativos ; en los 14 ultimos (1973-1986): 10 positivos ; anios seguidos negativos desde 1960: 11 ; anios seguidos positivos hasta 1986: 9
+[M7-06d] residuo del primer trimestre con ventana 7, 1960..1986:
+ 1960  1961  1962  1963  1964  1965  1966  1967  1968  1969  1970  1971  1972 
+-0.02 -0.02  0.00  0.03 -0.02  0.00  0.01 -0.02  0.01  0.03 -0.07  0.07 -0.04 
+ 1973  1974  1975  1976  1977  1978  1979  1980  1981  1982  1983  1984  1985 
+-0.02  0.02 -0.03  0.07 -0.05 -0.03  0.05  0.02 -0.03  0.03 -0.03  0.02  0.03 
+ 1986 
+-0.02 
+[M7-06e]   negativo en 15 de los 27 anios ; cambios de signo a lo largo de la serie: 18 (con periodic: 5)
+[M7-07] ventana de tendencia por defecto de stl(): con periodic = 7 ; con s.window = 7 = 9
+[M7-08] valor por defecto de s.window en stl(): no tiene (); hay que darlo siempre
+
+============================================================================
+M8 · la serie desestacionalizada de mdeaths, en las dos escalas
+============================================================================
+--- BLOQUE de la solucion ---
+         observada resta divide
+Nov 1975      1545  1652   1613
+Dec 1975      2066  1749   1650
+Jan 1976      2020  1398   1379
+Feb 1976      2750  2175   1946
+maxima   anio    mes 
+   229   1976      2 
+--- fin del BLOQUE ---
+
+[M8-01] mdeaths: n = 72, de 1974-1 a 1979-12 ; maximo = 2750 (obs. 26 = 1976-2)
+[M8-02] componente estacional de la suma, ene..dic: +622 +575 +465 +155 -186 -310 -358 -455 -470 -247 -107 +317
+[M8-03] factor estacional del producto, exp(S), ene..dic: 1.465 1.413 1.353 1.139 0.909 0.823 0.790 0.722 0.710 0.863 0.958 1.252
+[M8-04] noviembre -> diciembre de 1975: observada 1545 -> 2066 (+521) ; resta 1652 -> 1749 (+97) ; divide 1613 -> 1650 (+37)
+[M8-05]   lo que el patron anual pone en ese paso: suma +424 muertes ; producto x1.307
+[M8-06] febrero de 1976: observada 2750 ; resta 2175 (quita 575) ; divide 1946 (quita 804, factor 1.413)
+[M8-07]   enero y marzo de 1976, ajustadas: resta 1398 y 1818 ; divide 1379 y 1687
+[M8-08] media de cada serie ajustada: resta 1496 ; divide 1446 ; mediana de |resta - divide| = 55 ; n.o de meses con diferencia > 100: 2
+[M8-09] febrero de 1976 en la serie ajustada: es el maximo de `resta` (2175, obs. 26) y de `divide` (1946, obs. 26) ; segundo valor mas alto: resta 1818 ; divide 1729
+[M8-10] medias anuales de mdeaths: 1974:1589  1975:1604  1976:1558  1977:1411  1978:1444  1979:1370
+[M8-11] residuo de febrero de 1976: suma +576 muertes ; producto +0.251 en logaritmos (x1.285)
+
+============================================================================
+Fin
+============================================================================
