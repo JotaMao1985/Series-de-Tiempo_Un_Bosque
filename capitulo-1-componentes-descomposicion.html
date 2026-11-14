@@ -1593,6 +1593,37 @@
       margin-bottom: 0.85rem;
     }
 
+    /* Datos de una pregunta (campo `datos`): una tabla compacta, dentro de
+       `.tabla-desplazable`, o una lista cuando la tabla no cabría en el
+       teléfono (la pregunta 6 necesita tres columnas y a 375 px solo se veían
+       dos). Sin el margen inferior de las tablas y las listas de la prosa. */
+    .quiz-datos {
+      margin: 0.9rem 0 0.85rem 0;
+    }
+
+    .quiz-datos .tabla-desplazable {
+      max-width: 30rem;
+      margin-bottom: 0;
+    }
+
+    .quiz-datos > ul {
+      margin-bottom: 0;
+      color: #374151;
+    }
+
+    .quiz-datos > ul > li + li {
+      margin-top: 0.3rem;
+    }
+
+    .quiz-datos .tabla-desplazable > table {
+      font-size: 0.875rem;
+    }
+
+    .quiz-datos .tabla-desplazable > table th,
+    .quiz-datos .tabla-desplazable > table td {
+      padding: 0.5rem 0.8rem;
+    }
+
     /* Resumen final */
     .quiz-resumen {
       margin-top: 1.15rem;
@@ -2949,13 +2980,14 @@ start(AirPassengers)       # 1949 1
 # Objeto tsibble (tidyverts / fpp3)
 library(fpp3)
 pasajeros &lt;- as_tsibble(AirPassengers)
-pasajeros
+print(pasajeros, n = 2)    # sin n = 2, R imprime las diez primeras filas
 #> # A tsibble: 144 x 2 [1M]
-#>       index  value
-#>       &lt;mth&gt;  &lt;dbl&gt;
-#>  1 1949 ene    112
-#>  2 1949 feb    118
-#>  # ... 142 mas</code></pre>
+#>      index value
+#>      &lt;mth&gt; &lt;dbl&gt;
+#> 1 1949 Jan   112
+#> 2 1949 Feb   118
+#> # ℹ 142 more rows
+# Los meses salen en el idioma del sistema: "ene." si R esta en espanol</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python"># Serie de pandas con indice de fechas mensuales (inicio de mes)
@@ -3014,6 +3046,12 @@ print(pasajeros.head())</code></pre>
         <strong>índice</strong>— y admite <strong>varias series a la vez</strong> en formato largo, cada una con sus
         propias fechas, si se le declara cuál es la columna que las distingue: la <strong>clave</strong>.</p>
 
+      <p>La clase del índice dice además cada cuánto se midió la serie. En la salida de arriba la columna
+        <code>index</code> es de clase <code>&lt;mth&gt;</code>, un mes, y la cabecera lo resume en
+        <code>[1M]</code>: un dato por mes. Cuando el tiempo llega como una fecha de calendario,
+        <code>yearmonth()</code> la convierte en un mes; para datos trimestrales o semanales están
+        <code>yearquarter()</code> y <code>yearweek()</code>.</p>
+
       <p>La regla que gobierna el objeto es una sola: <strong>índice y clave, juntos, identifican una fila y solo
         una</strong>. Si recibe las ventas mensuales de cinco tiendas y solo se declara el índice, cada mes tiene
         cinco filas y el objeto se niega a construirse:</p>
@@ -3032,6 +3070,105 @@ as_tsibble(ventas, index = mes, key = tienda)   # las cinco series, cada una la 
         <p><strong>La frecuencia no es un detalle administrativo:</strong> casi todos los métodos de este curso
           —estacionalidad, diferenciación estacional, SARIMA— se apoyan en ella. Declararla mal no produce un error;
           produce descomposiciones y pronósticos sin sentido, que es bastante peor.</p>
+      </div>
+
+      <div class="exercise">
+        <h4><i class="fas fa-pen-to-square mr-2" aria-hidden="true"></i>Para practicar</h4>
+        <div class="ejercicio-guiado">
+          <p class="ejercicio-enunciado" style="margin-bottom: 0.75rem;">Dos series llegan en una sola tabla, como suelen llegar de un archivo: las
+            muertes mensuales por enfermedades pulmonares en el Reino Unido, de 1974 a 1979, de hombres y de mujeres
+            (en R son <code>mdeaths</code> y <code>fdeaths</code>). El código arma esa tabla cruda, <code>crudo</code>,
+            con una fila por mes y sexo. Conviértela en un <code>tsibble</code> y entrega tres cosas:</p>
+          <pre><code class="language-r">library(fpp3)
+meses &lt;- seq(as.Date("1974-01-01"), by = "month",
+             length.out = 72)
+crudo &lt;- data.frame(
+  mes     = rep(meses, times = 2),
+  sexo    = rep(c("hombres", "mujeres"), each = 72),
+  muertes = c(mdeaths, fdeaths)
+)</code></pre>
+          <ol style="list-style-type: lower-alpha; margin-top: 0.5rem; margin-bottom: 0;">
+            <li>Lo que responde <code>as_tsibble(crudo, index = mes)</code> y lo que devuelve
+              <code>duplicates(crudo, index = mes)</code>, la función que ese mismo error recomienda: ¿cuántas
+              filas señala, y por qué esas?</li>
+            <li>La cabecera del objeto cuando se declara también la clave, sin tocar la columna <code>mes</code>:
+              ¿qué intervalo anuncia, y qué contesta <code>has_gaps()</code>?</li>
+            <li>El objeto bien declarado, con su cabecera y la respuesta de <code>has_gaps()</code>, y una frase
+              que diga qué cambió.</li>
+          </ol>
+          <div class="ejercicio-acciones">
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c1m2-pista">
+              <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c1m2-sol">
+              <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="ejercicio-panel pista" id="c1m2-pista" hidden>
+            <p style="margin:0;">La regla es la del módulo: índice y clave, juntos, identifican una fila y solo una.
+              Cuenta cuántas filas de <code>crudo</code> son de enero de 1974. Para el intervalo, mira de qué clase
+              es la columna <code>mes</code> con <code>str(crudo)</code> y compárala con la del índice de
+              <code>pasajeros</code>, el objeto del módulo: el intervalo sale de ahí.</p>
+          </div>
+          <div class="ejercicio-panel solucion" id="c1m2-sol" hidden>
+            <p><strong>Respuesta: el objeto solo queda bien cuando se le declaran las tres cosas</strong> —el
+              índice, la clave y la unidad en que el índice mide el tiempo—, y solo protesta por una de ellas.</p>
+            <pre><code class="language-r"># (a) Solo el indice
+try(as_tsibble(crudo, index = mes))
+#> Error in validate_tsibble(data = tbl, key = key_vars, key_data = key_data,  :
+#>   A valid tsibble must have distinct rows identified by key and index.
+#> ℹ Please use `duplicates()` to check the duplicated rows.
+nrow(duplicates(crudo, index = mes))
+#> [1] 144
+nrow(duplicates(crudo, index = mes, key = sexo))
+#> [1] 0
+
+# (b) Indice y clave, con `mes` todavia como fecha de dia
+diario &lt;- as_tsibble(crudo, index = mes, key = sexo)
+print(diario, n = 2)
+#> # A tsibble: 144 x 3 [1D]
+#> # Key:       sexo [2]
+#>   mes        sexo    muertes
+#>   &lt;date>     &lt;chr>     &lt;dbl>
+#> 1 1974-01-01 hombres    2134
+#> 2 1974-02-01 hombres    1863
+#> # ℹ 142 more rows
+has_gaps(diario)$.gaps
+#> [1] TRUE TRUE
+
+# (c) El mes, declarado como mes
+muertes &lt;- crudo |>
+  mutate(mes = yearmonth(mes)) |>
+  as_tsibble(index = mes, key = sexo)
+print(muertes, n = 2)
+#> # A tsibble: 144 x 3 [1M]
+#> # Key:       sexo [2]
+#>        mes sexo    muertes
+#>      &lt;mth> &lt;chr>     &lt;dbl>
+#> 1 1974 Jan hombres    2134
+#> 2 1974 Feb hombres    1863
+#> # ℹ 142 more rows
+has_gaps(muertes)$.gaps
+#> [1] FALSE FALSE</code></pre>
+            <p><strong>(a)</strong> El objeto se niega a construirse, como con las tiendas del módulo, y
+              <code>duplicates()</code> dice hasta dónde llega el problema: señala las 144 filas, todas. Cada mes
+              aparece dos veces, una por sexo, así que con el índice solo no hay ni una fila que sea única. Con
+              la clave declarada no señala ninguna.</p>
+            <p><strong>(b)</strong> Con la clave el objeto se construye, y ahí está la trampa, porque no protesta.
+              La cabecera anuncia <code>[1D]</code>: como <code>mes</code> es una fecha de día, el objeto entiende
+              dos series <em>diarias</em> con un dato el primero de cada mes y nada en los demás días. Por eso
+              <code>has_gaps()</code> contesta <code>TRUE</code> en las dos: entre el 1 de enero de 1974 y el 1 de
+              diciembre de 1979 hay 2161 días, y cada serie trae 72 datos. Una descomposición STL sobre este
+              objeto no llega a ajustarse: avisa de esos huecos y devuelve un modelo vacío.</p>
+            <p style="margin-bottom:0;"><strong>(c)</strong> <code>yearmonth()</code> convierte la fecha en un mes, y
+              con eso la cabecera pasa a <code>[1M]</code>, <code>has_gaps()</code> contesta <code>FALSE</code> y
+              <code>Key: sexo [2]</code> dice que el objeto guarda dos series de 72 meses, cada una la suya. Los
+              datos no cambiaron: cambió lo que se declaró de ellos. El intervalo lo decide la clase del índice, no
+              el espaciado de las fechas, y declararlo mal no produce un error al construir el objeto: es la nota
+              sobre la frecuencia, en versión <code>tsibble</code>. La serie de hombres vuelve en el ejercicio
+              del Módulo 8.</p>
+          </div>
+        </div>
       </div>
     </div>
   </template>
@@ -3254,6 +3391,78 @@ plt.show()</code></pre>
           mes es una serie corta con su propia subida, y el Módulo 7 las suavizará una por una; el de rezagos, que la
           serie se parece a sí misma doce meses atrás, y el Capítulo 2 le pondrá número. Ninguno de los cuatro estima
           nada todavía: señalan lo que habrá que estimar.</p>
+      </div>
+
+      <div class="exercise">
+        <h4><i class="fas fa-pen-to-square mr-2" aria-hidden="true"></i>Para practicar</h4>
+        <div class="ejercicio-guiado">
+          <p class="ejercicio-enunciado"><code>nottem</code> trae la temperatura media mensual en Nottingham, de 1920 a
+            1939, en grados Fahrenheit (viene con R). Dibuja su gráfico de subseries y su gráfico de rezagos, del 1
+            al 12, y entrega dos cosas:</p>
+          <ol style="list-style-type: lower-alpha; margin-top: 0.5rem; margin-bottom: 0;">
+            <li>Del gráfico de subseries: los dos datos más alejados de la media de su mes, uno por debajo y otro
+              por encima, con su mes, su año y cuánto se alejan. ¿Cuál de los dos se habría visto también en el
+              gráfico de tiempo?</li>
+            <li>Del gráfico de rezagos: un rezago en el que la nube se inclina hacia arriba, uno en el que se
+              inclina hacia abajo y uno en el que no se inclina hacia ningún lado, con la forma que tiene en ese
+              último. Explica los tres con lo que sabes de cómo es un año en Nottingham.</li>
+          </ol>
+          <div class="ejercicio-acciones">
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c1m3-pista">
+              <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c1m3-sol">
+              <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="ejercicio-panel pista" id="c1m3-pista" hidden>
+            <p style="margin:0;">En el gráfico de subseries la raya horizontal de cada panel es la media de ese mes:
+              busca el pico y el valle que más se separan de su raya, y comprueba la distancia con una resta. En el
+              de rezagos, pregúntate qué mes tiene enfrente cada mes: con $k = 12$, el mismo mes del año anterior.
+              Hazte la misma pregunta en los demás paneles. Y compara con lo que pasaba en
+              <code>AirPassengers</code>: allí había una tendencia, que aquí falta.</p>
+          </div>
+          <div class="ejercicio-panel solucion" id="c1m3-sol" hidden>
+            <pre><code class="language-r">library(fpp3)
+temp &lt;- as_tsibble(nottem)
+gg_subseries(temp, value)
+gg_lag(temp, value, geom = "point", lags = 1:12)
+
+# (a) Cada dato frente a la media de su mes
+desvio &lt;- nottem - ave(nottem, cycle(nottem))
+i &lt;- c(which.min(desvio), which.max(desvio))
+data.frame(anio = floor(time(nottem))[i], mes = cycle(nottem)[i],
+           valor = nottem[i], desvio = round(desvio[i], 1))
+#>   anio mes valor desvio
+#> 1 1929   2  31.3   -7.9
+#> 2 1934  12  45.8    6.3
+
+# (b) La correlacion de la nube en tres rezagos
+n &lt;- length(nottem)
+nube &lt;- function(k) cor(nottem[(k + 1):n], nottem[1:(n - k)])
+round(sapply(c(3, 6, 12), nube), 3)
+#> [1] -0.018 -0.896  0.921</code></pre>
+            <p><strong>(a)</strong> Los dos datos son febrero de 1929, con 31.3&nbsp;°F, 7.9 por debajo de la media
+              de febrero (39.2), y diciembre de 1934, con 45.8&nbsp;°F, 6.3 por encima de la de diciembre (39.5). El
+              primero es además el mínimo de toda la serie, así que en el gráfico de tiempo se ve: es el valle más
+              hondo, aunque allí no dice que sea un febrero ni cuánto se aparta de un febrero corriente. El segundo
+              no se ve. Una temperatura de 45.8&nbsp;°F es de lo más corriente —la media de abril es 46.3—, y la
+              serie pasa por ella dos veces cada año; solo es rara <em>para un diciembre</em>, y eso solo lo enseña
+              el panel de diciembre. El gráfico de subseries deja otra lectura: ningún panel sube ni baja con los
+              años. En <code>AirPassengers</code> todos subían; aquí no hay tendencia.</p>
+            <p style="margin-bottom:0;"><strong>(b)</strong> Con $k = 12$ la nube se cierra sobre la diagonal
+              (correlación 0.921): cada mes frente a su igual del año anterior. Con $k = 6$ se inclina hacia abajo
+              ($-0.896$): cada mes tiene enfrente al de la estación opuesta, y a un julio caluroso le corresponde
+              un enero frío. En <code>AirPassengers</code> esa misma nube seguía inclinada hacia arriba (0.784)
+              porque la tendencia empujaba a la vez a los dos valores de cada punto; sin tendencia, la
+              estacionalidad sola le da la vuelta. Con $k = 3$ la nube no se inclina hacia ningún lado
+              ($-0.018$), pero no es una mancha sin forma: es un anillo. Abril y octubre tienen temperaturas
+              parecidas (46.3 y 49.5 de media) y pasados opuestos: tres meses antes de abril era enero, y tres
+              meses antes de octubre, julio. Una correlación cercana a cero no dice que el pasado no informe; dice
+              que no informa en línea recta. Conviene recordarlo en el Capítulo 2, donde cada nube se resume en
+              ese único número.</p>
+          </div>
+        </div>
       </div>
 
       <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
@@ -4114,6 +4323,83 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
           <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.6"><a href="#ref-m6-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §3.6)</a></cite></span>.</p>
       </div>
 
+      <div class="exercise">
+        <h4><i class="fas fa-pen-to-square mr-2" aria-hidden="true"></i>Para practicar</h4>
+        <div class="ejercicio-guiado">
+          <p class="ejercicio-enunciado"><code>UKgas</code> trae el consumo trimestral de gas en el Reino Unido, de 1960
+            a 1986, en millones de <em>therms</em> (viene con R). Descomponla con la clásica <strong>aditiva</strong>
+            y mira solo el residuo. Entrega tres cosas:</p>
+          <ol style="list-style-type: lower-alpha; margin-top: 0.5rem; margin-bottom: 0;">
+            <li>La desviación típica del residuo en 1961, 1975 y 1985, y el nombre de lo que dibujan esas tres
+              cifras.</li>
+            <li>A cuál de los cuatro pasos del recorrido te devuelve ese residuo, qué cambias en él y, antes de
+              hacerlo, qué esperas que les pase a las tres cifras si ese era el único fallo.</li>
+            <li>Las tres cifras después del cambio, frente a tu predicción. Si no se cumple, mira el residuo del
+              primer trimestre año por año y di qué paso lo explica.</li>
+          </ol>
+          <div class="ejercicio-acciones">
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c1m6-pista">
+              <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c1m6-sol">
+              <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="ejercicio-panel pista" id="c1m6-pista" hidden>
+            <p style="margin:0;">Dibuja el residuo antes de calcular nada:
+              <code>plot(decompose(UKgas)$random)</code>. Un residuo que hizo su trabajo es igual de ancho de
+              principio a fin y no repite un dibujo cada año. Si el tuyo falla en alguna de las dos cosas, relee en
+              las fichas del recorrido la línea «Qué te devuelve atrás» de cada paso: una de ellas describe lo que
+              estás viendo.</p>
+          </div>
+          <div class="ejercicio-panel solucion" id="c1m6-sol" hidden>
+            <p><strong>Respuesta: el residuo manda de vuelta dos veces, primero al paso 1 y después al
+              paso 3.</strong></p>
+            <pre><code class="language-r">anio &lt;- floor(time(UKgas))
+tres &lt;- c("1961", "1975", "1985")
+sd_anual &lt;- function(r, decimales) {
+  round(tapply(r, anio, sd, na.rm = TRUE)[tres], decimales)
+}
+
+# (a) La clasica aditiva: dispersion del residuo en tres anios
+adi &lt;- decompose(UKgas, type = "additive")
+sd_anual(adi$random, 1)
+#>  1961  1975  1985
+#> 114.1  18.8 210.6
+
+# (c) Paso 1 otra vez: multiplicativa. El residuo es un cociente
+mul &lt;- decompose(UKgas, type = "multiplicative")
+sd_anual(mul$random, 3)
+#>  1961  1975  1985
+#> 0.162 0.072 0.195
+
+# El residuo multiplicativo del primer trimestre, cada 5 anios
+t1 &lt;- setNames(mul$random[cycle(UKgas) == 1], 1960:1986)
+round(t1[c("1961", "1966", "1971", "1976", "1981", "1986")], 2)
+#> 1961 1966 1971 1976 1981 1986
+#> 0.90 0.93 1.03 1.08 1.08 1.11</code></pre>
+            <p><strong>(a)</strong> Las tres cifras, 114.1, 18.8 y 210.6, dibujan una U: el residuo es seis veces
+              más disperso en 1961 que en 1975, y once veces más en 1985. Es la U de <code>AirPassengers</code>,
+              más honda. Y dentro de cada año repite un dibujo: el del primer trimestre es negativo los quince
+              años de 1961 a 1975 y positivo los nueve de 1978 a 1986. Eso no es ruido.</p>
+            <p><strong>(b)</strong> Devuelve al <strong>paso 1</strong>, la escala; su ficha lo dice así: «Si al
+              final el residuo conserva la forma estacional abombada, la escala estaba mal elegida». El modelo
+              aditivo reparte a todos los años el mismo vaivén, 344.1 millones de <em>therms</em>, y el de la serie
+              pasó de 75.3 en 1961 a 805.2 en 1985. Se cambia a la multiplicativa. La predicción: el residuo
+              multiplicativo es un cociente alrededor de 1, así que, si la escala era el único fallo, debería ser
+              igual de disperso en los tres años.</p>
+            <p style="margin-bottom:0;"><strong>(c)</strong> No se cumple: 0.162, 0.072 y 0.195. La U sigue ahí,
+              menos honda —el residuo de 1985 es 2.7 veces el de 1975, no once—, así que la escala no era el único
+              fallo. El residuo del primer trimestre dice cuál es el otro: 0.90, 0.93, 1.03, 1.08, 1.08 y 1.11.
+              Queda por debajo de 1 los diez años de 1961 a 1970 y por encima los nueve de 1978 a 1986: el índice
+              del primer trimestre, 1.454, les queda grande a los primeros años y corto a los últimos. Es la señal
+              del <strong>paso 3</strong>: «Si los índices no sirven igual al principio y al final de la muestra,
+              la estacionalidad cambia: hay que pasar a STL». Dentro del método clásico ya no hay a qué paso
+              volver: el ejercicio del Módulo 7 retoma la serie ahí.</p>
+          </div>
+        </div>
+      </div>
+
       <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
         <h4>Fuentes citadas en este módulo</h4>
         <!--FUENTES-MODULO:inicio-->
@@ -4240,9 +4526,11 @@ da = seasonal_decompose(pasajeros, model="additive", period=12)</code></pre>
         Sin la opción robusta, el método reparte ese exceso entre los tres componentes: el julio estacional de
         <em>los doce años</em> sube de +24.2&nbsp;% a +28.1&nbsp;%, la tendencia de ese mes pasa de 283.2 a 294.3
         mil pasajeros, y su residuo queda en 0.3708. Con <code>robust = TRUE</code> el julio inflado acaba con peso 0
-        —el último apartado del módulo explica cómo— y los otros dos componentes casi no se enteran —+24.6&nbsp;% y 282.2 mil—: es el residuo el que carga con
-        el dato, 0.4404. El <strong>Ejercicio 3</strong> del cierre compara estas cifras con las del método
-        clásico.</p>
+        —el último apartado del módulo explica cómo— y los otros dos componentes casi no se enteran. La comparación
+        buena es con su propia línea base, el ajuste robusto de la serie sin inflar, que ya no da +24.2&nbsp;% y
+        283.2 mil sino +25.6&nbsp;% y 283.1 mil: frente a ella, el julio estacional queda en +24.6&nbsp;% y la
+        tendencia en 282.2 mil. Es el residuo el que carga con el dato, 0.4404. El <strong>Ejercicio 3</strong> del cierre compara estas cifras con las del método
+        clásico, y repite la prueba con el atípico al final de la serie.</p>
 
       <div class="code-tabs" role="group" aria-label="STL en R y Python">
         <div class="code-tabs-nav" role="tablist" aria-label="Lenguaje del ejemplo">
@@ -4549,6 +4837,96 @@ print((rob.weights &lt; 1e-8).sum())                                           #
           con los dos usos de una descomposición: quitar la estacionalidad y medir cuánto pesa cada componente.</p>
       </div>
 
+      <div class="exercise">
+        <h4><i class="fas fa-pen-to-square mr-2" aria-hidden="true"></i>Para practicar</h4>
+        <div class="ejercicio-guiado">
+          <p class="ejercicio-enunciado">Aplica STL a <code>log(UKgas)</code> —el consumo trimestral de gas en el Reino
+            Unido de 1960 a 1986, la serie del ejercicio del Módulo 6— dos veces, con
+            <code>s.window = "periodic"</code> y con <code>s.window = 7</code>, y decide con cuál de los dos ajustes
+            te quedas. Entrega tres cosas:</p>
+          <ol style="list-style-type: lower-alpha; margin-top: 0.5rem; margin-bottom: 0;">
+            <li>El factor estacional del primer trimestre en 1960 y en 1986 con cada ajuste, ya sin
+              logaritmos, y lo que significa el de 1986 en porcentaje sobre la tendencia.</li>
+            <li>El residuo del primer trimestre con cada ajuste, año por año: ¿cambia de signo a lo largo de la
+              serie? Si cambia, ¿desde qué año?</li>
+            <li>Con cuál de los dos ajustes te quedas, y por qué, en dos frases.</li>
+          </ol>
+          <div class="ejercicio-acciones">
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c1m7-pista">
+              <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c1m7-sol">
+              <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="ejercicio-panel pista" id="c1m7-pista" hidden>
+            <p style="margin:0;">Los componentes salen en logaritmos, y ahí se suman. Para leer el estacional como
+              un factor que multiplica a la tendencia hay que deshacer el logaritmo con <code>exp()</code>. Y para
+              decidir no basta el tamaño del residuo: sepáralo por trimestre y míralo año por año, que es donde se
+              ve si le queda forma.</p>
+          </div>
+          <div class="ejercicio-panel solucion" id="c1m7-sol" hidden>
+            <p><strong>Respuesta: <code>s.window = 7</code>.</strong> El patrón estacional del gas no es el
+              mismo en 1960 que en 1986, y con <code>"periodic"</code> lo que cambió se queda en el residuo.</p>
+            <pre><code class="language-r">fija  &lt;- stl(log(UKgas), s.window = "periodic")$time.series
+movil &lt;- stl(log(UKgas), s.window = 7)$time.series
+es_t1 &lt;- cycle(UKgas) == 1   # el primer trimestre de cada anio
+
+# (a) Factor estacional del primer trimestre en 1960 y 1986,
+#     ya sin logaritmos; y el de 1986, antes y despues de exp()
+factor_t1 &lt;- function(st) {
+  f &lt;- exp(st[es_t1, "seasonal"])[c(1, 27)]
+  setNames(f, c("1960", "1986"))
+}
+round(rbind(periodic  = factor_t1(fija),
+            ventana_7 = factor_t1(movil)), 3)
+#>            1960  1986
+#> periodic  1.542 1.542
+#> ventana_7 1.362 1.850
+t1_1986 &lt;- movil[es_t1, "seasonal"][27]
+round(c(logaritmo = t1_1986, factor = exp(t1_1986)), 3)
+#> logaritmo    factor
+#>     0.615     1.850
+
+# (b) Residuo del primer trimestre: en cuantos anios es negativo,
+#     por tramos, y su media en los 13 primeros y los 14 ultimos
+res_t1 &lt;- function(st) st[es_t1, "remainder"]
+tramo  &lt;- cut(1960:1986, c(1959, 1970, 1977, 1986),
+              labels = c("1960-70", "1971-77", "1978-86"))
+negativos &lt;- function(st) tapply(res_t1(st) &lt; 0, tramo, sum)
+rbind(periodic = negativos(fija), ventana_7 = negativos(movil))
+#>           1960-70 1971-77 1978-86
+#> periodic       11       5       0
+#> ventana_7       7       4       4
+mitad &lt;- rep(c("1960-72", "1973-86"), c(13, 14))
+media &lt;- function(st) tapply(res_t1(st), mitad, mean)
+round(rbind(periodic  = media(fija),
+            ventana_7 = media(movil)), 3)
+#>           1960-72 1973-86
+#> periodic   -0.094   0.090
+#> ventana_7  -0.003   0.002</code></pre>
+            <p><strong>(a)</strong> Con <code>"periodic"</code> el primer trimestre vale lo mismo los 27 años: 1.542
+              veces la tendencia. Con la ventana de 7 pasa de 1.362 en 1960 a 1.850 en 1986. Ese 1.850 sale de un
+              componente que en logaritmos vale 0.615: $\exp(0.615) = 1.850$, un 85.0&nbsp;% por encima de la
+              tendencia, no el 61.5&nbsp;% que sugiere leer el número tal cual. El Módulo 8 empieza por ahí.</p>
+            <p><strong>(b)</strong> Con el patrón fijo el residuo del primer trimestre cambia de signo: es negativo
+              los once años de 1960 a 1970 y positivo los nueve de 1978 a 1986, y su media pasa de $-0.094$ en
+              los trece primeros años a $+0.090$ en los catorce últimos. El cambio no es de golpe: entre 1971 y
+              1977 todavía es negativo cinco años, y desde 1978 no vuelve a serlo. Con la ventana de 7 no hay
+              tramos: los años negativos se reparten por toda la serie (7, 4 y 4) y las dos medias son $-0.003$ y
+              $+0.002$.</p>
+            <p style="margin-bottom:0;"><strong>(c)</strong> Se elige el número. Un patrón fijo que se equivoca
+              once años seguidos hacia un lado y nueve seguidos hacia el otro no deja ruido en el residuo, deja
+              estructura: es la misma señal que el ejercicio del Módulo 6 leyó en la descomposición clásica. Lo
+              que no conviene es elegir <em>qué</em> número por el tamaño del residuo: cuanto más corta es la
+              ventana, más se pliega el componente estacional a cada año, ruido incluido, y el residuo baja
+              siempre (su desviación típica es 0.044 con 5, 0.054 con 7 y 0.066 con 13, frente a 0.152 con
+              <code>"periodic"</code>). Aquí la lectura es la misma con cualquier ventana de 5 a 13: el factor de
+              1986 queda entre 1.811 y 1.855.</p>
+          </div>
+        </div>
+      </div>
+
       <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
         <h4>Fuentes citadas en este módulo</h4>
         <!--FUENTES-MODULO:inicio-->
@@ -4804,6 +5182,80 @@ plt.legend(); plt.show()</code></pre>
           componentes sean de fiar.</p>
       </div>
 
+      <div class="exercise">
+        <h4><i class="fas fa-pen-to-square mr-2" aria-hidden="true"></i>Para practicar</h4>
+        <div class="ejercicio-guiado">
+          <p class="ejercicio-enunciado"><code>mdeaths</code> trae las muertes mensuales de hombres por enfermedades
+            pulmonares en el Reino Unido, de 1974 a 1979: es la serie de hombres del ejercicio del Módulo 2.
+            Construye su serie desestacionalizada de dos maneras —restando el componente estacional de una STL sobre
+            la serie, y dividiendo entre $\exp(\hat{S}_t)$ con una STL sobre el logaritmo, las dos con
+            <code>s.window = "periodic"</code>— y entrega tres cosas:</p>
+          <ol style="list-style-type: lower-alpha; margin-top: 0.5rem; margin-bottom: 0;">
+            <li>La serie observada y las dos ajustadas, de noviembre de 1975 a febrero de 1976.</li>
+            <li>La mayor diferencia entre las dos series ajustadas, el mes en que cae y una frase que diga por
+              qué ahí.</li>
+            <li>Dos lecturas, de una frase cada una: cuánto queda, una vez ajustada, de la subida de noviembre a
+              diciembre de 1975; y si febrero de 1976, el máximo de la serie, sigue destacando.</li>
+          </ol>
+          <div class="ejercicio-acciones">
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c1m8-pista">
+              <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c1m8-sol">
+              <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="ejercicio-panel pista" id="c1m8-pista" hidden>
+            <p style="margin:0;">Son las dos fórmulas del módulo: $y_t - \hat{S}_t$ en el modelo aditivo y
+              $y_t / \hat{S}_t$ en el multiplicativo, que con la STL en logaritmos es $y_t / \exp(\hat{S}_t)$.
+              Antes de mirar la tabla, apuesta dos cosas: cuánto de la subida de 521 muertes entre noviembre y
+              diciembre de 1975 sobrevive al ajuste, y si febrero de 1976 sigue siendo el máximo. Después compara
+              tu apuesta con la tabla.</p>
+          </div>
+          <div class="ejercicio-panel solucion" id="c1m8-sol" hidden>
+            <pre><code class="language-r"># Dos STL: sobre la serie (y = T + S + R) y sobre su logaritmo
+suma     &lt;- stl(mdeaths, s.window = "periodic")$time.series
+producto &lt;- stl(log(mdeaths), s.window = "periodic")$time.series
+
+ajustada_resta  &lt;- mdeaths - suma[, "seasonal"]
+ajustada_divide &lt;- mdeaths / exp(producto[, "seasonal"])
+
+# (a) Cuatro meses seguidos
+tabla &lt;- cbind(observada = mdeaths,
+               resta     = ajustada_resta,
+               divide    = ajustada_divide)
+round(window(tabla, start = c(1975, 11), end = c(1976, 2)))
+#>          observada resta divide
+#> Nov 1975      1545  1652   1613
+#> Dec 1975      2066  1749   1650
+#> Jan 1976      2020  1398   1379
+#> Feb 1976      2750  2175   1946
+
+# (b) Donde se separan mas las dos series ajustadas
+dif &lt;- abs(ajustada_resta - ajustada_divide)
+j   &lt;- which.max(dif)
+c(maxima = round(max(dif)),
+  anio = floor(time(dif))[j], mes = cycle(dif)[j])
+#> maxima   anio    mes
+#>    229   1976      2</code></pre>
+            <p><strong>(b)</strong> Las dos series ajustadas se separan 229 muertes como mucho, y es en febrero de
+              1976. Restar le quita a ese febrero lo mismo que a cualquier otro, 575 muertes; dividir le quita una
+              proporción, la de todos los febreros (entre 1.413), que en un mes tan alto son 804. En los meses
+              corrientes las dos casi coinciden: la mitad de los 72 se separan menos de 55 muertes, y solo dos, más
+              de 100. La elección de escala pesa donde el dato es extraordinario.</p>
+            <p><strong>(c)</strong> De noviembre a diciembre de 1975 las muertes suben 521, de 1545 a 2066. Ajustada,
+              la subida se queda en 97 restando y en 37 dividiendo: casi todo lo demás es el patrón anual, que pone
+              424 muertes más en diciembre que en noviembre todos los años. Es la comparación entre meses seguidos
+              para la que se construye esta serie.</p>
+            <p style="margin-bottom:0;">Febrero de 1976, en cambio, sigue destacando. Con 2750 muertes es el máximo
+              de la serie observada, y ajustado es también el máximo de las dos series ajustadas: 2175 y 1946,
+              cuando el segundo valor más alto de cada una es 1818 y 1729. Desestacionalizar quita lo que ese mes
+              tiene de febrero, no lo que tuvo de extraordinario. Eso se queda en el residuo, que la serie ajustada
+              conserva, y ahora se ve mejor.</p>
+          </div>
+        </div>
+      </div>
+
       <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
         <h4>Fuentes citadas en este módulo</h4>
         <!--FUENTES-MODULO:inicio-->
@@ -4870,10 +5322,11 @@ plt.legend(); plt.show()</code></pre>
 
       <div class="quiz" data-quiz="cap1">
         <h4><i class="fas fa-circle-question" aria-hidden="true"></i> Autoevaluación</h4>
-        <p class="text-sm" style="margin-bottom:0;">Ocho preguntas para comprobar lo esencial. En las de respuesta
-          única cada opción tiene su explicación; en las numéricas y en la de selección múltiple la explicación es
-          una para el acierto y otra para el fallo. Si te equivocas, la retroalimentación te dice dónde estuvo el
-          razonamiento.</p>
+        <p class="text-sm" style="margin-bottom:0;">Ocho preguntas para comprobar lo esencial; cada una lleva su
+          rótulo. Las de «Opción múltiple» y la de «Lectura de gráfico» tienen una sola respuesta correcta, y cada
+          opción trae su explicación. En la de «Varias respuestas» se explica cada opción que se haya juzgado mal,
+          y en la de «Respuesta numérica» la explicación es una para el acierto y otra para el fallo. Si te
+          equivocas, la retroalimentación te dice dónde estuvo el razonamiento.</p>
         <div class="quiz-progreso" role="presentation"><div class="quiz-progreso-barra"></div></div>
         <div class="quiz-preguntas"></div>
         <div class="quiz-resumen" role="status" hidden></div>
@@ -4890,9 +5343,23 @@ plt.legend(); plt.show()</code></pre>
           reales, para que puedas compararlas con las tuyas.</p>
 
         <div class="ejercicio-guiado">
-          <p class="ejercicio-enunciado"><span class="ejercicio-numero">1.</span>Con <code>fpp3</code>, grafica y
-            descompone (clásica y STL) la serie <code>co2</code> o una serie de demanda de energía. ¿Aditiva o
-            multiplicativa? Justifica con el gráfico estacional.</p>
+          <p class="ejercicio-enunciado"><span class="ejercicio-numero">1.</span>¿Aditiva o multiplicativa? La
+            serie es <code>co2</code>, que viene con R: la concentración mensual de CO₂ en Mauna Loa, en partes por
+            millón (ppm), de 1959 a 1997. Entrega cuatro cosas:</p>
+          <ol style="list-style-type: lower-alpha; margin-top: 0.5rem; margin-bottom: 0;">
+            <li>El gráfico de tiempo y el gráfico estacional, con una frase: a simple vista, ¿el vaivén anual se
+              ensancha a medida que sube el nivel?</li>
+            <li>La medida del Módulo 4 —nivel medio, amplitud (máximo menos mínimo) y amplitud/nivel— para 1959,
+              1978 y 1997, y la pendiente $b$ de la recta $\log(\text{amplitud}) = a + b\,\log(\text{nivel})$
+              ajustada con los 39 años, con su intervalo del 95&nbsp;%. Con $b \approx 0$ la amplitud no depende
+              del nivel; con $b \approx 1$ es proporcional a él.</li>
+            <li>Las dos descomposiciones clásicas, aditiva y multiplicativa; la serie desestacionalizada con cada
+              una; y dos comparaciones: la mayor diferencia entre las dos series ajustadas, en ppm, y la desviación
+              típica de cada residuo (el de la multiplicativa, traducido a ppm como en el Módulo 6:
+              $y_t - \hat{T}_t\hat{S}_t$).</li>
+            <li>El veredicto, en dos frases: a cuál de las dos apunta el criterio, y cuánto cambia el resultado al
+              elegir una u otra.</li>
+          </ol>
           <div class="ejercicio-acciones">
             <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c1e1-pista">
               <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
@@ -4902,76 +5369,124 @@ plt.legend(); plt.show()</code></pre>
             </button>
           </div>
           <div class="ejercicio-panel pista" id="c1e1-pista" hidden>
-            <p style="margin:0;">"A ojo" no basta y aquí es fácil equivocarse. Convierte la pregunta en un número:
-              mide la <strong>amplitud estacional de cada año</strong> (máximo menos mínimo) y el <strong>nivel medio de
-              ese año</strong>, y mira si la amplitud crece cuando crece el nivel. Antes de calcular nada, fíjate en un
-              detalle que lo condiciona todo: ¿cuánto varía el nivel del CO₂ entre 1959 y 1997, en porcentaje?</p>
+            <p style="margin:0;">El gráfico estacional da la primera impresión, y aquí conviene no quedarse en ella:
+              por eso el apartado (b) pide medir. Antes de calcular nada, mide una cosa que lo condiciona todo:
+              cuánto varía el nivel medio del CO₂ entre 1959 y 1997, en porcentaje. Compáralo con el de
+              <code>AirPassengers</code>, que se multiplica por 3.76. Y antes de descomponer, apuesta cuántas ppm
+              separarán a las dos series ajustadas; después compara tu apuesta con el apartado (c).</p>
           </div>
           <div class="ejercicio-panel solucion" id="c1e1-sol" hidden>
-            <p><strong>Respuesta: con <code>co2</code> el criterio apunta a la multiplicativa, pero elegir una u otra
-              cambia muy poco</strong> — y distinguir esas dos cosas es justamente el aprendizaje.</p>
-            <pre><code class="language-r"># Criterio cuantitativo: elasticidad amplitud-nivel.
-#   log(amplitud del anio) = a + b * log(nivel del anio)
-#   b ~ 0 => ADITIVA (la amplitud no depende del nivel)
-#   b ~ 1 => MULTIPLICATIVA (la amplitud es proporcional al nivel)
-elasticidad &lt;- function(x) {
-  anios &lt;- floor(time(x))
-  completos &lt;- names(which(table(anios) == frequency(x)))
-  v &lt;- as.numeric(x)
-  nivel    &lt;- tapply(v, anios, mean)[completos]
-  amplitud &lt;- tapply(v, anios, function(z) max(z) - min(z))[completos]
-  fit &lt;- lm(log(amplitud) ~ log(nivel))
-  c(b = coef(fit)[2], confint(fit)[2, ], R2 = summary(fit)$r.squared)
-}
+            <p><strong>Respuesta: el criterio apunta a la multiplicativa, pero elegir una u otra cambia muy
+              poco</strong> — y distinguir esas dos cosas es justamente el aprendizaje.</p>
+            <pre><code class="language-r">library(fpp3)
+co2_ts &lt;- as_tsibble(co2)
 
-elasticidad(co2)             # b = 1.083, IC95 [0.575, 1.591], R2 = 0.335
-elasticidad(AirPassengers)   # b = 1.291, IC95 [1.149, 1.432], R2 = 0.976
+# (a) Mirar
+autoplot(co2_ts, value)       # grafico de tiempo
+gg_season(co2_ts, value)      # grafico estacional
 
-# La clave esta en cuanto recorre cada serie en proporcion a su media
-# (maximo menos minimo de toda la serie: tendencia y vaiven estacional juntos):
-(max(co2) - min(co2)) / mean(co2)                       # 0.159 -> 16 %
-(max(AirPassengers) - min(AirPassengers)) / mean(AirPassengers)   # 1.848 -> 185 %</code></pre>
+# (b) Medir: nivel y amplitud de cada anio, como en el Modulo 4
+anio     &lt;- floor(time(co2))
+nivel    &lt;- tapply(co2, anio, mean)
+amplitud &lt;- tapply(co2, anio, function(z) max(z) - min(z))
+tabla    &lt;- cbind(nivel, amplitud, pct = 100 * amplitud / nivel)
+round(tabla[c("1959", "1978", "1997"), ], 2)
+#>       nivel amplitud  pct
+#> 1959 315.83     4.95 1.57
+#> 1978 335.34     5.46 1.63
+#> 1997 363.82     6.60 1.81
+
+ajuste &lt;- lm(log(amplitud) ~ log(nivel))
+round(c(b = coef(ajuste)[[2]], confint(ajuste)[2, ]), 3)
+#>      b  2.5 % 97.5 %
+#>  1.083  0.575  1.591
+
+# (c) Descomponer de las dos maneras y comparar las series ajustadas, en ppm
+adi &lt;- decompose(co2, type = "additive")
+mul &lt;- decompose(co2, type = "multiplicative")
+ajustada_adi &lt;- co2 - adi$seasonal
+ajustada_mul &lt;- co2 / mul$seasonal
+round(max(abs(ajustada_adi - ajustada_mul)), 2)
+#> [1] 0.26
+round(c(aditiva        = sd(adi$random, na.rm = TRUE),
+        multiplicativa = sd(co2 - mul$trend * mul$seasonal, na.rm = TRUE)), 3)
+#>        aditiva multiplicativa
+#>          0.265          0.238</code></pre>
+            <div class="tabla-desplazable">
             <table>
-              <caption class="sr-only">Elasticidad amplitud-nivel en dos series</caption>
+              <caption class="sr-only">Lo que dice cada apartado del ejercicio 1 sobre la serie co2</caption>
               <thead>
-                <tr><th scope="col">Serie</th><th scope="col">$b$</th><th scope="col">IC 95&nbsp;%</th>
-                  <th scope="col">$R^2$</th><th scope="col">Veredicto</th></tr>
+                <tr><th scope="col">Apartado</th><th scope="col">Resultado</th><th scope="col">Apunta a</th></tr>
               </thead>
               <tbody>
-                <tr><td><code>co2</code></td><td>1.083</td><td>[0.575, 1.591]</td><td>0.335</td>
+                <tr><td>(a) Gráfico estacional</td>
+                  <td>La misma forma los 39 años; el vaivén crece 1.65 ppm en un recorrido de 53.66</td>
+                  <td>Aditiva, a ojo</td></tr>
+                <tr><td>(b) Amplitud frente a nivel</td>
+                  <td>$b = 1.083$, intervalo $[0.575,\ 1.591]$</td>
                   <td>Descarta la aditiva; compatible con la multiplicativa</td></tr>
-                <tr><td><code>AirPassengers</code></td><td>1.291</td><td>[1.149, 1.432]</td><td>0.976</td>
-                  <td>Descarta la aditiva; con esta medida, también la multiplicativa exacta</td></tr>
+                <tr><td>(c) Series ajustadas</td>
+                  <td>Se separan 0.26 ppm como mucho: el 4.2&nbsp;% de un vaivén de 6.25 ppm</td>
+                  <td>Da casi lo mismo</td></tr>
+                <tr><td>(c) Residuo</td>
+                  <td>0.265 ppm la aditiva, 0.238 ppm la multiplicativa</td>
+                  <td>Multiplicativa, por poco</td></tr>
               </tbody>
             </table>
-            <p>En <code>AirPassengers</code> el intervalo es estrecho y excluye el 0 con holgura, y el ajuste explica
-              el 97.6&nbsp;% de la variación: la aditiva queda descartada. Pero el intervalo excluye también el 1: con
-              esta medida, la amplitud crece <em>más</em> que en proporción al nivel, que es el «tampoco es un
-              multiplicativo de manual» del Módulo 4. La salvedad importa, porque el máximo menos el mínimo del año
-              recoge también lo que sube la tendencia: midiendo la amplitud sobre la serie sin tendencia (1950–1959),
-              $b = 1.18$ con intervalo $[0.95, 1.41]$, que ya alcanza el 1. En <code>co2</code> el intervalo es mucho más ancho —va de 0.58 a 1.59, con un
-              $R^2$ de 0.335—, pero deja fuera el 0 y contiene el 1: <strong>los datos descartan la aditiva y son
-              compatibles con la multiplicativa</strong>. Que el intervalo salga tan ancho tiene su razón: el nivel
-              medio anual del CO₂ solo sube un 15&nbsp;% en 39 años (de 315.8 a 363.8 ppm), mientras que el de
-              <code>AirPassengers</code> se multiplica por 3.76; las dos últimas líneas del código lo resumen con el
-              recorrido total de cada serie frente a su media, 16&nbsp;% y 185&nbsp;%. Y ese mismo rango tan estrecho
-              hace que la aditiva y la multiplicativa den aquí casi lo mismo, así que <strong>la elección importa
-              poco</strong>: no porque los datos no distingan, sino porque la diferencia entre las dos es
-              pequeña.</p>
-            <p style="margin-bottom:0;">Hay un matiz interesante y verificable: la amplitud estacional del CO₂
-              <strong>sí</strong> crece, a razón de $+0.024$ ppm por año ($p = 0.0002$), y ese crecimiento es el que
-              predice la proporcionalidad: una amplitud que fuera siempre la misma fracción del nivel crecería
-              $+0.023$ ppm por año, y el cociente entre amplitud y nivel no muestra tendencia ($p = 0.85$). Una
-              descomposición aditiva de índices fijos no puede recogerlo; una multiplicativa sí, porque aplica sus
-              índices fijos sobre un nivel que sube. También lo recoge <strong>STL</strong> con una ventana
-              estacional finita, que deja evolucionar el componente estacional, pero aquí no es un argumento para
-              preferirla: a la multiplicativa le basta.</p>
+            </div>
+            <p><strong>(a)</strong> En el gráfico estacional las 39 líneas tienen la misma forma —el máximo cae en
+              mayo 38 de los 39 años, y el mínimo en septiembre u octubre— y van apiladas de abajo arriba por la
+              tendencia. A simple vista no se abre ningún abanico: la amplitud pasa de 4.95 a 6.60 ppm, 1.65 ppm
+              más, en una serie que recorre 53.66. La primera impresión es «aditiva».</p>
+            <p><strong>(b)</strong> Medida, la amplitud sí crece: un 33.3&nbsp;% entre 1959 y 1997, mientras el nivel
+              sube un 15.2&nbsp;% (de 315.83 a 363.82 ppm). La proporción entre las dos se queda entre el
+              1.52&nbsp;% y el 2.02&nbsp;% los 39 años. La pendiente es $b = 1.083$, y su intervalo, de 0.575 a
+              1.591, deja fuera el 0 y contiene el 1: <strong>los datos descartan la aditiva y son compatibles con
+              la multiplicativa</strong>. Que el intervalo salga tan ancho —el ajuste tiene un $R^2$ de 0.335—
+              tiene su razón, y es la pregunta de la pista: con un nivel que solo varía un 15.2&nbsp;% hay muy
+              poco recorrido para estimar cómo responde la amplitud. En <code>AirPassengers</code>, cuyo nivel se
+              multiplica por 3.76, la misma cuenta da $b = 1.291$ con un intervalo de 1.149 a 1.432.</p>
+            <p><strong>(c)</strong> Las dos descomposiciones casi coinciden. La aditiva reparte un vaivén fijo de
+              6.25 ppm (de $-3.25$ en octubre a $+3.00$ en mayo); los índices de la multiplicativa, aplicados al
+              nivel de 1959 y al de 1997, dan vaivenes de 5.86 y 6.75 ppm. Las dos series desestacionalizadas no se
+              separan más de 0.26 ppm, el 4.2&nbsp;% del vaivén; en <code>AirPassengers</code> la misma
+              comparación da 51.1 mil pasajeros sobre un vaivén de 117.4, el 43.5&nbsp;%. El residuo favorece por
+              poco a la multiplicativa, 0.238 ppm frente a 0.265, y el de la aditiva es algo más disperso en los
+              dos extremos de la serie (0.29 ppm de media en 1959–1964 y en 1992–1997, frente a 0.19 en
+              1975–1981): la U del Módulo 6, muy atenuada.</p>
+            <p><strong>(d)</strong> El criterio apunta a la multiplicativa: la amplitud crece con el nivel y el
+              intervalo de $b$ deja fuera el 0. Pero <strong>la elección importa poco</strong>, y no porque los
+              datos no distingan, sino porque la diferencia entre las dos es pequeña: con un nivel que apenas
+              varía un 15.2&nbsp;%, restar un vaivén fijo y multiplicar por un índice fijo dan series ajustadas que
+              se separan 0.26 ppm como mucho.</p>
+            <p style="margin-bottom:0;"><strong>Para ir más lejos.</strong> La amplitud estacional del CO₂ crece a
+              razón de $+0.024$ ppm por año ($p = 0.0002$), y ese crecimiento es el que predice la
+              proporcionalidad: una amplitud que fuera siempre la misma fracción del nivel crecería $+0.023$ ppm
+              por año, y el cociente entre amplitud y nivel no muestra tendencia ($p = 0.85$). Una descomposición
+              aditiva de índices fijos no puede recogerlo; una multiplicativa sí, porque aplica sus índices fijos
+              sobre un nivel que sube. También lo recoge STL con una ventana estacional finita, que deja
+              evolucionar el componente estacional —con <code>s.window = 11</code> su vaivén pasa de 5.85 ppm en
+              1959 a 6.72 en 1997—, pero aquí no es un argumento para preferirla: a la multiplicativa le
+              basta.</p>
           </div>
         </div>
 
         <div class="ejercicio-guiado">
-          <p class="ejercicio-enunciado"><span class="ejercicio-numero">2.</span>Calcula $F_T$ y $F_S$ para dos series
-            distintas y compáralas.</p>
+          <p class="ejercicio-enunciado"><span class="ejercicio-numero">2.</span>Calcula $F_T$ y $F_S$, con la
+            fórmula del Módulo 8 y <code>stl(…, s.window = "periodic")</code>, en cuatro casos: <code>nottem</code>
+            (la temperatura mensual en Nottingham, la serie del ejercicio del Módulo 3), <code>USAccDeaths</code>
+            (muertes accidentales mensuales en Estados Unidos, 1973–1978), <code>AirPassengers</code> en logaritmos
+            y <code>AirPassengers</code> sin transformar. Cuatro de las ocho cifras están ya en la tabla del
+            Módulo 8, las de <code>nottem</code> y las de <code>AirPassengers</code> en logaritmos: compruébalas y
+            completa las que faltan. Entrega tres cosas:</p>
+          <ol style="list-style-type: lower-alpha; margin-top: 0.5rem; margin-bottom: 0;">
+            <li>La tabla con las ocho cifras, a tres decimales.</li>
+            <li>Una frase que ordene los cuatro casos por la fuerza de su tendencia, y otra sobre
+              <code>nottem</code>: el ejercicio del Módulo 3 ya mostró que ninguno de sus paneles sube ni baja con
+              los años; ¿qué añade a eso su $F_T$, puesto junto al del ruido puro de la tabla del Módulo 8?</li>
+            <li>Una frase sobre lo que le pasa a $F_S$ de <code>AirPassengers</code> al quitar el logaritmo, y por
+              qué.</li>
+          </ol>
           <div class="ejercicio-acciones">
             <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c1e2-pista">
               <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
@@ -4981,52 +5496,94 @@ elasticidad(AirPassengers)   # b = 1.291, IC95 [1.149, 1.432], R2 = 0.976
             </button>
           </div>
           <div class="ejercicio-panel pista" id="c1e2-pista" hidden>
-            <p style="margin:0;">Escoge dos series que se parezcan poco entre sí: te dirán mucho más que dos parecidas.
-              <code>co2</code> (tendencia arrolladora) y <code>USAccDeaths</code> (estacionalidad marcada y una tendencia
-              bastante más débil) son un buen par. Y no olvides el $\max(0, \cdot)$ de la fórmula: sin él pueden salir valores negativos que no
-              significan nada.</p>
+            <p style="margin:0;">Antes de calcular las cifras que faltan, apuesta dónde van a caer: ¿el $F_T$ de
+              <code>USAccDeaths</code> estará más cerca del de <code>nottem</code> o del de
+              <code>AirPassengers</code>? No olvides el $\max(0, \cdot)$ de la fórmula: sin él pueden salir
+              valores negativos que no significan nada. Y para el apartado (c), recuerda qué supone
+              <code>s.window = "periodic"</code> sobre el componente estacional y pregúntate si
+              <code>AirPassengers</code> lo cumple cuando no se toman logaritmos.</p>
           </div>
           <div class="ejercicio-panel solucion" id="c1e2-sol" hidden>
-            <pre><code class="language-r">fuerzas &lt;- function(x, usar_log = FALSE) {
-  z  &lt;- if (usar_log) log(x) else x
-  st &lt;- stl(z, s.window = "periodic")$time.series
-  R &lt;- st[, "remainder"]; T_ &lt;- st[, "trend"]; S &lt;- st[, "seasonal"]
-  c(FT = max(0, 1 - var(R) / var(T_ + R)),
-    FS = max(0, 1 - var(R) / var(S  + R)))
+            <pre><code class="language-r">fuerzas &lt;- function(x) {
+  st &lt;- stl(x, s.window = "periodic")$time.series
+  Tt &lt;- st[, "trend"]; St &lt;- st[, "seasonal"]; Rt &lt;- st[, "remainder"]
+  c(FT = max(0, 1 - var(Rt) / var(Tt + Rt)),
+    FS = max(0, 1 - var(Rt) / var(St + Rt)))
 }
 
-round(fuerzas(co2), 4)                          # FT = 0.9997  FS = 0.9841
-round(fuerzas(USAccDeaths), 4)                  # FT = 0.7991  FS = 0.9426
-round(fuerzas(AirPassengers, usar_log = TRUE), 4)  # FT = 0.9940  FS = 0.9368</code></pre>
+round(rbind(nottem               = fuerzas(nottem),
+            USAccDeaths          = fuerzas(USAccDeaths),
+            "log(AirPassengers)" = fuerzas(log(AirPassengers)),
+            AirPassengers        = fuerzas(AirPassengers)), 3)
+#>                       FT    FS
+#> nottem             0.205 0.944
+#> USAccDeaths        0.799 0.943
+#> log(AirPassengers) 0.994 0.937
+#> AirPassengers      0.968 0.783
+
+# El residuo de la STL sin logaritmo: su dispersion, anio por anio
+st &lt;- stl(AirPassengers, s.window = "periodic")$time.series
+round(tapply(st[, "remainder"], floor(time(AirPassengers)), sd), 1)
+#> 1949 1950 1951 1952 1953 1954 1955 1956 1957 1958 1959 1960
+#> 26.5 21.2 22.9 18.0 15.6  7.3  5.1  7.7 14.5 25.3 25.7 37.2</code></pre>
             <table>
-              <caption class="sr-only">Fuerza de tendencia y estacionalidad en tres series</caption>
+              <caption class="sr-only">Fuerza de la tendencia y de la estacionalidad en los cuatro casos del ejercicio 2</caption>
               <thead>
-                <tr><th scope="col">Serie</th><th scope="col">$F_T$</th><th scope="col">$F_S$</th>
+                <tr><th scope="col">Caso</th><th scope="col">$F_T$</th><th scope="col">$F_S$</th>
                   <th scope="col">Lectura</th></tr>
               </thead>
               <tbody>
-                <tr><td><code>co2</code></td><td>0.9997</td><td>0.9841</td>
-                  <td>Tendencia casi perfecta: el residuo es ínfimo frente a ella</td></tr>
-                <tr><td><code>USAccDeaths</code></td><td>0.7991</td><td>0.9426</td>
-                  <td>Estacionalidad fuerte, tendencia claramente más débil</td></tr>
-                <tr><td>log(<code>AirPassengers</code>)</td><td>0.9940</td><td>0.9368</td>
+                <tr><td><code>nottem</code></td><td>0.205</td><td>0.944</td>
+                  <td>Estacionalidad y casi nada de tendencia</td></tr>
+                <tr><td><code>USAccDeaths</code></td><td>0.799</td><td>0.943</td>
+                  <td>Estacionalidad fuerte; tendencia más débil, que cambia de sentido</td></tr>
+                <tr><td>log(<code>AirPassengers</code>)</td><td>0.994</td><td>0.937</td>
                   <td>Los dos componentes muy marcados</td></tr>
+                <tr><td><code>AirPassengers</code></td><td>0.968</td><td>0.783</td>
+                  <td>La misma serie en la escala equivocada</td></tr>
               </tbody>
             </table>
-            <p style="margin-bottom:0;">El contraste útil es $F_T$: 0.9997 en <code>co2</code> frente a 0.7991 en
-              <code>USAccDeaths</code>. El CO₂ sube de forma casi determinista, mientras que en las muertes accidentales
-              la tendencia existe pero es más débil y cambia de sentido —la media anual baja de 9652 en 1973 a 8395
-              en 1976 y vuelve a subir—: su estructura es sobre todo el patrón anual. <strong>Dos
-              advertencias:</strong> primero, no compares $F_T$ con $F_S$ <em>dentro</em> de una misma serie, porque
-              sus denominadores son distintos; compara la misma medida <em>entre</em> series. Y segundo, un $F_T$ de
-              0.9997 no significa "explica el 99.97&nbsp;% de la varianza": el denominador es
-              $\operatorname{Var}(T+R)$, no la varianza total.</p>
+            <p><strong>(b)</strong> Por la fuerza de la tendencia, de mayor a menor: <code>AirPassengers</code> en
+              logaritmos (0.994), <code>AirPassengers</code> sin transformar (0.968), <code>USAccDeaths</code>
+              (0.799) y <code>nottem</code> (0.205). <code>AirPassengers</code> sube todos los años. En
+              <code>USAccDeaths</code> la tendencia existe, pero es más débil y cambia de sentido: la media anual
+              baja de 9652 en 1973 a 8395 en 1976 y vuelve a subir, hasta 8802 en 1978. De <code>nottem</code> el
+              gráfico de subseries del Módulo 3 ya decía que no tiene tendencia; su $F_T$ lo pone en una escala:
+              0.205 queda mucho más cerca del 0.12 que da el ruido puro que del 0.799 de
+              <code>USAccDeaths</code>. Tampoco es cero, y por eso hace falta la referencia: ni una serie sin
+              tendencia da cero. En cambio $F_S$ apenas distingue a las tres series —0.944, 0.943 y 0.937—: las
+              tres tienen una estacionalidad igual de marcada.</p>
+            <p><strong>(c)</strong> Al quitar el logaritmo $F_S$ cae de 0.937 a 0.783, y $F_T$ de 0.994 a 0.968. La
+              serie es la misma; lo que cambia es que la STL es aditiva y, con <code>"periodic"</code>, reparte el
+              mismo vaivén todos los años, cuando el de <code>AirPassengers</code> crece con el nivel. Lo que el
+              componente estacional no recoge va a parar al residuo: su varianza es el 21.7&nbsp;% de
+              $\operatorname{Var}(S_t + R_t)$, frente al 6.3&nbsp;% en logaritmos. Y ese residuo no es ruido: su
+              desviación típica, año por año, dibuja la U del Módulo 6 —26.5 en 1949, 5.1 en 1955, 37.2 en
+              1960—. La lección va más allá de esta serie: <strong>$F_T$ y $F_S$ describen la descomposición, no
+              solo la serie</strong>, y una fuerza baja puede delatar una escala mal elegida antes que un
+              componente débil.</p>
+            <p style="margin-bottom:0;"><strong>Dos advertencias</strong>, que valen para cualquier tabla como
+              esta. No se compara $F_T$ con $F_S$ <em>dentro</em> de una misma serie, porque sus denominadores son
+              distintos; se compara la misma medida <em>entre</em> series. Y un $F_T$ de 0.994 no significa «la
+              tendencia explica el 99.4&nbsp;% de la varianza»: el denominador es
+              $\operatorname{Var}(T_t + R_t)$, no la varianza total.</p>
           </div>
         </div>
 
         <div class="ejercicio-guiado">
-          <p class="ejercicio-enunciado"><span class="ejercicio-numero">3.</span>Con IA como tutor, pide un
-            contraejemplo donde la descomposición clásica falle (un atípico) y verifica en R que STL lo maneja mejor.</p>
+          <p class="ejercicio-enunciado"><span class="ejercicio-numero">3.</span>Con una IA como tutor. Pídele a un
+            asistente un contraejemplo, con código en R, en el que un solo dato atípico estropee la descomposición
+            clásica y STL lo resista. Después ponlo a prueba tú sobre <code>AirPassengers</code>, dos veces:
+            multiplicando por 1.5 el julio de 1955 (observación 79) y, aparte, el julio de 1960 (observación 139),
+            uno de los últimos datos de la serie. Entrega tres cosas:</p>
+          <ol style="list-style-type: lower-alpha; margin-top: 0.5rem; margin-bottom: 0;">
+            <li>La petición que hiciste y el código que recibiste, sin retocar.</li>
+            <li>Una tabla con el índice estacional de julio —serie limpia, atípico en 1955 y atípico en 1960— para
+              tres métodos: la clásica multiplicativa, la STL sobre el logaritmo con la opción robusta apagada y
+              la misma STL con la opción robusta encendida.</li>
+            <li>Tres frases: qué afirmó el asistente que tu tabla confirma, qué afirmó que tu tabla desmiente o
+              matiza, y qué cambia cuando el atípico está al final.</li>
+          </ol>
           <div class="ejercicio-acciones">
             <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c1e3-pista">
               <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
@@ -5036,57 +5593,95 @@ round(fuerzas(AirPassengers, usar_log = TRUE), 4)  # FT = 0.9940  FS = 0.9368</c
             </button>
           </div>
           <div class="ejercicio-panel pista" id="c1e3-pista" hidden>
-            <p style="margin:0;">Diseña el experimento para que sea concluyente: toma una serie <em>limpia</em>,
-              contamina <strong>un solo</strong> punto, y compara el componente estacional <em>antes y después</em> con
-              cada método. Así el único cambio es el atípico. Y ojo con un detalle que decide el resultado: STL tiene un
-              argumento que hay que activar para que sea resistente —el bucle exterior del Módulo 7, el que reparte los
-              pesos bicuadrados—. Si no lo activas, ese bucle da cero vueltas y el ejercicio "demuestra" lo contrario
-              de lo que esperabas.</p>
+            <p style="margin:0;">Diseña el experimento para que el único cambio sea el atípico: cada método se
+              compara consigo mismo, antes y después de contaminar la serie, y no con otro método. Y antes de
+              ejecutar nada, apuesta: ¿dónde le hará más daño el atípico a la descomposición clásica, en mitad de la
+              serie o al final? Para contestar, repasa en el Módulo 6 de dónde sale el índice de julio: qué julios
+              entran en ese promedio.</p>
           </div>
           <div class="ejercicio-panel solucion" id="c1e3-sol" hidden>
-            <p><strong>Respuesta: STL resiste, pero solo con <code>robust = TRUE</code>.</strong></p>
-            <pre><code class="language-r"># Un unico atipico: julio de 1955 (obs. 79), inflado un 50 %
-pos &lt;- 79
-ap_out &lt;- AirPassengers
-ap_out[pos] &lt;- ap_out[pos] * 1.5      # 364 -> 546
+            <p><strong>Respuesta: depende de dónde caiga el atípico, y de una opción que viene apagada.</strong> En
+              mitad de la serie la clásica falla y STL solo resiste con <code>robust = TRUE</code>. Al final, la
+              clásica casi no se mueve, pero no porque resista.</p>
+            <pre><code class="language-r">contamina &lt;- function(pos) { x &lt;- AirPassengers; x[pos] &lt;- 1.5 * x[pos]; x }
 
-idx_clasica &lt;- function(x) as.numeric(decompose(x, type = "multiplicative")$figure)
-idx_stl &lt;- function(x, robusto) {
-  s &lt;- stl(log(x), s.window = "periodic", robust = robusto)$time.series[, "seasonal"]
-  as.numeric(exp(s[1:12]))
+julio_clasica &lt;- function(x) decompose(x, type = "multiplicative")$figure[7]
+julio_stl &lt;- function(x, robusta) {
+  s &lt;- stl(log(x), s.window = "periodic", robust = robusta)$time.series[, "seasonal"]
+  exp(s[7])
 }
+indices &lt;- function(x) c(clasica     = julio_clasica(x),
+                         stl         = julio_stl(x, robusta = FALSE),
+                         stl_robusta = julio_stl(x, robusta = TRUE))
 
-# Indice estacional de JULIO, el mes contaminado: limpio -> contaminado
-idx_clasica(AirPassengers)[7];      idx_clasica(ap_out)[7]        # 1.2266 -> 1.2758
-idx_stl(AirPassengers, TRUE)[7];    idx_stl(ap_out, TRUE)[7]      # 1.2562 -> 1.2458
-idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.2806</code></pre>
+tabla &lt;- rbind(limpia   = indices(AirPassengers),
+               jul_1955 = indices(contamina(79)),     # 364 -> 546
+               jul_1960 = indices(contamina(139)))    # 622 -> 933
+round(tabla, 4)
+#>          clasica    stl stl_robusta
+#> limpia    1.2266 1.2416      1.2562
+#> jul_1955  1.2758 1.2806      1.2458
+#> jul_1960  1.2292 1.2810      1.2440
+
+# Distorsion de cada metodo frente a SU propia linea base, en %
+round(100 * (sweep(tabla[-1, ], 2, tabla["limpia", ], "/") - 1), 2)
+#>          clasica  stl stl_robusta
+#> jul_1955    4.02 3.14       -0.82
+#> jul_1960    0.21 3.17       -0.97
+
+# Que ve la clasica en el ultimo julio: ni tendencia ni residuo
+final &lt;- decompose(contamina(139), type = "multiplicative")
+c(tendencia = final$trend[139], residuo = final$random[139])
+#> tendencia   residuo
+#>        NA        NA</code></pre>
+            <div class="tabla-desplazable">
             <table>
-              <caption class="sr-only">Distorsión del índice estacional de julio ante un atípico</caption>
+              <caption class="sr-only">Índice estacional de julio con un atípico en mitad de la serie y con otro al final, en tres métodos</caption>
               <thead>
-                <tr><th scope="col">Método</th><th scope="col">Índice limpio</th>
-                  <th scope="col">Con el atípico</th><th scope="col">Distorsión</th></tr>
+                <tr><th scope="col">Método</th><th scope="col">Serie limpia</th>
+                  <th scope="col">Atípico en julio de 1955</th><th scope="col">Atípico en julio de 1960</th></tr>
               </thead>
               <tbody>
-                <tr><td>Clásica multiplicativa</td><td>1.2266</td><td>1.2758</td><td>+4.02&nbsp;%</td></tr>
-                <tr><td>STL con <code>robust = TRUE</code></td><td>1.2562</td><td>1.2458</td>
-                  <td><strong>−0.82&nbsp;%</strong></td></tr>
-                <tr><td>STL con <code>robust = FALSE</code></td><td>1.2416</td><td>1.2806</td><td>+3.14&nbsp;%</td></tr>
+                <tr><td>Clásica multiplicativa</td><td>1.2266</td><td>1.2758 (+4.02&nbsp;%)</td>
+                  <td>1.2292 (<strong>+0.21&nbsp;%</strong>)</td></tr>
+                <tr><td>STL, <code>robust = FALSE</code></td><td>1.2416</td><td>1.2806 (+3.14&nbsp;%)</td>
+                  <td>1.2810 (+3.17&nbsp;%)</td></tr>
+                <tr><td>STL, <code>robust = TRUE</code></td><td>1.2562</td><td>1.2458 (−0.82&nbsp;%)</td>
+                  <td>1.2440 (−0.97&nbsp;%)</td></tr>
               </tbody>
             </table>
-            <p>La descomposición clásica promedia todos los julios por igual, así que un solo dato inflado arrastra el
-              índice de <em>todos</em> los julios de la serie: +4.02&nbsp;%. STL robusto reduce la distorsión a
-              −0.82&nbsp;%, cinco veces menos, porque su regresión local reponderea las observaciones y le baja el peso
-              a la que se sale del patrón.</p>
-            <p style="margin-bottom:0;"><strong>El detalle que hace o deshace el ejercicio:</strong> con
-              <code>robust = FALSE</code> —que es el valor <em>por defecto</em> de <code>stl()</code>— la distorsión es
-              +3.14&nbsp;%, prácticamente igual de mala que la clásica. El mecanismo está en el Módulo 7: con
-              <code>robust = TRUE</code> el julio contaminado recibe peso <strong>0</strong> y sale del ajuste, y sin
-              ella nadie se lo pregunta. (No es el único efecto de la opción: el ajuste robusto reparte pesos entre
-              todas las observaciones —sobre la serie sin atípico deja cuatro sin peso y 18 por debajo de 0.5—, así
-              que su índice «limpio», 1.2562, tampoco coincide con el 1.2416 del ajuste sin robustez.) Es decir: STL no es intrínsecamente resistente,
-              lo es la opción. Si le pediste el contraejemplo a un asistente y te dio código sin
-              <code>robust = TRUE</code>, la conclusión que habrías sacado sería la contraria a la correcta, y no por
-              culpa del método sino de un argumento por defecto. Verificar ejecutando es lo que evita ese error.</p>
+            </div>
+            <p><strong>En mitad de la serie</strong> pasa lo que anuncia el Módulo 7. La clásica promedia los
+              julios por igual, así que un solo dato inflado arrastra el índice de <em>todos</em>: +4.02&nbsp;%. La
+              STL con la opción robusta apagada —el valor <em>por defecto</em> de <code>stl()</code>— lo hace casi
+              igual de mal, +3.14&nbsp;%. Con <code>robust = TRUE</code> el julio contaminado acaba con peso 0 y la
+              distorsión se queda en −0.82&nbsp;%, cinco veces menos que la clásica. STL no es resistente por sí
+              misma: lo es la opción.</p>
+            <p><strong>Al final de la serie</strong> el resultado sorprende: la clásica apenas se mueve,
+              +0.21&nbsp;%, diecinueve veces menos que con el atípico en el centro. No es resistencia, es
+              ceguera. La media móvil no estima tendencia en los seis últimos meses, y sin tendencia no hay cociente
+              ni residuo: las dos últimas líneas del código devuelven <code>NA</code>. El julio de 1960 nunca entra
+              en el índice de julio, que se promedia con los once julios de 1949 a 1959; tampoco entra en la serie
+              limpia. Su único rastro es indirecto: infla hasta en 25.9 mil pasajeros la tendencia de enero a junio
+              de 1960, los índices de esos seis meses bajan entre un 0.04&nbsp;% y un 0.27&nbsp;%, y la
+              normalización reparte la diferencia entre los otros seis, que suben todos lo mismo: ese
+              +0.21&nbsp;%. La STL sí llega al final, y por eso sí lo ve: con la opción apagada se distorsiona como
+              en el centro (+3.17&nbsp;%), y con la opción encendida lo aparta (peso 0, −0.97&nbsp;%) y lo deja a
+              la vista en el residuo, 0.4565 en logaritmos frente a 0.0371 en la serie limpia. La clásica no lo
+              estropea, pero tampoco lo detecta, y eso ocurre justo en el tramo del que partiría un pronóstico.</p>
+            <p><strong>Las dos STL no parten del mismo sitio.</strong> Encender la opción robusta mueve el índice
+              de julio también en la serie limpia: de 1.2416 a 1.2562, un +1.17&nbsp;%, más de lo que luego lo mueve
+              cualquiera de los dos atípicos. La razón es que el ajuste robusto reparte pesos entre todas las
+              observaciones —sobre la serie sin atípico deja cuatro sin peso y 18 por debajo de 0.5—. Por eso cada
+              método se mide contra su propia línea base: comparar el 1.2458 de la STL robusta con el 1.2416 de la
+              otra mezclaría el efecto del atípico con el de la opción.</p>
+            <p style="margin-bottom:0;"><strong>Lo que hay que mirar en la respuesta del asistente</strong>, que es
+              el apartado (c). Primero, si su código activa <code>robust = TRUE</code>: si no lo hace, la tabla
+              «demuestra» lo contrario de lo que afirma, +3.14&nbsp;% frente a +4.02&nbsp;%, y no por culpa del
+              método sino de un argumento por defecto. Segundo, si compara cada método con su propia serie limpia.
+              Y tercero, si dice algo sobre la posición: «la descomposición clásica es sensible a los atípicos» es
+              cierto en mitad de la serie y no lo es al final, por una razón que no es ninguna virtud. Una
+              respuesta verosímil y una respuesta comprobada se distinguen ejecutando.</p>
           </div>
         </div>
       </div>
@@ -5139,15 +5734,20 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         2: "Sesión 2 · Descomponer"
       },
       modules: [
+        // `duration` son minutos de LECTURA, medidos con la fórmula de la R3
+        // (palabras / 180 + 3 por simulador + 2 por bloque de código), leyendo
+        // también la pista y la solución de cada ejercicio. No incluyen el
+        // tiempo de resolverlo ni el de la autoevaluación. Medida:
+        // diagnostico/cap1/comprobaciones/r5_minutos.py (2026-11-14).
         { id: 1, sesion: 1, title: "¿Qué es una serie de tiempo?", shortTitle: "Qué es", duration: "5 min" },
-        { id: 2, sesion: 1, title: "Series de tiempo en software", shortTitle: "ts / pandas", duration: "7 min" },
-        { id: 3, sesion: 1, title: "Visualización de series", shortTitle: "Gráficos", duration: "20 min" },
+        { id: 2, sesion: 1, title: "Series de tiempo en software", shortTitle: "ts / pandas", duration: "13 min" },
+        { id: 3, sesion: 1, title: "Visualización de series", shortTitle: "Gráficos", duration: "24 min" },
         { id: 4, sesion: 1, title: "Los cuatro componentes", shortTitle: "Componentes", duration: "20 min" },
         { id: 5, sesion: 1, title: "Medias móviles y suavizamiento", shortTitle: "Medias móviles", duration: "10 min" },
-        { id: 6, sesion: 2, title: "Descomposición clásica", shortTitle: "Desc. clásica", duration: "22 min" },
-        { id: 7, sesion: 2, title: "Descomposición STL", shortTitle: "STL", duration: "20 min" },
-        { id: 8, sesion: 2, title: "Ajuste estacional y fuerza", shortTitle: "Ajuste estacional", duration: "10 min" },
-        { id: 9, sesion: 2, title: "Conexión, resumen y lecturas", shortTitle: "Cierre", duration: "15 min" }
+        { id: 6, sesion: 2, title: "Descomposición clásica", shortTitle: "Desc. clásica", duration: "27 min" },
+        { id: 7, sesion: 2, title: "Descomposición STL", shortTitle: "STL", duration: "25 min" },
+        { id: 8, sesion: 2, title: "Ajuste estacional y fuerza", shortTitle: "Ajuste estacional", duration: "15 min" },
+        { id: 9, sesion: 2, title: "Conexión, resumen y lecturas", shortTitle: "Cierre", duration: "22 min" }
       ]
     };
 
@@ -7451,6 +8051,9 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
     // Campos comunes: {pregunta, pista, modulo}. `pista` se muestra tras el
     // PRIMER fallo y se deja reintentar; al segundo fallo se revela la
     // respuesta. `modulo` alimenta el resumen final de "qué repasar".
+    // Opcional en cualquier tipo: `datos`, HTML con la tabla o la lista de
+    // cifras que el enunciado pide leer; se pinta entre el enunciado y las
+    // opciones.
     //
     // TODA opción lleva su propio `retro`, también las incorrectas: explicar
     // dónde falla el razonamiento vale más que decir "incorrecto". En 'opcion' y
@@ -7621,6 +8224,16 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
           if (chart) registrarGraficoQuiz(raiz, chart);
         }
 
+        // Datos del enunciado, si los hay: una tabla o una lista de cifras que
+        // hay que leer para responder. Van fuera del <p> del enunciado, que no
+        // admite ni una ni otra.
+        if (p.datos) {
+          const datos = document.createElement('div');
+          datos.className = 'quiz-datos';
+          datos.innerHTML = p.datos;
+          bloque.appendChild(datos);
+        }
+
         const pista = document.createElement('div');
         pista.className = 'quiz-pista';
         pista.hidden = true;
@@ -7650,7 +8263,11 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
           function comprobarNumerica() {
             if (estado[i].resuelta) return;
             // Se acepta coma o punto como separador decimal
-            const dada = parseFloat(String(input.value).trim().replace(',', '.'));
+            // Además se lee una fracción «a/b»: parseFloat('1/8') da 1, y la
+            // respuesta exacta se contaba como fallo sin avisar.
+            const escrito = String(input.value).trim().replace(/,/g, '.');
+            const fraccion = escrito.match(/^(-?\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)$/);
+            const dada = fraccion ? parseFloat(fraccion[1]) / parseFloat(fraccion[2]) : parseFloat(escrito);
             if (!isFinite(dada)) {
               pista.innerHTML = '<strong>Escribe un número</strong> antes de comprobar.';
               pista.hidden = false;
@@ -7811,8 +8428,9 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
     function iniciarEjerciciosGuiados() {
       // wrapCodeBlocks() colapsa todos los <pre> del módulo. Dentro de una
       // solución eso obligaría a un segundo clic para ver el código que el
-      // estudiante acaba de pedir, así que ahí se dejan desplegados.
-      mainContent.querySelectorAll('.ejercicio-panel pre.collapsed').forEach(pre => {
+      // estudiante acaba de pedir, así que ahí se dejan desplegados. Lo mismo
+      // vale para el código que un enunciado da de partida (ejercicio del M2).
+      mainContent.querySelectorAll('.ejercicio-guiado pre.collapsed').forEach(pre => {
         pre.classList.remove('collapsed');
         pre.classList.add('expanded');
         const boton = pre.closest('.code-block-wrapper')?.querySelector('.code-toggle-btn');
@@ -8067,64 +8685,73 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         pista: 'Los dos son subidas y bajadas que se repiten. Piensa en si puedes decir <em>de antemano</em> cuánto va a durar la próxima repetición.',
         opciones: [
           {
-            texto: 'El ciclo siempre dura más de un año y la estacionalidad, menos.',
+            texto: 'El ciclo dura siempre más de un año, y la estacionalidad, menos de uno.',
             correcta: false,
             retro: 'Las duraciones típicas sí suelen ser esas, pero no es lo que los define. Lo determinante es que el período de la estacionalidad es <em>fijo y conocido</em>, y el del ciclo no.'
           },
           {
-            texto: 'La estacionalidad se repite con un período fijo y conocido; el ciclo, con duración variable e impredecible.',
+            texto: 'La estacionalidad tiene un período fijo y conocido, y el ciclo no lo tiene.',
             correcta: true,
-            retro: 'Esa es la diferencia definitoria. La estacionalidad de <code>AirPassengers</code> es anual y siempre dura 12 meses; las subidas y bajadas de un ciclo económico no tienen duración fija —suelen durar al menos dos años—, y no se sabe de antemano cuánto durará la siguiente.'
+            retro: 'Esa es la diferencia que los define. La estacionalidad de <code>AirPassengers</code> es anual y siempre dura 12 meses; las subidas y bajadas de un ciclo económico no tienen duración fija —suelen durar al menos dos años—, y no se sabe de antemano cuánto durará la siguiente.'
           },
           {
-            texto: 'La estacionalidad se aprecia en el gráfico de tiempo y el ciclo no.',
+            texto: 'La estacionalidad se ve en el gráfico de tiempo, y el ciclo solo al descomponer.',
             correcta: false,
-            retro: 'Los dos se aprecian. La diferencia está en la regularidad del período, no en la visibilidad.'
+            retro: 'Los dos se aprecian en el gráfico de tiempo. Y al descomponer el ciclo ni siquiera sale aparte: va dentro del componente tendencia-ciclo. La diferencia está en la regularidad del período, no en la visibilidad.'
           },
           {
-            texto: 'Son sinónimos; en la práctica se usan indistintamente.',
+            texto: 'Son lo mismo a dos escalas: un vaivén que vuelve cada 12 meses es un ciclo anual.',
             correcta: false,
-            retro: 'Confundirlos tiene consecuencias: si tratas un ciclo como estacionalidad, impones un período fijo a algo que no lo tiene y el modelo pronostica repeticiones que nunca llegan.'
+            retro: 'En el habla corriente se dice «ciclo anual», pero aquí las dos palabras separan cosas distintas: un vaivén que vuelve cada 12 meses tiene período fijo y conocido, y eso es estacionalidad. La confusión tiene consecuencias en los dos sentidos: tratar un ciclo como estacionalidad le impone un período fijo que no tiene, y el modelo pronostica repeticiones que nunca llegan.'
           }
         ]
       },
       {
         tipo: 'opcion',
-        modulo: 6,
-        pregunta: 'En <code>AirPassengers</code>, la amplitud de las oscilaciones anuales <strong>crece</strong> con el nivel de la serie. ¿Qué descomposición conviene?',
-        pista: 'Si la oscilación es un <em>porcentaje</em> del nivel en vez de una cantidad fija, ¿los componentes se suman o se multiplican? Y recuerda qué le hace el logaritmo a un producto.',
+        modulo: 4,
+        pregunta: 'La tabla resume la producción trimestral de gas en Australia (<code>Gas</code>, en <code>aus_production</code>; en petajulios): el nivel medio de cuatro años y su amplitud, el trimestre más alto menos el más bajo. ¿Qué descomposición conviene?',
+        datos: '<div class="tabla-desplazable"><table>' +
+          '<caption class="sr-only">Nivel medio y amplitud de la producción trimestral de gas en Australia, en cuatro años</caption>' +
+          '<thead><tr><th scope="col">Año</th><th scope="col">Nivel medio</th><th scope="col">Amplitud</th></tr></thead>' +
+          '<tbody><tr><td>1960</td><td>7.25</td><td>2</td></tr>' +
+          '<tr><td>1975</td><td>47.50</td><td>16</td></tr>' +
+          '<tr><td>1990</td><td>140.25</td><td>38</td></tr>' +
+          '<tr><td>2005</td><td>194.25</td><td>51</td></tr></tbody></table></div>',
+        pista: 'Que la amplitud suba no decide nada todavía. Compara dos filas: ¿por cuánto se multiplica el nivel de una a otra, y por cuánto la amplitud?',
         opciones: [
           {
-            texto: 'Aditiva sobre la serie original.',
+            texto: 'Aditiva: la amplitud no depende del nivel, que es lo que supone ese modelo.',
             correcta: false,
-            retro: 'Dejaría un componente estacional de amplitud constante: subestimaría las oscilaciones de 1960 y sobreestimaría las de 1949. El residuo delataría el problema: su dispersión, medida año por año, dibuja una U —grande en los dos extremos de la serie y mínima hacia 1954 y 1955—, como muestra el Módulo 6.'
+            retro: 'En la tabla sí depende: la amplitud pasa de 2 a 51 mientras el nivel pasa de 7.25 a 194.25, y lo hace al ritmo del nivel (2 de 7.25 es el 27.6&nbsp;%, y 51 de 194.25, el 26.3&nbsp;%). Una aditiva dejaría ese desajuste en el residuo, y se notaría: su desviación típica en los cuatro años de la tabla es 12.1, 6.9, 7.1 y 11.9, grande en los extremos y menor en el centro. Es la U que el Módulo 6 mide en <code>AirPassengers</code> (30.5 en 1949, 5.6 en 1954, 25.4 en 1960), y por la misma razón: un vaivén fijo solo acierta a mitad de la muestra.'
           },
           {
-            texto: 'Da igual: las dos ajustan prácticamente lo mismo.',
+            texto: 'Cualquiera de las dos: aditiva y multiplicativa ajustan casi lo mismo.',
             correcta: false,
-            retro: 'No dan lo mismo. Compara en el Módulo 6 el componente estacional constante de la aditiva con los índices multiplicativos, que escalan con el nivel.'
+            retro: 'Que den casi lo mismo no se puede dar por hecho: hay que medirlo, y eso es lo que hace el ejercicio 1 con otra serie. Aquí no lo dan. El nivel se multiplica por 26.8 entre 1960 y 2005, y la aditiva repartiría a todos los años el mismo vaivén, 28.9 petajulios, cuando el de 1960 fue de 2 y el de 2005, de 51.'
           },
           {
-            texto: 'Ninguna: primero hay que diferenciar la serie.',
+            texto: 'Ninguna todavía: antes hay que diferenciar la serie y quitar la tendencia.',
             correcta: false,
-            retro: 'Diferenciar (Capítulo 2) sirve para quitar la tendencia, no para estabilizar una amplitud que crece. Para eso está la transformación logarítmica o Box–Cox.'
+            retro: 'Diferenciar (Capítulo 2) quita la tendencia, pero no estabiliza una amplitud que crece con el nivel: eso lo hace el logaritmo. Y para decidir entre suma y producto no hace falta quitar nada: basta comparar la amplitud con el nivel, como en el Módulo 4.'
           },
           {
-            texto: 'Multiplicativa, o equivalentemente aditiva sobre el logaritmo.',
+            texto: 'Multiplicativa: la amplitud se mantiene cerca del 30&nbsp;% del nivel medio.',
             correcta: true,
-            retro: 'Cuando la amplitud es proporcional al nivel, el modelo natural es $y_t = T_t \\times S_t \\times R_t$. Y como $\\log(T \\times S \\times R) = \\log T + \\log S + \\log R$, tomar logaritmos convierte el problema en aditivo: por eso este capítulo aplica STL sobre $\\log(y_t)$.'
+            retro: 'Entre 1960 y 2005 el nivel se multiplica por 26.8 y la amplitud por 25.5, así que la proporción casi no se mueve: 27.6, 33.7, 27.1 y 26.3&nbsp;% en las cuatro filas. Una amplitud proporcional al nivel es la marca del modelo $y_t = T_t \\times S_t \\times R_t$. Y como $\\log(T \\times S \\times R) = \\log T + \\log S + \\log R$, tomar logaritmos convierte el producto en suma: por eso este capítulo aplica STL sobre $\\log(y_t)$.'
           }
         ]
       },
       {
         tipo: 'numerica',
         modulo: 5,
-        pregunta: 'Aplicas una media móvil centrada <strong>2×12</strong> a <code>AirPassengers</code>, que tiene 144 observaciones. ¿Cuántos valores de tendencia obtienes (es decir, cuántos <em>no</em> son <code>NA</code>)?',
-        pista: 'Una ventana centrada de orden 12 necesita 6 meses a cada lado. En los primeros y en los últimos meses no los hay. ¿Cuántos se pierden en total?',
-        respuesta: 132,
-        tolerancia: 0,
-        retroAcierto: '$144 - 12 = 132$: se pierden 6 al principio y 6 al final. Puedes comprobarlo tú: en el Módulo 6, las curvas de tendencia arrancan en julio de 1949 y terminan en junio de 1960, no cubren los extremos. Esta pérdida es una de las limitaciones de la descomposición clásica que STL resuelve.',
-        retroFallo: 'Son $144 - 12 = 132$. Con $m$ par, la media móvil centrada $2\\times m$ necesita $m/2$ observaciones a cada lado, así que se pierden $m$ en total: aquí, 6 al principio y 6 al final. Si respondiste 138, contaste solo un extremo; si respondiste 144, olvidaste que en los bordes no hay con qué promediar.'
+        pregunta: 'Una serie <strong>trimestral</strong> se suaviza con la media móvil centrada <strong>2×4</strong>. En cada valor de la tendencia, ¿qué peso recibe la observación <strong>más alejada del centro</strong> de la ventana? Escríbelo en decimales o como fracción.',
+        pista: 'La 2×4 es el promedio de dos medias de cuatro trimestres seguidas, la segunda desplazada un trimestre respecto de la primera. Escribe qué trimestres entran en cada una y cuenta en cuántas aparece cada uno.',
+        respuesta: 0.125,
+        // 0.0051 y no 0.005: en coma flotante 0.13 - 0.125 da 0.005000000000000004,
+        // y con 0.005 el redondeo a dos decimales se contaba como fallo.
+        tolerancia: 0.0051,
+        retroAcierto: 'Las dos ventanas de cuatro trimestres comparten tres; los dos trimestres de los extremos aparecen en una sola, así que pesan la mitad: $\\tfrac12 \\cdot \\tfrac14 = \\tfrac18 = 0.125$. Si escribiste 0.13 o 0.12, redondeaste: el peso exacto es $\\tfrac18$. Los cinco pesos son $\\tfrac18, \\tfrac14, \\tfrac14, \\tfrac14, \\tfrac18$ y suman 1. Esos dos extremos son el mismo trimestre con un año de diferencia, y entre los dos reúnen $\\tfrac14$, igual que cada uno de los otros tres: por eso la ventana borra el patrón trimestral, como la 2×12 del Módulo 5 borra el mensual con $\\tfrac1{24}$ en los extremos.',
+        retroFallo: 'Es $\\tfrac12 \\cdot \\tfrac14 = \\tfrac18$. La 2×4 promedia dos ventanas de cuatro trimestres seguidas, y los dos trimestres de los extremos solo entran en una de ellas: los cinco pesos son $\\tfrac18, \\tfrac14, \\tfrac14, \\tfrac14, \\tfrac18$. Si respondiste 0.25, les diste el peso de los tres centrales, y los cinco sumarían 1.25; si respondiste 0.2, repartiste por igual entre los cinco, y el trimestre que aparece dos veces pesaría el doble que los demás; si respondiste 0.042, copiaste el $\\tfrac1{24}$ de la 2×12, que es $\\tfrac1{2m}$ con $m = 12$ y no con $m = 4$; y si respondiste 12.5, eso es el porcentaje: el peso es 0.125.'
       },
       {
         tipo: 'grafico',
@@ -8132,7 +8759,7 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         alto: 220,
         descripcionGrafico: 'Serie AirPassengers junto a su componente de tendencia, que no cubre los primeros ni los últimos meses',
         pregunta: 'Aquí está <code>AirPassengers</code> con la tendencia que estima la descomposición clásica. ¿Por qué la línea naranja <strong>no llega</strong> a los extremos?',
-        pista: 'No es un problema de los datos: la serie está completa, sin huecos. Piensa en cómo se calcula cada punto de esa línea naranja y qué necesita a su alrededor.',
+        pista: 'No es un problema de los datos: la serie está completa, sin huecos. Piensa en cómo se calcula cada punto de esa línea naranja, y mira en el gráfico dónde falta: ¿en un extremo o en los dos?',
         dibujar: canvas => crearGraficoLinea(canvas, DATOS_CAP1.fechas, [
           { label: 'Observada', data: DATOS_CAP1.observado, borderColor: COLORES_GRAFICO.primario,
             backgroundColor: COLORES_GRAFICO.primario, borderWidth: 1, pointRadius: 0 },
@@ -8142,24 +8769,24 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         ], { scales: { x: ejeAnual(), y: { title: tituloEje('Miles de pasajeros') } } }),
         opciones: [
           {
-            texto: 'Porque una media móvil centrada de orden 12 necesita 6 meses a cada lado, y en los extremos no existen.',
+            texto: 'Porque cada punto promedia seis meses a cada lado, y en los bordes no los hay.',
             correcta: true,
-            retro: 'Se pierden 6 valores al principio y 6 al final, quedando 132 de 144. Es una limitación estructural de la descomposición clásica, no un fallo del software. STL no la tiene: su tendencia por regresión local sí llega a los extremos, y por eso en el Módulo 7 la curva cubre toda la serie.'
+            retro: 'La media móvil centrada 2×12 necesita seis meses antes y seis después de cada punto: se pierden 6 valores al principio y 6 al final, y quedan 132 de 144. Es una limitación estructural de la descomposición clásica, no un fallo del software. STL no la tiene: su tendencia por regresión local sí llega a los extremos, y por eso en el Módulo 7 la curva cubre toda la serie.'
           },
           {
-            texto: 'Porque a la serie le faltan datos en 1949 y en 1960.',
+            texto: 'Porque a la serie le faltan datos al principio de 1949 y al final de 1960.',
             correcta: false,
             retro: 'La serie está completa: 144 observaciones mensuales sin un solo hueco, de enero de 1949 a diciembre de 1960. Lo que falta es la <em>tendencia estimada</em>, no el dato.'
           },
           {
-            texto: 'Porque la descomposición descarta el primer y el último año por convención.',
+            texto: 'Porque la descomposición descarta por norma el primer año y el último.',
             correcta: false,
-            retro: 'No hay tal convención, y además no es un año entero: son exactamente 6 meses a cada lado, la mitad del orden de la ventana. Con una media móvil 2×4 sobre datos trimestrales se perderían 2 a cada lado.'
+            retro: 'No hay tal norma, y además no es un año entero: son exactamente 6 meses a cada lado, la mitad del orden de la ventana. Con una media móvil 2×4 sobre datos trimestrales se perderían 2 a cada lado.'
           },
           {
-            texto: 'Porque el gráfico está recortado; los valores sí existen.',
+            texto: 'Porque cada punto promedia los doce meses anteriores, y en 1949 no los hay.',
             correcta: false,
-            retro: 'No existen: en esas posiciones <code>decompose()</code> devuelve <code>NA</code>. Puedes comprobarlo con <code>sum(is.na(decompose(AirPassengers)$trend))</code>, que da 12.'
+            retro: 'Esa sería una media de un solo lado, y dejaría otro dibujo: 11 huecos al principio y ninguno al final. En el gráfico la línea naranja falta en <em>los dos</em> extremos, seis meses en cada uno, que es la huella de una ventana centrada. En esas posiciones <code>decompose()</code> devuelve <code>NA</code>: <code>sum(is.na(decompose(AirPassengers)$trend))</code> da 12.'
           }
         ]
       },
@@ -8167,52 +8794,96 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         tipo: 'multiple',
         modulo: 7,
         pregunta: 'Marca <strong>todas</strong> las ventajas reales de STL frente a la descomposición clásica.',
-        pista: 'Son tres. Piensa en qué le pasa al patrón estacional año tras año, qué ocurre en los extremos de la serie, y qué pasa si hay un dato disparatado.',
+        pista: 'Repasa cada opción con dos preguntas: ¿la clásica ya lo hacía?, ¿STL lo sigue necesitando? Una ventaja real es algo que cambia de un método al otro.',
         opciones: [
-          { texto: 'No necesita que se le declare el período estacional.', correcta: false },
-          { texto: 'Permite que el patrón estacional cambie a lo largo del tiempo.', correcta: true },
-          { texto: 'Estima la tendencia también en los extremos, sin dejar <code>NA</code>.', correcta: true },
-          { texto: 'Evita tener que transformar la serie cuando la amplitud crece con el nivel.', correcta: false },
-          { texto: 'Con <code>robust = TRUE</code>, resiste los valores atípicos.', correcta: true }
+          {
+            texto: 'No necesita que se le declare el período estacional de la serie.',
+            correcta: false,
+            retro: 'Lo necesita igual que la clásica: parte de la frecuencia de la serie, y sin ella <code>stl()</code> se detiene con el error «series is not periodic or has less than two periods».'
+          },
+          {
+            texto: 'Permite que el patrón estacional cambie a lo largo de los años.',
+            correcta: true,
+            retro: 'Con <code>s.window</code> numérico cada mes se suaviza a lo largo de los años en vez de recibir un único índice: en el simulador del Módulo 7, con ventana 11, julio pasa de +20.4&nbsp;% en 1949 a +27.9&nbsp;% en 1960.'
+          },
+          {
+            texto: 'Estima la tendencia también en los extremos, sin dejar <code>NA</code>.',
+            correcta: true,
+            retro: 'Su tendencia sale de una regresión local, que en los bordes ajusta con los vecinos que haya: tiene los 144 valores, frente a los 132 de la media móvil.'
+          },
+          {
+            texto: 'Evita transformar la serie cuando la amplitud crece con el nivel.',
+            correcta: false,
+            retro: 'STL es <em>aditiva</em>: solo sabe sumar. Por eso el capítulo la aplica sobre $\\log(y_t)$ y no sobre la serie. Lo que pasa cuando no se hace lo mide el ejercicio 2.'
+          },
+          {
+            texto: 'Con <code>robust = TRUE</code>, resiste los valores atípicos de la serie.',
+            correcta: true,
+            retro: 'Es una opción y viene apagada. Encendida, el julio inflado del Módulo 7 acaba con peso 0, y los otros dos componentes apenas se mueven frente a su propia línea base, que es el ajuste robusto de la serie sin inflar.'
+          }
         ],
         retroAcierto: 'Las tres. Y las tres se ven en este mismo capítulo: la tendencia de STL del Módulo 7 tiene los 144 valores, mientras que la clásica del Módulo 6 solo tiene 132. La estacionalidad que cambia y la robustez se encienden en el simulador del Módulo 7, y el ejercicio 3 mide la segunda.',
-        retroFallo: 'Las tres correctas son que el patrón estacional puede cambiar, que la tendencia llega a los extremos y que <code>robust = TRUE</code> resiste los atípicos. Las otras dos son falsas: STL <strong>sí</strong> necesita el período $m$ (parte de él igual que la clásica), y <strong>no</strong> evita transformar, porque STL es <em>aditiva</em> — precisamente por eso este capítulo la aplica sobre $\\log(y_t)$ y no sobre la serie original.'
-      },
-      {
-        tipo: 'numerica',
-        modulo: 8,
-        pregunta: 'Una descomposición STL deja $\\operatorname{Var}(R_t) = 0.0012$ y $\\operatorname{Var}(T_t + R_t) = 0.20$. ¿Cuánto vale la fuerza de la tendencia $F_T = 1 - \\dfrac{\\operatorname{Var}(R_t)}{\\operatorname{Var}(T_t + R_t)}$? Da tres decimales.',
-        pista: 'Es una división y una resta. $0.0012 / 0.20 = 0.006$.',
-        respuesta: 0.994,
-        tolerancia: 0.0006,
-        retroAcierto: '$1 - 0.0012/0.20 = 1 - 0.006 = 0.994$. Es justo el valor de <code>AirPassengers</code> en este capítulo: una tendencia dominante. Fíjate en que el denominador es $\\operatorname{Var}(T+R)$ y no la varianza total: por eso $F_T$ <strong>no</strong> es "el porcentaje de varianza explicada por la tendencia".',
-        retroFallo: '$1 - 0.0012/0.20 = 1 - 0.006 = 0.994$. Si te dio 0.006 invertiste la resta, y si te dio algo cercano a 0.99 pero no exacto, revisa la división: $0.0012/0.20$ es $0.006$, no $0.0006$.'
+        retroFallo: 'Las ventajas reales son tres: el patrón estacional puede cambiar, la tendencia llega a los extremos y, con <code>robust = TRUE</code>, resiste los atípicos. Las otras dos opciones le atribuyen a STL algo que no hace. Esto es lo que pasó con las que no juzgaste bien:'
       },
       {
         tipo: 'opcion',
         modulo: 8,
-        pregunta: 'Para <code>AirPassengers</code> obtuvimos $F_T = 0.994$ y $F_S = 0.937$. ¿Cómo se leen?',
-        pista: 'Las dos van de 0 a 1. Pregúntate qué significa el extremo 0 y qué significa el 1, y si tiene sentido comparar una con la otra cuando sus denominadores son distintos.',
+        pregunta: 'Cuatro series se descomponen con STL (<code>s.window = "periodic"</code>) y dejan estas varianzas, cada una en las unidades de su serie. ¿Cuál tiene la <strong>tendencia más fuerte</strong>, medida con $F_T$?',
+        datos: '<ul>' +
+          '<li><code>USAccDeaths</code>: $\\operatorname{Var}(R_t) = 44\\,960$ y $\\operatorname{Var}(T_t + R_t) = 223\\,800$</li>' +
+          '<li><code>log(AirPassengers)</code>: $\\operatorname{Var}(R_t) = 0.001074$ y $\\operatorname{Var}(T_t + R_t) = 0.1793$</li>' +
+          '<li><code>co2</code>: $\\operatorname{Var}(R_t) = 0.06768$ y $\\operatorname{Var}(T_t + R_t) = 220.7$</li>' +
+          '<li><code>nottem</code>: $\\operatorname{Var}(R_t) = 4.0613$ y $\\operatorname{Var}(T_t + R_t) = 5.1117$</li>' +
+          '</ul>',
+        pista: 'Ninguna de las dos varianzas decide por separado. Aplica la fórmula del Módulo 8 a las cuatro series, una por una, antes de elegir.',
         opciones: [
           {
-            texto: 'La tendencia explica el 99.4 % de la varianza total de la serie.',
+            texto: '<code>USAccDeaths</code>, las muertes accidentales en Estados Unidos.',
+            correcta: false,
+            retro: 'Su $\\operatorname{Var}(T_t + R_t)$ es, con diferencia, la mayor de las cuatro, pero una varianza grande solo dice que la serie se mide con números grandes. Lo que mira $F_T$ es cuánto de ella es residuo: $44\\,960 / 223\\,800 = 0.201$, así que $F_T = 0.799$.'
+          },
+          {
+            texto: '<code>log(AirPassengers)</code>, los pasajeros de avión, en logaritmos.',
+            correcta: false,
+            retro: 'Su residuo es el más pequeño en valor absoluto, pero porque la serie está en logaritmos, donde todo es pequeño. Frente a su propia $\\operatorname{Var}(T_t + R_t)$ es $0.001074 / 0.1793 = 0.0060$, y $F_T = 0.994$: muy alta, pero no la mayor.'
+          },
+          {
+            texto: '<code>co2</code>, la concentración de CO₂ medida en Mauna Loa, en ppm.',
+            correcta: true,
+            retro: '$F_T = 1 - \\operatorname{Var}(R_t)/\\operatorname{Var}(T_t + R_t)$ compara dos varianzas de la misma serie, así que las unidades se cancelan y lo que decide es la proporción. En <code>co2</code> el cociente es $0.06768 / 220.7 = 0.0003$ y $F_T = 0.9997$; en las otras tres, $0.994$, $0.799$ y $0.205$. Ni la varianza más grande ni el residuo más pequeño deciden. Y el denominador es $\\operatorname{Var}(T_t + R_t)$, no la varianza total: por eso $F_T$ <strong>no</strong> es «el porcentaje de varianza que explica la tendencia».'
+          },
+          {
+            texto: '<code>nottem</code>, la temperatura media mensual en Nottingham.',
+            correcta: false,
+            retro: 'Aquí el residuo es casi todo lo que hay: $4.0613 / 5.1117 = 0.795$, así que $F_T = 0.205$, la más baja de las cuatro y la que figura en la tabla del Módulo 8. Dos varianzas pequeñas y parecidas no hacen una tendencia fuerte: hacen una serie que, quitada la estacionalidad, es casi puro residuo.'
+          }
+        ]
+      },
+      {
+        tipo: 'opcion',
+        modulo: 8,
+        pregunta: 'Para <code>AirPassengers</code>, en logaritmos y con la STL de partida del Módulo 7, resultan $F_T = 0.994$ y $F_S = 0.937$. ¿Cómo se leen?',
+        pista: 'Las dos van de 0 a 1. Pregúntate qué significa cada extremo, y contra qué se mide cada componente en su fórmula.',
+        opciones: [
+          {
+            texto: 'La tendencia explica el 99.4&nbsp;% de la varianza total de la serie.',
             correcta: false,
             retro: 'No es una proporción de la varianza total. $F_T = 1 - \\operatorname{Var}(R)/\\operatorname{Var}(T+R)$: el denominador solo incluye tendencia y residuo, no la estacionalidad.'
           },
           {
-            texto: 'La estacionalidad es débil, porque $0.937$ está por debajo de $F_T$.',
+            texto: 'La estacionalidad es débil, porque $0.937$ queda por debajo de $F_T$.',
             correcta: false,
-            retro: '$0.937$ es un valor muy alto en una escala de 0 a 1. Además $F_T$ y $F_S$ tienen denominadores distintos, así que compararlas entre sí no dice cuál componente "gana".'
+            retro: '$0.937$ es un valor muy alto en una escala de 0 a 1. Además $F_T$ y $F_S$ tienen denominadores distintos, así que compararlas entre sí no dice cuál componente «gana».'
           },
           {
-            texto: 'Los dos componentes dominan claramente sobre el residuo: un valor cercano a 1 indica componente fuerte.',
+            texto: 'Los dos componentes pesan mucho más que el residuo: ambas rozan el 1.',
             correcta: true,
-            retro: 'Cada fuerza compara la varianza del residuo con la del componente más el residuo, así que va de 0 (componente despreciable) a 1 (componente dominante). Aquí las dos son altísimas, exactamente lo que se ve en el gráfico.'
+            retro: 'Cada fuerza compara la varianza del residuo con la del componente más el residuo, así que va de 0 (componente despreciable) a 1 (componente dominante). Aquí las dos son muy altas: quedan lejos de lo que da una serie sin tendencia (0.205 en <code>nottem</code>) o sin estacionalidad anual (0.005 en <code>sunspots</code>), y es lo que ya se veía en el gráfico.'
           },
           {
-            texto: 'Como $F_T > F_S$, conviene descartar el componente estacional al modelar.',
+            texto: 'La descomposición es correcta: con fuerzas así, el residuo es solo ruido.',
             correcta: false,
-            retro: 'Sería un error grave: con $F_S = 0.937$ la estacionalidad es de las más marcadas que se ven en la práctica. Descartarla arruinaría cualquier pronóstico.'
+            retro: 'Las fuerzas miden cuánto pesan los componentes frente al residuo, no si el residuo quedó sin forma: una descomposición puede dar fuerzas altas y dejar un residuo lleno de estructura. El ejercicio 2 lo mide con esta misma serie. Si el residuo es ruido se comprueba mirándolo, que es el paso 4 del Módulo 6.'
           }
         ]
       },
@@ -8220,27 +8891,27 @@ idx_stl(AirPassengers, FALSE)[7];   idx_stl(ap_out, FALSE)[7]     # 1.2416 -> 1.
         tipo: 'opcion',
         modulo: 8,
         pregunta: '¿Para qué sirve una serie <strong>desestacionalizada</strong> (<em>seasonally adjusted</em>)?',
-        pista: 'Piensa en las noticias: "el desempleo cayó respecto al mes pasado". ¿Qué habría que quitar para que esa comparación signifique algo, si enero siempre cae?',
+        pista: 'Empieza por lo que hace la operación: ¿qué componente quita, y cuáles deja como estaban? Después pregúntate para qué querría alguien justo esa serie.',
         opciones: [
           {
-            texto: 'Para pronosticar directamente, ya que no hay que modelar la estacionalidad.',
+            texto: 'Para pronosticar sin tener que ocuparse ya de la estacionalidad.',
             correcta: false,
             retro: 'Se puede pronosticar la serie ajustada, pero para devolver el pronóstico a la escala original hay que <em>volver a añadir</em> el componente estacional. No desaparece del problema.'
           },
           {
-            texto: 'Para comparar períodos consecutivos sin que el patrón anual enmascare el movimiento de fondo.',
+            texto: 'Para comparar meses seguidos sin que el patrón anual lo tape.',
             correcta: true,
             retro: 'Es justo el uso que le dan las cifras oficiales de empleo: sin ajustar, la caída de enero frente a diciembre diría poco, porque enero siempre cae. Ajustada, la comparación ya no arrastra el patrón anual. Pero la serie ajustada conserva el residuo, así que una subida o una bajada de un mes al siguiente todavía puede engañar: para leer cambios de rumbo conviene mirar la tendencia-ciclo.'
           },
           {
-            texto: 'Para eliminar la tendencia de la serie.',
+            texto: 'Para quitar la tendencia y dejar a la vista el vaivén de cada año.',
             correcta: false,
-            retro: 'Desestacionalizar quita $S_t$, no $T_t$. De hecho, en la serie ajustada la tendencia se ve mucho mejor, precisamente porque ya no la tapa la oscilación anual.'
+            retro: 'Es al revés: desestacionalizar quita $S_t$, no $T_t$. En la serie ajustada la tendencia se ve mucho mejor, precisamente porque ya no la tapa la oscilación anual.'
           },
           {
-            texto: 'Para eliminar los valores atípicos.',
+            texto: 'Para quedarse solo con la tendencia: una curva suave, sin sobresaltos.',
             correcta: false,
-            retro: 'No hace nada con los atípicos. Si acaso, en la serie ajustada resaltan más, porque se ha quitado una fuente de variación regular.'
+            retro: 'La serie ajustada no es la tendencia: conserva el residuo, y por eso en el gráfico del Módulo 8 no es una curva suave. Tampoco borra los atípicos; si acaso resaltan más, porque se ha quitado una fuente de variación regular.'
           }
         ]
       }
