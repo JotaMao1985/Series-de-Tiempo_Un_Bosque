@@ -3,7 +3,7 @@ tipo: plan
 curso: "[[20948 Series de Tiempo]]"
 capitulo: "[[20948-01 Componentes y descomposición]]"
 fecha: 2026-11-10
-estado: aprobado
+estado: CERRADO (2026-11-16) — R1–R5 publicadas · main 7e85896 · gh-pages 03d0ce6
 ---
 
 # Plan — Mejora del capítulo 1 · Componentes y descomposición (Fase 1)
@@ -13,8 +13,9 @@ prometa lo que no muestra, con gráficas que se lean y con práctica para cada o
 declara. Es la primera aplicación del sistema de [[PLAN_Gestion_Documental]] a un capítulo entero
 y el molde para los otros cinco.
 
-**Estado: aprobado por Javier el 2026-11-10 (D1–D9). R1 y R2 publicadas el 2026-11-11; R3, R3-bis y R4 publicadas el 13; sigue R5.** Lo que sigue es el diagnóstico y el plan;
-las rondas se registran en §4.
+**Estado: CERRADO por Javier el 2026-11-16.** Aprobado el 2026-11-10 (D1–D9); R1 y R2 publicadas el
+2026-11-11; R3, R3-bis y R4 el 13; R5 el 14. Lo que sigue es el diagnóstico y el plan; las rondas se
+registran en §4, y lo que la Fase 1 deja fuera está en §9.
 
 ## 1. El hueco — diagnóstico del 2026-11-10
 
@@ -293,6 +294,24 @@ Siguen abiertas:
    implementa.
 4. Si los tres cambios del motor del quiz que viven solo en el capítulo 1 pasan a la plantilla, con
    lo que heredarían los otros capítulos.
+
+## 9. Cierre (2026-11-16)
+
+Javier cerró la Fase 1 con las cinco rondas publicadas. De los siete criterios de §5 se cumplen tres;
+los otros cuatro no se dan por cumplidos y quedan como trabajo **fuera de esta fase**, sin plan:
+
+- **Práctica en el M1, el M4 y el M5** (hueco 7 del diagnóstico).
+- **Las 75 filas de prioridad media y baja** del inventario de afirmaciones, sin marcar ni registrar.
+- **Una relectura completa del capítulo ya corregido** por un par que no haya visto ninguna ronda, y
+  la pasada de los gráficos a 1200, 800 y 375 px sobre el capítulo tal como quedó tras la R3.
+- Lo que no es del capítulo sino del sistema: los tres cambios del motor del quiz que viven solo aquí
+  (pasarlos a la plantilla), el auditor que no lee `data-afirma` dentro de `<script>`, el vocabulario
+  de localizadores de las ayudas de R y `data-via` (los dos últimos, con la sesión de Muestreo), y las
+  preguntas del Checkpoint 0 en [[PLAN_Gestion_Documental]] §7.
+
+El molde para los otros cinco capítulos es el de estas rondas: un solo redactor por ronda, un
+verificador independiente de contexto limpio sobre el diff —encontró problemas en lo «terminado» en
+todas, 21 en la R4 y 17 en la R5— y la sesión maestra que vuelve a medir en R antes de aceptar nada.
 
 ## 8. Enlaces
 
