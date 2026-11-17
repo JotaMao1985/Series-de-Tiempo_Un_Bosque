@@ -98,6 +98,14 @@ html = una_vez(
     "<title>Series de Tiempo · Capítulo 4 — Modelos ARIMA y Box–Jenkins</title>",
     "title")
 
+# El pie de página. Hasta el 2026-11-16 nadie lo sustituía y los caps. 4–6
+# heredaban «Capítulo 3» del capítulo 3.
+html = una_vez(
+    html,
+    "Series de Tiempo • Capítulo 3 • UnBosque 2026",
+    "Series de Tiempo • Capítulo 4 • UnBosque 2026",
+    "pie de página")
+
 html = una_vez(
     html,
     'style="margin:0; text-align:left;">CAPÍTULO 3 •',
@@ -307,7 +315,7 @@ if sin_simulacro.count("    // [inicio · simulacro del quiz]") == 1:
     i = sin_simulacro.index("    // [inicio · simulacro del quiz]")
     sin_simulacro = sin_simulacro[:i] + sin_simulacro[sin_simulacro.index("    // [fin · simulacro del quiz]", i):]
 for resto in ["DATOS_CAP3", "SERIES_CAP3", "AUTOEVALUACIONES['cap3']", "PROCESOS",
-              "MANCHAS", "RETORNOS", "manchas solares", "Capítulo 3 —",
+              "MANCHAS", "RETORNOS", "manchas solares", "Capítulo 3 —", "Capítulo 3 •",
               "genera_cap3.R", "capitulo-3",
               "AUTOEVALUACIONES['parcial2']", 'data-quiz="parcial2"',
               # El simulacro del capítulo 3: su registro y su contenedor. El

@@ -112,6 +112,14 @@ html = una_vez(
     "<title>Series de Tiempo · Capítulo 5 — Modelos SARIMA</title>",
     "title")
 
+# El pie de página. Hasta el 2026-11-16 nadie lo sustituía y los caps. 4–6
+# heredaban «Capítulo 3» del capítulo 3.
+html = una_vez(
+    html,
+    "Series de Tiempo • Capítulo 4 • UnBosque 2026",
+    "Series de Tiempo • Capítulo 5 • UnBosque 2026",
+    "pie de página")
+
 html = una_vez(
     html,
     'style="margin:0; text-align:left;">CAPÍTULO 4 •',
@@ -512,7 +520,7 @@ for fn in ["function crearGraficoBarras", "function calcularPACF", "function cre
 
 # Nada del capítulo anterior debe sobrevivir
 for resto in ["DATOS_CAP4", "SERIES_CAP4", "AUTOEVALUACIONES['cap4']", "genera_cap4.R",
-              "capitulo-4", "Capítulo 4 —", "data-ciclo=\"box-jenkins\"",
+              "capitulo-4", "Capítulo 4 —", "Capítulo 4 •", "data-ciclo=\"box-jenkins\"",
               "SIMULADORES['nilo-y-diferencia']", "SIMULADORES['explorador-modelos']",
               # El simulacro del Módulo 11 del capítulo 4: contenedor, registro y lo que
               # su motor y su CSS tienen y el de este no (desplegables y puestos). El

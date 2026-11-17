@@ -125,6 +125,35 @@ aprueba aparte, después del Checkpoint 0.
     fuente de Series aparecerán en el vault cuando esta rama se fusione a `main`, que es de donde
     lee su generador. De esa norma falta aquí `data-via` (citas de segunda mano).
 
+### Cierre del Checkpoint 0 (2026-11-16)
+
+Javier aprobó las recomendaciones de la sesión maestra. Estado de cada punto:
+
+- **1, 3, 6 y 10** — resueltos antes, durante la Fase 1: el PDF de Cleveland se descargó con
+  permiso el 2026-11-13; las citas llevan «y»; Guerrero (2003) y Box y Jenkins (1970) entraron por
+  RIS transcrito en la R4 (`bibliografia/transcripciones/sin-identificador.ris`).
+- **4 · Año de Box et al., 5.ª ed.: 2015.** Wiley la fecha en «June 2015»; el 2016 de Zotero
+  venía del catálogo de la Library of Congress, cuyo campo 264 dice «[2016]» entre corchetes (fecha
+  que suple el catalogador). Se corrige con una enmienda en `enmiendas.yml`, con esa evidencia; la
+  clave sigue siendo `box2016time` porque una clave asignada no cambia. Con ella el capítulo 1 dice
+  2015, como los otros cinco.
+- **2 · Pie de referencias: capítulo a capítulo.** La lista de cada capítulo se regenera en su ronda
+  de fuentes, cuando se sabe qué obras cita de verdad. Lo que sí se corrigió ya: el rótulo
+  «Capítulo 3» que los caps. 4–6 heredaban en el pie. Los ensambladores `ensambla_cap4|5|6.py`
+  ahora sustituyen el rótulo y vigilan que no quede el del capítulo anterior.
+- **5 · Shumway y Stoffer: se sigue citando la 4.ª (2017)**, la del syllabus. Pasar a la 5.ª
+  (Springer, 2025) es un cambio de syllabus que se decide al revisarlo para 2027-I. Mientras no
+  haya ejemplar de ninguna de las dos (el único PDF es la 3.ª, parcial), nada se contrasta contra
+  Shumway y Stoffer. Queda por saber si la biblioteca de la universidad tiene la 4.ª o la 5.ª.
+- **8 · PDF de 28 KB con la tabla de contenido de FPP3** (adjunto `E5VE9TUP`, de gbv.de): se
+  decidió borrarlo, pero Zotero no lo permite en segundo plano (el menú «Delete» sale desactivado y
+  la tecla no llega). Queda para Javier: seleccionarlo bajo FPP3 y pulsar Suprimir. El exportador
+  ya lo ignora.
+- **9 · `Vault/` en git local**, sin remoto: primer commit `56ce049`. Se avisó a las sesiones
+  hermanas que escriben en el vault.
+- **7 · Procedencia de los tres PDF admitidos**: sigue «por confirmar» en `ejemplares.yml` hasta que
+  Javier la diga.
+
 ## 8. Riesgos
 
 - **La caché `_local/` es de cada copia de trabajo.** Tras fusionar a `main` hay que correr

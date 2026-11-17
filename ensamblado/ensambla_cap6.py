@@ -105,6 +105,14 @@ html = una_vez(
     "<title>Series de Tiempo · Capítulo 6 — Pronóstico y evaluación</title>",
     "title")
 
+# El pie de página. Hasta el 2026-11-16 nadie lo sustituía y los caps. 4–6
+# heredaban «Capítulo 3» del capítulo 3.
+html = una_vez(
+    html,
+    "Series de Tiempo • Capítulo 5 • UnBosque 2026",
+    "Series de Tiempo • Capítulo 6 • UnBosque 2026",
+    "pie de página")
+
 html = una_vez(
     html,
     'style="margin:0; text-align:left;">CAPÍTULO 5 •',
@@ -422,7 +430,7 @@ for fn in ["function crearGraficoBarras", "function calcularPACF", "function cre
 
 # Nada del capítulo anterior debe sobrevivir
 for resto in ["DATOS_CAP5", "SERIES_CAP5", "AUTOEVALUACIONES['cap5']", "genera_cap5.R",
-              "capitulo-5", "Capítulo 5 —", 'data-ciclo="identificacion-estacional"',
+              "capitulo-5", "Capítulo 5 —", "Capítulo 5 •", 'data-ciclo="identificacion-estacional"',
               "SIMULADORES['mapa-firma']", "SIMULADORES['explorador-sarima']",
               # El simulacro del Módulo 12 del capítulo 5: registro, motor y CSS.
               "cap5-simulacro", "SIMULACROS", "pintarSimulacro", "ESTADO_SIMULACRO", ".simulacro {",
