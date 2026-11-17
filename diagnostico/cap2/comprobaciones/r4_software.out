@@ -1,0 +1,79 @@
+R R version 4.6.0 (2026-04-24) · tseries 0.10.62 · forecast 9.0.2 · urca 1.3.4 
+
+== c2-m3-06 · acf() divide entre T ==
+max |acf() - (suma/T)/(suma0/T)| en k=1..24: 1.665335e-15 
+
+== c2-m4-04, c2-m4-09 · pacf() y la recursión de Durbin-Levinson ==
+ly : max |pacf() - Durbin-Levinson sobre acf()| en k=1..24: 3.587408e-14 
+y : max |pacf() - Durbin-Levinson sobre acf()| en k=1..24: 2.592371e-14 
+
+== c2-m6-04, c2-m6-10 · adf.test(): rezagos por defecto y regresión ==
+function (x, alternative = c("stationary", "explosive"), k = trunc((length(x) - 
+    1)^(1/3))) 
+NULL
+    tt <- k:n
+        res <- lm(yt ~ xt1 + 1 + tt + yt1)
+    else res <- lm(yt ~ xt1 + 1 + tt)
+    table <- cbind(c(4.38, 4.15, 4.04, 3.99, 3.98, 3.96), c(3.95, 
+    table <- -table
+    for (i in (1:tablen)) tableipl[i] <- approx(tableT, table[, 
+    interpol <- approx(tableipl, tablep, STAT, rule = 2)$y
+    if (!is.na(STAT) && is.na(approx(tableipl, tablep, STAT, 
+            warning("p-value smaller than printed p-value")
+        else warning("p-value greater than printed p-value")
+k por defecto en AirPassengers: 5 
+adf.test: -7.318571  · lm con constante y tendencia: -7.318571 
+avisos:
+   p-value smaller than printed p-value 
+   p-value smaller than printed p-value 
+   p-value greater than printed p-value 
+
+== c2-m6-09, c2-m7-15 · kpss.test(): truncamiento y tabla ==
+function (x, null = c("Level", "Trend"), lshort = TRUE) 
+NULL
+        table <- c(0.216, 0.176, 0.146, 0.119)
+        table <- c(0.739, 0.574, 0.463, 0.347)
+        warning("essentially perfect fit: test may be unreliable")
+        l <- trunc(4 * (n/100)^0.25)
+    else l <- trunc(12 * (n/100)^0.25)
+    PVAL <- approx(table, tablep, STAT, rule = 2)$y
+    if (!is.na(STAT) && is.na(approx(table, tablep, STAT, rule = 1)$y)) 
+            warning("p-value smaller than printed p-value")
+        else warning("p-value greater than printed p-value")
+
+== c2-m7-18, c2-m7-15 · ndiffs() y nsdiffs() ==
+function (x, alpha = 0.05, test = c("kpss", "adf", "pp"), type = c("level", 
+    "trend"), max.d = 2, ...) 
+NULL
+function (x, alpha = 0.05, m = frequency(x), test = c("seas", 
+    "ocsb", "hegy", "ch"), max.D = 1, ...) 
+NULL
+    kpss_wrap <- function(..., use.lag = trunc(3 * sqrt(length(x))/13)) {
+        ur.kpss(..., use.lag = use.lag)
+                ...) > 0.64, ocsb = with(ocsb.test(x, maxlag = 3, 
+    stlfit <- mstl(x)
+    remainder <- stlfit[, "Remainder"]
+    seasonal <- stlfit[, grep("Season", colnames(stlfit), fixed = TRUE), 
+n = 132 · kpss.test: 0.3681637 · ur.kpss con 2 rezagos: 0.5366879 · valores críticos:
+                10pct  5pct 2.5pct  1pct
+critical values 0.347 0.463  0.574 0.739
+
+== c2-m8-03 · BoxCox() admite negativos con lambda > 0 ==
+[1] -6 -4  0  2
+attr(,"lambda")
+[1] 0.5
+        out <- (sign(x) * abs(x)^lambda - 1)/lambda
+
+== c2-m8-04 · el criterio de Guerrero tal como lo describe el capítulo ==
+{
+    period <- round(max(nonseasonal.length, frequency(x)))
+    nobsf <- length(x)
+    nyr <- floor(nobsf/period)
+    nobst <- floor(nyr * period)
+    x.mat <- matrix(x[(nobsf - nobst + 1):nobsf], period, nyr)
+    x.mean <- colMeans(x.mat, na.rm = TRUE)
+    x.sd <- apply(x.mat, 2, sd, na.rm = TRUE)
+    x.rat <- x.sd/x.mean^(1 - lam)
+    sd(x.rat, na.rm = TRUE)/mean(x.rat, na.rm = TRUE)
+}
+lambda que minimiza el CV de s_i / media_i^(1-lambda): -0.2947156 · BoxCox.lambda(guerrero): -0.2947156 

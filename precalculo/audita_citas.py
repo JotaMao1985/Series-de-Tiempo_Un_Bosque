@@ -14,6 +14,14 @@ LITERAL del pasaje leído, y el auditor la busca en el texto de la fuente
 (extraído por `extrae_fuente.py` a una caché local). Una cita inventada, o un
 localizador que no corresponde, no pasa.
 
+Dónde vive el literal (desde el 2026-11-17). El repo es público y la norma común
+recomienda guardar en git solo el puntero y la huella: el registro versionado
+(contraste/capN.yml) lleva, por fuente, `cita_sha256` (sha256 del literal
+pasado por `normaliza()`) y `cita_palabras`; el literal vive fuera de git, en
+bibliografia/_local/citas/capN.yml, indexado por id de la afirmación y posición
+de la fuente (1, 2…). Sin ese archivo, F05 dice «no comprobable aquí» y no
+aprueba. Lo pasa de un sitio a otro `precalculo/migra_citas_fuera.py`.
+
 Qué comprueba, por capítulo:
 
   F01  toda clave citada (`data-ref`) existe en bibliografia/referencias.json
@@ -25,7 +33,9 @@ Qué comprueba, por capítulo:
        localizador con una fuente de la entrada
   F04  esquema: campos obligatorios, enumerados, identificadores únicos, y
        localizadores del vocabulario cerrado de la norma común
-  F05  la cita literal está en el texto de la fuente, en ese localizador
+  F05  el literal local corresponde a su huella (`cita_sha256`) y está en el
+       texto de la fuente, en ese localizador; sin literal local, «no
+       comprobable aquí»
   F06  el ejemplar leído es el que está en Zotero (sha256)
   F07  se cita la edición que se leyó: la portada está comprobada, el año
        coincide y la página impresa es la que lleva esa página del PDF
@@ -33,16 +43,22 @@ Qué comprueba, por capítulo:
   F09  la prosa no cambió desde que se contrastó (huella del texto)
   F10  --red: los DOI existen en Crossref con el mismo título y año, y los
        enlaces externos responden
-  F11  cita ≤ 25 palabras; tope de palabras citadas por obra
+  F11  cita ≤ 25 palabras (`cita_palabras`, y coincide con el literal local).
+       El tope global de palabras citadas por obra dejó de aplicarse el
+       2026-11-17: el repo ya no contiene ningún literal
   F12  capítulos 3–6: la afirmación está en las fuentes de ensamblado/capN/
+  F13  ningún literal de cita en el registro versionado: una fuente con
+       `cita`, o con su literal en otro campo, falla
   A01  aviso, no falla: apellidos de la biblioteca en la prosa sin <cite>
+  A02  aviso, no falla: una nota o un motivo del registro repite un literal
 
 Uso:  python3 precalculo/audita_citas.py                # los 6 capítulos
       python3 precalculo/audita_citas.py --red          # además, la red
       python3 precalculo/audita_citas.py --cierre       # falla si queda algo
                                                         # pendiente o por reverificar
-      python3 precalculo/audita_citas.py --sin-cache    # en un clon sin las
-                                                        # fuentes: F05 informa, no falla
+      python3 precalculo/audita_citas.py --sin-cache    # en un clon sin las fuentes
+                                                        # ni los literales (_local/):
+                                                        # F05 informa, no falla
       python3 precalculo/audita_citas.py --huella c1-m7-01
                                                         # la huella actual de esa afirmación
       python3 precalculo/audita_citas.py --uso          # escribe uso_fuentes.json, el
@@ -83,7 +99,10 @@ ABIERTOS = {"pendiente", "por-reverificar", "discrepa"}
 CLASES_CON_TEXTO = {"PDF", "WEB", "DOC"}
 CLASES = CLASES_CON_TEXTO | {"MAN", "REPO"}
 MAX_PALABRAS_CITA = 25
-TOPE_PALABRAS_OBRA = 400
+# Hasta el 2026-11-17 había además un tope de 400 palabras citadas por obra,
+# sumando todo el repo (F11). Se retiró al sacar los literales de git: el repo
+# ya no reproduce ningún pasaje, y el tope no protegía nada que siga ahí.
+RE_SHA256 = re.compile(r"^[0-9a-f]{64}$")
 RE_ID = re.compile(r"^c(\d+)-m(\d+)-(\d{2,})$")
 # Vocabulario cerrado de localizadores, el de la norma común de los cuatro cursos
 # (Vault/Estandar/Capa de fuentes.md). Varios se separan con «; »; los rangos de
@@ -139,6 +158,17 @@ def normaliza(texto: str) -> str:
 
 def huella(texto: str) -> str:
     return hashlib.sha256(normaliza(texto).encode("utf-8")).hexdigest()[:16]
+
+
+def huella_cita(literal: str) -> str:
+    """`cita_sha256`: el sha256 completo del literal normalizado. Un cambio de
+    espacios, de comillas o de rayas no lo mueve; una palabra distinta, sí."""
+    return hashlib.sha256(normaliza(literal).encode("utf-8")).hexdigest()
+
+
+def palabras_cita(literal: str) -> int:
+    """`cita_palabras`: el mismo recuento que F11 hacía sobre la `cita`."""
+    return len(str(literal).split())
 
 
 # --------------------------------------------------------------------------- #
@@ -231,6 +261,8 @@ class Biblioteca:
     candado: dict[str, dict]
     ejemplares: dict[str, dict]
     instantaneas: dict[str, dict]
+    # Literales de las citas, fuera de git: {capítulo: {id: {posición: literal}}}
+    citas: dict[int, dict[str, dict[int, str]]] = dataclasses.field(default_factory=dict)
 
     @classmethod
     def carga(cls, directorio: pathlib.Path) -> "Biblioteca":
@@ -239,8 +271,17 @@ class Biblioteca:
             return (yaml.safe_load(ruta.read_text("utf-8")) or {}) if ruta.exists() else {}
         referencias = json.loads((directorio / "referencias.json").read_text("utf-8"))
         candado = json.loads((directorio / "zotero.lock.json").read_text("utf-8"))["obras"]
+        citas = {}
+        for ruta in sorted((directorio / "_local" / "citas").glob("cap*.yml")):
+            dato = yaml.safe_load(ruta.read_text("utf-8")) or {}
+            citas[int(re.search(r"cap(\d+)", ruta.name).group(1))] = dato.get("citas") or {}
         return cls(directorio, {r["id"]: r for r in referencias}, candado,
-                   y("ejemplares.yml"), y("instantaneas.yml"))
+                   y("ejemplares.yml"), y("instantaneas.yml"), citas)
+
+    def literal(self, capitulo: int, ident: str, posicion: int) -> str | None:
+        """El literal de la fuente `posicion` (1, 2…) de esa afirmación, o None."""
+        valor = ((self.citas.get(capitulo) or {}).get(ident) or {}).get(posicion)
+        return str(valor) if valor is not None else None
 
     def anio(self, clave: str) -> str:
         partes = (self.referencias[clave].get("issued") or {}).get("date-parts") or [[None]]
@@ -300,9 +341,14 @@ def f04_esquema(registro: dict, nombre: str, capitulo: int) -> list[Hallazgo]:
             h.append(Hallazgo("F04", donde, f"veredicto `{veredicto}` sin `motivo`"))
         for n, f in enumerate(fuentes, start=1):
             aqui = f"{donde} · fuente {n}"
-            for campo in ("clave", "loc", "clase", "cita"):
+            for campo in ("clave", "loc", "clase", "cita_sha256", "cita_palabras"):
                 if not f.get(campo):
                     h.append(Hallazgo("F04", aqui, f"falta `{campo}`"))
+            if f.get("cita_sha256") and not RE_SHA256.match(str(f["cita_sha256"])):
+                h.append(Hallazgo("F04", aqui, "`cita_sha256` no es un sha256 (64 hexadecimales en minúscula)"))
+            palabras = f.get("cita_palabras")
+            if palabras and (isinstance(palabras, bool) or not isinstance(palabras, int) or palabras < 1):
+                h.append(Hallazgo("F04", aqui, "`cita_palabras` no es un entero positivo"))
             if f.get("loc") and not localizador_valido(f["loc"]):
                 h.append(Hallazgo("F04", aqui, f"el localizador «{f['loc']}» no usa el vocabulario cerrado "
                                                "(§3.4 · cap. 3 · p. 15 · pp. 15–17 · tabla 3.1 · fig. 3.1 · ec. 3.3 · "
@@ -352,9 +398,19 @@ def seccion_de(texto: str, loc: str) -> tuple[str, str | None]:
     return "\n".join(lineas[inicio:fin]), None
 
 
+def f05_huella(f: dict, donde: str, literal: str | None) -> list[Hallazgo]:
+    """El literal local y el registro versionado dicen la misma cita."""
+    esperado = f.get("cita_sha256")
+    if literal is None or not esperado or huella_cita(literal) == esperado:
+        return []
+    return [Hallazgo("F05", donde, "el literal de _local/citas/ no corresponde a `cita_sha256`: "
+                                  "cambió el literal sin el registro, o el registro sin el literal")]
+
+
 def f05_cita_literal(bib: Biblioteca, f: dict, donde: str, sin_cache: bool,
-                     cuenta: dict) -> list[Hallazgo]:
-    clave, clase, cita = f.get("clave", ""), f.get("clase"), f.get("cita") or ""
+                     cuenta: dict, literal: str | None) -> list[Hallazgo]:
+    """El literal (de _local/citas/, fuera de git) está en la fuente, en ese sitio."""
+    clave, clase = f.get("clave", ""), f.get("clase")
     if clase not in CLASES_CON_TEXTO:
         cuenta["sin_guion"] += 1
         return []
@@ -372,13 +428,21 @@ def f05_cita_literal(bib: Biblioteca, f: dict, donde: str, sin_cache: bool,
             if falta:
                 return [Hallazgo("F05", donde, f"la sección §{falta} no está en la {sitio} de «{clave}»")]
             sitio = f"{f.get('loc')} de la {sitio}"
+    if literal is None:
+        # Sin el literal no hay nada que buscar: igual que sin caché, se
+        # informa y no se aprueba.
+        cuenta["sin_literal"] += 1
+        if sin_cache:
+            return []
+        return [Hallazgo("F05", donde, "el literal no está en _local/citas/: no comprobable aquí "
+                                      "(copiarlo de la copia que lo tiene, o --sin-cache)")]
     if texto is None:
         cuenta["sin_cache"] += 1
         if sin_cache:
             return []
         return [Hallazgo("F05", donde, f"no está en la caché la {sitio} de «{clave}»: "
                                       "no comprobable aquí (extrae_fuente.py, o --sin-cache)")]
-    if normaliza(cita) not in normaliza(texto):
+    if normaliza(literal) not in normaliza(texto):
         return [Hallazgo("F05", donde, f"la cita literal NO está en la {sitio} de «{clave}»")]
     cuenta["comprobadas"] += 1
     return []
@@ -514,13 +578,30 @@ def audita_capitulo(bib: Biblioteca, ruta_html: pathlib.Path, registro: dict, no
                                             "pasa a `por-reverificar`"))
         for n, f in enumerate(e.get("fuentes") or [], start=1):
             aqui = f"{donde} · fuente {n}"
+            literal = bib.literal(capitulo, ident, n)
+            # F13 — el literal no vuelve a git: ni en `cita` ni en otro campo
+            if "cita" in f:
+                h.append(Hallazgo("F13", aqui, "la fuente lleva `cita`: el literal va en _local/citas/, "
+                                              "fuera de git (precalculo/migra_citas_fuera.py)"))
+            elif literal and any(isinstance(v, str) and normaliza(literal) in normaliza(v)
+                                 for k, v in f.items() if k != "cita_sha256"):
+                h.append(Hallazgo("F13", aqui, "el literal de la cita está en el registro versionado"))
+            h += f05_huella(f, aqui, literal)
             if veredicto in CITABLES:
-                h += f05_cita_literal(bib, f, aqui, sin_cache, cuenta)
+                h += f05_cita_literal(bib, f, aqui, sin_cache, cuenta, literal)
                 h += f06_f07_ejemplar(bib, f, aqui)
-            palabras = len(str(f.get("cita") or "").split())
-            if palabras > MAX_PALABRAS_CITA:
-                h.append(Hallazgo("F11", aqui, f"la cita tiene {palabras} palabras (máximo {MAX_PALABRAS_CITA})"))
-            cuenta["palabras"][f.get("clave")] = cuenta["palabras"].get(f.get("clave"), 0) + palabras
+            palabras = f.get("cita_palabras")
+            if isinstance(palabras, int) and not isinstance(palabras, bool):
+                if palabras > MAX_PALABRAS_CITA:
+                    h.append(Hallazgo("F11", aqui, f"la cita tiene {palabras} palabras (máximo {MAX_PALABRAS_CITA})"))
+                if literal is not None and palabras_cita(literal) != palabras:
+                    h.append(Hallazgo("F11", aqui, f"`cita_palabras` dice {palabras} y el literal local tiene "
+                                                   f"{palabras_cita(literal)}"))
+            # A02 — una nota o un motivo que repite el literal lo devuelve a git
+            if literal and len(literal.split()) >= 3:
+                for campo in ("nota", "motivo", "afirmacion"):
+                    if normaliza(literal) in normaliza(str(e.get(campo) or "")):
+                        cuenta["a02"].append(f"{aqui} · `{campo}`")
 
     # F12 — capítulos ensamblados
     if capitulo >= 3 and dir_ensamblado is not None and lector.afirmaciones:
@@ -596,8 +677,8 @@ def audita(dir_bib: pathlib.Path, dir_sitio: pathlib.Path, *, red: bool = False,
            sin_cache: bool = False, dir_ensamblado: pathlib.Path | None = None
            ) -> tuple[list[Hallazgo], dict]:
     bib = Biblioteca.carga(dir_bib)
-    cuenta = {"veredictos": {}, "comprobadas": 0, "sin_cache": 0, "sin_guion": 0,
-              "palabras": {}, "a01": {}, "capitulos": 0, "citas": 0}
+    cuenta = {"veredictos": {}, "comprobadas": 0, "sin_cache": 0, "sin_literal": 0, "sin_guion": 0,
+              "a01": {}, "a02": [], "capitulos": 0, "citas": 0}
     h: list[Hallazgo] = []
     htmls: list[pathlib.Path] = []
     registros = {int(re.search(r"cap(\d+)", p.name).group(1)): p
@@ -611,9 +692,7 @@ def audita(dir_bib: pathlib.Path, dir_sitio: pathlib.Path, *, red: bool = False,
         cuenta["capitulos"] += 1
         h += audita_capitulo(bib, ruta_html, registro, nombre, capitulo, sin_cache, cuenta, dir_ensamblado)
         cuenta["citas"] += len(lee_html(ruta_html.read_text("utf-8")).citas)
-    for clave, palabras in cuenta["palabras"].items():
-        if palabras > TOPE_PALABRAS_OBRA:
-            h.append(Hallazgo("F11", str(clave), f"{palabras} palabras citadas de una sola obra (tope {TOPE_PALABRAS_OBRA})"))
+    # El tope global de palabras por obra ya no se aplica: ver MAX_PALABRAS_CITA.
     if red:
         h += f10_red(bib, htmls)
     return h, cuenta
@@ -693,8 +772,10 @@ def main() -> int:
     ap.add_argument("--cierre", action="store_true",
                     help="falla si queda algo pendiente, por reverificar o que discrepa")
     ap.add_argument("--sin-cache", action="store_true",
-                    help="F05 informa de lo que no puede comprobar, en vez de fallar")
-    ap.add_argument("--avisos", action="store_true", help="lista los apellidos sin cita (A01)")
+                    help="F05 informa de lo que no puede comprobar (sin caché o sin el literal "
+                         "de _local/citas/), en vez de fallar")
+    ap.add_argument("--avisos", action="store_true",
+                    help="lista los apellidos sin cita (A01) y las notas que repiten un literal (A02)")
     ap.add_argument("--huella", metavar="ID", help="imprime la huella actual de una afirmación")
     args = ap.parse_args()
 
@@ -724,7 +805,8 @@ def main() -> int:
     if total:
         print("  " + " · ".join(f"{k}: {v[k]}" for k in sorted(v)))
         print(f"  citas literales comprobadas contra la fuente: {cuenta['comprobadas']}"
-              f" · sin caché aquí: {cuenta['sin_cache']} · sin guion (MAN/REPO): {cuenta['sin_guion']}")
+              f" · sin caché aquí: {cuenta['sin_cache']} · sin literal local: {cuenta['sin_literal']}"
+              f" · sin guion (MAN/REPO): {cuenta['sin_guion']}")
     sueltos = sum(len(s) for s in cuenta["a01"].values())
     if sueltos:
         print(f"  [A01] {sueltos} apellidos de la biblioteca aparecen en la prosa sin <cite>"
@@ -733,6 +815,12 @@ def main() -> int:
             for archivo, s in cuenta["a01"].items():
                 for apellido, linea in sorted(s.items(), key=lambda par: par[1]):
                     print(f"         {archivo}:{linea}  {apellido}")
+    if cuenta["a02"]:
+        print(f"  [A02] {len(cuenta['a02'])} notas o motivos del registro repiten el literal de una cita"
+              + ("" if args.avisos else " (--avisos para verlos)"))
+        if args.avisos:
+            for donde in cuenta["a02"]:
+                print(f"         {donde}")
     if args.cierre and abiertos:
         print(f"FALLA  [cierre] quedan {abiertos} afirmaciones pendientes, por reverificar o que discrepan")
         return 1

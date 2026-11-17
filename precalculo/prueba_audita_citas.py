@@ -14,6 +14,12 @@ códigos esperados: ni se escapa el defecto, ni salta una alarma que no toca.
 No depende de Zotero, de los PDF ni de la red: la biblioteca es de juguete.
 Sí usa pandoc, porque F02 compara contra lo que escribe genera_referencias.py.
 
+Desde el 2026-11-17 el literal de cada cita vive fuera de git
+(`_local/citas/capN.yml`) y el registro guarda su huella y su recuento: el
+capítulo de prueba se construye así, y cinco inyecciones vigilan esa frontera
+(literal alterado frente a su huella, literal ausente, recuento falseado,
+huella ausente y literal devuelto al registro versionado).
+
 Uso:  python3 precalculo/prueba_audita_citas.py
 Devuelve 1 si alguna inyección no se detecta como se esperaba.
 """
@@ -99,6 +105,7 @@ def sha(dato: bytes) -> str:
 def construye(base: pathlib.Path) -> None:
     bib, sitio = base / "bibliografia", base / "Htmls_Series"
     (bib / "contraste").mkdir(parents=True)
+    (bib / "_local" / "citas").mkdir(parents=True)
     (bib / "_local" / "texto" / "perez2020series").mkdir(parents=True)
     (bib / "_local" / "web" / "gomez1990metodo").mkdir(parents=True)
     (base / "ensamblado" / "cap3").mkdir(parents=True)
@@ -150,12 +157,12 @@ def construye(base: pathlib.Path) -> None:
     escribe_registro(bib, 1, [
         {"id": "c1-m1-01", "tipo": "resultado", "afirmacion": "la MM centrada elimina la estacionalidad",
          "hash_texto": h(cap1, "c1-m1-01"), "veredicto": "respaldada", "verificado_por": "verificador A",
-         "fuentes": [{"clave": "perez2020series", "loc": "p. 3", "clase": "PDF", "pagina_pdf": 5, "cita": CITA_1}],
+         "fuentes": [{"clave": "perez2020series", "loc": "p. 3", "clase": "PDF", "pagina_pdf": 5, **huella(CITA_1)}],
          **comun},
         {"id": "c1-m1-02", "tipo": "atribucion", "afirmacion": "el procedimiento es robusto",
          "hash_texto": h(cap1, "c1-m1-02"), "veredicto": "con-matiz", "verificado_por": "verificador A",
          "nota": "la fuente habla de residuos, no de valores atípicos en general",
-         "fuentes": [{"clave": "gomez1990metodo", "loc": "§2", "clase": "WEB", "instantanea": "pagina", "cita": CITA_2}],
+         "fuentes": [{"clave": "gomez1990metodo", "loc": "§2", "clase": "WEB", "instantanea": "pagina", **huella(CITA_2)}],
          **comun},
         {"id": "c1-m1-03", "tipo": "resultado", "afirmacion": "normalización deducida en el material",
          "hash_texto": h(cap1, "c1-m1-03"), "veredicto": "propia", **comun},
@@ -167,6 +174,31 @@ def construye(base: pathlib.Path) -> None:
         {"id": "c3-m1-01", "tipo": "resultado", "afirmacion": "demostrado en el capítulo",
          "hash_texto": h(HTML_CAP3, "c3-m1-01"), "veredicto": "propia", **comun},
     ])
+    escribe_literales(bib, 1, {"c1-m1-01": {1: CITA_1}, "c1-m1-02": {1: CITA_2}})
+
+
+def huella(literal: str) -> dict:
+    """Lo que el registro versionado guarda de una cita: huella y recuento."""
+    return {"cita_sha256": audita_citas.huella_cita(literal), "cita_palabras": audita_citas.palabras_cita(literal)}
+
+
+def escribe_literales(bib: pathlib.Path, capitulo: int, citas: dict) -> None:
+    (bib / "_local" / "citas" / f"cap{capitulo}.yml").write_text(
+        yaml.safe_dump({"capitulo": capitulo, "citas": citas}, allow_unicode=True, sort_keys=False), "utf-8")
+
+
+def edita_literal(base: pathlib.Path, capitulo: int, ident: str, posicion: int, nuevo: str | None,
+                  registro_tambien: bool = False) -> None:
+    """Cambia (o borra, con None) un literal local; si se pide, el registro le sigue."""
+    ruta = base / "bibliografia" / "_local" / "citas" / f"cap{capitulo}.yml"
+    dato = yaml.safe_load(ruta.read_text("utf-8"))
+    if nuevo is None:
+        del dato["citas"][ident][posicion]
+    else:
+        dato["citas"][ident][posicion] = nuevo
+    ruta.write_text(yaml.safe_dump(dato, allow_unicode=True, sort_keys=False), "utf-8")
+    if registro_tambien and nuevo is not None:
+        edita_registro(base, capitulo, ident, lambda e: e["fuentes"][posicion - 1].update(huella(nuevo)))
 
 
 def escribe_registro(bib: pathlib.Path, capitulo: int, afirmaciones: list[dict]) -> None:
@@ -260,7 +292,8 @@ def i_localizador_libre(b):
 
 
 def i_cita_alterada(b):
-    edita_registro(b, 1, "c1-m1-01", lambda e: e["fuentes"][0].update(cita=CITA_1.replace("exactamente", "casi")))
+    # Literal y registro coherentes entre sí, pero el literal no está en la fuente.
+    edita_literal(b, 1, "c1-m1-01", 1, CITA_1.replace("exactamente", "casi"), registro_tambien=True)
 
 
 def i_pagina_equivocada(b):
@@ -322,7 +355,32 @@ def i_prosa_cambiada(b):
 
 def i_cita_larga(b):
     larga = " ".join(audita_citas.normaliza(PAGINA_5).split()[2:])
-    edita_registro(b, 1, "c1-m1-01", lambda e: e["fuentes"][0].update(cita=larga))
+    edita_literal(b, 1, "c1-m1-01", 1, larga, registro_tambien=True)
+
+
+def i_literal_sin_su_huella(b):
+    # Alguien movió el literal local una palabra y no tocó el registro. El
+    # tramo nuevo también está en la página y tiene las mismas palabras: solo
+    # la huella lo delata.
+    otro = "m " + CITA_1.removesuffix(" completo")
+    assert audita_citas.palabras_cita(otro) == audita_citas.palabras_cita(CITA_1)
+    edita_literal(b, 1, "c1-m1-01", 1, otro)
+
+
+def i_literal_ausente(b):
+    edita_literal(b, 1, "c1-m1-01", 1, None)
+
+
+def i_palabras_falseadas(b):
+    edita_registro(b, 1, "c1-m1-01", lambda e: e["fuentes"][0].update(cita_palabras=12))
+
+
+def i_huella_ausente(b):
+    edita_registro(b, 1, "c1-m1-02", lambda e: e["fuentes"][0].pop("cita_sha256"))
+
+
+def i_literal_vuelve_a_git(b):
+    edita_registro(b, 1, "c1-m1-02", lambda e: e["fuentes"][0].update(cita=CITA_2))
 
 
 def i_fuera_del_ensamblado(b):
@@ -356,6 +414,11 @@ INYECCIONES = [
     ("quien verifica es quien redactó", i_autoverificacion, {"F08"}),
     ("la prosa cambió después del contraste", i_prosa_cambiada, {"F09"}),
     ("cita literal de más de 25 palabras", i_cita_larga, {"F11"}),
+    ("literal local retocado sin cambiar su huella", i_literal_sin_su_huella, {"F05"}),
+    ("literal local ausente: no comprobable, no aprueba", i_literal_ausente, {"F05"}),
+    ("`cita_palabras` que no es el recuento del literal", i_palabras_falseadas, {"F11"}),
+    ("fuente sin `cita_sha256`", i_huella_ausente, {"F04"}),
+    ("el literal vuelve al registro versionado", i_literal_vuelve_a_git, {"F13"}),
     ("afirmación ausente de las fuentes de ensamblado", i_fuera_del_ensamblado, {"F12"}),
 ]
 
@@ -398,11 +461,28 @@ def main() -> int:
         shutil.rmtree(copia / BIB / "_local")
         hallazgos, cuenta = audita_citas.audita(copia / BIB, copia / "Htmls_Series", sin_cache=True,
                                                 dir_ensamblado=copia / "ensamblado")
-        if [x for x in hallazgos if not x.aviso] or cuenta["sin_cache"] != 2 or cuenta["comprobadas"] != 0:
+        no_comprobables = cuenta["sin_cache"] + cuenta["sin_literal"]
+        if [x for x in hallazgos if not x.aviso] or no_comprobables != 2 or cuenta["comprobadas"] != 0:
             falla = True
             print("FALLA  --sin-cache: debía informar de 2 citas no comprobables y no aprobar ninguna")
         else:
             print("OK     --sin-cache informa de 2 citas no comprobables y no da ninguna por comprobada")
+
+        # Con la caché pero sin los literales (un clon público): tampoco aprueba nada
+        copia = pathlib.Path(temporal) / "sin_literales"
+        shutil.copytree(molde, copia)
+        shutil.rmtree(copia / BIB / "_local" / "citas")
+        sin = audita_citas.audita(copia / BIB, copia / "Htmls_Series", dir_ensamblado=copia / "ensamblado")[0]
+        hallazgos, cuenta = audita_citas.audita(copia / BIB, copia / "Htmls_Series", sin_cache=True,
+                                                dir_ensamblado=copia / "ensamblado")
+        if {x.codigo for x in sin if not x.aviso} != {"F05"} \
+                or not all("no comprobable aquí" in x.que for x in sin if not x.aviso) \
+                or [x for x in hallazgos if not x.aviso] or cuenta["sin_literal"] != 2 or cuenta["comprobadas"] != 0:
+            falla = True
+            print("FALLA  sin _local/citas/: debía decir «no comprobable aquí» de 2 citas y no aprobar ninguna")
+        else:
+            print("OK     sin _local/citas/: «no comprobable aquí» en 2 citas (F05; con --sin-cache, solo informa)"
+                  " y ninguna comprobada")
 
     total = len(INYECCIONES)
     print(f"\n{'FALLA' if falla else 'OK   '}  {total} inyecciones" + ("" if falla else ", todas detectadas con su código exacto"))

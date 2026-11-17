@@ -1,0 +1,2069 @@
+# Registro de contraste · Capítulo 2 · Estacionariedad, ACF y PACF
+#
+# Cada entrada une una afirmación del capítulo (el elemento con ese
+# `data-afirma`) con el pasaje LEÍDO que la respalda. La cita literal vive
+# fuera de git, en `bibliografia/_local/citas/cap2.yml`; aquí quedan su huella
+# (`cita_sha256`, del literal normalizado) y su número de palabras, y
+# `precalculo/audita_citas.py` busca el literal en el texto de la fuente, en la
+# sección o página que dice `loc`. Quien verifica no es quien redactó.
+#
+# Ronda R4 «fuentes» (2026-11-17). Este archivo lo escribe
+# `diagnostico/cap2/comprobaciones/r4_registro.py` a partir de su tabla de
+# entradas: el redactor leyó cada pasaje en la caché local (FPP3, Cryer y Chan,
+# Hamilton y la ayuda de R), copió de ahí la cita y el guion la comprobó antes
+# de escribir. Los veredictos son la PROPUESTA del redactor: ninguna entrada
+# lleva `verificado_por` hasta que la firme un verificador que no redactó.
+# Las citas de Hamilton reproducen las erratas de su escaneo.
+#
+# Lo que NO se pudo contrastar queda `pendiente` con su motivo y sin
+# localizador: lo que depende de la 4.ª edición de Shumway y Stoffer (solo hay
+# la 3.ª, parcial), de Kwiatkowski et al. (1992) y de Guerrero (1993), que están
+# en la biblioteca sin texto, y de la serie de datos.gov.co, que no es una obra
+# de la biblioteca. Lo que el capítulo dice del software (tseries, forecast,
+# urca, statsmodels) y ninguna obra respalda es `propia`: se comprobó
+# ejecutando o leyendo el código, en `comprobaciones/r4_software.*`.
+capitulo: 2
+archivo: Htmls_Series/capitulo-2-estacionariedad-acf-pacf.html
+afirmaciones:
+
+- id: c2-m1-01
+  tipo: definicion
+  afirmacion: "Modelar la dependencia temporal exige que las reglas del juego no cambien con el tiempo: esa es la idea de estacionariedad."
+  hash_texto: "4e9db92f90dfbcb9"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "2e29b123d01f5a025ec6eaf5827ed16dcfa5590e9afcff643971ef2f20a6f919"
+    cita_palabras: 8
+  - clave: cryer2008time
+    loc: "p. 16"
+    clase: PDF
+    pagina_pdf: 29
+    cita_sha256: "cd11c67aec56ec066126671cc76eb80331cd321dac89665d470bef50b0cc3a7d"
+    cita_palabras: 13
+  nota: >-
+    «Las reglas del juego» es la imagen del capítulo para lo que Cryer y Chan llaman las leyes de probabilidad
+    del proceso y FPP3 sus propiedades estadísticas. La cita visible es la de FPP3.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m1-03
+  tipo: definicion
+  afirmacion: "Un proceso es estrictamente estacionario si la distribución conjunta de cualquier conjunto de instantes es la misma tras cualquier desplazamiento."
+  hash_texto: "b71fc47532a35232"
+  veredicto: respaldada
+  fuentes:
+  - clave: cryer2008time
+    loc: "p. 16"
+    clase: PDF
+    pagina_pdf: 29
+    cita_sha256: "19939325578cc99303aa477d4fed4afe241eed28b23ee01fcda2bf3c66872a5e"
+    cita_palabras: 7
+  - clave: hamilton1994time
+    loc: "p. 46"
+    clase: PDF
+    pagina_pdf: 61
+    cita_sha256: "123256b85625678a8d4cf81581ae37288b613e1f52e856d9ad5fc34fd653c4df"
+    cita_palabras: 8
+  nota: >-
+    Los subíndices de las fórmulas salen partidos en el texto extraído: las citas son los tramos de prosa. La
+    notación del capítulo (instantes t_1…t_k, desplazamiento h) es la suya.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m1-04
+  tipo: resultado
+  afirmacion: "La estacionariedad estricta es una condición muy fuerte y difícil de verificar con una sola realización."
+  hash_texto: "e0483dc983095cdd"
+  veredicto: pendiente
+  motivo: >-
+    Solo se ha leído en la 3.ª edición de Shumway y Stoffer (2011), que no es la que cita el curso; la 4.ª
+    (2017) no está en la caché. Queda a la espera de que Javier la consiga con el acceso institucional.
+  nota: >-
+    En la 3.ª edición el pasaje dice que la estacionariedad estricta es demasiado fuerte para la mayoría de las
+    aplicaciones y difícil de evaluar con un solo conjunto de datos. El capítulo decía «imposible»: se cambió a
+    «difícil», que es lo que dice lo leído.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m1-05
+  tipo: regla
+  afirmacion: "Se trabaja con una versión más manejable de la estacionariedad, que solo pide que los dos primeros momentos sean invariantes."
+  hash_texto: "d9becd380b99ffcd"
+  veredicto: respaldada
+  fuentes:
+  - clave: cryer2008time
+    loc: "p. 17"
+    clase: PDF
+    pagina_pdf: 30
+    cita_sha256: "40095ca038bbbf5537ca2971df25c6eaa938d3d914e47be4940207ba6a0585c8"
+    cita_palabras: 6
+  - clave: hamilton1994time
+    loc: "p. 46"
+    clase: PDF
+    pagina_pdf: 61
+    cita_sha256: "5126babe76802d59bf0797203adadd14e8a7b9e9e9f4ab49fc844441228fc504"
+    cita_palabras: 9
+  nota: >-
+    TRAS LA VERIFICACIÓN. Entrada nueva. La frase decía «se trabaja casi siempre», una afirmación sobre la
+    práctica sin fuente: se quitó. Lo que las fuentes sostienen es que los dos manuales adoptan la versión débil
+    como su «estacionaria» sin más; «más manejable» es del capítulo.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m1-06
+  tipo: definicion
+  afirmacion: "Un proceso es débilmente estacionario si su media es constante, su varianza es finita y constante, y la covarianza entre dos instantes depende solo del rezago."
+  hash_texto: "c79174f97385e840"
+  veredicto: respaldada
+  fuentes:
+  - clave: cryer2008time
+    loc: "p. 17"
+    clase: PDF
+    pagina_pdf: 30
+    cita_sha256: "3627419108531369c50b6daa7975281e2513d03d0ead015bb23c6485fda37799"
+    cita_palabras: 5
+  - clave: cryer2008time
+    loc: "p. 17"
+    clase: PDF
+    pagina_pdf: 30
+    cita_sha256: "df8b02df84696bd310f16defa2ee05e34a4914075df0a508cc9dcc82826e530a"
+    cita_palabras: 7
+  - clave: hamilton1994time
+    loc: "p. 45"
+    clase: PDF
+    pagina_pdf: 60
+    cita_sha256: "583171a449104bf1c1ccf3e795e1dd05d026326b1e897f2e87d501856a9a70a5"
+    cita_palabras: 11
+  nota: >-
+    TRAS LA VERIFICACIÓN. La cita iba pegada a «las tres condiciones» y la p. 17 enumera dos: se movió tras
+    «débilmente estacionario». Cryer y Chan dan dos condiciones (media constante y covarianza que depende solo
+    del rezago); la segunda, con rezago cero, es la varianza constante que el capítulo enumera aparte. La
+    finitud de la varianza está implícita en las dos fuentes. La cita de Hamilton reproduce las erratas del
+    escaneo.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m1-07
+  tipo: resultado
+  afirmacion: "La estacionariedad estricta con varianza finita implica la débil, pero no al revés; si el proceso es gaussiano, las dos coinciden."
+  hash_texto: "bfca55170beac7cc"
+  veredicto: respaldada
+  fuentes:
+  - clave: hamilton1994time
+    loc: "p. 46"
+    clase: PDF
+    pagina_pdf: 61
+    cita_sha256: "f354fc1a0b9f425f216b0de2c935837214e15a5f22943831008763848f798ed0"
+    cita_palabras: 15
+  - clave: hamilton1994time
+    loc: "p. 46"
+    clase: PDF
+    pagina_pdf: 61
+    cita_sha256: "648cb371dc6f4077601b51c88f12d947d116f0342e50c0318ebf056686e5aa4e"
+    cita_palabras: 8
+  - clave: hamilton1994time
+    loc: "p. 46"
+    clase: PDF
+    pagina_pdf: 61
+    cita_sha256: "4424271afeee404512ae4df23f275b3e7f83a18d4c5e5b3d044d72bdc04be57d"
+    cita_palabras: 6
+  - clave: cryer2008time
+    loc: "p. 17"
+    clase: PDF
+    pagina_pdf: 30
+    cita_sha256: "a43ee343bf1227529fb7539057d0d617070b9d0c3b556655c001116408d76354"
+    cita_palabras: 4
+  nota: >-
+    La marca acaba antes de «En este curso…», que es la convención del capítulo (la misma que adoptan Hamilton y
+    Cryer y Chan en esas páginas).
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m1-13
+  tipo: resultado
+  afirmacion: "Una serie con estacionalidad no es estacionaria: su media depende del mes."
+  hash_texto: "30a7ccae0cbdafd0"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "a99ad5cba6a9d28a1accfb98a11b2a514e50ec3bdd5a383280f0923e8b0c349f"
+    cita_palabras: 6
+  nota: >-
+    FPP3 da la razón en general (la estacionalidad afecta al valor de la serie en distintos momentos); «su media
+    depende del mes» es la forma en que el capítulo lo concreta.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m1-15
+  tipo: resultado
+  afirmacion: "Los modelos ARMA y la inferencia que los acompaña suponen estacionariedad."
+  hash_texto: "28f57935c92cbec4"
+  veredicto: respaldada
+  fuentes:
+  - clave: cryer2008time
+    loc: "p. 16"
+    clase: PDF
+    pagina_pdf: 29
+    cita_sha256: "8b6ef5b0c60fde663617c3fb5c706f843e13d4034df074ecdec66b654a629f22"
+    cita_palabras: 5
+  - clave: cryer2008time
+    loc: "p. 55"
+    clase: PDF
+    pagina_pdf: 68
+    cita_sha256: "12ee225bbcfa0986d1f15963b1e15ce27cea730488f5d5938a706187d44f4ad6"
+    cita_palabras: 5
+  - clave: cryer2008time
+    loc: "p. 55"
+    clase: PDF
+    pagina_pdf: 68
+    cita_sha256: "d9a89b7f01b7d71466da812f2488eb8ad5ad7c6918caa9a39f9ef3e167c20b70"
+    cita_palabras: 6
+  nota: >-
+    TRAS LA VERIFICACIÓN. La p. 16 respalda solo la mitad de la frase (la inferencia exige supuestos, y el más
+    importante es la estacionariedad; dice «usually»); se añadió la p. 55, donde Cryer y Chan presentan los ARMA
+    como modelos para series estacionarias. La cita visible sigue en la p. 16. La marca cubre solo la primera
+    frase; lo que sigue no se ha contrastado.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m2-01
+  tipo: definicion
+  afirmacion: "El ruido blanco es el ladrillo con el que se construyen todos los modelos del curso."
+  hash_texto: "58ce70279e07eb70"
+  veredicto: con-matiz
+  fuentes:
+  - clave: hamilton1994time
+    loc: "p. 47"
+    clase: PDF
+    pagina_pdf: 62
+    cita_sha256: "4ca8336fb6bdc1ce5012cc1893f05ca020897065b62f82cd33e93a6cc0bed616"
+    cita_palabras: 12
+  - clave: cryer2008time
+    loc: "p. 17"
+    clase: PDF
+    pagina_pdf: 30
+    cita_sha256: "69652505c470af0c80ec90770bc0c13b507a1a5ef436fe5a28a0d2e95b84e0d9"
+    cita_palabras: 4
+  nota: >-
+    TRAS LA VERIFICACIÓN. Pasa a con-matiz: Hamilton lo dice de «todos los procesos de este capítulo» (su
+    capítulo 3, ARMA estacionarios) y Cryer y Chan de «muchos procesos útiles»; «todos los modelos del curso» es
+    más general que las dos.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m2-02
+  tipo: definicion
+  afirmacion: "Ruido blanco: media cero, varianza constante y covarianzas nulas entre instantes distintos; si además es independiente y normal, ruido blanco gaussiano."
+  hash_texto: "ae3270b0175b4d79"
+  veredicto: respaldada
+  fuentes:
+  - clave: hamilton1994time
+    loc: "pp. 47–48"
+    clase: PDF
+    pagina_pdf: 62
+    cita_sha256: "30289119adb30d3ba7ffdb1428be683e6168423f7484c966fe1df3e65a3b2d82"
+    cita_palabras: 7
+  - clave: hamilton1994time
+    loc: "pp. 47–48"
+    clase: PDF
+    pagina_pdf: 62
+    cita_sha256: "a9f5e7a6546b5e90550642a71394a9ad33014b240b01aa519fb50476d2cff959"
+    cita_palabras: 8
+  - clave: hamilton1994time
+    loc: "pp. 47–48"
+    clase: PDF
+    pagina_pdf: 62
+    cita_sha256: "8accef0a325802ade4eae71b088a0d330c0548c471211c19c9e468e875cc88df"
+    cita_palabras: 7
+  - clave: hamilton1994time
+    loc: "pp. 47–48"
+    clase: PDF
+    pagina_pdf: 62
+    cita_sha256: "c86ff2a1ed388e54c8fb940821486a813191150b43b69a9cd550098802a98848"
+    cita_palabras: 8
+  nota: >-
+    El capítulo sigue la definición de Hamilton (incorrelación). Cryer y Chan (p. 17) definen el ruido blanco
+    como una sucesión de variables independientes e idénticamente distribuidas, que es más exigente: es la
+    distinción que el propio módulo explica en el recuadro siguiente. Para que la cita no quedara sin punto
+    final se añadió uno tras ella.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m2-03
+  tipo: resultado
+  afirmacion: "Incorrelación no es independencia; una serie incorrelada puede tener cuadrados con estructura, y esa es la puerta a los modelos ARCH/GARCH, que explican por qué los rendimientos financieros parecen ruido blanco y sus cuadrados no."
+  hash_texto: "0d44b082ea85c420"
+  veredicto: respaldada
+  fuentes:
+  - clave: hamilton1994time
+    loc: "p. 48"
+    clase: PDF
+    pagina_pdf: 63
+    cita_sha256: "87012225b39d070c4c5684886624d13a36c8b516a55684cf9c2ffab2460de4e7"
+    cita_palabras: 9
+  - clave: cryer2008time
+    loc: "p. 285"
+    clase: PDF
+    pagina_pdf: 295
+    cita_sha256: "061b0763a4995d16e86af15ca57fdb842d514f04cb1ff8380757d877334c23ac"
+    cita_palabras: 8
+  - clave: cryer2008time
+    loc: "p. 285"
+    clase: PDF
+    pagina_pdf: 295
+    cita_sha256: "54060fbea15f977546e001fc1553aeffd440fd7e8e1170396e919b37039e80a6"
+    cita_palabras: 6
+  nota: >-
+    En Hamilton, [3.2.4] es la independencia y [3.2.3] la incorrelación. Cryer y Chan lo muestran con los
+    rendimientos diarios de CREF (pp. 281 y 285) y presentan ARCH y GARCH a continuación. «Estructura clarísima»
+    es énfasis del capítulo.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m2-06
+  tipo: resultado
+  afirmacion: "Si la serie es ruido blanco independiente, cada autocorrelación muestral es aproximadamente N(0, 1/T), y por eso la banda ±1.96/√T contiene el 95 % de las barras."
+  hash_texto: "9b8ceec652d1e657"
+  veredicto: respaldada
+  fuentes:
+  - clave: cryer2008time
+    loc: "p. 110"
+    clase: PDF
+    pagina_pdf: 121
+    cita_sha256: "0e22305f6646f79de48edad11317cd24b06c4b79b26603ed392e880531a8b875"
+    cita_palabras: 8
+  - clave: cryer2008time
+    loc: "p. 110"
+    clase: PDF
+    pagina_pdf: 121
+    cita_sha256: "6017dd658e699901b2e948795f719210054011363a063c6660c648711c59c760"
+    cita_palabras: 5
+  - clave: hyndman2021forecasting
+    loc: "§2.9"
+    clase: WEB
+    instantanea: graphics
+    cita_sha256: "227a4b9e2a4c3ade130365004c6dc29eb06cb46d834646ef844a0d799123e801"
+    cita_palabras: 10
+  nota: >-
+    En Cryer y Chan el ruido blanco es i.i.d. por definición (p. 17), así que su Var(r_k) ≈ 1/n vale para el
+    caso independiente, que es el que el capítulo exige. FPP3 da la banda para «white noise» sin precisar. La
+    condición i.i.d. con cuarto momento finito está escrita en Shumway y Stoffer (3.ª ed., p. 29, nota 5),
+    edición que no se cita.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m2-08
+  tipo: regla
+  afirmacion: "Una barra que apenas asoma fuera de la banda no basta como evidencia; una barra muy grande, o un patrón, sí."
+  hash_texto: "8407a524964a2c14"
+  veredicto: con-matiz
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§2.9"
+    clase: WEB
+    instantanea: graphics
+    cita_sha256: "2a5fa5b26b07a7aa85a0b7fa1e77f76c1385294de7f17c2f1a449ba831fdf083"
+    cita_palabras: 6
+  nota: >-
+    TRAS LA VERIFICACIÓN. «No es evidencia de nada» pasó a «no basta como evidencia». Sigue el matiz: FPP3 da
+    dos señales de que la serie no es ruido blanco —una o más barras grandes fuera de la banda, o bastante más
+    del 5 % de las barras fuera— y no habla de «un patrón», que es como el capítulo resume la segunda.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m2-09
+  tipo: regla
+  afirmacion: "Un buen modelo ha exprimido la estructura predecible y deja residuales indistinguibles del ruido blanco; si queda autocorrelación, queda información sin aprovechar."
+  hash_texto: "5ce13532aedca5d1"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§5.4"
+    clase: WEB
+    instantanea: toolbox
+    cita_sha256: "ecff85c495b0edaef6945ada9d6bf1345cea87e0ee531eae279dec90a2266ead"
+    cita_palabras: 7
+  nota: >-
+    TRAS LA VERIFICACIÓN. FRASE REESCRITA: decía «Un modelo… es bueno cuando…», que lo presentaba como criterio
+    suficiente. FPP3 lo da como propiedad que un buen método cumple y advierte de que cumplirla no impide que el
+    método se pueda mejorar ni sirve para elegir entre métodos.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m2-10
+  tipo: resultado
+  afirmacion: "Si el ruido es incorrelado pero no independiente, la varianza de r_k puede dejar de ser 1/T y la banda ya no cubre el 95 %."
+  hash_texto: "9865716c2aa15714"
+  veredicto: pendiente
+  motivo: >-
+    Ningún pasaje leído lo dice. La condición i.i.d. del resultado asintótico solo se ha leído en Shumway y
+    Stoffer, 3.ª ed. (p. 29, nota 5), que no es la edición que cita el curso; qué ocurre cuando falla no está en
+    la caché.
+  nota: >-
+    La frase la añadió la R1 a petición del par académico. La ayuda de plot.acf de R (sección Note) advierte de
+    que el intervalo se basa en una serie incorrelada y debe tratarse con cautela, lo que no es lo mismo.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m3-01
+  tipo: definicion
+  afirmacion: "La autocorrelación mide la relación lineal entre una serie y una copia de sí misma desplazada k instantes; es la versión numérica del gráfico de rezagos."
+  hash_texto: "cd8c3bc5ad5eb009"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§2.8"
+    clase: WEB
+    instantanea: graphics
+    cita_sha256: "65d3656bc0ba2b304832a45e018f8619f9aadacfbd24f14b630dd55201ee02b8"
+    cita_palabras: 7
+  - clave: hyndman2021forecasting
+    loc: "§2.8"
+    clase: WEB
+    instantanea: graphics
+    cita_sha256: "a7237e0b36349972288eaf32ba7464b8c859bb8b367d547c42a44da959ca83e8"
+    cita_palabras: 6
+  nota: >-
+    TRAS LA VERIFICACIÓN. FRASE REESCRITA: «cuánto se parece» pasó a «la relación lineal», que es lo que dice
+    FPP3.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m3-05
+  tipo: resultado
+  afirmacion: "En la autocovarianza muestral la suma tiene T−k términos pero se divide entre T."
+  hash_texto: "980e009532488466"
+  veredicto: respaldada
+  fuentes:
+  - clave: cryer2008time
+    loc: "p. 46"
+    clase: PDF
+    pagina_pdf: 59
+    cita_sha256: "e9f707aaf35730a027d5b8309ce799363bc61e2f7fd789da981cdad235e56eba"
+    cita_palabras: 9
+  nota: >-
+    Es la ecuación (3.6.2) de esa página, la misma que el capítulo escribe arriba; FPP3 §2.8 da la misma
+    fórmula. La razón del divisor va en c2-m3-15.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m3-06
+  tipo: dato
+  afirmacion: "acf() de R y acf(..., adjusted=False) de statsmodels usan el divisor T y por eso coinciden."
+  hash_texto: "3f88d9eceb403437"
+  veredicto: propia
+  nota: >-
+    Comprobado ejecutando: diagnostico/cap2/comprobaciones/r4_software.R y r4_software.py (diferencia máxima con
+    la fórmula de divisor T: 2e-15 en R y 2e-16 en statsmodels). La ayuda de acf() no escribe la fórmula: remite
+    a Venables y Ripley (2002), que no está en la biblioteca.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m3-07
+  tipo: definicion
+  afirmacion: "El correlograma es el gráfico de r_k contra k."
+  hash_texto: "ae9c8d5b15f42d99"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§2.8"
+    clase: WEB
+    instantanea: graphics
+    cita_sha256: "d7438e671145837954d383eff17477542eb2a0515d22ea98c468401766eaf197"
+    cita_palabras: 5
+  nota: >-
+    La marca acaba antes de «Es la herramienta de diagnóstico más importante del curso», que es una valoración
+    del capítulo.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m3-09
+  tipo: regla
+  afirmacion: "Tabla de patrones del correlograma: barras dentro de la banda, ruido blanco; decaimiento lento y casi lineal, tendencia o raíz unitaria que pide diferenciar; picos en los múltiplos de m, estacionalidad; decaimiento rápido, proceso estacionario."
+  hash_texto: "342453d44c0e660f"
+  veredicto: con-matiz
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§2.9"
+    clase: WEB
+    instantanea: graphics
+    cita_sha256: "05adff1daf85272ccae1d692c2eab8e7234f42e9f0a54b6e6c769be57e4442dc"
+    cita_palabras: 7
+  - clave: cryer2008time
+    loc: "p. 128"
+    clase: PDF
+    pagina_pdf: 139
+    cita_sha256: "f6e3632cae4248f13d434e35407a55aeff87d8caff38dade7dc77dbbc57402ce"
+    cita_palabras: 12
+  - clave: hyndman2021forecasting
+    loc: "§2.8"
+    clase: WEB
+    instantanea: graphics
+    cita_sha256: "16ea63d31e72d0718742e4a08a60282667e6fe41fe93a2888e1d977e2bbce375"
+    cita_palabras: 5
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "f94c061ec3c16990da80985bfdf56371c924a11dbaf86a8fcc10f215e6ab6e98"
+    cita_palabras: 8
+  nota: >-
+    La marca envuelve la tabla y la línea de fuentes que se le añadió debajo, que dice qué obra respalda cada
+    fila. Matices: (fila 2) Cryer y Chan dicen que el decaimiento lineal se toma a menudo como síntoma de no
+    estacionariedad que requiere diferenciar, y el capítulo lo matiza en el párrafo siguiente para la tendencia
+    determinista; (fila 4) FPP3 respalda que la ACF de una serie estacionaria cae pronto a cero, pero
+    «exponencial» y «memoria corta» son glosa del capítulo; (fila 1) «no queda estructura lineal» también. Las
+    cifras de la tercera columna son de R (precalculo/genera_cap2.R).
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m3-13
+  tipo: resultado
+  afirmacion: "Dos series no estacionarias independientes pueden mostrar correlación cruzada alta sin relación real: es la regresión espuria, y con series no estacionarias los estadísticos habituales engañan."
+  hash_texto: "cee89958d33e3679"
+  veredicto: respaldada
+  fuentes:
+  - clave: cryer2008time
+    loc: "pp. 263–264"
+    clase: PDF
+    pagina_pdf: 273
+    cita_sha256: "19f4a07fc97bad90139fccf339b87597ab77f61dd4f074ef5e4d71c3e5d0ad93"
+    cita_palabras: 5
+  - clave: cryer2008time
+    loc: "pp. 263–264"
+    clase: PDF
+    pagina_pdf: 273
+    cita_sha256: "daf8c64f097b68ca394ff53835cc07469235c1cdd973fd21b6701cefa6847e9d"
+    cita_palabras: 3
+  - clave: hamilton1994time
+    loc: "pp. 557–558"
+    clase: PDF
+    pagina_pdf: 572
+    cita_sha256: "50ac0eb5e609b880dd282e010f70d70e52652f54facadd654b571dc394643188"
+    cita_palabras: 9
+  - clave: hamilton1994time
+    loc: "pp. 557–558"
+    clase: PDF
+    pagina_pdf: 572
+    cita_sha256: "ad9593b3bdeafdd9d757a4620fd656d66a6f078842c9390d4762d8027e57665c"
+    cita_palabras: 11
+  nota: >-
+    TRAS LA VERIFICACIÓN. FRASE REESCRITA: decía «Dos series con tendencia creciente tendrán autocorrelaciones
+    altas y correlación cruzada alta». Cryer y Chan lo muestran con dos IMA(1,1) independientes, cuya
+    correlación cruzada se dispersa entre −1 y 1, y dicen «sometimes». Sobre los nombres: Cryer y Chan hablan de
+    correlación espuria (y la remontan a Yule, 1926); Hamilton, de regresión espuria entre series no
+    estacionarias cuyo residuo no es estacionario (Granger y Newbold, 1974). El capítulo no nombra a ninguno.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m3-15
+  tipo: resultado
+  afirmacion: "Dividir entre T garantiza que la matriz de autocovarianzas sea semidefinida positiva, a cambio de un sesgo pequeño hacia cero en rezagos grandes."
+  hash_texto: "b0f577e7770daaa2"
+  veredicto: pendiente
+  motivo: >-
+    Solo se ha leído en la 3.ª edición de Shumway y Stoffer (2011), que no es la que cita el curso; la 4.ª
+    (2017) no está en la caché. Queda a la espera de que Javier la consiga con el acceso institucional.
+  nota: >-
+    En la 3.ª edición (p. 29) el pasaje dice que el estimador con divisor n es una función definida no negativa
+    y el de divisor n−h no, y que ninguno de los dos es insesgado; no habla de un sesgo «hacia cero». Cryer y
+    Chan (p. 46) solo dicen que «por varias razones» esa es la definición estándar.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m3-16
+  tipo: resultado
+  afirmacion: "Las fórmulas de la autocorrelación muestral suponen una serie estacionaria."
+  hash_texto: "0df0ace6468d9775"
+  veredicto: respaldada
+  fuentes:
+  - clave: cryer2008time
+    loc: "p. 46"
+    clase: PDF
+    pagina_pdf: 59
+    cita_sha256: "3986f88d458279389b054111f72c60725a1b6781d0d68372529315f202cfa5f1"
+    cita_palabras: 9
+  nota: >-
+    La marca cubre solo esa oración. Lo que sigue —que en una caminata los r_k no estiman ninguna cantidad fija—
+    es la consecuencia que saca el capítulo.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m3-17
+  tipo: atribucion
+  afirmacion: "La prueba de Ljung–Box resume todas las autocorrelaciones en un solo p-valor."
+  hash_texto: "bdf5c4764acaacb5"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§5.4"
+    clase: WEB
+    instantanea: toolbox
+    cita_sha256: "7f7bdcf73eb6012ffed7258bddee208a1fcffc0f9352dc421b576ac178c1df97"
+    cita_palabras: 5
+  - clave: rcoreteam2026r
+    loc: "§Description"
+    clase: WEB
+    instantanea: Box.test
+    cita_sha256: "dfe1de5f9c126c2f1fc93c937edbc113e88dfd98783413eb5f2f20151f6bfdbd"
+    cita_palabras: 14
+  nota: >-
+    El nombre de la prueba se toma de FPP3 y de la ayuda de Box.test(); el artículo de Ljung y Box (1978) está
+    en la biblioteca sin texto y no se cita.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m4-01
+  tipo: definicion
+  afirmacion: "La ACF hace un doble conteo: si hoy depende de ayer y ayer de anteayer, hoy y anteayer pueden aparecer correlacionados aunque no haya relación directa."
+  hash_texto: "17c52a57d6950b5f"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§9.5"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "61a3ed1d0b7cb578a3590de00a60e059662bc48cb591fb8f57e745f067e3242e"
+    cita_palabras: 7
+  nota: >-
+    TRAS LA VERIFICACIÓN. «Aparecerán» pasó a «pueden aparecer»: FPP3 dice «might be correlated».
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m4-02
+  tipo: definicion
+  afirmacion: "La autocorrelación parcial en el rezago k es la correlación entre y_t e y_{t−k} descontado el efecto de los rezagos intermedios; equivale al último coeficiente de la mejor predicción lineal de y_t con sus k valores anteriores."
+  hash_texto: "30e03c279e12a9f1"
+  veredicto: respaldada
+  fuentes:
+  - clave: cryer2008time
+    loc: "p. 112"
+    clase: PDF
+    pagina_pdf: 123
+    cita_sha256: "e882381aa3aded36cc371a8ec53526c9696f6fb8968cce94fb8312d05e9784a1"
+    cita_palabras: 8
+  - clave: hamilton1994time
+    loc: "p. 111"
+    clase: PDF
+    pagina_pdf: 126
+    cita_sha256: "22ae960d45bad9b2339d1aa4594937f61171d1ed9931d95b443208486dabc6da"
+    cita_palabras: 17
+  - clave: hyndman2021forecasting
+    loc: "§9.5"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "cda0e85fb0e8c512bb6f742e8b27f0c60d03d10c48512a67f60c0937d96b7aaa"
+    cita_palabras: 7
+  nota: >-
+    TRAS LA VERIFICACIÓN. FRASE REESCRITA. Decía «es el coeficiente φ_kk de la regresión», con la cita entre «la
+    regresión» y su ecuación. Ahora sigue a Hamilton, que la define en la población como el último coeficiente
+    de la proyección lineal sobre los m valores más recientes del proceso centrado; la cita va antes de los dos
+    puntos. FPP3 dice que «se puede estimar» como el último coeficiente de un modelo autorregresivo: es fuente,
+    sin cita visible. La notación φ_kk es la de Cryer y Chan.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m4-04
+  tipo: atribucion
+  afirmacion: "La PACF muestral se calcula a partir de la ACF, sustituyendo ρ por r y aplicando la recursión de Durbin–Levinson; da los valores de pacf() en R y no coincide exactamente con el último coeficiente de una regresión por mínimos cuadrados."
+  hash_texto: "43e5cc350b21ce17"
+  veredicto: con-matiz
+  fuentes:
+  - clave: cryer2008time
+    loc: "p. 115"
+    clase: PDF
+    pagina_pdf: 126
+    cita_sha256: "0938753e26a82014b444aedf0acf37fca8ba3d79a46d43c7382321b07f497733"
+    cita_palabras: 9
+  - clave: cryer2008time
+    loc: "p. 115"
+    clase: PDF
+    pagina_pdf: 126
+    cita_sha256: "a84e821fdc4c2c0e337598c356b775e16ce2178225d3ebea15b8866edbc23894"
+    cita_palabras: 5
+  - clave: rcoreteam2026r
+    loc: "§Details"
+    clase: WEB
+    instantanea: acf
+    cita_sha256: "f9486000899102c864861337cb29a602f2b5b06e30ae3049a72658c428766659"
+    cita_palabras: 9
+  nota: >-
+    TRAS LA VERIFICACIÓN. FRASE REESCRITA. Decía «En la práctica no se corren k regresiones: se obtiene la
+    PACF…», que daba a entender que las k regresiones darían lo mismo. Cryer y Chan: la recursión resuelve el
+    sistema (6.2.8) y, sustituyendo las ρ por las r, da la PACF muestral. Matiz: las dos cosas que la frase dice
+    del software no vienen de la fuente y se comprobaron ejecutando: que los valores son los de pacf()
+    (r4_software.R, 4e-14; la ayuda de R no nombra la recursión) y que no coinciden con el último coeficiente
+    por MCO (maestra_r4.R: hasta 0.60 en log(AirPassengers), k = 12).
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m4-05
+  tipo: resultado
+  afirmacion: "Los coeficientes φ_k1, …, φ_kk de la definición satisfacen el sistema de Yule–Walker de orden k, cuya matriz son las autocorrelaciones."
+  hash_texto: "79cd7fc832e103fe"
+  veredicto: respaldada
+  fuentes:
+  - clave: cryer2008time
+    loc: "p. 114"
+    clase: PDF
+    pagina_pdf: 125
+    cita_sha256: "4116dd8ee52caf9ebb7e11a261cd7f844abd8763d5213c8f164a24bdf7cab05d"
+    cita_palabras: 6
+  nota: >-
+    TRAS LA VERIFICACIÓN. FRASE REESCRITA. Decía «Ajustar la regresión del rezago k equivale a resolver el
+    sistema de Yule–Walker», que solo vale en la población: Cryer y Chan lo enuncian para la PACF teórica de un
+    proceso estacionario, ecuaciones (6.2.7)–(6.2.8). Con datos, el último coeficiente de la regresión por MCO
+    difiere de pacf() (maestra_r4.out).
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m4-06
+  tipo: resultado
+  afirmacion: "El sistema se resuelve de forma recursiva, pasando de la solución de orden k−1 a la de orden k; el coeficiente nuevo es el cociente de la ecuación."
+  hash_texto: "1bcf00dd45a22cf9"
+  veredicto: respaldada
+  fuentes:
+  - clave: cryer2008time
+    loc: "p. 115"
+    clase: PDF
+    pagina_pdf: 126
+    cita_sha256: "2530efcd1bad494b1d0ff4f5d4ff1d8ca921a94bc568a87b6b5f7b750eb59a7a"
+    cita_palabras: 6
+  nota: >-
+    La fórmula es la (6.2.9) de Cryer y Chan. Que la matriz sea simétrica y de Toeplitz es una observación del
+    capítulo sobre la matriz que acaba de escribir; la fuente no usa ese nombre.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m4-07
+  tipo: resultado
+  afirmacion: "El denominador de la recursión es la varianza del error de predicción de orden k−1 (dividida entre γ_0), y v_k = v_{k−1}(1 − φ_kk²)."
+  hash_texto: "93078a5828bc0b2f"
+  veredicto: pendiente
+  motivo: >-
+    Solo se ha leído en la 3.ª edición de Shumway y Stoffer (2011), que no es la que cita el curso; la 4.ª
+    (2017) no está en la caché. Queda a la espera de que Javier la consiga con el acceso institucional.
+  nota: >-
+    En la 3.ª edición es la Propiedad 3.4 (p. 112), que escribe el error cuadrático de predicción P = P(1 −
+    φ_nn²). Cryer y Chan (p. 115) dan la recursión sin interpretar el denominador.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m4-08
+  tipo: resultado
+  afirmacion: "Los demás coeficientes se actualizan con una sola pasada, arrancando en φ_11 = ρ_1; cada rezago cuesta O(k) en vez de O(k³)."
+  hash_texto: "9d5219e012bd8a13"
+  veredicto: con-matiz
+  fuentes:
+  - clave: cryer2008time
+    loc: "p. 115"
+    clase: PDF
+    pagina_pdf: 126
+    cita_sha256: "7ba2cecbec8ceaa8cb0888ebf8f8c009b8de978ea183aaeaf53b96f5e392d2dc"
+    cita_palabras: 7
+  nota: >-
+    La fórmula de actualización y el arranque están en Cryer y Chan, ecuación (6.2.9). El costo O(k) frente a
+    O(k³) no está en ninguna fuente leída: es un recuento de operaciones del capítulo.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m4-09
+  tipo: dato
+  afirmacion: "Con la recursión coinciden pacf() de R y el método ldb de statsmodels, y es la que implementa calcularPACF(); el método ywm llega a los mismos valores resolviendo Yule–Walker."
+  hash_texto: "d11a50681076fd51"
+  veredicto: propia
+  nota: >-
+    Comprobado ejecutando: r4_software.R (pacf() frente a la recursión, 4e-14) y r4_software.py (ywm y ldb
+    frente a la recursión, 1e-14). El capítulo decía que pacf() y ldb «implementan» la recursión; se reescribió
+    a «coinciden», que es lo comprobado. Lo que hace cada método de statsmodels lo dice su docstring (0.14.6),
+    leído en esta sesión; statsmodels no es una obra de la biblioteca.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m4-11
+  tipo: regla
+  afirmacion: "Regla de identificación: PACF que se corta tras p y ACF que decae, AR(p); ACF que se corta tras q y PACF que decae, MA(q); las dos decaen, ARMA(p,q), y entonces los gráficos no dicen cuánto valen p y q."
+  hash_texto: "09c8115fb4e6e7f2"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§9.5"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "5ec0d2f6c45d5c94cbc67b9c509d6db966594e6fd7ce6df59bf197a807c385ce"
+    cita_palabras: 12
+  - clave: hyndman2021forecasting
+    loc: "§9.5"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "8a4723a0d90e7c058f1039175ea9eba5f691c0d9b64e015a6af989517a3093b3"
+    cita_palabras: 6
+  - clave: cryer2008time
+    loc: "p. 116"
+    clase: PDF
+    pagina_pdf: 127
+    cita_sha256: "9cb73d01278fc42301ccd3394e3dc54648b9ee12eab36f766727e7912965355f"
+    cita_palabras: 8
+  nota: >-
+    La marca es el recuadro entero. FPP3 lo enuncia para ARIMA(p,d,0) y ARIMA(0,d,q) sobre los datos
+    diferenciados. Las tres columnas (decae / se corta) son el cuadro 6.3 de Cryer y Chan, p. 116.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m4-12
+  tipo: regla
+  afirmacion: "La banda ±1.96/√T de la PACF vale para los rezagos mayores que p cuando la serie sigue un AR(p); el ruido blanco es el caso p = 0."
+  hash_texto: "6c74e7d54744eabd"
+  veredicto: respaldada
+  fuentes:
+  - clave: cryer2008time
+    loc: "p. 115"
+    clase: PDF
+    pagina_pdf: 126
+    cita_sha256: "2d3536a3565dde9091d5fbde188e868b940bfa7d6f14765a9b99110c6aa6c63c"
+    cita_palabras: 13
+  - clave: hamilton1994time
+    loc: "p. 112"
+    clase: PDF
+    pagina_pdf: 127
+    cita_sha256: "590427b5347c25a40bdb8cdd877a8bfae64281a1871a52a3d34da73aba2ea401"
+    cita_palabras: 18
+  nota: >-
+    FRASE REESCRITA. El capítulo decía que la banda «vale bajo la hipótesis de que la serie es ruido blanco».
+    Las dos fuentes dan el resultado bajo un AR(p), para rezagos mayores que p (Cryer y Chan lo atribuyen a
+    «Quenoulle (1949)», así escrito en el texto extraído); el ruido blanco es el caso p = 0, y eso último lo
+    añade el capítulo. Cryer y Chan usan ±2/√n.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m4-14
+  tipo: dato
+  afirmacion: "La TRM es la tasa de cambio del peso frente al dólar; aquí, su promedio mensual de enero de 2015 a junio de 2026, 138 meses, calculado con la serie diaria de datos.gov.co."
+  hash_texto: "8974bc15da425faa"
+  veredicto: pendiente
+  motivo: >-
+    La serie de datos.gov.co no es una obra de la biblioteca ni tiene instantánea: falta darla de alta en «4
+    Datos y software» con su URL y la fecha de la copia.
+  nota: >-
+    Las cifras (138 meses, el rango de fechas) salen de la copia fija en Htmls_Series/datos/, que lee
+    precalculo/genera_cap2.R.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m5-01
+  tipo: resultado
+  afirmacion: "En el AR(1): con |φ| < 1 el proceso es estacionario y su ACF es φ^k; con φ = 1 es la caminata aleatoria, con raíz unitaria; con |φ| > 1 es explosivo, una no estacionariedad menos razonable que la de φ = 1."
+  hash_texto: "c14fe03684654411"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§9.3"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "e2e5ddd8081c1f294bc53de7ca844cc28815cb42148fef394cea1c5d7d6d385d"
+    cita_palabras: 9
+  - clave: hyndman2021forecasting
+    loc: "§9.3"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "7c69b505d4245242471bf25a8bcd9a53832fda3ddb34a3b681b06631799286b5"
+    cita_palabras: 7
+  - clave: cryer2008time
+    loc: "p. 67"
+    clase: PDF
+    pagina_pdf: 80
+    cita_sha256: "88411c3ab8f745fdffd809f746ce587fb2ae9ec6c22990e71b27ee93c9084b63"
+    cita_palabras: 4
+  - clave: cryer2008time
+    loc: "p. 89"
+    clase: PDF
+    pagina_pdf: 101
+    cita_sha256: "aff39e765357411ec8c6ffb2e4e28d22b53030bf5b3045c45be527ce7625f46b"
+    cita_palabras: 7
+  - clave: cryer2008time
+    loc: "p. 89"
+    clase: PDF
+    pagina_pdf: 101
+    cita_sha256: "635f2be24e4e9627e30b3279cbb8951eccf0aed25cbcfada074279198f544435"
+    cita_palabras: 10
+  nota: >-
+    TRAS LA VERIFICACIÓN. FRASE REESCRITA: «Rara vez sirve para modelar datos reales», que la fuente no dice,
+    pasó a «Es una no estacionariedad menos razonable que la de φ = 1», que es lo que dicen Cryer y Chan en la
+    p. 89. La marca es la lista de los tres casos. En el texto extraído de la p. 71 se pierden las barras del
+    valor absoluto. Que el efecto de un choque a h periodos es φ^h sale de la representación (4.3.8) de la p.
+    70, no citada.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m5-04
+  tipo: resultado
+  afirmacion: "En la caminata aleatoria la varianza es tσ² y un choque tiene efecto permanente."
+  hash_texto: "1c7a271052e97191"
+  veredicto: respaldada
+  fuentes:
+  - clave: cryer2008time
+    loc: "p. 13"
+    clase: PDF
+    pagina_pdf: 26
+    cita_sha256: "2de9ae730e099cdcfb734c2bc592cedf69112f9302aa02c41bc0752eec8153d9"
+    cita_palabras: 7
+  - clave: hamilton1994time
+    loc: "p. 443"
+    clase: PDF
+    pagina_pdf: 458
+    cita_sha256: "b6e48988f72db24bb3951740168bceed495762d0297c54cb0bd5a15377fc6e62"
+    cita_palabras: 13
+  nota: >-
+    La varianza es la ecuación (2.2.11) de Cryer y Chan. Hamilton lo enuncia para cualquier proceso con raíz
+    unitaria.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m5-05
+  tipo: definicion
+  afirmacion: "La condición de estacionariedad equivale a que la raíz del polinomio característico esté fuera del círculo unitario; con φ = 1 la raíz vale 1, y de ahí el nombre."
+  hash_texto: "341d53915a17a8e6"
+  veredicto: respaldada
+  fuentes:
+  - clave: cryer2008time
+    loc: "p. 71"
+    clase: PDF
+    pagina_pdf: 84
+    cita_sha256: "34e1807310b5a19cf0530677313c1213d1df0e24f6e649ae4abf24f35a92334f"
+    cita_palabras: 7
+  - clave: cryer2008time
+    loc: "p. 128"
+    clase: PDF
+    pagina_pdf: 139
+    cita_sha256: "9e229164e1f0480d7f3cf8dd9581c192741dfd13a9db41c6a637227a43068e2f"
+    cita_palabras: 5
+  nota: >-
+    Cryer y Chan enuncian la condición de las raíces para el AR(2) y dicen que vale sin cambios para el orden p;
+    el caso del AR(1), con raíz 1/φ, lo escribe el capítulo.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m5-07
+  tipo: resultado
+  afirmacion: "Cuanto más corta la muestra y más cerca φ de 1, menos se distinguen φ = 0.95 y φ = 1: acaba siendo casi imposible."
+  hash_texto: "4cc28ac38b6d3bc0"
+  veredicto: con-matiz
+  fuentes:
+  - clave: hamilton1994time
+    loc: "p. 445"
+    clase: PDF
+    pagina_pdf: 460
+    cita_sha256: "5d6abc258e26c43b9570284032c74ddff9907efda1e8dfc2022223917806359f"
+    cita_palabras: 14
+  nota: >-
+    TRAS LA VERIFICACIÓN. Pasa a con-matiz. Hamilton (§15.4) dice que, para cualquier tamaño de muestra dado,
+    existe un proceso estacionario indistinguible de uno con raíz unitaria. Ni el 0.95, ni que la dificultad
+    crezca al acortarse la muestra, ni que se trate de los correlogramas están en la fuente: son la concreción
+    del capítulo sobre su simulador.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m5-09
+  tipo: definicion
+  afirmacion: "Al añadir una constante se obtiene la caminata aleatoria con deriva."
+  hash_texto: "6d0ece87d65a7403"
+  veredicto: respaldada
+  fuentes:
+  - clave: hamilton1994time
+    loc: "p. 436"
+    clase: PDF
+    pagina_pdf: 451
+    cita_sha256: "327e3b6e18859e3c8443a9a1216c4fd49159ad663cfb2d9ffc9fdc75791d5990"
+    cita_palabras: 10
+  - clave: hyndman2021forecasting
+    loc: "§9.3"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "0cd9cafcb6a4878efcaed02a8fc8717aae5306a956508ad68ca4fb417886e705"
+    cita_palabras: 9
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "c8b44105710c6967062559421668909de6d6f138956a1fd5a4dd96d489b4d30f"
+    cita_palabras: 6
+  nota: >-
+    TRAS LA VERIFICACIÓN. La cita visible pasó de FPP3 §9.1, que describe el modelo sin nombrarlo, a Hamilton p.
+    436, que sí usa el nombre; FPP3 lo usa en §9.3. La forma resuelta y_t = y_0 + ct + Σε es la del ejercicio
+    2.19 de Cryer y Chan (p. 22).
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m5-10
+  tipo: resultado
+  afirmacion: "En la caminata con deriva la serie sube en promedio c por periodo pero no vuelve a la recta ct: la distancia a ella es una caminata aleatoria, la tendencia estocástica."
+  hash_texto: "45a0d37c1cbcab1a"
+  veredicto: con-matiz
+  fuentes:
+  - clave: hamilton1994time
+    loc: "p. 442"
+    clase: PDF
+    pagina_pdf: 457
+    cita_sha256: "c90dc9eb13845fcf7f31ca07a43b50e095c30454e5c035db18ea444d99ea77b2"
+    cita_palabras: 11
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "e48ff4d08a59750c264429981348ecc9627b0a1656679e0deb2cf11918aad023"
+    cita_palabras: 7
+  - clave: cryer2008time
+    loc: "p. 27"
+    clase: PDF
+    pagina_pdf: 40
+    cita_sha256: "88992cb207837e91953fc822c582ad4360f150341d65cdcf319b774d6c51e17b"
+    cita_palabras: 8
+  nota: >-
+    Matiz sobre el término: Cryer y Chan advierten de que «tendencia estocástica» no tiene una definición
+    generalmente aceptada. Que la distancia a la recta es una caminata de varianza tσ² se deduce de la fórmula
+    que el capítulo escribe justo antes.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m5-11
+  tipo: atribucion
+  afirmacion: "Las caminatas aleatorias se usan mucho para datos financieros y económicos; como su pronóstico es el último valor observado, en precios e índices bursátiles el pronóstico ingenuo suele ser el mejor método."
+  hash_texto: "ca73908579df8c80"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "c9c6fe93678957fec75d1b4909e7d3b385eaee0b6721eeacd7fd272b6136ba5c"
+    cita_palabras: 10
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "78aa59e15f0672633cc4f0fd1521e834db4fa6c238c12e036672823863c207eb"
+    cita_palabras: 13
+  - clave: hyndman2021forecasting
+    loc: "§5.4"
+    clase: WEB
+    instantanea: toolbox
+    cita_sha256: "c7bc2a51ce5e1214b9403adada796e0f0b9905a9edeb0a820f0421a528eda75b"
+    cita_palabras: 9
+  nota: >-
+    TRAS LA VERIFICACIÓN. FRASE REESCRITA dos veces. La original decía «Es el modelo por defecto para precios de
+    activos, índices y tipos de cambio»; la primera reescritura hacía de la popularidad del modelo la causa de
+    que el ingenuo gane («y eso explica por qué»). Ahora la causa es la de FPP3 §9.1: el pronóstico de una
+    caminata aleatoria es la última observación.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m5-12
+  tipo: regla
+  afirmacion: "Una tendencia determinista se corrige quitando la recta ajustada; una estocástica, diferenciando."
+  hash_texto: "f665c91474b54ed8"
+  veredicto: respaldada
+  fuentes:
+  - clave: hamilton1994time
+    loc: "pp. 435–436"
+    clase: PDF
+    pagina_pdf: 450
+    cita_sha256: "6faf69984e59c4c3ec8ba17c306d3460997bc1a52a5738c4244e8c2a046fa4fb"
+    cita_palabras: 5
+  - clave: hamilton1994time
+    loc: "pp. 435–436"
+    clase: PDF
+    pagina_pdf: 450
+    cita_sha256: "081fb14c6c97335c71fb74b5b0e6813a7bcf761e0d6d8d8f729c1d54c570cb3b"
+    cita_palabras: 6
+  - clave: hamilton1994time
+    loc: "pp. 435–436"
+    clase: PDF
+    pagina_pdf: 450
+    cita_sha256: "5a8752666aba9249da224ef4384f2549d5f4e4a22ff68541b973e9634fadce2d"
+    cita_palabras: 5
+  nota: >-
+    La marca acaba en «diferenciando». El costo de equivocarse en cada dirección, que sigue, lo deduce el
+    capítulo con sus propias fórmulas. Hamilton escribe el término de error como un proceso estacionario
+    general, no solo ruido blanco.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m6-01
+  tipo: regla
+  afirmacion: "Las pruebas de raíz unitaria ponen un número a la decisión; el ADF y el KPSS plantean hipótesis nulas contrarias."
+  hash_texto: "5fd760e00ae985a6"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "360ff40355229d6f102e0eab693ce7d46dad41de8d503c1d0d02551ccabf0ab4"
+    cita_palabras: 7
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "235356c7d883c73eab76437c7697f48ff2ebf6482bcf5e80be8d1dcb3b8159f8"
+    cita_palabras: 9
+  - clave: cryer2008time
+    loc: "p. 129"
+    clase: PDF
+    pagina_pdf: 140
+    cita_sha256: "62d6d78a11e28711b6aac6e80fa7db5cf835fcdf7f43fd336b36fdb4a8df74bf"
+    cita_palabras: 5
+  nota: >-
+    FPP3 da la nula del KPSS y Cryer y Chan la del ADF. El capítulo decía «Las dos más usadas son ADF y KPSS»,
+    sin fuente: ahora dice «Aquí se usan dos».
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m6-04
+  tipo: definicion
+  afirmacion: "ADF (Dickey–Fuller aumentada): se regresa la primera diferencia sobre el nivel rezagado y k diferencias rezagadas, con constante y tendencia; H0 es la raíz unitaria (γ = 0) y H1 la estacionariedad (γ < 0)."
+  hash_texto: "47994bd273d896c5"
+  veredicto: respaldada
+  fuentes:
+  - clave: cryer2008time
+    loc: "pp. 128–129"
+    clase: PDF
+    pagina_pdf: 139
+    cita_sha256: "d72e144263c2b667eac172339b09665c930b6dcaa601cacff59b52a3afbd353e"
+    cita_palabras: 9
+  - clave: cryer2008time
+    loc: "pp. 128–129"
+    clase: PDF
+    pagina_pdf: 139
+    cita_sha256: "584bca6b13dcec93e2b72d9914d6aa1da0092d2b52240d6645db1985651de5d2"
+    cita_palabras: 8
+  - clave: cryer2008time
+    loc: "pp. 128–129"
+    clase: PDF
+    pagina_pdf: 139
+    cita_sha256: "5db70ae415aa82d24b13cd51efcd091c428269a7eac2de1dfbfaee62d68d1eb9"
+    cita_palabras: 5
+  - clave: cryer2008time
+    loc: "p. 130"
+    clase: PDF
+    pagina_pdf: 141
+    cita_sha256: "10e7f5a7fa14bba37b54597d59906b48823d7dee359ad1ef9d86b419bda88215"
+    cita_palabras: 8
+  - clave: hamilton1994time
+    loc: "p. 475"
+    clase: PDF
+    pagina_pdf: 490
+    cita_sha256: "5225ede3e2130c6e88b10fe3c2e54d7e183cd11dca65bf83fd914c7c801fe6bd"
+    cita_palabras: 11
+  nota: >-
+    TRAS LA VERIFICACIÓN. La regresión con constante y tendencia no está en pp. 128–129 sino en la p. 130: se
+    añadió ahí una segunda cita visible, sobre una frase reescrita («La regresión con constante y tendencia es
+    la que corresponde cuando la alternativa es una tendencia lineal más un error estacionario»). La marca es el
+    recuadro entero. El nombre y la atribución salen de Cryer y Chan y de Hamilton; el artículo de Dickey y
+    Fuller no está en la biblioteca y no se cita. Que adf.test() estima siempre esa regresión se comprobó en R
+    (r4_software.R reproduce el estadístico); la igualdad γ = φ − 1 la deduce el propio recuadro. Cryer y Chan
+    llaman a al coeficiente que el capítulo llama γ.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m6-05
+  tipo: definicion
+  afirmacion: "KPSS: descompone la serie en tendencia determinista, caminata aleatoria y error estacionario, y contrasta que la varianza de la caminata es cero, es decir, que la serie es estacionaria (en nivel o en tendencia)."
+  hash_texto: "712f4e75c143819a"
+  veredicto: pendiente
+  motivo: >-
+    Depende de Kwiatkowski et al. (1992), que está en la biblioteca sin texto. Queda a la espera de que Javier
+    consiga el artículo con el acceso institucional.
+  nota: >-
+    FPP3 §9.1 respalda la hipótesis nula (va en c2-m6-16) y el nombre de la prueba, pero no la descomposición ni
+    las dos variantes. Tampoco está contrastado lo que el módulo dice del KPSS de tendencia en el párrafo de la
+    TRM («en el KPSS de tendencia, al revés»).
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m6-06
+  tipo: regla
+  afirmacion: "Tabla de las cuatro combinaciones de ADF y KPSS y su conclusión."
+  hash_texto: "4900194a984447a0"
+  veredicto: propia
+  nota: >-
+    Ninguna fuente leída da esta tabla. Las dos primeras filas se siguen de las hipótesis nulas de cada prueba
+    (c2-m6-04, c2-m6-16); la tercera, de que no rechazar no es concluir; la cuarta la ilustra el propio módulo
+    con AirPassengers. FPP3 §9.1 solo dice que las pruebas de raíz unitaria parten de supuestos distintos y
+    pueden dar respuestas contradictorias. Se quitó «(muestra corta)» de la tercera fila: esa causa no tiene
+    fuente.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m6-09
+  tipo: dato
+  afirmacion: "adf.test y kpss.test interpolan el p-valor en tablas publicadas y avisan cuando cae fuera del rango."
+  hash_texto: "3a059121648d5729"
+  veredicto: propia
+  nota: >-
+    Comprobado en el código de las dos funciones y ejecutando (r4_software.R: las tablas, las llamadas a
+    approx() y los avisos «p-value smaller/greater than printed p-value»). tseries no es una obra de la
+    biblioteca. FPP3 §9.1 describe lo mismo para su unitroot_kpss.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m6-10
+  tipo: dato
+  afirmacion: "adf.test elige por defecto k = ⌊(T−1)^(1/3)⌋ = 5 rezagos, menos que el periodo estacional."
+  hash_texto: "9d70449c090f0140"
+  veredicto: propia
+  nota: >-
+    El valor por defecto está en la firma de la función (r4_software.R); 5 es su valor con T = 144.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m6-11
+  tipo: resultado
+  afirmacion: "La oscilación anual no cabe en los 5 rezagos, se queda en el residuo y el ADF la lee como evidencia de estacionariedad."
+  hash_texto: "23c283faa0ec60f2"
+  veredicto: propia
+  nota: >-
+    Es la explicación del capítulo y ninguna fuente leída la da. La sostienen las tres evidencias que siguen (el
+    estadístico con k = 12, la serie desestacionalizada y el Monte Carlo), calculadas en
+    precalculo/genera_cap2.R.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m6-16
+  tipo: resultado
+  afirmacion: "En el KPSS un p-valor pequeño rechaza la estacionariedad, al revés que en el ADF."
+  hash_texto: "3561d94aaae083c4"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "f2d4e0855889154db478fec6d6e38b30be602709a59c4d592f0f871274dbe3ec"
+    cita_palabras: 11
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "d671ded79f8f376d01c913c90cfdd40195347957dd960da327e2735f242e32d1"
+    cita_palabras: 6
+  nota: >-
+    El nombre de la prueba y su atribución a Kwiatkowski et al. (1992) se toman de FPP3; Hamilton (p. 532)
+    también lo lista entre los contrastes de raíz unitaria. El artículo no se ha leído.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m6-17
+  tipo: resultado
+  afirmacion: "En el ADF con tendencia la nula es la tendencia estocástica y la alternativa, la determinista."
+  hash_texto: "5410b2994f5f662f"
+  veredicto: respaldada
+  fuentes:
+  - clave: cryer2008time
+    loc: "pp. 129–130"
+    clase: PDF
+    pagina_pdf: 140
+    cita_sha256: "08a2ec692501b765bc6f9f5eb42ecf5d38245061c035d0a28fb208676a501dda"
+    cita_palabras: 9
+  - clave: cryer2008time
+    loc: "pp. 129–130"
+    clase: PDF
+    pagina_pdf: 140
+    cita_sha256: "d495a3556be9d97537a4e3b7abe5bf1bf2b57388e522dcdfe62d5328a15cd23f"
+    cita_palabras: 6
+  nota: >-
+    La marca acaba antes de «en el KPSS de tendencia, al revés», que depende de Kwiatkowski et al. (1992) y
+    queda con c2-m6-05.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m6-18
+  tipo: atribucion
+  afirmacion: "La prueba KPSS es la de Kwiatkowski, Phillips, Schmidt y Shin."
+  hash_texto: "1c4675820d154235"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "d671ded79f8f376d01c913c90cfdd40195347957dd960da327e2735f242e32d1"
+    cita_palabras: 6
+  - clave: hamilton1994time
+    loc: "p. 532"
+    clase: PDF
+    pagina_pdf: 547
+    cita_sha256: "53052c3b696c9de510852f5bfcd6a24a4baca93246106f074cdc3a78dfcd34cd"
+    cita_palabras: 6
+  nota: >-
+    TRAS LA VERIFICACIÓN. Entrada nueva: el título del recuadro atribuía la prueba a cuatro autores sin marca.
+    La atribución se toma de FPP3 y de Hamilton, que lo lista entre los contrastes de raíz unitaria; el artículo
+    no se ha leído. La cita va en el propio título.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m7-01
+  tipo: definicion
+  afirmacion: "La diferenciación es una manera de eliminar una raíz unitaria: se modelan los cambios y no el nivel."
+  hash_texto: "c055e7b3d6b7d68d"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "4b4f7254407c3c55f63f7883adbc4c09a79594faf659928c75a7dc751c6294c3"
+    cita_palabras: 6
+  nota: >-
+    TRAS LA VERIFICACIÓN. «La herramienta estándar» pasó a «una manera»: FPP3 la presenta como «one way».
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m7-02
+  tipo: definicion
+  afirmacion: "Operador de rezago B, diferencia regular (1−B), diferencia estacional (1−B^m), d diferencias (1−B)^d; cada diferencia cuesta tantas observaciones como su rezago."
+  hash_texto: "a7454a8de66a64c4"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§9.2"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "cf9f66afd66483b77e8ffeb1d9d1a84337c2ce312d24a703eca89dd5b9d7760a"
+    cita_palabras: 7
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "97c45ea3c5498d115c7e606a296e03cfe2520c1df6f08d796604c0097207fad6"
+    cita_palabras: 7
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "97069fc6a9d925140f5d7286ee17177d4a015b41f2d64202d693a44535cc9bbb"
+    cita_palabras: 7
+  - clave: cryer2008time
+    loc: "p. 233"
+    clase: PDF
+    pagina_pdf: 243
+    cita_sha256: "75cae8928b6c983ebac243ea30e491a8c78cd082a4866c7b4c9776cb79a06657"
+    cita_palabras: 9
+  nota: >-
+    La marca es el recuadro entero. FPP3 no usa el símbolo ∇; Cryer y Chan sí. La convención de d y D es la del
+    curso.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m7-05
+  tipo: atribucion
+  afirmacion: "Hyndman y Athanasopoulos recomiendan aplicar primero la diferencia estacional cuando el patrón estacional es marcado, porque a veces basta."
+  hash_texto: "b5c8abfb47b370c0"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "869fe58b6fc0a809c88354b2fde0ee63a746b868ea123df8b0772822fc2d3002"
+    cita_palabras: 8
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "9544e910b1d7e67b145d6af798ebe88a8f793bcb144088e5292b0e7bc596447f"
+    cita_palabras: 8
+  nota: >-
+    FRASE REESCRITA. Decía «La recomendación de FPP3 es aplicar primero la diferencia estacional: … y se ahorra
+    una diferencia regular que solo añadiría ruido». Se añadió la condición con que FPP3 la da (un patrón
+    estacional fuerte) y se quitó «que solo añadiría ruido», que no es de la fuente. La factorización de 1 − B^m
+    con que el capítulo explica por qué basta es suya.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m7-06
+  tipo: regla
+  afirmacion: "Si la ACF decae despacio y casi en línea recta, falta diferenciar; si tras diferenciar cae rápido, ya está."
+  hash_texto: "02fdd6b0a28339fa"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "8c44dc0ba6f276e3b0ba59e683c71a59cdfbe61cc300e160bce1a2080b836907"
+    cita_palabras: 7
+  - clave: cryer2008time
+    loc: "p. 128"
+    clase: PDF
+    pagina_pdf: 139
+    cita_sha256: "67a46f826d1d422eb17273e0e76a11a3bb30c1908c599e03b7769ca66957609d"
+    cita_palabras: 6
+  nota: >-
+    TRAS LA VERIFICACIÓN. Se añadió a las fuentes Cryer y Chan p. 128, de donde sale «casi en línea recta» (la
+    nota lo decía y la fuente faltaba); FPP3 dice «slowly». La cita visible sigue siendo la de FPP3.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m7-07
+  tipo: regla
+  afirmacion: "Las pruebas se aplican de forma secuencial: diferenciar, volver a probar, repetir."
+  hash_texto: "9b6e225cfb109efd"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "9b23cf78a3a97888236f881f59b7348033f24b3c2beb7e64cd24cc91182047b2"
+    cita_palabras: 8
+  nota: >-
+    Lo que sigue en la viñeta —que es lo que hace ndiffs(), con su propia versión del KPSS— se contrasta en
+    c2-m7-18.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m7-08
+  tipo: resultado
+  afirmacion: "Para una serie estacionaria Var(∇y) = 2(1−ρ_1)Var(y), y en una muestra de una serie estacionaria el cociente se acerca a 2(1−r_1): la varianza baja al diferenciar si r_1 > 0.5 y sube si r_1 < 0.5, así que no decide."
+  hash_texto: "d1ff882917ed58ad"
+  veredicto: propia
+  nota: >-
+    TRAS LA VERIFICACIÓN. FRASE ACOTADA: decía «en una muestra cualquiera el cociente de varianzas sigue de
+    cerca a 2(1−r_1)», que no se cumple en series no estacionarias (log(AirPassengers): 0.058 frente a 0.093,
+    según el verificador y maestra_r4). Ahora lo dice de una muestra de una serie estacionaria. La identidad
+    sale de Var(y_t − y_{t−1}) = 2γ_0 − 2γ_1; los dos contraejemplos están en r1_errores.R y maestra_r1.R.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m7-09
+  tipo: resultado
+  afirmacion: "Diferenciar de más introduce autocorrelación que no estaba en los datos."
+  hash_texto: "fe0295019a79f1de"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "cfe906fcb3936beecb0351cf5f1ab5a8b423d978cb8cce76220015526a2e0357"
+    cita_palabras: 10
+  - clave: cryer2008time
+    loc: "p. 126"
+    clase: PDF
+    pagina_pdf: 137
+    cita_sha256: "b91b806780953b2c7dfd5ccd9bc34b3fe6ba33a9235cbb775126dfb1dac1c7ae"
+    cita_palabras: 4
+  nota: >-
+    La marca cubre solo la primera oración. Se quitó «más frecuente» de «Ese es el indicio más frecuente», que
+    no tenía fuente.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m7-11
+  tipo: resultado
+  afirmacion: "La serie sobrediferenciada es un MA(1) con θ en el borde, no invertible, lo que da problemas al estimador; no conviene diferenciar más de lo necesario."
+  hash_texto: "79534bb71ae8d4d6"
+  veredicto: respaldada
+  fuentes:
+  - clave: cryer2008time
+    loc: "pp. 126–127"
+    clase: PDF
+    pagina_pdf: 137
+    cita_sha256: "d26129c9ce37cc8e37cc318a04e96ed82accf173c19fedc93eeded2c45eab1ff"
+    cita_palabras: 8
+  - clave: cryer2008time
+    loc: "pp. 126–127"
+    clase: PDF
+    pagina_pdf: 137
+    cita_sha256: "8ef972d20e24e7fa81ab811ce843764585a4801f497c28f9ede88ee46a5494f6"
+    cita_palabras: 6
+  - clave: cryer2008time
+    loc: "p. 57"
+    clase: PDF
+    pagina_pdf: 70
+    cita_sha256: "32e5ebc38bb42a2627563f16c118b6433cf192f3dfe7ce0648dc6d256b05f686"
+    cita_palabras: 6
+  - clave: hyndman2021forecasting
+    loc: "§9.4"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "4e32532bc83727a29887fa79116afccc9d44118ef02e603ee2327f9fe54a971f"
+    cita_palabras: 5
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "23d244e4d1bf24ae1a034f5f2e253af4d5a6e9dd3c56c3d698c5cbf6895e8303"
+    cita_palabras: 6
+  nota: >-
+    TRAS LA VERIFICACIÓN. «En la duda, conviene diferenciar de menos» pasó a «No conviene diferenciar más de lo
+    necesario», que es lo que dice FPP3 §9.1. Cryer y Chan escriben el MA(1) con signo menos (θ = 1) y advierten
+    en la p. 57 de que R usa el signo más: son las dos convenciones que el párrafo menciona. Su ejemplo es la
+    segunda diferencia de una caminata; el del capítulo, la primera diferencia de un ruido blanco.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m7-14
+  tipo: atribucion
+  afirmacion: "Con D = 1 y d = 1 sobre el logaritmo se llega a la serie del modelo «airline»."
+  hash_texto: "bcb93c9da5b16e14"
+  veredicto: respaldada
+  fuentes:
+  - clave: cryer2008time
+    loc: "pp. 240–241"
+    clase: PDF
+    pagina_pdf: 250
+    cita_sha256: "95ceb657854ab931a21610420f74345fec51ed494884fb8536e96ae983df6e02"
+    cita_palabras: 9
+  - clave: cryer2008time
+    loc: "p. 247"
+    clase: PDF
+    pagina_pdf: 257
+    cita_sha256: "d753fcda56efafa30d726ce35e21be1bfeb9a188f409f228ded064370b85bfca"
+    cita_palabras: 10
+  nota: >-
+    Cryer y Chan llaman así al ARIMA(0,1,1)×(0,1,1)12 sobre los logaritmos de la serie de pasajeros. El capítulo
+    usa el nombre para la serie doblemente diferenciada sobre la que ese modelo se ajusta.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m7-15
+  tipo: dato
+  afirmacion: "kpss.test usa ⌊4(n/100)^(1/4)⌋ = 4 rezagos y ndiffs, vía urca::ur.kpss, ⌊3√n/13⌋ = 2; con dos el estadístico sube a 0.537, por encima del valor crítico del 5 % (0.463)."
+  hash_texto: "74045ae025126e90"
+  veredicto: propia
+  nota: >-
+    Comprobado en el código de las tres funciones y ejecutando (r4_software.R: 0.368 frente a 0.537, y la tabla
+    de valores críticos de ur.kpss). Ni tseries ni forecast ni urca son obras de la biblioteca.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m7-18
+  tipo: dato
+  afirmacion: "ndiffs() repite una prueba KPSS hasta que deja de rechazar (como máximo dos diferencias) y usa la versión de urca; nsdiffs() mide la fuerza estacional F_S sobre una descomposición STL y pide una diferencia si pasa de 0.64."
+  hash_texto: "740e24c4dda2f604"
+  veredicto: con-matiz
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "cf283e30c17f87730dee89478abdca7b013443c469d3ed5690417f26bbadb816"
+    cita_palabras: 5
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "e737381245c47ebf9cda10e219a3e8349c28683c9803ccf1ea477be5819c2d1f"
+    cita_palabras: 9
+  nota: >-
+    Matiz: FPP3 describe unitroot_ndiffs() y unitroot_nsdiffs(), las funciones equivalentes de su paquete; el
+    capítulo habla de ndiffs() y nsdiffs() de forecast. Lo específico de forecast —el máximo de dos diferencias,
+    la llamada a urca::ur.kpss con su truncamiento, la descomposición con mstl() y el umbral 0.64— se comprobó
+    en el código (r4_software.R); forecast no es una obra de la biblioteca.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m7-19
+  tipo: dato
+  afirmacion: "UKgas es el consumo trimestral de gas del Reino Unido de 1960 a 1986: 108 trimestres."
+  hash_texto: "da33060eae4bfe9f"
+  veredicto: respaldada
+  fuentes:
+  - clave: rcoreteam2026r
+    loc: "§Description; §Format"
+    clase: WEB
+    instantanea: UKgas
+    cita_sha256: "43548c36ae7baaa773d5dd1fbde2f9d03ca257ec965fb2208a676f104823a94c"
+    cita_palabras: 8
+  - clave: rcoreteam2026r
+    loc: "§Format"
+    clase: WEB
+    instantanea: UKgas
+    cita_sha256: "18bd3fa72b38425b34f224e25c62de8f14db69e276c23dc4d9239200db5bbd62"
+    cita_palabras: 7
+  nota: >-
+    Ayuda de UKgas, R 4.6.0 · datasets 4.6.0.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m8-01
+  tipo: resultado
+  afirmacion: "La diferenciación estabiliza la media; para la varianza hace falta una transformación."
+  hash_texto: "a86a02fbe3e4c286"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "3ee883ba10c7e5f8605ec069549e12c33666f894f65e99a1df6e6267f26f69e1"
+    cita_palabras: 7
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "4b4f7254407c3c55f63f7883adbc4c09a79594faf659928c75a7dc751c6294c3"
+    cita_palabras: 6
+  nota: >-
+    TRAS LA VERIFICACIÓN. FRASE REESCRITA: decía «arregla la media, pero no la varianza». FPP3 reparte los
+    papeles (las transformaciones estabilizan la varianza y la diferenciación, la media) sin negar nada.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m8-02
+  tipo: resultado
+  afirmacion: "La varianza se estabiliza con una transformación; a menudo sirve el logaritmo, y la familia de Box–Cox lo generaliza."
+  hash_texto: "71136a4a60404c23"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§3.1"
+    clase: WEB
+    instantanea: decomposition
+    cita_sha256: "0cad04e5bc2dfce04a309aa387b480facfb19a1bca9c18a797be7b55e2f67d31"
+    cita_palabras: 6
+  - clave: cryer2008time
+    loc: "p. 98"
+    clase: PDF
+    pagina_pdf: 110
+    cita_sha256: "f5e2811c104708c4ddc995de1496bf443bb3ab3da5ec13f50b592ca2ed06d4b1"
+    cita_palabras: 11
+  nota: >-
+    FRASE AJUSTADA: decía «la más frecuente es el logaritmo»; FPP3 dice «often useful». Que el logaritmo
+    convierte crecimiento multiplicativo en aditivo corresponde a lo que Cryer y Chan dicen en las pp. 98–99 (un
+    nivel que crece exponencialmente pasa a tendencia lineal).
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m8-03
+  tipo: definicion
+  afirmacion: "Transformación de Box–Cox: log(y) si λ = 0 y (y^λ − 1)/λ en otro caso; exige y > 0, y la variante de forecast y fpp3 admite negativos con λ > 0; λ = 1, 0.5, 0 y −1 son la identidad, la raíz, el logaritmo y la inversa."
+  hash_texto: "94eb0fad3bf4a7bd"
+  veredicto: respaldada
+  fuentes:
+  - clave: cryer2008time
+    loc: "p. 101"
+    clase: PDF
+    pagina_pdf: 113
+    cita_sha256: "4ba0b3a25aa6b11b30855c52a1383b1f4314f29397fb93da3e17aaebc38ab474"
+    cita_palabras: 6
+  - clave: cryer2008time
+    loc: "p. 101"
+    clase: PDF
+    pagina_pdf: 113
+    cita_sha256: "69b9feb26ef19860184041b2b6c05aec911890d9463bba500425aefe08751062"
+    cita_palabras: 6
+  - clave: cryer2008time
+    loc: "p. 101"
+    clase: PDF
+    pagina_pdf: 113
+    cita_sha256: "6d32e2bee48333ee4dcdac8f38002e9f45e9e6b0eecd50a321b4b6ffd2baf982"
+    cita_palabras: 5
+  - clave: hyndman2021forecasting
+    loc: "§3.1"
+    clase: WEB
+    instantanea: decomposition
+    cita_sha256: "81a7609ce289dc33a3e10bfec383f3b178da69430b906dac695326db6ae3b0e9"
+    cita_palabras: 10
+  - clave: hyndman2021forecasting
+    loc: "§3.1"
+    clase: WEB
+    instantanea: decomposition
+    cita_sha256: "e3ab9538c969f9c647a6ffe631471bca98cf935e92d6192634f9ba61c12e8ef5"
+    cita_palabras: 10
+  nota: >-
+    La marca es el recuadro entero. La fórmula es la (5.4.4) de Cryer y Chan; el artículo de Box y Cox no está
+    en la biblioteca y no se cita. Que BoxCox() de forecast use la variante con el signo se comprobó en su
+    código (r4_software.R); la de fpp3 la describe FPP3 §3.1. La última frase —cuanto menor es λ, más se
+    comprimen los valores grandes— es del capítulo.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m8-04
+  tipo: definicion
+  afirmacion: "Criterio de Guerrero: se parte la serie en bloques de m observaciones y se elige el λ que minimiza el coeficiente de variación de s_i / media_i^(1−λ)."
+  hash_texto: "e8d6db8b894cdc59"
+  veredicto: pendiente
+  motivo: >-
+    Depende de Guerrero (1993), que está en la biblioteca sin texto. Queda a la espera de que Javier consiga el
+    artículo con el acceso institucional.
+  nota: >-
+    FPP3 §3.1 atribuye el método a Guerrero (1993) sin describirlo. La descripción del recuadro coincide con el
+    código de forecast:::guer.cv, y minimizando ese coeficiente de variación se recupera el λ de BoxCox.lambda
+    (−0.2947; r4_software.R): lo que falta es leerlo en el artículo.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m8-05
+  tipo: regla
+  afirmacion: "Se prefiere el logaritmo porque es interpretable (cambios porcentuales) y porque el λ óptimo es él mismo una estimación."
+  hash_texto: "31fdb550bd2ce5cb"
+  veredicto: con-matiz
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§3.1"
+    clase: WEB
+    instantanea: decomposition
+    cita_sha256: "1cf93f1111c7756554db189964e2c8c388dd5143e5b36d81491d59e1bfaeb346"
+    cita_palabras: 10
+  - clave: cryer2008time
+    loc: "p. 101"
+    clase: PDF
+    pagina_pdf: 113
+    cita_sha256: "434fc89b687b0185440aff4c890f629d702ad1157c1e239afd3fac4a2dac3666"
+    cita_palabras: 8
+  nota: >-
+    TRAS LA VERIFICACIÓN. La cita de FPP3 se movió a «variaciones porcentuales», que es lo que la fuente dice;
+    antes caía sobre «no significa nada para nadie», que es hipérbole del capítulo (FPP3: otras transformaciones
+    son «not so interpretable»). Matiz en la segunda razón: Cryer y Chan dicen que no suele justificarse estimar
+    λ con precisión; que el λ estimado «tiene su propia incertidumbre» es la razón que da el capítulo.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m8-08
+  tipo: resultado
+  afirmacion: "Al deshacer la transformación se obtiene la mediana del pronóstico, no la media, si la distribución en la escala transformada es simétrica; la media pide una corrección de sesgo, que fable aplica sola."
+  hash_texto: "ed2836dd6f3024eb"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§5.6"
+    clase: WEB
+    instantanea: toolbox
+    cita_sha256: "7c9f1d65e51979df08e2169adab8695ff27a1c63135d9658c68b435821d1b220"
+    cita_palabras: 9
+  - clave: hyndman2021forecasting
+    loc: "§5.6"
+    clase: WEB
+    instantanea: toolbox
+    cita_sha256: "47f72b7b1ecad1e5857e18874b4e356c57cf8d6497996192e93faad86a5369fb"
+    cita_palabras: 6
+  - clave: hyndman2021forecasting
+    loc: "§5.6"
+    clase: WEB
+    instantanea: toolbox
+    cita_sha256: "52b6d191c12f45e187b7c098ddcdffb626dea9268a160947cee44df3a0d1e7d6"
+    cita_palabras: 6
+  nota: >-
+    Se quitó «y statsmodels no», que no tenía pasaje.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m8-13
+  tipo: atribucion
+  afirmacion: "El criterio de Guerrero es el que Hyndman y Athanasopoulos ofrecen para elegir λ."
+  hash_texto: "776007c0ed2d9c14"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§3.1"
+    clase: WEB
+    instantanea: decomposition
+    cita_sha256: "ba3f7b0c2ba09955fedabb4170324ca4a565bfb9b40dcb7a126b5dc7fcfd0b3b"
+    cita_palabras: 14
+  nota: >-
+    TRAS LA VERIFICACIÓN. Entrada nueva, con un inciso añadido en la introducción del simulador para que el
+    nombre lleve su atribución. Las demás menciones de «criterio de Guerrero» y «λ de Guerrero» (la etiqueta del
+    gráfico, el recuadro de cifras, el paso 2 del pipeline, el ejercicio 1) repiten el nombre y no llevan marca.
+    Cómo funciona el criterio sigue pendiente en c2-m8-04.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m9-01
+  tipo: regla
+  afirmacion: "El preprocesamiento es una secuencia de decisiones que conviene ejecutar siempre en el mismo orden."
+  hash_texto: "f39b7102c111f81d"
+  veredicto: con-matiz
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§9.7"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "7ca684eac54245259861e4067290c6bd25b477d6783ae18f1a838839f35e865a"
+    cita_palabras: 8
+  - clave: hyndman2021forecasting
+    loc: "§9.7"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "8dac238c83588c008480e77f3da88998444915e998d486f93110512430b287a6"
+    cita_palabras: 5
+  nota: >-
+    TRAS LA VERIFICACIÓN. Nota completada. Matices: el procedimiento de FPP3 §9.7 es «a useful general approach»
+    para datos no estacionales y sigue hasta el ajuste del modelo. Respalda el orden graficar → transformar →
+    diferenciar. No respalda «siempre» ni «porque cada paso condiciona el diagnóstico del siguiente», que son
+    del capítulo; la diferencia estacional antes de la regular viene de §9.1 (c2-m7-05), y los pasos de
+    verificar y documentar son del capítulo.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m9-11
+  tipo: regla
+  afirmacion: "Fuga de información: los parámetros de la transformación se estiman solo con el entrenamiento."
+  hash_texto: "70c8c6ad29b2df29"
+  veredicto: con-matiz
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§5.10"
+    clase: WEB
+    instantanea: toolbox
+    cita_sha256: "b8481c70d8897a9053c6886bae562fc1d555d52dc8f241fba4132ceff1aec2e6"
+    cita_palabras: 10
+  - clave: hyndman2021forecasting
+    loc: "§5.3"
+    clase: WEB
+    instantanea: toolbox
+    cita_sha256: "3b1110cb458de323eccc36dda6bb65e7d203a09b2302562f0919faab62957b32"
+    cita_palabras: 3
+  nota: >-
+    Matiz: FPP3 no habla de «fuga de información» ni de los parámetros de una transformación. Respalda el
+    principio —un pronóstico no puede usar observaciones futuras— y que los valores ajustados no son pronósticos
+    verdaderos cuando sus parámetros se estimaron con toda la serie. Aplicarlo a λ, la media o la desviación es
+    del capítulo.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m9-12
+  tipo: regla
+  afirmacion: "La validación cruzada que baraja observaciones no sirve con series; hay que usar validación de origen móvil."
+  hash_texto: "0af3c32bf2eb9afd"
+  veredicto: con-matiz
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§5.10"
+    clase: WEB
+    instantanea: toolbox
+    cita_sha256: "eaf005ea3c716c4dc79b0cc6f6e440ac0b78c1a64f50010878f07cfd7ccec89d"
+    cita_palabras: 11
+  - clave: hyndman2021forecasting
+    loc: "§5.10"
+    clase: WEB
+    instantanea: toolbox
+    cita_sha256: "323ebf8cf60fe4390cf71cbbd1866dc59f7894fa4fbcb25b3ae4993a4f253373"
+    cita_palabras: 4
+  nota: >-
+    Matiz: FPP3 describe la validación de origen móvil; no dice que la validación cruzada estándar «no sirve».
+    Esa parte es la consecuencia que saca el capítulo: barajar entrena con datos posteriores a los de prueba.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m9-13
+  tipo: resultado
+  afirmacion: "Un árbol de decisión de hojas constantes predice con promedios de lo que vio, así que ante una tendencia creciente se queda en una meseta; diferenciar antes le quita ese problema."
+  hash_texto: "b12cf16c95f039bd"
+  veredicto: propia
+  nota: >-
+    Es un argumento, no una cita: la predicción de una hoja es la media de las observaciones de entrenamiento
+    que caen en ella, así que no puede superar el máximo visto. No hay fuente leída ni ejemplo calculado en el
+    repo que lo acompañe; si se quiere respaldar hace falta una obra de aprendizaje automático, que la
+    biblioteca no tiene.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m9-23
+  tipo: atribucion
+  afirmacion: "Lectura: FPP3 §9.1 (estacionariedad y diferenciación), §9.2 (el operador B), §2.8–2.9 (autocorrelación y ruido blanco) y §3.1 (transformaciones y Box–Cox)."
+  hash_texto: "14fadc845c3326cc"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "944344bddae89735c9646c8701328d877457440d08f545b62c152a579fbb70c1"
+    cita_palabras: 4
+  - clave: hyndman2021forecasting
+    loc: "§9.2"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "85b19a781269835ac70146c33a9be870ca7d7d6ca233f4f97675fde0a125681c"
+    cita_palabras: 3
+  - clave: hyndman2021forecasting
+    loc: "§2.8"
+    clase: WEB
+    instantanea: graphics
+    cita_sha256: "cd8ef064d76b4f5f568b40fbd11b89521b2896844b81a3c0317d7d9cfdb99968"
+    cita_palabras: 2
+  - clave: hyndman2021forecasting
+    loc: "§2.9"
+    clase: WEB
+    instantanea: graphics
+    cita_sha256: "bb121ea6397c15af778a24492f6dc10164bc33f5b09d3dab0ff5a3e950f5eeb9"
+    cita_palabras: 3
+  - clave: hyndman2021forecasting
+    loc: "§3.1"
+    clase: WEB
+    instantanea: decomposition
+    cita_sha256: "60360a64eb6697776a3cbc17ed2aae7f62c8299a8464212fc224d612571290f4"
+    cita_palabras: 4
+  - clave: hyndman2021forecasting
+    loc: "§3.1"
+    clase: WEB
+    instantanea: decomposition
+    cita_sha256: "9da97482ea4d3a97aeac73c8c23f32728cf765a418287377393ddbf8eafb07f3"
+    cita_palabras: 6
+  nota: >-
+    TRAS LA VERIFICACIÓN. Entrada nueva. Las citas son los títulos de las secciones, leídos en la caché; la
+    remisión se reescribió para que la obra y la primera sección las escriba el generador. El título del libro y
+    la edición siguen tecleados y coinciden con referencias.json.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m9-24
+  tipo: atribucion
+  afirmacion: "Lectura: Shumway y Stoffer (4.ª ed.), medidas de dependencia, series estacionarias, estimación de la correlación y diferenciación; en la 3.ª edición, secc. 1.4–1.6 y 2.3."
+  hash_texto: "941759a45fb86ac4"
+  veredicto: pendiente
+  motivo: >-
+    Solo se ha leído en la 3.ª edición de Shumway y Stoffer (2011), que no es la que cita el curso; la 4.ª
+    (2017) no está en la caché. Queda a la espera de que Javier la consiga con el acceso institucional.
+  nota: >-
+    El capítulo decía «(4.ª ed.), secc. 1.4–1.6 … y 2.1 (diferenciación)». En la 3.ª edición la 2.1 es
+    «Introduction» y la diferenciación está en la 2.3 «Exploratory Data Analysis» (índice y p. 61, leídos). Se
+    escribieron los temas y la numeración de la 3.ª, diciendo que la 4.ª puede ser otra.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m9-25
+  tipo: atribucion
+  afirmacion: "Lectura: Kwiatkowski, Phillips, Schmidt y Shin (1992), Journal of Econometrics 54(1–3), 159–178, el artículo al que se atribuye la prueba KPSS."
+  hash_texto: "f0e7a7aa14fd205d"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§9.1"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "d671ded79f8f376d01c913c90cfdd40195347957dd960da327e2735f242e32d1"
+    cita_palabras: 6
+  - clave: hyndman2021forecasting
+    loc: "§9.12"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "c66dc3f35087e3605325c752323eaf2852c2db79741947571df67ebe58449fd9"
+    cita_palabras: 13
+  - clave: hyndman2021forecasting
+    loc: "§9.12"
+    clase: WEB
+    instantanea: arima
+    cita_sha256: "1da784540dbeda7effa86268227353b6b10b9b6c9ade63a10c8481ac66f0cf99"
+    cita_palabras: 4
+  nota: >-
+    TRAS LA VERIFICACIÓN. Entrada nueva. «El artículo original de la prueba KPSS» pasó a «el artículo al que se
+    atribuye la prueba KPSS»: es lo que FPP3 hace, y el artículo no se ha leído. Título, revista y volumen están
+    en la bibliografía de FPP3 (que añade un subtítulo); las páginas 159–178 salen ilegibles en el texto
+    extraído y coinciden con referencias.json (DOI de Crossref). La ficha sigue tecleada, no generada.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17
+
+- id: c2-m9-26
+  tipo: atribucion
+  afirmacion: "Lectura: Guerrero (1993), Journal of Forecasting 12(1), 37–48, el criterio de selección de λ del Módulo 8."
+  hash_texto: "5a5ac01400272d63"
+  veredicto: respaldada
+  fuentes:
+  - clave: hyndman2021forecasting
+    loc: "§3.1"
+    clase: WEB
+    instantanea: decomposition
+    cita_sha256: "ba3f7b0c2ba09955fedabb4170324ca4a565bfb9b40dcb7a126b5dc7fcfd0b3b"
+    cita_palabras: 14
+  - clave: hyndman2021forecasting
+    loc: "§3.8"
+    clase: WEB
+    instantanea: decomposition
+    cita_sha256: "bcf02e610f45a0fd027b0323e82acca3ece0f10c820b26af49d1adbfa5cd6435"
+    cita_palabras: 11
+  nota: >-
+    TRAS LA VERIFICACIÓN. Entrada nueva. La atribución y la ficha completa están en FPP3 (§3.1 y su
+    bibliografía) y coinciden con referencias.json. El artículo no se ha leído: qué hace el criterio sigue
+    pendiente en c2-m8-04. La ficha sigue tecleada, no generada.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 2 (Fable 5.2)
+  verificado_por: verificador independiente de la R4 del capítulo 2 (subagente), leyó el pasaje en la caché el 2026-11-17
+  fecha: 2026-11-17

@@ -1,9 +1,11 @@
 # Registro de contraste · Capítulo 1 · Componentes y descomposición
 #
 # Cada entrada une una afirmación del capítulo (el elemento con ese
-# `data-afirma`) con el pasaje LEÍDO que la respalda. La `cita` es literal y
-# `precalculo/audita_citas.py` la busca en el texto de la fuente, en la sección
-# o página que dice `loc`. Quien verifica no es quien redactó.
+# `data-afirma`) con el pasaje LEÍDO que la respalda. La cita literal vive
+# fuera de git, en `bibliografia/_local/citas/cap1.yml`; aquí quedan su huella
+# (`cita_sha256`, del literal normalizado) y su número de palabras, y
+# `precalculo/audita_citas.py` busca el literal en el texto de la fuente, en la
+# sección o página que dice `loc`. Quien verifica no es quien redactó.
 #
 # Estas cinco son el piloto de la ronda de gestión documental (2026-11-10). La
 # verificación la hicieron dos subagentes de contexto limpio, uno con Opus 5.5
@@ -39,17 +41,20 @@ afirmaciones:
     loc: "§1.4"
     clase: WEB
     instantanea: intro
-    cita: "observed at regular intervals of time"
+    cita_sha256: "0bc5916890a9bf54e3ad41dc41c19c13d1623c1f025244fe2af294d718d8e25b"
+    cita_palabras: 6
   - clave: shumway2011time
     loc: "p. 11; §1.3"
     clase: PDF
     pagina_pdf: 24
-    cita: "according to the order they are obtained in time"
+    cita_sha256: "0f61ee00327f010477a69b1186a81824958dff65b4521936a8d816e00f266445"
+    cita_palabras: 9
   - clave: shumway2011time
     loc: "p. 11; §1.3"
     clase: PDF
     pagina_pdf: 24
-    cita: "sampled at equally spaced points"
+    cita_sha256: "5486da04f2da8b590e1c227bf9114487bc6099ac75251d950369134d90ef3927"
+    cita_palabras: 5
   nota: >-
     Lo que las citas sostienen y lo que no. La de FPP3 §1.4 —«observed at regular intervals of time»— no es
     una definición: es una declaración de alcance del libro («In this book, we will only consider time series
@@ -74,17 +79,20 @@ afirmaciones:
     loc: "§Description; §Format"
     clase: WEB
     instantanea: AirPassengers
-    cita: "international airline passengers, 1949 to 1960."
+    cita_sha256: "21de8aadeaefea48efa092f0a7f29b070315acfad02556a2d76232d85688a397"
+    cita_palabras: 6
   - clave: rcoreteam2026r
     loc: "§Description"
     clase: WEB
     instantanea: AirPassengers
-    cita: "The classic Box & Jenkins airline data."
+    cita_sha256: "5bafad05486ce35198099509c0c9f0ca5403c449a87a7084857f16a552854d10"
+    cita_palabras: 7
   - clave: rcoreteam2026r
     loc: "§Format"
     clase: WEB
     instantanea: AirPassengers
-    cita: "A monthly time series, in thousands."
+    cita_sha256: "892327a490ec2522ac39315a4dc490276cbc81a5124682373f0f3d7493a91a00"
+    cita_palabras: 6
   nota: >-
     La ayuda de R (R 4.6.0, datasets 4.6.0) sostiene la frase entera: totales mensuales de pasajeros de
     aerolíneas internacionales, de 1949 a 1960 y «the classic Box & Jenkins airline data» en la sección
@@ -111,7 +119,8 @@ afirmaciones:
     loc: "§3.2"
     clase: WEB
     instantanea: decomposition
-    cita: "then a multiplicative decomposition is more appropriate"
+    cita_sha256: "63302d7c6e7c2e862bf5cf7ff6ed6d0a1da34b5ee772e3721f543f5c70f8e3c2"
+    cita_palabras: 7
   nota: >-
     FPP3 §3.2 respalda la conclusión —si la variación estacional es proporcional al nivel, el modelo es
     multiplicativo—, pero no la regla de lectura del gráfico estacional: §2.4 describe gg_season sin hablar
@@ -134,27 +143,32 @@ afirmaciones:
     loc: "§2.3"
     clase: WEB
     instantanea: graphics
-    cita: "long-term increase or decrease in the data"
+    cita_sha256: "9f30e27c9cf351bce75f92bc458b071bd0b6179484fd2c26ddac74e16de0b515"
+    cita_palabras: 7
   - clave: hyndman2021forecasting
     loc: "§2.3"
     clase: WEB
     instantanea: graphics
-    cita: "Seasonality is always of a fixed and known period."
+    cita_sha256: "b7295ebdd13ee2b001794ea48e6bd9ae530a15fe1ac9442256426804214695de"
+    cita_palabras: 9
   - clave: hyndman2021forecasting
     loc: "§2.3"
     clase: WEB
     instantanea: graphics
-    cita: "that are not of a fixed frequency"
+    cita_sha256: "61c316df4f827c41ab5d329f08fe3565f1883b740a6f182b665ae92cd3a90bd4"
+    cita_palabras: 7
   - clave: hyndman2021forecasting
     loc: "§2.3"
     clase: WEB
     instantanea: graphics
-    cita: "usually due to economic conditions"
+    cita_sha256: "04fb30f73b3a77079b90284619c32ceabd6a93523b8f66ef8e59efa1ec0eb3a2"
+    cita_palabras: 5
   - clave: cryer2008time
     loc: "p. 28; §3.1"
     clase: PDF
     pagina_pdf: 41
-    cita: "Many authors use the word trend only for a slowly changing mean"
+    cita_sha256: "30bc20d3e393b9c2f1962b43e9d22fae57d859ad227d787f8adf6b17b2410105"
+    cita_palabras: 12
   nota: >-
     FUSIÓN DE IDENTIFICADORES: esta entrada absorbe a c1-m4-03 (estacionalidad) y c1-m4-04 (ciclo), que se
     registraron por separado y se retiraron en la corrección de la R4 por decisión de la sesión maestra: las
@@ -185,7 +199,8 @@ afirmaciones:
     loc: "cap. 3"
     clase: WEB
     instantanea: decomposition
-    cita: "we usually combine the trend and cycle into a single trend-cycle component (often just called the trend for simplicity)"
+    cita_sha256: "6366029bf7a53f2660f561599e9a5493deaba69f6236301217abb46a9f80deb2"
+    cita_palabras: 19
   nota: >-
     Historia de la frase. El verificador del lote R4a leyó «Muchos textos agrupan tendencia y ciclo en un
     solo término tendencia-ciclo» y dio «con-matiz»: la práctica está en la entrada del cap. 3 de FPP3, pero
@@ -211,12 +226,14 @@ afirmaciones:
     loc: "§2.3"
     clase: WEB
     instantanea: graphics
-    cita: "is usually at least 2 years"
+    cita_sha256: "3c7e2c31bc09633fc70373cb1e72bbf843d9dbb465d279be073b6d2ea0f18f7d"
+    cita_palabras: 6
   - clave: hyndman2021forecasting
     loc: "§2.3"
     clase: WEB
     instantanea: graphics
-    cita: "part of a long cycle"
+    cita_sha256: "6180fcb0995bdd1cb745fbf7d23da1e227c898139290bb5f8cdbd94caf6b3544"
+    cita_palabras: 5
   nota: >-
     El texto del inventario («un ciclo económico de siete u ocho años cabría ahí una vez y media») ya no está
     en el capítulo: lo retiró una ronda anterior. Se marcó la frase vigente del mismo párrafo, que es la que
@@ -238,12 +255,14 @@ afirmaciones:
     loc: "§3.2"
     clase: WEB
     instantanea: decomposition
-    cita: "additive decomposition, then we can write y_{t} = S_{t} + T_{t} + R_t"
+    cita_sha256: "73ab6d9ee433ad466b2d76645e37bedec8fe0010356b7e97cd8c240af09ed761"
+    cita_palabras: 13
   - clave: hyndman2021forecasting
     loc: "§3.2"
     clase: WEB
     instantanea: decomposition
-    cita: "y_{t} = S_{t} \\times T_{t} \\times R_t"
+    cita_sha256: "8812be92b3dbdff3367e32938baaa16fed55408965ce5f4352b8c110689be875"
+    cita_palabras: 7
   nota: >-
     FPP3 §3.2 escribe las dos ecuaciones que el capítulo pone a continuación de la frase marcada; el orden de
     los sumandos y de los factores difiere, sin consecuencia. El puntero del inventario a Shumway y Stoffer,
@@ -262,12 +281,14 @@ afirmaciones:
     loc: "§3.2"
     clase: WEB
     instantanea: decomposition
-    cita: "does not vary with the level"
+    cita_sha256: "ce3eacb771ef06332cc730bb9ba8f706d99bc323ad2687d845124361aba0fa2b"
+    cita_palabras: 6
   - clave: hyndman2021forecasting
     loc: "§3.2"
     clase: WEB
     instantanea: decomposition
-    cita: "proportional to the level"
+    cita_sha256: "0bfc391756c0ea9d0b21126677938ee9f05284d7d6bcea3db7fac83009fa25bc"
+    cita_palabras: 4
   nota: >-
     El criterio del capítulo coincide con FPP3 §3.2, incluida la mención de la variación alrededor de la
     tendencia además de la amplitud estacional. El texto del inventario era una versión anterior de la frase
@@ -286,12 +307,14 @@ afirmaciones:
     loc: "§3.3"
     clase: WEB
     instantanea: decomposition
-    cita: "moving average of order m can be written as \\hat{T}_{t} = \\frac{1}{m} \\sum_{j=-k}^k y_{t+j}"
+    cita_sha256: "d436a4a3a3999868706bc98271ef37659ff0a182d44bb65ff71dcbee92bb7507"
+    cita_palabras: 14
   - clave: shumway2011time
     loc: "p. 71; §2.4; ec. 2.50"
     clase: PDF
     pagina_pdf: 84
-    cita: "the weights, a−k , . . . , a0 , . . . , ak , we used were all the same"
+    cita_sha256: "b8fe038395e43d74a15f660e9c6a635c61edd9b2edbd5dc9d5c8d2e49c913dde"
+    cita_palabras: 22
   nota: >-
     La fórmula y la condición m = 2k + 1 son las de FPP3 §3.3 (su ecuación 3.2), y Shumway y Stoffer
     describen la misma media móvil simétrica de pesos iguales. El verificador escribió el localizador como
@@ -311,7 +334,8 @@ afirmaciones:
     loc: "§3.3"
     clase: WEB
     instantanea: decomposition
-    cita: "weighted moving average of order m + 1"
+    cita_sha256: "8984c5627b7e6f55966fcb07b1316876833d1c3312ad2e923bb2bee05e6c6b86"
+    cita_palabras: 8
   nota: >-
     Por el tope de palabras citadas de FPP3 (F11) se registra una sola de las dos citas del verificador; la
     otra («The first value in the 2x4-MA column is the average of these two») respaldaba la primera mitad.
@@ -332,27 +356,32 @@ afirmaciones:
     loc: "§3.4"
     clase: WEB
     instantanea: decomposition
-    cita: "if m = 12, there is no trend-cycle estimate for the first six or the last six observations"
+    cita_sha256: "22fa89852767b296a7b4384cd19534d3c27b48539ffe52f1575a1bd89902b914"
+    cita_palabras: 18
   - clave: hyndman2021forecasting
     loc: "§3.4"
     clase: WEB
     instantanea: decomposition
-    cita: "Classical decomposition methods assume that the seasonal component repeats from year to year."
+    cita_sha256: "e619d7a1c91dd888f396f463e9838c4c0cab8ff49d32e8a15e0ae277b970869e"
+    cita_palabras: 13
   - clave: hyndman2021forecasting
     loc: "§3.4"
     clase: WEB
     instantanea: decomposition
-    cita: "The classical method is not robust to these kinds of unusual values."
+    cita_sha256: "b8f54d6cce2fd0a0c0d2a45154090d0e8195418c5297baf37c810acb103a4386"
+    cita_palabras: 12
   - clave: hyndman2021forecasting
     loc: "§3.3"
     clase: WEB
     instantanea: decomposition
-    cita: 'a 2 \times m-MA is equivalent to a weighted moving average of order m + 1'
+    cita_sha256: "76d3d86638db528b3b3c40e0fa4acccad253c7414273fbc3fb0e086543463167"
+    cita_palabras: 16
   - clave: hyndman2021forecasting
     loc: "§3.3"
     clase: WEB
     instantanea: decomposition
-    cita: "There are no values for either the first two years or the last two years"
+    cita_sha256: "a9f14ebcba0b8987a77d64cc629a299c3942dfd941da5fa3b0f7eaecd6df690e"
+    cita_palabras: 15
   nota: >-
     Reverificada el 2026-11-11, después de que la ronda R1 precisara los huecos: m/2 con m par y (m−1)/2 con
     m impar. La fuente respalda las tres limitaciones. El matiz que queda: FPP3 no escribe ninguna de las dos
@@ -374,12 +403,14 @@ afirmaciones:
     loc: "§3.4"
     clase: WEB
     instantanea: decomposition
-    cita: "The trend-cycle estimate tends to over-smooth rapid rises and falls in the data."
+    cita_sha256: "86f83c08e710ce0989d968ec8ff5cb4818c8fd88c67c8ee37d317aa4ace71772"
+    cita_palabras: 13
   - clave: hyndman2021forecasting
     loc: "§3.6"
     clase: WEB
     instantanea: decomposition
-    cita: "The smoothness of the trend-cycle can also be controlled by the user."
+    cita_sha256: "d99c2b20359acda8ac595dc80ea7287758b15e34695dc832c16667ebe5f617b7"
+    cita_palabras: 12
   nota: >-
     La añadió la ronda R3 (2026-11-11) al recoger la cuarta limitación que el capítulo no desarrollaba; el
     verificador de corrección señaló que atribuía a la fuente sin registro, y se registró el 2026-11-13. La
@@ -401,17 +432,20 @@ afirmaciones:
     loc: "§3.4"
     clase: WEB
     instantanea: decomposition
-    cita: "detrended series: y_t - \\hat{T}_t."
+    cita_sha256: "e9bc0437054eadcad558a3a25806106f863c862763d0dea9034965935ac19d99"
+    cita_palabras: 5
   - clave: hyndman2021forecasting
     loc: "§3.4"
     clase: WEB
     instantanea: decomposition
-    cita: "detrended series: y_t / \\hat{T}_t."
+    cita_sha256: "877046df6cd830968b24b6646210f0fa0cebb4beb29a41e14c4d2742af72da12"
+    cita_palabras: 5
   - clave: hyndman2021forecasting
     loc: "§3.4"
     clase: WEB
     instantanea: decomposition
-    cita: "average the detrended values for that season"
+    cita_sha256: "ee4a9e44537a1e8c2376462197584be7aedd864941888ec877bde0cc3e56c992"
+    cita_palabras: 7
   nota: >-
     FPP3 §3.4 da el paso 2 en las dos escalas —restar en la aditiva, dividir en la multiplicativa: de ahí las
     dos primeras citas— y el paso 3 como el promedio por posición. Dos cosas son del capítulo y no de la
@@ -434,17 +468,20 @@ afirmaciones:
     loc: "§3.4"
     clase: WEB
     instantanea: decomposition
-    cita: "using a 2 \\times m-MA."
+    cita_sha256: "a201d5d0f76755667b8a5fd3fd0b1b0a0f26507d1265e6c2a45bf2b41f41395d"
+    cita_palabras: 5
   - clave: hyndman2021forecasting
     loc: "§3.4"
     clase: WEB
     instantanea: decomposition
-    cita: "adjusted to ensure that they add to m."
+    cita_sha256: "661919273e3722371995b107de6b822dd336851bf74f5e51e46347cb14fe7f59"
+    cita_palabras: 8
   - clave: hyndman2021forecasting
     loc: "§3.4"
     clase: WEB
     instantanea: decomposition
-    cita: "dividing out the estimated seasonal and trend-cycle components"
+    cita_sha256: "d91e1ebe48eb87872da7ab18ef2e7e11d31e6fd58d91fb2697003b067025909e"
+    cita_palabras: 8
   nota: >-
     FPP3 §3.4 respalda el contenido de cada fila —tendencia por media móvil, serie sin tendencia, promedio
     por posición, ajuste de los índices y residuo— en las dos columnas. El matiz, que el capítulo no oculta
@@ -468,7 +505,8 @@ afirmaciones:
     loc: "§3.4"
     clase: WEB
     instantanea: decomposition
-    cita: "adjusted to ensure that they add to m."
+    cita_sha256: "661919273e3722371995b107de6b822dd336851bf74f5e51e46347cb14fe7f59"
+    cita_palabras: 8
   nota: >-
     FPP3 §3.4 impone que los índices multiplicativos sumen m —con m = 12, media 1—. La marca termina en «…la
     condición de la última fila de la tabla»: que el reescalado del paso 3c esté puesto para imponerla es
@@ -491,12 +529,14 @@ afirmaciones:
     loc: "§3.3; §3.4"
     clase: WEB
     instantanea: decomposition
-    cita: "first step in a classical decomposition is to use a moving average"
+    cita_sha256: "51472271e018e0362ee35a16ae8e0a5b47d809c9c42bcda53fee8a9808cbd7c8"
+    cita_palabras: 12
   - clave: hyndman2021forecasting
     loc: "§3.4"
     clase: WEB
     instantanea: decomposition
-    cita: "\\hat{T}_t using a 2 \\times m-MA."
+    cita_sha256: "f29dd046bda45f34b3336bbe98f80f375985c5d30fa3bbbb13f88cf310870204"
+    cita_palabras: 6
   nota: >-
     CAMBIO DE IDENTIFICADOR: en el inventario esta afirmación es c1-m6-02, pero ese id ya estaba registrado
     desde la R3 para la cuarta limitación del método clásico; aquí lleva c1-m6-20, el primero libre del
@@ -520,12 +560,14 @@ afirmaciones:
     loc: "§3.6"
     clase: WEB
     instantanea: decomposition
-    cita: "“Seasonal and Trend decomposition using Loess”"
+    cita_sha256: "9ef5991b63da7f99578afb7d0cb962722e5f020bdbbdf2cc3b55380a4f5e46c2"
+    cita_palabras: 6
   - clave: rcoreteam2026r
     loc: "§Description"
     clase: WEB
     instantanea: stl
-    cita: "components using ‘loess’, acronym STL."
+    cita_sha256: "1edc6cc8e18cca13042535952a28d641dc66b9a239b883744b37082b2cc43ea1"
+    cita_palabras: 5
   nota: >-
     Estaba «pendiente» desde el piloto. El capítulo escribía «Seasonal-Trend decomposition using Loess», y el
     verificador, ya con el artículo original leído, confirmó que ninguna fuente escribe esa cadena: mezclaba
@@ -554,12 +596,14 @@ afirmaciones:
     loc: "p. 3"
     clase: PDF
     pagina_pdf: 1
-    cita: "STL: A Seasonal-Trend Decomposition"
+    cita_sha256: "412bd8c5f88b1dc08895156e4f8d1d721f3b3471900658bbcd39886f654da0b0"
+    cita_palabras: 4
   - clave: cleveland1990stl
     loc: "p. 3"
     clase: PDF
     pagina_pdf: 1
-    cita: "Procedure Based on Loess"
+    cita_sha256: "e022e5566da3aac2f2192aebdb73f7c4e3a7836db44f6188e46b00898f5af701"
+    cita_palabras: 4
   nota: >-
     ENTRADA NUEVA de la verificación independiente de la R4; no está en el inventario. El capítulo desarrolla
     el acrónimo con la forma de FPP3 (c1-m7-01) y la lista de fuentes del módulo imprime el título del
@@ -582,27 +626,32 @@ afirmaciones:
     loc: "§3.3"
     clase: PDF
     pagina_pdf: 12
-    cita: "The STL robust estimation is needed when"
+    cita_sha256: "798c0b77d5b8f51bc39956952f40ffbbb66adc602c73153e66bf40ec080f54fc"
+    cita_palabras: 7
   - clave: cleveland1990stl
     loc: "§3.3"
     clase: PDF
     pagina_pdf: 12
-    cita: "consists of the inner loop."
+    cita_sha256: "d7e293820b93f74f077a2867ee3cd9ec7609d726cfb1743dd817a289117f9d3a"
+    cita_palabras: 5
   - clave: cleveland1990stl
     loc: "§2.2"
     clase: PDF
     pagina_pdf: 4
-    cita: "an inner loop nested inside an outer loop. In"
+    cita_sha256: "b41d48ce8c32dd7eece328fb968baa117aaf5d1bb07cc10ea803b14f9a97a2bb"
+    cita_palabras: 9
   - clave: rcoreteam2026r
     loc: "§Usage"
     clase: WEB
     instantanea: stl
-    cita: "robust = FALSE,"
+    cita_sha256: "22ad141b5f97ff292f2ffd89e626f943565e128cabb7e597d20e267f37540aa5"
+    cita_palabras: 3
   - clave: rcoreteam2026r
     loc: "§Usage"
     clase: WEB
     instantanea: stl
-    cita: "outer = if(robust) 15 else 0,"
+    cita_sha256: "8c63bf1a418e8c8bf5cbcf2ac86e329858badacba04bcdcc1f05fb64f262f080"
+    cita_palabras: 6
   nota: >-
     Estaba «pendiente» desde el piloto, a falta del artículo original y de la ayuda de R. Las tres partes
     quedan respaldadas, cada una por su fuente. Opcional: §3.3 del artículo dice que la estimación robusta
@@ -627,12 +676,14 @@ afirmaciones:
     loc: "§3.6"
     clase: WEB
     instantanea: decomposition
-    cita: "Unlike SEATS and X-11, STL will handle any type of seasonality, not only monthly and quarterly data."
+    cita_sha256: "e3901ef0a6c0501037807cf1a6c159ce6fb58470c3e14710070403c749651ed4"
+    cita_palabras: 17
   - clave: hyndman2021forecasting
     loc: "§3.6"
     clase: WEB
     instantanea: decomposition
-    cita: "A multiplicative decomposition can be obtained by first taking logs of the data, then back-transforming the components."
+    cita_sha256: "deea0a719dc2ae19a29c139742cb307bfdea2f02220a43a929eca18833acc4b4"
+    cita_palabras: 17
   nota: >-
     AirPassengers no aparece en la fuente: es el ejemplo del capítulo. La fuente añade que después se
     deshace la transformación en los componentes y que una Box-Cox con 0 < λ < 1 da descomposiciones
@@ -651,22 +702,26 @@ afirmaciones:
     loc: "§2.1"
     clase: PDF
     pagina_pdf: 4
-    cita: "x; that are closest to x are selected and each"
+    cita_sha256: "9d65da23aaf660f49ec7577e2af16664ba1ea12b357ba6949c42973cf93eecba"
+    cita_palabras: 10
   - clave: cleveland1990stl
     loc: "§2.1"
     clase: PDF
     pagina_pdf: 4
-    cita: "fitting is locally-linear or locally-quadratic."
+    cita_sha256: "bca4e3346dd990a9249f9b1806df475f031e518f5f4ffbdebd786ab7b6fa08a4"
+    cita_palabras: 5
   - clave: cleveland1990stl
     loc: "§2.1"
     clase: PDF
     pagina_pdf: 4
-    cita: "locally-fitted polynomial at x is g(x). In this"
+    cita_sha256: "c199a11bcb99522f25e302831ca3e98f133529268050840cf3c8a3ac9f9b24bb"
+    cita_palabras: 8
   - clave: cleveland1990stl
     loc: "§2.1"
     clase: PDF
     pagina_pdf: 4
-    cita: "increase in distance from x and become zero"
+    cita_sha256: "1d500fdcd4ce3b6de36332c0e66ff6122fdf77248c73712e9351d2cbe78d6cf1"
+    cita_palabras: 8
   nota: >-
     §2.1 del artículo dice las cuatro cosas de la frase: se eligen los q valores más próximos a x, se ajusta
     un polinomio local, el valor devuelto es el del polinomio en x, y los pesos se anulan en el q-ésimo punto
@@ -695,7 +750,8 @@ afirmaciones:
     loc: "§Arguments"
     clase: WEB
     instantanea: stl
-    cita: "t.window: the span (in lags) of the loess window for trend extraction,"
+    cita_sha256: "a528b578c6feca917c4731b1ef11e62ebb8bc51eb47189e8b3689aec2074797a"
+    cita_palabras: 12
   nota: >-
     La frase del inventario («es lo que en R se pasa como t.window para la tendencia y s.window para lo
     estacional») ya no está: la R3-bis repartió su contenido entre los pasos 1 y 2 de «El método, paso a
@@ -718,17 +774,20 @@ afirmaciones:
     loc: "§Usage"
     clase: WEB
     instantanea: stl
-    cita: "stl(x, s.window, s.degree = 0,"
+    cita_sha256: "3d5f1d144d3f7fd417e8213e847936a84a095ae4512142084a35cd2702387952"
+    cita_palabras: 5
   - clave: rcoreteam2026r
     loc: "§Usage"
     clase: WEB
     instantanea: stl
-    cita: "t.window = NULL, t.degree = 1,"
+    cita_sha256: "86461d28454eb88907a9e56cf9a2daaabbe79cf7f1eed442a4d321e473ac0b1c"
+    cita_palabras: 6
   - clave: cleveland1990stl
     loc: "§2.3"
     clase: PDF
     pagina_pdf: 5
-    cita: "smoothed by loess with q = m, andd = 1."
+    cita_sha256: "e4be69b90b63cf48b4ee451d2a5eff5ccc639f2033dc17461d5c49cb97886ff2"
+    cita_palabras: 10
   nota: >-
     Los dos valores por defecto están en la línea de uso de la ayuda de stl(): s.degree = 0 y t.degree = 1.
     La marca cubre solo la primera oración del párrafo de cierre del desarrollo («Los dos grados por defecto…
@@ -755,22 +814,26 @@ afirmaciones:
     loc: "§2.1"
     clase: PDF
     pagina_pdf: 4
-    cita: "tricube weight function:"
+    cita_sha256: "5ac8c1cfeb5aa2e741382d06161dbcda381705caaea14060bac27452e4ce29a3"
+    cita_palabras: 3
   - clave: cleveland1990stl
     loc: "§2.1"
     clase: PDF
     pagina_pdf: 4
-    cita: "Thus the x, close to x have the largest"
+    cita_sha256: "5a128cb533ca5083b8921bad6b00fe23578565bfc8aeda6d98ff0a45bdae0586"
+    cita_palabras: 9
   - clave: cleveland1990stl
     loc: "§2.1"
     clase: PDF
     pagina_pdf: 4
-    cita: "increase in distance from x and become zero"
+    cita_sha256: "1d500fdcd4ce3b6de36332c0e66ff6122fdf77248c73712e9351d2cbe78d6cf1"
+    cita_palabras: 8
   - clave: cleveland1990stl
     loc: "§2.1"
     clase: PDF
     pagina_pdf: 4
-    cita: "at the qth farthest point."
+    cita_sha256: "ea3681adf2aef0e97cdab187378555f0a2ea8a6eda2865e9aec456fc971d6006"
+    cita_palabras: 5
   nota: >-
     El nombre y la forma son del artículo: «tricube weight function», peso máximo sobre x, que decrece con la
     distancia y se anula en el q-ésimo punto más lejano, es decir, en el borde de la ventana. La fórmula del
@@ -791,17 +854,20 @@ afirmaciones:
     loc: "§Arguments"
     clase: WEB
     instantanea: stl
-    cita: "‘nextodd(ceiling((1.5*period) / (1-(1.5/s.window))))’, is"
+    cita_sha256: "68f8de831ec51ad470995e1852660d3e5e1406271ce1b010bf61d15c1cb16a9a"
+    cita_palabras: 4
   - clave: cleveland1990stl
     loc: "p. 20"
     clase: PDF
     pagina_pdf: 18
-    cita: "to be the smallest odd integer satisfying the"
+    cita_sha256: "cff8857c3f84ed5972d415a8ccf8f59c33f43f59510cea71bc9150f1f43239d5"
+    cita_palabras: 8
   - clave: cleveland1990stl
     loc: "p. 20"
     clase: PDF
     pagina_pdf: 18
-    cita: "chosen to be 35; the right side of the"
+    cita_sha256: "32ea2544bf158c59f52111f5cb9c3e89a65e025dfa79e5ef490067cf27adbc5e"
+    cita_palabras: 9
   nota: >-
     La ayuda de stl() da la regla carácter por carácter, incluidos el techo y el impar inmediato. El artículo
     respalda la misma regla en prosa —n_t es el menor entero impar que satisface la desigualdad con 1.5 n_p—
@@ -826,37 +892,44 @@ afirmaciones:
     loc: "§2.2; §2.3"
     clase: PDF
     pagina_pdf: 5
-    cita: "cycle-subseries of the detrended series is"
+    cita_sha256: "51f9665db22fcf00e9baa185d53f966d544352dba9a650b9610feaf35512cbd8"
+    cita_palabras: 6
   - clave: cleveland1990stl
     loc: "§2.2"
     clase: PDF
     pagina_pdf: 5
-    cita: "subseries as cycle-subseries."
+    cita_sha256: "6ea35d3f3e051f1493f421b7786436744f7614606d17e4f0a59d5c0ccbc7a801"
+    cita_palabras: 3
   - clave: cleveland1990stl
     loc: "§2.2"
     clase: PDF
     pagina_pdf: 5
-    cita: "January values, the second is the February"
+    cita_sha256: "09b8b8570713e7261883f45d968553b9e11b5f12c9fd7086020c4f0bb8e857d3"
+    cita_palabras: 7
   - clave: rcoreteam2026r
     loc: "§Details"
     clase: WEB
     instantanea: stl
-    cita: "sub-series (the series of all January values, ...); if ‘s.window ="
+    cita_sha256: "767b15e4511d9a6f5bbd6f50476ac5b4a30265447c63cf3d833da418a2ecf40f"
+    cita_palabras: 11
   - clave: rcoreteam2026r
     loc: "§Details"
     clase: WEB
     instantanea: stl
-    cita: "\"periodic\"’ smoothing is effectively replaced by taking the mean."
+    cita_sha256: "1c4b6739e989c160d58f7c1543f56768a4184e65f997db89a442d883b6599b0a"
+    cita_palabras: 9
   - clave: rcoreteam2026r
     loc: "§Arguments"
     clase: WEB
     instantanea: stl
-    cita: "lags) of the loess window for seasonal extraction, which"
+    cita_sha256: "2c717903a3b64e8ed2edcc445aa888bca2aaba6b5de6b65e3413bee10080cd57"
+    cita_palabras: 9
   - clave: hyndman2021forecasting
     loc: "§3.6"
     clase: WEB
     instantanea: decomposition
-    cita: "periodic season(window='periodic') (i.e., identical across years)"
+    cita_sha256: "81a165fcb2aff5be383d2596a17be868a0caf2ac20624409956408801288c2f2"
+    cita_palabras: 6
   nota: >-
     El artículo nombra y define las subseries de enero, de febrero, etc. («cycle-subseries»), y el paso 2 de
     su bucle interior las suaviza por separado con Loess. La ayuda de stl() lo repite y añade que con
@@ -886,37 +959,44 @@ afirmaciones:
     loc: "§Usage"
     clase: WEB
     instantanea: stl
-    cita: "inner = if(robust)  1 else 2,"
+    cita_sha256: "82e3206e7a921cf826a07f4dfa7c400fee0a5280e6d723a347a75e348ba43eb2"
+    cita_palabras: 6
   - clave: rcoreteam2026r
     loc: "§Arguments"
     clase: WEB
     instantanea: stl
-    cita: "inner: integer; the number of ‘inner’ (backfitting) iterations;"
+    cita_sha256: "0f0d0acd46afc962ca7fc7820accd8a5b474326763a905a019f830cefef6c078"
+    cita_palabras: 8
   - clave: rcoreteam2026r
     loc: "§Arguments"
     clase: WEB
     instantanea: stl
-    cita: "usually very few (2) iterations suffice."
+    cita_sha256: "66e55bff0b260727bef449507879ac3cbbe73dbf3049917c5efbc81d2668c50a"
+    cita_palabras: 6
   - clave: cleveland1990stl
     loc: "§2.2"
     clase: PDF
     pagina_pdf: 4
-    cita: "STL consists of two recursive procedures:"
+    cita_sha256: "3530316bf36c9491d60a71eac2bbbd1478d2c58d3be67adb9e2cefccd1525406"
+    cita_palabras: 6
   - clave: cleveland1990stl
     loc: "§2.2"
     clase: PDF
     pagina_pdf: 4
-    cita: "an inner loop nested inside an outer loop. In"
+    cita_sha256: "b41d48ce8c32dd7eece328fb968baa117aaf5d1bb07cc10ea803b14f9a97a2bb"
+    cita_palabras: 9
   - clave: cleveland1990stl
     loc: "§2.3"
     clase: PDF
     pagina_pdf: 5
-    cita: "Each pass of the inner loop consists of"
+    cita_sha256: "c7e3156f74159cee532f20f436f24974673562fe834a50e31ccc973035c9cce1"
+    cita_palabras: 8
   - clave: cleveland1990stl
     loc: "§2.2"
     clase: PDF
     pagina_pdf: 4
-    cita: "loop followed by a computation of"
+    cita_sha256: "7832cc8c544575be352f5fa47db22d20e3e3913b4d3ce47d1ac7e0df67de5830"
+    cita_palabras: 6
   nota: >-
     La frase del inventario («Son dos bucles, uno dentro de otro: el interior alterna estacionalidad y
     tendencia hasta que se estabilizan…») ya no está: la R3 y la R3-bis la repartieron entre el paso 4 de «El
@@ -948,22 +1028,26 @@ afirmaciones:
     loc: "§2.4"
     clase: PDF
     pagina_pdf: 6
-    cita: "where B is the bisquare weight function:"
+    cita_sha256: "6c7d7a74f202fbb546ba2360428d38ba96723fdb68c90470cb71e98092a6b72d"
+    cita_palabras: 7
   - clave: cleveland1990stl
     loc: "§2.4"
     clase: PDF
     pagina_pdf: 6
-    cita: "h = 6 median(|R,|)."
+    cita_sha256: "f0c6356700886fc7e8f68c577f1251f2b2f4889122f1a12b94f8dc19a2d4e236"
+    cita_palabras: 4
   - clave: cleveland1990stl
     loc: "§2.4"
     clase: PDF
     pagina_pdf: 6
-    cita: "will have a small or zero weight. Let"
+    cita_sha256: "b25119b65dd33004f8584830c57069a050f6ece70d8aa9eb3f3acb29a0029de7"
+    cita_palabras: 8
   - clave: cleveland1990stl
     loc: "§2.4"
     clase: PDF
     pagina_pdf: 6
-    cita: "in the data that results in a very large |R,|"
+    cita_sha256: "cadf101d417f47b33d66fe930f4a22c16fc7c2699ac895f6281a6dc1dec21e26"
+    cita_palabras: 10
   nota: >-
     El artículo da las tres piezas de la frase: el nombre («bisquare weight function»), la unidad de medida
     —h es seis veces la mediana de los residuos absolutos— y el corte, porque un atípico con residuo grande
@@ -984,7 +1068,8 @@ afirmaciones:
     loc: "p. 5"
     clase: PDF
     pagina_pdf: 3
-    cita: "weighted regression, or loess (Cleveland and"
+    cita_sha256: "7455c62620caa4b2fa929b5f7b72516fb8f230e7639f40de5ab02b5b4d89374e"
+    cita_palabras: 6
   nota: >-
     ENTRADA NUEVA de la corrección de la R4; no está en el inventario (c1-m7-23 es el primer id libre del
     módulo). Sale de c1-m7-05: el verificador del lote R4b anotó allí que el artículo presenta el suavizador
@@ -1007,12 +1092,14 @@ afirmaciones:
     loc: "§4.3"
     clase: WEB
     instantanea: features
-    cita: "A time series decomposition can be used to measure the strength of trend and seasonality in a time series."
+    cita_sha256: "9223f4c3fa47f5462d955ea629ced563837236c6167ff706132dbe47e698f3a3"
+    cita_palabras: 19
   - clave: hyndman2021forecasting
     loc: "§4.3"
     clase: WEB
     instantanea: features
-    cita: 'F_S = \max\left( 0, 1 - \frac{\text{Var}(R_t)}{\text{Var}(S_{t} + R_t)} \right)'
+    cita_sha256: "ca6ab2ee825113001e08bb299aa0c7eb24887d372938f7ac70835ec25dbd4e2d"
+    cita_palabras: 10
   nota: >-
     El capítulo publicado remite a «FPP3, §3.6», que es «STL decomposition». Las definiciones y las dos
     fórmulas, idénticas a las del capítulo, están en §4.3 «STL Features»: el localizador se corrigió en el
@@ -1032,12 +1119,14 @@ afirmaciones:
     loc: "§3.2"
     clase: WEB
     instantanea: decomposition
-    cita: "the resulting values are the “seasonally adjusted” data."
+    cita_sha256: "2b66c515d576c7605c3f10976a6b54c1c0826d40fb3fac227cca4ad63d4d91f9"
+    cita_palabras: 8
   - clave: hyndman2021forecasting
     loc: "§3.2"
     clase: WEB
     instantanea: decomposition
-    cita: "contain the remainder component as well as the trend-cycle"
+    cita_sha256: "678bc6b5bfc1602e253f31a92eca5ce89caf872024bb685c125073d0140b4468"
+    cita_palabras: 9
   nota: >-
     FPP3 §3.2 respalda la definición, las dos fórmulas y el punto fino de que la serie ajustada conserva el
     residuo además de la tendencia-ciclo. FPP3 añade una advertencia que el párrafo marcado no recoge: por
@@ -1057,12 +1146,14 @@ afirmaciones:
     loc: "§3.2"
     clase: WEB
     instantanea: decomposition
-    cita: "monthly unemployment data are usually seasonally adjusted"
+    cita_sha256: "5e38a34d9fa34b08585fa2d56437b8335703cca9b07c96032fa2407b36ee9b13"
+    cita_palabras: 7
   - clave: hyndman2021forecasting
     loc: "§3.5"
     clase: WEB
     instantanea: decomposition
-    cita: "decomposition procedures which are used for seasonal adjustment"
+    cita_sha256: "834db72a047c2207f8fe5356b244e68d82cd13c5428ca602980575afb4db9a94"
+    cita_palabras: 8
   nota: >-
     El verificador del lote R4a leyó «muchas estadísticas oficiales —desempleo, producción—» y dio
     «con-matiz», porque FPP3 no dice nada de la «producción». La primera pasada de la R4 la retiró y dejó

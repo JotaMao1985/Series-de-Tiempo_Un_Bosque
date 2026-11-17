@@ -1,0 +1,66 @@
+2332: [Box, Jenkins, Ljung, Reinsel] Box, G. E. P., Jenkins, G. M., Reinsel, G. C., y Ljung, G. M. (2015). Time series analysis: forecasting and control (5.ª ed.). John Wiley & Sons, Inc.
+2333: [Brockwell, Davis] Brockwell, P. J., y Davis, R. A. (2016). Introduction to Time Series and Forecasting (3.ª ed.). Springer International Publishing. https://doi.org/10.1007/978-3-319-29854-2
+2334: [Athanasopoulos, Hyndman, fpp3] Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
+2335: [Shumway, Stoffer] Shumway, R. H., y Stoffer, D. S. (2017). Time Series Analysis and Its Applications: With R Examples (4.ª ed.). Springer International Publishing. https://doi.org/10.1007/978-3-319-52452-8
+2473: [estándar] Si la serie no lo es, los coeficientes estimados no significan lo que parecen, los errores estándar están mal y los pronósticos heredan el problema. Buena parte de este capítulo consiste en dos preguntas:
+2482: [Chan, Cryer] Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3
+2483: [Hamilton] Hamilton, J. D. (1994). Time series analysis. Princeton University Press.
+2484: [Athanasopoulos, Hyndman, fpp3] Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
+2626: [Chan, Cryer] Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3
+2627: [Hamilton] Hamilton, J. D. (1994). Time series analysis. Princeton University Press.
+2628: [Athanasopoulos, Hyndman, fpp3] Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
+2765: [clásic] El Capítulo 1 dejó un cabo suelto: el residuo de una descomposición se juzgaba a ojo. El correlograma lo mide. El residuo de la descomposición clásica multiplicativa de
+2781: [fpp3, siempre] # Correlograma con R base acf(AirPassengers, lag.max = 24, main = "ACF de AirPassengers") # Los valores numericos (el primero, el rezago 0, siempre vale 1) r <- acf(AirPassengers, lag.max = 24, plot = FALSE)$acf[-1] round(r[c(1, 2, 12)], 4) #> [1] 0.9480 0.875
+2860: [Chan, Cryer] Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3
+2861: [Hamilton] Hamilton, J. D. (1994). Time series analysis. Princeton University Press.
+2862: [Athanasopoulos, Hyndman, fpp3] Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
+3031: [fpp3, siempre] # ACF y PACF una al lado de la otra par(mfrow = c(1, 2)) acf(AirPassengers, lag.max = 24, main = "ACF") pacf(AirPassengers, lag.max = 24, main = "PACF") # pacf() empieza en el rezago 1; acf() empieza en el rezago 0, que siempre vale 1 p <- pacf(AirPassengers, 
+3056: [Durbin, Levinson, Walker, Yule] # ACF y PACF una al lado de la otra import numpy as np import pandas as pd import statsmodels.api as sm import matplotlib.pyplot as plt from statsmodels.graphics.tsaplots import plot_acf, plot_pacf from statsmodels.tsa.stattools import pacf datos = sm.datasets
+3094: [Chan, Cryer] Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3
+3095: [Hamilton] Hamilton, J. D. (1994). Time series analysis. Princeton University Press.
+3096: [Athanasopoulos, Hyndman, fpp3] Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
+3166: [siempre] siempre el mismo, así que todo lo que cambia se debe a $\phi$. Fíjate en cómo la ACF decae cada vez más despacio a medida que $\phi$ se acerca a 1: con $\phi = 1$ baja casi en línea recta, y esa es la huella de la raíz unitaria. Luego activa la
+3294: [Chan, Cryer] Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3
+3295: [Hamilton] Hamilton, J. D. (1994). Time series analysis. Princeton University Press.
+3296: [Athanasopoulos, Hyndman, fpp3] Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
+3362: [siempre] estacionaria. Con el KPSS, "p < 0.05" significa no estacionaria. Antes de interpretar cualquier salida, pregúntate siempre:
+3485: [por defecto] log(AirPassengers): el logaritmo iguala la amplitud de las oscilaciones, que en esta serie crece con el nivel (Capítulo 1; el Módulo 8 lo retoma), y es la escala en que esta serie se diferencia en los módulos que siguen. En logaritmos el $k = 5$ por defecto da
+3502: [por defecto] 5 (valor por defecto)
+3571: [Dickey, Fuller, por defecto] library(tseries) # --- La TRM: promedio mensual de enero de 2015 a junio de 2026 ------------ # Copia fija de los 138 meses con que se calcularon las cifras de este # modulo. Se lee de la carpeta de trabajo si el archivo ya esta ahi; si # no, de la pagina del 
+3648: [por defecto] import os import pandas as pd from statsmodels.tsa.stattools import adfuller, kpss # La TRM: la misma copia fija de 138 meses (enero de 2015 a junio de 2026). # Se lee de la carpeta de trabajo si el archivo ya esta ahi; si no, de la # pagina del curso. La seri
+3698: [Chan, Cryer] Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3
+3699: [Athanasopoulos, Hyndman, fpp3] Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
+3748: [siempre] Con una serie estacional, este curso aplica siempre el mismo orden:
+4202: [Chan, Cryer] Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3
+4203: [Athanasopoulos, Hyndman, fpp3] Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
+4220: [Box, Cox] 2.8 Logaritmo y Box–Cox
+4226: [Box, Cox] Estabilizar la varianza con el logaritmo o con Box–Cox, elegir $\lambda$ con un criterio objetivo y saber deshacer la transformación.
+4262: [Guerrero] Criterio de Guerrero (menor es mejor)
+4283: [Guerrero] En este curso se usa el logaritmo, aunque el óptimo formal sea otro. Conviene poner el precio sobre la mesa en lugar de decir que da igual: el criterio de Guerrero vale
+4309: [Box, Cox, Guerrero, fpp3, guerrero] library(forecast) # Lambda por el criterio de Guerrero lambda <- BoxCox.lambda(AirPassengers, method = "guerrero") round(lambda, 4) #> [1] -0.2947 # Aplicar y deshacer la transformacion: sobre los datos, la vuelta es exacta w <- BoxCox(AirPassengers, lambda) y
+4336: [Guerrero, guerrero] import numpy as np import pandas as pd import statsmodels.api as sm from scipy.stats import boxcox from statsmodels.base.transform import BoxCox datos = sm.datasets.get_rdataset("AirPassengers").data pasajeros = pd.Series( datos["value"].values, index=pd.date_
+4376: [Chan, Cryer] Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3
+4377: [Athanasopoulos, Hyndman, fpp3] Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
+4483: [Guerrero, guerrero] log(y); para compararlo con el $\lambda$ de Guerrero, BoxCox.lambda(y, method = "guerrero") y BoxCox() (Módulo 8); en Python, np.log() o, para el $\lambda$ de Guerrero, BoxCox().transform_boxcox() de statsmodels: scipy.stats.boxcox estima $\lambda$ por máxima 
+4507: [Nunca] Comprobar si queda una raíz unitaria y, si queda, aplicar $\nabla$. Una tendencia determinista —una recta con ruido— no se diferencia: se le resta la recta, y el Módulo 6 enseña a distinguir los dos casos. Nunca sobre una serie estacional cruda: el ADF puede r
+4550: [Guerrero, guerrero] library(forecast); library(tseries) # Los pasos 2 a 5 del procedimiento. El paso 1 (graficar) decide el argumento # `logaritmo`: TRUE si la dispersion crece con el nivel, FALSE si no hay nada # que estabilizar. El paso 6 es guardar lo que devuelve la funcion. 
+4598: [siempre] import numpy as np import pandas as pd import statsmodels.api as sm from statsmodels.tsa.stattools import acf, kpss datos = sm.datasets.get_rdataset("AirPassengers").data pasajeros = pd.Series( datos["value"].values, index=pd.date_range("1949-01-01", periods=l
+4659: [estándar] el orden temporal impone restricciones que el preprocesamiento estándar ignora
+4714: [nunca] $\phi = 1$: los choques no se olvidan nunca
+4746: [Box, Cox] Box–Cox
+4752: [siempre] Graficar, transformar, $\nabla_m$, $\nabla$, verificar y documentar, siempre en ese orden
+4774: [propuest] Ejercicios propuestos
+4793: [Guerrero] después la diferencia estacional y solo al final la regular. Y cuidado con dos cosas: el $\lambda$ de Guerrero aquí no te va a servir de mucho (piensa cuánto varía el
+4800: [guerrero] library(forecast); library(tseries) # 1. Transformar? Entre el minimo y el maximo de toda la muestra hay solo un # 15.9 % de la media: el nivel del CO2 apenas cambia de escala round((max(co2) - min(co2)) / mean(co2), 3) #> [1] 0.159 round(BoxCox.lambda(co2, me
+4880: [nunca, siempre] library(tseries) set.seed(2026) p <- replicate(500, suppressWarnings(adf.test(cumsum(rnorm(100)))$p.value)) 100 * mean(p < 0.05) # en porcentaje; nominal: 5 % #> [1] 4.6 100 * mean(p < 0.10) # nominal: 10 % #> [1] 9.2 # Y no es que la prueba nunca rechace: sob
+4924: [Box, Ljung] library(forecast) y <- USAccDeaths # La trampa: ndiffs sobre la serie CRUDA dice 0, porque la estacionalidad # domina y confunde a la prueba. El orden correcto es estacional primero. ndiffs(y) # enganoso #> [1] 0 nsdiffs(y) #> [1] 1 ndiffs(diff(y, lag = 12)) #
+4959: [Box] Fuera de bandaLjung–Box $p$
+4969: [Box, Ljung] Cada diferencia sola arregla la mitad del problema y deja la otra intacta: $\nabla$ limpia el rezago 1 ($r_1 = 0.023$) pero deja la estacionalidad viva ($r_{12} = 0.709$), y $\nabla_{12}$ hace exactamente lo contrario. Solo aplicando las dos baja el número de 
+4976: [Box, Ljung] ndiffs pide 1; menos rezagos fuera; Ljung–Box el único que no está pegado a cero), y ese $r_1$ negativo es la huella del
+5105: [por defecto] Identifica el mecanismo concreto, no una vaguedad. "La estacionalidad afecta a la prueba" no sirve; "los $k=5$ rezagos por defecto no cubren el periodo $m=12$, así que la oscilación anual queda en el residuo y se lee como reversión a la media" sí.
+5110: [la literatura] Separa lo verificado de lo aceptado a ciegas. Ejemplo de lo primero: los estadísticos con distintos $k$, el resultado sobre la serie desestacionalizada, la tasa de falso rechazo del Monte Carlo. Ejemplo de lo segundo: cualquier afirmación sobre "la literatura 
+5118: [siempre] La idea de fondo vale para todo el curso: un asistente es útil para generar hipótesis y rapidísimo para producir texto plausible. La parte que no puede delegar es la verificación, y en series de tiempo verificar casi siempre significa
+5157: [Chan, Cryer] Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3
+5158: [Hamilton] Hamilton, J. D. (1994). Time series analysis. Princeton University Press.
+5159: [Athanasopoulos, Hyndman, fpp3] Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
+5168: [Athanasopoulos, Hyndman, fpp3] Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/

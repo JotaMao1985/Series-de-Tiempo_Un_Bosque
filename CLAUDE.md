@@ -10,8 +10,9 @@ Material HTML interactivo de un curso universitario, publicado en GitHub Pages d
 2. **Ninguna cita de memoria.** No escribas un autor, un año, una página, una sección ni un DOI
    que no hayas leído en esta sesión en la fuente o en `bibliografia/`. Una obra entra por
    Zotero con su DOI o ISBN; una afirmación atribuida lleva `data-afirma`, una entrada en
-   `bibliografia/contraste/capN.yml` con la cita literal del pasaje leído, y la verifica alguien
-   que no la redactó. Lo que no se pueda contrastar se declara `propia` o `pendiente`: nunca se
+   `bibliografia/contraste/capN.yml` con la huella de la cita literal del pasaje leído (el
+   literal, fuera de git, en `bibliografia/_local/citas/`), y la verifica alguien que no la
+   redactó. Lo que no se pueda contrastar se declara `propia` o `pendiente`: nunca se
    rellena. El procedimiento completo está en `bibliografia/README.md`.
 
 ## Antes de dar algo por hecho

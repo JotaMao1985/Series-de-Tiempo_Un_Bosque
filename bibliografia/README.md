@@ -15,7 +15,8 @@ guion lo comprueba.
 | Cómo se encontró cada identificador | `obras.tsv` | la búsqueda en Crossref y Open Library del 2026-11-10 |
 | Ejemplar leído (huella, portada) | `ejemplares.yml` | `precalculo/extrae_fuente.py` + una mirada a la portada |
 | Páginas web leídas (URL, fecha, huella) | `instantaneas.yml` | `precalculo/extrae_fuente.py --web` |
-| Afirmación ↔ pasaje leído | `contraste/capN.yml` | quien dirige la ronda, con lo que devuelve el verificador |
+| Afirmación ↔ pasaje leído | `contraste/capN.yml`: localizador, veredicto y la huella de la cita (`cita_sha256`, `cita_palabras`) | quien dirige la ronda, con lo que devuelve el verificador |
+| Literal de cada cita | `_local/citas/capN.yml` — **fuera de git** (desde el 2026-11-17) | `precalculo/migra_citas_fuera.py` |
 | Contrato curso → vault | `uso_fuentes.json`: lo único que el vault lee de este curso | `precalculo/audita_citas.py --uso` |
 | PDF y texto por página | `_local/` — **fuera de git**: el repo es público | `precalculo/extrae_fuente.py` |
 | Estilo de cita | `apa-es.csl` (APA 7; variante con «y» en lugar de «&») | derivado del `apa.csl` de Zotero |
@@ -50,7 +51,12 @@ alta a mano en Zotero copiando la portada, y se anota `origen: portada`.
 2. Un verificador **que no es quien redactó** recibe la afirmación y el texto de la fuente —no el
    veredicto esperado— y devuelve el veredicto y una cita literal de 25 palabras como mucho.
 3. La entrada se escribe en `contraste/capN.yml`. La huella de la prosa sale de
-   `python3 precalculo/audita_citas.py --huella c1-m7-03`.
+   `python3 precalculo/audita_citas.py --huella c1-m7-03`. La cita literal se escribe en la
+   fuente como `cita:` y se corre `python3 precalculo/migra_citas_fuera.py`, que la pasa a
+   `_local/citas/capN.yml` (clave: id de la afirmación y posición de la fuente, 1, 2…) y deja en
+   el registro `cita_sha256` (sha256 del literal pasado por la `normaliza()` del auditor: un
+   cambio de espacios o comillas no la mueve) y `cita_palabras`. Mientras quede un `cita:` en el
+   registro, el auditor falla (F13): el repo es público y ningún literal va a git.
 4. `python3 precalculo/genera_referencias.py` escribe el texto de las citas y las listas.
 5. `python3 precalculo/audita_citas.py` tiene que salir en verde.
 
@@ -70,7 +76,13 @@ admiten cita visible. Un capítulo con algo pendiente no cierra su auditoría
 (`audita_citas.py --cierre`).
 
 Clases de evidencia: `PDF` (página del ejemplar), `WEB` (instantánea de una página, acotada a la
-sección del localizador) y `DOC` (documentación de R) las comprueba el auditor contra `_local/`.
+sección del localizador) y `DOC` (documentación de R) las comprueba el auditor contra `_local/`:
+toma el literal de `_local/citas/`, exige que su huella sea la `cita_sha256` del registro y lo busca
+en el texto de la fuente. Sin el literal local (un clon del repo público), F05 dice «no comprobable
+aquí» y no aprueba; con `--sin-cache` lo cuenta sin fallar. El máximo de 25 palabras por cita se
+comprueba con `cita_palabras` (y, si está el literal, que sea su recuento real). El tope de 400
+palabras citadas por obra que había hasta el 2026-11-17 ya no se aplica: el repo no contiene
+ningún literal.
 `MAN` (un libro en papel, con página) y `REPO` (una derivación o una cifra del propio repo) no
 las ejecuta ningún guion y se cuentan aparte.
 
@@ -81,8 +93,9 @@ las ejecuta ningún guion y se cuentan aparte.
 | `precalculo/exporta_zotero.py` | Zotero → `referencias.json`. `--comprobar` no escribe |
 | `precalculo/extrae_fuente.py` | PDF y páginas web → texto en `_local/`, y su huella |
 | `precalculo/genera_referencias.py` | escribe las citas, las listas de fuentes y el pie |
-| `precalculo/audita_citas.py` | F01–F12: la cita literal está en la fuente, la edición es la leída, quien verifica no redactó, la prosa no cambió… |
-| `precalculo/prueba_audita_citas.py` | inyecta 24 defectos y exige que cada uno salte con su código exacto |
+| `precalculo/audita_citas.py` | F01–F13: la cita literal está en la fuente, la edición es la leída, quien verifica no redactó, la prosa no cambió, ningún literal en git… |
+| `precalculo/prueba_audita_citas.py` | inyecta 29 defectos y exige que cada uno salte con su código exacto |
+| `precalculo/migra_citas_fuera.py` | pasa los `cita:` del registro a `_local/citas/` y deja huella y palabras; `--comprobar` no escribe |
 | `precalculo/verifica_todo.py` | todos los verificadores del sitio, de una vez |
 
 ## Lo que falta (2026-11-10)
@@ -99,4 +112,5 @@ las ejecuta ningún guion y se cuentan aparte.
 - **Box et al., 5.ª ed.**: el catálogo de la Library of Congress la fecha en 2016 y el syllabus
   en 2015 (Wiley la publicó en junio de 2015 con copyright 2016). Decide Javier.
 - La caché `_local/` es de cada copia de trabajo: tras fusionar a `main` hay que volver a correr
-  `extrae_fuente.py` allí.
+  `extrae_fuente.py` allí. `_local/citas/` no se regenera desde ninguna parte: hay que copiarlo de
+  la copia que lo tiene.

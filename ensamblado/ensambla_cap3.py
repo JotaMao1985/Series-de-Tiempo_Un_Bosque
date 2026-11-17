@@ -176,6 +176,68 @@ html = reemplazar(
     "pie de página")
 
 # ---------------------------------------------------------------------------
+# 1b. Lo que la ronda de fuentes (R4) del capítulo 2 dejó en el armazón
+# ---------------------------------------------------------------------------
+# Desde el 2026-11-17 el capítulo 2 lleva sus fuentes contrastadas: el CSS de
+# las citas (`.cita`, `.fuentes-modulo`, `.lista-fuentes`) y un pie que escribe
+# `precalculo/genera_referencias.py` entre los marcadores PIE-REFERENCIAS. El
+# capítulo 3 —y con él el 4, el 5 y el 6, que parten de este— todavía no ha
+# pasado su ronda de fuentes: no tiene ninguna cita ni registro de contraste, y
+# no debe heredar ni la hoja de estilo ni la lista del capítulo 2. Aquí se
+# retira el CSS y se devuelve al pie la lista tecleada que el capítulo 3 tenía,
+# de modo que el capítulo ensamblado no cambia.
+#
+# CUANDO EL CAPÍTULO 3 HAGA SU RONDA DE FUENTES, esta sección se borra: entonces
+# sí debe llevar el CSS, y su pie lo escribirá el generador sobre los marcadores.
+PIE_TECLEADO_CAP3 = """\
+      <ul class="space-y-3 text-white/90 text-sm">
+        <li class="flex items-start gap-2">
+          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
+          <span>Hyndman, R.J., &amp; Athanasopoulos, G. (2021). <em class="text-gold">Forecasting: Principles and
+              Practice</em> (3rd ed.). OTexts. Acceso abierto: <a href="https://otexts.com/fpp3/"
+              class="underline text-gold" target="_blank" rel="noopener">otexts.com/fpp3</a>.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
+          <span>Shumway, R.H., &amp; Stoffer, D.S. (2017). <em class="text-gold">Time Series Analysis and Its
+              Applications: With R Examples</em> (4th ed.). Springer.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
+          <span>Box, G.E.P., Jenkins, G.M., Reinsel, G.C., &amp; Ljung, G.M. (2015). <em class="text-gold">Time Series
+              Analysis: Forecasting and Control</em> (5th ed.). John Wiley &amp; Sons.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
+          <span>Brockwell, P.J., &amp; Davis, R.A. (2016). <em class="text-gold">Introduction to Time Series and
+              Forecasting</em> (3rd ed.). Springer.</span>
+        </li>
+      </ul>
+"""
+
+html = recortar(
+    html,
+    "    /* ------------------------------------------------------------------\n"
+    "       Cita con fuente",
+    "    /* SVG Styles */",
+    "",
+    "CSS de las citas del capítulo 2")
+
+_pie_ini = "      <!--PIE-REFERENCIAS:inicio-->\n"
+_pie_fin = "      <!--PIE-REFERENCIAS:fin-->\n"
+for _m in (_pie_ini, _pie_fin):
+    if html.count(_m) != 1:
+        sys.exit(f"ABORTA [pie de referencias]: el marcador {_m.strip()!r} aparece "
+                 f"{html.count(_m)} veces, se esperaba 1. Si el capítulo 2 ya no "
+                 f"genera su pie, la sección 1b de este script sobra.")
+_i = html.index(_pie_ini)
+_j = html.index(_pie_fin) + len(_pie_fin)
+if _j <= _i:
+    sys.exit("ABORTA [pie de referencias]: los marcadores están en orden inverso")
+html = html[:_i] + PIE_TECLEADO_CAP3 + html[_j:]
+sustituciones += 1
+
+# ---------------------------------------------------------------------------
 # 2. CSS del componente .derivacion
 # ---------------------------------------------------------------------------
 # Ya no se inserta: el capítulo 2 lo trae desde que el componente se
