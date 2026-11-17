@@ -13,7 +13,7 @@ con una sola regla para decidir cuántas veces diferenciar, con gráficas que se
 teléfono, con sus fuentes contrastadas y con práctica en cada módulo. Es la segunda aplicación
 del molde del capítulo 1 ([[PLAN_Mejora_Cap1]] §9).
 
-**Estado: aprobado por Javier el 2026-11-16 (D1–D9, con D4: los arreglos de gráficas se propagan a los capítulos 3–6). Sigue la R1.** Lo que sigue es el
+**Estado: aprobado por Javier el 2026-11-16 (D1–D9, con D4: los arreglos de gráficas se propagan a los capítulos 3–6). R1 publicada el mismo día; sigue la R2.** Lo que sigue es el
 diagnóstico y el plan; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-16
@@ -143,7 +143,7 @@ Cada una lleva mi recomendación; las decide Javier.
 
 ### Registro de rondas
 
-- **R1 · errores — hecha el 2026-11-16, sin publicar** (`main` `7b03463`). Los siete errores y las
+- **R1 · errores — hecha y PUBLICADA el 2026-11-16** (`main` `7b03463` · gh-pages `016f211`). Los siete errores y las
   imprecisiones del par, una por una (`diagnostico/cap2/R1_cambios.md`). La varianza deja de decidir
   cuántas veces diferenciar, en ningún sentido: falla con un AR(1) estacionario (la baja sin hacer falta) y
   con un ARIMA(0,1,1) con θ = −0.8 (la sube con la diferencia que hace falta). Los 21 bloques muestran su
