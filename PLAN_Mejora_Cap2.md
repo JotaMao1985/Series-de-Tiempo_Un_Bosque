@@ -3,7 +3,7 @@ tipo: plan
 curso: "[[20948 Series de Tiempo]]"
 capitulo: "[[20948-02 Estacionariedad, ACF y PACF]]"
 fecha: 2026-11-16
-estado: propuesto
+estado: aprobado
 ---
 
 # Plan — Mejora del capítulo 2 · Estacionariedad, ACF y PACF (Fase 2)
@@ -13,7 +13,7 @@ con una sola regla para decidir cuántas veces diferenciar, con gráficas que se
 teléfono, con sus fuentes contrastadas y con práctica en cada módulo. Es la segunda aplicación
 del molde del capítulo 1 ([[PLAN_Mejora_Cap1]] §9).
 
-**Estado: propuesto el 2026-11-16, pendiente de la aprobación de Javier.** Lo que sigue es el
+**Estado: aprobado por Javier el 2026-11-16 (D1–D9, con D4: los arreglos de gráficas se propagan a los capítulos 3–6). Sigue la R1.** Lo que sigue es el
 diagnóstico y el plan; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-16
@@ -168,10 +168,9 @@ Cada una lleva mi recomendación; las decide Javier.
 
 ## 7. Preguntas abiertas
 
-1. ¿Apruebas D1–D9 tal como están?
-2. D4: ¿propagar los arreglos de gráficas a los capítulos 3–6 en la misma ronda, o dejar cada uno
-   para su propia ronda?
-3. ¿Descargas tú, con el acceso institucional, los capítulos de la 4.ª de Shumway y Stoffer y el
+Resueltas el 2026-11-16: Javier aprobó D1–D9 tal como están, D4 incluida.
+
+1. ¿Descargas tú, con el acceso institucional, los capítulos de la 4.ª de Shumway y Stoffer y el
    artículo de Kwiatkowski et al. (1992), o te preparo la lista exacta de qué hace falta?
 
 ## 8. Enlaces
