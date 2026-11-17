@@ -165,7 +165,7 @@ Cada una lleva mi recomendación; las decide Javier.
   constante repetida que dejaba sin cargar el `<script>` del cap. 5. **La plantilla quedó distinta del
   capítulo 2** (no estaba aprobado tocarla). Para la R3: la pista de que una tabla sigue a la derecha.
 
-- **R3 · estructura — hecha el 2026-11-17, sin publicar.** Cada término se presenta o se anuncia donde
+- **R3 · estructura — hecha el 2026-11-17, sin publicar** (`main` `cfcd0a5`). Cada término se presenta o se anuncia donde
   aparece por primera vez (∇, la TRM, raíz unitaria, la banda, el logaritmo, MA(1) como adelanto del
   capítulo 3). Una sola regla para el orden de las diferencias, la estacional primero, en una caja del M7
   que citan el M6 y el M9, con un caso en que el orden cambia la cuenta (`log(UKgas)`). El pipeline del M9
