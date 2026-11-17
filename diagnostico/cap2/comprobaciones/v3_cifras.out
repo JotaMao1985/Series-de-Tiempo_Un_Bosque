@@ -1,0 +1,187 @@
+R 4 6.0 | forecast 9.0.2 | tseries 0.10.62 
+
+====  M1 · AirPassengers: unidades y rango  ====
+[1] 1949.000 1960.917   12.000
+[1] 144
+
+====  M3 · residuo de decompose multiplicativo  ====
+      n   banda 
+132.000   0.171 
+[1] 0.403 0.294
+[1] 14
+ [1]  1  3  4  5  6  7  8 11 12 13 18 19 23 24
+Residuo de decompose sobre serie con R_t i.i.d.: barras fuera (media, p95): 2.73 6 | r1 medio -0.105 | r12 medio -0.082 
+
+====  M4 · PACF de AirPassengers y de la serie de memoria corta  ====
+PACF AP fuera de la banda: 6 rezagos 1 2 9 10 11 13 
+[1]  0.474  0.014 -0.014  0.033
+[1] 1 9
+[1] 0.474 0.235 0.106 0.074
+[1] 1 2
+
+====  M5 · potencia del ADF para phi = 0.95 frente a phi = 1 (n = 200)  ====
+ADF rechaza la raiz unitaria con phi = 0.95, n = 200: 0.145 
+
+====  M6 · recta con ruido  ====
+
+	Augmented Dickey-Fuller Test
+
+data:  recta
+Dickey-Fuller = -5.7441, Lag order = 5, p-value = 0.01
+alternative hypothesis: stationary
+
+Warning message:
+In adf.test(recta) : p-value smaller than printed p-value
+
+	KPSS Test for Trend Stationarity
+
+data:  recta
+KPSS Trend = 0.051544, Truncation lag parameter = 4, p-value = 0.1
+
+Warning message:
+In kpss.test(recta, null = "Trend") : p-value greater than printed p-value
+Otras 300 semillas: ADF rechaza 1 | KPSS tendencia no rechaza 0.98 
+
+====  M6 · TRM  ====
+[1] 138
+[1] "2015-01" "2026-06"
+
+	Augmented Dickey-Fuller Test
+
+data:  trm
+Dickey-Fuller = -1.9783, Lag order = 5, p-value = 0.5855
+alternative hypothesis: stationary
+
+
+	KPSS Test for Level Stationarity
+
+data:  trm
+KPSS Level = 2.2427, Truncation lag parameter = 4, p-value = 0.01
+
+
+	KPSS Test for Trend Stationarity
+
+data:  trm
+KPSS Trend = 0.27297, Truncation lag parameter = 4, p-value = 0.01
+
+
+	KPSS Test for Trend Stationarity
+
+data:  diff(trm)
+KPSS Trend = 0.069899, Truncation lag parameter = 4, p-value = 0.1
+
+
+====  M6 · AirPassengers: ADF y KPSS de nivel y de tendencia  ====
+
+	Augmented Dickey-Fuller Test
+
+data:  AirPassengers
+Dickey-Fuller = -7.3186, Lag order = 5, p-value = 0.01
+alternative hypothesis: stationary
+
+
+	KPSS Test for Level Stationarity
+
+data:  AirPassengers
+KPSS Level = 2.7395, Truncation lag parameter = 4, p-value = 0.01
+
+
+	KPSS Test for Trend Stationarity
+
+data:  AirPassengers
+KPSS Trend = 0.09615, Truncation lag parameter = 4, p-value = 0.1
+
+
+	Augmented Dickey-Fuller Test
+
+data:  log(AirPassengers)
+Dickey-Fuller = -6.4215, Lag order = 5, p-value = 0.01
+alternative hypothesis: stationary
+
+
+	Augmented Dickey-Fuller Test
+
+data:  AirPassengers
+Dickey-Fuller = -1.5094, Lag order = 12, p-value = 0.7807
+alternative hypothesis: stationary
+
+
+	KPSS Test for Trend Stationarity
+
+data:  log(AirPassengers)
+KPSS Trend = 0.11267, Truncation lag parameter = 4, p-value = 0.1
+
+
+====  M7 · regla del orden en log(AirPassengers)  ====
+nsdiffs(la) = 1 | ndiffs(diff(la,12)) = 1 | ndiffs/nsdiffs de dd = 0 0 
+orden contrario: ndiffs(la) = 1 | ndiffs(diff(la)) = 0 | nsdiffs(diff(la)) = 1 | r12 de diff(la) = 0.841 
+
+	KPSS Test for Level Stationarity
+
+data:  diff(la)
+KPSS Level = 0.028205, Truncation lag parameter = 4, p-value = 0.1
+
+
+====  M7 · UKgas  ====
+[1] 1960.00 1986.75    4.00
+[1] 108
+nsdiffs(g) = 1 | ndiffs(diff(g,4)) = 0 
+ndiffs(g) = 1 | nsdiffs(diff(g)) = 1 
+[1] 104 103
+[1] -0.178 -0.576
+F_S (seas.heuristic) de g: 0.974 | de diff(g): 0.964 
+ndiffs(gs, test='adf') = 0 | ndiffs(gs, test='pp') = 0 | ndiffs(gs, alpha=0.1) = 0 | ndiffs(gs, type='trend') = 1 
+nsdiffs(g, test='ocsb') = 1 
+
+	KPSS Test for Level Stationarity
+
+data:  gs
+KPSS Level = 0.26407, Truncation lag parameter = 4, p-value = 0.1
+
+
+	Augmented Dickey-Fuller Test
+
+data:  gs
+Dickey-Fuller = -3.8731, Lag order = 4, p-value = 0.01803
+alternative hypothesis: stationary
+
+Series: g 
+ARIMA(1,0,0)(0,1,0)[4] with drift 
+
+Coefficients:
+          ar1   drift
+      -0.1780  0.0164
+s.e.   0.0964  0.0022
+
+sigma^2 = 0.01104:  log likelihood = 87.76
+AIC=-169.52   AICc=-169.28   BIC=-161.59
+        p         d         q         P         D         Q Frequency 
+        3         0         1         0         1         0         4 
+r1 y r4 de gs: -0.178 -0.191 
+r1 y r4 de gsd: -0.576 -0.33 
+UKgas sin log: nsdiffs 1 ndiffs(diff(.,4)) 1 ndiffs 1 
+
+====  M7 · F_S de nsdiffs frente al del cap. 1 (0.937 log AP / 0.783 AP)  ====
+seas.heuristic(log AP) = 0.964 | seas.heuristic(AP) = 0.941 
+
+====  M7 · KPSS de ndiffs frente a tseries::kpss.test (truncamiento)  ====
+trunc(3*sqrt(n)/13) con n = 132 = 2 
+
+	KPSS Test for Level Stationarity
+
+data:  diff(la, lag = 12)
+KPSS Level = 0.36816, Truncation lag parameter = 4, p-value = 0.09088
+
+[1] 0.5366879
+
+====  M9 · pipeline con logaritmo  ====
+[1]   1.0   1.0   0.1 131.0
+[1] -0.341 -0.387
+[1] 5
+[1]  1  3  9 12 23
+[1] -0.2947
+[1]   1   1 131
+[1] 1.0 1.0 0.1
+[1] 1 0
+preparar(UKDriverDeaths) = 0 1 
+preparar(log UKgas por defecto) d, D = 0 1 

@@ -1,0 +1,22 @@
+== 1 · que hace ndiffs() (M7, caja de la regla) ==
+    kpss_wrap <- function(..., use.lag = trunc(3 * sqrt(length(x))/13)) {
+        ur.kpss(..., use.lag = use.lag)
+    while (dodiff && d < max.d) {
+argumentos: function (x, alpha = 0.05, test = c("kpss", "adf", "pp"), type = c("level",      "trend"), max.d = 2, ...)  
+sobre nabla_12 log y (n = 132): tseries::kpss.test 0.3682 con 4 rezagos (p = 0.0909) | urca::ur.kpss con 2 rezagos 0.5367 (critico 5 %: 0.463) | ndiffs = 1
+nsdiffs: seas.heuristic(log AP) = 0.964 (mstl); umbral 0.64
+
+== 2 · M5: con phi = 0.95 y 200 datos, lo habitual es que las pruebas no lo separen de la raiz unitaria ==
+1000 series AR(1), phi = 0.95, n = 200: el ADF rechaza la raiz unitaria en el 15.2 %; el KPSS de nivel rechaza la estacionariedad en el 72.8 %
+
+== 5 (menor) · M3: el residuo de decompose() de una serie con error i.i.d. ya trae autocorrelacion ==
+1000 series multiplicativas con error i.i.d.: barras fuera de 24, media 2.68, percentil 95 6, maximo 11; r1 medio -0.097. En AirPassengers: 14
+
+== 11 (menor) · M6: el KPSS de tendencia con la estacionalidad dentro y sin ella ==
+AirPassengers: 0.0961 (p 0.10) | log: 0.1127 (p 0.10) | log desestacionalizada: 0.3864 (p 0.01)
+
+== 4 · M9, resumen: el Monte Carlo del M6 (de DATOS_CAP2) ==
+amplitud 0, 0.5, 1, 2, 4 -> 3.2, 3.6, 5.0, 11.2, 17.6 % de rechazos (precalculo/salidas/cap2_estacionariedad.json)
+
+== 12 (menor) · M9, cierre: la serie final no pide mas ni menos diferencias ==
+ndiffs, nsdiffs de la serie final: 0 0 | ndiffs(nabla_12 log y): 1 | nsdiffs(log y): 1 

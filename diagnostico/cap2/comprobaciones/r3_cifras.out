@@ -1,0 +1,43 @@
+== M3 · el residuo de la descomposicion clasica multiplicativa ==
+n (prosa: 132)                                             132
+banda (prosa: 0.171)                                       0.1705961
+r1, r12 (prosa: 0.403, 0.294)                              0.40337890  0.29388665
+fuera de 24 (prosa: 14)                                    14
+
+== M4 · PACF y ACF de la serie de memoria corta ==
+ACF 1-3 (prosa: 0.474, 0.235, 0.106)                       0.47399946  0.23548716  0.10584660
+PACF 1-4 (prosa: 0.474, 0.014, -0.014, 0.033)               0.473999462   0.013944702  -0.013967776   0.033340196
+PACF fuera (prosa: 1 y 9)                                  1  9
+PACF de AirPassengers fuera (prosa: seis)                   1   2   9  10  11  13
+
+== M6 · determinista frente a estocastica; la cuarta fila ==
+recta: ADF, p (prosa: -5.744, < 0.01)                      -5.7440946   0.0100000
+recta: KPSS Trend, p (prosa: 0.052, > 0.10)                0.051544103  0.100000000
+  otra semilla (2): p del ADF, p del KPSS Trend            0.01  0.10
+  otra semilla (3): p del ADF, p del KPSS Trend            0.01  0.10
+  otra semilla (4): p del ADF, p del KPSS Trend            0.02182259  0.10000000
+  otra semilla (5): p del ADF, p del KPSS Trend            0.01  0.10
+  otra semilla (6): p del ADF, p del KPSS Trend            0.01  0.10
+AirPassengers: ADF (prosa: -7.32)                          -7.3185713
+AirPassengers: KPSS nivel, p (prosa: 2.739, < 0.01)        2.7394736  0.0100000
+AirPassengers: KPSS tendencia, p (prosa: 0.096, > 0.10)    0.096149849  0.100000000
+AirPassengers: ADF k = 12 (prosa: -1.51, 0.781)            -1.50936258   0.78071368
+log(AirPassengers): ADF k = 5 (prosa: -6.42)               -6.4214577
+
+== M7 · la regla del orden ==
+identidad (1-B^4) = (1-B)(1+B+B^2+B^3): max |dif|          0
+nsdiffs por defecto: umbral de seas.heuristic              ver body(nsdiffs): seas.heuristic(x) > 0.64
+UKgas: n, m, inicio, fin                                    108     4  1960     1  1986     4
+regla: nsdiffs(g), ndiffs(nabla_4 g) (prosa: 1, 0)         1  0
+al reves: ndiffs(g), nsdiffs(nabla g) (prosa: 1, 1)        1  1
+observaciones (prosa: 104, 103)                            104  103
+r1 (prosa: -0.178, -0.576)                                 -0.17824502  -0.57596306
+tras la regla no piden mas: ndiffs, nsdiffs                0  0
+log AP: nsdiffs, ndiffs(nabla_12), ndiffs y nsdiffs finales 1  1  0  0
+log AP al reves: ndiffs(nabla), nsdiffs(nabla), r12        0.00000000  1.00000000  0.84142998
+
+== M9 · el pipeline con logaritmo y el cierre ==
+n, p del KPSS (prosa: 131, 0.1)                            131.0    0.1
+r1, r12 (prosa: -0.341, -0.387)                            -0.34112380  -0.38661286
+fuera de 24 (prosa: 5)                                     5
+lambda de Guerrero (codigo: -0.2947)                       -0.29471559

@@ -1,0 +1,150 @@
+== 1. KPSS sobre AirPassengers (la cuarta fila: las dos rechazan?) ==
+Warning in adf.test(AirPassengers) :
+  p-value smaller than printed p-value
+
+	Augmented Dickey-Fuller Test
+
+data:  AirPassengers
+Dickey-Fuller = -7.3186, Lag order = 5, p-value = 0.01
+alternative hypothesis: stationary
+
+Warning in kpss.test(AirPassengers) :
+  p-value smaller than printed p-value
+
+	KPSS Test for Level Stationarity
+
+data:  AirPassengers
+KPSS Level = 2.7395, Truncation lag parameter = 4, p-value = 0.01
+
+Warning in kpss.test(AirPassengers, null = "Trend") :
+  p-value greater than printed p-value
+
+	KPSS Test for Trend Stationarity
+
+data:  AirPassengers
+KPSS Trend = 0.09615, Truncation lag parameter = 4, p-value = 0.1
+
+Warning in adf.test(log(AirPassengers)) :
+  p-value smaller than printed p-value
+
+	Augmented Dickey-Fuller Test
+
+data:  log(AirPassengers)
+Dickey-Fuller = -6.4215, Lag order = 5, p-value = 0.01
+alternative hypothesis: stationary
+
+Warning in kpss.test(log(AirPassengers)) :
+  p-value smaller than printed p-value
+
+	KPSS Test for Level Stationarity
+
+data:  log(AirPassengers)
+KPSS Level = 2.8287, Truncation lag parameter = 4, p-value = 0.01
+
+Warning in kpss.test(log(AirPassengers), null = "Trend") :
+  p-value greater than printed p-value
+
+	KPSS Test for Trend Stationarity
+
+data:  log(AirPassengers)
+KPSS Trend = 0.11267, Truncation lag parameter = 4, p-value = 0.1
+
+
+== 2. Tendencia determinista frente a estocastica ==
+semilla 1: ADF -5.7441 p 0.0100 | KPSS Trend 0.0515 p 0.1000 | ndiffs 1
+semilla 2: ADF -4.4716 p 0.0100 | KPSS Trend 0.0922 p 0.1000 | ndiffs 1
+semilla 3: ADF -4.5232 p 0.0100 | KPSS Trend 0.0994 p 0.1000 | ndiffs 1
+semilla 4: ADF -3.7853 p 0.0218 | KPSS Trend 0.1113 p 0.1000 | ndiffs 1
+semilla 5: ADF -5.2431 p 0.0100 | KPSS Trend 0.0433 p 0.1000 | ndiffs 1
+semilla 6: ADF -4.3083 p 0.0100 | KPSS Trend 0.0563 p 0.1000 | ndiffs 1
+
+== 3. El residuo de una descomposicion, con el correlograma ==
+decompose aditiva:        n 132 banda 0.1706 r1 0.6542 r12 0.6737 fuera 19 de 24: 1 2 4 5 6 7 8 10 11 12 13 14 16 17 18 19 20 23 24
+decompose multiplicativa: n 132 banda 0.1706 r1 0.4034 r12 0.2939 fuera 14 de 24: 1 3 4 5 6 7 8 11 12 13 18 19 23 24
+stl(log) periodic:        n 144 banda 0.1633 r1 0.3713 r12 0.3408 fuera 16 de 24: 1 3 4 5 6 7 8 11 12 13 16 18 19 20 23 24
+stl(log) s.window 13:     n 144 banda 0.1633 r1 0.2418 r12 0.0179 fuera 3 de 24: 1 4 23
+stl(log) 13 robust:       n 144 banda 0.1633 r1 0.3567 r12 0.0626 fuera 3 de 24: 1 4 23
+
+== 4. PACF de la serie de memoria corta del M3 ==
+[1]  0.474  0.014 -0.014  0.033
+[1] 1 9
+[1] 0.474 0.235 0.106 0.074
+[1] 1 2
+
+== 5. Series donde el orden cambia la cuenta: ndiffs(cruda), nsdiffs, ndiffs(tras nabla_m), nsdiffs(tras nabla) ==
+USAccDeaths      m 12 n   72 | ndiffs(y) 0 | nsdiffs(y) 1 | ndiffs(nabla_m y) 1 | ndiffs(nabla y) 0 nsdiffs(nabla y) 1
+UKDriverDeaths   m 12 n  192 | ndiffs(y) 1 | nsdiffs(y) 1 | ndiffs(nabla_m y) 0 | ndiffs(nabla y) 0 nsdiffs(nabla y) 1
+ldeaths          m 12 n   72 | ndiffs(y) 0 | nsdiffs(y) 1 | ndiffs(nabla_m y) 0 | ndiffs(nabla y) 0 nsdiffs(nabla y) 0
+mdeaths          m 12 n   72 | ndiffs(y) 0 | nsdiffs(y) 1 | ndiffs(nabla_m y) 0 | ndiffs(nabla y) 0 nsdiffs(nabla y) 0
+fdeaths          m 12 n   72 | ndiffs(y) 0 | nsdiffs(y) 1 | ndiffs(nabla_m y) 0 | ndiffs(nabla y) 0 nsdiffs(nabla y) 0
+nottem           m 12 n  240 | ndiffs(y) 0 | nsdiffs(y) 1 | ndiffs(nabla_m y) 0 | ndiffs(nabla y) 0 nsdiffs(nabla y) 1
+co2              m 12 n  468 | ndiffs(y) 1 | nsdiffs(y) 1 | ndiffs(nabla_m y) 1 | ndiffs(nabla y) 0 nsdiffs(nabla y) 1
+UKgas            m  4 n  108 | ndiffs(y) 1 | nsdiffs(y) 1 | ndiffs(nabla_m y) 1 | ndiffs(nabla y) 0 nsdiffs(nabla y) 1
+logUKgas         m  4 n  108 | ndiffs(y) 1 | nsdiffs(y) 1 | ndiffs(nabla_m y) 0 | ndiffs(nabla y) 0 nsdiffs(nabla y) 1
+AirPassengers    m 12 n  144 | ndiffs(y) 1 | nsdiffs(y) 1 | ndiffs(nabla_m y) 1 | ndiffs(nabla y) 0 nsdiffs(nabla y) 1
+logAP            m 12 n  144 | ndiffs(y) 1 | nsdiffs(y) 1 | ndiffs(nabla_m y) 1 | ndiffs(nabla y) 0 nsdiffs(nabla y) 1
+wineind          m 12 n  176 | ndiffs(y) 1 | nsdiffs(y) 1 | ndiffs(nabla_m y) 1 | ndiffs(nabla y) 0 nsdiffs(nabla y) 1
+gas              m 12 n  476 | ndiffs(y) 1 | nsdiffs(y) 1 | ndiffs(nabla_m y) 1 | ndiffs(nabla y) 0 nsdiffs(nabla y) 1
+loggas           m 12 n  476 | ndiffs(y) 1 | nsdiffs(y) 1 | ndiffs(nabla_m y) 1 | ndiffs(nabla y) 0 nsdiffs(nabla y) 1
+woolyrnq         m  4 n  119 | ndiffs(y) 1 | nsdiffs(y) 1 | ndiffs(nabla_m y) 0 | ndiffs(nabla y) 0 nsdiffs(nabla y) 1
+austres          m  4 n   89 | ndiffs(y) 2 | nsdiffs(y) 0 | ndiffs(nabla_m y) 1 | ndiffs(nabla y) 1 nsdiffs(nabla y) 0
+JohnsonJohnson   m  4 n   84 | ndiffs(y) 1 | nsdiffs(y) 1 | ndiffs(nabla_m y) 1 | ndiffs(nabla y) 0 nsdiffs(nabla y) 1
+logJJ            m  4 n   84 | ndiffs(y) 1 | nsdiffs(y) 1 | ndiffs(nabla_m y) 0 | ndiffs(nabla y) 0 nsdiffs(nabla y) 1
+sunspot.month    m 12 n 3310 | ndiffs(y) 0 | nsdiffs(y) 0 | ndiffs(nabla_m y) 0 | ndiffs(nabla y) 0 nsdiffs(nabla y) 0
+presidents       m  4 n  120 | ndiffs(y) 0 | nsdiffs(y) 0 | ndiffs(nabla_m y) 0 | ndiffs(nabla y) 0 nsdiffs(nabla y) 0
+UKDriverlog      m 12 n  192 | ndiffs(y) 1 | nsdiffs(y) 1 | ndiffs(nabla_m y) 0 | ndiffs(nabla y) 0 nsdiffs(nabla y) 0
+
+== 6. Pipeline con logaritmo ==
+nsdiffs 1 
+ndiffs 1 
+n 131 var 0.002102066 kpss p 0.1 
+ndiffs/nsdiffs final 0 0 
+r1 -0.3411238 r12 -0.3866129 fuera 1 3 9 12 23 
+pacf fuera 1 3 9 12 
+lambda -0.2947156 
+
+== 7. Monte Carlo del M6 (amplitudes) ==
+
+== 8. Candidatas para el caso en que el orden cambia la cuenta ==
+--- UKDriverDeaths m 12 n 192 
+ estacional primero: nsdiffs(y) 1 | ndiffs(nabla_m y) 0 | nsdiffs(nabla_m y) 0 
+   nabla_m y: n 180 r1 0.452 r2 0.396 r3 0.252 r_m -0.274 fuera 6 de 24 (1 2 3 4 5 12) 
+   kpss.test(nabla_m y): 0.3247 p 0.1000 | ur.kpss(lag de ndiffs): 0.3670 (5%: 0.463)
+ regular primero:    ndiffs(y) 1 | nsdiffs(nabla y) 1 | ndiffs(nabla_m nabla y) 0 
+   nabla y:   n 191 r1 -0.077 r2 -0.085 r3 -0.126 r_m 0.537 fuera 7 de 24 (4 8 12 20 22 23 24) 
+   nabla_m nabla y: n 179 r1 -0.456 r2 0.087 r3 -0.097 r_m -0.458 fuera 9 de 24 (1 5 12 13 17 18 19 22 23) 
+--- log(UKgas) m 4 n 108 
+ estacional primero: nsdiffs(y) 1 | ndiffs(nabla_m y) 0 | nsdiffs(nabla_m y) 0 
+   nabla_m y: n 104 r1 -0.178 r2 0.007 r3 0.130 r_m -0.191 fuera 1 de 8 (5) 
+   kpss.test(nabla_m y): 0.2641 p 0.1000 | ur.kpss(lag de ndiffs): 0.2585 (5%: 0.463)
+ regular primero:    ndiffs(y) 1 | nsdiffs(nabla y) 1 | ndiffs(nabla_m nabla y) 0 
+   nabla y:   n 107 r1 -0.085 r2 -0.826 r3 -0.053 r_m 0.931 fuera 4 de 8 (2 4 6 8) 
+   nabla_m nabla y: n 103 r1 -0.576 r2 0.026 r3 0.187 r_m -0.330 fuera 3 de 8 (1 4 5) 
+--- woolyrnq m 4 n 119 
+ estacional primero: nsdiffs(y) 1 | ndiffs(nabla_m y) 0 | nsdiffs(nabla_m y) 0 
+   nabla_m y: n 115 r1 0.621 r2 0.287 r3 -0.018 r_m -0.230 fuera 3 de 8 (1 2 4) 
+   kpss.test(nabla_m y): 0.1129 p 0.1000 | ur.kpss(lag de ndiffs): 0.1247 (5%: 0.463)
+ regular primero:    ndiffs(y) 1 | nsdiffs(nabla y) 1 | ndiffs(nabla_m nabla y) 0 
+   nabla y:   n 118 r1 -0.087 r2 -0.596 r3 -0.079 r_m 0.681 fuera 4 de 8 (2 4 6 8) 
+   nabla_m nabla y: n 114 r1 -0.068 r2 -0.020 r3 -0.097 r_m -0.469 fuera 1 de 8 (4) 
+--- log(JohnsonJohnson) m 4 n 84 
+ estacional primero: nsdiffs(y) 1 | ndiffs(nabla_m y) 0 | nsdiffs(nabla_m y) 0 
+   nabla_m y: n 80 r1 0.277 r2 0.230 r3 -0.018 r_m -0.091 fuera 3 de 8 (1 2 7) 
+   kpss.test(nabla_m y): 0.1731 p 0.1000 | ur.kpss(lag de ndiffs): 0.1861 (5%: 0.463)
+ regular primero:    ndiffs(y) 1 | nsdiffs(nabla y) 1 | ndiffs(nabla_m nabla y) 0 
+   nabla y:   n 83 r1 -0.507 r2 0.067 r3 -0.403 r_m 0.731 fuera 6 de 8 (1 3 4 5 7 8) 
+   nabla_m nabla y: n 79 r1 -0.436 r2 0.150 r3 -0.086 r_m -0.213 fuera 2 de 8 (1 7) 
+--- USAccDeaths m 12 n 72 
+ estacional primero: nsdiffs(y) 1 | ndiffs(nabla_m y) 1 | nsdiffs(nabla_m y) 0 
+   nabla_m y: n 60 r1 0.690 r2 0.574 r3 0.530 r_m -0.077 fuera 6 de 24 (1 2 3 4 5 6) 
+   kpss.test(nabla_m y): 1.0225 p 0.0100 | ur.kpss(lag de ndiffs): 1.7390 (5%: 0.463)
+ regular primero:    ndiffs(y) 0 | nsdiffs(nabla y) 1 | ndiffs(nabla_m nabla y) 0 
+   nabla y:   n 71 r1 0.023 r2 0.035 r3 -0.105 r_m 0.709 fuera 6 de 24 (4 6 8 12 18 24) 
+   nabla_m nabla y: n 59 r1 -0.353 r2 -0.101 r3 0.084 r_m -0.336 fuera 2 de 24 (1 12) 
+--- log(AirPassengers) m 12 n 144 
+ estacional primero: nsdiffs(y) 1 | ndiffs(nabla_m y) 1 | nsdiffs(nabla_m y) 0 
+   nabla_m y: n 132 r1 0.714 r2 0.623 r3 0.480 r_m -0.243 fuera 9 de 24 (1 2 3 4 5 6 7 8 12) 
+   kpss.test(nabla_m y): 0.3682 p 0.0909 | ur.kpss(lag de ndiffs): 0.5367 (5%: 0.463)
+ regular primero:    ndiffs(y) 1 | nsdiffs(nabla y) 1 | ndiffs(nabla_m nabla y) 0 
+   nabla y:   n 143 r1 0.200 r2 -0.120 r3 -0.151 r_m 0.841 fuera 10 de 24 (1 4 8 11 12 13 16 20 23 24) 
+   nabla_m nabla y: n 131 r1 -0.341 r2 0.105 r3 -0.202 r_m -0.387 fuera 5 de 24 (1 3 9 12 23) 

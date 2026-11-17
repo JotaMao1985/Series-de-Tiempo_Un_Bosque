@@ -165,6 +165,20 @@ Cada una lleva mi recomendación; las decide Javier.
   constante repetida que dejaba sin cargar el `<script>` del cap. 5. **La plantilla quedó distinta del
   capítulo 2** (no estaba aprobado tocarla). Para la R3: la pista de que una tabla sigue a la derecha.
 
+- **R3 · estructura — hecha el 2026-11-17, sin publicar.** Cada término se presenta o se anuncia donde
+  aparece por primera vez (∇, la TRM, raíz unitaria, la banda, el logaritmo, MA(1) como adelanto del
+  capítulo 3). Una sola regla para el orden de las diferencias, la estacional primero, en una caja del M7
+  que citan el M6 y el M9, con un caso en que el orden cambia la cuenta (`log(UKgas)`). El pipeline del M9
+  usa el logaritmo en R y en Python y su resumen recoge las dos nulas contrarias y el caso tramposo del
+  ADF; el M9 cierra con lo que sigue en el capítulo 3. Se cumplen las promesas que el lector encontró
+  rotas (el residuo del capítulo 1, el objetivo del M4, la tendencia determinista frente a la estocástica
+  del M5 → M6, la contradicción de ADF y KPSS de la tarjeta). Minutos: 98 declarados → 106, a menos de
+  0.4 min de lo medido en cada módulo. El verificador de bloques pasa a 277/277. En el armazón, la
+  pista de que una tabla sigue a la derecha (un desvanecido que nunca apaga texto entero), propagada a
+  los capítulos 3–6. El verificador independiente encontró 5 puntos que corregir y 13 menores; resueltos
+  salvo dos menores anotados (`diagnostico/cap2/R3_cambios.md`). Queda abierto: en 38 de 169 tablas que
+  se desplazan, el borde cae entre dos columnas y la pista casi no se ve hasta desplazar.
+
 ## 5. Criterios de aceptación
 
 - [ ] Cada uno de los 7 errores tiene su comprobación en R y deja de reproducirse.
