@@ -2355,11 +2355,14 @@
       </div>
 
       <div class="note">
-        <p><strong>Cómo leer la banda.</strong> Si la serie es realmente ruido blanco, cada autocorrelación muestral se
-          distribuye aproximadamente $\mathrm{N}(0, 1/T)$. Por eso la banda de $\pm 1.96/\sqrt{T}$ marca la zona donde
-          cae el 95 % de las barras <strong>por azar</strong>. Con $T = 200$ la banda vale $\pm 0.139$. Ojo con la
-          aritmética: si miramos 24 rezagos, <strong>esperamos</strong> que algo más de uno se salga aunque la serie sea
-          ruido blanco puro. Una barra fuera de la banda no es evidencia de nada; un patrón sí.</p>
+        <p><strong>Cómo leer la banda.</strong> Si la serie es ruido blanco <strong>independiente</strong> —i.i.d., no
+          solo incorrelado—, cada autocorrelación muestral se distribuye aproximadamente $\mathrm{N}(0, 1/T)$. Por eso
+          la banda de $\pm 1.96/\sqrt{T}$ marca la zona donde cae el 95 % de las barras <strong>por azar</strong>. Con
+          $T = 200$ la banda vale $\pm 0.139$. Ojo con la aritmética: en 24 rezagos lo <strong>esperable</strong> es
+          que algo más de uno se salga aunque la serie sea ruido blanco puro. Una barra que apenas asoma fuera de la
+          banda no es evidencia de nada; una barra muy grande, o un patrón, sí. Y si el ruido es incorrelado pero no
+          independiente —el caso de la advertencia de arriba—, la varianza de $r_k$ puede dejar de ser $1/T$, y entonces
+          la banda ya no cubre el 95 %.</p>
       </div>
 
       <div class="code-tabs">
@@ -2377,11 +2380,13 @@ plot(e, type = "l", main = "Ruido blanco", ylab = expression(epsilon[t]))
 acf(e, lag.max = 24, main = "ACF del ruido blanco")
 
 # La banda que dibuja acf() es +/- 1.96/sqrt(T)
-1.96 / sqrt(length(e))   # 0.1386
+round(1.96 / sqrt(length(e)), 4)
+#> [1] 0.1386
 
 # Cuantos rezagos se salen de la banda (esperamos ~5% de 24, es decir, 1 o 2)
 r &lt;- acf(e, lag.max = 24, plot = FALSE)$acf[-1]
-sum(abs(r) &gt; 1.96 / sqrt(length(e)))</code></pre>
+sum(abs(r) > 1.96 / sqrt(length(e)))
+#> [1] 0</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python"># Ruido blanco: simulacion y correlograma
@@ -2390,6 +2395,7 @@ import matplotlib.pyplot as plt
 from statsmodels.graphics.tsaplots import plot_acf
 from statsmodels.tsa.stattools import acf
 
+# Con la misma semilla, numpy no genera los numeros de R: es otra realizacion
 rng = np.random.default_rng(2026)
 e = rng.standard_normal(200)
 
@@ -2399,10 +2405,13 @@ ejes[0].set_title("Ruido blanco")
 plot_acf(e, lags=24, ax=ejes[1], title="ACF del ruido blanco")
 
 banda = 1.96 / np.sqrt(len(e))
-print(round(banda, 4))                      # 0.1386
+print(round(banda, 4))
+#> 0.1386
 
+# Rezagos fuera de la banda
 r = acf(e, nlags=24, adjusted=False)[1:]
-print(int(np.sum(np.abs(r) &gt; banda)))       # rezagos fuera de la banda</code></pre>
+print(int(np.sum(np.abs(r) > banda)))
+#> 1</code></pre>
         </div>
       </div>
 
@@ -2514,7 +2523,9 @@ print(int(np.sum(np.abs(r) &gt; banda)))       # rezagos fuera de la banda</code
           <tr>
             <td>Decaimiento <strong>rápido</strong> (exponencial)</td>
             <td>Proceso estacionario con memoria corta (Capítulo 3)</td>
-            <td>$\nabla$TRM: $r_1 = 0.088$, todo lo demás dentro de la banda</td>
+            <td>Serie simulada de 200 valores en la que cada uno es la mitad del anterior más un ruido nuevo (está en
+              el código de abajo; el Módulo 5 presenta este proceso): $r_1 = 0.474$, $r_2 = 0.235$, y del rezago 3
+              en adelante todo dentro de la banda $\pm 0.139$</td>
           </tr>
         </tbody>
       </table>
@@ -2530,12 +2541,23 @@ acf(AirPassengers, lag.max = 24, main = "ACF de AirPassengers")
 
 # Los valores numericos (el primero, el rezago 0, siempre vale 1)
 r &lt;- acf(AirPassengers, lag.max = 24, plot = FALSE)$acf[-1]
-round(r[c(1, 2, 12)], 4)     # 0.9480  0.8756  0.7604
+round(r[c(1, 2, 12)], 4)
+#> [1] 0.9480 0.8756 0.7604
+
+# El caso contrario, de memoria corta: una serie simulada en la que cada valor
+# es la mitad del anterior mas un ruido nuevo. Su ACF cae deprisa
+set.seed(1)
+corta &lt;- arima.sim(list(ar = 0.5), n = 200)
+rc &lt;- acf(corta, lag.max = 24, main = "ACF de una serie de memoria corta")$acf[-1]
+round(rc[1:4], 3)
+#> [1] 0.474 0.235 0.106 0.074
+which(abs(rc) > 1.96 / sqrt(200))     # los unicos rezagos fuera de la banda
+#> [1] 1 2
 
 # El mismo grafico con la gramatica de fpp3
 library(fpp3)
-as_tsibble(AirPassengers) |&gt;
-  ACF(value, lag_max = 24) |&gt;
+as_tsibble(AirPassengers) |>
+  ACF(value, lag_max = 24) |>
   autoplot() +
   labs(title = "ACF de AirPassengers")</code></pre>
         </div>
@@ -2558,7 +2580,8 @@ plot_acf(pasajeros, lags=24, title="ACF de AirPassengers")
 
 # adjusted=False usa el divisor T, igual que acf() de R
 r = acf(pasajeros, nlags=24, adjusted=False)[1:]
-print(np.round(r[[0, 1, 11]], 4))   # [0.948  0.8756 0.7604]</code></pre>
+print(np.round(r[[0, 1, 11]], 4))
+#> [0.948  0.8756 0.7604]</code></pre>
         </div>
       </div>
 
@@ -2651,9 +2674,11 @@ print(np.round(r[[0, 1, 11]], 4))   # [0.948  0.8756 0.7604]</code></pre>
               <p>Arrancando en $\phi_{11} = \rho_1$, cada rezago cuesta $O(k)$ en vez de $O(k^3)$.</p>
             </li>
           </ol>
-          <p class="derivacion-resultado">Esta es exactamente la recursión que implementan <code>pacf()</code> de R, el
-            método <code>ywm</code> de statsmodels y la función <code>calcularPACF()</code> que mueve los simuladores de
-            los capítulos 3 y 5. Las tres coinciden hasta el redondeo con que se guardó el precálculo.</p>
+          <p class="derivacion-resultado">Esta es la recursión que implementan <code>pacf()</code> de R, el método
+            <code>ldb</code> de statsmodels y la función <code>calcularPACF()</code> que mueve los simuladores de los
+            capítulos 3 y 5. El método <code>ywm</code> de statsmodels, que es el que usa el código de este módulo,
+            llega a los mismos valores por el otro camino: resuelve el sistema de Yule–Walker del paso 1 para cada
+            rezago. Todos coinciden hasta el redondeo con que se guardó el precálculo.</p>
         </div>
       </div>
 
@@ -2696,7 +2721,8 @@ print(np.round(r[[0, 1, 11]], 4))   # [0.948  0.8756 0.7604]</code></pre>
         <ul style="margin-bottom:0;">
           <li>PACF que se <strong>corta</strong> tras el rezago $p$ y ACF que decae → modelo <strong>AR($p$)</strong>;</li>
           <li>ACF que se <strong>corta</strong> tras el rezago $q$ y PACF que decae → modelo <strong>MA($q$)</strong>;</li>
-          <li>las dos decaen sin cortarse → modelo <strong>ARMA($p,q$)</strong>.</li>
+          <li>las dos decaen sin cortarse → modelo <strong>ARMA($p,q$)</strong>, y en ese caso los gráficos ya no dicen
+            cuánto valen $p$ y $q$.</li>
         </ul>
       </div>
 
@@ -2714,10 +2740,11 @@ pacf(AirPassengers, lag.max = 24, main = "PACF")
 # pacf() empieza en el rezago 1; acf() empieza en el rezago 0, que siempre vale 1
 p &lt;- pacf(AirPassengers, lag.max = 24, plot = FALSE)$acf
 round(p[1:3], 4)
+#> [1]  0.9480 -0.2294  0.0381
 
 # En fpp3, las dos de un tiron
 library(fpp3)
-as_tsibble(AirPassengers) |&gt;
+as_tsibble(AirPassengers) |>
   gg_tsdisplay(value, plot_type = "partial", lag_max = 24)</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
@@ -2739,9 +2766,15 @@ fig, ejes = plt.subplots(1, 2, figsize=(12, 4))
 plot_acf(pasajeros,  lags=24, ax=ejes[0], title="ACF")
 plot_pacf(pasajeros, lags=24, ax=ejes[1], title="PACF", method="ywm")
 
-# method="ywm" reproduce la recursion de Durbin-Levinson que usa pacf() de R
+# method="ywm" resuelve las ecuaciones de Yule-Walker con el divisor T y da
+# los mismos valores que pacf() de R
 p = pacf(pasajeros, nlags=24, method="ywm")[1:]
-print(np.round(p[:3], 4))</code></pre>
+print(np.round(p[:3], 4))
+#> [ 0.948  -0.2294  0.0381]
+
+# method="ldb" llega a ellos por la recursion de Durbin-Levinson
+print(np.allclose(p, pacf(pasajeros, nlags=24, method="ldb")[1:]))
+#> True</code></pre>
         </div>
       </div>
 
@@ -2832,9 +2865,13 @@ print(np.round(p[:3], 4))</code></pre>
           <li>Con $\phi = 0.95$ la serie <em>parece</em> tener tendencia sin tenerla, y la ACF baja tan despacio que
             cuesta distinguirla de una raíz unitaria. Este es exactamente el caso difícil: con muestras cortas,
             distinguir $\phi = 0.95$ de $\phi = 1$ es casi imposible.</li>
-          <li>Con la primera diferencia activada, cualquier $\phi$ produce algo que <em>ya</em> se parece a ruido
-            blanco... y con $\phi$ pequeño produce autocorrelación negativa en el rezago 1. Es la primera pista sobre la
-            sobrediferenciación del Módulo 7.</li>
+          <li>Con la primera diferencia activada, el resultado depende de $\phi$. Con $\phi = 1$ queda el ruido de
+            partida, porque $\nabla y_t = \varepsilon_t$: ruido blanco. Con $\phi &lt; 1$ la serie ya era estacionaria
+            y la diferencia sobra; deja una autocorrelación <strong>negativa</strong> en el rezago 1, que en
+            teoría vale $-(1-\phi)/2$: $-0.25$ con $\phi = 0.5$ y $-0.5$ con $\phi = 0$ (el simulador marca $-0.252$ y
+            $-0.506$). Con $\phi$ cerca de 1 esa huella es demasiado pequeña para verse: es el caso difícil del
+            punto anterior. Con $\phi &gt; 1$ la diferencia no arregla nada: la serie diferenciada sigue siendo explosiva.
+            Es la primera pista sobre la sobrediferenciación del Módulo 7.</li>
         </ol>
       </div>
 
@@ -2847,8 +2884,10 @@ print(np.round(p[:3], 4))</code></pre>
         $$y_t = c + y_{t-1} + \varepsilon_t \quad \Longrightarrow \quad y_t = y_0 + ct + \sum_{i=1}^{t}\varepsilon_i$$
       </div>
 
-      <p>El término $ct$ produce una tendencia lineal, pero se trata de una <strong>tendencia estocástica</strong>: la
-        serie sube en promedio $c$ por periodo mientras deambula alrededor de esa pendiente. Es el modelo por defecto
+      <p>El término $ct$ es una recta, y la suma $\sum\varepsilon_i$ que se le añade es la <strong>tendencia
+          estocástica</strong>: la serie sube en promedio $c$ por periodo, pero no vuelve a esa recta, porque la
+        distancia que la separa de ella es una caminata aleatoria cuya varianza, $t\sigma^2$, no deja de crecer. Es el
+        modelo por defecto
         para precios de activos, índices y tipos de cambio, y explica por qué el pronóstico ingenuo (<em>naïve</em>:
         "mañana será como hoy") es tan difícil de batir en esos casos.</p>
 
@@ -2856,8 +2895,10 @@ print(np.round(p[:3], 4))</code></pre>
         <p><strong>Tendencia determinista vs. tendencia estocástica.</strong> Se parecen en el gráfico y exigen
           tratamientos opuestos. $y_t = a + bt + \varepsilon_t$ (determinista) se corrige <em>quitando</em> la recta
           ajustada; $y_t = c + y_{t-1} + \varepsilon_t$ (estocástica) se corrige <strong>diferenciando</strong>. Aplicar
-          el tratamiento equivocado deja la serie tan mal como estaba: quitar una recta a una caminata deja los
-          residuales igual de no estacionarios. Distinguirlas es justamente el trabajo de las pruebas del Módulo 6.</p>
+          el tratamiento equivocado tiene un costo en las dos direcciones: quitar una recta a una caminata deja los
+          residuales igual de no estacionarios, y diferenciar una serie con tendencia determinista sí la vuelve
+          estacionaria, pero sobrediferenciada —$\nabla y_t = b + \varepsilon_t - \varepsilon_{t-1}$, con el problema
+          que describe el Módulo 7—. Distinguirlas es justamente el trabajo de las pruebas del Módulo 6.</p>
       </div>
 
       <div class="code-tabs">
@@ -2882,7 +2923,8 @@ plot(ar1(0.95, e), type = "l", main = "phi = 0.95 (casi raiz unitaria)")
 plot(ar1(1.00, e), type = "l", main = "phi = 1.00 (caminata aleatoria)")
 
 # La caminata es la suma acumulada del ruido
-all.equal(ar1(1, e), cumsum(e))   # TRUE
+all.equal(ar1(1, e), cumsum(e))
+#> [1] TRUE
 
 # Caminata con deriva: c = 0.3 por periodo
 deriva &lt;- cumsum(0.3 + e)
@@ -2910,7 +2952,8 @@ for eje, phi, titulo in zip(ejes, [0.50, 0.95, 1.00],
     eje.set_title(f"phi = {phi:.2f} ({titulo})")
 
 # La caminata es la suma acumulada del ruido
-print(np.allclose(ar1(1.0, e), np.cumsum(e)))   # True
+print(np.allclose(ar1(1.0, e), np.cumsum(e)))
+#> True
 
 deriva = np.cumsum(0.3 + e)   # caminata con deriva</code></pre>
         </div>
@@ -2948,9 +2991,11 @@ deriva = np.cumsum(0.3 + e)   # caminata con deriva</code></pre>
         <p>Se estima la regresión</p>
         $$\nabla y_t = \alpha + \beta t + \gamma\, y_{t-1} + \sum_{i=1}^{k}\delta_i \nabla y_{t-i} + \varepsilon_t$$
         <p style="margin-bottom:0;">y se contrasta $H_0: \gamma = 0$ (equivalente a $\phi = 1$: <strong>hay raíz
-            unitaria</strong>) contra $H_1: \gamma &lt; 0$ (estacionaria). Los términos $\nabla y_{t-i}$ son la parte
-          "aumentada": absorben la autocorrelación que quede en los errores. Un <strong>p-valor pequeño rechaza la raíz
-            unitaria</strong>, es decir, favorece la estacionariedad.</p>
+            unitaria</strong>) contra $H_1: \gamma &lt; 0$ (estacionaria alrededor de la tendencia $\alpha + \beta t$ que
+          la propia regresión incluye; sin el término $\beta t$, estacionaria en nivel). Los términos
+          $\nabla y_{t-i}$ son la parte "aumentada": absorben la autocorrelación que quede en los errores. Un
+          <strong>p-valor pequeño rechaza la raíz unitaria</strong>, es decir, favorece la estacionariedad.
+          <code>adf.test()</code> de R estima siempre la regresión completa, con constante y tendencia.</p>
       </div>
 
       <div class="definition">
@@ -3003,6 +3048,10 @@ deriva = np.cumsum(0.3 + e)   # caminata con deriva</code></pre>
         </tbody>
       </table>
 
+      <p>En la tabla, y en el recuadro anterior, «estacionaria» se lee según la variante de cada prueba: con
+        <code>adf.test()</code>, estacionaria alrededor de una tendencia; con el KPSS, en nivel o alrededor de una
+        tendencia, según se pida.</p>
+
       <h3>Caso limpio: la TRM colombiana</h3>
 
       <p>Apliquemos las dos pruebas a la Tasa Representativa del Mercado (COP/USD), promedio mensual de enero de 2015 a
@@ -3024,7 +3073,7 @@ deriva = np.cumsum(0.3 + e)   # caminata con deriva</code></pre>
           <tr>
             <td>TRM</td>
             <td>−1.978</td>
-            <td>0.586</td>
+            <td>0.585</td>
             <td>2.243</td>
             <td>&lt; 0.01</td>
             <td>No estacionaria</td>
@@ -3033,7 +3082,7 @@ deriva = np.cumsum(0.3 + e)   # caminata con deriva</code></pre>
             <td>$\nabla$TRM</td>
             <td>−3.880</td>
             <td>0.017</td>
-            <td>0.242</td>
+            <td>0.241</td>
             <td>&gt; 0.10</td>
             <td>Estacionaria</td>
           </tr>
@@ -3043,6 +3092,11 @@ deriva = np.cumsum(0.3 + e)   # caminata con deriva</code></pre>
       <p>Las dos pruebas están de acuerdo en las dos filas: la TRM en niveles tiene raíz unitaria (el ADF no la rechaza,
         el KPSS rechaza la estacionariedad) y basta <strong>una</strong> diferencia para arreglarla. Esto es lo que uno
         espera ver en un caso bien portado.</p>
+
+      <p>Un detalle de especificación: la regresión de <code>adf.test()</code> lleva tendencia y el KPSS de la tabla es
+        el de nivel, de modo que las dos hipótesis no son exactamente complementarias. Aquí no cambia nada: el KPSS de
+        tendencia (<code>null = "Trend"</code>) también rechaza la estacionariedad de la TRM (0.273, $p &lt; 0.01$) y
+        tampoco la rechaza en su diferencia (0.070, $p &gt; 0.10$).</p>
 
       <div class="note">
         <p><strong>Sobre los p-valores al borde.</strong> Tanto <code>adf.test</code> como <code>kpss.test</code>
@@ -3055,7 +3109,7 @@ deriva = np.cumsum(0.3 + e)   # caminata con deriva</code></pre>
 
       <p>Ahora el mismo procedimiento sobre <code>AirPassengers</code>, una serie con tendencia y estacionalidad
         evidentes. El ADF devuelve un estadístico de <strong>−7.32 con p &lt; 0.01</strong>: rechaza rotundamente la
-        raíz unitaria y proclama que la serie es estacionaria.</p>
+        raíz unitaria y proclama que la serie es estacionaria alrededor de una tendencia.</p>
 
       <div class="warning">
         <p><strong>Eso es falso, y conviene entender exactamente por qué.</strong> <code>adf.test</code> elige por
@@ -3066,7 +3120,9 @@ deriva = np.cumsum(0.3 + e)   # caminata con deriva</code></pre>
       </div>
 
       <p>Tres evidencias de que el problema es ese y no otro. Primero, el resultado se da la vuelta en cuanto los
-        rezagos cubren un ciclo completo:</p>
+        rezagos cubren un ciclo completo. Sobre la serie sin transformar, con $k = 12$ el estadístico pasa de −7.32 a
+        −1.51 ($p = 0.781$). La tabla lo recorre sobre <code>log(AirPassengers)</code>, que es la serie del resto de
+        este módulo y en la que el $k = 5$ por defecto da −6.42:</p>
 
       <table>
         <caption class="sr-only">ADF sobre log(AirPassengers) según el número de rezagos</caption>
@@ -3081,7 +3137,7 @@ deriva = np.cumsum(0.3 + e)   # caminata con deriva</code></pre>
         <tbody>
           <tr>
             <td>5 <em>(valor por defecto)</em></td>
-            <td>−6.422</td>
+            <td>−6.421</td>
             <td>&lt; 0.01</td>
             <td>"Estacionaria" — incorrecto</td>
           </tr>
@@ -3093,7 +3149,7 @@ deriva = np.cumsum(0.3 + e)   # caminata con deriva</code></pre>
           </tr>
           <tr>
             <td>12</td>
-            <td>−1.533</td>
+            <td>−1.532</td>
             <td>0.771</td>
             <td>No rechaza la raíz unitaria</td>
           </tr>
@@ -3135,7 +3191,9 @@ deriva = np.cumsum(0.3 + e)   # caminata con deriva</code></pre>
         <p><strong>Regla de trabajo.</strong> Con series estacionales, <strong>no</strong> apliques ADF o KPSS a la
           serie cruda. El orden correcto (que seguiremos en el Módulo 9 y en el Capítulo 5) es: estabilizar la varianza
           → decidir la diferencia <em>estacional</em> → y solo entonces contrastar la raíz unitaria regular. Las
-          funciones <code>ndiffs()</code> y <code>nsdiffs()</code> del Módulo 7 automatizan justamente ese orden.</p>
+          funciones <code>nsdiffs()</code> y <code>ndiffs()</code> del Módulo 7 hacen esos dos contrastes, pero el
+          orden lo pone quien las usa: primero <code>nsdiffs()</code>, se diferencia, y después <code>ndiffs()</code>
+          sobre la serie ya diferenciada.</p>
       </div>
 
       <div class="code-tabs">
@@ -3144,86 +3202,105 @@ deriva = np.cumsum(0.3 + e)   # caminata con deriva</code></pre>
           <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
         </div>
         <div class="code-tab-panel" data-lang="r">
-          <pre><code class="language-r">library(tseries); library(jsonlite)
+          <pre><code class="language-r">library(tseries)
 
-# --- La TRM: promedio mensual desde datos.gov.co (Superintendencia --------
-#     Financiera). Requiere internet; devuelve la serie hasta el mes cerrado.
-descarga_trm <- function() {
-  url <- paste0("https://www.datos.gov.co/resource/32sa-8pi3.json",
-                "?$select=vigenciadesde,valor",
-                "&$where=vigenciadesde%20%3E=%20%272015-01-01T00:00:00.000%27",
-                "&$order=vigenciadesde&$limit=20000")
-  d <- fromJSON(url)
-  d$valor <- as.numeric(d$valor)
-  d$mes   <- substr(d$vigenciadesde, 1, 7)
-  d <- d[d$mes < format(Sys.Date(), "%Y-%m"), ]   # se descarta el mes en curso
-  m <- aggregate(valor ~ mes, data = d, FUN = mean)
-  m <- m[order(m$mes), ]
-  ts(round(m$valor, 2),
-     start = c(as.integer(substr(m$mes[1], 1, 4)), as.integer(substr(m$mes[1], 6, 7))),
-     frequency = 12)
-}
-trm <- descarga_trm()
-length(trm)   # 138 meses al corte de junio de 2026
+# --- La TRM: promedio mensual de enero de 2015 a junio de 2026 ------------
+#     Copia fija de los 138 meses con que se calcularon las cifras de este
+#     modulo. Se lee de la carpeta de trabajo si el archivo ya esta ahi; si
+#     no, de la pagina del curso. La serie al dia se descarga en el ejercicio 4.
+archivo &lt;- "trm_mensual_2015-01_2026-06.csv"
+if (!file.exists(archivo))
+  archivo &lt;- paste0("https://jotamao1985.github.io/Series-de-Tiempo_Un_Bosque/datos/", archivo)
+d   &lt;- read.csv(archivo)
+trm &lt;- ts(d$trm, start = c(2015, 1), frequency = 12)
+length(trm)
+#> [1] 138
+
+# De cada prueba se copia solo la linea del estadistico. Los avisos de R van
+# abreviados: donde aqui dice "Warning: ...", R escribe "Warning message:" y,
+# debajo, "In kpss.test(trm) : ..." con el mismo mensaje.
 
 # --- Caso limpio: la TRM (H0 del ADF: hay raiz unitaria) ------------------
-adf.test(trm)          # ADF = -1.9783, p = 0.5855 -> NO rechaza: raiz unitaria
-kpss.test(trm)         # KPSS =  2.2427, p < 0.01  -> rechaza estacionariedad
-                       # Las dos coinciden: la TRM no es estacionaria
+adf.test(trm)                         # NO rechaza: raiz unitaria
+#> Dickey-Fuller = -1.9783, Lag order = 5, p-value = 0.5855
+kpss.test(trm)                        # rechaza la estacionariedad
+#> KPSS Level = 2.2427, Truncation lag parameter = 4, p-value = 0.01
+#> Warning: p-value smaller than printed p-value
+# Las dos coinciden: la TRM no es estacionaria
 
-adf.test(diff(trm))    # ADF = -3.8801, p = 0.0172 -> rechaza: estacionaria
-kpss.test(diff(trm))   # KPSS =  0.2415, p > 0.10  -> no rechaza
-                       # Una diferencia basta
+adf.test(diff(trm))                   # rechaza: estacionaria
+#> Dickey-Fuller = -3.8801, Lag order = 5, p-value = 0.01721
+kpss.test(diff(trm))                  # no rechaza
+#> KPSS Level = 0.24147, Truncation lag parameter = 4, p-value = 0.1
+#> Warning: p-value greater than printed p-value
+# Las dos coinciden otra vez: una diferencia basta
+
+# adf.test() lleva tendencia en su regresion; el KPSS de tendencia dice lo mismo
+kpss.test(trm, null = "Trend")        # rechaza
+#> KPSS Trend = 0.27297, Truncation lag parameter = 4, p-value = 0.01
+#> Warning: p-value smaller than printed p-value
 
 # --- Caso tramposo: una serie estacional ----------------------------------
-adf.test(AirPassengers)               # -7.3186, p < 0.01  (!!) "estacionaria"
-trunc((length(AirPassengers) - 1)^(1/3))   # 5 rezagos por defecto < m = 12
+adf.test(AirPassengers)               # (!!) rechaza la raiz unitaria
+#> Dickey-Fuller = -7.3186, Lag order = 5, p-value = 0.01
+#> Warning: p-value smaller than printed p-value
+trunc((length(AirPassengers) - 1)^(1/3))   # rezagos por defecto: menos que m = 12
+#> [1] 5
 
 # Con rezagos que cubren un ciclo completo, el resultado se invierte
-adf.test(log(AirPassengers), k = 12)  # -1.5325, p = 0.7711
+adf.test(AirPassengers, k = 12)
+#> Dickey-Fuller = -1.5094, Lag order = 12, p-value = 0.7807
+adf.test(log(AirPassengers), k = 12)
+#> Dickey-Fuller = -1.5325, Lag order = 12, p-value = 0.7711
 
 # Sin estacionalidad de por medio, las dos pruebas vuelven a coincidir
 library(forecast)
 sa &lt;- seasadj(stl(log(AirPassengers), s.window = "periodic"))
-adf.test(sa)                          # -2.1524, p = 0.5130 -> no rechaza
-kpss.test(sa, null = "Trend")         #  0.3864, p < 0.01   -> rechaza</code></pre>
+adf.test(sa)                          # no rechaza
+#> Dickey-Fuller = -2.1524, Lag order = 5, p-value = 0.513
+kpss.test(sa, null = "Trend")         # rechaza
+#> KPSS Trend = 0.38637, Truncation lag parameter = 4, p-value = 0.01
+#> Warning: p-value smaller than printed p-value</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
-          <pre><code class="language-python">import pandas as pd
+          <pre><code class="language-python">import os
+import pandas as pd
 from statsmodels.tsa.stattools import adfuller, kpss
 
-# La TRM: promedio mensual desde datos.gov.co. Requiere internet.
-url = ("https://www.datos.gov.co/resource/32sa-8pi3.json"
-       "?$select=vigenciadesde,valor"
-       "&$where=vigenciadesde%20%3E=%20%272015-01-01T00:00:00.000%27"
-       "&$order=vigenciadesde&$limit=20000")
-d = pd.read_json(url)
-d["mes"] = d["vigenciadesde"].astype(str).str.slice(0, 7)
-d = d[d["mes"] &lt; pd.Timestamp.today().strftime("%Y-%m")]   # sin el mes en curso
-trm = d.groupby("mes")["valor"].mean().round(2)
-trm.index = pd.PeriodIndex(trm.index, freq="M").to_timestamp()
-print(len(trm))    # 138 meses al corte de junio de 2026
+# La TRM: la misma copia fija de 138 meses (enero de 2015 a junio de 2026).
+# Se lee de la carpeta de trabajo si el archivo ya esta ahi; si no, de la
+# pagina del curso. La serie al dia se descarga en el ejercicio 4.
+archivo = "trm_mensual_2015-01_2026-06.csv"
+if not os.path.exists(archivo):
+    archivo = "https://jotamao1985.github.io/Series-de-Tiempo_Un_Bosque/datos/" + archivo
+d = pd.read_csv(archivo)
+trm = pd.Series(d["trm"].values, index=pd.to_datetime(d["mes"] + "-01"))
+print(len(trm))
+#> 138
 
 # La especificacion importa: para reproducir adf.test() de R hay que pedir
 # deriva + tendencia ('ct') y fijar los rezagos (R no los elige por AIC).
 def adf_como_en_r(x):
     k = int(((len(x) - 1) ** (1 / 3)))
     est, p, *_ = adfuller(x, maxlag=k, regression="ct", autolag=None)
-    return round(est, 4), round(p, 4), k
+    return round(float(est), 4), round(float(p), 4), k
 
-print(adf_como_en_r(trm))                   # (-1.9783, 0.6132, 5) -> no rechaza
-print(adf_como_en_r(trm.diff().dropna()))   # (-3.8801, 0.0129, 5) -> rechaza
+print(adf_como_en_r(trm))                   # no rechaza
+#> (-1.9783, 0.6132, 5)
+print(adf_como_en_r(trm.diff().dropna()))   # rechaza
+#> (-3.8801, 0.0129, 5)
 
 # OJO al comparar con R: el ESTADISTICO coincide con tseries hasta el cuarto
 # decimal (-1.9783 y -3.8801), pero el P-VALOR no: R interpola en las tablas de
 # Banerjee et al. (1993) y statsmodels usa la superficie de respuesta de
-# MacKinnon. De ahi 0.6132 frente a 0.5855, y 0.0129 frente a 0.0172. La
-# conclusion es la misma en los dos casos; solo cambia el tercer decimal.
+# MacKinnon. De ahi 0.6132 frente a 0.5855, y 0.0129 frente a 0.0172: la
+# diferencia llega a las centesimas. La conclusion es la misma en los dos
+# casos, pero un p-valor de R y uno de statsmodels no se comparan entre si.
 
 # KPSS: H0 OPUESTA (la serie ES estacionaria)
 est, p, *_ = kpss(trm, regression="c", nlags=int(4 * (len(trm) / 100) ** 0.25))
-print(round(est, 4), p)            # 2.2427, p = 0.01 (tope de la tabla)
-                                   # -> rechaza estacionariedad
+print(round(float(est), 4), p)     # p = 0.01 es el tope de la tabla: rechaza
+#> 2.2427 0.01
 
 # Aviso: statsmodels usa por defecto autolag='AIC' y regression='c'. Con las
 # opciones por defecto NO reproduce adf.test() de R; los estadisticos difieren.</code></pre>
@@ -3373,13 +3450,14 @@ print(round(est, 4), p)            # 2.2427, p = 0.01 (tope de la tabla)
 
       <h3>¿Cuántas diferencias?</h3>
 
-      <p>Hay tres señales que conviene mirar juntas, y en los casos normales las tres apuntan al mismo número.</p>
+      <p>La decisión se apoya en dos cosas, el correlograma y las pruebas. La varianza, que a menudo se cita como
+        tercera señal, cambia al diferenciar pero no decide, y conviene ver por qué.</p>
 
       <div class="simulador" data-simulador="diferenciacion">
         <h4><i class="fas fa-sliders-h" aria-hidden="true"></i> El contador de diferencias</h4>
-        <p class="simulador-intro">Elige una serie y ve subiendo $d$. Observa las tres señales a
-          la vez: la forma de la serie, el correlograma y —sobre todo— la <strong>varianza</strong> de la lectura
-          numérica.</p>
+        <p class="simulador-intro">Elige una serie y ve subiendo $d$. Observa la forma de la serie y
+          el correlograma, y anota cómo cambia la <strong>varianza</strong> de la lectura numérica: después de la
+          tabla se explica qué dice ese número y qué no.</p>
         <div class="simulador-controles"></div>
         <div class="grafico-wrapper" style="height:220px;">
           <canvas aria-label="Serie tras aplicar d diferencias regulares" role="img"></canvas>
@@ -3395,8 +3473,8 @@ print(round(est, 4), p)            # 2.2427, p = 0.01 (tope de la tabla)
           diferenciar cae rápido dentro de la banda, ya está.</li>
         <li><strong>Las pruebas del Módulo 6</strong>, aplicadas de forma secuencial: diferenciar, volver a probar,
           repetir. Eso es exactamente lo que hace <code>ndiffs()</code>.</li>
-        <li><strong>La varianza.</strong> Cada diferencia útil la reduce; la primera diferencia de más la
-          <strong>aumenta</strong>. El mínimo señala el $d$ correcto.</li>
+        <li><strong>La varianza no es una tercera señal.</strong> Que suba o baje al diferenciar depende solo de
+          $r_1$, y eso no distingue la diferencia que hace falta de la que sobra, como se ve después de la tabla.</li>
       </ol>
 
       <table>
@@ -3449,33 +3527,59 @@ print(round(est, 4), p)            # 2.2427, p = 0.01 (tope de la tabla)
       <p>En las dos series la varianza toca su mínimo en $d = 1$ —el mismo valor que devuelve <code>ndiffs()</code>— y
         a partir de ahí vuelve a crecer.</p>
 
+      <p>Que aquí coincidan no convierte el mínimo de la varianza en una regla, en ninguno de los dos sentidos. Para
+        una serie estacionaria, $\operatorname{Var}(\nabla y_t) = 2(1-\rho_1)\operatorname{Var}(y_t)$, y en una
+        muestra cualquiera el cociente de varianzas sigue de cerca a $2(1-r_1)$: la varianza baja al diferenciar si
+        $r_1 &gt; 0.5$ y sube si $r_1 &lt; 0.5$. Es decir, repite lo que ya dice $r_1$, y $r_1$ solo no dice si hay
+        una raíz unitaria. Dos series simuladas, que están en el código de más abajo, lo muestran:</p>
+
+      <ul>
+        <li>Una serie estacionaria y persistente (el proceso del Módulo 5 con $\phi = 0.8$, 200 valores):
+          <code>ndiffs()</code> devuelve 0 y, aun así, la varianza <strong>baja</strong> de 2.497 a 1.033 al aplicar
+          una diferencia que sobra.</li>
+        <li>Una serie con raíz unitaria cuyos cambios se compensan en parte de un periodo al siguiente (144 valores):
+          <code>ndiffs()</code> devuelve 1 y la varianza <strong>sube</strong> de 1.096 a 1.513 al aplicar la
+          diferencia que hace falta.</li>
+      </ul>
+
+      <p>Por eso la decisión la toman el correlograma y las pruebas, no la varianza.</p>
+
       <div class="warning">
         <h4 style="margin-top:0;"><i class="fas fa-triangle-exclamation mr-2" aria-hidden="true"></i>Sobrediferenciación
           (<em>overdifferencing</em>)</h4>
-        <p>Diferenciar de más no es inofensivo: infla la varianza e <strong>introduce autocorrelación que no estaba en
-            los datos</strong>. Mira la columna $r_1$ de la tabla: −0.29, −0.53 en log(<code>AirPassengers</code>);
-          −0.41, −0.60 en la TRM. Ese es el rastro característico.</p>
-        <p style="margin-bottom:0;">La razón es algebraica. Si $y_t$ ya es ruido blanco y lo diferenciamos, obtenemos
-          $\nabla y_t = \varepsilon_t - \varepsilon_{t-1}$, que es un MA(1) con $\theta = -1$ y cuya autocorrelación
-          teórica en el rezago 1 vale $-0.5$. Es decir: <strong>fabricamos</strong> un modelo MA donde no había nada. Y
-          ese MA es <em>no invertible</em>, lo que le da problemas al estimador. La regla es simple: en la duda,
-          diferencia de menos.</p>
+        <p>Diferenciar de más no es inofensivo: <strong>introduce autocorrelación que no estaba en los datos</strong>.
+          La columna $r_1$ de la tabla lo muestra: −0.29, −0.53 en log(<code>AirPassengers</code>); −0.41, −0.60 en
+          la TRM. Ese es el indicio más frecuente: una autocorrelación negativa en el rezago 1 que se acerca a
+          $-0.5$.</p>
+        <p>La razón es algebraica. Si $y_t$ ya es ruido blanco y se diferencia, se obtiene
+          $\nabla y_t = \varepsilon_t - \varepsilon_{t-1}$, que es un MA(1) —con la convención
+          $y_t = \varepsilon_t + \theta\varepsilon_{t-1}$, $\theta = -1$; con la convención del signo contrario,
+          $\theta = 1$— cuya autocorrelación teórica en el rezago 1 vale $-0.5$. Es decir: se
+          <strong>fabrica</strong> un modelo MA donde no había nada. Y ese MA es <em>no invertible</em>, lo que le
+          da problemas al estimador. En la duda, conviene diferenciar de menos.</p>
+        <p style="margin-bottom:0;">Es un indicio, no una regla, y falla en los dos sentidos. En la serie estacionaria
+          y persistente de arriba la diferencia sobra y $r_1$ queda en $-0.148$, lejos de $-0.5$; en la serie con
+          raíz unitaria la diferencia hace falta y $r_1$ queda en $-0.483$. La sobrediferenciación se evita antes
+          de diferenciar, con el correlograma y las pruebas de la serie de partida.</p>
       </div>
 
       <h3>Diferenciación estacional en la práctica</h3>
 
-      <p>Sobre <code>log(AirPassengers)</code> el diagnóstico secuencial es instructivo. Tras <strong>una diferencia
-          regular</strong>, el KPSS de nivel ya no rechaza la estacionariedad ($p &gt; 0.10$) y <code>ndiffs()</code>
-        devuelve 0 — pero la ACF todavía tiene un pico enorme en el rezago 12 ($r_{12} = 0.841$) y
-        <code>nsdiffs()</code> sigue pidiendo 1. Las pruebas de raíz unitaria regular <strong>no ven la
-          estacionalidad</strong>; hay que mirar el correlograma. Aplicando además la diferencia estacional se llega a
-        $\nabla_{12}\nabla \log y_t$, con <code>ndiffs = 0</code> y <code>nsdiffs = 0</code>: la serie del modelo
-        <em>airline</em> que ajustaremos en el Capítulo 5.</p>
+      <p>Sobre <code>log(AirPassengers)</code> el diagnóstico secuencial es instructivo. Con la diferencia estacional
+        primero, <code>nsdiffs()</code> pide 1; sobre $\nabla_{12}\log y_t$, <code>ndiffs()</code> pide 1 más, y así se
+        llega a $\nabla\nabla_{12}\log y_t$, con <code>ndiffs = 0</code> y <code>nsdiffs = 0</code>: la serie del
+        modelo <em>airline</em> que ajustaremos en el Capítulo 5.</p>
+
+      <p>El orden contrario enseña por qué no basta con las pruebas. Tras <strong>una diferencia regular</strong>, el
+        KPSS de nivel ya no rechaza la estacionariedad ($p &gt; 0.10$) y <code>ndiffs()</code> devuelve 0 — pero la ACF
+        todavía tiene un pico enorme en el rezago 12 ($r_{12} = 0.841$) y <code>nsdiffs()</code> sigue pidiendo 1. Las
+        pruebas de raíz unitaria regular <strong>no ven la estacionalidad</strong>; hay que mirar el correlograma.</p>
 
       <div class="warning">
         <h4 style="margin-top:0;"><i class="fas fa-triangle-exclamation mr-2" aria-hidden="true"></i>Dos funciones de R
           que dicen "KPSS" y no dan lo mismo</h4>
-        <p>Sobre esa misma serie $\nabla_{12}\log y_t$ ($n = 132$), <code>tseries::kpss.test()</code> devuelve
+        <p>Sobre $\nabla_{12}\log y_t$ ($n = 132$), la serie que deja la diferencia estacional,
+          <code>tseries::kpss.test()</code> devuelve
           <strong>0.368 con $p = 0.091$</strong> —no rechaza al 5 %, o sea $d = 0$—, mientras que
           <code>ndiffs()</code> devuelve <strong>1</strong>. No es un error de ninguna de las dos.</p>
         <p>El motivo es el <strong>truncamiento de rezagos</strong> del estimador de la varianza de largo plazo, y cada
@@ -3485,9 +3589,12 @@ print(round(est, 4), p)            # 2.2427, p = 0.01 (tope de la tabla)
           rezagos se suaviza menos y el estadístico sube a <strong>0.537</strong>, que ya supera el valor crítico del
           5 % (0.463).</p>
         <p style="margin-bottom:0;">Moraleja, y vale para todo el capítulo: cuando el p-valor ronda el umbral
-          ($0.091$ frente a $0.05$) la decisión <strong>no</strong> la debe tomar una sola función. Mira las tres
-          señales juntas —correlograma, pruebas y varianza— y documenta cuál usaste. Aquí las tres apuntan a lo mismo:
-          el pico de $r_{12} = 0.841$ pide la diferencia estacional, y tras aplicarla la serie ya está lista.</p>
+          ($0.091$ frente a $0.05$) la decisión <strong>no</strong> la debe tomar una sola función. Hay que mirar
+          el correlograma junto a las pruebas y documentar qué se usó. Aquí el correlograma desempata a favor de
+          <code>ndiffs()</code>: la ACF de $\nabla_{12}\log y_t$ baja despacio ($r_1 = 0.714$, $r_2 = 0.623$,
+          $r_3 = 0.480$, con los ocho primeros rezagos fuera de la banda), que es la huella de una raíz unitaria
+          regular todavía sin tratar. El resultado es $d = 1$ y $D = 1$, lo mismo que decide el pipeline del
+          Módulo 9.</p>
       </div>
 
       <div class="code-tabs">
@@ -3498,54 +3605,99 @@ print(round(est, 4), p)            # 2.2427, p = 0.01 (tope de la tabla)
         <div class="code-tab-panel" data-lang="r">
           <pre><code class="language-r">library(forecast)
 
-# Diferencia regular y estacional
-d1  &lt;- diff(log(AirPassengers))            # (1 - B)
+# Diferencia estacional y diferencia regular
 d12 &lt;- diff(log(AirPassengers), lag = 12)  # (1 - B^12)
-dd  &lt;- diff(d1, lag = 12)                  # (1 - B)(1 - B^12): modelo airline
+dd  &lt;- diff(d12)                           # (1 - B)(1 - B^12): modelo airline
+d1  &lt;- diff(log(AirPassengers))            # (1 - B), sin la estacional
+length(dd)
+#> [1] 131
 
-# Cuantas diferencias sugieren las pruebas
-ndiffs(log(AirPassengers))    # 1  (diferencias regulares)
-nsdiffs(log(AirPassengers))   # 1  (diferencias estacionales)
-ndiffs(d1)                    # 0  <- ya no pide mas diferencias regulares...
-nsdiffs(d1)                   # 1  <- ...pero si una estacional
-ndiffs(dd); nsdiffs(dd)       # 0 y 0: estacionaria
+# Cuantas diferencias piden las pruebas, con la estacional primero
+nsdiffs(log(AirPassengers))   # estacionales
+#> [1] 1
+ndiffs(d12)                   # regulares, sobre la serie ya diferenciada
+#> [1] 1
+ndiffs(dd); nsdiffs(dd)       # ninguna mas: estacionaria
+#> [1] 0
+#> [1] 0
+
+# En el orden contrario, tras la diferencia regular...
+ndiffs(d1)                    # ...ya no pide mas diferencias regulares,
+#> [1] 0
+nsdiffs(d1)                   # pero si una estacional
+#> [1] 1
+
+# El recuadro: sobre d12, kpss.test() no rechaza al 5 % y ndiffs() pide 1
+library(tseries)
+kpss.test(d12)
+#> KPSS Level = 0.36816, Truncation lag parameter = 4, p-value = 0.09088
 
 # OJO: diff(x, differences = 0) NO devuelve x, lanza un error. Para recorrer
 # d = 0, 1, 2, 3 en un bucle hay que tratar el caso d = 0 aparte.
-difn <- function(x, d) if (d == 0) x else diff(x, differences = d)
+difn &lt;- function(x, d) if (d == 0) x else diff(x, differences = d)
 
-# La varianza delata la sobrediferenciacion
-sapply(0:3, function(d) var(difn(log(AirPassengers), d)))
-# 0.19488  0.01135  0.01823  0.04691   <- el minimo esta en d = 1
+# La tabla: varianza y r1 segun el numero de diferencias
+round(sapply(0:3, function(d) var(difn(log(AirPassengers), d))), 5)
+#> [1] 0.19488 0.01135 0.01823 0.04691
+round(sapply(0:3, function(d) acf(difn(log(AirPassengers), d),
+                                  lag.max = 1, plot = FALSE)$acf[2]), 4)
+#> [1]  0.9537  0.1998 -0.2926 -0.5335
 
-# ...y tambien la ACF del rezago 1, que se acerca a -0.5
-sapply(0:3, function(d) acf(difn(log(AirPassengers), d),
-                            lag.max = 1, plot = FALSE)$acf[2])
-# 0.9537  0.1998  -0.2926  -0.5335</code></pre>
+# Ni la varianza ni r1 deciden. (a) Serie estacionaria y persistente:
+set.seed(1)
+y &lt;- arima.sim(list(ar = 0.8), n = 200)
+ndiffs(y)                               # no hay que diferenciarla...
+#> [1] 0
+round(c(var(y), var(diff(y))), 3)       # ...y la varianza BAJA al hacerlo,
+#> [1] 2.497 1.033
+round(acf(diff(y), lag.max = 1, plot = FALSE)$acf[2], 3)   # con r1 lejos de -0.5
+#> [1] -0.148
+
+# (b) Serie con raiz unitaria cuyos cambios se compensan en parte (theta = -0.8):
+set.seed(4)
+z &lt;- arima.sim(list(order = c(0, 1, 1), ma = -0.8), n = 143)
+ndiffs(z)                               # hay que diferenciarla...
+#> [1] 1
+round(c(var(z), var(diff(z))), 3)       # ...y la varianza SUBE al hacerlo,
+#> [1] 1.096 1.513
+round(acf(diff(z), lag.max = 1, plot = FALSE)$acf[2], 3)   # con r1 junto a -0.5
+#> [1] -0.483</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np
 import pandas as pd
+import statsmodels.api as sm
 from statsmodels.tsa.stattools import acf
 
+datos = sm.datasets.get_rdataset("AirPassengers").data
+pasajeros = pd.Series(
+    datos["value"].values,
+    index=pd.date_range("1949-01-01", periods=len(datos), freq="MS"),
+)
 lap = np.log(pasajeros)
 
-d1  = lap.diff().dropna()          # (1 - B)
-d12 = lap.diff(12).dropna()        # (1 - B^12)
-dd  = lap.diff().diff(12).dropna() # (1 - B)(1 - B^12): modelo airline
+d12 = lap.diff(12).dropna()         # (1 - B^12)
+dd  = lap.diff(12).diff().dropna()  # (1 - B)(1 - B^12): modelo airline
+d1  = lap.diff().dropna()           # (1 - B), sin la estacional
+print(len(dd))
+#> 131
 
-# statsmodels no trae ndiffs/nsdiffs; el equivalente esta en pmdarima:
+# statsmodels no trae ndiffs/nsdiffs; estan en pmdarima, que no forma parte
+# del entorno del curso. Con pmdarima 2.1.1:
 #   from pmdarima.arima import ndiffs, nsdiffs
 #   ndiffs(lap, test="kpss")        -> 1
 #   nsdiffs(lap, m=12, test="ocsb") -> 1
 
-# La varianza delata la sobrediferenciacion
+# Varianza y r1 segun el numero de diferencias regulares
 for d in range(4):
     y = lap.copy()
     for _ in range(d):
         y = y.diff().dropna()
     print(d, round(y.var(), 5), round(acf(y, nlags=1, adjusted=False)[1], 4))
-# 0 0.19488 0.9537 | 1 0.01135 0.1998 | 2 0.01823 -0.2926 | 3 0.04691 -0.5335</code></pre>
+#> 0 0.19488 0.9537
+#> 1 0.01135 0.1998
+#> 2 0.01823 -0.2926
+#> 3 0.04691 -0.5335</code></pre>
         </div>
       </div>
     </div>
@@ -3585,7 +3737,9 @@ for d in range(4):
         \log(y_t) & \text{si } \lambda = 0,\\[4pt]
         \dfrac{y_t^{\lambda} - 1}{\lambda} & \text{en otro caso.}
         \end{cases}$$
-        <p style="margin-bottom:0;">Exige $y_t &gt; 0$. Casos particulares: $\lambda = 1$ deja la serie como estaba
+        <p style="margin-bottom:0;">Así escrita exige $y_t &gt; 0$; <code>BoxCox()</code> de <code>forecast</code> y
+          <code>box_cox()</code> de <code>fpp3</code> usan una variante con el signo de $y_t$ que admite valores
+          negativos cuando $\lambda &gt; 0$. Casos particulares: $\lambda = 1$ deja la serie como estaba
           (salvo un desplazamiento), $\lambda = 0.5$ es la raíz cuadrada, $\lambda = 0$ el logaritmo y $\lambda = -1$ la
           inversa. Cuanto <strong>menor</strong> es $\lambda$, más agresivamente se comprimen los valores grandes.</p>
       </div>
@@ -3626,16 +3780,16 @@ for d in range(4):
           $\lambda = -0.295$. Es decir, el logaritmo se queda un 88 % por encima del mínimo —la franja donde el criterio
           no se aleja más de un 20 % del mínimo es $\lambda \in [-0.41,\, -0.17]$, y el 0 <em>no</em> está dentro—, pero
           aun así capta el <strong>84 % de la mejora</strong> alcanzable respecto a no transformar.</p>
-        <p style="margin-bottom:0;">Se prefiere igual, por tres razones que pesan más que ese sobrecosto: (1)
+        <p style="margin-bottom:0;">Se prefiere igual, por dos razones que pesan más que ese sobrecosto: (1)
           $\lambda = 0$ es interpretable —los cambios se leen como variaciones porcentuales— mientras que
           $\lambda = -0.295$ no significa nada para nadie; (2) el $\hat\lambda$ óptimo es él mismo una estimación, hecha
-          aquí con solo 12 bloques anuales, y tiene su propia incertidumbre; (3) deshacer la transformación es trivial.
-          FPP3 hace la misma recomendación.</p>
+          aquí con solo 12 bloques anuales, y tiene su propia incertidumbre.</p>
       </div>
 
       <div class="warning">
         <p><strong>Al deshacer la transformación aparece un sesgo.</strong> Si pronosticamos $w_t$ y volvemos con
-          $\exp(\cdot)$, lo que obtenemos es la <strong>mediana</strong> del pronóstico, no la media. Para la media hace
+          $\exp(\cdot)$, lo que obtenemos es la <strong>mediana</strong> del pronóstico, no la media —siempre que la
+          distribución del pronóstico en la escala transformada sea simétrica—. Para la media hace
           falta una corrección de sesgo (que <code>fable</code> aplica sola y <code>statsmodels</code> no). Volveremos a
           esto en el Capítulo 6; por ahora basta saber que la vuelta atrás no es simétrica.</p>
       </div>
@@ -3650,12 +3804,18 @@ for d in range(4):
 
 # Lambda por el criterio de Guerrero
 lambda &lt;- BoxCox.lambda(AirPassengers, method = "guerrero")
-round(lambda, 4)          # -0.2947
+round(lambda, 4)
+#> [1] -0.2947
 
-# Aplicar y deshacer la transformacion
+# Aplicar y deshacer la transformacion: sobre los datos, la vuelta es exacta
 w  &lt;- BoxCox(AirPassengers, lambda)
 y2 &lt;- InvBoxCox(w, lambda)
-max(abs(y2 - AirPassengers))   # ~0: la vuelta es exacta
+max(abs(y2 - AirPassengers)) &lt; 1e-9
+#> [1] TRUE
+
+# BoxCox() usa la variante con signo: admite negativos si lambda > 0
+round(as.numeric(BoxCox(c(-2, 4), lambda = 0.5)), 2)
+#> [1] -4.83  2.00
 
 par(mfrow = c(3, 1))
 plot(AirPassengers,                main = "Original: la amplitud crece")
@@ -3664,24 +3824,40 @@ plot(w,                            main = "Box-Cox con lambda optimo")
 
 # En fpp3 la transformacion viaja dentro del modelo y la correccion de
 # sesgo al deshacerla se aplica sola:
-#   modelo &lt;- serie |&gt; model(ARIMA(box_cox(value, lambda)))</code></pre>
+#   modelo &lt;- serie |> model(ARIMA(box_cox(value, lambda)))</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np
+import pandas as pd
+import statsmodels.api as sm
 from scipy.stats import boxcox
-from scipy.special import inv_boxcox
+from statsmodels.base.transform import BoxCox
+
+datos = sm.datasets.get_rdataset("AirPassengers").data
+pasajeros = pd.Series(
+    datos["value"].values,
+    index=pd.date_range("1949-01-01", periods=len(datos), freq="MS"),
+)
 
 # Aviso: scipy.stats.boxcox elige lambda por MAXIMA VEROSIMILITUD suponiendo
-# datos i.i.d., no por el criterio de Guerrero. Para series de tiempo, el
-# equivalente a BoxCox.lambda(method="guerrero") es:
-#   from pmdarima.preprocessing import BoxCoxEndogTransformer
+# datos i.i.d., no por el criterio de Guerrero, y da otro valor
 w, lam = boxcox(pasajeros.values)
-print(round(lam, 4))          # distinto del -0.2947 de Guerrero
+print(round(float(lam), 4))
+#> 0.148
 
-# En la practica, el logaritmo (lambda = 0)
+# El criterio de Guerrero esta en statsmodels (0.14): window_length es el
+# tamano del bloque, 12 meses, y el resultado es el de BoxCox.lambda() de R
+w, lam = BoxCox().transform_boxcox(pasajeros.values, method="guerrero",
+                                   window_length=12)
+print(round(float(lam), 4))
+#> -0.2947
+
+# En la practica, el logaritmo (lambda = 0). Sobre los datos la vuelta con
+# exp() es exacta; el sesgo aparece al deshacer un PRONOSTICO
 w = np.log(pasajeros)
-y2 = np.exp(w)                # ...y la vuelta da la MEDIANA, no la media
-print(float(np.max(np.abs(y2 - pasajeros))))</code></pre>
+y2 = np.exp(w)
+print(float(np.max(np.abs(y2 - pasajeros))) &lt; 1e-9)
+#> True</code></pre>
         </div>
       </div>
     </div>
@@ -3784,7 +3960,7 @@ print(float(np.max(np.abs(y2 - pasajeros))))</code></pre>
           </div>
           <div class="ciclo-campo">
             <span class="ciclo-etiqueta">Con qué</span>
-            <p><code>BoxCox.lambda(y, method = "guerrero")</code> y <code>BoxCox()</code> (Módulo 8); en Python, <code>scipy.stats.boxcox</code>.</p>
+            <p><code>BoxCox.lambda(y, method = "guerrero")</code> y <code>BoxCox()</code> (Módulo 8); en Python, <code>np.log()</code> o, para el $\lambda$ de Guerrero, <code>BoxCox().transform_boxcox()</code> de statsmodels: <code>scipy.stats.boxcox</code> estima $\lambda$ por máxima verosimilitud y da otro valor.</p>
           </div>
           <div class="ciclo-campo ciclo-vuelta">
             <span class="ciclo-etiqueta">Qué te devuelve atrás</span>
@@ -3816,21 +3992,21 @@ print(float(np.max(np.abs(y2 - pasajeros))))</code></pre>
           </div>
           <div class="ciclo-campo ciclo-vuelta">
             <span class="ciclo-etiqueta">Qué te devuelve atrás</span>
-            <p>Si la varianza <em>sube</em> al diferenciar, te pasaste: vuelve con una diferencia menos.</p>
+            <p>Si antes de diferenciar la ACF ya caía rápido y <code>ndiffs()</code> devolvía 0, esa diferencia sobraba: vuelve con una diferencia menos. Un $r_1$ cercano a $-0.5$ tras diferenciar es un indicio de lo mismo, no una prueba (Módulo 7).</p>
           </div>
         </div>
         <div class="ciclo-panel" id="ciclo-preprocesamiento-verificar" role="tabpanel" hidden>
           <div class="ciclo-campo">
             <span class="ciclo-etiqueta">Qué haces</span>
-            <p>ACF y PACF de la serie transformada, repetir las pruebas y comprobar que la varianza <strong>no subió</strong>. Este paso es el que cierra el ciclo y manda de vuelta a los anteriores.</p>
+            <p>ACF y PACF de la serie transformada y repetir las pruebas sobre ella. Este paso es el que cierra el ciclo y manda de vuelta a los anteriores.</p>
           </div>
           <div class="ciclo-campo">
             <span class="ciclo-etiqueta">Con qué</span>
-            <p><code>ACF()</code>/<code>PACF()</code> de feasts, <code>adf.test()</code>, <code>kpss.test()</code> y <code>var()</code> por cada $d$.</p>
+            <p><code>ACF()</code>/<code>PACF()</code> de feasts, <code>adf.test()</code> y <code>kpss.test()</code>.</p>
           </div>
           <div class="ciclo-campo ciclo-vuelta">
             <span class="ciclo-etiqueta">Qué te devuelve atrás</span>
-            <p>ACF que no decae → paso 4. Varianza que crece → paso 4 con una diferencia menos. Abombamiento → paso 2. Un salto de nivel que no viste → paso 1.</p>
+            <p>ACF que no decae → paso 4. Una diferencia que las pruebas no pedían → paso 4 con una diferencia menos. Abombamiento → paso 2. Un salto de nivel que no viste → paso 1.</p>
           </div>
         </div>
         <div class="ciclo-panel" id="ciclo-preprocesamiento-documentar" role="tabpanel" hidden>
@@ -3859,27 +4035,35 @@ preparar &lt;- function(y, m = frequency(y)) {
   w &lt;- if (abs(lambda) &lt; 0.25) log(y) else BoxCox(y, lambda)
 
   # 2. Diferencia estacional PRIMERO
-  D &lt;- if (m &gt; 1) nsdiffs(w) else 0
-  if (D &gt; 0) w &lt;- diff(w, lag = m, differences = D)
+  D &lt;- if (m > 1) nsdiffs(w) else 0
+  if (D > 0) w &lt;- diff(w, lag = m, differences = D)
 
   # 3. Diferencia regular despues
   d &lt;- ndiffs(w)
-  if (d &gt; 0) w &lt;- diff(w, differences = d)
+  if (d > 0) w &lt;- diff(w, differences = d)
 
-  # 4. Verificar: la varianza no debe haber subido de mas
+  # 4. Verificar: el KPSS de la serie final no debe rechazar
   list(serie = w, lambda = lambda, d = d, D = D,
        var_final = var(w),
        kpss_p = suppressWarnings(kpss.test(w)$p.value))
 }
 
 res &lt;- preparar(AirPassengers)
-res$d; res$D                 # 1 y 1  -> el modelo airline
-round(res$lambda, 4)         # -0.2947
-signif(res$var_final, 3)     # 9.17e-05, en la escala Box-Cox: NO es comparable
-                             # con la varianza de la serie original
-res$kpss_p                   # 0.1, con el aviso "greater than printed p-value":
-                             # ya no se rechaza la estacionariedad
-length(res$serie)            # 131 = 144 - 12 - 1: cada diferencia cuesta datos
+res$d; res$D                 # el modelo airline
+#> [1] 1
+#> [1] 1
+round(res$lambda, 4)
+#> [1] -0.2947
+# La varianza final esta en la escala Box-Cox: NO es comparable con la de la
+# serie original
+signif(res$var_final, 3)
+#> [1] 9.17e-05
+# El p-valor del KPSS es el tope de la tabla (sin suppressWarnings() saldria
+# el aviso "greater than printed p-value"): ya no se rechaza la estacionariedad
+res$kpss_p
+#> [1] 0.1
+length(res$serie)            # 144 - 12 - 1: cada diferencia cuesta datos
+#> [1] 131
 
 par(mfrow = c(1, 2))
 acf(res$serie,  lag.max = 24, main = "ACF final")
@@ -3887,11 +4071,20 @@ pacf(res$serie, lag.max = 24, main = "PACF final")</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np
+import pandas as pd
+import statsmodels.api as sm
 from statsmodels.tsa.stattools import kpss
 
-# Para que esta funcion decida IGUAL que ndiffs() de R hay que usar su mismo
-# truncamiento de rezagos: floor(3*sqrt(n)/13), el de urca::ur.kpss. Con el
-# de tseries, floor(4*(n/100)^0.25), esta serie daria d = 0 (ver Modulo 7).
+datos = sm.datasets.get_rdataset("AirPassengers").data
+pasajeros = pd.Series(
+    datos["value"].values,
+    index=pd.date_range("1949-01-01", periods=len(datos), freq="MS"),
+)
+
+# Para que esta funcion decida IGUAL que ndiffs() de R hay que usar el
+# truncamiento de rezagos que ndiffs() le pasa a urca::ur.kpss:
+# floor(3*sqrt(n)/13). Con el de tseries, floor(4*(n/100)^0.25), esta serie
+# daria d = 0 (ver Modulo 7).
 def kpss_como_ndiffs(w):
     nlags = int(3 * np.sqrt(len(w)) / 13)
     est, p, *_ = kpss(w, regression="c", nlags=nlags)
@@ -3901,8 +4094,10 @@ def preparar(y, m=12):
     # 1. Estabilizar la varianza (en la practica, el logaritmo)
     w = np.log(y)
 
-    # 2. Diferencia estacional PRIMERO
-    D = 1 if m &gt; 1 else 0
+    # 2. Diferencia estacional PRIMERO. Aqui D no se decide con una prueba:
+    #    se fija en 1 siempre que m &gt; 1, sea o no estacional la serie
+    #    (statsmodels no trae un equivalente de nsdiffs)
+    D = 1 if m > 1 else 0
     if D:
         w = w.diff(m).dropna()
 
@@ -3914,12 +4109,13 @@ def preparar(y, m=12):
 
     est, p = kpss_como_ndiffs(w)
     return {"serie": w, "d": d, "D": D,
-            "var_final": float(w.var()), "kpss_p": p}
+            "var_final": float(w.var()), "kpss_p": float(p)}
 
 res = preparar(pasajeros)
 print(res["d"], res["D"], round(res["var_final"], 5), round(res["kpss_p"], 3))
-# 1 1 0.0021 0.1   -> las mismas d y D que la version en R
+#> 1 1 0.0021 0.1
 
+# d coincide con la version en R; D tambien, pero aqui estaba puesto a mano.
 # La varianza final NO coincide con la del bloque de R (9.17e-05) y no tiene
 # por que: esta version usa el logaritmo y aquella el lambda optimo de
 # Box-Cox. Son escalas distintas, asi que solo son comparables las decisiones
@@ -3941,9 +4137,9 @@ print(res["d"], res["D"], round(res["var_final"], 5), round(res["kpss_p"], 3))
           <li><strong>La validación cruzada estándar no sirve</strong>: barajar observaciones destruye el orden y
             entrena con datos posteriores a los de prueba. Hay que usar validación de origen móvil, y a eso dedicamos el
             Capítulo 6.</li>
-          <li><strong>La estacionariedad sigue importando fuera de ARIMA</strong>: las redes recurrentes y los modelos
-            basados en árboles también funcionan mucho mejor sobre series diferenciadas, porque no tienen que aprender a
-            extrapolar una tendencia.</li>
+          <li><strong>La estacionariedad sigue importando fuera de ARIMA</strong>: un árbol de decisión de hojas constantes predice con
+            promedios de lo que vio al entrenarse, así que ante una tendencia que sigue subiendo se queda en una
+            meseta; diferenciar la serie antes le quita ese problema.</li>
         </ul>
       </div>
 
@@ -3999,8 +4195,10 @@ print(res["d"], res["D"], round(res["var_final"], 5), round(res["kpss_p"], 3))
 
       <div class="quiz" data-quiz="cap2">
         <h4><i class="fas fa-circle-question" aria-hidden="true"></i> Autoevaluación</h4>
-        <p class="text-sm" style="margin-bottom:0;">Seis preguntas para comprobar lo esencial. Cada opción tiene su
-          explicación: si te equivocas, la retroalimentación te dice exactamente dónde estuvo el razonamiento.</p>
+        <p class="text-sm" style="margin-bottom:0;">Ocho preguntas para comprobar lo esencial. En las de una sola
+          respuesta, cada opción tiene su explicación: si te equivocas, la retroalimentación te dice dónde estuvo el
+          razonamiento. En las numéricas y en la de selección múltiple la explicación llega al comprobar la
+          respuesta.</p>
         <div class="quiz-progreso" role="presentation"><div class="quiz-progreso-barra"></div></div>
         <div class="quiz-preguntas"></div>
         <div class="quiz-resumen" role="status" hidden></div>
@@ -4019,8 +4217,7 @@ print(res["d"], res["D"], round(res["var_final"], 5), round(res["kpss_p"], 3))
         <div class="ejercicio-guiado">
           <p class="ejercicio-enunciado"><span class="ejercicio-numero">1.</span>Toma la serie <code>co2</code> de R
             (CO₂ en Mauna Loa, mensual). Grafícala, calcula ACF y PACF, y aplica el pipeline del Módulo 9. ¿Cuántas
-            diferencias regulares y estacionales hacen falta? Justifica con las tres señales (correlograma, pruebas y
-            varianza).</p>
+            diferencias regulares y estacionales hacen falta? Justifica con el correlograma y las pruebas.</p>
           <div class="ejercicio-acciones">
             <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c2e1-pista">
               <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
@@ -4033,35 +4230,52 @@ print(res["d"], res["D"], round(res["var_final"], 5), round(res["kpss_p"], 3))
             <p style="margin:0;">Respeta el orden del pipeline: <strong>primero</strong> decide si hay que transformar,
               <strong>después</strong> la diferencia estacional y <strong>solo al final</strong> la regular. Y cuidado
               con dos cosas: el $\lambda$ de Guerrero aquí no te va a servir de mucho (piensa cuánto varía el
-              <em>nivel</em> del CO₂ en toda la muestra), y la varianza hay que compararla <em>después</em> de la
-              diferencia estacional, no sobre la serie cruda.</p>
+              <em>nivel</em> del CO₂ en toda la muestra), y el correlograma hay que volver a mirarlo
+              <em>después</em> de cada diferencia, no solo sobre la serie cruda.</p>
           </div>
           <div class="ejercicio-panel solucion" id="c2e1-sol" hidden>
             <p><strong>Respuesta: $d = 1$ y $D = 1$.</strong></p>
             <pre><code class="language-r">library(forecast); library(tseries)
 
-# 1. Transformar? El nivel del CO2 solo varia un 15.9% en toda la muestra
-(max(co2) - min(co2)) / mean(co2)          # 0.159
-BoxCox.lambda(co2, method = "guerrero")    # -0.0343, pero poco informativo:
-# sobre un rango tan estrecho cualquier potencia es casi lineal y lambda queda
-# mal identificado. Se trabaja sin transformar.
+# 1. Transformar? Entre el minimo y el maximo de toda la muestra hay solo un
+#    15.9 % de la media: el nivel del CO2 apenas cambia de escala
+round((max(co2) - min(co2)) / mean(co2), 3)
+#> [1] 0.159
+round(BoxCox.lambda(co2, method = "guerrero"), 4)
+#> [1] -0.0343
+# Poco informativo: sobre un rango tan estrecho cualquier potencia es casi
+# lineal y lambda queda mal identificado. Se trabaja sin transformar.
 
 # 2. Diferencia estacional PRIMERO
-nsdiffs(co2)                                # 1
-co2_s <- diff(co2, lag = 12)
+nsdiffs(co2)
+#> [1] 1
+co2_s &lt;- diff(co2, lag = 12)
 
 # 3. Y ahora la regular
-ndiffs(co2_s)                               # 1
-co2_sd <- diff(co2_s)
+ndiffs(co2_s)
+#> [1] 1
+co2_sd &lt;- diff(co2_s)
 
-# Las tres senales, todas de acuerdo:
-acf(co2, lag.max = 24, plot = FALSE)$acf[c(2, 13)]   # r1 = 0.9909, r12 = 0.9284
-difn <- function(x, d) if (d == 0) x else diff(x, differences = d)
-sapply(0:3, function(d) var(difn(co2_s, d)))
-# 0.3882  0.1543  0.4023  1.3123   <- minimo en d = 1
-kpss.test(co2_sd)$p.value                   # > 0.10: ya no se rechaza</code></pre>
+# El correlograma dice lo mismo que las pruebas. Serie original: r1 y r12
+round(acf(co2, lag.max = 24, plot = FALSE)$acf[c(2, 13)], 4)
+#> [1] 0.9909 0.9284
+# Tras la diferencia estacional la ACF todavia baja despacio: r1, r2 y r3
+round(acf(co2_s, lag.max = 24, plot = FALSE)$acf[2:4], 4)
+#> [1] 0.7998 0.7196 0.6284
+# La serie final: no pide mas diferencias y el KPSS ya no rechaza
+# (0.1 es el tope de la tabla: p > 0.10; suppressWarnings() calla ese aviso)
+ndiffs(co2_sd); nsdiffs(co2_sd)
+#> [1] 0
+#> [1] 0
+suppressWarnings(kpss.test(co2_sd))$p.value
+#> [1] 0.1
+# Lo que queda en ella: r1 y cuantos de 24 rezagos salen de la banda
+r &lt;- acf(co2_sd, lag.max = 24, plot = FALSE)$acf[-1]
+c(n = length(co2_sd), r1 = round(r[1], 3), fuera = sum(abs(r) > 1.96 / sqrt(length(co2_sd))))
+#>       n      r1   fuera 
+#> 455.000  -0.302   5.000 </code></pre>
             <table>
-              <caption class="sr-only">Las tres señales sobre co2</caption>
+              <caption class="sr-only">El correlograma y las pruebas sobre co2</caption>
               <thead>
                 <tr><th scope="col">Señal</th><th scope="col">Qué dice</th></tr>
               </thead>
@@ -4069,15 +4283,15 @@ kpss.test(co2_sd)$p.value                   # > 0.10: ya no se rechaza</code></p
                 <tr><td>Correlograma</td><td>$r_1 = 0.991$ y $r_{12} = 0.928$ con banda $\pm 0.091$: tendencia
                   <em>y</em> estacionalidad, las dos muy marcadas</td></tr>
                 <tr><td>Pruebas</td><td><code>nsdiffs</code> = 1; tras $\nabla_{12}$, <code>ndiffs</code> = 1</td></tr>
-                <tr><td>Varianza (tras $\nabla_{12}$)</td><td>0.388 → <strong>0.154</strong> → 0.402 → 1.312: mínimo
-                  en $d = 1$</td></tr>
+                <tr><td>Correlograma tras $\nabla_{12}$</td><td>$r_1 = 0.800$, $r_2 = 0.720$, $r_3 = 0.628$: baja
+                  despacio, queda una raíz unitaria regular</td></tr>
               </tbody>
             </table>
-            <p><strong>La serie final</strong> $\nabla\nabla_{12}\,y_t$ tiene $n = 455$, varianza $0.154$,
+            <p><strong>La serie final</strong> $\nabla\nabla_{12}\,y_t$ tiene $n = 455$,
               $r_1 = -0.302$ y KPSS con $p &gt; 0.10$. Ojo con dos detalles honestos: quedan <strong>5 de 24</strong>
               rezagos fuera de la banda, así que <em>no</em> es ruido blanco — sigue habiendo estructura ARMA que
-              modelar, y eso es justo el trabajo del Capítulo 3. Y ese $r_1 = -0.302$ no es sobrediferenciación sino la
-              huella del componente MA que aparecerá en el modelo.</p>
+              modelar, y eso es justo el trabajo del Capítulo 3. Y ese $r_1 = -0.302$ no es sobrediferenciación —las pruebas pedían las
+              dos diferencias y ya no piden más— sino la huella del componente MA que aparecerá en el modelo.</p>
           </div>
         </div>
 
@@ -4105,18 +4319,22 @@ kpss.test(co2_sd)$p.value                   # > 0.10: ya no se rechaza</code></p
 set.seed(2026)
 p &lt;- replicate(500, suppressWarnings(adf.test(cumsum(rnorm(100)))$p.value))
 
-100 * mean(p &lt; 0.05)   # 4.6 %  (nominal: 5 %)
-100 * mean(p &lt; 0.10)   # 9.2 %  (nominal: 10 %)
+100 * mean(p &lt; 0.05)   # en porcentaje; nominal: 5 %
+#> [1] 4.6
+100 * mean(p &lt; 0.10)   # nominal: 10 %
+#> [1] 9.2
 
 # Y no es que la prueba nunca rechace: sobre ruido blanco, donde H0 es FALSA,
-# rechaza el 93.8 % de las veces. Tiene potencia de sobra.
+# rechaza casi siempre. Tiene potencia de sobra.
 set.seed(2026)
 p2 &lt;- replicate(500, suppressWarnings(adf.test(rnorm(100))$p.value))
-100 * mean(p2 &lt; 0.05)  # 93.8 %</code></pre>
+100 * mean(p2 &lt; 0.05)
+#> [1] 93.8</code></pre>
             <p><strong>La comparación con el Módulo 6 es el punto del ejercicio.</strong> Aquí el falso rechazo es
-              4.6&nbsp;%, prácticamente el 5&nbsp;% nominal; allá llegaba al <strong>17.6&nbsp;%</strong>. La única
-              diferencia entre los dos experimentos es que a aquellas caminatas se les sumó un componente estacional.
-              Conclusión: el ADF <strong>no está roto</strong> —sobre caminatas puras se comporta exactamente como
+              4.6&nbsp;%, prácticamente el 5&nbsp;% nominal; allá llegaba al <strong>17.6&nbsp;%</strong>. La
+              diferencia de fondo entre los dos experimentos es que a aquellas caminatas se les sumó un componente
+              estacional (también cambian la longitud, 144 frente a 100, y la semilla; la comparación limpia está en
+              el propio Monte Carlo del Módulo 6, que con amplitud 0 rechaza el 3.2&nbsp;%). Conclusión: el ADF <strong>no está roto</strong> —sobre caminatas puras se comporta exactamente como
               promete—; lo que lo rompe es aplicarlo a una serie estacional con menos rezagos que el periodo.</p>
           </div>
         </div>
@@ -4124,7 +4342,7 @@ p2 &lt;- replicate(500, suppressWarnings(adf.test(rnorm(100))$p.value))
         <div class="ejercicio-guiado">
           <p class="ejercicio-enunciado"><span class="ejercicio-numero">3.</span>Sobre <code>USAccDeaths</code>, compara
             $\nabla y_t$, $\nabla_{12} y_t$ y $\nabla_{12}\nabla y_t$. ¿Cuál de las tres deja los residuales más cerca
-            del ruido blanco? Usa la varianza y el correlograma.</p>
+            del ruido blanco? Usa el correlograma y las pruebas.</p>
           <div class="ejercicio-acciones">
             <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c2e3-pista">
               <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
@@ -4134,10 +4352,10 @@ p2 &lt;- replicate(500, suppressWarnings(adf.test(rnorm(100))$p.value))
             </button>
           </div>
           <div class="ejercicio-panel pista" id="c2e3-pista" hidden>
-            <p style="margin:0;">No te quedes en la varianza: mírala junto con <strong>cuántos rezagos se salen de la
-              banda</strong> y con $r_{12}$, que es donde vive la estacionalidad. Y si consultas
-              <code>ndiffs(USAccDeaths)</code> directamente, desconfía del número que salga y relee la caja de
-              advertencia del Módulo 7.</p>
+            <p style="margin:0;">Mira <strong>cuántos rezagos se salen de la banda</strong> y qué pasa con $r_{12}$,
+              que es donde vive la estacionalidad. Y si consultas
+              <code>ndiffs(USAccDeaths)</code> directamente, desconfía del número que salga y relee la «Regla de
+              trabajo» del Módulo 6.</p>
           </div>
           <div class="ejercicio-panel solucion" id="c2e3-sol" hidden>
             <p><strong>Respuesta: $\nabla_{12}\nabla y_t$.</strong></p>
@@ -4146,22 +4364,30 @@ y &lt;- USAccDeaths
 
 # La trampa: ndiffs sobre la serie CRUDA dice 0, porque la estacionalidad
 # domina y confunde a la prueba. El orden correcto es estacional primero.
-ndiffs(y)                     # 0   <- enganoso
-nsdiffs(y)                    # 1
-ndiffs(diff(y, lag = 12))     # 1   <- este es el bueno
+ndiffs(y)                     # enganoso
+#> [1] 0
+nsdiffs(y)
+#> [1] 1
+ndiffs(diff(y, lag = 12))     # este es el bueno
+#> [1] 1
 
 banda &lt;- function(x) 1.96 / sqrt(length(x))
 resumen &lt;- function(x, nombre) {
   r &lt;- acf(x, lag.max = 24, plot = FALSE)$acf[-1]
   data.frame(serie = nombre, n = length(x), varianza = round(var(x)),
              r1 = round(r[1], 4), r12 = round(r[12], 4),
-             fuera = sum(abs(r) &gt; banda(x)),
+             fuera = sum(abs(r) > banda(x)),
              ljung_box_p = round(Box.test(x, lag = 24, type = "Ljung-Box")$p.value, 4))
 }
 rbind(resumen(y, "original"),
       resumen(diff(y), "nabla"),
       resumen(diff(y, lag = 12), "nabla12"),
-      resumen(diff(diff(y), lag = 12), "nabla12 nabla"))</code></pre>
+      resumen(diff(diff(y), lag = 12), "nabla12 nabla"))
+#>           serie  n varianza      r1     r12 fuera ljung_box_p
+#> 1      original 72   917290  0.7075  0.6286    14      0.0000
+#> 2         nabla 71   540735  0.0233  0.7087     6      0.0000
+#> 3       nabla12 60   288866  0.6899 -0.0768     6      0.0000
+#> 4 nabla12 nabla 59   154530 -0.3534 -0.3357     2      0.0333</code></pre>
             <table>
               <caption class="sr-only">Comparación de las tres diferenciaciones sobre USAccDeaths</caption>
               <thead>
@@ -4172,7 +4398,7 @@ rbind(resumen(y, "original"),
                 </tr>
               </thead>
               <tbody>
-                <tr><td>Original</td><td>72</td><td>917 290</td><td>0.708</td><td>0.629</td><td>14 de 24</td><td>&lt; 0.0001</td></tr>
+                <tr><td>Original</td><td>72</td><td>917 290</td><td>0.707</td><td>0.629</td><td>14 de 24</td><td>&lt; 0.0001</td></tr>
                 <tr><td>$\nabla$</td><td>71</td><td>540 735</td><td>0.023</td><td>0.709</td><td>6 de 24</td><td>&lt; 0.0001</td></tr>
                 <tr><td>$\nabla_{12}$</td><td>60</td><td>288 866</td><td>0.690</td><td>−0.077</td><td>6 de 24</td><td>&lt; 0.0001</td></tr>
                 <tr><td><strong>$\nabla_{12}\nabla$</strong></td><td>59</td><td><strong>154 530</strong></td><td>−0.353</td><td>−0.336</td><td><strong>2 de 24</strong></td><td>0.033</td></tr>
@@ -4180,14 +4406,15 @@ rbind(resumen(y, "original"),
             </table>
             <p>Cada diferencia sola arregla la mitad del problema y deja la otra intacta: $\nabla$ limpia el rezago 1
               ($r_1 = 0.023$) pero deja la estacionalidad viva ($r_{12} = 0.709$), y $\nabla_{12}$ hace exactamente lo
-              contrario. Solo aplicando las dos bajan a la vez la varianza (a 154 530, la más baja) y el número de
-              rezagos fuera de banda (2 de 24).</p>
+              contrario. Solo aplicando las dos baja el número de rezagos fuera de banda a 2 de 24 y deja el
+              Ljung–Box de estar pegado a cero.</p>
             <p style="margin-bottom:0;"><strong>Una advertencia sobre el $r_1 = -0.353$:</strong> es tentador leerlo
-              como sobrediferenciación, porque se parece al $-0.5$ del Módulo 7. Pero aquí no lo es. Las tres señales
-              apuntan a $\nabla_{12}\nabla$ (varianza mínima, menos rezagos fuera, Ljung–Box el único que no está
-              pegado a cero), y ese $r_1$ negativo es la huella del <strong>componente MA(1)</strong> del modelo
-              <em>airline</em> que ajustaremos en el Capítulo 5. La sobrediferenciación se reconoce porque la varianza
-              <em>sube</em>; aquí baja.</p>
+              como sobrediferenciación, porque se parece al $-0.5$ del Módulo 7. Pero aquí no lo es. Las pruebas y el
+              correlograma apuntan a $\nabla_{12}\nabla$ (<code>nsdiffs</code> pide 1 y, tras la diferencia
+              estacional, <code>ndiffs</code> pide 1; menos rezagos fuera; Ljung–Box el único que no está pegado a
+              cero), y ese $r_1$ negativo es la huella del <strong>componente MA(1)</strong> del modelo
+              <em>airline</em> que ajustaremos en el Capítulo 5. Un $r_1$ negativo es un indicio de
+              sobrediferenciación, no una prueba: decide si las pruebas pedían o no la diferencia.</p>
           </div>
         </div>
 
@@ -4205,24 +4432,91 @@ rbind(resumen(y, "original"),
             </button>
           </div>
           <div class="ejercicio-panel pista" id="c2e4-pista" hidden>
-            <p style="margin:0;">El código de descarga está en el bloque R del Módulo 6, listo para copiar. Antes de
-              correrlo, escribe tu predicción: los tipos de cambio son el ejemplo clásico de caminata aleatoria con
+            <p style="margin:0;">El Módulo 6 trabaja con una copia fija de la serie, cortada en junio de 2026. El código
+              que descarga la serie al día está al abrir «Cómo comprobarlo», listo para copiar. Antes de correrlo,
+              escribe tu predicción: los tipos de cambio son el ejemplo clásico de caminata aleatoria con
               deriva, así que ¿esperas que unos meses más de datos cambien el veredicto?</p>
           </div>
           <div class="ejercicio-panel solucion" id="c2e4-sol" hidden>
             <p>Este ejercicio <strong>no tiene una respuesta fija</strong>: depende de cuándo lo hagas. Lo que sí es
               fijo es el punto de comparación. Al corte de este material (junio de 2026, $n = 138$ meses):</p>
             <ul>
-              <li>TRM en niveles: ADF $p = 0.586$ (no rechaza) y KPSS $p &lt; 0.01$ (rechaza estacionariedad)
+              <li>TRM en niveles: ADF $p = 0.585$ (no rechaza) y KPSS $p &lt; 0.01$ (rechaza estacionariedad)
                 → <strong>raíz unitaria</strong>.</li>
               <li>$\nabla$TRM: ADF $p = 0.017$ (rechaza) y KPSS $p &gt; 0.10$ (no rechaza)
                 → <strong>estacionaria</strong>. <code>ndiffs</code> = 1.</li>
             </ul>
-            <p style="margin-bottom:0;">Lo esperable es que el veredicto <strong>no cambie</strong>, y ese es el
-              aprendizaje: la conclusión sobre una raíz unitaria es una propiedad estructural de la serie, no un
-              accidente de la ventana de datos. Si <em>sí</em> te cambia, no lo des por bueno de inmediato: comprueba
-              primero que la descarga trajo todos los meses, que descartaste el mes en curso (que está incompleto y
-              distorsiona el último dato) y que la frecuencia quedó declarada como mensual.</p>
+            <pre><code class="language-r">library(tseries); library(jsonlite)
+
+# La TRM al dia: promedio mensual desde datos.gov.co (Superintendencia
+# Financiera). Requiere internet; devuelve la serie hasta el ultimo mes cerrado.
+descarga_trm &lt;- function() {
+  url &lt;- paste0("https://www.datos.gov.co/resource/32sa-8pi3.json",
+                "?$select=vigenciadesde,valor",
+                "&amp;$where=vigenciadesde%20%3E=%20%272015-01-01T00:00:00.000%27",
+                "&amp;$order=vigenciadesde&amp;$limit=20000")
+  d &lt;- fromJSON(url)
+  d$valor &lt;- as.numeric(d$valor)
+  d$mes   &lt;- substr(d$vigenciadesde, 1, 7)
+  d &lt;- d[d$mes &lt; format(Sys.Date(), "%Y-%m"), ]   # se descarta el mes en curso
+  m &lt;- aggregate(valor ~ mes, data = d, FUN = mean)
+  m &lt;- m[order(m$mes), ]
+  ts(round(m$valor, 2),
+     start = c(as.integer(substr(m$mes[1], 1, 4)), as.integer(substr(m$mes[1], 6, 7))),
+     frequency = 12)
+}
+trm_hoy &lt;- descarga_trm()
+length(trm_hoy)        # 138 al corte de junio de 2026; uno mas por cada mes cerrado
+
+# El mismo analisis del Modulo 6, ahora con todos los meses
+adf.test(trm_hoy);       kpss.test(trm_hoy)
+adf.test(diff(trm_hoy)); kpss.test(diff(trm_hoy))
+
+# El punto de comparacion fijo: la copia de 138 meses del Modulo 6
+archivo &lt;- "trm_mensual_2015-01_2026-06.csv"
+if (!file.exists(archivo))
+  archivo &lt;- paste0("https://jotamao1985.github.io/Series-de-Tiempo_Un_Bosque/datos/", archivo)
+trm &lt;- ts(read.csv(archivo)$trm, start = c(2015, 1), frequency = 12)
+round(c(adf.test(trm)$p.value, adf.test(diff(trm))$p.value), 3)
+#> [1] 0.585 0.017
+
+# Y lo que pesa la ventana: la misma copia, solo desde enero de 2022
+length(window(trm, start = c(2022, 1)))
+#> [1] 54
+round(adf.test(window(trm, start = c(2022, 1)))$p.value, 3)
+#> [1] 0.071</code></pre>
+            <p>La misma descarga en Python:</p>
+            <pre><code class="language-python">import pandas as pd
+from statsmodels.tsa.stattools import adfuller
+
+# La misma descarga en Python. Requiere internet.
+url = ("https://www.datos.gov.co/resource/32sa-8pi3.json"
+       "?$select=vigenciadesde,valor"
+       "&amp;$where=vigenciadesde%20%3E=%20%272015-01-01T00:00:00.000%27"
+       "&amp;$order=vigenciadesde&amp;$limit=20000")
+d = pd.read_json(url)
+d["mes"] = d["vigenciadesde"].astype(str).str.slice(0, 7)
+d = d[d["mes"] &lt; pd.Timestamp.today().strftime("%Y-%m")]   # sin el mes en curso
+trm_hoy = d.groupby("mes")["valor"].mean().round(2)
+trm_hoy.index = pd.PeriodIndex(trm_hoy.index, freq="M").to_timestamp()
+print(len(trm_hoy))    # 138 al corte de junio de 2026; uno mas por cada mes cerrado
+
+# La misma funcion del Modulo 6: el ADF con la especificacion de adf.test() de R
+def adf_como_en_r(x):
+    k = int(((len(x) - 1) ** (1 / 3)))
+    est, p, *_ = adfuller(x, maxlag=k, regression="ct", autolag=None)
+    return round(float(est), 4), round(float(p), 4), k
+
+print(adf_como_en_r(trm_hoy))
+print(adf_como_en_r(trm_hoy.diff().dropna()))</code></pre>
+            <p style="margin-bottom:0;">Lo esperable es que unos meses más <strong>no cambien</strong> el veredicto:
+              con 138 meses la evidencia contra la estacionariedad es abundante. Pero el resultado de una prueba sí
+              depende de la ventana, sobre todo cuando es corta: con la misma copia recortada a los 54 meses que van
+              desde enero de 2022, el ADF da $p = 0.071$, que ya rechaza la raíz unitaria al 10&nbsp;% y se queda a un
+              paso de hacerlo al 5&nbsp;%. Si te cambia, no lo des por
+              bueno de inmediato: comprueba primero que la descarga trajo todos los meses, que descartaste el mes en
+              curso (que está incompleto y distorsiona el último dato) y que la frecuencia quedó declarada como
+              mensual.</p>
           </div>
         </div>
 
@@ -5783,17 +6077,13 @@ rbind(resumen(y, "original"),
         gAcf.update('none');
 
         const v = varianzaMuestral(y);
-        // Varianza mínima sobre d = 0..3: la señal práctica de cuántas veces diferenciar
-        const varianzas = [0, 1, 2, 3].map(d => varianzaMuestral(diferenciar(base, d)));
-        const dOptimo = varianzas.indexOf(Math.min(...varianzas));
 
         actualizarLectura(lectura, [
           { etiqueta: 'd =', valor: params.d },
           { etiqueta: 'n =', valor: y.length },
           { etiqueta: 'varianza =', valor: v < 1 ? v.toPrecision(4) : v.toFixed(2) },
           { etiqueta: 'r₁ =', valor: acf[0].toFixed(4) },
-          { etiqueta: 'ndiffs (R) =', valor: SERIES_CAP2[params.serie].ndiffs },
-          { etiqueta: 'd de varianza mínima =', valor: dOptimo }
+          { etiqueta: 'ndiffs (R) =', valor: SERIES_CAP2[params.serie].ndiffs }
         ]);
       }
 
@@ -5946,7 +6236,7 @@ rbind(resumen(y, "original"),
           {
             texto: 'Ya es ruido blanco: la diferenciación terminó el trabajo.',
             correcta: false,
-            retro: 'Si fuera ruido blanco, la banda dejaría fuera al 5&nbsp;% de las barras por puro azar —una o dos de 24—, no ninguna. Lo que delata a esta no es que se salga, sino cuánto y dónde: se sale muchísimo, y en el rezago 12.'
+            retro: 'Si fuera ruido blanco, se esperaría que una o dos de las 24 barras asomaran fuera de la banda por puro azar. Aquí se salen 10 de 24, y la del rezago 12 muchísimo: $r_{12} = 0.841$ frente a una banda de $\\pm 0.164$.'
           },
           {
             texto: 'Falta otra diferencia regular, porque la ACF no decae.',
@@ -5963,17 +6253,17 @@ rbind(resumen(y, "original"),
       {
         tipo: 'multiple',
         modulo: 7,
-        pregunta: 'Marca <strong>todas</strong> las señales que delatan que has diferenciado de más.',
-        pista: 'Son tres. Piensa en qué le pasa a la dispersión de la serie, qué autocorrelación aparece de la nada, y qué tipo de modelo queda inducido.',
+        pregunta: 'Aplicaste una diferencia regular y sospechas que sobraba. Marca <strong>todos</strong> los indicios que apoyan esa sospecha.',
+        pista: 'Son tres. Piensa en qué decían el correlograma y las pruebas antes de diferenciar, qué autocorrelación aparece de la nada, y qué tipo de modelo queda inducido.',
         opciones: [
-          { texto: 'La varianza deja de bajar y vuelve a subir.', correcta: true },
-          { texto: 'La serie pierde observaciones en cada diferencia.', correcta: false },
+          { texto: 'Antes de diferenciar, la ACF ya caía rápido y <code>ndiffs()</code> devolvía 0.', correcta: true },
+          { texto: 'La varianza subió al diferenciar.', correcta: false },
           { texto: 'Aparece autocorrelación negativa fuerte en el rezago 1, cerca de $-0.5$.', correcta: true },
-          { texto: 'Queda inducido un MA(1) con $\\theta = -1$, que además no es invertible.', correcta: true },
+          { texto: 'Queda inducido un MA(1), $\\varepsilon_t - \\varepsilon_{t-1}$, que además no es invertible.', correcta: true },
           { texto: 'Aparecen picos en los rezagos múltiplos del periodo estacional.', correcta: false }
         ],
-        retroAcierto: 'Las tres van juntas y son la misma cosa vista de tres formas. Si $y_t$ ya era ruido blanco, $\\nabla y_t = \\varepsilon_t - \\varepsilon_{t-1}$ tiene varianza $2\\sigma^2$ (el doble) y $\\rho_1 = -0.5$ exactamente. En log(<code>AirPassengers</code>): la varianza va $0.0114 \\to 0.0182 \\to 0.0469$ y $r_1$ va $0.200 \\to -0.293 \\to -0.534$.',
-        retroFallo: 'Las tres correctas son: varianza que repunta, $r_1$ cerca de $-0.5$ y un MA(1) no invertible inducido. Las otras dos son distractores: <em>perder observaciones</em> pasa con cualquier diferencia, útil o no, así que no distingue nada; y los <em>picos en los múltiplos del periodo</em> son la firma de la estacionalidad, que es lo contrario del problema (ahí te falta diferenciar, no te has pasado).'
+        retroAcierto: 'La primera es la que decide: si el correlograma y las pruebas no pedían la diferencia, sobraba. Las otras dos son su huella cuando lo diferenciado ya era casi ruido blanco: $\\nabla y_t = \\varepsilon_t - \\varepsilon_{t-1}$ es un MA(1) no invertible con $\\rho_1 = -0.5$ exactamente. En log(<code>AirPassengers</code>), $r_1$ va $0.200 \\to -0.293 \\to -0.534$ al pasar de una a dos y a tres diferencias. Son indicios, no reglas: el Módulo 7 muestra una serie donde la diferencia sobra y $r_1$ queda en $-0.148$, y otra donde hace falta y queda en $-0.483$.',
+        retroFallo: 'Los tres indicios son: que el correlograma y las pruebas no pidieran la diferencia, un $r_1$ cerca de $-0.5$ y un MA(1) no invertible inducido. Los otros dos son distractores. <em>La varianza</em> sube o baja al diferenciar según $r_1$ sea menor o mayor que $0.5$, haga falta la diferencia o no: en el Módulo 7 sube de 1.096 a 1.513 con una diferencia que hacía falta y baja de 2.497 a 1.033 con una que sobraba. Y los <em>picos en los múltiplos del periodo</em> son la firma de la estacionalidad, que es lo contrario del problema (ahí falta diferenciar).'
       },
       {
         tipo: 'opcion',
@@ -6041,14 +6331,14 @@ rbind(resumen(y, "original"),
         pista: 'Cada diferencia cuesta tantas observaciones como su rezago: $\\nabla$ cuesta 1 y $\\nabla_{12}$ cuesta 12.',
         respuesta: 131,
         tolerancia: 0,
-        retroAcierto: '$144 - 1 - 12 = 131$. Es exactamente el $n$ de la serie del modelo <em>airline</em> del capítulo. Por eso diferenciar de más no es gratis: además de inflar la varianza, cada diferencia te quita datos para estimar.',
+        retroAcierto: '$144 - 1 - 12 = 131$. Es exactamente el $n$ de la serie del modelo <em>airline</em> del capítulo. Por eso diferenciar de más no es gratis: además de fabricar autocorrelación que no estaba, cada diferencia te quita datos para estimar.',
         retroFallo: '$144 - 1 - 12 = 131$. Cada diferencia cuesta su rezago: la regular quita 1 observación y la estacional de periodo 12 quita 12. Si respondiste 143 o 132, aplicaste solo una de las dos; si respondiste 120, restaste dos veces el periodo.'
       },
       {
         tipo: 'opcion',
         modulo: 8,
-        pregunta: 'El criterio de Guerrero devuelve $\\lambda = -0.295$ para <code>AirPassengers</code>, pero FPP3 y este capítulo recomiendan usar el logaritmo. ¿Por qué?',
-        pista: 'No es porque el logaritmo gane en el criterio: no gana. Piensa en quién tiene que <em>entender</em> el resultado y en qué pasa al deshacer la transformación.',
+        pregunta: 'El criterio de Guerrero devuelve $\\lambda = -0.295$ para <code>AirPassengers</code>, pero este capítulo recomienda usar el logaritmo. ¿Por qué?',
+        pista: 'No es porque el logaritmo gane en el criterio: no gana. Piensa en quién tiene que <em>entender</em> el resultado y en cuánto se puede confiar en un $\\lambda$ estimado con 12 bloques.',
         opciones: [
           {
             texto: 'Porque el logaritmo estabiliza mejor la varianza.',
@@ -6058,15 +6348,15 @@ rbind(resumen(y, "original"),
           {
             texto: 'Porque un $\\lambda$ negativo no está permitido.',
             correcta: false,
-            retro: 'Sí está permitido: $\\lambda = -1$ es la transformación inversa. La única restricción de Box–Cox es que los datos sean estrictamente positivos.'
+            retro: 'Sí está permitido: $\\lambda = -1$ es la transformación inversa. La restricción está en los datos, no en $\\lambda$: con $\\lambda \\le 0$ tienen que ser estrictamente positivos.'
           },
           {
             texto: 'Porque el criterio de Guerrero solo es válido para series anuales.',
             correcta: false,
-            retro: 'Al contrario: necesita partir la serie en bloques estacionales, y aquí usa bloques de $m = 12$ meses. Con series anuales sin ciclo habría que fijar el tamaño de bloque a mano.'
+            retro: 'Al contrario: necesita partir la serie en bloques estacionales, y aquí usa bloques de $m = 12$ meses. Con series anuales, sin ciclo, <code>BoxCox.lambda()</code> toma bloques de 2 observaciones.'
           },
           {
-            texto: 'Porque $\\lambda = 0$ es interpretable, deshacer la transformación es trivial y el óptimo es a su vez una estimación con incertidumbre.',
+            texto: 'Porque $\\lambda = 0$ es interpretable y el óptimo es a su vez una estimación con incertidumbre.',
             correcta: true,
             retro: 'Y conviene saber lo que cuesta: el criterio vale 0.153 con el logaritmo frente a 0.081 en el óptimo (un 88&nbsp;% más), aunque capta el 84&nbsp;% de la mejora respecto a no transformar (0.530). Se acepta ese sobrecosto a cambio de poder leer los cambios como variaciones porcentuales.'
           }
