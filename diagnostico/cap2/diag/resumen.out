@@ -1,0 +1,852 @@
+== Prueba de fuentes
+{"escenario": "fuentes-normales", "ancho": 1200, "msHastaPrimerGrafico": 612, "alCrear": {"estado": "loading", "montserrat": true, "fira": true, "urls": [33870, 23374, 27486]}, "a1200ms": {"estado": "loaded", "montserrat": true}, "despues": {"estado": "loaded", "montserrat": true, "fira": true}, "cambiaSinRepintar": [false, false, false], "lienzoCambiaAlRepintar": [true, true, true]}
+{"escenario": "fuentes-normales", "ancho": 375, "msHastaPrimerGrafico": 331, "alCrear": {"estado": "loading", "montserrat": true, "fira": true, "urls": [16298, 14178, 16410]}, "a1200ms": {"estado": "loaded", "montserrat": true}, "despues": {"estado": "loaded", "montserrat": true, "fira": true}, "cambiaSinRepintar": [true, true, true], "lienzoCambiaAlRepintar": [true, true, true]}
+{"escenario": "fuentes-lentas", "ancho": 1200, "msHastaPrimerGrafico": 3139, "alCrear": {"estado": "loading", "montserrat": false, "fira": false, "urls": [33574, 22498, 25482]}, "a1200ms": {"estado": "loading", "montserrat": false}, "despues": {"estado": "loaded", "montserrat": true, "fira": true}, "cambiaSinRepintar": [false, false, false], "lienzoCambiaAlRepintar": [true, true, true]}
+{"escenario": "fuentes-lentas", "ancho": 375, "msHastaPrimerGrafico": 3150, "alCrear": {"estado": "loading", "montserrat": false, "fira": false, "urls": [16366, 14778, 15130]}, "a1200ms": {"estado": "loading", "montserrat": false}, "despues": {"estado": "loaded", "montserrat": true, "fira": true}, "cambiaSinRepintar": [false, false, false], "lienzoCambiaAlRepintar": [true, true, true]}
+{"eventos": []}
+fuentes-normales 1200: inicial vs repintado -> DISTINTAS en (49, 49, 683, 186)
+fuentes-normales 375: inicial vs repintado -> IGUALES
+fuentes-lentas 1200: inicial vs repintado -> DISTINTAS en (0, 0, 700, 208)
+fuentes-lentas 375: inicial vs repintado -> DISTINTAS en (0, 0, 267, 208)
+
+== Contraste sobre blanco de los colores usados
+#012820: 15.84:1
+#0e7490: 5.36:1
+#FF6600: 2.94:1
+
+==================== ancho 375
+
+-- M1  docSw=375 inner=375 main=345/345
+  SIM panel-estacionariedad: w=303 right=339 sw/cw=301/301 h4={'txt': 'Una estacionaria y dos que no lo son', 'h': 47.3, 'hijos': 2} alturas=[200, 200, 200]
+  [0] panel-estacionariedad line 236x177 right=305.5 area={'w': 207.9, 'h': 117.8, 'left': 27.2, 'right': 235.1} leyenda=['Ruido blanco'] h=32
+       aria="Ruido blanco: oscila alrededor de cero con dispersión constante"
+       x: titulo=None rango=[0, 199] n=11 fuente=normal 11px Montserrat cargada=True ticks=['1', '20', '39', '58', '77', '96', '115', '134', '153', '172', '191'] minGap=2.9 solapes=['134|153 (2.9 px)'] fuera=[]
+       y: titulo=None rango=[-3, 3] n=7 fuente=normal 11px Fira Code cargada=True ticks=['-3', '-2', '-1', '0', '1', '2', '3']
+  [1] panel-estacionariedad line 236x177 right=305.5 area={'w': 202.2, 'h': 117.8, 'left': 33.8, 'right': 236} leyenda=['Caminata aleatoria'] h=32
+       aria="Caminata aleatoria: deambula sin volver a un nivel fijo"
+       x: titulo=None rango=[0, 199] n=10 fuente=normal 11px Montserrat cargada=True ticks=['1', '21', '41', '61', '81', '101', '121', '141', '161', '181'] minGap=5.5 solapes=[] fuera=[]
+       y: titulo=None rango=[-15, 10] n=6 fuente=normal 11px Fira Code cargada=True ticks=['-15', '-10', '-5', '0', '5', '10']
+  [2] panel-estacionariedad line 236x177 right=305.5 area={'w': 202.2, 'h': 117.8, 'left': 33.8, 'right': 236} leyenda=['AirPassengers'] h=32
+       aria="AirPassengers: tendencia creciente y estacionalidad de amplitud creciente"
+       x: titulo=None rango=[0, 143] n=5 fuente=normal 11px Montserrat cargada=True ticks=['1949-01', '1951-06', '1953-11', '1956-04', '1958-09'] minGap=-1.4 solapes=['1949-01|1951-06 (1.3 px)', '1953-11|1956-04 (2.3 px)', '1956-04|1958-09 (-1.4 px)'] fuera=[]
+       y: titulo=None rango=[100, 700] n=7 fuente=normal 11px Fira Code cargada=True ticks=['100', '200', '300', '400', '500', '600', '700']
+  TABLAS que desbordan: [{"i": 0, "sw": 390, "cw": 303, "parentCw": 303, "caption": "Qué condición de estacionariedad incumple cada serie"}]
+  DESBORDAN la ventana: [{"tag": "THEAD", "cls": "", "right": 425.7, "txt": "Serie ¿Estacionaria? Condición que falla"}, {"tag": "TBODY", "cls": "", "right": 425.7, "txt": "Ruido blanco Sí Ninguna: media 0, varianza constan"}]
+
+-- M2  docSw=375 inner=375 main=345/345
+  SIM ruido-blanco: w=303 right=339 sw/cw=301/301 h4={'txt': 'Ruido blanco y su correlograma', 'h': 47.3, 'hijos': 2} alturas=[220, 250]
+     lectura aria-live=None role=None h=54.4: T = 200banda = ±0.1386rezagos dentro de la banda: 24 de 24
+  [0] ruido-blanco line 236x197 right=305.5 area={'w': 207.9, 'h': 137.8, 'left': 27.2, 'right': 235.1} leyenda=['Ruido blanco simulado'] h=32
+       aria="Serie de ruido blanco simulado"
+       x: titulo=None rango=[0, 199] n=11 fuente=normal 11px Montserrat cargada=True ticks=['1', '20', '39', '58', '77', '96', '115', '134', '153', '172', '191'] minGap=2.9 solapes=['134|153 (2.9 px)'] fuera=[]
+       y: titulo=None rango=[-3, 3] n=7 fuente=normal 11px Fira Code cargada=True ticks=['-3', '-2', '-1', '0', '1', '2', '3']
+  [1] ruido-blanco bar 236x227 right=305.5 area={'w': 195.6, 'h': 147.8, 'left': 40.4, 'right': 236} leyenda=['Banda ±1.96/√T', 'ACF'] h=32
+       aria="Correlograma del ruido blanco: todas las barras dentro de la banda"
+       x: titulo='Rezago k' rango=[0, 23] n=12 fuente=normal 10px Fira Code cargada=True ticks=['1', '3', '5', '7', '9', '11', '13', '15', '17', '19', '21', '23'] minGap=4.3 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=6 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.6', '-0.2', '0.2', '0.6', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.1385929291125633, 'color': '#FF6600', 'x0': 44.5, 'x1': 231.9, 'y': 95.7}, {'label': '', 'valor': -0.1385929291125633, 'color': '#FF6600', 'x0': 44.5, 'x1': 231.9, 'y': 116.1}] anchoBarra=2.9
+  KATEX que desborda: [{"i": 0, "sw": 496, "cw": 257, "contCw": 299, "ox": "visible", "right": 318, "dentro": "definition", "txt": "E[εt]=0,Var⁡(εt)=σ2,Cov⁡(εt,εt+k)=0 para todo k≠0.E[\\varepsilon_t] = 0"}]
+  DESBORDAN la ventana: [{"tag": "semantics", "cls": "", "right": 656.2, "txt": "E[εt]=0,Var⁡(εt)=σ2,Cov⁡(εt,εt+k)=0 para todo k≠0."}, {"tag": "SPAN", "cls": "base", "right": 419.6, "txt": "σ2,Cov(εt​,εt+k​)="}, {"tag": "SPAN", "cls": "base", "right": 543.9, "txt": "0para todo k="}, {"tag": "SPAN", "cls": "base", "right": 557, "txt": "0."}, {"tag": "path", "cls": "[object SVGAnimatedString]", "right": 6897.7, "txt": ""}, {"tag": "CODE", "cls": "language-r", "right": 703.9, "txt": "# Ruido blanco: simulacion y correlograma set.seed"}]
+
+-- M3  docSw=375 inner=375 main=345/345
+  SIM correlogramas-comparados: w=303 right=339 sw/cw=301/301 h4={'txt': 'Tres correlogramas, tres diagnósticos', 'h': 47.3, 'hijos': 2} alturas=[200, 200, 200]
+  [0] correlogramas-comparados bar 236x177 right=305.5 area={'w': 195.6, 'h': 97.8, 'left': 40.4, 'right': 236} leyenda=['Banda ±1.96/√T', 'ACF'] h=32
+       aria="ACF del ruido blanco: todas las barras dentro de la banda"
+       x: titulo='Rezago k' rango=[0, 23] n=12 fuente=normal 10px Fira Code cargada=True ticks=['1', '3', '5', '7', '9', '11', '13', '15', '17', '19', '21', '23'] minGap=4.3 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.1385929291125633, 'color': '#FF6600', 'x0': 44.5, 'x1': 231.9, 'y': 74.1}, {'label': '', 'valor': -0.1385929291125633, 'color': '#FF6600', 'x0': 44.5, 'x1': 231.9, 'y': 87.7}] anchoBarra=2.9
+  [1] correlogramas-comparados bar 236x177 right=305.5 area={'w': 195.6, 'h': 97.8, 'left': 40.4, 'right': 236} leyenda=['Banda ±1.96/√T', 'ACF'] h=32
+       aria="ACF de la caminata aleatoria: decrece lentamente"
+       x: titulo='Rezago k' rango=[0, 23] n=12 fuente=normal 10px Fira Code cargada=True ticks=['1', '3', '5', '7', '9', '11', '13', '15', '17', '19', '21', '23'] minGap=4.3 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.1385929291125633, 'color': '#FF6600', 'x0': 44.5, 'x1': 231.9, 'y': 74.1}, {'label': '', 'valor': -0.1385929291125633, 'color': '#FF6600', 'x0': 44.5, 'x1': 231.9, 'y': 87.7}] anchoBarra=2.9
+  [2] correlogramas-comparados bar 236x177 right=305.5 area={'w': 195.6, 'h': 97.8, 'left': 40.4, 'right': 236} leyenda=['Banda ±1.96/√T', 'ACF'] h=32
+       aria="ACF de AirPassengers: decae lentamente con picos estacionales"
+       x: titulo='Rezago k' rango=[0, 23] n=12 fuente=normal 10px Fira Code cargada=True ticks=['1', '3', '5', '7', '9', '11', '13', '15', '17', '19', '21', '23'] minGap=4.3 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.16333333333333333, 'color': '#FF6600', 'x0': 44.5, 'x1': 231.9, 'y': 72.9}, {'label': '', 'valor': -0.16333333333333333, 'color': '#FF6600', 'x0': 44.5, 'x1': 231.9, 'y': 88.9}] anchoBarra=2.9
+  KATEX que desborda: [{"i": 0, "sw": 313, "cw": 273, "contCw": 301, "ox": "visible", "right": 324, "dentro": "formula", "txt": "γk=Cov⁡(yt,yt+k)=E[(yt−μ)(yt+k−μ)]\\gamma_k = \\operatorname{Cov}(y_t, y"}, {"i": 1, "sw": 400, "cw": 273, "contCw": 301, "ox": "visible", "right": 324, "dentro": "formula", "txt": "ρk=γkγ0=Cov⁡(yt,yt+k)Var⁡(yt),−1≤ρk≤1,ρ0=1\\rho_k = \\frac{\\gamma_k}{\\ga"}, {"i": 2, "sw": 349, "cw": 273, "contCw": 301, "ox": "visible", "right": 324, "dentro": "formula", "txt": "γ^k=1T∑t=1T−k(yt−yˉ)(yt+k−yˉ),rk=ρ^k=γ^kγ^0\\hat\\gamma_k = \\frac{1}{T}\\"}]
+  TABLAS que desbordan: [{"i": 0, "sw": 398, "cw": 303, "parentCw": 303, "caption": "Patrones del correlograma y su interpretación"}]
+  DESBORDAN la ventana: [{"tag": "semantics", "cls": "", "right": 501.2, "txt": "γk=Cov⁡(yt,yt+k)=E[(yt−μ)(yt+k−μ)]\\gamma_k = \\oper"}, {"tag": "semantics", "cls": "", "right": 584.4, "txt": "ρk=γkγ0=Cov⁡(yt,yt+k)Var⁡(yt),−1≤ρk≤1,ρ0=1\\rho_k ="}, {"tag": "SPAN", "cls": "base", "right": 442.4, "txt": "1,ρ0​="}, {"tag": "SPAN", "cls": "base", "right": 450.8, "txt": "1"}, {"tag": "semantics", "cls": "", "right": 529.8, "txt": "γ^k=1T∑t=1T−k(yt−yˉ)(yt+k−yˉ),rk=ρ^k=γ^kγ^0\\hat\\ga"}, {"tag": "SPAN", "cls": "base", "right": 379.4, "txt": "ρ^​k​="}, {"tag": "SPAN", "cls": "base", "right": 399.6, "txt": "γ^​0​γ^​k​​"}, {"tag": "THEAD", "cls": "", "right": 434.1, "txt": "Lo que se ve en el correlograma Lo que indica Ejem"}]
+
+-- M4  docSw=375 inner=375 main=345/345
+  SIM explorador-acf-pacf: w=303 right=339 sw/cw=301/301 h4={'txt': 'Explorador de ACF y PACF', 'h': 23.6, 'hijos': 2} alturas=[200, 200, 200]
+     lectura aria-live=None role=None h=103.7: T = 144banda = ±0.1633r₁ = 0.9480rezagos fuera de la banda: 24 de 24ndiffs = 1nsdiffs = 1
+     control {'tipo': 'select-one', 'id': 'sel-serie-449888229', 'label': 'Serie', 'value': 'airpassengers', 'w': 259}
+  [0] explorador-acf-pacf line 236x177 right=305.5 area={'w': 201.3, 'h': 117.8, 'left': 33.8, 'right': 235.1} leyenda=['AirPassengers (nivel)'] h=32
+       aria="Serie seleccionada"
+       x: titulo=None rango=[0, 143] n=5 fuente=normal 11px Montserrat cargada=True ticks=['1949-01', '1951-06', '1953-11', '1956-04', '1958-09'] minGap=-1.5 solapes=['1949-01|1951-06 (1.2 px)', '1953-11|1956-04 (2.1 px)', '1956-04|1958-09 (-1.5 px)'] fuera=[]
+       y: titulo=None rango=[100, 700] n=7 fuente=normal 11px Fira Code cargada=True ticks=['100', '200', '300', '400', '500', '600', '700']
+  [1] explorador-acf-pacf bar 236x177 right=305.5 area={'w': 194.9, 'h': 97.8, 'left': 40.4, 'right': 235.3} leyenda=['Banda ±1.96/√T', 'ACF'] h=32
+       aria="Función de autocorrelación de la serie seleccionada"
+       x: titulo='Rezago k' rango=[0, 23] n=12 fuente=normal 10px Fira Code cargada=True ticks=['1', '3', '5', '7', '9', '11', '13', '15', '17', '19', '21', '23'] minGap=4.2 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.16333333333333333, 'color': '#FF6600', 'x0': 44.5, 'x1': 231.2, 'y': 72.9}, {'label': '', 'valor': -0.16333333333333333, 'color': '#FF6600', 'x0': 44.5, 'x1': 231.2, 'y': 88.9}] anchoBarra=2.9
+  [2] explorador-acf-pacf bar 236x177 right=305.5 area={'w': 194.9, 'h': 97.8, 'left': 40.4, 'right': 235.3} leyenda=['Banda ±1.96/√T', 'PACF'] h=32
+       aria="Función de autocorrelación parcial de la serie seleccionada"
+       x: titulo='Rezago k' rango=[0, 23] n=12 fuente=normal 10px Fira Code cargada=True ticks=['1', '3', '5', '7', '9', '11', '13', '15', '17', '19', '21', '23'] minGap=4.2 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.16333333333333333, 'color': '#FF6600', 'x0': 44.5, 'x1': 231.2, 'y': 72.9}, {'label': '', 'valor': -0.16333333333333333, 'color': '#FF6600', 'x0': 44.5, 'x1': 231.2, 'y': 88.9}] anchoBarra=2.9
+  KATEX que desborda: [{"i": 0, "sw": 311, "cw": 257, "contCw": 299, "ox": "visible", "right": 318, "dentro": "definition", "txt": "yt=ϕk1yt−1+ϕk2yt−2+⋯+ϕkkyt−k+εty_t = \\phi_{k1} y_{t-1} + \\phi_{k2} y_{"}]
+  DESBORDAN la ventana: [{"tag": "semantics", "cls": "", "right": 509, "txt": "yt=ϕk1yt−1+ϕk2yt−2+⋯+ϕkkyt−k+εty_t = \\phi_{k1} y_{"}, {"tag": "CODE", "cls": "language-r", "right": 737.5, "txt": "# ACF y PACF una al lado de la otra par(mfrow = c("}, {"tag": "path", "cls": "[object SVGAnimatedString]", "right": 6978.9, "txt": ""}]
+
+-- M5  docSw=375 inner=375 main=345/345
+  SIM ar1-phi: w=303 right=339 sw/cw=301/301 h4={'txt': 'El deslizador de ϕ\\phiϕ', 'h': 23.9, 'hijos': 3} alturas=[220, 230]
+     lectura aria-live=None role=None h=79.1: φ = 0.70r₁ = 0.6315r₁₀ = -0.0969varianza = 1.467proceso: estacionaria (|φ| < 1)
+     control {'tipo': 'range', 'id': 'ctl-phi-196889566', 'label': 'Coeficiente φ0.70', 'min': '0', 'max': '1.05', 'step': '0.01', 'value': '0.7', 'w': 259}
+     control {'tipo': 'checkbox', 'id': '', 'label': 'Aplicar primera diferencia ∇', 'min': '', 'max': '', 'step': '', 'value': 'on', 'w': 13}
+  [0] ar1-phi line 236x197 right=305.5 area={'w': 207.8, 'h': 137.8, 'left': 27.2, 'right': 235} leyenda=['y_t con φ = 0.70'] h=32
+       aria="Serie AR(1) simulada según el valor de phi"
+       x: titulo=None rango=[0, 199] n=11 fuente=normal 11px Montserrat cargada=True ticks=['1', '20', '39', '58', '77', '96', '115', '134', '153', '172', '191'] minGap=3 solapes=[] fuera=[]
+       y: titulo=None rango=[-4, 3] n=8 fuente=normal 11px Fira Code cargada=True ticks=['-4', '-3', '-2', '-1', '0', '1', '2', '3']
+  [1] ar1-phi bar 236x207 right=305.5 area={'w': 194.9, 'h': 105.8, 'left': 40.4, 'right': 235.3} leyenda=['Banda ±1.96/√T', 'ACF muestral'] h=54
+       aria="ACF muestral de la serie AR(1) simulada"
+       x: titulo='Rezago k' rango=[0, 23] n=12 fuente=normal 10px Fira Code cargada=True ticks=['1', '3', '5', '7', '9', '11', '13', '15', '17', '19', '21', '23'] minGap=4.2 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.1385929291125633, 'color': '#FF6600', 'x0': 44.5, 'x1': 231.2, 'y': 99.6}, {'label': '', 'valor': -0.1385929291125633, 'color': '#FF6600', 'x0': 44.5, 'x1': 231.2, 'y': 114.2}] anchoBarra=2.9
+  KATEX que desborda: [{"i": 0, "sw": 325, "cw": 273, "contCw": 301, "ox": "visible", "right": 324, "dentro": "formula", "txt": "yt=ϕ yt−1+εt,εt∼ruido blanco(0,σ2)y_t = \\phi\\, y_{t-1} + \\varepsilon_t"}, {"i": 1, "sw": 346, "cw": 273, "contCw": 301, "ox": "visible", "right": 324, "dentro": "formula", "txt": "yt=c+yt−1+εt⟹yt=y0+ct+∑i=1tεiy_t = c + y_{t-1} + \\varepsilon_t \\quad \\"}]
+  DESBORDAN la ventana: [{"tag": "semantics", "cls": "", "right": 504.8, "txt": "yt=ϕ yt−1+εt,εt∼ruido blanco(0,σ2)y_t = \\phi\\, y_{"}, {"tag": "SPAN", "cls": "base", "right": 376.5, "txt": "ruido blanco(0,σ2)"}, {"tag": "math", "cls": "", "right": 381.1, "txt": "yt=yt−1+εty_t = y_{t-1} + \\varepsilon_t"}, {"tag": "semantics", "cls": "", "right": 527, "txt": "yt=c+yt−1+εt⟹yt=y0+ct+∑i=1tεiy_t = c + y_{t-1} + \\"}, {"tag": "SPAN", "cls": "base", "right": 394.5, "txt": "i=1∑t​εi​"}, {"tag": "CODE", "cls": "language-r", "right": 662, "txt": "# El mismo ruido, tres valores de phi set.seed(202"}]
+
+-- M6  docSw=375 inner=375 main=345/345
+  SIM montecarlo-adf: w=303 right=339 sw/cw=301/301 h4={'txt': 'La estacionalidad infla el falso rechazo', 'h': 47.3, 'hijos': 2} alturas=[280]
+  [0] montecarlo-adf bar 236x257 right=305.5 area={'w': 208.8, 'h': 155.8, 'left': 27.2, 'right': 236} leyenda=['Nivel nominal 5%', '% de falsos rechazos de la raíz unitaria'] h=54
+       aria="Porcentaje de falsos rechazos del ADF según la amplitud estacional"
+       x: titulo='Amplitud del componente estacional' rango=[0, 4] n=5 fuente=normal 10px Fira Code cargada=True ticks=['0.0', '0.5', '1.0', '2.0', '4.0'] minGap=23.7 solapes=[] fuera=[]
+       y: titulo=None rango=[0, 20] n=6 fuente=normal 11px Fira Code cargada=True ticks=['0', '4', '8', '12', '16', '20']
+       rectas=[{'label': 'Nivel nominal 5%', 'valor': 5, 'color': '#012820', 'x0': 48.1, 'x1': 215.1, 'y': 170.9}] anchoBarra=15
+  KATEX que desborda: [{"i": 0, "sw": 296, "cw": 257, "contCw": 299, "ox": "visible", "right": 318, "dentro": "definition", "txt": "∇yt=α+βt+γ yt−1+∑i=1kδi∇yt−i+εt\\nabla y_t = \\alpha + \\beta t + \\gamma\\"}]
+  TABLAS que desbordan: [{"i": 0, "sw": 374, "cw": 303, "parentCw": 303, "caption": "Combinaciones posibles de resultados de ADF y KPSS"}, {"i": 1, "sw": 452, "cw": 303, "parentCw": 303, "caption": "Resultados de ADF y KPSS sobre la TRM y su primera diferenci"}, {"i": 2, "sw": 385, "cw": 303, "parentCw": 303, "caption": "ADF sobre log(AirPassengers) según el número de rezagos"}]
+  DESBORDAN la ventana: [{"tag": "semantics", "cls": "", "right": 479.8, "txt": "∇yt=α+βt+γ yt−1+∑i=1kδi∇yt−i+εt\\nabla y_t = \\alpha"}, {"tag": "THEAD", "cls": "", "right": 410.5, "txt": "ADF (H0H_0H0​: raíz unitaria) KPSS (H0H_0H0​: esta"}, {"tag": "TBODY", "cls": "", "right": 410.5, "txt": "Rechaza No rechaza Estacionaria. Las dos coinciden"}, {"tag": "THEAD", "cls": "", "right": 488, "txt": "Serie ADF p-valor KPSS (nivel) p-valor Veredicto"}, {"tag": "TBODY", "cls": "", "right": 488, "txt": "TRM −1.978 0.586 2.243 < 0.01 No estacionaria ∇\\na"}, {"tag": "math", "cls": "", "right": 379.1, "txt": "k=⌊(T−1)1/3⌋=5k = \\lfloor (T-1)^{1/3} \\rfloor = 5"}, {"tag": "THEAD", "cls": "", "right": 420.7, "txt": "Rezagos kkk Estadístico ADF p-valor Lectura"}, {"tag": "TBODY", "cls": "", "right": 420.7, "txt": "5 (valor por defecto) −6.422 < 0.01 \"Estacionaria\""}]
+
+-- M7  docSw=375 inner=375 main=345/345
+  SIM diferenciacion: w=303 right=339 sw/cw=301/301 h4={'txt': 'El contador de diferencias', 'h': 23.6, 'hijos': 2} alturas=[220, 230]
+     lectura aria-live=None role=None h=103.7: d = 0n = 138varianza = 338834.24r₁ = 0.9637ndiffs (R) = 1d de varianza mínima = 1
+     control {'tipo': 'select-one', 'id': 'sel-serie-681255937', 'label': 'Serie', 'value': 'trm', 'w': 259}
+     control {'tipo': 'range', 'id': 'ctl-d-96119580', 'label': 'Número de diferencias regulares (d)0', 'min': '0', 'max': '3', 'step': '1', 'value': '0', 'w': 259}
+  [0] diferenciacion line 236x197 right=305.5 area={'w': 194.7, 'h': 137.8, 'left': 40.4, 'right': 235.1} leyenda=['Serie original'] h=32
+       aria="Serie tras aplicar d diferencias regulares"
+       x: titulo=None rango=[0, 137] n=4 fuente=normal 11px Montserrat cargada=True ticks=['2015-01', '2017-12', '2020-11', '2023-10'] minGap=9.6 solapes=[] fuera=[]
+       y: titulo=None rango=[2000, 5000] n=7 fuente=normal 11px Fira Code cargada=True ticks=['2000', '2500', '3000', '3500', '4000', '4500', '5000']
+  [1] diferenciacion bar 236x207 right=305.5 area={'w': 194.9, 'h': 105.8, 'left': 40.4, 'right': 235.3} leyenda=['Banda ±1.96/√T', 'ACF muestral'] h=54
+       aria="ACF de la serie diferenciada"
+       x: titulo='Rezago k' rango=[0, 23] n=12 fuente=normal 10px Fira Code cargada=True ticks=['1', '3', '5', '7', '9', '11', '13', '15', '17', '19', '21', '23'] minGap=4.2 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.16684628002871474, 'color': '#FF6600', 'x0': 44.5, 'x1': 231.2, 'y': 98.1}, {'label': '', 'valor': -0.16684628002871474, 'color': '#FF6600', 'x0': 44.5, 'x1': 231.2, 'y': 115.7}] anchoBarra=2.9
+  TABLAS que desbordan: [{"i": 0, "sw": 349, "cw": 303, "parentCw": 303, "caption": "Diferencia regular y diferencia estacional de AirPassengers "}, {"i": 1, "sw": 371, "cw": 303, "parentCw": 303, "caption": "Varianza y primera autocorrelación según el número de difere"}]
+  DESBORDAN la ventana: [{"tag": "semantics", "cls": "", "right": 388.5, "txt": "∇yt=yt−yt−1=(1−B) yt\\nabla y_t = y_t - y_{t-1} = ("}, {"tag": "semantics", "cls": "", "right": 413.5, "txt": "∇myt=yt−yt−m=(1−Bm) yt\\nabla_m y_t = y_t - y_{t-m}"}, {"tag": "THEAD", "cls": "", "right": 384.7, "txt": "Mes yty_tyt​ ∇yt=yt−yt−1\\nabla y_t = y_t - y_{t-1}"}, {"tag": "TBODY", "cls": "", "right": 384.7, "txt": "1949-01 112 — falta 1948-12 — falta 1948-01 — 1949"}, {"tag": "THEAD", "cls": "", "right": 406.7, "txt": "ddd log(AirPassengers) TRM Varianza r1r_1r1​ Varia"}, {"tag": "TBODY", "cls": "", "right": 406.7, "txt": "0 0.19488 0.954 338 834 0.964 1 0.01135 ← 0.200 14"}, {"tag": "path", "cls": "[object SVGAnimatedString]", "right": 7011.7, "txt": ""}, {"tag": "CODE", "cls": "language-r", "right": 712.4, "txt": "library(forecast) # Diferencia regular y estaciona"}]
+
+-- M8  docSw=375 inner=375 main=345/345
+  SIM box-cox: w=303 right=339 sw/cw=301/301 h4={'txt': 'El deslizador de λ\\lambdaλ', 'h': 23.9, 'hijos': 3} alturas=[230, 200]
+     lectura aria-live=None role=None h=121.3: λ = 1.00 (sin transformar, salvo un desplazamiento)CV de Guerrero = 0.53032λ óptimo (R) = -0.2947CV en el óptimo = 0.08149
+     control {'tipo': 'range', 'id': 'ctl-lambda-889957181', 'label': 'Parámetro λ de Box-Cox1.00', 'min': '-1', 'max': '2', 'step': '0.01', 'value': '1', 'w': 259}
+  [0] box-cox line 236x207 right=305.5 area={'w': 201.3, 'h': 147.8, 'left': 33.8, 'right': 235.1} leyenda=['Box-Cox con λ = 1.00'] h=32
+       aria="AirPassengers transformada con Box-Cox"
+       x: titulo=None rango=[0, 143] n=5 fuente=normal 11px Montserrat cargada=True ticks=['1949-01', '1951-06', '1953-11', '1956-04', '1958-09'] minGap=-1.5 solapes=['1949-01|1951-06 (1.2 px)', '1953-11|1956-04 (2.1 px)', '1956-04|1958-09 (-1.5 px)'] fuera=[]
+       y: titulo=None rango=[100, 700] n=7 fuente=normal 11px Fira Code cargada=True ticks=['100', '200', '300', '400', '500', '600', '700']
+  [1] box-cox line 236x177 right=305.5 area={'w': 197.2, 'h': 117.8, 'left': 33.8, 'right': 231} leyenda=['CV de Guerrero', 'λ elegido'] h=32
+       aria="Coeficiente de variación de Guerrero en función de lambda"
+       x: titulo=None rango=[0, 60] n=7 fuente=normal 11px Montserrat cargada=True ticks=['-1.00', '-0.55', '-0.10', '0.35', '0.80', '1.25', '1.70'] minGap=4 solapes=[] fuera=[]
+       y: titulo=None rango=[0, 1] n=6 fuente=normal 11px Fira Code cargada=True ticks=['0', '0.2', '0.4', '0.6', '0.8', '1.0']
+  DESBORDAN la ventana: [{"tag": "semantics", "cls": "", "right": 402.1, "txt": "wt={log⁡(yt)si λ=0,ytλ−1λen otro caso.w_t = \\begin"}, {"tag": "math", "cls": "", "right": 434.9, "txt": "λ∈[−0.41, −0.17]\\lambda \\in [-0.41,\\, -0.17]"}, {"tag": "CODE", "cls": "language-r", "right": 661.9, "txt": "library(forecast) # Lambda por el criterio de Guer"}]
+
+-- M9  docSw=375 inner=375 main=345/345
+  [0] quiz bar 206x191 right=290.5 area={'w': 165.6, 'h': 111.8, 'left': 40.4, 'right': 206} leyenda=['Banda ±1.96/√T', 'ACF'] h=32
+       aria="Función de autocorrelación de la primera diferencia del logaritmo de AirPassengers, con un pico marcado en el rezago 12"
+       x: titulo='Rezago k' rango=[0, 23] n=8 fuente=normal 10px Fira Code cargada=True ticks=['1', '4', '7', '10', '13', '16', '19', '22'] minGap=8.7 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.1639034339613898, 'color': '#FF6600', 'x0': 43.8, 'x1': 202.5, 'y': 78.7}, {'label': '', 'valor': -0.1639034339613898, 'color': '#FF6600', 'x0': 43.8, 'x1': 202.5, 'y': 97.1}] anchoBarra=2.5
+  [1] quiz bar 206x191 right=290.5 area={'w': 165.6, 'h': 111.8, 'left': 40.4, 'right': 206} leyenda=['Banda ±1.96/√T', 'ACF'] h=32
+       aria="Función de autocorrelación de una caminata aleatoria: decae muy lentamente desde valores cercanos a uno"
+       x: titulo='Rezago k' rango=[0, 23] n=8 fuente=normal 10px Fira Code cargada=True ticks=['1', '4', '7', '10', '13', '16', '19', '22'] minGap=8.7 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.1385929291125633, 'color': '#FF6600', 'x0': 43.8, 'x1': 202.5, 'y': 80.2}, {'label': '', 'valor': -0.1385929291125633, 'color': '#FF6600', 'x0': 43.8, 'x1': 202.5, 'y': 95.6}] anchoBarra=2.5
+  TABLAS que desbordan: [{"i": 0, "sw": 415, "cw": 303, "parentCw": 303, "caption": "Conceptos clave del capítulo 2"}]
+  DESBORDAN la ventana: [{"tag": "CODE", "cls": "language-r", "right": 729.2, "txt": "library(forecast); library(tseries) preparar <- fu"}, {"tag": "THEAD", "cls": "", "right": 451, "txt": "Concepto Idea en una línea En R"}, {"tag": "TBODY", "cls": "", "right": 451, "txt": "Estacionariedad débil Media y varianza constantes;"}, {"tag": "path", "cls": "[object SVGAnimatedString]", "right": 6898.6, "txt": ""}]
+
+==================== ancho 800
+
+-- M1  docSw=800 inner=800 main=438/438
+  SIM panel-estacionariedad: w=358 right=735 sw/cw=356/356 h4={'txt': 'Una estacionaria y dos que no lo son', 'h': 54, 'hijos': 2} alturas=[200, 200, 200]
+  [0] panel-estacionariedad line 282x174 right=697 area={'w': 254.8, 'h': 114.8, 'left': 27.2, 'right': 282} leyenda=['Ruido blanco'] h=32
+       aria="Ruido blanco: oscila alrededor de cero con dispersión constante"
+       x: titulo=None rango=[0, 199] n=12 fuente=normal 11px Montserrat cargada=True ticks=['1', '18', '35', '52', '69', '86', '103', '120', '137', '154', '171', '188'] minGap=4.3 solapes=[] fuera=[]
+       y: titulo=None rango=[-3, 3] n=7 fuente=normal 11px Fira Code cargada=True ticks=['-3', '-2', '-1', '0', '1', '2', '3']
+  [1] panel-estacionariedad line 282x174 right=697 area={'w': 248.2, 'h': 114.8, 'left': 33.8, 'right': 282} leyenda=['Caminata aleatoria'] h=32
+       aria="Caminata aleatoria: deambula sin volver a un nivel fijo"
+       x: titulo=None rango=[0, 199] n=12 fuente=normal 11px Montserrat cargada=True ticks=['1', '18', '35', '52', '69', '86', '103', '120', '137', '154', '171', '188'] minGap=3.8 solapes=[] fuera=[]
+       y: titulo=None rango=[-15, 10] n=6 fuente=normal 11px Fira Code cargada=True ticks=['-15', '-10', '-5', '0', '5', '10']
+  [2] panel-estacionariedad line 282x174 right=697 area={'w': 248.2, 'h': 114.8, 'left': 33.8, 'right': 282} leyenda=['AirPassengers'] h=32
+       aria="AirPassengers: tendencia creciente y estacionalidad de amplitud creciente"
+       x: titulo=None rango=[0, 143] n=6 fuente=normal 11px Montserrat cargada=True ticks=['1949-01', '1951-01', '1953-01', '1955-01', '1957-01', '1959-01'] minGap=3 solapes=[] fuera=[]
+       y: titulo=None rango=[100, 700] n=7 fuente=normal 11px Fira Code cargada=True ticks=['100', '200', '300', '400', '500', '600', '700']
+  TABLAS que desbordan: [{"i": 0, "sw": 445, "cw": 445, "parentCw": 358, "caption": "Qué condición de estacionariedad incumple cada serie"}]
+  RECORTADOS por main: [{"tag": "TABLE", "cls": "", "sobra": 46.4, "txt": "Qué condición de e tacionariedad incumple cada  er"}]
+  DESBORDAN la ventana: [{"tag": "TABLE", "cls": "", "right": 822.4, "txt": "Qué condición de estacionariedad incumple cada ser"}]
+
+-- M2  docSw=800 inner=800 main=438/438
+  SIM ruido-blanco: w=358 right=735 sw/cw=356/356 h4={'txt': 'Ruido blanco y su correlograma', 'h': 54, 'hijos': 2} alturas=[220, 250]
+     lectura aria-live=None role=None h=62.1: T = 200banda = ±0.1386rezagos dentro de la banda: 24 de 24
+  [0] ruido-blanco line 282x194 right=697 area={'w': 254.8, 'h': 134.8, 'left': 27.2, 'right': 282} leyenda=['Ruido blanco simulado'] h=32
+       aria="Serie de ruido blanco simulado"
+       x: titulo=None rango=[0, 199] n=12 fuente=normal 11px Montserrat cargada=True ticks=['1', '18', '35', '52', '69', '86', '103', '120', '137', '154', '171', '188'] minGap=4.3 solapes=[] fuera=[]
+       y: titulo=None rango=[-3, 3] n=7 fuente=normal 11px Fira Code cargada=True ticks=['-3', '-2', '-1', '0', '1', '2', '3']
+  [1] ruido-blanco bar 282x224 right=697 area={'w': 241.6, 'h': 144.8, 'left': 40.4, 'right': 282} leyenda=['Banda ±1.96/√T', 'ACF'] h=32
+       aria="Correlograma del ruido blanco: todas las barras dentro de la banda"
+       x: titulo='Rezago k' rango=[0, 23] n=12 fuente=normal 10px Fira Code cargada=True ticks=['1', '3', '5', '7', '9', '11', '13', '15', '17', '19', '21', '23'] minGap=8.1 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=6 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.6', '-0.2', '0.2', '0.6', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.1385929291125633, 'color': '#FF6600', 'x0': 45.4, 'x1': 277, 'y': 94.4}, {'label': '', 'valor': -0.1385929291125633, 'color': '#FF6600', 'x0': 45.4, 'x1': 277, 'y': 114.4}] anchoBarra=3.6
+  KATEX que desborda: [{"i": 0, "sw": 567, "cw": 306, "contCw": 354, "ox": "visible", "right": 711, "dentro": "definition", "txt": "E[εt]=0,Var⁡(εt)=σ2,Cov⁡(εt,εt+k)=0 para todo k≠0.E[\\varepsilon_t] = 0"}]
+  DESBORDAN la ventana: [{"tag": "semantics", "cls": "", "right": 1090.3, "txt": "E[εt]=0,Var⁡(εt)=σ2,Cov⁡(εt,εt+k)=0 para todo k≠0."}, {"tag": "SPAN", "cls": "base", "right": 814.7, "txt": "σ2,Cov(εt​,εt+k​)="}, {"tag": "SPAN", "cls": "base", "right": 956.8, "txt": "0para todo k="}, {"tag": "SPAN", "cls": "base", "right": 971.8, "txt": "0."}, {"tag": "path", "cls": "[object SVGAnimatedString]", "right": 8223.4, "txt": ""}, {"tag": "CODE", "cls": "language-r", "right": 1140.3, "txt": "# Ruido blanco: simulacion y correlograma set.seed"}]
+
+-- M3  docSw=800 inner=800 main=438/438
+  SIM correlogramas-comparados: w=358 right=735 sw/cw=356/356 h4={'txt': 'Tres correlogramas, tres diagnósticos', 'h': 54, 'hijos': 2} alturas=[200, 200, 200]
+  [0] correlogramas-comparados bar 282x174 right=697 area={'w': 241.6, 'h': 94.8, 'left': 40.4, 'right': 282} leyenda=['Banda ±1.96/√T', 'ACF'] h=32
+       aria="ACF del ruido blanco: todas las barras dentro de la banda"
+       x: titulo='Rezago k' rango=[0, 23] n=12 fuente=normal 10px Fira Code cargada=True ticks=['1', '3', '5', '7', '9', '11', '13', '15', '17', '19', '21', '23'] minGap=8.1 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.1385929291125633, 'color': '#FF6600', 'x0': 45.4, 'x1': 277, 'y': 72.8}, {'label': '', 'valor': -0.1385929291125633, 'color': '#FF6600', 'x0': 45.4, 'x1': 277, 'y': 86}] anchoBarra=3.6
+  [1] correlogramas-comparados bar 282x174 right=697 area={'w': 241.6, 'h': 94.8, 'left': 40.4, 'right': 282} leyenda=['Banda ±1.96/√T', 'ACF'] h=32
+       aria="ACF de la caminata aleatoria: decrece lentamente"
+       x: titulo='Rezago k' rango=[0, 23] n=12 fuente=normal 10px Fira Code cargada=True ticks=['1', '3', '5', '7', '9', '11', '13', '15', '17', '19', '21', '23'] minGap=8.1 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.1385929291125633, 'color': '#FF6600', 'x0': 45.4, 'x1': 277, 'y': 72.8}, {'label': '', 'valor': -0.1385929291125633, 'color': '#FF6600', 'x0': 45.4, 'x1': 277, 'y': 86}] anchoBarra=3.6
+  [2] correlogramas-comparados bar 282x174 right=697 area={'w': 241.6, 'h': 94.8, 'left': 40.4, 'right': 282} leyenda=['Banda ±1.96/√T', 'ACF'] h=32
+       aria="ACF de AirPassengers: decae lentamente con picos estacionales"
+       x: titulo='Rezago k' rango=[0, 23] n=12 fuente=normal 10px Fira Code cargada=True ticks=['1', '3', '5', '7', '9', '11', '13', '15', '17', '19', '21', '23'] minGap=8.1 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.16333333333333333, 'color': '#FF6600', 'x0': 45.4, 'x1': 277, 'y': 71.7}, {'label': '', 'valor': -0.16333333333333333, 'color': '#FF6600', 'x0': 45.4, 'x1': 277, 'y': 87.1}] anchoBarra=3.6
+  KATEX que desborda: [{"i": 0, "sw": 358, "cw": 308, "contCw": 356, "ox": "visible", "right": 710, "dentro": "formula", "txt": "γk=Cov⁡(yt,yt+k)=E[(yt−μ)(yt+k−μ)]\\gamma_k = \\operatorname{Cov}(y_t, y"}, {"i": 1, "sw": 457, "cw": 308, "contCw": 356, "ox": "visible", "right": 710, "dentro": "formula", "txt": "ρk=γkγ0=Cov⁡(yt,yt+k)Var⁡(yt),−1≤ρk≤1,ρ0=1\\rho_k = \\frac{\\gamma_k}{\\ga"}, {"i": 2, "sw": 398, "cw": 308, "contCw": 356, "ox": "visible", "right": 710, "dentro": "formula", "txt": "γ^k=1T∑t=1T−k(yt−yˉ)(yt+k−yˉ),rk=ρ^k=γ^kγ^0\\hat\\gamma_k = \\frac{1}{T}\\"}]
+  TABLAS que desbordan: [{"i": 0, "sw": 455, "cw": 455, "parentCw": 358, "caption": "Patrones del correlograma y su interpretación"}]
+  RECORTADOS por main: [{"tag": "TABLE", "cls": "", "sobra": 56, "txt": "Patrone  del correlograma y  u interpretación\n    "}]
+  DESBORDAN la ventana: [{"tag": "semantics", "cls": "", "right": 913.9, "txt": "γk=Cov⁡(yt,yt+k)=E[(yt−μ)(yt+k−μ)]\\gamma_k = \\oper"}, {"tag": "semantics", "cls": "", "right": 1007.5, "txt": "ρk=γkγ0=Cov⁡(yt,yt+k)Var⁡(yt),−1≤ρk≤1,ρ0=1\\rho_k ="}, {"tag": "SPAN", "cls": "base", "right": 849.1, "txt": "1,ρ0​="}, {"tag": "SPAN", "cls": "base", "right": 858.8, "txt": "1"}, {"tag": "semantics", "cls": "", "right": 945.5, "txt": "γ^k=1T∑t=1T−k(yt−yˉ)(yt+k−yˉ),rk=ρ^k=γ^kγ^0\\hat\\ga"}, {"tag": "TABLE", "cls": "", "right": 832, "txt": "Patrones del correlograma y su interpretación Lo q"}, {"tag": "CODE", "cls": "language-r", "right": 1025.1, "txt": "# Correlograma con R base acf(AirPassengers, lag.m"}]
+
+-- M4  docSw=800 inner=800 main=438/438
+  SIM explorador-acf-pacf: w=358 right=735 sw/cw=356/356 h4={'txt': 'Explorador de ACF y PACF', 'h': 27, 'hijos': 2} alturas=[200, 200, 200]
+     lectura aria-live=None role=None h=90.2: T = 144banda = ±0.1633r₁ = 0.9480rezagos fuera de la banda: 24 de 24ndiffs = 1nsdiffs = 1
+     control {'tipo': 'select-one', 'id': 'sel-serie-56037634', 'label': 'Serie', 'value': 'airpassengers', 'w': 142}
+  [0] explorador-acf-pacf line 282x174 right=697 area={'w': 247.3, 'h': 114.8, 'left': 33.8, 'right': 281.1} leyenda=['AirPassengers (nivel)'] h=32
+       aria="Serie seleccionada"
+       x: titulo=None rango=[0, 143] n=6 fuente=normal 11px Montserrat cargada=True ticks=['1949-01', '1951-01', '1953-01', '1955-01', '1957-01', '1959-01'] minGap=2.8 solapes=['1953-01|1955-01 (2.9 px)', '1957-01|1959-01 (2.8 px)'] fuera=[]
+       y: titulo=None rango=[100, 700] n=7 fuente=normal 11px Fira Code cargada=True ticks=['100', '200', '300', '400', '500', '600', '700']
+  [1] explorador-acf-pacf bar 282x174 right=697 area={'w': 240.9, 'h': 94.8, 'left': 40.4, 'right': 281.3} leyenda=['Banda ±1.96/√T', 'ACF'] h=32
+       aria="Función de autocorrelación de la serie seleccionada"
+       x: titulo='Rezago k' rango=[0, 23] n=12 fuente=normal 10px Fira Code cargada=True ticks=['1', '3', '5', '7', '9', '11', '13', '15', '17', '19', '21', '23'] minGap=8 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.16333333333333333, 'color': '#FF6600', 'x0': 45.4, 'x1': 276.2, 'y': 71.7}, {'label': '', 'valor': -0.16333333333333333, 'color': '#FF6600', 'x0': 45.4, 'x1': 276.2, 'y': 87.1}] anchoBarra=3.6
+  [2] explorador-acf-pacf bar 282x174 right=697 area={'w': 240.9, 'h': 94.8, 'left': 40.4, 'right': 281.3} leyenda=['Banda ±1.96/√T', 'PACF'] h=32
+       aria="Función de autocorrelación parcial de la serie seleccionada"
+       x: titulo='Rezago k' rango=[0, 23] n=12 fuente=normal 10px Fira Code cargada=True ticks=['1', '3', '5', '7', '9', '11', '13', '15', '17', '19', '21', '23'] minGap=8 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.16333333333333333, 'color': '#FF6600', 'x0': 45.4, 'x1': 276.2, 'y': 71.7}, {'label': '', 'valor': -0.16333333333333333, 'color': '#FF6600', 'x0': 45.4, 'x1': 276.2, 'y': 87.1}] anchoBarra=3.6
+  KATEX que desborda: [{"i": 0, "sw": 355, "cw": 306, "contCw": 354, "ox": "visible", "right": 711, "dentro": "definition", "txt": "yt=ϕk1yt−1+ϕk2yt−2+⋯+ϕkkyt−k+εty_t = \\phi_{k1} y_{t-1} + \\phi_{k2} y_{"}]
+  DESBORDAN la ventana: [{"tag": "semantics", "cls": "", "right": 922.4, "txt": "yt=ϕk1yt−1+ϕk2yt−2+⋯+ϕkkyt−k+εty_t = \\phi_{k1} y_{"}, {"tag": "CODE", "cls": "language-r", "right": 1178.7, "txt": "# ACF y PACF una al lado de la otra par(mfrow = c("}, {"tag": "path", "cls": "[object SVGAnimatedString]", "right": 8305.9, "txt": ""}]
+
+-- M5  docSw=800 inner=800 main=438/438
+  SIM ar1-phi: w=358 right=735 sw/cw=356/356 h4={'txt': 'El deslizador de ϕ\\phiϕ', 'h': 28.1, 'hijos': 3} alturas=[220, 230]
+     lectura aria-live=None role=None h=90.2: φ = 0.70r₁ = 0.6315r₁₀ = -0.0969varianza = 1.467proceso: estacionaria (|φ| < 1)
+     control {'tipo': 'range', 'id': 'ctl-phi-251923034', 'label': 'Coeficiente φ0.70', 'min': '0', 'max': '1.05', 'step': '0.01', 'value': '0.7', 'w': 142}
+     control {'tipo': 'checkbox', 'id': '', 'label': 'Aplicar primera diferencia ∇', 'min': '', 'max': '', 'step': '', 'value': 'on', 'w': 13}
+  [0] ar1-phi line 282x194 right=697 area={'w': 254, 'h': 134.8, 'left': 27.2, 'right': 281.2} leyenda=['y_t con φ = 0.70'] h=32
+       aria="Serie AR(1) simulada según el valor de phi"
+       x: titulo=None rango=[0, 199] n=12 fuente=normal 11px Montserrat cargada=True ticks=['1', '18', '35', '52', '69', '86', '103', '120', '137', '154', '171', '188'] minGap=4.3 solapes=[] fuera=[]
+       y: titulo=None rango=[-4, 3] n=8 fuente=normal 11px Fira Code cargada=True ticks=['-4', '-3', '-2', '-1', '0', '1', '2', '3']
+  [1] ar1-phi bar 282x204 right=697 area={'w': 240.9, 'h': 124.8, 'left': 40.4, 'right': 281.3} leyenda=['Banda ±1.96/√T', 'ACF muestral'] h=32
+       aria="ACF muestral de la serie AR(1) simulada"
+       x: titulo='Rezago k' rango=[0, 23] n=12 fuente=normal 10px Fira Code cargada=True ticks=['1', '3', '5', '7', '9', '11', '13', '15', '17', '19', '21', '23'] minGap=8 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.1385929291125633, 'color': '#FF6600', 'x0': 45.4, 'x1': 276.2, 'y': 85.8}, {'label': '', 'valor': -0.1385929291125633, 'color': '#FF6600', 'x0': 45.4, 'x1': 276.2, 'y': 103}] anchoBarra=3.6
+  KATEX que desborda: [{"i": 0, "sw": 372, "cw": 308, "contCw": 356, "ox": "visible", "right": 710, "dentro": "formula", "txt": "yt=ϕ yt−1+εt,εt∼ruido blanco(0,σ2)y_t = \\phi\\, y_{t-1} + \\varepsilon_t"}, {"i": 1, "sw": 395, "cw": 308, "contCw": 356, "ox": "visible", "right": 710, "dentro": "formula", "txt": "yt=c+yt−1+εt⟹yt=y0+ct+∑i=1tεiy_t = c + y_{t-1} + \\varepsilon_t \\quad \\"}]
+  DESBORDAN la ventana: [{"tag": "semantics", "cls": "", "right": 917.9, "txt": "yt=ϕ yt−1+εt,εt∼ruido blanco(0,σ2)y_t = \\phi\\, y_{"}, {"tag": "semantics", "cls": "", "right": 942.7, "txt": "yt=c+yt−1+εt⟹yt=y0+ct+∑i=1tεiy_t = c + y_{t-1} + \\"}, {"tag": "CODE", "cls": "language-r", "right": 1092.4, "txt": "# El mismo ruido, tres valores de phi set.seed(202"}]
+
+-- M6  docSw=800 inner=800 main=438/438
+  SIM montecarlo-adf: w=358 right=735 sw/cw=356/356 h4={'txt': 'La estacionalidad infla el falso rechazo', 'h': 54, 'hijos': 2} alturas=[280]
+  [0] montecarlo-adf bar 282x254 right=697 area={'w': 254.8, 'h': 152.8, 'left': 27.2, 'right': 282} leyenda=['Nivel nominal 5%', '% de falsos rechazos de la raíz unitaria'] h=54
+       aria="Porcentaje de falsos rechazos del ADF según la amplitud estacional"
+       x: titulo='Amplitud del componente estacional' rango=[0, 4] n=5 fuente=normal 10px Fira Code cargada=True ticks=['0.0', '0.5', '1.0', '2.0', '4.0'] minGap=32.9 solapes=[] fuera=[]
+       y: titulo=None rango=[0, 20] n=6 fuente=normal 11px Fira Code cargada=True ticks=['0', '4', '8', '12', '16', '20']
+       rectas=[{'label': 'Nivel nominal 5%', 'valor': 5, 'color': '#012820', 'x0': 52.7, 'x1': 256.5, 'y': 168.6}] anchoBarra=18.3
+  KATEX que desborda: [{"i": 0, "sw": 338, "cw": 306, "contCw": 354, "ox": "visible", "right": 711, "dentro": "definition", "txt": "∇yt=α+βt+γ yt−1+∑i=1kδi∇yt−i+εt\\nabla y_t = \\alpha + \\beta t + \\gamma\\"}]
+  TABLAS que desbordan: [{"i": 0, "sw": 428, "cw": 428, "parentCw": 358, "caption": "Combinaciones posibles de resultados de ADF y KPSS"}, {"i": 1, "sw": 517, "cw": 517, "parentCw": 358, "caption": "Resultados de ADF y KPSS sobre la TRM y su primera diferenci"}, {"i": 2, "sw": 440, "cw": 440, "parentCw": 358, "caption": "ADF sobre log(AirPassengers) según el número de rezagos"}]
+  RECORTADOS por main: [{"tag": "TABLE", "cls": "", "sobra": 28.9, "txt": "Combinacione  po ible  de re ultado  de ADF y KPSS"}, {"tag": "TABLE", "cls": "", "sobra": 117.6, "txt": "Re ultado  de ADF y KPSS  obre la TRM y  u primera"}, {"tag": "TABLE", "cls": "", "sobra": 40.6, "txt": "ADF  obre log(AirPa enger )  egún el número de rez"}]
+  DESBORDAN la ventana: [{"tag": "semantics", "cls": "", "right": 889.2, "txt": "∇yt=α+βt+γ yt−1+∑i=1kδi∇yt−i+εt\\nabla y_t = \\alpha"}, {"tag": "TABLE", "cls": "", "right": 804.9, "txt": "Combinaciones posibles de resultados de ADF y KPSS"}, {"tag": "TABLE", "cls": "", "right": 893.6, "txt": "Resultados de ADF y KPSS sobre la TRM y su primera"}, {"tag": "TABLE", "cls": "", "right": 816.6, "txt": "ADF sobre log(AirPassengers) según el número de re"}, {"tag": "math", "cls": "", "right": 925.8, "txt": "yt=caminata aleatoria+Asin⁡(2πt/12)y_t = \\text{cam"}, {"tag": "CODE", "cls": "language-r", "right": 1236.6, "txt": "library(tseries); library(jsonlite) # --- La TRM: "}]
+
+-- M7  docSw=800 inner=800 main=438/438
+  SIM diferenciacion: w=358 right=735 sw/cw=356/356 h4={'txt': 'El contador de diferencias', 'h': 27, 'hijos': 2} alturas=[220, 230]
+     lectura aria-live=None role=None h=90.2: d = 0n = 138varianza = 338834.24r₁ = 0.9637ndiffs (R) = 1d de varianza mínima = 1
+     control {'tipo': 'select-one', 'id': 'sel-serie-587094411', 'label': 'Serie', 'value': 'trm', 'w': 142}
+     control {'tipo': 'range', 'id': 'ctl-d-95598192', 'label': 'Número de diferencias regulares (d)0', 'min': '0', 'max': '3', 'step': '1', 'value': '0', 'w': 142}
+  [0] diferenciacion line 282x194 right=697 area={'w': 240.7, 'h': 134.8, 'left': 40.4, 'right': 281.1} leyenda=['Serie original'] h=32
+       aria="Serie tras aplicar d diferencias regulares"
+       x: titulo=None rango=[0, 137] n=5 fuente=normal 11px Montserrat cargada=True ticks=['2015-01', '2017-05', '2019-09', '2022-01', '2024-05'] minGap=6.1 solapes=[] fuera=[]
+       y: titulo=None rango=[2000, 5000] n=7 fuente=normal 11px Fira Code cargada=True ticks=['2000', '2500', '3000', '3500', '4000', '4500', '5000']
+  [1] diferenciacion bar 282x204 right=697 area={'w': 240.9, 'h': 124.8, 'left': 40.4, 'right': 281.3} leyenda=['Banda ±1.96/√T', 'ACF muestral'] h=32
+       aria="ACF de la serie diferenciada"
+       x: titulo='Rezago k' rango=[0, 23] n=12 fuente=normal 10px Fira Code cargada=True ticks=['1', '3', '5', '7', '9', '11', '13', '15', '17', '19', '21', '23'] minGap=8 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.16684628002871474, 'color': '#FF6600', 'x0': 45.4, 'x1': 276.2, 'y': 84}, {'label': '', 'valor': -0.16684628002871474, 'color': '#FF6600', 'x0': 45.4, 'x1': 276.2, 'y': 104.8}] anchoBarra=3.6
+  TABLAS que desbordan: [{"i": 0, "sw": 399, "cw": 399, "parentCw": 358, "caption": "Diferencia regular y diferencia estacional de AirPassengers "}, {"i": 1, "sw": 424, "cw": 424, "parentCw": 358, "caption": "Varianza y primera autocorrelación según el número de difere"}]
+  RECORTADOS por main: [{"tag": "TABLE", "cls": "", "sobra": 24.7, "txt": "Varianza y primera autocorrelación  egún el número"}]
+  DESBORDAN la ventana: [{"tag": "semantics", "cls": "", "right": 813.4, "txt": "∇myt=yt−yt−m=(1−Bm) yt\\nabla_m y_t = y_t - y_{t-m}"}, {"tag": "math", "cls": "", "right": 838.4, "txt": "∇12yt=yt−yt−12\\nabla_{12} y_t = y_t - y_{t-12}"}, {"tag": "math", "cls": "", "right": 801.7, "txt": "115−112=3115 - 112 = 3"}, {"tag": "math", "cls": "", "right": 801.7, "txt": "126−118=8126 - 118 = 8"}, {"tag": "path", "cls": "[object SVGAnimatedString]", "right": 8182.5, "txt": ""}, {"tag": "CODE", "cls": "language-r", "right": 1150, "txt": "library(forecast) # Diferencia regular y estaciona"}]
+
+-- M8  docSw=800 inner=800 main=438/438
+  SIM box-cox: w=358 right=735 sw/cw=356/356 h4={'txt': 'El deslizador de λ\\lambdaλ', 'h': 28.1, 'hijos': 3} alturas=[230, 200]
+     lectura aria-live=None role=None h=138.5: λ = 1.00 (sin transformar, salvo un desplazamiento)CV de Guerrero = 0.53032λ óptimo (R) = -0.2947CV en el óptimo = 0.08149
+     control {'tipo': 'range', 'id': 'ctl-lambda-793234189', 'label': 'Parámetro λ de Box-Cox1.00', 'min': '-1', 'max': '2', 'step': '0.01', 'value': '1', 'w': 142}
+  [0] box-cox line 282x204 right=697 area={'w': 247.3, 'h': 144.8, 'left': 33.8, 'right': 281.1} leyenda=['Box-Cox con λ = 1.00'] h=32
+       aria="AirPassengers transformada con Box-Cox"
+       x: titulo=None rango=[0, 143] n=6 fuente=normal 11px Montserrat cargada=True ticks=['1949-01', '1951-01', '1953-01', '1955-01', '1957-01', '1959-01'] minGap=2.8 solapes=['1953-01|1955-01 (2.9 px)', '1957-01|1959-01 (2.8 px)'] fuera=[]
+       y: titulo=None rango=[100, 700] n=7 fuente=normal 11px Fira Code cargada=True ticks=['100', '200', '300', '400', '500', '600', '700']
+  [1] box-cox line 282x174 right=697 area={'w': 243.2, 'h': 114.8, 'left': 33.8, 'right': 277} leyenda=['CV de Guerrero', 'λ elegido'] h=32
+       aria="Coeficiente de variación de Guerrero en función de lambda"
+       x: titulo=None rango=[0, 60] n=9 fuente=normal 11px Montserrat cargada=True ticks=['-1.00', '-0.65', '-0.30', '0.05', '0.40', '0.75', '1.10', '1.45', '1.80'] minGap=1.4 solapes=['-1.00|-0.65 (2.7 px)', '-0.65|-0.30 (1.4 px)'] fuera=[]
+       y: titulo=None rango=[0, 1] n=6 fuente=normal 11px Fira Code cargada=True ticks=['0', '0.2', '0.4', '0.6', '0.8', '1.0']
+  DESBORDAN la ventana: [{"tag": "CODE", "cls": "language-r", "right": 1092.4, "txt": "library(forecast) # Lambda por el criterio de Guer"}]
+
+-- M9  docSw=800 inner=800 main=438/438
+  [0] quiz bar 248x188 right=680 area={'w': 207.6, 'h': 108.8, 'left': 40.4, 'right': 248} leyenda=['Banda ±1.96/√T', 'ACF'] h=32
+       aria="Función de autocorrelación de la primera diferencia del logaritmo de AirPassengers, con un pico marcado en el rezago 12"
+       x: titulo='Rezago k' rango=[0, 23] n=12 fuente=normal 10px Fira Code cargada=True ticks=['1', '3', '5', '7', '9', '11', '13', '15', '17', '19', '21', '23'] minGap=5.3 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.1639034339613898, 'color': '#FF6600', 'x0': 44.7, 'x1': 243.7, 'y': 77.5}, {'label': '', 'valor': -0.1639034339613898, 'color': '#FF6600', 'x0': 44.7, 'x1': 243.7, 'y': 95.3}] anchoBarra=3.1
+  [1] quiz bar 248x188 right=680 area={'w': 207.6, 'h': 108.8, 'left': 40.4, 'right': 248} leyenda=['Banda ±1.96/√T', 'ACF'] h=32
+       aria="Función de autocorrelación de una caminata aleatoria: decae muy lentamente desde valores cercanos a uno"
+       x: titulo='Rezago k' rango=[0, 23] n=12 fuente=normal 10px Fira Code cargada=True ticks=['1', '3', '5', '7', '9', '11', '13', '15', '17', '19', '21', '23'] minGap=5.3 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.1385929291125633, 'color': '#FF6600', 'x0': 44.7, 'x1': 243.7, 'y': 78.9}, {'label': '', 'valor': -0.1385929291125633, 'color': '#FF6600', 'x0': 44.7, 'x1': 243.7, 'y': 93.9}] anchoBarra=3.1
+  TABLAS que desbordan: [{"i": 0, "sw": 474, "cw": 474, "parentCw": 358, "caption": "Conceptos clave del capítulo 2"}]
+  RECORTADOS por main: [{"tag": "TABLE", "cls": "", "sobra": 75.3, "txt": "Concepto  clave del capítulo 2\n        \n          "}]
+  DESBORDAN la ventana: [{"tag": "CODE", "cls": "language-r", "right": 1169.2, "txt": "library(forecast); library(tseries) preparar <- fu"}, {"tag": "TABLE", "cls": "", "right": 851.3, "txt": "Conceptos clave del capítulo 2 Concepto Idea en un"}, {"tag": "path", "cls": "[object SVGAnimatedString]", "right": 8224.7, "txt": ""}]
+
+==================== ancho 1200
+
+-- M1  docSw=1200 inner=1200 main=822/822
+  SIM panel-estacionariedad: w=742 right=1127 sw/cw=740/740 h4={'txt': 'Una estacionaria y dos que no lo son', 'h': 27, 'hijos': 2} alturas=[200, 200, 200]
+  [0] panel-estacionariedad line 666x174 right=1089 area={'w': 638.8, 'h': 114.8, 'left': 27.2, 'right': 666} leyenda=['Ruido blanco'] h=32
+       aria="Ruido blanco: oscila alrededor de cero con dispersión constante"
+       x: titulo=None rango=[0, 199] n=12 fuente=normal 11px Montserrat cargada=True ticks=['1', '18', '35', '52', '69', '86', '103', '120', '137', '154', '171', '188'] minGap=37.2 solapes=[] fuera=[]
+       y: titulo=None rango=[-3, 3] n=7 fuente=normal 11px Fira Code cargada=True ticks=['-3', '-2', '-1', '0', '1', '2', '3']
+  [1] panel-estacionariedad line 666x174 right=1089 area={'w': 632.2, 'h': 114.8, 'left': 33.8, 'right': 666} leyenda=['Caminata aleatoria'] h=32
+       aria="Caminata aleatoria: deambula sin volver a un nivel fijo"
+       x: titulo=None rango=[0, 199] n=12 fuente=normal 11px Montserrat cargada=True ticks=['1', '18', '35', '52', '69', '86', '103', '120', '137', '154', '171', '188'] minGap=36.6 solapes=[] fuera=[]
+       y: titulo=None rango=[-15, 10] n=6 fuente=normal 11px Fira Code cargada=True ticks=['-15', '-10', '-5', '0', '5', '10']
+  [2] panel-estacionariedad line 666x174 right=1089 area={'w': 632.2, 'h': 114.8, 'left': 33.8, 'right': 666} leyenda=['AirPassengers'] h=32
+       aria="AirPassengers: tendencia creciente y estacionalidad de amplitud creciente"
+       x: titulo=None rango=[0, 143] n=12 fuente=normal 11px Montserrat cargada=True ticks=['1949-01', '1950-01', '1951-01', '1952-01', '1953-01', '1954-01', '1955-01', '1956-01', '1957-01', '1958-01', '1959-01', '1960-01'] minGap=13.1 solapes=[] fuera=[]
+       y: titulo=None rango=[100, 700] n=7 fuente=normal 11px Fira Code cargada=True ticks=['100', '200', '300', '400', '500', '600', '700']
+
+-- M2  docSw=1200 inner=1200 main=822/822
+  SIM ruido-blanco: w=742 right=1127 sw/cw=740/740 h4={'txt': 'Ruido blanco y su correlograma', 'h': 27, 'hijos': 2} alturas=[220, 250]
+     lectura aria-live=None role=None h=33.9: T = 200banda = ±0.1386rezagos dentro de la banda: 24 de 24
+  [0] ruido-blanco line 666x194 right=1089 area={'w': 638.8, 'h': 134.8, 'left': 27.2, 'right': 666} leyenda=['Ruido blanco simulado'] h=32
+       aria="Serie de ruido blanco simulado"
+       x: titulo=None rango=[0, 199] n=12 fuente=normal 11px Montserrat cargada=True ticks=['1', '18', '35', '52', '69', '86', '103', '120', '137', '154', '171', '188'] minGap=37.2 solapes=[] fuera=[]
+       y: titulo=None rango=[-3, 3] n=7 fuente=normal 11px Fira Code cargada=True ticks=['-3', '-2', '-1', '0', '1', '2', '3']
+  [1] ruido-blanco bar 666x224 right=1089 area={'w': 625.6, 'h': 144.8, 'left': 40.4, 'right': 666} leyenda=['Banda ±1.96/√T', 'ACF'] h=32
+       aria="Correlograma del ruido blanco: todas las barras dentro de la banda"
+       x: titulo='Rezago k' rango=[0, 23] n=24 fuente=normal 10px Fira Code cargada=True ticks=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14'] minGap=14 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=6 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.6', '-0.2', '0.2', '0.6', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.1385929291125633, 'color': '#FF6600', 'x0': 53.4, 'x1': 653, 'y': 94.4}, {'label': '', 'valor': -0.1385929291125633, 'color': '#FF6600', 'x0': 53.4, 'x1': 653, 'y': 114.4}] anchoBarra=9.4
+  DESBORDAN la ventana: [{"tag": "semantics", "cls": "", "right": 1290.3, "txt": "E[εt]=0,Var⁡(εt)=σ2,Cov⁡(εt,εt+k)=0 para todo k≠0."}, {"tag": "path", "cls": "[object SVGAnimatedString]", "right": 8832.1, "txt": ""}]
+
+-- M3  docSw=1200 inner=1200 main=822/822
+  SIM correlogramas-comparados: w=742 right=1127 sw/cw=740/740 h4={'txt': 'Tres correlogramas, tres diagnósticos', 'h': 27, 'hijos': 2} alturas=[200, 200, 200]
+  [0] correlogramas-comparados bar 666x174 right=1089 area={'w': 625.6, 'h': 94.8, 'left': 40.4, 'right': 666} leyenda=['Banda ±1.96/√T', 'ACF'] h=32
+       aria="ACF del ruido blanco: todas las barras dentro de la banda"
+       x: titulo='Rezago k' rango=[0, 23] n=24 fuente=normal 10px Fira Code cargada=True ticks=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14'] minGap=14 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.1385929291125633, 'color': '#FF6600', 'x0': 53.4, 'x1': 653, 'y': 72.8}, {'label': '', 'valor': -0.1385929291125633, 'color': '#FF6600', 'x0': 53.4, 'x1': 653, 'y': 86}] anchoBarra=9.4
+  [1] correlogramas-comparados bar 666x174 right=1089 area={'w': 625.6, 'h': 94.8, 'left': 40.4, 'right': 666} leyenda=['Banda ±1.96/√T', 'ACF'] h=32
+       aria="ACF de la caminata aleatoria: decrece lentamente"
+       x: titulo='Rezago k' rango=[0, 23] n=24 fuente=normal 10px Fira Code cargada=True ticks=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14'] minGap=14 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.1385929291125633, 'color': '#FF6600', 'x0': 53.4, 'x1': 653, 'y': 72.8}, {'label': '', 'valor': -0.1385929291125633, 'color': '#FF6600', 'x0': 53.4, 'x1': 653, 'y': 86}] anchoBarra=9.4
+  [2] correlogramas-comparados bar 666x174 right=1089 area={'w': 625.6, 'h': 94.8, 'left': 40.4, 'right': 666} leyenda=['Banda ±1.96/√T', 'ACF'] h=32
+       aria="ACF de AirPassengers: decae lentamente con picos estacionales"
+       x: titulo='Rezago k' rango=[0, 23] n=24 fuente=normal 10px Fira Code cargada=True ticks=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14'] minGap=14 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.16333333333333333, 'color': '#FF6600', 'x0': 53.4, 'x1': 653, 'y': 71.7}, {'label': '', 'valor': -0.16333333333333333, 'color': '#FF6600', 'x0': 53.4, 'x1': 653, 'y': 87.1}] anchoBarra=9.4
+  DESBORDAN la ventana: [{"tag": "semantics", "cls": "", "right": 1207.5, "txt": "ρk=γkγ0=Cov⁡(yt,yt+k)Var⁡(yt),−1≤ρk≤1,ρ0=1\\rho_k ="}]
+
+-- M4  docSw=1200 inner=1200 main=822/822
+  SIM explorador-acf-pacf: w=742 right=1127 sw/cw=740/740 h4={'txt': 'Explorador de ACF y PACF', 'h': 27, 'hijos': 2} alturas=[200, 200, 200]
+     lectura aria-live=None role=None h=62.1: T = 144banda = ±0.1633r₁ = 0.9480rezagos fuera de la banda: 24 de 24ndiffs = 1nsdiffs = 1
+     control {'tipo': 'select-one', 'id': 'sel-serie-842944914', 'label': 'Serie', 'value': 'airpassengers', 'w': 334}
+  [0] explorador-acf-pacf line 666x174 right=1089 area={'w': 631.3, 'h': 114.8, 'left': 33.8, 'right': 665.1} leyenda=['AirPassengers (nivel)'] h=32
+       aria="Serie seleccionada"
+       x: titulo=None rango=[0, 143] n=12 fuente=normal 11px Montserrat cargada=True ticks=['1949-01', '1950-01', '1951-01', '1952-01', '1953-01', '1954-01', '1955-01', '1956-01', '1957-01', '1958-01', '1959-01', '1960-01'] minGap=13 solapes=[] fuera=[]
+       y: titulo=None rango=[100, 700] n=7 fuente=normal 11px Fira Code cargada=True ticks=['100', '200', '300', '400', '500', '600', '700']
+  [1] explorador-acf-pacf bar 666x174 right=1089 area={'w': 624.9, 'h': 94.8, 'left': 40.4, 'right': 665.3} leyenda=['Banda ±1.96/√T', 'ACF'] h=32
+       aria="Función de autocorrelación de la serie seleccionada"
+       x: titulo='Rezago k' rango=[0, 23] n=24 fuente=normal 10px Fira Code cargada=True ticks=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14'] minGap=14 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.16333333333333333, 'color': '#FF6600', 'x0': 53.4, 'x1': 652.2, 'y': 71.7}, {'label': '', 'valor': -0.16333333333333333, 'color': '#FF6600', 'x0': 53.4, 'x1': 652.2, 'y': 87.1}] anchoBarra=9.4
+  [2] explorador-acf-pacf bar 666x174 right=1089 area={'w': 624.9, 'h': 94.8, 'left': 40.4, 'right': 665.3} leyenda=['Banda ±1.96/√T', 'PACF'] h=32
+       aria="Función de autocorrelación parcial de la serie seleccionada"
+       x: titulo='Rezago k' rango=[0, 23] n=24 fuente=normal 10px Fira Code cargada=True ticks=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14'] minGap=14 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.16333333333333333, 'color': '#FF6600', 'x0': 53.4, 'x1': 652.2, 'y': 71.7}, {'label': '', 'valor': -0.16333333333333333, 'color': '#FF6600', 'x0': 53.4, 'x1': 652.2, 'y': 87.1}] anchoBarra=9.4
+  DESBORDAN la ventana: [{"tag": "path", "cls": "[object SVGAnimatedString]", "right": 8630.7, "txt": ""}]
+
+-- M5  docSw=1200 inner=1200 main=822/822
+  SIM ar1-phi: w=742 right=1127 sw/cw=740/740 h4={'txt': 'El deslizador de ϕ\\phiϕ', 'h': 28.1, 'hijos': 3} alturas=[220, 230]
+     lectura aria-live=None role=None h=62.1: φ = 0.70r₁ = 0.6315r₁₀ = -0.0969varianza = 1.467proceso: estacionaria (|φ| < 1)
+     control {'tipo': 'range', 'id': 'ctl-phi-860412155', 'label': 'Coeficiente φ0.70', 'min': '0', 'max': '1.05', 'step': '0.01', 'value': '0.7', 'w': 334}
+     control {'tipo': 'checkbox', 'id': '', 'label': 'Aplicar primera diferencia ∇', 'min': '', 'max': '', 'step': '', 'value': 'on', 'w': 13}
+  [0] ar1-phi line 666x194 right=1089 area={'w': 638, 'h': 134.8, 'left': 27.2, 'right': 665.2} leyenda=['y_t con φ = 0.70'] h=32
+       aria="Serie AR(1) simulada según el valor de phi"
+       x: titulo=None rango=[0, 199] n=12 fuente=normal 11px Montserrat cargada=True ticks=['1', '18', '35', '52', '69', '86', '103', '120', '137', '154', '171', '188'] minGap=37.1 solapes=[] fuera=[]
+       y: titulo=None rango=[-4, 3] n=8 fuente=normal 11px Fira Code cargada=True ticks=['-4', '-3', '-2', '-1', '0', '1', '2', '3']
+  [1] ar1-phi bar 666x204 right=1089 area={'w': 624.9, 'h': 124.8, 'left': 40.4, 'right': 665.3} leyenda=['Banda ±1.96/√T', 'ACF muestral'] h=32
+       aria="ACF muestral de la serie AR(1) simulada"
+       x: titulo='Rezago k' rango=[0, 23] n=24 fuente=normal 10px Fira Code cargada=True ticks=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14'] minGap=14 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.1385929291125633, 'color': '#FF6600', 'x0': 53.4, 'x1': 652.2, 'y': 85.8}, {'label': '', 'valor': -0.1385929291125633, 'color': '#FF6600', 'x0': 53.4, 'x1': 652.2, 'y': 103}] anchoBarra=9.4
+
+-- M6  docSw=1200 inner=1200 main=822/822
+  SIM montecarlo-adf: w=742 right=1127 sw/cw=740/740 h4={'txt': 'La estacionalidad infla el falso rechazo', 'h': 27, 'hijos': 2} alturas=[280]
+  [0] montecarlo-adf bar 666x254 right=1089 area={'w': 638.8, 'h': 174.8, 'left': 27.2, 'right': 666} leyenda=['Nivel nominal 5%', '% de falsos rechazos de la raíz unitaria'] h=32
+       aria="Porcentaje de falsos rechazos del ADF según la amplitud estacional"
+       x: titulo='Amplitud del componente estacional' rango=[0, 4] n=5 fuente=normal 10px Fira Code cargada=True ticks=['0.0', '0.5', '1.0', '2.0', '4.0'] minGap=109.7 solapes=[] fuera=[]
+       y: titulo=None rango=[0, 20] n=11 fuente=normal 11px Fira Code cargada=True ticks=['0', '2', '4', '6', '8', '10', '12', '14', '16', '18', '20']
+       rectas=[{'label': 'Nivel nominal 5%', 'valor': 5, 'color': '#012820', 'x0': 91.1, 'x1': 602.1, 'y': 163.1}] anchoBarra=46
+  DESBORDAN la ventana: [{"tag": "CODE", "cls": "language-r", "right": 1244.6, "txt": "library(tseries); library(jsonlite) # --- La TRM: "}]
+
+-- M7  docSw=1200 inner=1200 main=822/822
+  SIM diferenciacion: w=742 right=1127 sw/cw=740/740 h4={'txt': 'El contador de diferencias', 'h': 27, 'hijos': 2} alturas=[220, 230]
+     lectura aria-live=None role=None h=62.1: d = 0n = 138varianza = 338834.24r₁ = 0.9637ndiffs (R) = 1d de varianza mínima = 1
+     control {'tipo': 'select-one', 'id': 'sel-serie-502356281', 'label': 'Serie', 'value': 'trm', 'w': 334}
+     control {'tipo': 'range', 'id': 'ctl-d-353300724', 'label': 'Número de diferencias regulares (d)0', 'min': '0', 'max': '3', 'step': '1', 'value': '0', 'w': 334}
+  [0] diferenciacion line 666x194 right=1089 area={'w': 624.3, 'h': 134.8, 'left': 40.4, 'right': 664.7} leyenda=['Serie original'] h=32
+       aria="Serie tras aplicar d diferencias regulares"
+       x: titulo=None rango=[0, 137] n=12 fuente=normal 11px Montserrat cargada=True ticks=['2015-01', '2016-01', '2017-01', '2018-01', '2019-01', '2020-01', '2021-01', '2022-01', '2023-01', '2024-01', '2025-01', '2026-01'] minGap=12.7 solapes=[] fuera=[]
+       y: titulo=None rango=[2000, 5000] n=7 fuente=normal 11px Fira Code cargada=True ticks=['2000', '2500', '3000', '3500', '4000', '4500', '5000']
+  [1] diferenciacion bar 666x204 right=1089 area={'w': 624.9, 'h': 124.8, 'left': 40.4, 'right': 665.3} leyenda=['Banda ±1.96/√T', 'ACF muestral'] h=32
+       aria="ACF de la serie diferenciada"
+       x: titulo='Rezago k' rango=[0, 23] n=24 fuente=normal 10px Fira Code cargada=True ticks=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14'] minGap=14 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.16684628002871474, 'color': '#FF6600', 'x0': 53.4, 'x1': 652.2, 'y': 84}, {'label': '', 'valor': -0.16684628002871474, 'color': '#FF6600', 'x0': 53.4, 'x1': 652.2, 'y': 104.8}] anchoBarra=9.4
+  DESBORDAN la ventana: [{"tag": "path", "cls": "[object SVGAnimatedString]", "right": 8190.5, "txt": ""}]
+
+-- M8  docSw=1200 inner=1200 main=822/822
+  SIM box-cox: w=742 right=1127 sw/cw=740/740 h4={'txt': 'El deslizador de λ\\lambdaλ', 'h': 28.1, 'hijos': 3} alturas=[230, 200]
+     lectura aria-live=None role=None h=62.1: λ = 1.00 (sin transformar, salvo un desplazamiento)CV de Guerrero = 0.53032λ óptimo (R) = -0.2947CV en el óptimo = 0.08149
+     control {'tipo': 'range', 'id': 'ctl-lambda-126429042', 'label': 'Parámetro λ de Box-Cox1.00', 'min': '-1', 'max': '2', 'step': '0.01', 'value': '1', 'w': 334}
+  [0] box-cox line 666x204 right=1089 area={'w': 631.3, 'h': 144.8, 'left': 33.8, 'right': 665.1} leyenda=['Box-Cox con λ = 1.00'] h=32
+       aria="AirPassengers transformada con Box-Cox"
+       x: titulo=None rango=[0, 143] n=12 fuente=normal 11px Montserrat cargada=True ticks=['1949-01', '1950-01', '1951-01', '1952-01', '1953-01', '1954-01', '1955-01', '1956-01', '1957-01', '1958-01', '1959-01', '1960-01'] minGap=13 solapes=[] fuera=[]
+       y: titulo=None rango=[100, 700] n=7 fuente=normal 11px Fira Code cargada=True ticks=['100', '200', '300', '400', '500', '600', '700']
+  [1] box-cox line 666x174 right=1089 area={'w': 617.6, 'h': 114.8, 'left': 33.8, 'right': 651.4} leyenda=['CV de Guerrero', 'λ elegido'] h=32
+       aria="Coeficiente de variación de Guerrero en función de lambda"
+       x: titulo=None rango=[0, 60] n=11 fuente=normal 11px Montserrat cargada=True ticks=['-1.00', '-0.70', '-0.40', '-0.10', '0.20', '0.50', '0.80', '1.10', '1.40', '1.70', '2.00'] minGap=34 solapes=[] fuera=[]
+       y: titulo=None rango=[0, 1] n=6 fuente=normal 11px Fira Code cargada=True ticks=['0', '0.2', '0.4', '0.6', '0.8', '1.0']
+
+-- M9  docSw=1200 inner=1200 main=822/822
+  [0] quiz bar 632x188 right=1072 area={'w': 591.6, 'h': 108.8, 'left': 40.4, 'right': 632} leyenda=['Banda ±1.96/√T', 'ACF'] h=32
+       aria="Función de autocorrelación de la primera diferencia del logaritmo de AirPassengers, con un pico marcado en el rezago 12"
+       x: titulo='Rezago k' rango=[0, 23] n=24 fuente=normal 10px Fira Code cargada=True ticks=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14'] minGap=12.6 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.1639034339613898, 'color': '#FF6600', 'x0': 52.7, 'x1': 619.7, 'y': 77.5}, {'label': '', 'valor': -0.1639034339613898, 'color': '#FF6600', 'x0': 52.7, 'x1': 619.7, 'y': 95.3}] anchoBarra=8.9
+  [1] quiz bar 632x188 right=1072 area={'w': 591.6, 'h': 108.8, 'left': 40.4, 'right': 632} leyenda=['Banda ±1.96/√T', 'ACF'] h=32
+       aria="Función de autocorrelación de una caminata aleatoria: decae muy lentamente desde valores cercanos a uno"
+       x: titulo='Rezago k' rango=[0, 23] n=24 fuente=normal 10px Fira Code cargada=True ticks=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14'] minGap=12.6 solapes=[] fuera=[]
+       y: titulo=None rango=[-1, 1] n=5 fuente=normal 11px Fira Code cargada=True ticks=['-1.0', '-0.5', '0', '0.5', '1.0']
+       rectas=[{'label': 'Banda ±1.96/√T', 'valor': 0.1385929291125633, 'color': '#FF6600', 'x0': 52.7, 'x1': 619.7, 'y': 78.9}, {'label': '', 'valor': -0.1385929291125633, 'color': '#FF6600', 'x0': 52.7, 'x1': 619.7, 'y': 93.9}] anchoBarra=8.9
+  DESBORDAN la ventana: [{"tag": "path", "cls": "[object SVGAnimatedString]", "right": 8578.2, "txt": ""}]
+
+==================== estados de los simuladores
+
+---- ancho 375
+  panel-estacionariedad:inicial: None  outputs=[]
+     g0: area=117.8h leyenda=['Ruido blanco'] y=[-3, 3] yticks=['-3', '-2', '-1', '0', '1', '2', '3'] x solapes=1 minGap=2.9 xticks=['1', '20', '39', '58', '77', '96', '115', '134']
+     g1: area=117.8h leyenda=['Caminata aleatoria'] y=[-15, 10] yticks=['-15', '-10', '-5', '0', '5', '10'] x solapes=0 minGap=5.5 xticks=['1', '21', '41', '61', '81', '101', '121', '141']
+     g2: area=117.8h leyenda=['AirPassengers'] y=[100, 700] yticks=['100', '200', '300', '400', '500', '600', '700'] x solapes=3 minGap=-1.4 xticks=['1949-01', '1951-06', '1953-11', '1956-04', '1958-09']
+  ruido-blanco:inicial: T = 200banda = ±0.1386rezagos dentro de la banda: 24 de 24  outputs=[]
+     g0: area=137.8h leyenda=['Ruido blanco simulado'] y=[-3, 3] yticks=['-3', '-2', '-1', '0', '1', '2', '3'] x solapes=1 minGap=2.9 xticks=['1', '20', '39', '58', '77', '96', '115', '134']
+     g1: area=147.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.6', '-0.2', '0.2', '0.6', '1.0'] x solapes=0 minGap=4.3 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF', 0.115)]
+  correlogramas-comparados:inicial: None  outputs=[]
+     g0: area=97.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.3 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF', 0.115)]
+     g1: area=97.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.3 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF', 0.961)]
+     g2: area=97.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.3 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1633), ('', -0.1633)] barras=[('ACF', 0.948)]
+  explorador-acf-pacf:inicial: T = 144banda = ±0.1633r₁ = 0.9480rezagos fuera de la banda: 24 de 24ndiffs = 1nsdiffs = 1  outputs=[]
+     g0: area=117.8h leyenda=['AirPassengers (nivel)'] y=[100, 700] yticks=['100', '200', '300', '400', '500', '600', '700'] x solapes=3 minGap=-1.5 xticks=['1949-01', '1951-06', '1953-11', '1956-04', '1958-09']
+     g1: area=97.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1633), ('', -0.1633)] barras=[('ACF', 0.948)]
+     g2: area=97.8h leyenda=['Banda ±1.96/√T', 'PACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1633), ('', -0.1633)] barras=[('PACF', 0.948)]
+  explorador-acf-pacf:ruido_blanco: T = 200banda = ±0.1386r₁ = -0.0776rezagos fuera de la banda: 0 de 24ndiffs = 0nsdiffs = —  outputs=[]
+     g0: area=117.8h leyenda=['Ruido blanco simulado'] y=[-3, 3] yticks=['-3', '-2', '-1', '0', '1', '2', '3'] x solapes=0 minGap=3 xticks=['1', '20', '39', '58', '77', '96', '115', '134']
+     g1: area=97.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF', 0.115)]
+     g2: area=97.8h leyenda=['Banda ±1.96/√T', 'PACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('PACF', 0.115)]
+  explorador-acf-pacf:caminata: T = 200banda = ±0.1386r₁ = 0.9612rezagos fuera de la banda: 24 de 24ndiffs = 1nsdiffs = —  outputs=[]
+     g0: area=117.8h leyenda=['Caminata aleatoria simulada'] y=[-15, 10] yticks=['-15', '-10', '-5', '0', '5', '10'] x solapes=0 minGap=5.4 xticks=['1', '21', '41', '61', '81', '101', '121', '141']
+     g1: area=97.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF', 0.961)]
+     g2: area=97.8h leyenda=['Banda ±1.96/√T', 'PACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('PACF', 0.961)]
+  explorador-acf-pacf:log_airpassengers: T = 144banda = ±0.1633r₁ = 0.9537rezagos fuera de la banda: 24 de 24ndiffs = 1nsdiffs = 1  outputs=[]
+     g0: area=117.8h leyenda=['log(AirPassengers)'] y=[4.5, 6.6000000000000005] yticks=['4.5', '5.0', '5.5', '6.0', '6.5'] x solapes=3 minGap=-1.5 xticks=['1949-01', '1951-06', '1953-11', '1956-04', '1958-09']
+     g1: area=97.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1633), ('', -0.1633)] barras=[('ACF', 0.954)]
+     g2: area=97.8h leyenda=['Banda ±1.96/√T', 'PACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1633), ('', -0.1633)] barras=[('PACF', 0.954)]
+  explorador-acf-pacf:d_log_airpassengers: T = 143banda = ±0.1639r₁ = 0.1998rezagos fuera de la banda: 10 de 24ndiffs = 0nsdiffs = 1  outputs=[]
+     g0: area=117.8h leyenda=['Diferencia regular de log(AirPassengers)'] y=[-0.30000000000000004, 0.30000000000000004] yticks=['-0.3', '-0.2', '-0.1', '0', '0.1', '0.2', '0.3'] x solapes=4 minGap=-0.8 xticks=['1949-02', '1951-07', '1953-12', '1956-05', '1958-10']
+     g1: area=97.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1639), ('', -0.1639)] barras=[('ACF', 0.841)]
+     g2: area=97.8h leyenda=['Banda ±1.96/√T', 'PACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1639), ('', -0.1639)] barras=[('PACF', 0.586)]
+  explorador-acf-pacf:dd_log_airpassengers: T = 131banda = ±0.1712r₁ = -0.3411rezagos fuera de la banda: 5 de 24ndiffs = 0nsdiffs = 0  outputs=[]
+     g0: area=117.8h leyenda=['Diferencia regular y estacional de log(AirPassengers)'] y=[-0.15000000000000002, 0.15000000000000002] yticks=['-0.15', '-0.10', '-0.05', '0', '0.05', '0.10', '0.15'] x solapes=4 minGap=-2.8 xticks=['1950-02', '1952-05', '1954-08', '1956-11', '1959-02']
+     g1: area=97.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1712), ('', -0.1712)] barras=[('ACF', 0.387)]
+     g2: area=97.8h leyenda=['Banda ±1.96/√T', 'PACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1712), ('', -0.1712)] barras=[('PACF', 0.341)]
+  explorador-acf-pacf:trm: T = 138banda = ±0.1668r₁ = 0.9637rezagos fuera de la banda: 24 de 24ndiffs = 1nsdiffs = 0  outputs=[]
+     g0: area=117.8h leyenda=['TRM mensual (COP/USD)'] y=[2000, 5000] yticks=['2000', '2500', '3000', '3500', '4000', '4500', '5000'] x solapes=0 minGap=9.6 xticks=['2015-01', '2017-12', '2020-11', '2023-10']
+     g1: area=97.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1668), ('', -0.1668)] barras=[('ACF', 0.964)]
+     g2: area=97.8h leyenda=['Banda ±1.96/√T', 'PACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1668), ('', -0.1668)] barras=[('PACF', 0.964)]
+  explorador-acf-pacf:d_trm: T = 137banda = ±0.1675r₁ = 0.0876rezagos fuera de la banda: 1 de 24ndiffs = 0nsdiffs = 0  outputs=[]
+     g0: area=117.8h leyenda=['Primera diferencia de la TRM'] y=[-400, 600] yticks=['-400', '-200', '0', '200', '400', '600'] x solapes=0 minGap=9.3 xticks=['2015-02', '2018-01', '2020-12', '2023-11']
+     g1: area=97.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1675), ('', -0.1675)] barras=[('ACF', 0.19)]
+     g2: area=97.8h leyenda=['Banda ±1.96/√T', 'PACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1675), ('', -0.1675)] barras=[('PACF', 0.171)]
+  ar1-phi:inicial: φ = 0.70r₁ = 0.6315r₁₀ = -0.0969varianza = 1.467proceso: estacionaria (|φ| < 1)  outputs=['0.70']
+     g0: area=137.8h leyenda=['y_t con φ = 0.70'] y=[-4, 3] yticks=['-4', '-3', '-2', '-1', '0', '1', '2', '3'] x solapes=0 minGap=3 xticks=['1', '20', '39', '58', '77', '96', '115', '134']
+     g1: area=105.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF muestral', 0.631)]
+  ar1-phi:phi0: φ = 0.00r₁ = -0.0325r₁₀ = -0.1085varianza = 0.874proceso: estacionaria (|φ| < 1)  outputs=['0.00']
+     g0: area=137.8h leyenda=['y_t con φ = 0.00'] y=[-3, 3] yticks=['-3', '-2', '-1', '0', '1', '2', '3'] x solapes=0 minGap=3 xticks=['1', '20', '39', '58', '77', '96', '115', '134']
+     g1: area=105.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF muestral', 0.187)]
+  ar1-phi:phi050: φ = 0.50r₁ = 0.4355r₁₀ = -0.0784varianza = 1.080proceso: estacionaria (|φ| < 1)  outputs=['0.50']
+     g0: area=137.8h leyenda=['y_t con φ = 0.50'] y=[-4, 3] yticks=['-4', '-3', '-2', '-1', '0', '1', '2', '3'] x solapes=0 minGap=3 xticks=['1', '20', '39', '58', '77', '96', '115', '134']
+     g1: area=105.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF muestral', 0.436)]
+  ar1-phi:phi095: φ = 0.95r₁ = 0.8856r₁₀ = 0.2299varianza = 4.148proceso: estacionaria (|φ| < 1)  outputs=['0.95']
+     g0: area=137.8h leyenda=['y_t con φ = 0.95'] y=[-7, 3] yticks=['-7', '-5', '-3', '-1', '1', '3'] x solapes=0 minGap=3 xticks=['1', '20', '39', '58', '77', '96', '115', '134']
+     g1: area=105.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF muestral', 0.886)]
+  ar1-phi:phi100: φ = 1.00r₁ = 0.9752r₁₀ = 0.7693varianza = 24.267proceso: caminata aleatoria (φ = 1): raíz unitaria  outputs=['1.00']
+     g0: area=137.8h leyenda=['y_t con φ = 1.00'] y=[-20, 5] yticks=['-20', '-15', '-10', '-5', '0', '5'] x solapes=0 minGap=5.4 xticks=['1', '21', '41', '61', '81', '101', '121', '141']
+     g1: area=105.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF muestral', 0.975)]
+  ar1-phi:phi105: φ = 1.05r₁ = 0.9511r₁₀ = 0.6011varianza = 16760012.970proceso: explosiva (φ > 1)  outputs=['1.05']
+     g0: area=137.8h leyenda=['y_t con φ = 1.05'] y=[-20000, 0] yticks=['-20\u202f000', '-16\u202f000', '-12\u202f000', '-8000', '-4000', '0'] x solapes=0 minGap=3.6 xticks=['1', '24', '47', '70', '93', '116', '139', '162']
+     g1: area=105.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF muestral', 0.951)]
+  ar1-phi:phi0-dif: φ = 0.00r₁ = -0.5063r₁₀ = -0.1507varianza = 1.805proceso: ∇ de una serie estacionaria (|φ| < 1)  outputs=['0.00']
+     g0: area=137.8h leyenda=['∇y_t con φ = 0.00'] y=[-4, 4] yticks=['-4', '-3', '-2', '-1', '0', '1', '2', '3', '4'] x solapes=0 minGap=3 xticks=['1', '20', '39', '58', '77', '96', '115', '134']
+     g1: area=105.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1389), ('', -0.1389)] barras=[('ACF muestral', 0.506)]
+  ar1-phi:phi100-dif: φ = 1.00r₁ = -0.0323r₁₀ = -0.1082varianza = 0.878proceso: ∇ de una serie caminata aleatoria (φ = 1): raíz unitaria  outputs=['1.00']
+     g0: area=137.8h leyenda=['∇y_t con φ = 1.00'] y=[-3, 3] yticks=['-3', '-2', '-1', '0', '1', '2', '3'] x solapes=0 minGap=3 xticks=['1', '20', '39', '58', '77', '96', '115', '134']
+     g1: area=105.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1389), ('', -0.1389)] barras=[('ACF muestral', 0.187)]
+  ar1-phi:phi105-dif: φ = 1.05r₁ = 0.9512r₁₀ = 0.6014varianza = 38125.613proceso: ∇ de una serie explosiva (φ > 1)  outputs=['1.05']
+     g0: area=137.8h leyenda=['∇y_t con φ = 1.05'] y=[-1000, 200] yticks=['-1000', '-800', '-600', '-400', '-200', '0', '200'] x solapes=0 minGap=4.2 xticks=['1', '21', '41', '61', '81', '101', '121', '141']
+     g1: area=105.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1389), ('', -0.1389)] barras=[('ACF muestral', 0.951)]
+  montecarlo-adf:inicial: None  outputs=[]
+     g0: area=155.8h leyenda=['Nivel nominal 5%', '% de falsos rechazos de la raíz unitaria'] y=[0, 20] yticks=['0', '4', '8', '12', '16', '20'] x solapes=0 minGap=23.7 xticks=['0.0', '0.5', '1.0', '2.0', '4.0'] rectas=[('Nivel nominal 5%', 5)] barras=[('% de falsos rechazos de la raíz unitaria', 17.6)]
+  diferenciacion:inicial: d = 0n = 138varianza = 338834.24r₁ = 0.9637ndiffs (R) = 1d de varianza mínima = 1  outputs=['0']
+     g0: area=137.8h leyenda=['Serie original'] y=[2000, 5000] yticks=['2000', '2500', '3000', '3500', '4000', '4500', '5000'] x solapes=0 minGap=9.6 xticks=['2015-01', '2017-12', '2020-11', '2023-10']
+     g1: area=105.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1668), ('', -0.1668)] barras=[('ACF muestral', 0.964)]
+  diferenciacion:trm-d0: d = 0n = 138varianza = 338834.24r₁ = 0.9637ndiffs (R) = 1d de varianza mínima = 1  outputs=['0']
+     g0: area=137.8h leyenda=['Serie original'] y=[2000, 5000] yticks=['2000', '2500', '3000', '3500', '4000', '4500', '5000'] x solapes=0 minGap=9.6 xticks=['2015-01', '2017-12', '2020-11', '2023-10']
+     g1: area=105.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1668), ('', -0.1668)] barras=[('ACF muestral', 0.964)]
+  diferenciacion:trm-d1: d = 1n = 137varianza = 14800.40r₁ = 0.0876ndiffs (R) = 1d de varianza mínima = 1  outputs=['1']
+     g0: area=137.8h leyenda=['∇ de la serie'] y=[-400, 500] yticks=['-400', '-200', '0', '200', '400'] x solapes=0 minGap=9.3 xticks=['2015-02', '2018-01', '2020-12', '2023-11']
+     g1: area=105.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1675), ('', -0.1675)] barras=[('ACF muestral', 0.19)]
+  diferenciacion:trm-d2: d = 2n = 136varianza = 26812.57r₁ = -0.4146ndiffs (R) = 1d de varianza mínima = 1  outputs=['2']
+     g0: area=137.8h leyenda=['∇^2 de la serie'] y=[-600, 600] yticks=['-600', '-400', '-200', '0', '200', '400', '600'] x solapes=0 minGap=7.4 xticks=['2015-03', '2018-01', '2020-11', '2023-09']
+     g1: area=105.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1681), ('', -0.1681)] barras=[('ACF muestral', 0.415)]
+  diferenciacion:trm-d3: d = 3n = 135varianza = 75469.03r₁ = -0.6023ndiffs (R) = 1d de varianza mínima = 1  outputs=['3']
+     g0: area=137.8h leyenda=['∇^3 de la serie'] y=[-1500, 1000] yticks=['-1500', '-1000', '-500', '0', '500', '1000'] x solapes=0 minGap=5.3 xticks=['2015-04', '2018-02', '2020-12', '2023-10']
+     g1: area=105.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1687), ('', -0.1687)] barras=[('ACF muestral', 0.602)]
+  diferenciacion:log_airpassengers-d0: d = 0n = 144varianza = 0.1949r₁ = 0.9537ndiffs (R) = 1d de varianza mínima = 1  outputs=['0']
+     g0: area=137.8h leyenda=['Serie original'] y=[4.6000000000000005, 6.6000000000000005] yticks=['4.6', '5.0', '5.4', '5.8', '6.2', '6.6'] x solapes=3 minGap=-1.5 xticks=['1949-01', '1951-06', '1953-11', '1956-04', '1958-09']
+     g1: area=105.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1633), ('', -0.1633)] barras=[('ACF muestral', 0.954)]
+  diferenciacion:log_airpassengers-d1: d = 1n = 143varianza = 0.01135r₁ = 0.1998ndiffs (R) = 1d de varianza mínima = 1  outputs=['1']
+     g0: area=137.8h leyenda=['∇ de la serie'] y=[-0.25, 0.25] yticks=['-0.25', '-0.15', '-0.05', '0.05', '0.15', '0.25'] x solapes=4 minGap=-2.2 xticks=['1949-02', '1951-07', '1953-12', '1956-05', '1958-10']
+     g1: area=105.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1639), ('', -0.1639)] barras=[('ACF muestral', 0.841)]
+  diferenciacion:log_airpassengers-d2: d = 2n = 142varianza = 0.01823r₁ = -0.2926ndiffs (R) = 1d de varianza mínima = 1  outputs=['2']
+     g0: area=137.8h leyenda=['∇^2 de la serie'] y=[-0.30000000000000004, 0.4] yticks=['-0.3', '-0.2', '-0.1', '0', '0.1', '0.2', '0.3', '0.4'] x solapes=4 minGap=-0.9 xticks=['1949-03', '1951-08', '1954-01', '1956-06', '1958-11']
+     g1: area=105.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1645), ('', -0.1645)] barras=[('ACF muestral', 0.787)]
+  diferenciacion:log_airpassengers-d3: d = 3n = 141varianza = 0.04691r₁ = -0.5335ndiffs (R) = 1d de varianza mínima = 1  outputs=['3']
+     g0: area=137.8h leyenda=['∇^3 de la serie'] y=[-0.6000000000000001, 0.6000000000000001] yticks=['-0.6', '-0.4', '-0.2', '0', '0.2', '0.4', '0.6'] x solapes=4 minGap=-1.5 xticks=['1949-04', '1951-09', '1954-02', '1956-07', '1958-12']
+     g1: area=105.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1651), ('', -0.1651)] barras=[('ACF muestral', 0.746)]
+  diferenciacion:caminata-d0: d = 0n = 200varianza = 17.92r₁ = 0.9612ndiffs (R) = 1d de varianza mínima = 1  outputs=['0']
+     g0: area=137.8h leyenda=['Serie original'] y=[-15, 10] yticks=['-15', '-10', '-5', '0', '5', '10'] x solapes=0 minGap=5.4 xticks=['1', '21', '41', '61', '81', '101', '121', '141']
+     g1: area=105.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF muestral', 0.961)]
+  diferenciacion:caminata-d1: d = 1n = 199varianza = 0.9727r₁ = -0.0749ndiffs (R) = 1d de varianza mínima = 1  outputs=['1']
+     g0: area=137.8h leyenda=['∇ de la serie'] y=[-3, 3] yticks=['-3', '-2', '-1', '0', '1', '2', '3'] x solapes=0 minGap=3.8 xticks=['2', '22', '42', '62', '82', '102', '122', '142']
+     g1: area=105.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1389), ('', -0.1389)] barras=[('ACF muestral', 0.115)]
+  diferenciacion:caminata-d2: d = 2n = 198varianza = 2.10r₁ = -0.5865ndiffs (R) = 1d de varianza mínima = 1  outputs=['2']
+     g0: area=137.8h leyenda=['∇^2 de la serie'] y=[-5, 4] yticks=['-5', '-3', '-1', '1', '3'] x solapes=3 minGap=1.9 xticks=['3', '21', '39', '57', '75', '93', '111', '129']
+     g1: area=105.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1393), ('', -0.1393)] barras=[('ACF muestral', 0.587)]
+  diferenciacion:caminata-d3: d = 3n = 197varianza = 6.67r₁ = -0.7168ndiffs (R) = 1d de varianza mínima = 1  outputs=['3']
+     g0: area=137.8h leyenda=['∇^3 de la serie'] y=[-6, 8] yticks=['-6', '-4', '-2', '0', '2', '4', '6', '8'] x solapes=1 minGap=2.9 xticks=['4', '24', '44', '64', '84', '104', '124', '144']
+     g1: area=105.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=4.2 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1396), ('', -0.1396)] barras=[('ACF muestral', 0.717)]
+  box-cox:inicial: λ = 1.00 (sin transformar, salvo un desplazamiento)CV de Guerrero = 0.53032λ óptimo (R) = -0.2947CV en el óptimo = 0.08149  outputs=['1.00']
+     g0: area=147.8h leyenda=['Box-Cox con λ = 1.00'] y=[100, 700] yticks=['100', '200', '300', '400', '500', '600', '700'] x solapes=3 minGap=-1.5 xticks=['1949-01', '1951-06', '1953-11', '1956-04', '1958-09']
+     g1: area=117.8h leyenda=['CV de Guerrero', 'λ elegido'] y=[0, 1] yticks=['0', '0.2', '0.4', '0.6', '0.8', '1.0'] x solapes=0 minGap=4 xticks=['-1.00', '-0.55', '-0.10', '0.35', '0.80', '1.25', '1.70']
+  box-cox:lam-1: λ = -1.00 (inversa)CV de Guerrero = 0.33497λ óptimo (R) = -0.2947CV en el óptimo = 0.08149  outputs=['-1.00']
+     g0: area=147.8h leyenda=['Box-Cox con λ = -1.00'] y=[0.99, 0.999] yticks=['0.990', '0.991', '0.992', '0.993', '0.994', '0.995', '0.996', '0.997', '0.998', '0.999'] x solapes=4 minGap=-4.2 xticks=['1949-01', '1951-06', '1953-11', '1956-04', '1958-09']
+     g1: area=117.8h leyenda=['CV de Guerrero', 'λ elegido'] y=[0, 1] yticks=['0', '0.2', '0.4', '0.6', '0.8', '1.0'] x solapes=0 minGap=4 xticks=['-1.00', '-0.55', '-0.10', '0.35', '0.80', '1.25', '1.70']
+  box-cox:lam-030: λ = -0.30CV de Guerrero = 0.08152λ óptimo (R) = -0.2947CV en el óptimo = 0.08149  outputs=['-0.30']
+     g0: area=147.8h leyenda=['Box-Cox con λ = -0.30'] y=[2.5, 2.85] yticks=['2.50', '2.55', '2.60', '2.65', '2.70', '2.75', '2.80', '2.85'] x solapes=4 minGap=-2.8 xticks=['1949-01', '1951-06', '1953-11', '1956-04', '1958-09']
+     g1: area=117.8h leyenda=['CV de Guerrero', 'λ elegido'] y=[0, 1] yticks=['0', '0.2', '0.4', '0.6', '0.8', '1.0'] x solapes=0 minGap=4 xticks=['-1.00', '-0.55', '-0.10', '0.35', '0.80', '1.25', '1.70']
+  box-cox:lam0: λ = 0.00 (logaritmo)CV de Guerrero = 0.15308λ óptimo (R) = -0.2947CV en el óptimo = 0.08149  outputs=['0.00']
+     g0: area=147.8h leyenda=['Box-Cox con λ = 0.00'] y=[4.6000000000000005, 6.6000000000000005] yticks=['4.6', '5.0', '5.4', '5.8', '6.2', '6.6'] x solapes=3 minGap=-1.5 xticks=['1949-01', '1951-06', '1953-11', '1956-04', '1958-09']
+     g1: area=117.8h leyenda=['CV de Guerrero', 'λ elegido'] y=[0, 1] yticks=['0', '0.2', '0.4', '0.6', '0.8', '1.0'] x solapes=0 minGap=4 xticks=['-1.00', '-0.55', '-0.10', '0.35', '0.80', '1.25', '1.70']
+  box-cox:lam050: λ = 0.50 (raíz cuadrada)CV de Guerrero = 0.34606λ óptimo (R) = -0.2947CV en el óptimo = 0.08149  outputs=['0.50']
+     g0: area=147.8h leyenda=['Box-Cox con λ = 0.50'] y=[15, 50] yticks=['15', '20', '25', '30', '35', '40', '45', '50'] x solapes=2 minGap=-0.1 xticks=['1949-01', '1951-06', '1953-11', '1956-04', '1958-09']
+     g1: area=117.8h leyenda=['CV de Guerrero', 'λ elegido'] y=[0, 1] yticks=['0', '0.2', '0.4', '0.6', '0.8', '1.0'] x solapes=0 minGap=4 xticks=['-1.00', '-0.55', '-0.10', '0.35', '0.80', '1.25', '1.70']
+  box-cox:lam2: λ = 2.00CV de Guerrero = 0.84632λ óptimo (R) = -0.2947CV en el óptimo = 0.08149  outputs=['2.00']
+     g0: area=147.8h leyenda=['Box-Cox con λ = 2.00'] y=[0, 200000] yticks=['0', '40\u202f000', '80\u202f000', '120\u202f000', '160\u202f000', '200\u202f000'] x solapes=4 minGap=-6.2 xticks=['1949-01', '1951-06', '1953-11', '1956-04', '1958-09']
+     g1: area=117.8h leyenda=['CV de Guerrero', 'λ elegido'] y=[0, 1] yticks=['0', '0.2', '0.4', '0.6', '0.8', '1.0'] x solapes=0 minGap=4 xticks=['-1.00', '-0.55', '-0.10', '0.35', '0.80', '1.25', '1.70']
+
+---- ancho 800
+  panel-estacionariedad:inicial: None  outputs=[]
+     g0: area=114.8h leyenda=['Ruido blanco'] y=[-3, 3] yticks=['-3', '-2', '-1', '0', '1', '2', '3'] x solapes=0 minGap=4.3 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=114.8h leyenda=['Caminata aleatoria'] y=[-15, 10] yticks=['-15', '-10', '-5', '0', '5', '10'] x solapes=0 minGap=3.8 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g2: area=114.8h leyenda=['AirPassengers'] y=[100, 700] yticks=['100', '200', '300', '400', '500', '600', '700'] x solapes=0 minGap=3 xticks=['1949-01', '1951-01', '1953-01', '1955-01', '1957-01', '1959-01']
+  ruido-blanco:inicial: T = 200banda = ±0.1386rezagos dentro de la banda: 24 de 24  outputs=[]
+     g0: area=134.8h leyenda=['Ruido blanco simulado'] y=[-3, 3] yticks=['-3', '-2', '-1', '0', '1', '2', '3'] x solapes=0 minGap=4.3 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=144.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.6', '-0.2', '0.2', '0.6', '1.0'] x solapes=0 minGap=8.1 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF', 0.115)]
+  correlogramas-comparados:inicial: None  outputs=[]
+     g0: area=94.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8.1 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF', 0.115)]
+     g1: area=94.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8.1 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF', 0.961)]
+     g2: area=94.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8.1 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1633), ('', -0.1633)] barras=[('ACF', 0.948)]
+  explorador-acf-pacf:inicial: T = 144banda = ±0.1633r₁ = 0.9480rezagos fuera de la banda: 24 de 24ndiffs = 1nsdiffs = 1  outputs=[]
+     g0: area=114.8h leyenda=['AirPassengers (nivel)'] y=[100, 700] yticks=['100', '200', '300', '400', '500', '600', '700'] x solapes=2 minGap=2.8 xticks=['1949-01', '1951-01', '1953-01', '1955-01', '1957-01', '1959-01']
+     g1: area=94.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1633), ('', -0.1633)] barras=[('ACF', 0.948)]
+     g2: area=94.8h leyenda=['Banda ±1.96/√T', 'PACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1633), ('', -0.1633)] barras=[('PACF', 0.948)]
+  explorador-acf-pacf:ruido_blanco: T = 200banda = ±0.1386r₁ = -0.0776rezagos fuera de la banda: 0 de 24ndiffs = 0nsdiffs = —  outputs=[]
+     g0: area=114.8h leyenda=['Ruido blanco simulado'] y=[-3, 3] yticks=['-3', '-2', '-1', '0', '1', '2', '3'] x solapes=0 minGap=4.3 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=94.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF', 0.115)]
+     g2: area=94.8h leyenda=['Banda ±1.96/√T', 'PACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('PACF', 0.115)]
+  explorador-acf-pacf:caminata: T = 200banda = ±0.1386r₁ = 0.9612rezagos fuera de la banda: 24 de 24ndiffs = 1nsdiffs = —  outputs=[]
+     g0: area=114.8h leyenda=['Caminata aleatoria simulada'] y=[-15, 10] yticks=['-15', '-10', '-5', '0', '5', '10'] x solapes=0 minGap=3.7 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=94.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF', 0.961)]
+     g2: area=94.8h leyenda=['Banda ±1.96/√T', 'PACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('PACF', 0.961)]
+  explorador-acf-pacf:log_airpassengers: T = 144banda = ±0.1633r₁ = 0.9537rezagos fuera de la banda: 24 de 24ndiffs = 1nsdiffs = 1  outputs=[]
+     g0: area=114.8h leyenda=['log(AirPassengers)'] y=[4.5, 6.6000000000000005] yticks=['4.5', '5.0', '5.5', '6.0', '6.5'] x solapes=2 minGap=2.8 xticks=['1949-01', '1951-01', '1953-01', '1955-01', '1957-01', '1959-01']
+     g1: area=94.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1633), ('', -0.1633)] barras=[('ACF', 0.954)]
+     g2: area=94.8h leyenda=['Banda ±1.96/√T', 'PACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1633), ('', -0.1633)] barras=[('PACF', 0.954)]
+  explorador-acf-pacf:d_log_airpassengers: T = 143banda = ±0.1639r₁ = 0.1998rezagos fuera de la banda: 10 de 24ndiffs = 0nsdiffs = 1  outputs=[]
+     g0: area=114.8h leyenda=['Diferencia regular de log(AirPassengers)'] y=[-0.30000000000000004, 0.30000000000000004] yticks=['-0.3', '-0.2', '-0.1', '0', '0.1', '0.2', '0.3'] x solapes=5 minGap=-0.3 xticks=['1949-02', '1951-02', '1953-02', '1955-02', '1957-02', '1959-02']
+     g1: area=94.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1639), ('', -0.1639)] barras=[('ACF', 0.841)]
+     g2: area=94.8h leyenda=['Banda ±1.96/√T', 'PACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1639), ('', -0.1639)] barras=[('PACF', 0.586)]
+  explorador-acf-pacf:dd_log_airpassengers: T = 131banda = ±0.1712r₁ = -0.3411rezagos fuera de la banda: 5 de 24ndiffs = 0nsdiffs = 0  outputs=[]
+     g0: area=114.8h leyenda=['Diferencia regular y estacional de log(AirPassengers)'] y=[-0.15000000000000002, 0.15000000000000002] yticks=['-0.15', '-0.10', '-0.05', '0', '0.05', '0.10', '0.15'] x solapes=5 minGap=-2.1 xticks=['1950-02', '1951-12', '1953-10', '1955-08', '1957-06', '1959-04']
+     g1: area=94.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1712), ('', -0.1712)] barras=[('ACF', 0.387)]
+     g2: area=94.8h leyenda=['Banda ±1.96/√T', 'PACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1712), ('', -0.1712)] barras=[('PACF', 0.341)]
+  explorador-acf-pacf:trm: T = 138banda = ±0.1668r₁ = 0.9637rezagos fuera de la banda: 24 de 24ndiffs = 1nsdiffs = 0  outputs=[]
+     g0: area=114.8h leyenda=['TRM mensual (COP/USD)'] y=[2000, 5000] yticks=['2000', '2500', '3000', '3500', '4000', '4500', '5000'] x solapes=0 minGap=6.1 xticks=['2015-01', '2017-05', '2019-09', '2022-01', '2024-05']
+     g1: area=94.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1668), ('', -0.1668)] barras=[('ACF', 0.964)]
+     g2: area=94.8h leyenda=['Banda ±1.96/√T', 'PACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1668), ('', -0.1668)] barras=[('PACF', 0.964)]
+  explorador-acf-pacf:d_trm: T = 137banda = ±0.1675r₁ = 0.0876rezagos fuera de la banda: 1 de 24ndiffs = 0nsdiffs = 0  outputs=[]
+     g0: area=114.8h leyenda=['Primera diferencia de la TRM'] y=[-400, 600] yticks=['-400', '-200', '0', '200', '400', '600'] x solapes=0 minGap=5.1 xticks=['2015-02', '2017-06', '2019-10', '2022-02', '2024-06']
+     g1: area=94.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1675), ('', -0.1675)] barras=[('ACF', 0.19)]
+     g2: area=94.8h leyenda=['Banda ±1.96/√T', 'PACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1675), ('', -0.1675)] barras=[('PACF', 0.171)]
+  ar1-phi:inicial: φ = 0.70r₁ = 0.6315r₁₀ = -0.0969varianza = 1.467proceso: estacionaria (|φ| < 1)  outputs=['0.70']
+     g0: area=134.8h leyenda=['y_t con φ = 0.70'] y=[-4, 3] yticks=['-4', '-3', '-2', '-1', '0', '1', '2', '3'] x solapes=0 minGap=4.3 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF muestral', 0.631)]
+  ar1-phi:phi0: φ = 0.00r₁ = -0.0325r₁₀ = -0.1085varianza = 0.874proceso: estacionaria (|φ| < 1)  outputs=['0.00']
+     g0: area=134.8h leyenda=['y_t con φ = 0.00'] y=[-3, 3] yticks=['-3', '-2', '-1', '0', '1', '2', '3'] x solapes=0 minGap=4.3 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF muestral', 0.187)]
+  ar1-phi:phi050: φ = 0.50r₁ = 0.4355r₁₀ = -0.0784varianza = 1.080proceso: estacionaria (|φ| < 1)  outputs=['0.50']
+     g0: area=134.8h leyenda=['y_t con φ = 0.50'] y=[-4, 3] yticks=['-4', '-3', '-2', '-1', '0', '1', '2', '3'] x solapes=0 minGap=4.3 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF muestral', 0.436)]
+  ar1-phi:phi095: φ = 0.95r₁ = 0.8856r₁₀ = 0.2299varianza = 4.148proceso: estacionaria (|φ| < 1)  outputs=['0.95']
+     g0: area=134.8h leyenda=['y_t con φ = 0.95'] y=[-7, 3] yticks=['-7', '-5', '-3', '-1', '1', '3'] x solapes=0 minGap=4.3 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF muestral', 0.886)]
+  ar1-phi:phi100: φ = 1.00r₁ = 0.9752r₁₀ = 0.7693varianza = 24.267proceso: caminata aleatoria (φ = 1): raíz unitaria  outputs=['1.00']
+     g0: area=134.8h leyenda=['y_t con φ = 1.00'] y=[-20, 5] yticks=['-20', '-15', '-10', '-5', '0', '5'] x solapes=0 minGap=3.7 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF muestral', 0.975)]
+  ar1-phi:phi105: φ = 1.05r₁ = 0.9511r₁₀ = 0.6011varianza = 16760012.970proceso: explosiva (φ > 1)  outputs=['1.05']
+     g0: area=134.8h leyenda=['y_t con φ = 1.05'] y=[-20000, 0] yticks=['-20\u202f000', '-16\u202f000', '-12\u202f000', '-8000', '-4000', '0'] x solapes=0 minGap=4.6 xticks=['1', '20', '39', '58', '77', '96', '115', '134']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF muestral', 0.951)]
+  ar1-phi:phi0-dif: φ = 0.00r₁ = -0.5063r₁₀ = -0.1507varianza = 1.805proceso: ∇ de una serie estacionaria (|φ| < 1)  outputs=['0.00']
+     g0: area=134.8h leyenda=['∇y_t con φ = 0.00'] y=[-4, 4] yticks=['-4', '-3', '-2', '-1', '0', '1', '2', '3', '4'] x solapes=0 minGap=4.4 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1389), ('', -0.1389)] barras=[('ACF muestral', 0.506)]
+  ar1-phi:phi100-dif: φ = 1.00r₁ = -0.0323r₁₀ = -0.1082varianza = 0.878proceso: ∇ de una serie caminata aleatoria (φ = 1): raíz unitaria  outputs=['1.00']
+     g0: area=134.8h leyenda=['∇y_t con φ = 1.00'] y=[-3, 3] yticks=['-3', '-2', '-1', '0', '1', '2', '3'] x solapes=0 minGap=4.4 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1389), ('', -0.1389)] barras=[('ACF muestral', 0.187)]
+  ar1-phi:phi105-dif: φ = 1.05r₁ = 0.9512r₁₀ = 0.6014varianza = 38125.613proceso: ∇ de una serie explosiva (φ > 1)  outputs=['1.05']
+     g0: area=134.8h leyenda=['∇y_t con φ = 1.05'] y=[-1000, 200] yticks=['-1000', '-800', '-600', '-400', '-200', '0', '200'] x solapes=1 minGap=2.7 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1389), ('', -0.1389)] barras=[('ACF muestral', 0.951)]
+  montecarlo-adf:inicial: None  outputs=[]
+     g0: area=152.8h leyenda=['Nivel nominal 5%', '% de falsos rechazos de la raíz unitaria'] y=[0, 20] yticks=['0', '4', '8', '12', '16', '20'] x solapes=0 minGap=32.9 xticks=['0.0', '0.5', '1.0', '2.0', '4.0'] rectas=[('Nivel nominal 5%', 5)] barras=[('% de falsos rechazos de la raíz unitaria', 17.6)]
+  diferenciacion:inicial: d = 0n = 138varianza = 338834.24r₁ = 0.9637ndiffs (R) = 1d de varianza mínima = 1  outputs=['0']
+     g0: area=134.8h leyenda=['Serie original'] y=[2000, 5000] yticks=['2000', '2500', '3000', '3500', '4000', '4500', '5000'] x solapes=0 minGap=6.1 xticks=['2015-01', '2017-05', '2019-09', '2022-01', '2024-05']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1668), ('', -0.1668)] barras=[('ACF muestral', 0.964)]
+  diferenciacion:trm-d0: d = 0n = 138varianza = 338834.24r₁ = 0.9637ndiffs (R) = 1d de varianza mínima = 1  outputs=['0']
+     g0: area=134.8h leyenda=['Serie original'] y=[2000, 5000] yticks=['2000', '2500', '3000', '3500', '4000', '4500', '5000'] x solapes=0 minGap=6.1 xticks=['2015-01', '2017-05', '2019-09', '2022-01', '2024-05']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1668), ('', -0.1668)] barras=[('ACF muestral', 0.964)]
+  diferenciacion:trm-d1: d = 1n = 137varianza = 14800.40r₁ = 0.0876ndiffs (R) = 1d de varianza mínima = 1  outputs=['1']
+     g0: area=134.8h leyenda=['∇ de la serie'] y=[-400, 500] yticks=['-400', '-200', '0', '200', '400'] x solapes=0 minGap=5.1 xticks=['2015-02', '2017-06', '2019-10', '2022-02', '2024-06']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1675), ('', -0.1675)] barras=[('ACF muestral', 0.19)]
+  diferenciacion:trm-d2: d = 2n = 136varianza = 26812.57r₁ = -0.4146ndiffs (R) = 1d de varianza mínima = 1  outputs=['2']
+     g0: area=134.8h leyenda=['∇^2 de la serie'] y=[-600, 600] yticks=['-600', '-400', '-200', '0', '200', '400', '600'] x solapes=0 minGap=5.7 xticks=['2015-03', '2017-07', '2019-11', '2022-03', '2024-07']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1681), ('', -0.1681)] barras=[('ACF muestral', 0.415)]
+  diferenciacion:trm-d3: d = 3n = 135varianza = 75469.03r₁ = -0.6023ndiffs (R) = 1d de varianza mínima = 1  outputs=['3']
+     g0: area=134.8h leyenda=['∇^3 de la serie'] y=[-1500, 1000] yticks=['-1500', '-1000', '-500', '0', '500', '1000'] x solapes=0 minGap=3.6 xticks=['2015-04', '2017-07', '2019-10', '2022-01', '2024-04']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1687), ('', -0.1687)] barras=[('ACF muestral', 0.602)]
+  diferenciacion:log_airpassengers-d0: d = 0n = 144varianza = 0.1949r₁ = 0.9537ndiffs (R) = 1d de varianza mínima = 1  outputs=['0']
+     g0: area=134.8h leyenda=['Serie original'] y=[4.6000000000000005, 6.6000000000000005] yticks=['4.6', '5.0', '5.4', '5.8', '6.2', '6.6'] x solapes=2 minGap=2.8 xticks=['1949-01', '1951-01', '1953-01', '1955-01', '1957-01', '1959-01']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1633), ('', -0.1633)] barras=[('ACF muestral', 0.954)]
+  diferenciacion:log_airpassengers-d1: d = 1n = 143varianza = 0.01135r₁ = 0.1998ndiffs (R) = 1d de varianza mínima = 1  outputs=['1']
+     g0: area=134.8h leyenda=['∇ de la serie'] y=[-0.25, 0.25] yticks=['-0.25', '-0.15', '-0.05', '0.05', '0.15', '0.25'] x solapes=5 minGap=-1.4 xticks=['1949-02', '1951-02', '1953-02', '1955-02', '1957-02', '1959-02']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1639), ('', -0.1639)] barras=[('ACF muestral', 0.841)]
+  diferenciacion:log_airpassengers-d2: d = 2n = 142varianza = 0.01823r₁ = -0.2926ndiffs (R) = 1d de varianza mínima = 1  outputs=['2']
+     g0: area=134.8h leyenda=['∇^2 de la serie'] y=[-0.30000000000000004, 0.4] yticks=['-0.3', '-0.2', '-0.1', '0', '0.1', '0.2', '0.3', '0.4'] x solapes=5 minGap=0.2 xticks=['1949-03', '1951-03', '1953-03', '1955-03', '1957-03', '1959-03']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1645), ('', -0.1645)] barras=[('ACF muestral', 0.787)]
+  diferenciacion:log_airpassengers-d3: d = 3n = 141varianza = 0.04691r₁ = -0.5335ndiffs (R) = 1d de varianza mínima = 1  outputs=['3']
+     g0: area=134.8h leyenda=['∇^3 de la serie'] y=[-0.6000000000000001, 0.6000000000000001] yticks=['-0.6', '-0.4', '-0.2', '0', '0.2', '0.4', '0.6'] x solapes=5 minGap=-0.7 xticks=['1949-04', '1951-04', '1953-04', '1955-04', '1957-04', '1959-04']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1651), ('', -0.1651)] barras=[('ACF muestral', 0.746)]
+  diferenciacion:caminata-d0: d = 0n = 200varianza = 17.92r₁ = 0.9612ndiffs (R) = 1d de varianza mínima = 1  outputs=['0']
+     g0: area=134.8h leyenda=['Serie original'] y=[-15, 10] yticks=['-15', '-10', '-5', '0', '5', '10'] x solapes=0 minGap=3.7 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF muestral', 0.961)]
+  diferenciacion:caminata-d1: d = 1n = 199varianza = 0.9727r₁ = -0.0749ndiffs (R) = 1d de varianza mínima = 1  outputs=['1']
+     g0: area=134.8h leyenda=['∇ de la serie'] y=[-3, 3] yticks=['-3', '-2', '-1', '0', '1', '2', '3'] x solapes=0 minGap=4.7 xticks=['2', '19', '36', '53', '70', '87', '104', '121']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1389), ('', -0.1389)] barras=[('ACF muestral', 0.115)]
+  diferenciacion:caminata-d2: d = 2n = 198varianza = 2.10r₁ = -0.5865ndiffs (R) = 1d de varianza mínima = 1  outputs=['2']
+     g0: area=134.8h leyenda=['∇^2 de la serie'] y=[-5, 4] yticks=['-5', '-3', '-1', '1', '3'] x solapes=0 minGap=4.6 xticks=['3', '20', '37', '54', '71', '88', '105', '122']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1393), ('', -0.1393)] barras=[('ACF muestral', 0.587)]
+  diferenciacion:caminata-d3: d = 3n = 197varianza = 6.67r₁ = -0.7168ndiffs (R) = 1d de varianza mínima = 1  outputs=['3']
+     g0: area=134.8h leyenda=['∇^3 de la serie'] y=[-6, 8] yticks=['-6', '-4', '-2', '0', '2', '4', '6', '8'] x solapes=0 minGap=4.5 xticks=['4', '21', '38', '55', '72', '89', '106', '123']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=8 xticks=['1', '3', '5', '7', '9', '11', '13', '15'] rectas=[('Banda ±1.96/√T', 0.1396), ('', -0.1396)] barras=[('ACF muestral', 0.717)]
+  box-cox:inicial: λ = 1.00 (sin transformar, salvo un desplazamiento)CV de Guerrero = 0.53032λ óptimo (R) = -0.2947CV en el óptimo = 0.08149  outputs=['1.00']
+     g0: area=144.8h leyenda=['Box-Cox con λ = 1.00'] y=[100, 700] yticks=['100', '200', '300', '400', '500', '600', '700'] x solapes=2 minGap=2.8 xticks=['1949-01', '1951-01', '1953-01', '1955-01', '1957-01', '1959-01']
+     g1: area=114.8h leyenda=['CV de Guerrero', 'λ elegido'] y=[0, 1] yticks=['0', '0.2', '0.4', '0.6', '0.8', '1.0'] x solapes=2 minGap=1.4 xticks=['-1.00', '-0.65', '-0.30', '0.05', '0.40', '0.75', '1.10', '1.45']
+  box-cox:lam-1: λ = -1.00 (inversa)CV de Guerrero = 0.33497λ óptimo (R) = -0.2947CV en el óptimo = 0.08149  outputs=['-1.00']
+     g0: area=144.8h leyenda=['Box-Cox con λ = -1.00'] y=[0.99, 0.999] yticks=['0.990', '0.992', '0.994', '0.996', '0.998'] x solapes=5 minGap=0.5 xticks=['1949-01', '1951-01', '1953-01', '1955-01', '1957-01', '1959-01']
+     g1: area=114.8h leyenda=['CV de Guerrero', 'λ elegido'] y=[0, 1] yticks=['0', '0.2', '0.4', '0.6', '0.8', '1.0'] x solapes=2 minGap=1.4 xticks=['-1.00', '-0.65', '-0.30', '0.05', '0.40', '0.75', '1.10', '1.45']
+  box-cox:lam-030: λ = -0.30CV de Guerrero = 0.08152λ óptimo (R) = -0.2947CV en el óptimo = 0.08149  outputs=['-0.30']
+     g0: area=144.8h leyenda=['Box-Cox con λ = -0.30'] y=[2.5, 2.85] yticks=['2.50', '2.55', '2.60', '2.65', '2.70', '2.75', '2.80', '2.85'] x solapes=5 minGap=1.7 xticks=['1949-01', '1951-01', '1953-01', '1955-01', '1957-01', '1959-01']
+     g1: area=114.8h leyenda=['CV de Guerrero', 'λ elegido'] y=[0, 1] yticks=['0', '0.2', '0.4', '0.6', '0.8', '1.0'] x solapes=2 minGap=1.4 xticks=['-1.00', '-0.65', '-0.30', '0.05', '0.40', '0.75', '1.10', '1.45']
+  box-cox:lam0: λ = 0.00 (logaritmo)CV de Guerrero = 0.15308λ óptimo (R) = -0.2947CV en el óptimo = 0.08149  outputs=['0.00']
+     g0: area=144.8h leyenda=['Box-Cox con λ = 0.00'] y=[4.6000000000000005, 6.6000000000000005] yticks=['4.6', '5.0', '5.4', '5.8', '6.2', '6.6'] x solapes=2 minGap=2.8 xticks=['1949-01', '1951-01', '1953-01', '1955-01', '1957-01', '1959-01']
+     g1: area=114.8h leyenda=['CV de Guerrero', 'λ elegido'] y=[0, 1] yticks=['0', '0.2', '0.4', '0.6', '0.8', '1.0'] x solapes=2 minGap=1.4 xticks=['-1.00', '-0.65', '-0.30', '0.05', '0.40', '0.75', '1.10', '1.45']
+  box-cox:lam050: λ = 0.50 (raíz cuadrada)CV de Guerrero = 0.34606λ óptimo (R) = -0.2947CV en el óptimo = 0.08149  outputs=['0.50']
+     g0: area=144.8h leyenda=['Box-Cox con λ = 0.50'] y=[15, 50] yticks=['15', '20', '25', '30', '35', '40', '45', '50'] x solapes=0 minGap=3.9 xticks=['1949-01', '1951-01', '1953-01', '1955-01', '1957-01', '1959-01']
+     g1: area=114.8h leyenda=['CV de Guerrero', 'λ elegido'] y=[0, 1] yticks=['0', '0.2', '0.4', '0.6', '0.8', '1.0'] x solapes=2 minGap=1.4 xticks=['-1.00', '-0.65', '-0.30', '0.05', '0.40', '0.75', '1.10', '1.45']
+  box-cox:lam2: λ = 2.00CV de Guerrero = 0.84632λ óptimo (R) = -0.2947CV en el óptimo = 0.08149  outputs=['2.00']
+     g0: area=144.8h leyenda=['Box-Cox con λ = 2.00'] y=[0, 200000] yticks=['0', '40\u202f000', '80\u202f000', '120\u202f000', '160\u202f000', '200\u202f000'] x solapes=5 minGap=-1.1 xticks=['1949-01', '1951-01', '1953-01', '1955-01', '1957-01', '1959-01']
+     g1: area=114.8h leyenda=['CV de Guerrero', 'λ elegido'] y=[0, 1] yticks=['0', '0.2', '0.4', '0.6', '0.8', '1.0'] x solapes=2 minGap=1.4 xticks=['-1.00', '-0.65', '-0.30', '0.05', '0.40', '0.75', '1.10', '1.45']
+
+---- ancho 1200
+  panel-estacionariedad:inicial: None  outputs=[]
+     g0: area=114.8h leyenda=['Ruido blanco'] y=[-3, 3] yticks=['-3', '-2', '-1', '0', '1', '2', '3'] x solapes=0 minGap=37.2 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=114.8h leyenda=['Caminata aleatoria'] y=[-15, 10] yticks=['-15', '-10', '-5', '0', '5', '10'] x solapes=0 minGap=36.6 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g2: area=114.8h leyenda=['AirPassengers'] y=[100, 700] yticks=['100', '200', '300', '400', '500', '600', '700'] x solapes=0 minGap=13.1 xticks=['1949-01', '1950-01', '1951-01', '1952-01', '1953-01', '1954-01', '1955-01', '1956-01']
+  ruido-blanco:inicial: T = 200banda = ±0.1386rezagos dentro de la banda: 24 de 24  outputs=[]
+     g0: area=134.8h leyenda=['Ruido blanco simulado'] y=[-3, 3] yticks=['-3', '-2', '-1', '0', '1', '2', '3'] x solapes=0 minGap=37.2 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=144.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.6', '-0.2', '0.2', '0.6', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF', 0.115)]
+  correlogramas-comparados:inicial: None  outputs=[]
+     g0: area=94.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF', 0.115)]
+     g1: area=94.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF', 0.961)]
+     g2: area=94.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1633), ('', -0.1633)] barras=[('ACF', 0.948)]
+  explorador-acf-pacf:inicial: T = 144banda = ±0.1633r₁ = 0.9480rezagos fuera de la banda: 24 de 24ndiffs = 1nsdiffs = 1  outputs=[]
+     g0: area=114.8h leyenda=['AirPassengers (nivel)'] y=[100, 700] yticks=['100', '200', '300', '400', '500', '600', '700'] x solapes=0 minGap=13 xticks=['1949-01', '1950-01', '1951-01', '1952-01', '1953-01', '1954-01', '1955-01', '1956-01']
+     g1: area=94.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1633), ('', -0.1633)] barras=[('ACF', 0.948)]
+     g2: area=94.8h leyenda=['Banda ±1.96/√T', 'PACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1633), ('', -0.1633)] barras=[('PACF', 0.948)]
+  explorador-acf-pacf:ruido_blanco: T = 200banda = ±0.1386r₁ = -0.0776rezagos fuera de la banda: 0 de 24ndiffs = 0nsdiffs = —  outputs=[]
+     g0: area=114.8h leyenda=['Ruido blanco simulado'] y=[-3, 3] yticks=['-3', '-2', '-1', '0', '1', '2', '3'] x solapes=0 minGap=37.1 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=94.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF', 0.115)]
+     g2: area=94.8h leyenda=['Banda ±1.96/√T', 'PACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('PACF', 0.115)]
+  explorador-acf-pacf:caminata: T = 200banda = ±0.1386r₁ = 0.9612rezagos fuera de la banda: 24 de 24ndiffs = 1nsdiffs = —  outputs=[]
+     g0: area=114.8h leyenda=['Caminata aleatoria simulada'] y=[-15, 10] yticks=['-15', '-10', '-5', '0', '5', '10'] x solapes=0 minGap=36.5 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=94.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF', 0.961)]
+     g2: area=94.8h leyenda=['Banda ±1.96/√T', 'PACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('PACF', 0.961)]
+  explorador-acf-pacf:log_airpassengers: T = 144banda = ±0.1633r₁ = 0.9537rezagos fuera de la banda: 24 de 24ndiffs = 1nsdiffs = 1  outputs=[]
+     g0: area=114.8h leyenda=['log(AirPassengers)'] y=[4.5, 6.6000000000000005] yticks=['4.5', '5.0', '5.5', '6.0', '6.5'] x solapes=0 minGap=13 xticks=['1949-01', '1950-01', '1951-01', '1952-01', '1953-01', '1954-01', '1955-01', '1956-01']
+     g1: area=94.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1633), ('', -0.1633)] barras=[('ACF', 0.954)]
+     g2: area=94.8h leyenda=['Banda ±1.96/√T', 'PACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1633), ('', -0.1633)] barras=[('PACF', 0.954)]
+  explorador-acf-pacf:d_log_airpassengers: T = 143banda = ±0.1639r₁ = 0.1998rezagos fuera de la banda: 10 de 24ndiffs = 0nsdiffs = 1  outputs=[]
+     g0: area=114.8h leyenda=['Diferencia regular de log(AirPassengers)'] y=[-0.30000000000000004, 0.30000000000000004] yticks=['-0.3', '-0.2', '-0.1', '0', '0.1', '0.2', '0.3'] x solapes=0 minGap=10.6 xticks=['1949-02', '1950-02', '1951-02', '1952-02', '1953-02', '1954-02', '1955-02', '1956-02']
+     g1: area=94.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1639), ('', -0.1639)] barras=[('ACF', 0.841)]
+     g2: area=94.8h leyenda=['Banda ±1.96/√T', 'PACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1639), ('', -0.1639)] barras=[('PACF', 0.586)]
+  explorador-acf-pacf:dd_log_airpassengers: T = 131banda = ±0.1712r₁ = -0.3411rezagos fuera de la banda: 5 de 24ndiffs = 0nsdiffs = 0  outputs=[]
+     g0: area=114.8h leyenda=['Diferencia regular y estacional de log(AirPassengers)'] y=[-0.15000000000000002, 0.15000000000000002] yticks=['-0.15', '-0.10', '-0.05', '0', '0.05', '0.10', '0.15'] x solapes=0 minGap=9.8 xticks=['1950-02', '1951-01', '1951-12', '1952-11', '1953-10', '1954-09', '1955-08', '1956-07']
+     g1: area=94.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1712), ('', -0.1712)] barras=[('ACF', 0.387)]
+     g2: area=94.8h leyenda=['Banda ±1.96/√T', 'PACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1712), ('', -0.1712)] barras=[('PACF', 0.341)]
+  explorador-acf-pacf:trm: T = 138banda = ±0.1668r₁ = 0.9637rezagos fuera de la banda: 24 de 24ndiffs = 1nsdiffs = 0  outputs=[]
+     g0: area=114.8h leyenda=['TRM mensual (COP/USD)'] y=[2000, 5000] yticks=['2000', '2500', '3000', '3500', '4000', '4500', '5000'] x solapes=0 minGap=12.7 xticks=['2015-01', '2016-01', '2017-01', '2018-01', '2019-01', '2020-01', '2021-01', '2022-01']
+     g1: area=94.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1668), ('', -0.1668)] barras=[('ACF', 0.964)]
+     g2: area=94.8h leyenda=['Banda ±1.96/√T', 'PACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1668), ('', -0.1668)] barras=[('PACF', 0.964)]
+  explorador-acf-pacf:d_trm: T = 137banda = ±0.1675r₁ = 0.0876rezagos fuera de la banda: 1 de 24ndiffs = 0nsdiffs = 0  outputs=[]
+     g0: area=114.8h leyenda=['Primera diferencia de la TRM'] y=[-400, 600] yticks=['-400', '-200', '0', '200', '400', '600'] x solapes=0 minGap=10.3 xticks=['2015-02', '2016-02', '2017-02', '2018-02', '2019-02', '2020-02', '2021-02', '2022-02']
+     g1: area=94.8h leyenda=['Banda ±1.96/√T', 'ACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1675), ('', -0.1675)] barras=[('ACF', 0.19)]
+     g2: area=94.8h leyenda=['Banda ±1.96/√T', 'PACF'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1675), ('', -0.1675)] barras=[('PACF', 0.171)]
+  ar1-phi:inicial: φ = 0.70r₁ = 0.6315r₁₀ = -0.0969varianza = 1.467proceso: estacionaria (|φ| < 1)  outputs=['0.70']
+     g0: area=134.8h leyenda=['y_t con φ = 0.70'] y=[-4, 3] yticks=['-4', '-3', '-2', '-1', '0', '1', '2', '3'] x solapes=0 minGap=37.1 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF muestral', 0.631)]
+  ar1-phi:phi0: φ = 0.00r₁ = -0.0325r₁₀ = -0.1085varianza = 0.874proceso: estacionaria (|φ| < 1)  outputs=['0.00']
+     g0: area=134.8h leyenda=['y_t con φ = 0.00'] y=[-3, 3] yticks=['-3', '-2', '-1', '0', '1', '2', '3'] x solapes=0 minGap=37.1 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF muestral', 0.187)]
+  ar1-phi:phi050: φ = 0.50r₁ = 0.4355r₁₀ = -0.0784varianza = 1.080proceso: estacionaria (|φ| < 1)  outputs=['0.50']
+     g0: area=134.8h leyenda=['y_t con φ = 0.50'] y=[-4, 3] yticks=['-4', '-3', '-2', '-1', '0', '1', '2', '3'] x solapes=0 minGap=37.1 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF muestral', 0.436)]
+  ar1-phi:phi095: φ = 0.95r₁ = 0.8856r₁₀ = 0.2299varianza = 4.148proceso: estacionaria (|φ| < 1)  outputs=['0.95']
+     g0: area=134.8h leyenda=['y_t con φ = 0.95'] y=[-7, 3] yticks=['-7', '-5', '-3', '-1', '1', '3'] x solapes=0 minGap=37.1 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF muestral', 0.886)]
+  ar1-phi:phi100: φ = 1.00r₁ = 0.9752r₁₀ = 0.7693varianza = 24.267proceso: caminata aleatoria (φ = 1): raíz unitaria  outputs=['1.00']
+     g0: area=134.8h leyenda=['y_t con φ = 1.00'] y=[-20, 5] yticks=['-20', '-15', '-10', '-5', '0', '5'] x solapes=0 minGap=36.5 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF muestral', 0.975)]
+  ar1-phi:phi105: φ = 1.05r₁ = 0.9511r₁₀ = 0.6011varianza = 16760012.970proceso: explosiva (φ > 1)  outputs=['1.05']
+     g0: area=134.8h leyenda=['y_t con φ = 1.05'] y=[-20000, 0] yticks=['-20\u202f000', '-16\u202f000', '-12\u202f000', '-8000', '-4000', '0'] x solapes=0 minGap=34.5 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF muestral', 0.951)]
+  ar1-phi:phi0-dif: φ = 0.00r₁ = -0.5063r₁₀ = -0.1507varianza = 1.805proceso: ∇ de una serie estacionaria (|φ| < 1)  outputs=['0.00']
+     g0: area=134.8h leyenda=['∇y_t con φ = 0.00'] y=[-4, 4] yticks=['-4', '-3', '-2', '-1', '0', '1', '2', '3', '4'] x solapes=0 minGap=37.4 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1389), ('', -0.1389)] barras=[('ACF muestral', 0.506)]
+  ar1-phi:phi100-dif: φ = 1.00r₁ = -0.0323r₁₀ = -0.1082varianza = 0.878proceso: ∇ de una serie caminata aleatoria (φ = 1): raíz unitaria  outputs=['1.00']
+     g0: area=134.8h leyenda=['∇y_t con φ = 1.00'] y=[-3, 3] yticks=['-3', '-2', '-1', '0', '1', '2', '3'] x solapes=0 minGap=37.4 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1389), ('', -0.1389)] barras=[('ACF muestral', 0.187)]
+  ar1-phi:phi105-dif: φ = 1.05r₁ = 0.9512r₁₀ = 0.6014varianza = 38125.613proceso: ∇ de una serie explosiva (φ > 1)  outputs=['1.05']
+     g0: area=134.8h leyenda=['∇y_t con φ = 1.05'] y=[-1000, 200] yticks=['-1000', '-800', '-600', '-400', '-200', '0', '200'] x solapes=0 minGap=35.7 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1389), ('', -0.1389)] barras=[('ACF muestral', 0.951)]
+  montecarlo-adf:inicial: None  outputs=[]
+     g0: area=174.8h leyenda=['Nivel nominal 5%', '% de falsos rechazos de la raíz unitaria'] y=[0, 20] yticks=['0', '2', '4', '6', '8', '10', '12', '14', '16', '18'] x solapes=0 minGap=109.7 xticks=['0.0', '0.5', '1.0', '2.0', '4.0'] rectas=[('Nivel nominal 5%', 5)] barras=[('% de falsos rechazos de la raíz unitaria', 17.6)]
+  diferenciacion:inicial: d = 0n = 138varianza = 338834.24r₁ = 0.9637ndiffs (R) = 1d de varianza mínima = 1  outputs=['0']
+     g0: area=134.8h leyenda=['Serie original'] y=[2000, 5000] yticks=['2000', '2500', '3000', '3500', '4000', '4500', '5000'] x solapes=0 minGap=12.7 xticks=['2015-01', '2016-01', '2017-01', '2018-01', '2019-01', '2020-01', '2021-01', '2022-01']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1668), ('', -0.1668)] barras=[('ACF muestral', 0.964)]
+  diferenciacion:trm-d0: d = 0n = 138varianza = 338834.24r₁ = 0.9637ndiffs (R) = 1d de varianza mínima = 1  outputs=['0']
+     g0: area=134.8h leyenda=['Serie original'] y=[2000, 5000] yticks=['2000', '2500', '3000', '3500', '4000', '4500', '5000'] x solapes=0 minGap=12.7 xticks=['2015-01', '2016-01', '2017-01', '2018-01', '2019-01', '2020-01', '2021-01', '2022-01']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1668), ('', -0.1668)] barras=[('ACF muestral', 0.964)]
+  diferenciacion:trm-d1: d = 1n = 137varianza = 14800.40r₁ = 0.0876ndiffs (R) = 1d de varianza mínima = 1  outputs=['1']
+     g0: area=134.8h leyenda=['∇ de la serie'] y=[-400, 500] yticks=['-400', '-200', '0', '200', '400'] x solapes=0 minGap=10.3 xticks=['2015-02', '2016-02', '2017-02', '2018-02', '2019-02', '2020-02', '2021-02', '2022-02']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1675), ('', -0.1675)] barras=[('ACF muestral', 0.19)]
+  diferenciacion:trm-d2: d = 2n = 136varianza = 26812.57r₁ = -0.4146ndiffs (R) = 1d de varianza mínima = 1  outputs=['2']
+     g0: area=134.8h leyenda=['∇^2 de la serie'] y=[-600, 600] yticks=['-600', '-400', '-200', '0', '200', '400', '600'] x solapes=0 minGap=10.5 xticks=['2015-03', '2016-03', '2017-03', '2018-03', '2019-03', '2020-03', '2021-03', '2022-03']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1681), ('', -0.1681)] barras=[('ACF muestral', 0.415)]
+  diferenciacion:trm-d3: d = 3n = 135varianza = 75469.03r₁ = -0.6023ndiffs (R) = 1d de varianza mínima = 1  outputs=['3']
+     g0: area=134.8h leyenda=['∇^3 de la serie'] y=[-1500, 1000] yticks=['-1500', '-1000', '-500', '0', '500', '1000'] x solapes=0 minGap=8.7 xticks=['2015-04', '2016-04', '2017-04', '2018-04', '2019-04', '2020-04', '2021-04', '2022-04']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1687), ('', -0.1687)] barras=[('ACF muestral', 0.602)]
+  diferenciacion:log_airpassengers-d0: d = 0n = 144varianza = 0.1949r₁ = 0.9537ndiffs (R) = 1d de varianza mínima = 1  outputs=['0']
+     g0: area=134.8h leyenda=['Serie original'] y=[4.6000000000000005, 6.6000000000000005] yticks=['4.6', '5.0', '5.4', '5.8', '6.2', '6.6'] x solapes=0 minGap=13 xticks=['1949-01', '1950-01', '1951-01', '1952-01', '1953-01', '1954-01', '1955-01', '1956-01']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1633), ('', -0.1633)] barras=[('ACF muestral', 0.954)]
+  diferenciacion:log_airpassengers-d1: d = 1n = 143varianza = 0.01135r₁ = 0.1998ndiffs (R) = 1d de varianza mínima = 1  outputs=['1']
+     g0: area=134.8h leyenda=['∇ de la serie'] y=[-0.25, 0.25] yticks=['-0.25', '-0.15', '-0.05', '0.05', '0.15', '0.25'] x solapes=0 minGap=10 xticks=['1949-02', '1950-02', '1951-02', '1952-02', '1953-02', '1954-02', '1955-02', '1956-02']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1639), ('', -0.1639)] barras=[('ACF muestral', 0.841)]
+  diferenciacion:log_airpassengers-d2: d = 2n = 142varianza = 0.01823r₁ = -0.2926ndiffs (R) = 1d de varianza mínima = 1  outputs=['2']
+     g0: area=134.8h leyenda=['∇^2 de la serie'] y=[-0.30000000000000004, 0.4] yticks=['-0.3', '-0.2', '-0.1', '0', '0.1', '0.2', '0.3', '0.4'] x solapes=0 minGap=11 xticks=['1949-03', '1950-03', '1951-03', '1952-03', '1953-03', '1954-03', '1955-03', '1956-03']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1645), ('', -0.1645)] barras=[('ACF muestral', 0.787)]
+  diferenciacion:log_airpassengers-d3: d = 3n = 141varianza = 0.04691r₁ = -0.5335ndiffs (R) = 1d de varianza mínima = 1  outputs=['3']
+     g0: area=134.8h leyenda=['∇^3 de la serie'] y=[-0.6000000000000001, 0.6000000000000001] yticks=['-0.6', '-0.4', '-0.2', '0', '0.2', '0.4', '0.6'] x solapes=0 minGap=10.3 xticks=['1949-04', '1950-04', '1951-04', '1952-04', '1953-04', '1954-04', '1955-04', '1956-04']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1651), ('', -0.1651)] barras=[('ACF muestral', 0.746)]
+  diferenciacion:caminata-d0: d = 0n = 200varianza = 17.92r₁ = 0.9612ndiffs (R) = 1d de varianza mínima = 1  outputs=['0']
+     g0: area=134.8h leyenda=['Serie original'] y=[-15, 10] yticks=['-15', '-10', '-5', '0', '5', '10'] x solapes=0 minGap=36.5 xticks=['1', '18', '35', '52', '69', '86', '103', '120']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1386), ('', -0.1386)] barras=[('ACF muestral', 0.961)]
+  diferenciacion:caminata-d1: d = 1n = 199varianza = 0.9727r₁ = -0.0749ndiffs (R) = 1d de varianza mínima = 1  outputs=['1']
+     g0: area=134.8h leyenda=['∇ de la serie'] y=[-3, 3] yticks=['-3', '-2', '-1', '0', '1', '2', '3'] x solapes=0 minGap=37.6 xticks=['2', '19', '36', '53', '70', '87', '104', '121']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1389), ('', -0.1389)] barras=[('ACF muestral', 0.115)]
+  diferenciacion:caminata-d2: d = 2n = 198varianza = 2.10r₁ = -0.5865ndiffs (R) = 1d de varianza mínima = 1  outputs=['2']
+     g0: area=134.8h leyenda=['∇^2 de la serie'] y=[-5, 4] yticks=['-5', '-3', '-1', '1', '3'] x solapes=0 minGap=37.8 xticks=['3', '20', '37', '54', '71', '88', '105', '122']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1393), ('', -0.1393)] barras=[('ACF muestral', 0.587)]
+  diferenciacion:caminata-d3: d = 3n = 197varianza = 6.67r₁ = -0.7168ndiffs (R) = 1d de varianza mínima = 1  outputs=['3']
+     g0: area=134.8h leyenda=['∇^3 de la serie'] y=[-6, 8] yticks=['-6', '-4', '-2', '0', '2', '4', '6', '8'] x solapes=0 minGap=37.8 xticks=['4', '21', '38', '55', '72', '89', '106', '123']
+     g1: area=124.8h leyenda=['Banda ±1.96/√T', 'ACF muestral'] y=[-1, 1] yticks=['-1.0', '-0.5', '0', '0.5', '1.0'] x solapes=0 minGap=14 xticks=['1', '2', '3', '4', '5', '6', '7', '8'] rectas=[('Banda ±1.96/√T', 0.1396), ('', -0.1396)] barras=[('ACF muestral', 0.717)]
+  box-cox:inicial: λ = 1.00 (sin transformar, salvo un desplazamiento)CV de Guerrero = 0.53032λ óptimo (R) = -0.2947CV en el óptimo = 0.08149  outputs=['1.00']
+     g0: area=144.8h leyenda=['Box-Cox con λ = 1.00'] y=[100, 700] yticks=['100', '200', '300', '400', '500', '600', '700'] x solapes=0 minGap=13 xticks=['1949-01', '1950-01', '1951-01', '1952-01', '1953-01', '1954-01', '1955-01', '1956-01']
+     g1: area=114.8h leyenda=['CV de Guerrero', 'λ elegido'] y=[0, 1] yticks=['0', '0.2', '0.4', '0.6', '0.8', '1.0'] x solapes=0 minGap=34 xticks=['-1.00', '-0.70', '-0.40', '-0.10', '0.20', '0.50', '0.80', '1.10']
+  box-cox:lam-1: λ = -1.00 (inversa)CV de Guerrero = 0.33497λ óptimo (R) = -0.2947CV en el óptimo = 0.08149  outputs=['-1.00']
+     g0: area=144.8h leyenda=['Box-Cox con λ = -1.00'] y=[0.99, 0.999] yticks=['0.990', '0.992', '0.994', '0.996', '0.998'] x solapes=0 minGap=11.9 xticks=['1949-01', '1950-01', '1951-01', '1952-01', '1953-01', '1954-01', '1955-01', '1956-01']
+     g1: area=114.8h leyenda=['CV de Guerrero', 'λ elegido'] y=[0, 1] yticks=['0', '0.2', '0.4', '0.6', '0.8', '1.0'] x solapes=0 minGap=34 xticks=['-1.00', '-0.70', '-0.40', '-0.10', '0.20', '0.50', '0.80', '1.10']
+  box-cox:lam-030: λ = -0.30CV de Guerrero = 0.08152λ óptimo (R) = -0.2947CV en el óptimo = 0.08149  outputs=['-0.30']
+     g0: area=144.8h leyenda=['Box-Cox con λ = -0.30'] y=[2.5, 2.85] yticks=['2.50', '2.55', '2.60', '2.65', '2.70', '2.75', '2.80', '2.85'] x solapes=0 minGap=12.4 xticks=['1949-01', '1950-01', '1951-01', '1952-01', '1953-01', '1954-01', '1955-01', '1956-01']
+     g1: area=114.8h leyenda=['CV de Guerrero', 'λ elegido'] y=[0, 1] yticks=['0', '0.2', '0.4', '0.6', '0.8', '1.0'] x solapes=0 minGap=34 xticks=['-1.00', '-0.70', '-0.40', '-0.10', '0.20', '0.50', '0.80', '1.10']
+  box-cox:lam0: λ = 0.00 (logaritmo)CV de Guerrero = 0.15308λ óptimo (R) = -0.2947CV en el óptimo = 0.08149  outputs=['0.00']
+     g0: area=144.8h leyenda=['Box-Cox con λ = 0.00'] y=[4.6000000000000005, 6.6000000000000005] yticks=['4.6', '5.0', '5.4', '5.8', '6.2', '6.6'] x solapes=0 minGap=13 xticks=['1949-01', '1950-01', '1951-01', '1952-01', '1953-01', '1954-01', '1955-01', '1956-01']
+     g1: area=114.8h leyenda=['CV de Guerrero', 'λ elegido'] y=[0, 1] yticks=['0', '0.2', '0.4', '0.6', '0.8', '1.0'] x solapes=0 minGap=34 xticks=['-1.00', '-0.70', '-0.40', '-0.10', '0.20', '0.50', '0.80', '1.10']
+  box-cox:lam050: λ = 0.50 (raíz cuadrada)CV de Guerrero = 0.34606λ óptimo (R) = -0.2947CV en el óptimo = 0.08149  outputs=['0.50']
+     g0: area=144.8h leyenda=['Box-Cox con λ = 0.50'] y=[15, 50] yticks=['15', '20', '25', '30', '35', '40', '45', '50'] x solapes=0 minGap=13.5 xticks=['1949-01', '1950-01', '1951-01', '1952-01', '1953-01', '1954-01', '1955-01', '1956-01']
+     g1: area=114.8h leyenda=['CV de Guerrero', 'λ elegido'] y=[0, 1] yticks=['0', '0.2', '0.4', '0.6', '0.8', '1.0'] x solapes=0 minGap=34 xticks=['-1.00', '-0.70', '-0.40', '-0.10', '0.20', '0.50', '0.80', '1.10']
+  box-cox:lam2: λ = 2.00CV de Guerrero = 0.84632λ óptimo (R) = -0.2947CV en el óptimo = 0.08149  outputs=['2.00']
+     g0: area=144.8h leyenda=['Box-Cox con λ = 2.00'] y=[0, 200000] yticks=['0', '40\u202f000', '80\u202f000', '120\u202f000', '160\u202f000', '200\u202f000'] x solapes=0 minGap=11 xticks=['1949-01', '1950-01', '1951-01', '1952-01', '1953-01', '1954-01', '1955-01', '1956-01']
+     g1: area=114.8h leyenda=['CV de Guerrero', 'λ elegido'] y=[0, 1] yticks=['0', '0.2', '0.4', '0.6', '0.8', '1.0'] x solapes=0 minGap=34 xticks=['-1.00', '-0.70', '-0.40', '-0.10', '0.20', '0.50', '0.80', '1.10']
+
+==================== eventos de consola
+  {'cuando': 'carga 1200', 'txt': 'log error: Failed to load resource: the server responded with a status of 404 (File not found) http://localhost:8731/favicon.ico'}

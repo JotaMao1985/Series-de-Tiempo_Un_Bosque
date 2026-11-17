@@ -1,0 +1,21 @@
+TRM: 138 meses
+
+[E1] ACF de diff(TRM), 24 rezagos, banda ±1.96/sqrt(T)
+banda = ±0.1675 · r1 = 0.088
+rezagos fuera: 8  valores: -0.19 
+
+[E4] ¿la primera diferencia de más siempre aumenta la varianza?
+AR(1) phi=0.8: ndiffs = 0 · var(y) = 2.497 · var(diff y) = 1.033
+teórico Var(diff)/Var(y) = 2(1-phi) = 0.4 
+
+[E5] recuadro del M7: la serie diff12 log AirPassengers
+n = 132 · kpss.test = 0.368 (p = 0.091) · ndiffs = 1
+r1..r3 = 0.714 0.623 0.48  r12 = -0.243 
+var(s) = 0.0038 · var(diff s) = 0.0021
+r12 de diff(log AP) (la otra serie) = 0.841 
+
+[software] truncamiento del KPSS dentro de forecast::ndiffs y en urca::ur.kpss
+ndiffs menciona:
+  3 * sqrt(length(x))/13)) {
+  ur.kpss(..., use.lag = use.lag)
+ur.kpss, lags = 'short': trunc(4 * (n/100)^0.25) 

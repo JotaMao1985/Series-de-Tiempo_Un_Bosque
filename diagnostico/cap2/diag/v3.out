@@ -1,0 +1,109 @@
+== M3 apoyo: ACF de nabla TRM ==
+banda 0.1675  r8 = -0.1903   |r_k| > banda en k = 8 
+ndiffs(trm): 1 
+== M7 apoyo: la serie del recuadro (nabla12 log y) ==
+var d12, var nabla d12: 0.0038 0.002102 
+ACF d12 1..6: 0.714 0.623 0.48 0.441 0.387 0.319 
+== M9 pipeline R ==
+d D: 1 1  lambda -0.2947  var 9.17e-05  kpss_p 0.1  n 131 
+rama elegida: abs(lambda) < 0.25 ? FALSE 
+== Ejercicio 1: co2 ==
+(max-min)/mean: 0.1592 
+medias anuales primera/última: 315.83 363.82  subida %: 15.2 
+lambda guerrero co2: -0.0343 
+nsdiffs(co2): 1  ndiffs(co2_s): 1 
+r1 r12 co2: 0.9909 0.9284  banda 0.0906 
+var d=0..3 tras nabla12: 0.3882 0.1543 0.4023 1.3123 
+kpss.test(co2_sd) p: 0.1 
+final: n 455  var 0.1543  r1 -0.302  fuera: 5 de 24
+ndiffs(co2) sin diferencia estacional: 1 
+== Ejercicio 2 ==
+rechazo 5% y 10%: 4.6 9.2 
+potencia sobre ruido blanco: 93.8 
+p-valores en el tope 0.01 (sobre ruido blanco): 77 %
+== Ejercicio 3: USAccDeaths ==
+ndiffs(y) 0  nsdiffs(y) 1  ndiffs(diff(y,12)) 1 
+          serie  n varianza      r1     r12 fuera ljung_box_p
+1      original 72   917290  0.7075  0.6286    14   0.000e+00
+2         nabla 71   540735  0.0233  0.7087     6   2.265e-14
+3       nabla12 60   288866  0.6899 -0.0768     6   1.811e-12
+4 nabla12 nabla 59   154530 -0.3534 -0.3357     2   3.334e-02
+== Ejercicio 4 / quiz ==
+caminata: min valor -14.84 
+1.96/12 = 0.1633333   1.96/144 = 0.01361111  cociente 12 
+0.5^12 = 0.0002441406   banda n=143: 0.1639 
+nabla log AP: fuera de banda en k = 1 4 8 11 12 13 16 20 23 24 
+== Referencias en la ayuda de R ==
+References:
+
+     Kwiatkowski D, Phillips PCB, Schmidt P, Shin Y (1992). "Testing
+     the Null Hypothesis of Stationarity Against the Alternative of a
+     Unit Root." _Journal of Econometrics_, *54*(1-3), 159-178.
+     doi:10.1016/0304-4076(92)90104-y
+     <https://doi.org/10.1016/0304-4076%2892%2990104-y>.
+
+See Also:
+
+     'pp.test'
+
+Examples:
+
+     x <- rnorm(1000)  # is level stationary 
+References:
+
+     Banerjee A, Dolado JJ, Galbraith JW, Hendry D (1993).
+     _Co-integration, Error Correction, and the Econometric Analysis of
+     Non-Stationary Data_. Oxford University Press. ISBN 9780198288107.
+     doi:10.1093/0198288107.001.0001
+     <https://doi.org/10.1093/0198288107.001.0001>.
+
+     Said SE, Dickey DA (1984). "Testing for Unit Roots in
+     Autoregressive-Moving Average Models of Unknown Order."
+     _Biometrika_, *71*(3), 599-607. doi:10.1093/biomet/71.3.599
+     <https://doi.org/10.1093/biomet/71.3.599>.
+
+See Also:
+ 
+References:
+
+     Box, G. E. P. and Cox, D. R. (1964) An analysis of
+     transformations. _JRSS B_ *26* 211-246.
+
+     Guerrero, V.M. (1993) Time-series analysis supported by power
+     transformations. _Journal of Forecasting_, *12*, 37-48.
+
+See Also:
+
+     'BoxCox()'
+
+Examples:
+
+     lambda <- BoxCox.lambda(AirPassengers, lower = 0) 
+     adf.test(x, alternative = c("stationary", "explosive"),
+alternative: indicates the alternative hypothesis and must be one of
+          '"stationary"' (default) or '"explosive"'. You can specify
+     computed. The p-values are interpolated from Table 4.2, p. 103 of
+alternative: a character string describing the alternative hypothesis.
+== M8 apoyo: forecast::BoxCox admite negativos con lambda > 0 ==
+{
+    if (lambda == "auto") {
+        lambda <- BoxCox.lambda(x, lower = -0.9)
+    }
+    if (lambda < 0) {
+        x[x < 0] <- NA
+    }
+    if (lambda == 0) {
+        out <- log(x)
+    }
+    else {
+        out <- (sign(x) * abs(x)^lambda - 1)/lambda
+    }
+    if (!is.null(colnames(x))) {
+        colnames(out) <- colnames(x)
+    }
+    attr(out, "lambda") <- lambda
+    out
+}
+[1] -4.828427  2.000000
+attr(,"lambda")
+[1] 0.5

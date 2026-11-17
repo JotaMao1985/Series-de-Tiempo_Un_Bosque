@@ -1,0 +1,138 @@
+== M2 ruido blanco ==
+banda 0.1385929  fuera: 0  r1 -0.0776 
+24*0.05 = 1.2 
+== M3 ACF ==
+AP r1 r2 r12: 0.948 0.8756 0.7604  r11 r13: 0.7432 0.7127 
+caminata r1 r12: 0.9612 0.4877 
+dTRM r1: 0.0876  banda 0.1675  fuera de banda (rezagos): 8 
+dTRM r1..r6: 0.0876 -0.0433 -0.0478 0.0105 0.1573 0.0922 
+== M4 PACF ==
+caminata PACF 1..6: 0.9612 0.0563 -0.1246 -0.1402 -0.0804 0.0739  fuera de banda: 1 4 
+AP PACF 1..3: 0.948 -0.2294 0.0381 
+        ruido_blanco             caminata        airpassengers    log_airpassengers  d_log_airpassengers 
+            4.66e-05             4.41e-05             4.87e-05             5.20e-05             4.78e-05 
+dd_log_airpassengers                  trm                d_trm 
+            6.19e-05             4.99e-05             4.95e-05 
+max: 6.19e-05 
+DL vs stats::pacf (sin redondeo), caminata: 9.17e-15 
+== M5 AR(1) diferenciada: rho1 teórico de nabla y = -(1-phi)/2 ==
+phi 0  rho1(nabla) = -0.5  Var(nabla y)/Var(y) = 2 
+phi 0.5  rho1(nabla) = -0.25  Var(nabla y)/Var(y) = 1 
+phi 0.7  rho1(nabla) = -0.15  Var(nabla y)/Var(y) = 0.6 
+phi 0.95  rho1(nabla) = -0.025  Var(nabla y)/Var(y) = 0.1 
+== M6 ADF/KPSS ==
+n TRM: 138 2015 1 2026 6 
+         ADF   pADF   KPSS pKPSS
+TRM  -1.9783 0.5855 2.2427  0.01
+dTRM -3.8801 0.0172 0.2415  0.10
+ADF AP crudo: -7.3186 
+k por defecto: 5 
+log AP k= 5 -6.4215 0.01 
+log AP k= 11 -0.4398 0.9833 
+log AP k= 12 -1.5325 0.7711 
+log AP k= 13 -2.147 0.5152 
+AP (nivel) k= 5 -7.3186 0.01 
+AP (nivel) k= 11 -1.0675 0.9245 
+AP (nivel) k= 12 -1.5094 0.7807 
+AP (nivel) k= 13 -2.1008 0.5345 
+SA: ADF -2.1524 0.513  KPSS-T 0.3864 0.01 
+KPSS-T AP: 0.0961   log AP: 0.1127 
+Monte Carlo % rechazo: 3.2 3.6 5 11.2 17.6 
+Monte Carlo con k = 12, amplitudes 0 y 4: 3 2.8 
+binomial: IC95 de 3.2% con 500 réplicas: 1.84 5.14 
+== M7 diferenciación ==
+AP 1949-01..1950-02: 112 118 132 129 121 135 148 148 136 119 104 118 115 126 
+length dd: 131  primer valor nabla nabla12 (nivel): 5 
+     d  var_lx   r1_lx var_trm  r1_trm
+[1,] 0 0.19488  0.9537  338834  0.9637
+[2,] 1 0.01135  0.1998   14800  0.0876
+[3,] 2 0.01823 -0.2926   26813 -0.4146
+[4,] 3 0.04691 -0.5335   75469 -0.6023
+[1] "Error in diff.default(1:5, differences = 0) : \n  'lag' and 'differences' must be integers >= 1\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in diff.default(1:5, differences = 0): 'lag' and 'differences' must be integers >= 1>
+ndiffs/nsdiffs lx: 1 1  d1: 0 1  dd: 0 0  d12: 1 0 
+KPSS nivel d1 (tseries): 0.0282 0.1 
+r12 de d1: 0.8414   r12 de d12: -0.243   r1 de d12: 0.7137 
+kpss.test(d12): 0.3682 0.0909  lag 4  n 132 
+ur.kpss(d12, lag= 2 ): 0.5367  crit: 0.347 0.463 0.574 0.739 
+4(n/100)^.25 = 4 
+cuerpo de forecast:::kpss_test? -> ver abajo
+{
+    test <- match.arg(test)
+    type <- match(match.arg(type), c("level", "trend"))
+    x <- c(na.omit(c(x)))
+    d <- 0
+    if (alpha < 0.01) {
+        warning("Specified alpha value is less than the minimum, setting alpha=0.01")
+        alpha <- 0.01
+    }
+    else if (alpha > 0.1) {
+        warning("Specified alpha value is larger than the maximum, setting alpha=0.1")
+        alpha <- 0.1
+    }
+    if (is.constant(x)) {
+        return(d)
+    }
+    urca_pval <- function(urca_test) {
+        approx(urca_test@cval[1, ], as.numeric(sub("pct", "", 
+            colnames(urca_test@cval), fixed = TRUE))/100, xout = urca_test@teststat[1], 
+            rule = 2)$y
+    }
+    kpss_wrap <- function(..., use.lag = trunc(3 * sqrt(length(x))/13)) {
+        ur.kpss(..., use.lag = use.lag)
+    }
+    runTests <- function(x, test, alpha) {
+        tryCatch({
+            suppressWarnings(diff <- switch(test, kpss = urca_pval(kpss_wrap(x, 
+                type = c("mu", "tau")[type], ...)) < alpha, adf = urca_pval(ur.df(x, 
+                type = c("drift", "trend")[type], ...)) > alpha, 
+                pp = urca_pval(ur.pp(x, type = "Z-tau", model = c("constant", 
+                  "trend")[type], ...)) > alpha, stop("This shouldn't happen")))
+            diff
+        }, error = function(e) {
+            warning(call. = FALSE, sprintf("The chosen unit root test encountered an error when testing for the %s difference.\nFrom %s(): %s\n%i differences will be used. Consider using a different unit root test.", 
+                switch(as.character(d), `0` = "first", `1` = "second", 
+                  `2` = "third", paste0(d + 1, "th")), deparse(e$call[[1]]), 
+                e$message, d))
+            FALSE
+        })
+    }
+    dodiff <- runTests(x, test, alpha)
+    if (is.na(dodiff)) {
+        return(d)
+    }
+    while (dodiff && d < max.d) {
+        d <- d + 1
+        x <- diff(x)
+        if (is.constant(x)) {
+            return(d)
+        }
+        dodiff <- runTests(x, test, alpha)
+        if (is.na(dodiff)) {
+            return(d - 1)
+        }
+    }
+    d
+}
+== M7 contraejemplo: AR(1) estacionaria con phi = 0.8, ¿la varianza sube al diferenciar? ==
+var d=0..2: 2.955 1.204 2.687  ndiffs: 0 
+== M8 Box-Cox ==
+lambda AP -0.2947  TRM 0.1288 
+cv sin/log/opt: 0.53032 0.15308 0.08149  exceso log %: 87.9  mejora captada %: 84 
+zona 20%: -0.41 -0.175 
+{
+    period <- round(max(nonseasonal.length, frequency(x)))
+    nobsf <- length(x)
+    nyr <- floor(nobsf/period)
+    nobst <- floor(nyr * period)
+    x.mat <- matrix(x[(nobsf - nobst + 1):nobsf], period, nyr)
+    x.mean <- colMeans(x.mat, na.rm = TRUE)
+    x.sd <- apply(x.mat, 2, sd, na.rm = TRUE)
+    x.rat <- x.sd/x.mean^(1 - lam)
+    sd(x.rat, na.rm = TRUE)/mean(x.rat, na.rm = TRUE)
+}
+lambda guerrero serie anual (frecuencia 1, Nile): 0.9989 
+max|InvBoxCox - AP|: 1.818989e-12 
