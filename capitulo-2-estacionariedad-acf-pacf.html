@@ -1011,6 +1011,94 @@
       display: none;
     }
 
+    /* ------------------------------------------------------------------
+       Cita con fuente (añadida en la ronda de gestión documental,
+       2026-11-10).
+
+       Una afirmación que viene de una fuente lo dice ahí mismo, en la
+       prosa, con autor, año y localizador: «(Cleveland et al., 1990, §2)».
+       La cita enlaza a la lista «Fuentes citadas en este módulo», al final
+       del módulo, porque solo el módulo abierto está en el DOM; el
+       capítulo entero se reúne en «Referencias de este capítulo».
+
+       NADA de esto se teclea. Quien redacta escribe solo un elemento
+       `cite` vacío de clase `cita`, con `data-ref` (la clave de la obra) y
+       `data-loc` (el localizador: §2, p. 15), dentro de un elemento con
+       `data-afirma` (el id de la afirmación: c1-m7-01), y deja en el módulo
+       el par de marcadores FUENTES-MODULO. La sintaxis exacta está en la
+       cabecera de `precalculo/genera_referencias.py`; no se repite aquí
+       porque el generador la tomaría por una cita de verdad.
+       El texto visible y las listas los escribe
+       `precalculo/genera_referencias.py` desde Zotero, y
+       `precalculo/audita_citas.py` comprueba que cada cita tenga detrás un
+       pasaje leído (bibliografia/contraste/capN.yml).
+
+       `font-style: normal` porque <cite> es cursiva por defecto y aquí
+       no nombra un título sino que remite a una obra.
+       ------------------------------------------------------------------ */
+    .cita {
+      font-style: normal;
+      white-space: normal;
+    }
+
+    .cita a {
+      color: #012820;
+      text-decoration: underline;
+      text-decoration-color: rgba(255, 102, 0, 0.55);
+      text-decoration-thickness: 1.5px;
+      text-underline-offset: 2px;
+    }
+
+    .cita a:hover {
+      text-decoration-color: #FF6600;
+      background: rgba(255, 102, 0, 0.08);
+    }
+
+    .fuentes-modulo {
+      margin-top: 2.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .fuentes-modulo h4 {
+      font-size: 0.8125rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #6b7280;
+      margin: 0 0 0.6rem;
+    }
+
+    main ul.lista-fuentes,
+    footer ul.lista-fuentes {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    ul.lista-fuentes li {
+      font-size: 0.875rem;
+      line-height: 1.55;
+      margin: 0 0 0.55rem;
+      padding-left: 1.5rem;
+      text-indent: -1.5rem;          /* sangría francesa, como en APA */
+      overflow-wrap: anywhere;       /* un DOI largo no desborda en móvil */
+    }
+
+    ul.lista-fuentes li:target {
+      background: rgba(255, 102, 0, 0.10);
+      box-shadow: -0.5rem 0 0 rgba(255, 102, 0, 0.10), 0.5rem 0 0 rgba(255, 102, 0, 0.10);
+    }
+
+    ul.lista-fuentes a {
+      color: #012820;
+      text-decoration: underline;
+    }
+
+    footer ul.lista-fuentes a {
+      color: #fbbf24;
+    }
+
     /* SVG Styles */
     svg {
       display: block;
@@ -2239,29 +2327,14 @@
       <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
         <i class="fas fa-book-open" aria-hidden="true"></i> Referencias Bibliográficas
       </h3>
-      <ul class="space-y-3 text-white/90 text-sm">
-        <li class="flex items-start gap-2">
-          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
-          <span>Hyndman, R.J., &amp; Athanasopoulos, G. (2021). <em class="text-gold">Forecasting: Principles and
-              Practice</em> (3rd ed.). OTexts. Acceso abierto: <a href="https://otexts.com/fpp3/"
-              class="underline text-gold" target="_blank" rel="noopener">otexts.com/fpp3</a>.</span>
-        </li>
-        <li class="flex items-start gap-2">
-          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
-          <span>Shumway, R.H., &amp; Stoffer, D.S. (2017). <em class="text-gold">Time Series Analysis and Its
-              Applications: With R Examples</em> (4th ed.). Springer.</span>
-        </li>
-        <li class="flex items-start gap-2">
-          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
-          <span>Box, G.E.P., Jenkins, G.M., Reinsel, G.C., &amp; Ljung, G.M. (2015). <em class="text-gold">Time Series
-              Analysis: Forecasting and Control</em> (5th ed.). John Wiley &amp; Sons.</span>
-        </li>
-        <li class="flex items-start gap-2">
-          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
-          <span>Brockwell, P.J., &amp; Davis, R.A. (2016). <em class="text-gold">Introduction to Time Series and
-              Forecasting</em> (3rd ed.). Springer.</span>
-        </li>
+      <!--PIE-REFERENCIAS:inicio-->
+      <ul class="lista-fuentes">
+        <li id="pie-box2016time">Box, G. E. P., Jenkins, G. M., Reinsel, G. C., y Ljung, G. M. (2015). <em>Time series analysis: forecasting and control</em> (5.ª ed.). John Wiley &amp; Sons, Inc.</li>
+        <li id="pie-brockwell2016introduction">Brockwell, P. J., y Davis, R. A. (2016). <em>Introduction to Time Series and Forecasting</em> (3.ª ed.). Springer International Publishing. <a target="_blank" rel="noopener" href="https://doi.org/10.1007/978-3-319-29854-2">https://doi.org/10.1007/978-3-319-29854-2</a></li>
+        <li id="pie-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+        <li id="pie-shumway2017time">Shumway, R. H., y Stoffer, D. S. (2017). <em>Time Series Analysis and Its Applications: With R Examples</em> (4.ª ed.). Springer International Publishing. <a target="_blank" rel="noopener" href="https://doi.org/10.1007/978-3-319-52452-8">https://doi.org/10.1007/978-3-319-52452-8</a></li>
       </ul>
+      <!--PIE-REFERENCIAS:fin-->
       <div class="mt-6 pt-6 border-t border-white/20 text-center">
         <p class="text-white font-medium" style="text-align:center;">Diseñado por <span class="text-gold">Javier
             Mauricio Sierra</span></p>
@@ -2299,8 +2372,8 @@
       </div>
 
       <p>En el Capítulo 1 se descompuso una serie en tendencia, estacionalidad y residuo. El paso siguiente es otro:
-        para <em>modelar</em> la dependencia temporal hace falta que las reglas del juego no cambien con el tiempo. Esa
-        es la idea de <strong>estacionariedad</strong> (<em>stationarity</em>).</p>
+        <span data-afirma="c2-m1-01">para <em>modelar</em> la dependencia temporal hace falta que las reglas del juego no cambien con el tiempo. Esa
+        es la idea de <strong>estacionariedad</strong> (<em>stationarity</em>) <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.1"><a href="#ref-m1-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.1)</a></cite>.</span></p>
 
       <p>La intuición es simple. Si se observa una serie durante 1949–1954 y otra vez durante 1955–1960 y las dos
         ventanas se ven <em>estadísticamente</em> iguales —mismo nivel promedio, misma dispersión, misma forma de
@@ -2309,21 +2382,20 @@
       <div class="definition">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: estacionariedad estricta (<em>strict
             stationarity</em>)</h4>
-        <p>Un proceso $\{y_t\}$ es <strong>estrictamente estacionario</strong> si, para cualquier conjunto de instantes
+        <p><span data-afirma="c2-m1-03">Un proceso $\{y_t\}$ es <strong>estrictamente estacionario</strong> si, para cualquier conjunto de instantes
           $t_1, \ldots, t_k$ y cualquier desplazamiento $h$, la distribución conjunta de
-          $(y_{t_1}, \ldots, y_{t_k})$ es idéntica a la de $(y_{t_1+h}, \ldots, y_{t_k+h})$.</p>
+          $(y_{t_1}, \ldots, y_{t_k})$ es idéntica a la de $(y_{t_1+h}, \ldots, y_{t_k+h})$ <cite class="cita" data-ref="cryer2008time" data-loc="p. 16"><a href="#ref-m1-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 16)</a></cite>.</span></p>
         <p style="margin-bottom:0;">Es decir: <strong>toda</strong> la estructura probabilística es invariante ante
-          traslaciones en el tiempo. Es una condición muy fuerte y, en la práctica, imposible de verificar con una sola
-          realización de la serie.</p>
+          traslaciones en el tiempo. <span data-afirma="c2-m1-04">Es una condición muy fuerte y, en la práctica, difícil de verificar con una sola
+          realización de la serie.</span></p>
       </div>
 
-      <p>Por eso se trabaja casi siempre con una versión más manejable, que solo pide que los <strong>dos primeros
-          momentos</strong> sean invariantes:</p>
+      <p><span data-afirma="c2-m1-05">Por eso se trabaja con una versión más manejable, que solo pide que los <strong>dos primeros momentos</strong> sean invariantes <cite class="cita" data-ref="cryer2008time" data-loc="p. 17"><a href="#ref-m1-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 17)</a></cite></span>:</p>
 
-      <div class="definition">
+      <div class="definition" data-afirma="c2-m1-06">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: estacionariedad débil (<em>weak</em> o
           <em>second-order stationarity</em>)</h4>
-        <p>$\{y_t\}$ es <strong>débilmente estacionario</strong> si cumple las tres condiciones:</p>
+        <p>$\{y_t\}$ es <strong>débilmente estacionario</strong> <cite class="cita" data-ref="cryer2008time" data-loc="p. 17"><a href="#ref-m1-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 17)</a></cite> si cumple las tres condiciones:</p>
         <ol style="margin-bottom:0;">
           <li>$E[y_t] = \mu$ para todo $t$ — la <strong>media no depende del tiempo</strong>;</li>
           <li>$\operatorname{Var}(y_t) = \sigma^2 &lt; \infty$ para todo $t$ — la <strong>varianza es finita y
@@ -2333,9 +2405,9 @@
       </div>
 
       <div class="note">
-        <p><strong>Relación entre las dos.</strong> La estacionariedad estricta con varianza finita implica la débil,
+        <p><strong>Relación entre las dos.</strong> <span data-afirma="c2-m1-07">La estacionariedad estricta con varianza finita implica la débil,
           pero no al revés. Hay una excepción importante: si el proceso es <strong>gaussiano</strong>, la distribución
-          conjunta queda determinada por medias y covarianzas, y entonces las dos nociones coinciden. En este curso,
+          conjunta queda determinada por medias y covarianzas, y entonces las dos nociones coinciden <cite class="cita" data-ref="hamilton1994time" data-loc="p. 46"><a href="#ref-m1-hamilton1994time" title="Hamilton, J. D. (1994). Time series analysis. Princeton University Press.">(Hamilton, 1994, p. 46)</a></cite>.</span> En este curso,
           «estacionaria» sin más quiere decir estacionaria en sentido <strong>débil</strong>.</p>
       </div>
 
@@ -2390,19 +2462,29 @@
       </table>
 
       <div class="warning">
-        <p><strong>Cuidado con un error frecuente.</strong> Una serie con <strong>estacionalidad</strong> no es
-          estacionaria: su media depende del mes, y por tanto de $t$. Los dos términos se parecen en español pero
+        <p><strong>Cuidado con un error frecuente.</strong> <span data-afirma="c2-m1-13">Una serie con <strong>estacionalidad</strong> no es
+          estacionaria: su media depende del mes, y por tanto de $t$ <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.1"><a href="#ref-m1-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.1)</a></cite>.</span> Los dos términos se parecen en español pero
           significan cosas opuestas. En inglés el riesgo de confusión es menor: <em>seasonal</em> vs.
           <em>stationary</em>.</p>
       </div>
 
       <div class="note">
-        <p><strong>¿Por qué importa tanto?</strong> Porque los modelos ARMA del Capítulo 3 —y la teoría de estimación e
-          inferencia que los acompaña— <strong>suponen</strong> estacionariedad. Si la serie no lo es, los coeficientes
+        <p><strong>¿Por qué importa tanto?</strong> <span data-afirma="c2-m1-15">Porque los modelos ARMA del Capítulo 3 —y la teoría de estimación e
+          inferencia que los acompaña— <strong>suponen</strong> estacionariedad <cite class="cita" data-ref="cryer2008time" data-loc="p. 16"><a href="#ref-m1-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 16)</a></cite>.</span> Si la serie no lo es, los coeficientes
           estimados no significan lo que parecen, los errores estándar están mal y los pronósticos heredan el problema.
           Buena parte de este capítulo consiste en dos preguntas: <em>¿es estacionaria?</em> y, si no, <em>¿cómo se
             transforma para que lo sea?</em></p>
       </div>
+      <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
+        <h4>Fuentes citadas en este módulo</h4>
+        <!--FUENTES-MODULO:inicio-->
+        <ul class="lista-fuentes">
+          <li id="ref-m1-cryer2008time">Cryer, J. D., y Chan, K.-S. (2008). <em>Time Series Analysis</em> (2.ª ed.). Springer New York. <a target="_blank" rel="noopener" href="https://doi.org/10.1007/978-0-387-75959-3">https://doi.org/10.1007/978-0-387-75959-3</a></li>
+          <li id="ref-m1-hamilton1994time">Hamilton, J. D. (1994). <em>Time series analysis</em>. Princeton University Press.</li>
+          <li id="ref-m1-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+        </ul>
+        <!--FUENTES-MODULO:fin-->
+      </aside>
     </div>
   </template>
 
@@ -2428,10 +2510,10 @@
       </div>
 
       <p>El <strong>ruido blanco</strong> (<em>white noise</em>) es la serie estacionaria más simple posible: pura
-        aleatoriedad sin memoria. Es el ladrillo con el que se construyen todos los modelos del curso; el primero aparece
+        aleatoriedad sin memoria. <span data-afirma="c2-m2-01">Es el ladrillo con el que se construyen todos los modelos del curso <cite class="cita" data-ref="hamilton1994time" data-loc="p. 47"><a href="#ref-m2-hamilton1994time" title="Hamilton, J. D. (1994). Time series analysis. Princeton University Press.">(Hamilton, 1994, p. 47)</a></cite></span>; el primero aparece
         en el Módulo 5.</p>
 
-      <div class="definition">
+      <div class="definition" data-afirma="c2-m2-02">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: ruido blanco</h4>
         <p>$\{\varepsilon_t\}$ es <strong>ruido blanco</strong> si</p>
         <div class="formula-partes">
@@ -2440,15 +2522,15 @@
           $\operatorname{Cov}(\varepsilon_t, \varepsilon_{t+k}) = 0 \;\; \text{para todo } k \neq 0.$
         </div>
         <p style="margin-bottom:0;">Si además los $\varepsilon_t$ son independientes y normales, se habla de
-          <strong>ruido blanco gaussiano</strong>, que se escribe $\varepsilon_t \sim \mathrm{N}(0, \sigma^2)$ i.i.d.</p>
+          <strong>ruido blanco gaussiano</strong>, que se escribe $\varepsilon_t \sim \mathrm{N}(0, \sigma^2)$ i.i.d. <cite class="cita" data-ref="hamilton1994time" data-loc="pp. 47–48"><a href="#ref-m2-hamilton1994time" title="Hamilton, J. D. (1994). Time series analysis. Princeton University Press.">(Hamilton, 1994, pp. 47–48)</a></cite>.</p>
       </div>
 
       <div class="warning">
-        <p><strong>No confundir incorrelación con independencia.</strong> El ruido blanco exige covarianzas nulas, que
+        <p><strong>No confundir incorrelación con independencia.</strong> <span data-afirma="c2-m2-03">El ruido blanco exige covarianzas nulas, que
           es una condición sobre relaciones <em>lineales</em>. Dos variables pueden ser incorreladas y aun así
-          dependientes: si $x_t$ es ruido blanco, la serie $x_t^2$ puede tener estructura clarísima. Esa distinción es
+          dependientes <cite class="cita" data-ref="hamilton1994time" data-loc="p. 48"><a href="#ref-m2-hamilton1994time" title="Hamilton, J. D. (1994). Time series analysis. Princeton University Press.">(Hamilton, 1994, p. 48)</a></cite>: si $x_t$ es ruido blanco, la serie $x_t^2$ puede tener estructura clarísima. Esa distinción es
           la puerta de entrada a los modelos ARCH/GARCH de volatilidad, que quedan fuera de este curso pero explican por
-          qué en finanzas los rendimientos parecen ruido blanco y sus cuadrados no.</p>
+          qué en finanzas los rendimientos parecen ruido blanco y sus cuadrados no <cite class="cita" data-ref="cryer2008time" data-loc="p. 285"><a href="#ref-m2-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 285)</a></cite>.</span></p>
       </div>
 
       <p>El simulador de abajo dibuja la serie y, debajo, un gráfico que el Módulo 3 define con calma: el
@@ -2472,14 +2554,14 @@
       </div>
 
       <div class="note">
-        <p><strong>Cómo leer la banda.</strong> Si la serie es ruido blanco <strong>independiente</strong> —i.i.d., no
-          solo incorrelado—, cada autocorrelación muestral se distribuye aproximadamente $\mathrm{N}(0, 1/T)$. Por eso
-          la banda de $\pm 1.96/\sqrt{T}$ marca la zona donde cae el 95 % de las barras <strong>por azar</strong>. Con
+        <p><strong>Cómo leer la banda.</strong> <span data-afirma="c2-m2-06">Si la serie es ruido blanco <strong>independiente</strong> —i.i.d., no
+          solo incorrelado—, cada autocorrelación muestral se distribuye aproximadamente $\mathrm{N}(0, 1/T)$ <cite class="cita" data-ref="cryer2008time" data-loc="p. 110"><a href="#ref-m2-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 110)</a></cite>. Por eso
+          la banda de $\pm 1.96/\sqrt{T}$ marca la zona donde cae el 95 % de las barras <strong>por azar</strong> <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§2.9"><a href="#ref-m2-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §2.9)</a></cite>.</span> Con
           $T = 200$ la banda vale $\pm 0.139$. Ojo con la aritmética: en 24 rezagos lo <strong>esperable</strong> es
-          que algo más de uno se salga aunque la serie sea ruido blanco puro. Una barra que apenas asoma fuera de la
-          banda no es evidencia de nada; una barra muy grande, o un patrón, sí. Y si el ruido es incorrelado pero no
+          que algo más de uno se salga aunque la serie sea ruido blanco puro. <span data-afirma="c2-m2-08">Una barra que apenas asoma fuera de la
+          banda no basta como evidencia; una barra muy grande, o un patrón, sí <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§2.9"><a href="#ref-m2-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §2.9)</a></cite>.</span> <span data-afirma="c2-m2-10">Y si el ruido es incorrelado pero no
           independiente —el caso de la advertencia de arriba—, la varianza de $r_k$ puede dejar de ser $1/T$, y entonces
-          la banda ya no cubre el 95 %.</p>
+          la banda ya no cubre el 95 %.</span></p>
       </div>
 
       <div class="code-tabs">
@@ -2533,11 +2615,20 @@ print(int(np.sum(np.abs(r) > banda)))
       </div>
 
       <div class="note">
-        <p><strong>El ruido blanco es también la meta.</strong> Un modelo de series de tiempo es bueno cuando ha
-          exprimido toda la estructura predecible de la serie y lo que sobra —los residuales— es indistinguible del
-          ruido blanco. Si en los residuales todavía queda autocorrelación, queda información sin aprovechar. Ese
+        <p><strong>El ruido blanco es también la meta.</strong> <span data-afirma="c2-m2-09">Un buen modelo de series de tiempo ha exprimido toda la estructura predecible de la serie, y lo que sobra —los residuales— es indistinguible del
+          ruido blanco. Si en los residuales todavía queda autocorrelación, queda información sin aprovechar <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§5.4"><a href="#ref-m2-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §5.4)</a></cite>.</span> Ese
           diagnóstico es el corazón del Capítulo 3.</p>
       </div>
+      <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
+        <h4>Fuentes citadas en este módulo</h4>
+        <!--FUENTES-MODULO:inicio-->
+        <ul class="lista-fuentes">
+          <li id="ref-m2-cryer2008time">Cryer, J. D., y Chan, K.-S. (2008). <em>Time Series Analysis</em> (2.ª ed.). Springer New York. <a target="_blank" rel="noopener" href="https://doi.org/10.1007/978-0-387-75959-3">https://doi.org/10.1007/978-0-387-75959-3</a></li>
+          <li id="ref-m2-hamilton1994time">Hamilton, J. D. (1994). <em>Time series analysis</em>. Princeton University Press.</li>
+          <li id="ref-m2-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+        </ul>
+        <!--FUENTES-MODULO:fin-->
+      </aside>
     </div>
   </template>
 
@@ -2562,8 +2653,8 @@ print(int(np.sum(np.abs(r) > banda)))
         </div>
       </div>
 
-      <p>La <strong>autocorrelación</strong> mide cuánto se parece una serie a una copia de sí misma desplazada $k$
-        instantes. Es la traducción cuantitativa del gráfico de rezagos del Módulo 3 del Capítulo 1, y es también el
+      <p><span data-afirma="c2-m3-01">La <strong>autocorrelación</strong> mide la relación lineal entre una serie y una copia de sí misma desplazada $k$
+        instantes. Es la traducción cuantitativa del gráfico de rezagos del Módulo 3 del Capítulo 1 <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§2.8"><a href="#ref-m3-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §2.8)</a></cite></span>, y es también el
         número que el Módulo 2 dibujó sin definirlo.</p>
 
       <div class="formula">
@@ -2590,14 +2681,14 @@ print(int(np.sum(np.abs(r) > banda)))
       </div>
 
       <div class="note">
-        <p><strong>Un detalle que sorprende:</strong> la suma tiene $T-k$ términos pero se divide entre $T$, no entre
-          $T-k$. Es deliberado. Ese divisor garantiza que la matriz de autocovarianzas resultante sea semidefinida
+        <p><strong>Un detalle que sorprende:</strong> <span data-afirma="c2-m3-05">la suma tiene $T-k$ términos pero se divide entre $T$, no entre
+          $T-k$ <cite class="cita" data-ref="cryer2008time" data-loc="p. 46"><a href="#ref-m3-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 46)</a></cite>.</span> <span data-afirma="c2-m3-15">Es deliberado. Ese divisor garantiza que la matriz de autocovarianzas resultante sea semidefinida
           positiva —una propiedad que los algoritmos de estimación necesitan— a cambio de un sesgo pequeño hacia cero en
-          rezagos grandes. Tanto <code>acf()</code> de R como <code>acf(..., adjusted=False)</code> de
-          <code>statsmodels</code> usan el divisor $T$; por eso las dos coinciden.</p>
+          rezagos grandes.</span> <span data-afirma="c2-m3-06">Tanto <code>acf()</code> de R como <code>acf(..., adjusted=False)</code> de
+          <code>statsmodels</code> usan el divisor $T$; por eso las dos coinciden.</span></p>
       </div>
 
-      <p>El <strong>correlograma</strong> es simplemente el gráfico de $r_k$ contra $k$. Es la herramienta de
+      <p><span data-afirma="c2-m3-07">El <strong>correlograma</strong> es simplemente el gráfico de $r_k$ contra $k$ <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§2.8"><a href="#ref-m3-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §2.8)</a></cite>.</span> Es la herramienta de
         diagnóstico más importante del curso, porque cada patrón de la serie deja una huella reconocible:</p>
 
       <div class="simulador" data-simulador="correlogramas-comparados">
@@ -2621,47 +2712,50 @@ print(int(np.sum(np.abs(r) > banda)))
         </div>
       </div>
 
-      <table>
-        <caption class="sr-only">Patrones del correlograma y su interpretación</caption>
-        <thead>
-          <tr>
-            <th scope="col">Lo que se ve en el correlograma</th>
-            <th scope="col">Lo que indica</th>
-            <th scope="col">Ejemplo con cifras</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Todas las barras dentro de la banda</td>
-            <td>Ruido blanco: no queda estructura lineal</td>
-            <td>Ruido simulado: $r_1 = -0.078$, banda $\pm 0.139$</td>
-          </tr>
-          <tr>
-            <td>Decaimiento <strong>lento y casi lineal</strong></td>
-            <td>Tendencia o raíz unitaria: hay que diferenciar</td>
-            <td>Caminata: $r_1 = 0.961$, $r_{12} = 0.488$</td>
-          </tr>
-          <tr>
-            <td>Picos en $k = m, 2m, 3m \ldots$</td>
-            <td>Estacionalidad de periodo $m$</td>
-            <td><code>AirPassengers</code>: $r_{12} = 0.760$ con $m = 12$</td>
-          </tr>
-          <tr>
-            <td>Decaimiento <strong>rápido</strong> (exponencial)</td>
-            <td>Proceso estacionario con memoria corta (Capítulo 3)</td>
-            <td>Serie simulada de 200 valores en la que cada uno es la mitad del anterior más un ruido nuevo (está en
-              el código de abajo; el Módulo 5 presenta este proceso): $r_1 = 0.474$, $r_2 = 0.235$, y del rezago 3
-              en adelante todo dentro de la banda $\pm 0.139$</td>
-          </tr>
-        </tbody>
-      </table>
+      <div data-afirma="c2-m3-09">
+        <table>
+          <caption class="sr-only">Patrones del correlograma y su interpretación</caption>
+          <thead>
+            <tr>
+              <th scope="col">Lo que se ve en el correlograma</th>
+              <th scope="col">Lo que indica</th>
+              <th scope="col">Ejemplo con cifras</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Todas las barras dentro de la banda</td>
+              <td>Ruido blanco: no queda estructura lineal</td>
+              <td>Ruido simulado: $r_1 = -0.078$, banda $\pm 0.139$</td>
+            </tr>
+            <tr>
+              <td>Decaimiento <strong>lento y casi lineal</strong></td>
+              <td>Tendencia o raíz unitaria: hay que diferenciar</td>
+              <td>Caminata: $r_1 = 0.961$, $r_{12} = 0.488$</td>
+            </tr>
+            <tr>
+              <td>Picos en $k = m, 2m, 3m \ldots$</td>
+              <td>Estacionalidad de periodo $m$</td>
+              <td><code>AirPassengers</code>: $r_{12} = 0.760$ con $m = 12$</td>
+            </tr>
+            <tr>
+              <td>Decaimiento <strong>rápido</strong> (exponencial)</td>
+              <td>Proceso estacionario con memoria corta (Capítulo 3)</td>
+              <td>Serie simulada de 200 valores en la que cada uno es la mitad del anterior más un ruido nuevo (está en
+                el código de abajo; el Módulo 5 presenta este proceso): $r_1 = 0.474$, $r_2 = 0.235$, y del rezago 3
+                en adelante todo dentro de la banda $\pm 0.139$</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="text-sm text-gray-600" style="margin:-1.25rem 0 1.75rem;">Lecturas de la segunda columna: fila 1, <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§2.9" data-modo="narrativa"><a href="#ref-m3-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">Hyndman y Athanasopoulos (2021, §2.9)</a></cite>; fila 2, <cite class="cita" data-ref="cryer2008time" data-loc="p. 128" data-modo="narrativa"><a href="#ref-m3-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">Cryer y Chan (2008, p. 128)</a></cite>; fila 3, <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§2.8" data-modo="narrativa"><a href="#ref-m3-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">Hyndman y Athanasopoulos (2021, §2.8)</a></cite>; fila 4, <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.1" data-modo="narrativa"><a href="#ref-m3-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">Hyndman y Athanasopoulos (2021, §9.1)</a></cite>. Las cifras de la tercera columna se calcularon en R.</p>
+      </div>
 
       <p>Tres avisos sobre la tabla. <strong>Diferenciar</strong> es restar a cada valor el anterior: se pasa de la
         serie de los niveles a la de los cambios, $\nabla y_t = y_t - y_{t-1}$. Es el remedio de la segunda fila cuando lo que
         hay es una raíz unitaria —una tendencia que es una recta fija se trata de otro modo, como explican los
         Módulos 5 y 6—; el símbolo $\nabla$ reaparece en los módulos siguientes y el Módulo 7 lo desarrolla. La <strong>raíz
           unitaria</strong> es el nombre técnico de lo que le ocurre a la caminata aleatoria, y se define en el
-        Módulo 5. Y las fórmulas de este módulo suponen una serie estacionaria: en una caminata o en
+        Módulo 5. <span data-afirma="c2-m3-16">Y las fórmulas de este módulo suponen una serie estacionaria <cite class="cita" data-ref="cryer2008time" data-loc="p. 46"><a href="#ref-m3-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 46)</a></cite></span>: en una caminata o en
         <code>AirPassengers</code> no existe un $\rho_k$ que valga lo mismo en todo instante, así que sus $r_k$ no
         estiman ninguna cantidad fija. Su correlograma se lee como una huella: la que delata la no
         estacionariedad.</p>
@@ -2675,8 +2769,8 @@ print(int(np.sum(np.abs(r) > banda)))
         contando con que la media móvil con que se calcula ese residuo ya le deja algo de autocorrelación propia.
         No es ruido blanco: la descomposición separó la tendencia y la estacionalidad, pero en lo que sobra queda
         dependencia entre un mes y los siguientes. Describir esa dependencia es el trabajo de los modelos del
-        Capítulo 3, que además cambia el recuento de barras por una prueba formal, la de Ljung–Box, que las resume
-        todas en un solo p-valor.</p>
+        Capítulo 3, que además cambia el recuento de barras por <span data-afirma="c2-m3-17">una prueba formal, la de Ljung–Box, que las resume
+        todas en un solo p-valor <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§5.4"><a href="#ref-m3-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §5.4)</a></cite></span>.</p>
 
       <div class="code-tabs">
         <div class="code-tabs-nav" role="tablist" aria-label="Calcular y graficar la ACF">
@@ -2755,11 +2849,20 @@ print(int(np.sum(np.abs(rr) > 1.96 / np.sqrt(len(residuo)))))   # de 24 rezagos
       </div>
 
       <div class="warning">
-        <p><strong>La ACF no distingue causa de coincidencia.</strong> Dos series con tendencia creciente tendrán
-          autocorrelaciones altas y correlación cruzada alta entre sí aunque no tengan ninguna relación real. Es el
-          fenómeno de la <em>regresión espuria</em>: con series no estacionarias, los estadísticos habituales mienten.
+        <p><strong>La ACF no distingue causa de coincidencia.</strong> <span data-afirma="c2-m3-13">Dos series no estacionarias independientes pueden mostrar una correlación cruzada alta sin tener ninguna relación real <cite class="cita" data-ref="cryer2008time" data-loc="pp. 263–264"><a href="#ref-m3-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, pp. 263–264)</a></cite>. Es el
+          fenómeno de la <em>regresión espuria</em>: con series no estacionarias, los estadísticos habituales mienten <cite class="cita" data-ref="hamilton1994time" data-loc="pp. 557–558"><a href="#ref-m3-hamilton1994time" title="Hamilton, J. D. (1994). Time series analysis. Princeton University Press.">(Hamilton, 1994, pp. 557–558)</a></cite>.</span>
           Otra razón para volverlas estacionarias antes de modelar.</p>
       </div>
+      <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
+        <h4>Fuentes citadas en este módulo</h4>
+        <!--FUENTES-MODULO:inicio-->
+        <ul class="lista-fuentes">
+          <li id="ref-m3-cryer2008time">Cryer, J. D., y Chan, K.-S. (2008). <em>Time Series Analysis</em> (2.ª ed.). Springer New York. <a target="_blank" rel="noopener" href="https://doi.org/10.1007/978-0-387-75959-3">https://doi.org/10.1007/978-0-387-75959-3</a></li>
+          <li id="ref-m3-hamilton1994time">Hamilton, J. D. (1994). <em>Time series analysis</em>. Princeton University Press.</li>
+          <li id="ref-m3-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+        </ul>
+        <!--FUENTES-MODULO:fin-->
+      </aside>
     </div>
   </template>
 
@@ -2785,25 +2888,23 @@ print(int(np.sum(np.abs(rr) > 1.96 / np.sqrt(len(residuo)))))   # de 24 rezagos
         </div>
       </div>
 
-      <p>El correlograma del Módulo 3 tiene un punto ciego: la ACF hace un <em>doble conteo</em>. Si hoy depende de
-        ayer, y ayer de anteayer, hoy y anteayer aparecerán correlacionados <strong>aunque no haya ninguna relación directa</strong>
-        entre ellos: la correlación viaja de forma indirecta a través de ayer. La ACF no sabe separar esas dos cosas.</p>
+      <p>El correlograma del Módulo 3 tiene un punto ciego: la ACF hace un <em>doble conteo</em>. <span data-afirma="c2-m4-01">Si hoy depende de
+        ayer, y ayer de anteayer, hoy y anteayer pueden aparecer correlacionados <strong>aunque no haya ninguna relación directa</strong>
+        entre ellos: la correlación viaja de forma indirecta a través de ayer <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.5"><a href="#ref-m4-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.5)</a></cite>.</span> La ACF no sabe separar esas dos cosas.</p>
 
-      <div class="definition">
+      <div class="definition" data-afirma="c2-m4-02">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: autocorrelación parcial (PACF)</h4>
         <p>La <strong>autocorrelación parcial</strong> en el rezago $k$, que se denota $\phi_{kk}$, es la correlación
           entre $y_t$ y $y_{t-k}$ <strong>una vez descontado</strong> el efecto de los rezagos intermedios
-          $y_{t-1}, \ldots, y_{t-k+1}$.</p>
-        <p style="margin-bottom:0;">Equivalentemente: sobre la serie centrada —a la que ya se le restó su media—, es el
-          coeficiente $\phi_{kk}$ de la regresión</p>
+          $y_{t-1}, \ldots, y_{t-k+1}$ <cite class="cita" data-ref="cryer2008time" data-loc="p. 112"><a href="#ref-m4-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 112)</a></cite>.</p>
+        <p style="margin-bottom:0;">Equivalentemente: con el proceso centrado —ya restada su media—, es el último coeficiente, $\phi_{kk}$, de la mejor predicción lineal de $y_t$ a partir de sus $k$ valores anteriores <cite class="cita" data-ref="hamilton1994time" data-loc="p. 111"><a href="#ref-m4-hamilton1994time" title="Hamilton, J. D. (1994). Time series analysis. Princeton University Press.">(Hamilton, 1994, p. 111)</a></cite>:</p>
         <div class="formula-partes formula-partes--seguidas">
           $y_t = \phi_{k1} y_{t-1} + \phi_{k2} y_{t-2}$
           ${} + \cdots + \phi_{kk} y_{t-k} + \varepsilon_t$
         </div>
       </div>
 
-      <p>En la práctica no se corren $k$ regresiones: se obtiene la PACF a partir de la ACF con la <strong>recursión de
-          Durbin–Levinson</strong>, que es lo que hace <code>pacf()</code> en R.</p>
+      <p><span data-afirma="c2-m4-04">En la práctica la PACF muestral se calcula a partir de la ACF: se sustituyen las autocorrelaciones teóricas $\rho_k$ por las muestrales $r_k$ y se aplica la <strong>recursión de Durbin–Levinson</strong> <cite class="cita" data-ref="cryer2008time" data-loc="p. 115"><a href="#ref-m4-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 115)</a></cite>, que da los mismos valores que <code>pacf()</code> en R. Por eso no coincide exactamente con el último coeficiente de una regresión por mínimos cuadrados sobre $k$ rezagos.</span></p>
 
       <div class="derivacion">
         <button type="button" class="derivacion-boton" aria-expanded="false" aria-controls="der-durbin-levinson">
@@ -2814,8 +2915,8 @@ print(int(np.sum(np.abs(rr) > 1.96 / np.sqrt(len(residuo)))))   # de 24 rezagos
         <div class="derivacion-panel" id="der-durbin-levinson" hidden>
           <ol class="derivacion-pasos">
             <li>
-              <p>Ajustar la regresión del rezago $k$ equivale a resolver el sistema de Yule–Walker de orden $k$, cuya
-                matriz está formada por las propias autocorrelaciones:</p>
+              <p><span data-afirma="c2-m4-05">Los coeficientes $\phi_{k1}, \ldots, \phi_{kk}$ de la definición satisfacen el sistema de Yule–Walker de orden $k$, cuya
+                matriz está formada por las propias autocorrelaciones <cite class="cita" data-ref="cryer2008time" data-loc="p. 114"><a href="#ref-m4-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 114)</a></cite></span>:</p>
               $$\begin{pmatrix} 1 &amp; \rho_1 &amp; \cdots &amp; \rho_{k-1}\\ \rho_1 &amp; 1 &amp; \cdots &amp; \rho_{k-2}\\
                 \vdots &amp; &amp; \ddots &amp; \vdots\\ \rho_{k-1} &amp; \rho_{k-2} &amp; \cdots &amp; 1\end{pmatrix}
                 \begin{pmatrix}\phi_{k1}\\ \phi_{k2}\\ \vdots\\ \phi_{kk}\end{pmatrix}
@@ -2823,14 +2924,14 @@ print(int(np.sum(np.abs(rr) > 1.96 / np.sqrt(len(residuo)))))   # de 24 rezagos
               <p>Resolverlo por separado para cada $k$ costaría $O(k^3)$ operaciones… y hay que hacerlo para todos los
                 rezagos del correlograma.</p>
             </li>
-            <li>
+            <li data-afirma="c2-m4-06">
               <p>La matriz no es una matriz cualquiera: es <strong>simétrica y de Toeplitz</strong> (constante a lo
                 largo de cada diagonal). Eso permite pasar de la solución de orden $k-1$ a la de orden $k$ sin volver a
-                empezar. El coeficiente nuevo es</p>
+                empezar <cite class="cita" data-ref="cryer2008time" data-loc="p. 115"><a href="#ref-m4-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 115)</a></cite>. El coeficiente nuevo es</p>
               $$\phi_{kk} = \frac{\rho_k - \sum_{j=1}^{k-1}\phi_{k-1,j}\,\rho_{k-j}}
                                   {1 - \sum_{j=1}^{k-1}\phi_{k-1,j}\,\rho_j}$$
             </li>
-            <li>
+            <li data-afirma="c2-m4-07">
               <p>Léelo como lo que es: en el numerador está la autocorrelación del rezago $k$ <strong>menos lo que ya
                   explican</strong> los rezagos anteriores. Justamente la parte "parcial" que se buscaba.</p>
               <p>El denominador tampoco es un normalizador cualquiera: vale $v_{k-1}/\gamma_0$, donde</p>
@@ -2841,14 +2942,13 @@ print(int(np.sum(np.abs(rr) > 1.96 / np.sqrt(len(residuo)))))   # de 24 rezagos
                 mitad de la recursión: $v_k = v_{k-1}\,(1 - \phi_{kk}^2)$. Añadir un rezago nunca empeora la predicción,
                 y la mejora tanto más cuanto mayor sea $|\phi_{kk}|$.</p>
             </li>
-            <li>
-              <p>Y los demás coeficientes se actualizan con una sola pasada:</p>
+            <li data-afirma="c2-m4-08">
+              <p>Y los demás coeficientes se actualizan con una sola pasada <cite class="cita" data-ref="cryer2008time" data-loc="p. 115"><a href="#ref-m4-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 115)</a></cite>:</p>
               $$\phi_{kj} = \phi_{k-1,j} - \phi_{kk}\,\phi_{k-1,k-j}, \qquad j = 1,\ldots,k-1$$
               <p>Arrancando en $\phi_{11} = \rho_1$, cada rezago cuesta $O(k)$ en vez de $O(k^3)$.</p>
             </li>
           </ol>
-          <p class="derivacion-resultado">Esta es la recursión que implementan <code>pacf()</code> de R, el método
-            <code>ldb</code> de statsmodels y la función <code>calcularPACF()</code> que mueve los simuladores de los
+          <p class="derivacion-resultado" data-afirma="c2-m4-09">Con esta recursión coinciden <code>pacf()</code> de R y el método <code>ldb</code> de statsmodels, y es la que implementa la función <code>calcularPACF()</code> que mueve los simuladores de los
             capítulos 3 y 5. El método <code>ywm</code> de statsmodels, que es el que usa el código de este módulo,
             llega a los mismos valores por el otro camino: resuelve el sistema de Yule–Walker del paso 1 para cada
             rezago. Todos coinciden hasta el redondeo con que se guardó el precálculo.</p>
@@ -2864,7 +2964,7 @@ print(int(np.sum(np.abs(rr) > 1.96 / np.sqrt(len(residuo)))))   # de 24 rezagos
         mueve el selector:</p>
 
       <ul>
-        <li>La <strong>TRM</strong> es la Tasa Representativa del Mercado: la tasa de cambio del peso colombiano
+        <li data-afirma="c2-m4-14">La <strong>TRM</strong> es la Tasa Representativa del Mercado: la tasa de cambio del peso colombiano
           frente al dólar, en pesos por dólar. Aquí es su promedio mensual de enero de 2015 a junio de 2026, 138
           meses, calculado con la serie diaria que publica datos.gov.co. Es la segunda serie real del capítulo y
           vuelve en los Módulos 6 y 7.</li>
@@ -2905,14 +3005,14 @@ print(int(np.sum(np.abs(rr) > 1.96 / np.sqrt(len(residuo)))))   # de 24 rezagos
         banda, pero todavía no hay nada que identificar en ellas: mezclan la tendencia con la estacionalidad. Antes de
         leer un modelo en una PACF hay que volver estacionaria la serie, y de eso se ocupa el resto del capítulo.</p>
 
-      <div class="note">
+      <div class="note" data-afirma="c2-m4-11">
         <p><strong>Anticipo del Capítulo 3.</strong> Esta pareja de gráficos es la herramienta de identificación de
           modelos ARMA. La regla, que allí se desarrolla en detalle, es:</p>
         <ul style="margin-bottom:0;">
           <li>PACF que se <strong>corta</strong> tras el rezago $p$ y ACF que decae → modelo <strong>AR($p$)</strong>;</li>
           <li>ACF que se <strong>corta</strong> tras el rezago $q$ y PACF que decae → modelo <strong>MA($q$)</strong>;</li>
           <li>las dos decaen sin cortarse → modelo <strong>ARMA($p,q$)</strong>, y en ese caso los gráficos ya no dicen
-            cuánto valen $p$ y $q$.</li>
+            cuánto valen $p$ y $q$ <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.5"><a href="#ref-m4-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.5)</a></cite>.</li>
         </ul>
       </div>
 
@@ -2984,10 +3084,19 @@ print(np.allclose(p, pacf(pasajeros, nlags=24, method="ldb")[1:]))
       </div>
 
       <div class="warning">
-        <p><strong>La misma banda, la misma trampa.</strong> La banda $\pm 1.96/\sqrt{T}$ de la PACF vale bajo la
-          hipótesis de que la serie es ruido blanco. Con 24 rezagos, uno o dos picos fuera de la banda son lo normal por
+        <p><strong>La misma banda, la misma trampa.</strong> <span data-afirma="c2-m4-12">La banda $\pm 1.96/\sqrt{T}$ de la PACF vale para los rezagos mayores que $p$ cuando la serie sigue un AR($p$) <cite class="cita" data-ref="cryer2008time" data-loc="p. 115"><a href="#ref-m4-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 115)</a></cite>; el ruido blanco es el caso $p = 0$.</span> Con 24 rezagos, uno o dos picos fuera de la banda son lo normal por
           azar. Un rezago 17 que se asoma no justifica un modelo AR(17).</p>
       </div>
+      <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
+        <h4>Fuentes citadas en este módulo</h4>
+        <!--FUENTES-MODULO:inicio-->
+        <ul class="lista-fuentes">
+          <li id="ref-m4-cryer2008time">Cryer, J. D., y Chan, K.-S. (2008). <em>Time Series Analysis</em> (2.ª ed.). Springer New York. <a target="_blank" rel="noopener" href="https://doi.org/10.1007/978-0-387-75959-3">https://doi.org/10.1007/978-0-387-75959-3</a></li>
+          <li id="ref-m4-hamilton1994time">Hamilton, J. D. (1994). <em>Time series analysis</em>. Princeton University Press.</li>
+          <li id="ref-m4-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+        </ul>
+        <!--FUENTES-MODULO:fin-->
+      </aside>
     </div>
   </template>
 
@@ -3026,29 +3135,29 @@ print(np.allclose(p, pacf(pasajeros, nlags=24, method="ldb")[1:]))
 
       <p>Todo depende del valor de $\phi$:</p>
 
-      <ul>
-        <li><strong>$|\phi| &lt; 1$</strong>: el proceso es <strong>estacionario</strong>. Un choque se olvida
+      <ul data-afirma="c2-m5-01">
+        <li><strong>$|\phi| &lt; 1$</strong>: el proceso es <strong>estacionario</strong> <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.3"><a href="#ref-m5-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.3)</a></cite>. Un choque se olvida
           geométricamente: su efecto $h$ periodos después es $\phi^h$, que tiende a cero. La serie siempre vuelve hacia
-          su media. La ACF teórica es $\rho_k = \phi^k$, un decaimiento exponencial.</li>
+          su media. La ACF teórica es $\rho_k = \phi^k$, un decaimiento exponencial <cite class="cita" data-ref="cryer2008time" data-loc="p. 67"><a href="#ref-m5-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 67)</a></cite>.</li>
         <li><strong>$\phi = 1$</strong>: es la <strong>caminata aleatoria</strong> (<em>random walk</em>). El proceso
           tiene una <strong>raíz unitaria</strong>.</li>
         <li><strong>$|\phi| &gt; 1$</strong>: el proceso es <strong>explosivo</strong>; los choques se amplifican sin
-          límite. Rara vez sirve para modelar datos reales.</li>
+          límite. Es una no estacionariedad menos razonable que la de $\phi = 1$ <cite class="cita" data-ref="cryer2008time" data-loc="p. 89"><a href="#ref-m5-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 89)</a></cite>.</li>
       </ul>
 
       <div class="definition">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: caminata aleatoria y raíz unitaria</h4>
         <p>La <strong>caminata aleatoria</strong> es $y_t = y_{t-1} + \varepsilon_t$, es decir,
           $y_t = y_0 + \sum_{i=1}^{t}\varepsilon_i$. De ahí salen sus dos propiedades incómodas:</p>
-        <ul>
-          <li>$\operatorname{Var}(y_t) = t\,\sigma^2$: la varianza <strong>crece sin límite</strong>;</li>
-          <li>un choque nunca se olvida: su efecto sobre todos los valores futuros es permanente.</li>
+        <ul data-afirma="c2-m5-04">
+          <li>$\operatorname{Var}(y_t) = t\,\sigma^2$: la varianza <strong>crece sin límite</strong> <cite class="cita" data-ref="cryer2008time" data-loc="p. 13"><a href="#ref-m5-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 13)</a></cite>;</li>
+          <li>un choque nunca se olvida: su efecto sobre todos los valores futuros es permanente <cite class="cita" data-ref="hamilton1994time" data-loc="p. 443"><a href="#ref-m5-hamilton1994time" title="Hamilton, J. D. (1994). Time series analysis. Princeton University Press.">(Hamilton, 1994, p. 443)</a></cite>.</li>
         </ul>
-        <p style="margin-bottom:0;">El nombre <strong>raíz unitaria</strong> viene de escribir el modelo con el operador
+        <p style="margin-bottom:0;"><span data-afirma="c2-m5-05">El nombre <strong>raíz unitaria</strong> viene de escribir el modelo con el operador
           de rezago $B$ (donde $By_t = y_{t-1}$): la ecuación $(1-\phi B)y_t = \varepsilon_t$ tiene el polinomio
           característico $1 - \phi z = 0$, cuya raíz es $z = 1/\phi$. La condición de estacionariedad $|\phi| &lt; 1$
-          equivale a que esa raíz esté <strong>fuera</strong> del círculo unitario; con $\phi = 1$ la raíz vale
-          exactamente 1. El Capítulo 3 vuelve con calma sobre el operador $B$ y sobre esa condición.</p>
+          equivale a que esa raíz esté <strong>fuera</strong> del círculo unitario <cite class="cita" data-ref="cryer2008time" data-loc="p. 71"><a href="#ref-m5-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 71)</a></cite>; con $\phi = 1$ la raíz vale
+          exactamente 1.</span> El Capítulo 3 vuelve con calma sobre el operador $B$ y sobre esa condición.</p>
       </div>
 
       <div class="simulador" data-simulador="ar1-phi">
@@ -3075,9 +3184,9 @@ print(np.allclose(p, pacf(pasajeros, nlags=24, method="ldb")[1:]))
             de cero.</li>
           <li>Con $\phi = 0.95$ la serie <em>parece</em> tener tendencia sin tenerla, y la ACF baja mucho más despacio
             que con $\phi = 0.5$. Con el ruido del simulador todavía se distingue de la de $\phi = 1$: pasa el
-            deslizador de 0.95 a 1 y compara $r_{10}$ en la lectura. Este es el caso difícil: cuanto más corta es la
+            deslizador de 0.95 a 1 y compara $r_{10}$ en la lectura. <span data-afirma="c2-m5-07">Este es el caso difícil: cuanto más corta es la
             muestra y más se acerca $\phi$ a 1, menos se diferencian los dos correlogramas, y distinguir $\phi = 0.95$
-            de $\phi = 1$ acaba siendo casi imposible.</li>
+            de $\phi = 1$ acaba siendo casi imposible <cite class="cita" data-ref="hamilton1994time" data-loc="p. 445"><a href="#ref-m5-hamilton1994time" title="Hamilton, J. D. (1994). Time series analysis. Princeton University Press.">(Hamilton, 1994, p. 445)</a></cite>.</span></li>
           <li>Con la primera diferencia activada, el resultado depende de $\phi$. Con $\phi = 1$ queda el ruido de
             partida, porque $\nabla y_t = \varepsilon_t$: ruido blanco. Con $\phi &lt; 1$ la serie ya era estacionaria
             y la diferencia sobra; deja una autocorrelación <strong>negativa</strong> en el rezago 1, que en
@@ -3090,8 +3199,8 @@ print(np.allclose(p, pacf(pasajeros, nlags=24, method="ldb")[1:]))
 
       <h3>Caminata con deriva</h3>
 
-      <p>Al añadir una constante se obtiene la <strong>caminata aleatoria con deriva</strong> (<em>random walk with
-          drift</em>):</p>
+      <p><span data-afirma="c2-m5-09">Al añadir una constante se obtiene la <strong>caminata aleatoria con deriva</strong> (<em>random walk with
+          drift</em>) <cite class="cita" data-ref="hamilton1994time" data-loc="p. 436"><a href="#ref-m5-hamilton1994time" title="Hamilton, J. D. (1994). Time series analysis. Princeton University Press.">(Hamilton, 1994, p. 436)</a></cite></span>:</p>
 
       <div class="formula">
         <div class="formula-partes">
@@ -3100,17 +3209,14 @@ print(np.allclose(p, pacf(pasajeros, nlags=24, method="ldb")[1:]))
         </div>
       </div>
 
-      <p>El término $ct$ es una recta, y la suma $\sum\varepsilon_i$ que se le añade es la <strong>tendencia
-          estocástica</strong>: la serie sube en promedio $c$ por periodo, pero no vuelve a esa recta, porque la
-        distancia que la separa de ella es una caminata aleatoria cuya varianza, $t\sigma^2$, no deja de crecer. Es el
-        modelo por defecto
-        para precios de activos, índices y tipos de cambio, y explica por qué el pronóstico ingenuo (<em>naïve</em>:
-        "mañana será como hoy") es tan difícil de batir en esos casos.</p>
+      <p><span data-afirma="c2-m5-10">El término $ct$ es una recta, y la suma $\sum\varepsilon_i$ que se le añade es la <strong>tendencia
+          estocástica</strong>: la serie sube en promedio $c$ por periodo, pero no vuelve a esa recta <cite class="cita" data-ref="hamilton1994time" data-loc="p. 442"><a href="#ref-m5-hamilton1994time" title="Hamilton, J. D. (1994). Time series analysis. Princeton University Press.">(Hamilton, 1994, p. 442)</a></cite>, porque la
+        distancia que la separa de ella es una caminata aleatoria cuya varianza, $t\sigma^2$, no deja de crecer.</span> <span data-afirma="c2-m5-11">Las caminatas aleatorias se usan mucho para datos financieros y económicos <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.1"><a href="#ref-m5-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.1)</a></cite>; como su pronóstico es el último valor observado, en precios e índices bursátiles el pronóstico ingenuo (<em>naïve</em>: "mañana será como hoy") suele ser el mejor método <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§5.4"><a href="#ref-m5-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §5.4)</a></cite>.</span></p>
 
       <div class="warning">
-        <p><strong>Tendencia determinista vs. tendencia estocástica.</strong> Se parecen en el gráfico y exigen
+        <p><strong>Tendencia determinista vs. tendencia estocástica.</strong> <span data-afirma="c2-m5-12">Se parecen en el gráfico y exigen
           tratamientos opuestos. $y_t = a + bt + \varepsilon_t$ (determinista) se corrige <em>quitando</em> la recta
-          ajustada; $y_t = c + y_{t-1} + \varepsilon_t$ (estocástica) se corrige <strong>diferenciando</strong>. Aplicar
+          ajustada; $y_t = c + y_{t-1} + \varepsilon_t$ (estocástica) se corrige <strong>diferenciando</strong> <cite class="cita" data-ref="hamilton1994time" data-loc="pp. 435–436"><a href="#ref-m5-hamilton1994time" title="Hamilton, J. D. (1994). Time series analysis. Princeton University Press.">(Hamilton, 1994, pp. 435–436)</a></cite>.</span> Aplicar
           el tratamiento equivocado tiene un costo en las dos direcciones: quitar una recta a una caminata deja los
           residuales igual de no estacionarios, y diferenciar una serie con tendencia determinista sí la vuelve
           estacionaria, pero sobrediferenciada —$\nabla y_t = b + \varepsilon_t - \varepsilon_{t-1}$, con el problema
@@ -3181,6 +3287,16 @@ deriva = np.cumsum(0.3 + e)   # caminata con deriva</code></pre>
         declarado. No vuelven fácil el caso difícil —con $\phi$ tan cerca de 1 y doscientos datos, lo habitual es
         que tampoco ellas lo separen de la raíz unitaria—, pero sí dicen cuándo la evidencia alcanza y cuándo
         no.</p>
+      <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
+        <h4>Fuentes citadas en este módulo</h4>
+        <!--FUENTES-MODULO:inicio-->
+        <ul class="lista-fuentes">
+          <li id="ref-m5-cryer2008time">Cryer, J. D., y Chan, K.-S. (2008). <em>Time Series Analysis</em> (2.ª ed.). Springer New York. <a target="_blank" rel="noopener" href="https://doi.org/10.1007/978-0-387-75959-3">https://doi.org/10.1007/978-0-387-75959-3</a></li>
+          <li id="ref-m5-hamilton1994time">Hamilton, J. D. (1994). <em>Time series analysis</em>. Princeton University Press.</li>
+          <li id="ref-m5-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+        </ul>
+        <!--FUENTES-MODULO:fin-->
+      </aside>
     </div>
   </template>
 
@@ -3205,11 +3321,11 @@ deriva = np.cumsum(0.3 + e)   # caminata con deriva</code></pre>
         </div>
       </div>
 
-      <p>Mirar el correlograma es indispensable, pero es subjetivo. Las <strong>pruebas de raíz unitaria</strong>
-        (<em>unit root tests</em>) ponen un número a la decisión. Las dos más usadas son ADF y KPSS, y lo primero que
-        hay que grabarse es que <strong>plantean hipótesis nulas contrarias</strong>.</p>
+      <p><span data-afirma="c2-m6-01">Mirar el correlograma es indispensable, pero es subjetivo. Las <strong>pruebas de raíz unitaria</strong>
+        (<em>unit root tests</em>) ponen un número a la decisión <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.1"><a href="#ref-m6-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.1)</a></cite>. Aquí se usan dos, ADF y KPSS, y lo primero que
+        hay que grabarse es que <strong>plantean hipótesis nulas contrarias</strong>.</span></p>
 
-      <div class="definition">
+      <div class="definition" data-afirma="c2-m6-04">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>ADF — Dickey–Fuller aumentada</h4>
         <p>Se estima la regresión</p>
         <div class="formula-partes formula-partes--seguidas">
@@ -3220,8 +3336,7 @@ deriva = np.cumsum(0.3 + e)   # caminata con deriva</code></pre>
             unitaria</strong>) contra $H_1: \gamma &lt; 0$ (estacionaria alrededor de la tendencia $\alpha + \beta t$ que
           la propia regresión incluye, o <em>estacionaria en tendencia</em>; sin el término $\beta t$, estacionaria
           en nivel). Un <strong>p-valor pequeño rechaza la raíz unitaria</strong>, es decir, favorece la
-          estacionariedad. <code>adf.test()</code> de R estima siempre la regresión completa, con constante y
-          tendencia.</p>
+          estacionariedad <cite class="cita" data-ref="cryer2008time" data-loc="pp. 128–129"><a href="#ref-m6-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, pp. 128–129)</a></cite>. La regresión con constante y tendencia es la que corresponde cuando la alternativa es una tendencia lineal más un error estacionario <cite class="cita" data-ref="cryer2008time" data-loc="p. 130"><a href="#ref-m6-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 130)</a></cite>, y es la que <code>adf.test()</code> de R estima siempre.</p>
         <p style="margin-bottom:0;">Dos letras cambian aquí de oficio. $\nabla y_t = y_t - y_{t-1}$ es la primera
           diferencia del Módulo 3, y $\gamma$ no es la autocovarianza $\gamma_k$ de los Módulos 1 y 3, sino el
           coeficiente de $y_{t-1}$: al restar $y_{t-1}$ en los dos lados del proceso del Módulo 5 queda
@@ -3232,12 +3347,12 @@ deriva = np.cumsum(0.3 + e)   # caminata con deriva</code></pre>
       </div>
 
       <div class="definition">
-        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>KPSS — Kwiatkowski, Phillips, Schmidt y Shin</h4>
-        <p>Descompone la serie en tendencia determinista + caminata aleatoria + error estacionario, y contrasta
+        <h4><i class="fas fa-book mr-2" aria-hidden="true"></i><span data-afirma="c2-m6-18">KPSS — Kwiatkowski, Phillips, Schmidt y Shin <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.1"><a href="#ref-m6-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.1)</a></cite></span></h4>
+        <p><span data-afirma="c2-m6-05">Descompone la serie en tendencia determinista + caminata aleatoria + error estacionario, y contrasta
           $H_0$: la varianza del componente de caminata es cero, es decir, <strong>la serie ES estacionaria</strong>
-          (en nivel o alrededor de una tendencia, según la variante).</p>
-        <p style="margin-bottom:0;">Aquí un <strong>p-valor pequeño rechaza la estacionariedad</strong>. Es
-          exactamente al revés que el ADF.</p>
+          (en nivel o alrededor de una tendencia, según la variante).</span></p>
+        <p style="margin-bottom:0;"><span data-afirma="c2-m6-16">Aquí un <strong>p-valor pequeño rechaza la estacionariedad</strong> <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.1"><a href="#ref-m6-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.1)</a></cite>. Es
+          exactamente al revés que el ADF.</span></p>
       </div>
 
       <div class="warning">
@@ -3248,7 +3363,7 @@ deriva = np.cumsum(0.3 + e)   # caminata con deriva</code></pre>
           cualquier salida, pregúntate siempre: <strong>¿cuál es la $H_0$ de esta prueba?</strong></p>
       </div>
 
-      <table>
+      <table data-afirma="c2-m6-06">
         <caption class="sr-only">Combinaciones posibles de resultados de ADF y KPSS</caption>
         <thead>
           <tr>
@@ -3271,7 +3386,7 @@ deriva = np.cumsum(0.3 + e)   # caminata con deriva</code></pre>
           <tr>
             <td>No rechaza</td>
             <td>No rechaza</td>
-            <td>Datos poco informativos (muestra corta). Ninguna prueba concluye.</td>
+            <td>Datos poco informativos: ninguna prueba concluye.</td>
           </tr>
           <tr>
             <td>Rechaza</td>
@@ -3332,16 +3447,16 @@ deriva = np.cumsum(0.3 + e)   # caminata con deriva</code></pre>
         tendencia (<code>null = "Trend"</code>) también rechaza la estacionariedad de la TRM (0.273, $p &lt; 0.01$) y
         tampoco la rechaza en su diferencia (0.070, $p &gt; 0.10$).</p>
 
-      <p>Con las dos pruebas en su variante de tendencia se resuelve la distinción que el Módulo 5 dejó pendiente. En
-        el ADF la hipótesis nula es la tendencia estocástica y la alternativa, la determinista; en el KPSS de
+      <p>Con las dos pruebas en su variante de tendencia se resuelve la distinción que el Módulo 5 dejó pendiente. <span data-afirma="c2-m6-17">En
+        el ADF la hipótesis nula es la tendencia estocástica y la alternativa, la determinista <cite class="cita" data-ref="cryer2008time" data-loc="pp. 129–130"><a href="#ref-m6-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, pp. 129–130)</a></cite></span>; en el KPSS de
         tendencia, al revés. En la TRM el ADF no rechaza y el KPSS rechaza: su tendencia es estocástica y se corrige
         diferenciando. En una recta con ruido de la misma longitud, simulada en el código de más abajo, ocurre lo
         contrario: el ADF rechaza la raíz unitaria ($-5.744$, $p &lt; 0.01$) y el KPSS de tendencia no rechaza (0.052,
         $p &gt; 0.10$). Su tendencia es determinista y se corrige restando la recta.</p>
 
       <div class="note">
-        <p><strong>Sobre los p-valores al borde.</strong> Tanto <code>adf.test</code> como <code>kpss.test</code>
-          interpolan en tablas publicadas y avisan cuando el valor cae fuera del rango tabulado. Por eso aquí se escribe
+        <p><strong>Sobre los p-valores al borde.</strong> <span data-afirma="c2-m6-09">Tanto <code>adf.test</code> como <code>kpss.test</code>
+          interpolan en tablas publicadas y avisan cuando el valor cae fuera del rango tabulado.</span> Por eso aquí se escribe
           "&lt; 0.01" y "&gt; 0.10" en lugar de un número: el software reporta el extremo de la tabla, no el p-valor
           exacto. Reportarlo como "p = 0.01" sin más sería engañoso.</p>
       </div>
@@ -3357,11 +3472,11 @@ deriva = np.cumsum(0.3 + e)   # caminata con deriva</code></pre>
         ahora las dos pruebas dicen que la serie es estacionaria alrededor de una recta.</p>
 
       <div class="warning">
-        <p><strong>Eso es falso, y conviene entender exactamente por qué.</strong> <code>adf.test</code> elige por
+        <p><strong>Eso es falso, y conviene entender exactamente por qué.</strong> <span data-afirma="c2-m6-10"><code>adf.test</code> elige por
           defecto $k = \lfloor (T-1)^{1/3} \rfloor = 5$ rezagos, <strong>menos que el periodo estacional</strong>
-          $m = 12$. La oscilación anual —que sube y baja con enorme regularidad, es decir, revierte a su media todo el
+          $m = 12$.</span> <span data-afirma="c2-m6-11">La oscilación anual —que sube y baja con enorme regularidad, es decir, revierte a su media todo el
           tiempo— no cabe en esos 5 rezagos, se queda en el residuo, y el ADF la lee como evidencia de
-          estacionariedad.</p>
+          estacionariedad.</span></p>
       </div>
 
       <p>Tres evidencias de que el problema es la estacionalidad y no otra cosa. Primero, el resultado se da la vuelta en cuanto los
@@ -3558,9 +3673,9 @@ print(adf_como_en_r(trm.diff().dropna()))   # rechaza
 #> (-3.8801, 0.0129, 5)
 
 # OJO al comparar con R: el ESTADISTICO coincide con tseries hasta el cuarto
-# decimal (-1.9783 y -3.8801), pero el P-VALOR no: R interpola en las tablas de
-# Banerjee et al. (1993) y statsmodels usa la superficie de respuesta de
-# MacKinnon. De ahi 0.6132 frente a 0.5855, y 0.0129 frente a 0.0172: la
+# decimal (-1.9783 y -3.8801), pero el P-VALOR no: R lo interpola en una tabla
+# de valores criticos y statsmodels lo aproxima con una superficie de
+# respuesta. De ahi 0.6132 frente a 0.5855, y 0.0129 frente a 0.0172: la
 # diferencia llega a las centesimas. La conclusion es la misma en los dos
 # casos, pero un p-valor de R y uno de statsmodels no se comparan entre si.
 
@@ -3576,6 +3691,15 @@ print(round(float(est), 4), p)     # p = 0.01 es el tope de la tabla: rechaza
 
       <p>Las pruebas dicen si la serie necesita corrección, y el caso tramposo, que no se les puede preguntar en
         cualquier orden. El Módulo 7 presenta la corrección y fija ese orden.</p>
+      <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
+        <h4>Fuentes citadas en este módulo</h4>
+        <!--FUENTES-MODULO:inicio-->
+        <ul class="lista-fuentes">
+          <li id="ref-m6-cryer2008time">Cryer, J. D., y Chan, K.-S. (2008). <em>Time Series Analysis</em> (2.ª ed.). Springer New York. <a target="_blank" rel="noopener" href="https://doi.org/10.1007/978-0-387-75959-3">https://doi.org/10.1007/978-0-387-75959-3</a></li>
+          <li id="ref-m6-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+        </ul>
+        <!--FUENTES-MODULO:fin-->
+      </aside>
     </div>
   </template>
 
@@ -3600,14 +3724,14 @@ print(round(float(est), 4), p)     # p = 0.01 es el tope de la tabla: rechaza
         </div>
       </div>
 
-      <p>La <strong>diferenciación</strong> es la herramienta estándar para eliminar una raíz unitaria: en vez de
-        modelar el nivel de la serie, se modelan sus <em>cambios</em>. El Módulo 3 la presentó como una resta; aquí
+      <p><span data-afirma="c2-m7-01">La <strong>diferenciación</strong> es una manera de eliminar una raíz unitaria: en vez de
+        modelar el nivel de la serie, se modelan sus <em>cambios</em> <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.1"><a href="#ref-m7-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.1)</a></cite>.</span> El Módulo 3 la presentó como una resta; aquí
         recibe su notación, se cuenta lo que cuesta y se fija en qué orden se aplica.</p>
 
-      <div class="definition">
+      <div class="definition" data-afirma="c2-m7-02">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Operador de rezago y operador de diferencia</h4>
         <p>El <strong>operador de rezago</strong> $B$ (<em>backshift</em>) retrasa la serie un periodo:
-          $B y_t = y_{t-1}$, y en general $B^k y_t = y_{t-k}$.</p>
+          $B y_t = y_{t-1}$, y en general $B^k y_t = y_{t-k}$ <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.2"><a href="#ref-m7-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.2)</a></cite>.</p>
         <p>La <strong>diferencia regular</strong> (o de primer orden) es</p>
         $$\nabla y_t = y_t - y_{t-1} = (1 - B)\, y_t$$
         <p>La <strong>diferencia estacional</strong> de periodo $m$ compara cada observación con la de la misma
@@ -3615,7 +3739,7 @@ print(round(float(est), 4), p)     # p = 0.01 es el tope de la tabla: rechaza
         $$\nabla_m y_t = y_t - y_{t-m} = (1 - B^m)\, y_t$$
         <p style="margin-bottom:0;">Diferenciar $d$ veces se escribe $(1-B)^d y_t$. En todo el curso, $d$ es el
           número de diferencias regulares que se aplican a una serie y $D$, el de diferencias estacionales. Cada
-          diferencia cuesta observaciones: $\nabla$ deja $T-1$ datos, $\nabla_{12}$ deja $T-12$.</p>
+          diferencia cuesta observaciones: $\nabla$ deja $T-1$ datos, $\nabla_{12}$ deja $T-12$ <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.1"><a href="#ref-m7-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.1)</a></cite>.</p>
       </div>
 
       <div class="definition">
@@ -3629,20 +3753,19 @@ print(round(float(est), 4), p)     # p = 0.01 es el tope de la tabla: rechaza
               anterior</strong> y, si la pide, se aplica $\nabla$;</li>
           <li>se comprueba el resultado con el correlograma y las pruebas.</li>
         </ol>
-        <p><code>nsdiffs()</code> y <code>ndiffs()</code> son funciones del paquete <code>forecast</code> de R.
+        <p><span data-afirma="c2-m7-18"><code>nsdiffs()</code> y <code>ndiffs()</code> son funciones del paquete <code>forecast</code> de R.
           La segunda repite una prueba KPSS —diferenciar, volver a probar— hasta que deja de rechazar o llega a
           dos diferencias, y devuelve cuántas hicieron falta. No es el <code>kpss.test()</code> del Módulo 6: usa
           la versión del paquete <code>urca</code>, con otro truncamiento de rezagos, y las dos pueden no
           coincidir, como muestra el recuadro del final de este módulo. La primera mide la fuerza de la
           estacionalidad con la fórmula del $F_S$ del Capítulo 1, calculada sobre su propia descomposición STL, y
-          pide una diferencia estacional si pasa de 0.64. Cada una decide una sola clase de diferencia: el orden
+          pide una diferencia estacional si pasa de 0.64 <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.1"><a href="#ref-m7-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.1)</a></cite>.</span> Cada una decide una sola clase de diferencia: el orden
           lo pone quien las usa.</p>
         <p>El orden no cambia la serie a la que se llega si se aplican las dos diferencias
           —$\nabla\nabla_{12} y_t = \nabla_{12}\nabla y_t$, algebraicamente—, pero sí lo que se decide por el camino,
           por dos razones:</p>
         <ul>
-          <li>La recomendación de FPP3 es aplicar primero la diferencia estacional: a veces con ella basta y la
-            serie ya queda estacionaria, y se ahorra una diferencia regular que solo añadiría ruido. Que baste
+          <li data-afirma="c2-m7-05"><cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.1" data-modo="narrativa"><a href="#ref-m7-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">Hyndman y Athanasopoulos (2021, §9.1)</a></cite> recomiendan aplicar primero la diferencia estacional cuando el patrón estacional es marcado: a veces con ella basta y la serie ya queda estacionaria, y se ahorra una diferencia regular. Que baste
             tiene su explicación: la diferencia estacional ya lleva dentro una regular, porque
             $1 - B^m = (1-B)(1 + B + \cdots + B^{m-1})$.</li>
           <li>Las pruebas de raíz unitaria regular no son fiables sobre una serie que todavía es estacional
@@ -3769,10 +3892,10 @@ print(round(float(est), 4), p)     # p = 0.01 es el tope de la tabla: rechaza
       </div>
 
       <ol>
-        <li><strong>El correlograma.</strong> Si la ACF decae despacio y casi en línea recta, falta diferenciar. Si tras
-          diferenciar cae rápido dentro de la banda, ya está.</li>
-        <li><strong>Las pruebas del Módulo 6</strong>, aplicadas de forma secuencial: diferenciar, volver a probar,
-          repetir. Es lo que hace <code>ndiffs()</code>, con su propia versión del KPSS.</li>
+        <li data-afirma="c2-m7-06"><strong>El correlograma.</strong> Si la ACF decae despacio y casi en línea recta, falta diferenciar. Si tras
+          diferenciar cae rápido dentro de la banda, ya está <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.1"><a href="#ref-m7-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.1)</a></cite>.</li>
+        <li data-afirma="c2-m7-07"><strong>Las pruebas del Módulo 6</strong>, aplicadas de forma secuencial: diferenciar, volver a probar,
+          repetir <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.1"><a href="#ref-m7-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.1)</a></cite>. Es lo que hace <code>ndiffs()</code>, con su propia versión del KPSS.</li>
         <li><strong>La varianza no es una tercera señal.</strong> Que suba o baje al diferenciar depende solo de
           $r_1$, y eso no distingue la diferencia que hace falta de la que sobra, como se ve después de la tabla.</li>
       </ol>
@@ -3827,9 +3950,8 @@ print(round(float(est), 4), p)     # p = 0.01 es el tope de la tabla: rechaza
       <p>En las dos series la varianza toca su mínimo en $d = 1$ —el mismo valor que devuelve <code>ndiffs()</code>— y
         a partir de ahí vuelve a crecer.</p>
 
-      <p>Que aquí coincidan no convierte el mínimo de la varianza en una regla, en ninguno de los dos sentidos. Para
-        una serie estacionaria, $\operatorname{Var}(\nabla y_t) = 2(1-\rho_1)\operatorname{Var}(y_t)$, y en una
-        muestra cualquiera el cociente de varianzas sigue de cerca a $2(1-r_1)$: la varianza baja al diferenciar si
+      <p data-afirma="c2-m7-08">Que aquí coincidan no convierte el mínimo de la varianza en una regla, en ninguno de los dos sentidos. Para
+        una serie estacionaria, $\operatorname{Var}(\nabla y_t) = 2(1-\rho_1)\operatorname{Var}(y_t)$, y en una muestra de una serie estacionaria el cociente de varianzas se acerca a $2(1-r_1)$: la varianza baja al diferenciar si
         $r_1 &gt; 0.5$ y sube si $r_1 &lt; 0.5$. Es decir, repite lo que ya dice $r_1$, y $r_1$ solo no dice si hay
         una raíz unitaria. Dos series simuladas, que están en el código de más abajo, lo muestran:</p>
 
@@ -3847,20 +3969,20 @@ print(round(float(est), 4), p)     # p = 0.01 es el tope de la tabla: rechaza
       <div class="warning">
         <h4 style="margin-top:0;"><i class="fas fa-triangle-exclamation mr-2" aria-hidden="true"></i>Sobrediferenciación
           (<em>overdifferencing</em>)</h4>
-        <p>Diferenciar de más no es inofensivo: <strong>introduce autocorrelación que no estaba en los datos</strong>.
+        <p><span data-afirma="c2-m7-09">Diferenciar de más no es inofensivo: <strong>introduce autocorrelación que no estaba en los datos</strong> <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.1"><a href="#ref-m7-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.1)</a></cite>.</span>
           La columna $r_1$ de la tabla lo muestra: −0.29, −0.53 en log(<code>AirPassengers</code>); −0.41, −0.60 en
-          la TRM. Ese es el indicio más frecuente: una autocorrelación negativa en el rezago 1 que se acerca a
+          la TRM. Ese es el indicio: una autocorrelación negativa en el rezago 1 que se acerca a
           $-0.5$.</p>
         <p>La razón es algebraica. Si $y_t$ ya es ruido blanco y se diferencia, se obtiene
           $\nabla y_t = \varepsilon_t - \varepsilon_{t-1}$: cada valor mezcla el ruido de hoy con el de ayer, y dos
           valores seguidos comparten un $\varepsilon$ con el signo cambiado. Su covarianza es $-\sigma^2$ y su
           varianza, $2\sigma^2$: de ahí el $-0.5$. Es decir: se <strong>fabrica</strong> dependencia donde no había
           nada.</p>
-        <p><strong>Adelanto del Capítulo 3.</strong> Esa serie fabricada tiene nombre: es un proceso de media
+        <p data-afirma="c2-m7-11"><strong>Adelanto del Capítulo 3.</strong> Esa serie fabricada tiene nombre: es un proceso de media
           móvil de orden 1, o MA(1), que el Capítulo 3 escribe $y_t = \varepsilon_t + \theta\varepsilon_{t-1}$
           —aquí, $\theta = -1$; con la convención del signo contrario, $\theta = 1$—. Con ese valor de $\theta$ el
           MA(1) es <em>no invertible</em>, una propiedad que también se define allí y que le da problemas al
-          estimador. En la duda, conviene diferenciar de menos.</p>
+          estimador <cite class="cita" data-ref="cryer2008time" data-loc="pp. 126–127"><a href="#ref-m7-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, pp. 126–127)</a></cite>. No conviene diferenciar más de lo necesario <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.1"><a href="#ref-m7-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.1)</a></cite>.</p>
         <p style="margin-bottom:0;">Es un indicio, no una regla, y falla en los dos sentidos. En la serie estacionaria
           y persistente de arriba la diferencia sobra y $r_1$ queda en $-0.148$, lejos de $-0.5$; en la serie con
           raíz unitaria la diferencia hace falta y $r_1$ queda en $-0.483$. La sobrediferenciación se evita antes
@@ -3871,8 +3993,8 @@ print(round(float(est), 4), p)     # p = 0.01 es el tope de la tabla: rechaza
 
       <p>Sobre <code>log(AirPassengers)</code>, con la regla: <code>nsdiffs()</code> pide 1; sobre
         $\nabla_{12}\log y_t$, <code>ndiffs()</code> pide 1 más, y así se llega a $\nabla\nabla_{12}\log y_t$, donde
-        las dos funciones devuelven 0. Son $D = 1$ y $d = 1$: la serie del modelo <em>airline</em> que se ajusta en
-        el Capítulo 5, y una de las que ofrece el explorador del Módulo 4.</p>
+        las dos funciones devuelven 0. Son $D = 1$ y $d = 1$: <span data-afirma="c2-m7-14">la serie del modelo <em>airline</em> que se ajusta en
+        el Capítulo 5 <cite class="cita" data-ref="cryer2008time" data-loc="pp. 240–241"><a href="#ref-m7-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, pp. 240–241)</a></cite></span>, y una de las que ofrece el explorador del Módulo 4.</p>
 
       <p>En el orden contrario aquí se llega al mismo sitio, pero el camino enseña por qué no basta con las pruebas.
         Tras <strong>una diferencia regular</strong>, el KPSS de nivel ya no rechaza la estacionariedad
@@ -3880,8 +4002,8 @@ print(round(float(est), 4), p)     # p = 0.01 es el tope de la tabla: rechaza
         ($r_{12} = 0.841$) y <code>nsdiffs()</code> sigue pidiendo 1. Las pruebas de raíz unitaria regular
         <strong>no ven la estacionalidad</strong>; hay que mirar el correlograma.</p>
 
-      <p>En otras series el orden sí cambia la cuenta. <code>UKgas</code>, la serie de un ejercicio del
-        Capítulo 1, es el consumo trimestral de gas del Reino Unido de 1960 a 1986: 108 trimestres, con $m = 4$. Se toma en logaritmos, porque su amplitud
+      <p>En otras series el orden sí cambia la cuenta. <span data-afirma="c2-m7-19"><code>UKgas</code>, la serie de un ejercicio del
+        Capítulo 1, es el consumo trimestral de gas del Reino Unido de 1960 a 1986: 108 trimestres, con $m = 4$ <cite class="cita" data-ref="rcoreteam2026r" data-loc="§Description; §Format"><a href="#ref-m7-rcoreteam2026r" title="R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/">(R Core Team, 2026, §Description; §Format)</a></cite>.</span> Se toma en logaritmos, porque su amplitud
         crece con el nivel:</p>
 
       <table>
@@ -3933,7 +4055,7 @@ print(round(float(est), 4), p)     # p = 0.01 es el tope de la tabla: rechaza
           <code>tseries::kpss.test()</code> devuelve
           <strong>0.368 con $p = 0.091$</strong> —no rechaza al 5 %, o sea $d = 0$—, mientras que
           <code>ndiffs()</code> devuelve <strong>1</strong>. No es un error de ninguna de las dos.</p>
-        <p>El motivo es el <strong>truncamiento de rezagos</strong> del estimador de la varianza de largo plazo, y cada
+        <p data-afirma="c2-m7-15">El motivo es el <strong>truncamiento de rezagos</strong> del estimador de la varianza de largo plazo, y cada
           una usa una convención distinta: <code>kpss.test</code> toma
           $\lfloor 4(n/100)^{1/4}\rfloor = 4$ rezagos, y <code>ndiffs</code> —que por dentro llama a
           <code>urca::ur.kpss</code>, no a <code>tseries</code>— toma $\lfloor 3\sqrt{n}/13\rfloor = 2$. Con menos
@@ -4073,6 +4195,16 @@ for d in range(4):
 
       <p>Queda una pieza. La diferenciación corrige una media que cambia; una dispersión que crece con el nivel no la
         corrige ninguna diferencia, y es el asunto del Módulo 8.</p>
+      <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
+        <h4>Fuentes citadas en este módulo</h4>
+        <!--FUENTES-MODULO:inicio-->
+        <ul class="lista-fuentes">
+          <li id="ref-m7-cryer2008time">Cryer, J. D., y Chan, K.-S. (2008). <em>Time Series Analysis</em> (2.ª ed.). Springer New York. <a target="_blank" rel="noopener" href="https://doi.org/10.1007/978-0-387-75959-3">https://doi.org/10.1007/978-0-387-75959-3</a></li>
+          <li id="ref-m7-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+          <li id="ref-m7-rcoreteam2026r">R Core Team. (2026). <em>R: A Language and Environment for Statistical Computing</em> (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. <a target="_blank" rel="noopener" href="https://www.R-project.org/">https://www.R-project.org/</a></li>
+        </ul>
+        <!--FUENTES-MODULO:fin-->
+      </aside>
     </div>
   </template>
 
@@ -4097,24 +4229,23 @@ for d in range(4):
         </div>
       </div>
 
-      <p>La diferenciación arregla la media, pero no la varianza. En <code>AirPassengers</code> las oscilaciones anuales
+      <p><span data-afirma="c2-m8-01">La diferenciación estabiliza la media; para la varianza hace falta una transformación <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.1"><a href="#ref-m8-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.1)</a></cite>.</span> En <code>AirPassengers</code> las oscilaciones anuales
         de 1960 son mucho más amplias que las de 1949: la dispersión <strong>crece con el nivel</strong>, el abanico del
         Capítulo 1. Eso viola la segunda condición de estacionariedad y ninguna cantidad de diferencias lo corrige.
         Es la razón por la que la tabla de rezagos del Módulo 6 y todo el Módulo 7 trabajaron con
         <code>log(AirPassengers)</code>.</p>
 
-      <p>La solución es una transformación de <strong>estabilización de la varianza</strong>, y la más frecuente es el
-        logaritmo, que convierte crecimiento multiplicativo en aditivo. La familia de Box–Cox lo generaliza:</p>
+      <p><span data-afirma="c2-m8-02">La solución es una transformación de <strong>estabilización de la varianza</strong>, y a menudo sirve el logaritmo, que convierte crecimiento multiplicativo en aditivo. La familia de Box–Cox lo generaliza <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.1"><a href="#ref-m8-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §3.1)</a></cite></span>:</p>
 
-      <div class="definition">
+      <div class="definition" data-afirma="c2-m8-03">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Transformación de Box–Cox</h4>
         $$w_t = \begin{cases}
         \log(y_t) & \text{si } \lambda = 0,\\[4pt]
         \dfrac{y_t^{\lambda} - 1}{\lambda} & \text{en otro caso.}
         \end{cases}$$
-        <p style="margin-bottom:0;">Así escrita exige $y_t &gt; 0$; <code>BoxCox()</code> de <code>forecast</code> y
+        <p style="margin-bottom:0;">Así escrita exige $y_t &gt; 0$ <cite class="cita" data-ref="cryer2008time" data-loc="p. 101"><a href="#ref-m8-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 101)</a></cite>; <code>BoxCox()</code> de <code>forecast</code> y
           <code>box_cox()</code> de <code>fpp3</code> usan una variante con el signo de $y_t$ que admite valores
-          negativos cuando $\lambda &gt; 0$. Casos particulares: $\lambda = 1$ deja la serie como estaba
+          negativos cuando $\lambda &gt; 0$ <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.1"><a href="#ref-m8-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §3.1)</a></cite>. Casos particulares: $\lambda = 1$ deja la serie como estaba
           (salvo un desplazamiento), $\lambda = 0.5$ es la raíz cuadrada, $\lambda = 0$ el logaritmo y $\lambda = -1$ la
           inversa. Cuanto <strong>menor</strong> es $\lambda$, más agresivamente se comprimen los valores grandes.</p>
       </div>
@@ -4122,7 +4253,7 @@ for d in range(4):
       <div class="simulador" data-simulador="box-cox">
         <h4><i class="fas fa-sliders-h" aria-hidden="true"></i> El deslizador de $\lambda$</h4>
         <p class="simulador-intro">Mueve $\lambda$ sobre <code>AirPassengers</code> y observa cómo
-          la amplitud estacional deja de crecer. Abajo, el criterio de Guerrero para cada $\lambda$: el punto naranja
+          la amplitud estacional deja de crecer. Abajo, <span data-afirma="c2-m8-13">el criterio de Guerrero para cada $\lambda$ —el que <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.1" data-modo="narrativa"><a href="#ref-m8-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">Hyndman y Athanasopoulos (2021, §3.1)</a></cite> ofrecen para elegirla—</span>: el punto naranja
           marca dónde estás y el rombo, el mínimo de la curva, que es el $\lambda$ que elige R.</p>
         <div class="simulador-controles"></div>
         <div class="grafico-wrapper" style="height:230px;">
@@ -4136,7 +4267,7 @@ for d in range(4):
         <div class="simulador-lectura"></div>
       </div>
 
-      <div class="definition">
+      <div class="definition" data-afirma="c2-m8-04">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Cómo elegir $\lambda$: el criterio de Guerrero</h4>
         <p>Se parte la serie en bloques de $m$ observaciones (un año). Para cada bloque $i$ se calculan su media
           $\bar y_i$ y su desviación $s_i$, y se forma el cociente</p>
@@ -4149,23 +4280,23 @@ for d in range(4):
       <p>Para <code>AirPassengers</code> el criterio devuelve $\lambda = -0.295$, y para la TRM, $\lambda = 0.129$.</p>
 
       <div class="note">
-        <p><strong>En la práctica casi siempre se usa el logaritmo</strong>, aunque el óptimo formal sea otro. Conviene
+        <p><strong>En este curso se usa el logaritmo</strong>, aunque el óptimo formal sea otro. Conviene
           poner el precio sobre la mesa en lugar de decir que da igual: el criterio de Guerrero vale <strong>0.530</strong>
           sin transformar, <strong>0.153</strong> con el logaritmo y <strong>0.081</strong> en el óptimo
           $\lambda = -0.295$. Es decir, el logaritmo se queda un 88 % por encima del mínimo —la franja donde el criterio
           no se aleja más de un 20 % del mínimo es $\lambda \in [-0.41,\, -0.17]$, y el 0 <em>no</em> está dentro—, pero
           aun así capta el <strong>84 % de la mejora</strong> alcanzable respecto a no transformar.</p>
-        <p style="margin-bottom:0;">Se prefiere igual, por dos razones que pesan más que ese sobrecosto: (1)
-          $\lambda = 0$ es interpretable —los cambios se leen como variaciones porcentuales— mientras que
+        <p style="margin-bottom:0;"><span data-afirma="c2-m8-05">Se prefiere igual, por dos razones que pesan más que ese sobrecosto: (1)
+          $\lambda = 0$ es interpretable —los cambios se leen como variaciones porcentuales <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.1"><a href="#ref-m8-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §3.1)</a></cite>— mientras que
           $\lambda = -0.295$ no significa nada para nadie; (2) el $\hat\lambda$ óptimo es él mismo una estimación, hecha
-          aquí con solo 12 bloques anuales, y tiene su propia incertidumbre.</p>
+          aquí con solo 12 bloques anuales, y tiene su propia incertidumbre <cite class="cita" data-ref="cryer2008time" data-loc="p. 101"><a href="#ref-m8-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 101)</a></cite>.</span></p>
       </div>
 
       <div class="warning">
-        <p><strong>Al deshacer la transformación aparece un sesgo.</strong> Si se pronostica $w_t$ y se vuelve con
+        <p><strong>Al deshacer la transformación aparece un sesgo.</strong> <span data-afirma="c2-m8-08">Si se pronostica $w_t$ y se vuelve con
           $\exp(\cdot)$, lo que se obtiene es la <strong>mediana</strong> del pronóstico, no la media —siempre que la
           distribución del pronóstico en la escala transformada sea simétrica—. Para la media hace
-          falta una corrección de sesgo (que <code>fable</code> aplica sola y <code>statsmodels</code> no). El Capítulo 6
+          falta una corrección de sesgo (que <code>fable</code> aplica sola) <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§5.6"><a href="#ref-m8-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §5.6)</a></cite>.</span> El Capítulo 6
           vuelve sobre esto; por ahora basta saber que la vuelta atrás no es simétrica.</p>
       </div>
 
@@ -4238,6 +4369,15 @@ print(float(np.max(np.abs(y2 - pasajeros))) &lt; 1e-9)
 
       <p>Con esto están todas las piezas: una transformación para la varianza, dos diferencias para la media y dos
         pruebas para decidir. El Módulo 9 las pone en orden.</p>
+      <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
+        <h4>Fuentes citadas en este módulo</h4>
+        <!--FUENTES-MODULO:inicio-->
+        <ul class="lista-fuentes">
+          <li id="ref-m8-cryer2008time">Cryer, J. D., y Chan, K.-S. (2008). <em>Time Series Analysis</em> (2.ª ed.). Springer New York. <a target="_blank" rel="noopener" href="https://doi.org/10.1007/978-0-387-75959-3">https://doi.org/10.1007/978-0-387-75959-3</a></li>
+          <li id="ref-m8-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+        </ul>
+        <!--FUENTES-MODULO:fin-->
+      </aside>
     </div>
   </template>
 
@@ -4262,8 +4402,8 @@ print(float(np.max(np.abs(y2 - pasajeros))) &lt; 1e-9)
         </div>
       </div>
 
-      <p>Todo el capítulo se resume en una secuencia de decisiones que conviene ejecutar <strong>siempre en este
-          orden</strong>, porque cada paso condiciona el diagnóstico del siguiente. Los pasos 2 a 5 son la regla del
+      <p><span data-afirma="c2-m9-01">Todo el capítulo se resume en una secuencia de decisiones que conviene ejecutar <strong>siempre en este
+          orden</strong>, porque cada paso condiciona el diagnóstico del siguiente <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.7"><a href="#ref-m9-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.7)</a></cite>.</span> Los pasos 2 a 5 son la regla del
         orden del Módulo 7; el 1 y el 6 la rodean de lo que ninguna función hace sola: mirar antes y dejar
         constancia.</p>
 
@@ -4519,14 +4659,14 @@ print(int(np.sum(np.abs(r) > 1.96 / np.sqrt(len(res["serie"])))))   # de 24 reza
           pero con una diferencia crítica: <strong>el orden temporal impone restricciones que el preprocesamiento
             estándar ignora</strong>.</p>
         <ul style="margin-bottom:0;">
-          <li><strong>Fuga de información</strong> (<em>data leakage</em>): si calculas $\lambda$, la media o la
+          <li data-afirma="c2-m9-11"><strong>Fuga de información</strong> (<em>data leakage</em>): si calculas $\lambda$, la media o la
             desviación con <em>toda</em> la serie y luego partes en entrenamiento y prueba, has usado el futuro para
             transformar el pasado. Los parámetros de la transformación se estiman <strong>solo</strong> con el
-            entrenamiento.</li>
-          <li><strong>La validación cruzada estándar no sirve</strong>: barajar observaciones destruye el orden y
-            entrena con datos posteriores a los de prueba. Hay que usar validación de origen móvil, y a eso se dedica el
+            entrenamiento <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§5.10"><a href="#ref-m9-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §5.10)</a></cite>.</li>
+          <li data-afirma="c2-m9-12"><strong>La validación cruzada estándar no sirve</strong>: barajar observaciones destruye el orden y
+            entrena con datos posteriores a los de prueba. Hay que usar validación de origen móvil <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§5.10"><a href="#ref-m9-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §5.10)</a></cite>, y a eso se dedica el
             Capítulo 6.</li>
-          <li><strong>La estacionariedad sigue importando fuera de ARIMA</strong>: un árbol de decisión de hojas constantes predice con
+          <li data-afirma="c2-m9-13"><strong>La estacionariedad sigue importando fuera de ARIMA</strong>: un árbol de decisión de hojas constantes predice con
             promedios de lo que vio al entrenarse, así que ante una tendencia que sigue subiendo se queda en una
             meseta; diferenciar la serie antes le quita ese problema.</li>
         </ul>
@@ -4604,7 +4744,7 @@ print(int(np.sum(np.abs(r) > 1.96 / np.sqrt(len(res["serie"])))))   # de 24 reza
           </tr>
           <tr>
             <td>Box–Cox</td>
-            <td>Estabiliza la varianza; $\lambda = 0$ es el logaritmo, que es lo que se usa en la práctica</td>
+            <td>Estabiliza la varianza; $\lambda = 0$ es el logaritmo, que es lo que se usa en este curso</td>
             <td><code>log()</code>, <code>BoxCox.lambda()</code></td>
           </tr>
           <tr>
@@ -4856,8 +4996,7 @@ rbind(resumen(y, "original"),
           <div class="ejercicio-panel pista" id="c2e4-pista" hidden>
             <p style="margin:0;">El Módulo 6 trabaja con una copia fija de la serie, cortada en junio de 2026. El código
               que descarga la serie al día está al abrir «Cómo comprobarlo», listo para copiar. Antes de correrlo,
-              escribe tu predicción: los tipos de cambio son el ejemplo clásico de caminata aleatoria con
-              deriva, así que ¿esperas que unos meses más de datos cambien el veredicto?</p>
+              escribe tu predicción: el Módulo 6 encontró en la TRM una raíz unitaria, así que ¿esperas que unos meses más de datos cambien el veredicto?</p>
           </div>
           <div class="ejercicio-panel solucion" id="c2e4-sol" hidden>
             <p>Este ejercicio <strong>no tiene una respuesta fija</strong>: depende de cuándo lo hagas. Lo que sí es
@@ -5004,19 +5143,32 @@ print(adf_como_en_r(trm_hoy.diff().dropna()))</code></pre>
       <div class="references">
         <h3><i class="fas fa-book-open mr-2" aria-hidden="true"></i>Lecturas de este capítulo</h3>
         <ul style="margin-bottom:0;">
-          <li>Hyndman &amp; Athanasopoulos, <em>Forecasting: Principles and Practice</em> (3.ª ed.),
-            <strong>secc. 9.1</strong> (estacionariedad y diferenciación) y <strong>secc. 3.1–3.2</strong>
-            (transformaciones y Box–Cox). Acceso abierto:
+          <li data-afirma="c2-m9-23"><cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.1" data-modo="narrativa"><a href="#ref-m9-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">Hyndman y Athanasopoulos (2021, §9.1)</a></cite>, <em>Forecasting: Principles and Practice</em> (3.ª ed.): esa sección (estacionariedad y diferenciación) y las secc. <strong>9.2</strong> (el operador $B$), <strong>2.8–2.9</strong> (autocorrelación y ruido blanco) y <strong>3.1</strong> (transformaciones y Box–Cox). Acceso abierto:
             <a href="https://otexts.com/fpp3/" target="_blank" rel="noopener">otexts.com/fpp3</a>.</li>
-          <li>Shumway &amp; Stoffer, <em>Time Series Analysis and Its Applications</em> (4.ª ed.), secc. 1.4–1.6
-            (autocovarianza y estacionariedad) y 2.1 (diferenciación).</li>
-          <li>Kwiatkowski, Phillips, Schmidt &amp; Shin (1992). "Testing the null hypothesis of stationarity against the
-            alternative of a unit root". <em>Journal of Econometrics</em>, 54(1–3), 159–178 — el artículo original de la
-            prueba KPSS.</li>
-          <li>Guerrero, V.M. (1993). "Time-series analysis supported by power transformations". <em>Journal of
-              Forecasting</em>, 12(1), 37–48 — el criterio de selección de $\lambda$ del Módulo 8.</li>
+          <li data-afirma="c2-m9-24">Shumway &amp; Stoffer, <em>Time Series Analysis and Its Applications</em> (4.ª ed.): medidas de dependencia, series estacionarias, estimación de la correlación y diferenciación. En la 3.ª edición (2011) son las secc. 1.4–1.6 y 2.3; la numeración de la 4.ª puede ser otra.</li>
+          <li data-afirma="c2-m9-25">Kwiatkowski, Phillips, Schmidt &amp; Shin (1992). "Testing the null hypothesis of stationarity against the
+            alternative of a unit root". <em>Journal of Econometrics</em>, 54(1–3), 159–178 — el artículo al que se atribuye la prueba KPSS <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.1"><a href="#ref-m9-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.1)</a></cite>.</li>
+          <li data-afirma="c2-m9-26">Guerrero, V.M. (1993). "Time-series analysis supported by power transformations". <em>Journal of
+              Forecasting</em>, 12(1), 37–48 — el criterio de selección de $\lambda$ del Módulo 8 <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§3.1"><a href="#ref-m9-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §3.1)</a></cite>.</li>
         </ul>
+        <h3 style="margin-top:1.5rem;"><i class="fas fa-quote-right mr-2" aria-hidden="true"></i>Referencias citadas en este capítulo</h3>
+        <!--REFERENCIAS-CAPITULO:inicio-->
+        <ul class="lista-fuentes">
+          <li id="ref-cryer2008time">Cryer, J. D., y Chan, K.-S. (2008). <em>Time Series Analysis</em> (2.ª ed.). Springer New York. <a target="_blank" rel="noopener" href="https://doi.org/10.1007/978-0-387-75959-3">https://doi.org/10.1007/978-0-387-75959-3</a></li>
+          <li id="ref-hamilton1994time">Hamilton, J. D. (1994). <em>Time series analysis</em>. Princeton University Press.</li>
+          <li id="ref-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+          <li id="ref-rcoreteam2026r">R Core Team. (2026). <em>R: A Language and Environment for Statistical Computing</em> (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. <a target="_blank" rel="noopener" href="https://www.R-project.org/">https://www.R-project.org/</a></li>
+        </ul>
+        <!--REFERENCIAS-CAPITULO:fin-->
       </div>
+      <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
+        <h4>Fuentes citadas en este módulo</h4>
+        <!--FUENTES-MODULO:inicio-->
+        <ul class="lista-fuentes">
+          <li id="ref-m9-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+        </ul>
+        <!--FUENTES-MODULO:fin-->
+      </aside>
     </div>
   </template>
 
