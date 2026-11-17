@@ -153,6 +153,18 @@ Cada una lleva mi recomendación; las decide Javier.
   de la regla de la varianza que se había conservado); todos resueltos. Para las rondas de los capítulos 4
   y 5: alinear su lenguaje sobre el mínimo de varianza con lo que ahora enseña el 2.
 
+- **R2 · gráficas — hecha el 2026-11-17, sin publicar** (`main` `ee33ee6`). Los ayudantes compartidos se
+  arreglaron en el capítulo 2 y se propagaron a los capítulos 3–6 (D4): rezago 12 rotulado en 168 de 168
+  correlogramas por ancho (también en ejes j, k, h), fechas en eneros, banda en `#e05a00` (3.73:1), el 0
+  rotulado, tablas anchas desplazables dentro de su caja (recortes de `<main>`: 90 → 0), lecturas que se
+  anuncian una vez y `aria-label` que describen sin regalar el quiz. De los 49 problemas del diagnóstico:
+  37 arreglados, 7 en parte, 1 ya resuelto en la R1, 4 no tocados con su motivo
+  (`diagnostico/cap2/R2_cambios.md`). Ningún dato cambió: el verificador de bloques da lo mismo en los
+  cinco capítulos. El verificador independiente encontró dos regresiones (el 12 perdido en el eje j del
+  cap. 5 y las tablas estrechas entre 769 y 1199 px), resueltas; el redactor encontró y arregló una
+  constante repetida que dejaba sin cargar el `<script>` del cap. 5. **La plantilla quedó distinta del
+  capítulo 2** (no estaba aprobado tocarla). Para la R3: la pista de que una tabla sigue a la derecha.
+
 ## 5. Criterios de aceptación
 
 - [ ] Cada uno de los 7 errores tiene su comprobación en R y deja de reproducirse.
