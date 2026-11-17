@@ -179,6 +179,21 @@ Cada una lleva mi recomendación; las decide Javier.
   salvo dos menores anotados (`diagnostico/cap2/R3_cambios.md`). Queda abierto: en 38 de 169 tablas que
   se desplazan, el borde cae entre dos columnas y la pista casi no se ve hasta desplazar.
 
+- **R4 · fuentes — hecha el 2026-11-17, sin publicar** (`main` `5ca421b`). 80 afirmaciones marcadas y
+  registradas en `bibliografia/contraste/cap2.yml`: **51 respaldada, 12 con-matiz, 9 propia, 8 pendiente**
+  (el mensaje del commit dice 52 y 8 por error), las 80 firmadas por un verificador independiente en dos
+  lecturas. 79 citas visibles (FPP3, Cryer y Chan, Hamilton, ayuda de R); el capítulo pasa de 0 citas a 79.
+  17 frases se reescribieron porque la fuente decía otra cosa; en la primera lectura el verificador devolvió
+  23 entradas (7 errores, entre ellos que la regresión del rezago k «equivale» a Yule–Walker, cierto solo en
+  la población). No se dio de alta ninguna obra: lo no leído no se cita. Las 8 `pendiente` esperan la 4.ª de
+  Shumway y Stoffer, Kwiatkowski et al. (1992) y Guerrero (1993). `ensambla_cap3.py` conserva el pie propio
+  de los capítulos 3–6, que siguen idénticos.
+
+  **Citas literales fuera de git** (decisión de Javier del 2026-11-17, la que recomienda la norma común): el
+  registro guarda `cita_sha256` y `cita_palabras`; el literal vive en `bibliografia/_local/citas/`. Deja de
+  aplicarse el tope global por obra; F13 falla si un literal vuelve al registro. Detalle y lo que queda con
+  texto de fuente en archivos versionados: `diagnostico/cap2/R4_citas_fuera_de_git.md`.
+
 ## 5. Criterios de aceptación
 
 - [ ] Cada uno de los 7 errores tiene su comprobación en R y deja de reproducirse.
