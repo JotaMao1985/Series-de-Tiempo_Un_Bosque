@@ -584,12 +584,53 @@
       max-width: 100%;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
+      /* Pista de desplazamiento: una sombra en el borde hacia el que queda
+         fórmula por ver. Las dos primeras capas (blancas) se mueven con el
+         contenido y tapan la sombra cuando ya se ha llegado a ese extremo;
+         una fórmula que cabe entera no enseña ninguna. */
+      background-image:
+        linear-gradient(to right, white 40%, rgba(255, 255, 255, 0)),
+        linear-gradient(to left, white 40%, rgba(255, 255, 255, 0)),
+        linear-gradient(to right, rgba(1, 40, 32, 0.22), rgba(1, 40, 32, 0)),
+        linear-gradient(to left, rgba(1, 40, 32, 0.22), rgba(1, 40, 32, 0));
+      background-position: left center, right center, left center, right center;
+      background-repeat: no-repeat;
+      background-size: 2.5rem 100%, 2.5rem 100%, 0.9rem 100%, 0.9rem 100%;
+      background-attachment: local, local, scroll, scroll;
     }
 
     @media (min-width: 768px) {
       .formula {
         padding: 1.5rem;
       }
+    }
+
+    /* Fórmula en varias partes. Una fórmula en bloque no se parte: si no
+       cabe, se desplaza, y en el teléfono se quedaba fuera de la vista su
+       última condición (la covarianza nula del ruido blanco). Aquí cada
+       parte es una fórmula en línea y las partes bajan de renglón cuando no
+       caben: en escritorio se lee igual que antes, en una sola línea.
+       `--seguidas` es para una misma expresión cortada en un «=» o un «+»,
+       cuyas partes van pegadas. */
+    .formula-partes {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 0.6rem 2rem;
+      margin: 1em 0;
+    }
+
+    .formula-partes--seguidas {
+      column-gap: 0.3em;
+    }
+
+    .formula > .formula-partes:first-child {
+      margin-top: 0;
+    }
+
+    .formula > .formula-partes:last-child {
+      margin-bottom: 0;
     }
 
     /* KaTeX acompaña cada fórmula de una copia en MathML para lectores de
@@ -833,24 +874,27 @@
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
     }
 
+    /* En bloque, no en flex: con flex, cada trozo del título (el texto, una
+       fórmula, el texto que sigue) era una caja aparte y en el teléfono un
+       título con fórmula se leía desordenado («Teórica frente a muestral,»
+       a la izquierda y «T = 200» en una columna a la derecha). */
     .simulador h4 {
       color: #012820;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      display: block;
     }
 
+    .simulador h4 > i {
+      margin-right: 0.5rem;
+    }
+
+    /* Dos columnas como mucho, y solo si el simulador las aguanta: la regla
+       anterior miraba el ancho de la ventana, y a 800 px —con la barra
+       lateral, el área de contenido mide 438— dejaba cada control en 150 px. */
     .simulador-controles {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, max(15rem, 40%)), 1fr));
       gap: 0.75rem 1.5rem;
       margin: 1.25rem 0;
-    }
-
-    @media (min-width: 768px) {
-      .simulador-controles {
-        grid-template-columns: 1fr 1fr;
-      }
     }
 
     .control-slider {
@@ -879,6 +923,8 @@
       padding: 0.1rem 0.5rem;
       min-width: 3.25rem;
       text-align: center;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .control-slider input[type="range"] {
@@ -1101,12 +1147,43 @@
       }
     }
 
+    /* Por encima de 768 px la barra lateral sigue ahí y el área de contenido
+       mide de 406 a 820 px: una tabla ancha no cabía y <main> (overflow:
+       hidden) la cortaba sin barra de desplazamiento (a 800 px, siete tablas
+       del capítulo 2; a 1024 px, las más anchas de los capítulos 4, 5 y 6).
+       ajustarTablas() marca con esta clase SOLO la tabla que no cabe en su
+       contenedor, a cualquier ancho: esa se desplaza dentro de su caja, y la
+       que cabe sigue siendo una tabla que ocupa el 100 %. */
+    table.tabla-ancha {
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Si lo que lleva una caja no cabe (una fórmula en bloque ancha), la caja
+       se desplaza. La pista es la de `.formula`: una sombra en el borde hacia
+       el que queda contenido, tapada por dos capas del color de la caja que
+       se mueven con él. Una caja en la que todo cabe no enseña ninguna. */
     .definition,
     .note,
     .warning,
     .exercise {
       overflow-x: auto;
+      background-image:
+        linear-gradient(to right, var(--fondo-caja) 40%, transparent),
+        linear-gradient(to left, var(--fondo-caja) 40%, transparent),
+        linear-gradient(to right, rgba(1, 40, 32, 0.22), rgba(1, 40, 32, 0)),
+        linear-gradient(to left, rgba(1, 40, 32, 0.22), rgba(1, 40, 32, 0));
+      background-position: left center, right center, left center, right center;
+      background-repeat: no-repeat;
+      background-size: 2.5rem 100%, 2.5rem 100%, 0.9rem 100%, 0.9rem 100%;
+      background-attachment: local, local, scroll, scroll;
     }
+
+    .definition { --fondo-caja: #f0fdf4; }
+    .note { --fondo-caja: #fff7ed; }
+    .warning { --fondo-caja: #fff1f2; }
+    .exercise { --fondo-caja: #eff6ff; }
 
     .nav-item {
       border: none;
@@ -6360,9 +6437,43 @@ round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
         });
 
         addNavigationButtons();
+        ajustarTablas();
       }
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ================================================================
+    // Tablas que no caben
+    //
+    // Una tabla más ancha que su contenedor pasa a `table.tabla-ancha`
+    // (bloque con desplazamiento horizontal); la que cabe no se toca. Se
+    // mide con la tabla en su estado natural, así que la clase se quita si
+    // el área crece. Se repasa al cargar un módulo y cada vez que el área de
+    // contenido cambia de tamaño: al redimensionar la ventana, al plegar la
+    // barra lateral, al abrir un desplegable o cuando KaTeX termina de
+    // componer las fórmulas de las celdas. Las tablas ordenables
+    // (`.tabla-ranking`) tienen su propio marco desplazable y se saltan.
+    // ================================================================
+    function ajustarTablas() {
+      mainContent.querySelectorAll('table').forEach(tabla => {
+        if (tabla.closest('.tabla-ranking')) return;
+        const era = tabla.classList.contains('tabla-ancha');
+        if (era) tabla.classList.remove('tabla-ancha');
+        const caja = tabla.parentElement;
+        const estilo = getComputedStyle(caja);
+        const hueco = caja.clientWidth - parseFloat(estilo.paddingLeft) - parseFloat(estilo.paddingRight);
+        const ancha = tabla.offsetWidth > 0 && getComputedStyle(tabla).display === 'table' &&
+          tabla.offsetWidth > hueco + 1;
+        if (ancha) tabla.classList.add('tabla-ancha');
+      });
+    }
+    if (window.ResizeObserver) {
+      let repaso = null;
+      new ResizeObserver(() => {
+        cancelAnimationFrame(repaso);
+        repaso = requestAnimationFrame(ajustarTablas);
+      }).observe(mainContent);
     }
 
     function addNavigationButtons() {
@@ -6587,10 +6698,12 @@ round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
 
         const label = document.createElement('label');
         label.setAttribute('for', idControl);
-        label.append(def.etiqueta);
+        // El espacio separa la etiqueta del valor en el nombre accesible
+        // («Coeficiente φ 0.70»); en pantalla no ocupa: el label es flex.
+        label.append(def.etiqueta + ' ');
 
         const output = document.createElement('output');
-        output.textContent = Number(params[def.clave]).toFixed(decimales);
+        output.textContent = Number(params[def.clave]).toFixed(decimales).replace('-', '−');
         label.appendChild(output);
 
         const input = document.createElement('input');
@@ -6603,7 +6716,7 @@ round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
 
         input.addEventListener('input', () => {
           params[def.clave] = parseFloat(input.value);
-          output.textContent = params[def.clave].toFixed(decimales);
+          output.textContent = params[def.clave].toFixed(decimales).replace('-', '−');
           alCambiar();
         });
 
@@ -6616,14 +6729,230 @@ round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
     }
 
     // Paleta y defaults de la casa para gráficos de líneas.
+    //
+    // El naranja y el gris de los gráficos no son el naranja de marca
+    // (#FF6600, 2.94:1 sobre blanco) ni el gris anterior (#94a3b8, 2.56:1),
+    // sino los tonos más próximos que llegan al 3:1 que WCAG 1.4.11 pide a
+    // un objeto gráfico: #FB6400 (3.03:1) y #8795A9 (3.04:1), los mismos del
+    // capítulo 1. `banda` es el color de las rectas de referencia de
+    // crearGraficoBarras —la banda ±1.96/√T de los correlogramas—, que son
+    // finas y discontinuas y necesitan más contraste: #e05a00, 3.73:1.
     const COLORES_GRAFICO = {
       primario: '#012820',
-      secundario: '#FF6600',
+      secundario: '#FB6400',
       terciario: '#0e7490',
-      gris: '#94a3b8'
+      gris: '#8795A9',
+      banda: '#e05a00'
     };
 
+    // ================================================================
+    // Ejes legibles a cualquier ancho (2026-11-16)
+    //
+    // El salto automático de Chart.js elegía las marcas del eje horizontal
+    // sin mirar qué significan: en los correlogramas rotulaba «1, 3, 5…» y
+    // dejaba sin número los rezagos 12 y 24; en las series mensuales elegía
+    // meses arbitrarios («1951-06»), que en el teléfono se pisaban y que se
+    // corrían de mes al diferenciar; en las series simuladas, «1, 18, 35…».
+    // marcasLegibles() fija las marcas en afterBuildTicks, donde el eje ya
+    // conoce su ancho, según lo que sean las etiquetas:
+    //
+    //   · fechas «AAAA-MM»: solo eneros, rotulados con el año, y de años
+    //     múltiplos del salto para que no cambien al diferenciar (una serie
+    //     de dos o tres años va por meses, contados desde enero);
+    //   · números a paso constante: los múltiplos de un paso redondo (1, 2,
+    //     2.5 o 5 por una potencia de diez). Si el eje cuenta rezagos,
+    //     retardos u horizontes —enteros seguidos que empiezan por debajo de
+    //     12: k, j, h—, los múltiplos de un divisor de 12 (1, 2, 3, 4, 6, 12,
+    //     24…), de modo que el 12 y el 24 salgan siempre que el eje llegue a
+    //     ellos; y el primer valor, si cabe (el horizonte 1). Lo decide la
+    //     forma de las etiquetas, no el título del eje: en un gráfico de
+    //     barras, siempre; en uno de líneas, hasta 60 valores (más son los
+    //     instantes de una serie, que van con paso redondo).
+    //     `opciones.rezagos` (true o false) lo fuerza;
+    //   · cualquier otra cosa (nombres de modelos, «mes 1»…): no se toca.
+    //
+    // Devuelve true si fijó las marcas. Solo actúa sobre ejes de categorías.
+    // ================================================================
+    const ES_FECHA_MENSUAL = /^\d{4}-\d{2}$/;
+    const ES_NUMERO = /^[-−]?\d+(\.\d+)?$/;
+
+    function marcasLegibles(eje, opciones = {}) {
+      eje.$anual = false;
+      eje.$meses = false;
+      if (eje.type !== 'category' || !eje.isHorizontal() || !eje.width) return false;
+      const etiquetas = eje.getLabels().map(String);
+      const desde = Math.max(0, Math.ceil(eje.min));
+      const hasta = Math.min(etiquetas.length - 1, Math.floor(eje.max));
+      if (hasta - desde < 1) return false;
+      const fuente = (eje.options.ticks.font && eje.options.ticks.font.size) || 11;
+      const aire = opciones.aire || 1.3;
+      const largo = t => Math.max(1, t.length) * fuente * 0.62 + fuente * aire;
+      const tope = opciones.maxMarcas || Infinity;
+
+      // Fechas mensuales: los eneros, con el año. Si la serie no llega a
+      // cuatro eneros (dos o tres años de datos), las marcas van por meses
+      // contados desde enero —cada 1, 2, 3, 4 o 6—: el año en enero y el
+      // mes abreviado en los demás («1959 · abr · jul · oct · 1960»).
+      if (ES_FECHA_MENSUAL.test(etiquetas[desde]) && ES_FECHA_MENSUAL.test(etiquetas[hasta])) {
+        const eneros = [];
+        for (let i = desde; i <= hasta; i++) {
+          if (etiquetas[i].slice(5) === '01') eneros.push(i);
+        }
+        if (eneros.length < 4) {
+          const cabenMeses = Math.max(2, Math.min(tope, Math.floor(eje.width / largo('1949'))));
+          for (const cada of [1, 2, 3, 4, 6]) {
+            const marcas = [];
+            for (let i = desde; i <= hasta; i++) {
+              if ((Number(etiquetas[i].slice(5)) - 1) % cada === 0) marcas.push(i);
+            }
+            if (marcas.length >= 2 && marcas.length <= cabenMeses) {
+              eje.ticks = marcas.map(i => ({ value: i }));
+              eje.$meses = true;
+              return true;
+            }
+          }
+          if (eneros.length < 2) return false;
+        }
+        const caben = Math.max(2, Math.min(tope, Math.floor(eje.width / largo('1949'))));
+        let salto = 1;
+        while (Math.ceil(eneros.length / salto) > caben) salto++;
+        let marcas = eneros.filter(i => Number(etiquetas[i].slice(0, 4)) % salto === 0);
+        if (marcas.length < 2) marcas = eneros.filter((_, k) => k % salto === 0);
+        eje.ticks = marcas.map(i => ({ value: i }));
+        eje.$anual = true;
+        return true;
+      }
+
+      // Números a paso constante
+      const valores = [];
+      for (let i = desde; i <= hasta; i++) {
+        if (!ES_NUMERO.test(etiquetas[i])) return false;
+        valores.push(Number(etiquetas[i].replace('−', '-')));
+      }
+      const h = valores[1] - valores[0];
+      if (!(h > 0)) return false;
+      for (let i = 2; i < valores.length; i++) {
+        if (Math.abs(valores[i] - valores[i - 1] - h) > h * 1e-6) return false;
+      }
+      const ancho = Math.max(...etiquetas.slice(desde, hasta + 1).map(largo));
+      const caben = Math.max(2, Math.min(tope, Math.floor(eje.width / ancho)));
+      const multiplo = (v, p) => Math.abs(v / p - Math.round(v / p)) < 1e-6;
+      const elegidas = p => valores.map((v, k) => multiplo(v, p) ? desde + k : -1).filter(i => i >= 0);
+      const candidatos = [];
+      const primero = etiquetas.length ? Number(etiquetas[0].replace('−', '-')) : NaN;
+      const cuentaRezagos = opciones.rezagos !== undefined ? !!opciones.rezagos
+        : (h === 1 && primero >= 0 && primero < 12 &&
+           (!!opciones.barras || etiquetas.length <= 60));
+      if (cuentaRezagos && h === 1) {
+        candidatos.push(1, 2, 3, 4, 6);
+        for (let m = 12; m <= 12 * valores.length; m += 12) candidatos.push(m);
+      } else {
+        const p0 = Math.pow(10, Math.floor(Math.log10(h)));
+        for (let k = 0; k < 8; k++) {
+          [1, 2, 2.5, 5].forEach(f => candidatos.push(f * p0 * Math.pow(10, k)));
+        }
+      }
+      for (const p of candidatos) {
+        if (p < h * (1 - 1e-6) || !multiplo(p, h)) continue;
+        const marcas = elegidas(p);
+        if (marcas.length <= caben) {
+          if (marcas.length < 2) return false;
+          // El primer valor de un eje de rezagos (el rezago o el horizonte
+          // 1), si no es ya una marca y hay sitio hasta la siguiente
+          if (cuentaRezagos && marcas[0] > desde && marcas.length < caben &&
+              (marcas[0] - desde) * (eje.width / (hasta - desde + 1)) >= ancho) {
+            marcas.unshift(desde);
+          }
+          eje.ticks = marcas.map(i => ({ value: i }));
+          return true;
+        }
+      }
+      return false;
+    }
+
+    // Rótulo de una marca del eje de categorías: el año si marcasLegibles()
+    // dejó solo eneros (o el mes abreviado, en una serie corta), y el signo
+    // menos tipográfico en los números.
+    const MESES_DEL_EJE = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    function rotuloLegible(valor) {
+      const texto = String(this.getLabelForValue(valor));
+      if (this.$anual && ES_FECHA_MENSUAL.test(texto)) return texto.slice(0, 4);
+      if (this.$meses && ES_FECHA_MENSUAL.test(texto)) {
+        return texto.slice(5) === '01' ? texto.slice(0, 4) : MESES_DEL_EJE[Number(texto.slice(5)) - 1];
+      }
+      return ES_NUMERO.test(texto) ? texto.replace(/^-/, '−') : texto;
+    }
+
+    // Marcas del eje vertical. Chart.js genera una marca por renglón que
+    // quepa y luego se queda con una de cada m empezando por abajo, sin mirar
+    // cuál se lleva: de «−1.0, −0.8 … 1.0» quedaba «−1.0, −0.6, −0.2, 0.2…» y
+    // de «−7, −6 … 3», «−7, −5, −3, −1, 1, 3». El 0 —la referencia de un
+    // correlograma o de una serie diferenciada— se quedaba sin rótulo. Aquí
+    // se hace el mismo aclarado, pero contando desde el 0 cuando el eje lo
+    // tiene (el eje lleva `autoSkip: false` para que Chart.js no vuelva a
+    // aclarar). Un eje de −1 a 1 rotula −1, −0.5, 0, 0.5 y 1.
+    function marcasVerticales(eje) {
+      if (eje.type !== 'linear' || eje.isHorizontal() || eje.ticks.length < 3) return;
+      const fuente = (eje.options.ticks.font && eje.options.ticks.font.size) || 11;
+      const caben = Math.max(2, Math.floor(eje.height / (fuente * 1.2 + 3)) + 1);
+      if (eje.min === -1 && eje.max === 1) {
+        eje.ticks = (caben >= 5 ? [-1, -0.5, 0, 0.5, 1] : [-1, 0, 1]).map(v => ({ value: v }));
+        return;
+      }
+      if (eje.ticks.length <= caben) return;
+      const iCero = eje.ticks.findIndex(m => Math.abs(m.value) < 1e-9);
+      const origen = iCero >= 0 ? iCero : 0;
+      for (const cada of [2, 4, 5, 10, 20, 50, 100]) {
+        const marcas = eje.ticks.filter((_, k) => (k - origen) % cada === 0);
+        if (marcas.length <= caben || cada === 100) {
+          if (marcas.length >= 2) eje.ticks = marcas;
+          return;
+        }
+      }
+    }
+
+    // Cifra de una marca del eje vertical: el formato de la casa (el que fija
+    // Chart.defaults.scales.linear.ticks.callback) con el signo menos
+    // tipográfico, como en las tablas.
+    function rotuloVertical(valor, i, marcas) {
+      const formato = Chart.defaults.scales.linear.ticks.callback;
+      const texto = formato.call(this, valor, i, marcas);
+      if (valor === 0 && texto === '0') {
+        // «0.0» junto a «−1.0» y «0.5», no «0»
+        const k = marcas.findIndex(m => m.value !== 0);
+        const vecino = k >= 0 ? String(formato.call(this, marcas[k].value, k, marcas)) : '';
+        const decimales = vecino.includes('.') ? vecino.split('.')[1].length : 0;
+        return decimales ? (0).toFixed(decimales) : texto;
+      }
+      return typeof texto === 'string' ? texto.replace(/^-/, '−') : texto;
+    }
+
+    // Rejilla horizontal con la línea del 0 más oscura que las demás.
+    const REJILLA_GRAFICO = 'rgba(148, 163, 184, 0.2)';
+    const REJILLA_CERO = '#64748b';
+    function rejillaConCero(ctx) {
+      return ctx.tick && ctx.tick.value === 0 && ctx.scale.min <= 0 && ctx.scale.max > 0
+        ? REJILLA_CERO : REJILLA_GRAFICO;
+    }
+
+    // Título de un eje (opciones.tituloX / opciones.tituloY de los ayudantes)
+    function tituloDeEje(texto) {
+      return {
+        display: !!texto,
+        text: texto,
+        font: { family: 'Montserrat', size: 11 }
+      };
+    }
+
+    // `opciones` se mezcla con Object.assign, que es superficial: quien pasa
+    // `scales` sustituye los dos ejes enteros (y con ellos las marcas
+    // legibles y la línea del 0, que son de los ejes por defecto). `tituloX` y
+    // `tituloY` rotulan los ejes sin tener que pasar `scales`.
     function crearGraficoLinea(canvas, etiquetas, datasets, opciones = {}) {
+      const estrecho = !!canvas.parentNode && canvas.parentNode.clientWidth < 420;
+      const propias = Object.assign({}, opciones);
+      delete propias.tituloX;
+      delete propias.tituloY;
       return new Chart(canvas, {
         type: 'line',
         data: { labels: etiquetas, datasets: datasets },
@@ -6634,7 +6963,10 @@ round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
           interaction: { mode: 'index', intersect: false },
           plugins: {
             legend: {
-              labels: { font: { family: 'Montserrat', size: 12 }, boxWidth: 24 }
+              labels: {
+                font: { family: 'Montserrat', size: estrecho ? 11 : 12 },
+                boxWidth: estrecho ? 16 : 24
+              }
             },
             tooltip: {
               backgroundColor: '#012820',
@@ -6644,19 +6976,24 @@ round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
           },
           scales: {
             x: {
+              title: tituloDeEje(opciones.tituloX),
               ticks: {
                 font: { family: 'Montserrat', size: 11 },
                 maxTicksLimit: 12,
-                maxRotation: 0
+                maxRotation: 0,
+                callback: rotuloLegible
               },
-              grid: { display: false }
+              grid: { display: false },
+              afterBuildTicks: eje => { marcasLegibles(eje, { maxMarcas: 12 }); }
             },
             y: {
-              ticks: { font: { family: 'Fira Code', size: 11 } },
-              grid: { color: 'rgba(148, 163, 184, 0.2)' }
+              title: tituloDeEje(opciones.tituloY),
+              ticks: { font: { family: 'Fira Code', size: 11 }, autoSkip: false, callback: rotuloVertical },
+              grid: { color: rejillaConCero },
+              afterBuildTicks: marcasVerticales
             }
           }
-        }, opciones)
+        }, propias)
       });
     }
 
@@ -6756,11 +7093,38 @@ round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
       contenedor.appendChild(fila);
     }
 
+    // Leyenda de crearGraficoBarras: cada entrada se dibuja como lo que es.
+    // Las barras, con una caja de su color; las rectas de referencia (la
+    // banda del correlograma), con una raya discontinua, y no con el
+    // rectángulo gris de borde naranja que salía por defecto.
+    function etiquetasDeLeyendaBarras(chart) {
+      return Chart.defaults.plugins.legend.labels.generateLabels(chart).map(item => {
+        const ds = chart.data.datasets[item.datasetIndex];
+        if (ds.type === 'line') {
+          item.pointStyle = 'line';
+          item.strokeStyle = ds.borderColor;
+          item.lineWidth = 2;
+          item.lineDash = ds.borderDash || [];
+        } else {
+          item.pointStyle = 'rect';
+          item.lineWidth = 0;
+        }
+        return item;
+      });
+    }
+
     // Gráfico de barras para correlogramas. `opciones.lineas` dibuja rectas de
     // referencia horizontales (la banda ±1.96/√T, el nivel nominal de una
     // prueba, etc.) como conjuntos de datos de línea sobre las barras.
+    //
+    // El eje horizontal rotula con marcasLegibles(): si sus etiquetas son
+    // enteros seguidos que empiezan por debajo de 12 (rezagos k, retardos j, horizontes
+    // h), los múltiplos de un divisor de 12 que quepan, de modo que el 12 y el
+    // 24 llevan siempre su número; `opciones.rezagos: false` lo desactiva. El eje vertical lo rotula marcasVerticales() —un correlograma,
+    // de −1 a 1, con −1, −0.5, 0, 0.5 y 1— y la línea del 0 va más oscura.
     function crearGraficoBarras(canvas, etiquetas, valores, opciones = {}) {
       const n = etiquetas.length;
+      const estrecho = !!canvas.parentNode && canvas.parentNode.clientWidth < 420;
       const datasets = [{
         type: 'bar',
         label: opciones.etiqueta || 'ACF',
@@ -6791,7 +7155,7 @@ round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
           type: 'line',
           label: linea.etiqueta || '',
           data: Array(n).fill(linea.valor),
-          borderColor: linea.color || COLORES_GRAFICO.secundario,
+          borderColor: linea.color || COLORES_GRAFICO.banda,
           borderDash: [5, 4],
           borderWidth: 1.5,
           pointRadius: 0,
@@ -6812,8 +7176,11 @@ round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
             legend: {
               // Las rectas de referencia sin etiqueta no ensucian la leyenda
               labels: {
-                font: { family: 'Montserrat', size: 12 },
-                boxWidth: 24,
+                font: { family: 'Montserrat', size: estrecho ? 11 : 12 },
+                usePointStyle: true,
+                boxWidth: estrecho ? 18 : 24,
+                boxHeight: 8,
+                generateLabels: etiquetasDeLeyendaBarras,
                 filter: item => item.text !== ''
               }
             },
@@ -6826,22 +7193,35 @@ round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
           },
           scales: {
             x: {
-              title: {
-                display: !!opciones.tituloX,
-                text: opciones.tituloX,
-                font: { family: 'Montserrat', size: 11 }
+              title: tituloDeEje(opciones.tituloX),
+              ticks: {
+                font: { family: 'Fira Code', size: 10 },
+                maxRotation: 0,
+                callback: rotuloLegible
               },
-              ticks: { font: { family: 'Fira Code', size: 10 }, maxRotation: 0 },
-              grid: { display: false }
+              grid: { display: false },
+              afterBuildTicks: eje => { marcasLegibles(eje, { rezagos: opciones.rezagos, barras: true, aire: 0.9 }); }
             },
             y: {
+              title: tituloDeEje(opciones.tituloY),
               suggestedMin: opciones.min !== undefined ? opciones.min : -1,
               suggestedMax: opciones.max !== undefined ? opciones.max : 1,
-              ticks: { font: { family: 'Fira Code', size: 11 } },
-              grid: { color: 'rgba(148, 163, 184, 0.2)' }
+              ticks: { font: { family: 'Fira Code', size: 11 }, autoSkip: false, callback: rotuloVertical },
+              grid: { color: rejillaConCero },
+              afterBuildTicks: marcasVerticales
             }
           }
-        }
+        },
+        // La muestra de la leyenda mide lo que diga `boxWidth`, también si un
+        // capítulo lo cambia después de crear el gráfico (el 4 lo reduce en
+        // el teléfono): con un ancho fijo, su leyenda pasaba a dos líneas.
+        plugins: [{
+          id: 'anchoDeLaMuestra',
+          beforeUpdate: chart => {
+            const rotulos = chart.options.plugins.legend.labels;
+            rotulos.pointStyleWidth = rotulos.boxWidth;
+          }
+        }]
       });
     }
 
@@ -6928,11 +7308,43 @@ round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
       return Array.from({ length: k }, (_, i) => String(i + 1));
     }
 
-    // Escribe una lectura numérica bajo un simulador
+    // Región viva única de la página, fuera de la vista, por la que se
+    // anuncian las lecturas de los simuladores a quien usa lector de pantalla.
+    function regionDeAnuncios() {
+      let region = document.getElementById('anuncio-lectura');
+      if (!region) {
+        region = document.createElement('div');
+        region.id = 'anuncio-lectura';
+        region.setAttribute('aria-live', 'polite');
+        region.setAttribute('aria-atomic', 'true');
+        region.style.cssText = 'position:absolute;left:0;top:0;width:1px;height:1px;margin:-1px;' +
+          'padding:0;border:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;';
+        document.body.appendChild(region);
+      }
+      return region;
+    }
+    let anuncioPendiente = null;
+
+    // Escribe una lectura numérica bajo un simulador. Lo que se ve cambia al
+    // instante; lo que se anuncia, no: la lectura se reescribe en cada paso
+    // del deslizador, y una región viva sobre ella encolaría una frase larga
+    // por paso. Se anuncia una sola vez, 0.7 s después del último cambio, por
+    // la región común. El primer llenado (al abrir el módulo) no se anuncia.
     function actualizarLectura(elemento, campos) {
       elemento.innerHTML = campos
         .map(c => `<span><b>${c.etiqueta}</b> ${c.valor}</span>`)
         .join('');
+      if (!elemento.dataset.lecturaLista) {
+        elemento.dataset.lecturaLista = 'si';
+        regionDeAnuncios();
+        return;
+      }
+      clearTimeout(anuncioPendiente);
+      anuncioPendiente = setTimeout(() => {
+        if (!elemento.isConnected) return;
+        regionDeAnuncios().textContent =
+          Array.from(elemento.children, s => s.textContent.trim()).join('; ');
+      }, 700);
     }
 
     // ================================================================
