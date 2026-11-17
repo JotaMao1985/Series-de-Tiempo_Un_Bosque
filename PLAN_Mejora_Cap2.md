@@ -141,6 +141,18 @@ Cada una lleva mi recomendación; las decide Javier.
 | T5.2 | R5 | Quiz: rehacer P2, P7 y P8; longitudes; pistas; retros que no filtren el ejercicio 1 y el 3 | M | R3 |
 | T5.3 | R5 | Mejorar los cinco ejercicios del M9 (E1 con el log que aplica su propio pipeline; E2 con su control; E3 sin Ljung–Box o con él presentado) | M | R3 |
 
+### Registro de rondas
+
+- **R1 · errores — hecha el 2026-11-16, sin publicar** (`main` `7b03463`). Los siete errores y las
+  imprecisiones del par, una por una (`diagnostico/cap2/R1_cambios.md`). La varianza deja de decidir
+  cuántas veces diferenciar, en ningún sentido: falla con un AR(1) estacionario (la baja sin hacer falta) y
+  con un ARIMA(0,1,1) con θ = −0.8 (la sube con la diferencia que hace falta). Los 21 bloques muestran su
+  salida bajo `#>` y el verificador de bloques pasa de 0 a 226 cifras comprobadas. La TRM se lee de una
+  copia fija en `Htmls_Series/datos/`; cinco cifras publicadas estaban redondeadas dos veces. El
+  verificador independiente encontró 15 problemas en lo ya corregido, uno de ellos bloqueante (la mitad
+  de la regla de la varianza que se había conservado); todos resueltos. Para las rondas de los capítulos 4
+  y 5: alinear su lenguaje sobre el mínimo de varianza con lo que ahora enseña el 2.
+
 ## 5. Criterios de aceptación
 
 - [ ] Cada uno de los 7 errores tiene su comprobación en R y deja de reproducirse.
