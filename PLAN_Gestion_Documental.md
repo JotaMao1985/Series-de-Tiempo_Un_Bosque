@@ -127,7 +127,8 @@ aprueba aparte, después del Checkpoint 0.
 
 ### Cierre del Checkpoint 0 (2026-11-16)
 
-Javier aprobó las recomendaciones de la sesión maestra. Estado de cada punto:
+Javier aprobó las recomendaciones de la sesión maestra y **se publicaron el 2026-11-16** (`main` `7c66d9e` ·
+gh-pages `8e25d9d`). Estado de cada punto:
 
 - **1, 3, 6 y 10** — resueltos antes, durante la Fase 1: el PDF de Cleveland se descargó con
   permiso el 2026-11-13; las citas llevan «y»; Guerrero (2003) y Box y Jenkins (1970) entraron por
