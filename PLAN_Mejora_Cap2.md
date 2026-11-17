@@ -13,7 +13,7 @@ con una sola regla para decidir cuántas veces diferenciar, con gráficas que se
 teléfono, con sus fuentes contrastadas y con práctica en cada módulo. Es la segunda aplicación
 del molde del capítulo 1 ([[PLAN_Mejora_Cap1]] §9).
 
-**Estado: aprobado por Javier el 2026-11-16 (D1–D9, con D4: los arreglos de gráficas se propagan a los capítulos 3–6). R1 publicada el mismo día; R2 y R3, el 17; sigue la R4.** Lo que sigue es el
+**Estado: aprobado por Javier el 2026-11-16 (D1–D9, con D4: los arreglos de gráficas se propagan a los capítulos 3–6). R1 publicada el mismo día; R2, R3 y R4, el 17; sigue la R5.** Lo que sigue es el
 diagnóstico y el plan; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-16
@@ -179,7 +179,7 @@ Cada una lleva mi recomendación; las decide Javier.
   salvo dos menores anotados (`diagnostico/cap2/R3_cambios.md`). Queda abierto: en 38 de 169 tablas que
   se desplazan, el borde cae entre dos columnas y la pista casi no se ve hasta desplazar.
 
-- **R4 · fuentes — hecha el 2026-11-17, sin publicar** (`main` `5ca421b`). 80 afirmaciones marcadas y
+- **R4 · fuentes — hecha y PUBLICADA el 2026-11-17** (`main` `5ca421b` · gh-pages `52df364`). 80 afirmaciones marcadas y
   registradas en `bibliografia/contraste/cap2.yml`: **51 respaldada, 12 con-matiz, 9 propia, 8 pendiente**
   (el mensaje del commit dice 52 y 8 por error), las 80 firmadas por un verificador independiente en dos
   lecturas. 79 citas visibles (FPP3, Cryer y Chan, Hamilton, ayuda de R); el capítulo pasa de 0 citas a 79.
