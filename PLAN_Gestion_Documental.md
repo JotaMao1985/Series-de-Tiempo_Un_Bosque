@@ -145,15 +145,23 @@ gh-pages `8e25d9d`). Estado de cada punto:
 - **5 · Shumway y Stoffer: se sigue citando la 4.ª (2017)**, la del syllabus. Pasar a la 5.ª
   (Springer, 2025) es un cambio de syllabus que se decide al revisarlo para 2027-I. Mientras no
   haya ejemplar de ninguna de las dos (el único PDF es la 3.ª, parcial), nada se contrasta contra
-  Shumway y Stoffer. Queda por saber si la biblioteca de la universidad tiene la 4.ª o la 5.ª.
+  Shumway y Stoffer. **La universidad tiene la 4.ª en electrónico** (Springer eBooks ASCUN y Springer
+  Nature Complete eBooks; búsqueda por ISBN 978-3-319-52452-8 el 2026-11-16) y **no tiene la 5.ª**
+  (0 resultados por 978-3-031-70584-7); el catálogo físico no tiene ninguna. Para contrastar contra la
+  4.ª basta con que Javier descargue con su acceso institucional los capítulos que se citen y los deje
+  en `bibliografia/_local/`.
 - **8 · PDF de 28 KB con la tabla de contenido de FPP3** (adjunto `E5VE9TUP`, de gbv.de): se
   decidió borrarlo, pero Zotero no lo permite en segundo plano (el menú «Delete» sale desactivado y
-  la tecla no llega). Queda para Javier: seleccionarlo bajo FPP3 y pulsar Suprimir. El exportador
-  ya lo ignora.
+  la tecla no llega), y la solicitud de control de pantalla del 2026-11-16 no recibió respuesta.
+  Queda para Javier: seleccionarlo bajo FPP3 y pulsar Suprimir. El exportador ya lo ignora.
 - **9 · `Vault/` en git local**, sin remoto: primer commit `56ce049`. Se avisó a las sesiones
   hermanas que escriben en el vault.
-- **7 · Procedencia de los tres PDF admitidos**: sigue «por confirmar» en `ejemplares.yml` hasta que
-  Javier la diga.
+- **7 · Procedencia de los tres PDF admitidos**: leída en los metadatos de macOS el 2026-11-16 y
+  anotada en `ejemplares.yml`. Cryer y Chan y la 3.ª parcial de Shumway y Stoffer llegaron por
+  WhatsApp; Hamilton se descargó de github.com. En los tres el origen anterior es desconocido y
+  Javier no lo ha confirmado. Son copias de licencia incierta: sirven para leer y citar pasajes
+  cortos, nunca salen de `_local/`, y conviene reemplazarlas por ejemplares de la biblioteca cuando
+  los haya.
 
 ## 8. Riesgos
 
