@@ -13,7 +13,7 @@ con una sola regla para decidir cuántas veces diferenciar, con gráficas que se
 teléfono, con sus fuentes contrastadas y con práctica en cada módulo. Es la segunda aplicación
 del molde del capítulo 1 ([[PLAN_Mejora_Cap1]] §9).
 
-**Estado: aprobado por Javier el 2026-11-16 (D1–D9, con D4: los arreglos de gráficas se propagan a los capítulos 3–6). R1 publicada el mismo día y R2 el 17; sigue la R3.** Lo que sigue es el
+**Estado: aprobado por Javier el 2026-11-16 (D1–D9, con D4: los arreglos de gráficas se propagan a los capítulos 3–6). R1 publicada el mismo día; R2 y R3, el 17; sigue la R4.** Lo que sigue es el
 diagnóstico y el plan; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-16
@@ -165,7 +165,7 @@ Cada una lleva mi recomendación; las decide Javier.
   constante repetida que dejaba sin cargar el `<script>` del cap. 5. **La plantilla quedó distinta del
   capítulo 2** (no estaba aprobado tocarla). Para la R3: la pista de que una tabla sigue a la derecha.
 
-- **R3 · estructura — hecha el 2026-11-17, sin publicar** (`main` `cfcd0a5`). Cada término se presenta o se anuncia donde
+- **R3 · estructura — hecha y PUBLICADA el 2026-11-17** (`main` `cfcd0a5` · gh-pages `29a2278`). Cada término se presenta o se anuncia donde
   aparece por primera vez (∇, la TRM, raíz unitaria, la banda, el logaritmo, MA(1) como adelanto del
   capítulo 3). Una sola regla para el orden de las diferencias, la estacional primero, en una caja del M7
   que citan el M6 y el M9, con un caso en que el orden cambia la cuenta (`log(UKgas)`). El pipeline del M9
