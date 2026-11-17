@@ -13,7 +13,7 @@ con una sola regla para decidir cuántas veces diferenciar, con gráficas que se
 teléfono, con sus fuentes contrastadas y con práctica en cada módulo. Es la segunda aplicación
 del molde del capítulo 1 ([[PLAN_Mejora_Cap1]] §9).
 
-**Estado: aprobado por Javier el 2026-11-16 (D1–D9, con D4: los arreglos de gráficas se propagan a los capítulos 3–6). R1 publicada el mismo día; sigue la R2.** Lo que sigue es el
+**Estado: aprobado por Javier el 2026-11-16 (D1–D9, con D4: los arreglos de gráficas se propagan a los capítulos 3–6). R1 publicada el mismo día y R2 el 17; sigue la R3.** Lo que sigue es el
 diagnóstico y el plan; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-16
@@ -153,7 +153,7 @@ Cada una lleva mi recomendación; las decide Javier.
   de la regla de la varianza que se había conservado); todos resueltos. Para las rondas de los capítulos 4
   y 5: alinear su lenguaje sobre el mínimo de varianza con lo que ahora enseña el 2.
 
-- **R2 · gráficas — hecha el 2026-11-17, sin publicar** (`main` `ee33ee6`). Los ayudantes compartidos se
+- **R2 · gráficas — hecha y PUBLICADA el 2026-11-17** (`main` `ee33ee6` · gh-pages `be45a73`). Los ayudantes compartidos se
   arreglaron en el capítulo 2 y se propagaron a los capítulos 3–6 (D4): rezago 12 rotulado en 168 de 168
   correlogramas por ancho (también en ejes j, k, h), fechas en eneros, banda en `#e05a00` (3.73:1), el 0
   rotulado, tablas anchas desplazables dentro de su caja (recortes de `<main>`: 90 → 0), lecturas que se
