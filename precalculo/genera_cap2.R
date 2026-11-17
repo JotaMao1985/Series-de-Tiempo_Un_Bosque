@@ -10,6 +10,8 @@
 #   - Número sugerido de diferencias: ndiffs / nsdiffs (forecast)
 #   - Lambda de Box-Cox por el método de Guerrero (forecast)
 #   - Tabla de varianzas por nivel de diferenciación (sobrediferenciación)
+# y, aparte, Htmls_Series/datos/trm_mensual_<primer mes>_<último mes>.csv: la
+# copia fija de la TRM que lee el código publicado del Módulo 6.
 #
 # Script APARTE de genera_datos.R a propósito: aquel vuelve a descargar la TRM
 # y a reajustar los 37 modelos del origen móvil del capítulo 6. Aquí solo
@@ -56,6 +58,23 @@ trm <- ts(as.numeric(sd_json$trm$valores),
           start = as.integer(sd_json$trm$inicio), frequency = 12)
 cat("TRM leída de datos_series.json:", length(trm), "meses ·",
     sd_json$trm$descripcion, "\n")
+
+# Copia fija de esa TRM, publicada junto al capítulo (decisión D3 del plan de
+# mejora del capítulo 2). El bloque de código del Módulo 6 ya no descarga la
+# serie viva de datos.gov.co: lee este CSV, de modo que quien lo ejecute
+# obtiene las cifras que la página publica. La serie al día se descarga en el
+# ejercicio 4. El nombre lleva el primer y el último mes: si genera_datos.R
+# trae una TRM más larga, el archivo cambia de nombre y el capítulo —y el
+# enlace precalculo/<archivo>, que es el que encuentra el verificador de
+# bloques— hay que actualizarlos a la vez que las cifras.
+meses_trm <- format(seq(as.Date(sprintf("%d-%02d-01", start(trm)[1], start(trm)[2])),
+                        by = "month", length.out = length(trm)), "%Y-%m")
+dir_datos <- file.path(args_dir, "..", "Htmls_Series", "datos")
+dir.create(dir_datos, showWarnings = FALSE)
+archivo_trm <- sprintf("trm_mensual_%s_%s.csv", meses_trm[1], meses_trm[length(meses_trm)])
+write.csv(data.frame(mes = meses_trm, trm = as.numeric(trm)),
+          file.path(dir_datos, archivo_trm), row.names = FALSE, quote = FALSE)
+cat("Escrito: Htmls_Series/datos/", archivo_trm, " (", length(trm), " meses)\n", sep = "")
 
 # Ruido blanco y caminata aleatoria: misma realización siempre (semilla fija).
 # La caminata es el acumulado del MISMO ruido: así el capítulo puede decir

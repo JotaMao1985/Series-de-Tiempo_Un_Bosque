@@ -1,0 +1,25 @@
+== M3 · ejemplo de «decaimiento rápido»: y_t = 0.5 y_{t-1} + e_t, 200 valores ==
+Criterio, fijado antes de mirar: la primera semilla (1, 2, 3…) con la que, de 24 rezagos, solo quedan fuera
+de la banda los primeros y seguidos (1, o 1-2, o 1-2-3), con r1 > r2 > r3 > 0.
+semilla  1 · fuera: 1 2                    · r1..r4 = 0.474 0.235 0.106 0.074   <-- la primera que cumple
+máx |r_k| para k >= 4: 0.094 · banda ± 0.1386 · teórico 0.5^k: 0.5 0.25 0.125
+
+== M7 · la varianza no decide, en ningún sentido ==
+AR(1) phi = 0.8 (set.seed(1), n = 200): ndiffs = 0 · var 2.497 -> 1.033 · r1(y) = 0.7866 · 2(1 - r1) = 0.427 · razón = 0.413 · r1(dy) = -0.148
+ARIMA(0,1,1) theta = -0.8 (set.seed(4), n = 143 -> length 144): ndiffs = 1 · var 1.096 -> 1.513 · r1(z) = 0.3028 · 2(1 - r1) = 1.394 · razón = 1.380 · r1(dz) = -0.483
+   ACF de z, r1..r8: 0.303 0.261 0.198 0.355 0.293 0.302 0.158 0.124 · fuera de banda: 1 2 3 4 5 6 
+   adf p = 0.226 · kpss p = 0.097
+d12: var 0.00380 -> 0.00210 · 2(1 - r1) var = 0.00218
+lx d = 0 -> 1: razón de varianzas 0.058 · 2(1 - r1) = 0.093
+lx d = 1 -> 2: razón de varianzas 1.605 · 2(1 - r1) = 1.600
+lx d = 2 -> 3: razón de varianzas 2.574 · 2(1 - r1) = 2.585
+trm d = 0 -> 1: razón de varianzas 0.044 · 2(1 - r1) = 0.073
+trm d = 1 -> 2: razón de varianzas 1.812 · 2(1 - r1) = 1.825
+trm d = 2 -> 3: razón de varianzas 2.815 · 2(1 - r1) = 2.829
+
+== Ejercicio 1 · co2: el correlograma tras la diferencia estacional ==
+co2_s: n = 456 · banda ±0.0918 · r1..r6 = 0.7998 0.7196 0.6284 0.5961 0.5473 0.4990 · fuera: 15 de 24 (1 2 3 4 5 6 7 8 9 10 11 13 14 15 16)
+co2_sd: n = 455 · r1 = -0.3020 · fuera: 5 de 24 · ndiffs = 0 · nsdiffs = 0 · kpss p = 0.100
+
+== Ejercicio 3 · USAccDeaths ==
+ndiffs(diff(y, 12)) = 1 · ndiffs y nsdiffs de la doble diferencia: 0 0 

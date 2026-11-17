@@ -1,0 +1,261 @@
+
+=========== bloque #0 (r) · # Ruido blanco: simulacion y correlograma
+[1] 0.1386
+[1] 0
+
+=========== bloque #1 (python) · # Ruido blanco: simulacion y correlograma
+0.1386
+1
+
+=========== bloque #2 (r) · # Correlograma con R base
+[1] 0.9480 0.8756 0.7604
+[1] 0.474 0.235 0.106 0.074
+[1] 1 2
+
+=========== bloque #3 (python) · # Correlograma con statsmodels
+[0.948  0.8756 0.7604]
+
+=========== bloque #4 (r) · # ACF y PACF una al lado de la otra
+[1]  0.9480 -0.2294  0.0381
+
+=========== bloque #5 (python) · # ACF y PACF una al lado de la otra
+[ 0.948  -0.2294  0.0381]
+True
+
+=========== bloque #6 (r) · # El mismo ruido, tres valores de phi
+[1] TRUE
+
+=========== bloque #7 (python) · # El mismo ruido, tres valores de phi
+True
+
+=========== bloque #8 (r) · library(tseries)
+[1] 138
+
+	Augmented Dickey-Fuller Test
+
+data:  trm
+Dickey-Fuller = -1.9783, Lag order = 5, p-value = 0.5855
+alternative hypothesis: stationary
+
+
+	KPSS Test for Level Stationarity
+
+data:  trm
+KPSS Level = 2.2427, Truncation lag parameter = 4, p-value = 0.01
+
+
+	Augmented Dickey-Fuller Test
+
+data:  diff(trm)
+Dickey-Fuller = -3.8801, Lag order = 5, p-value = 0.01721
+alternative hypothesis: stationary
+
+
+	KPSS Test for Level Stationarity
+
+data:  diff(trm)
+KPSS Level = 0.24147, Truncation lag parameter = 4, p-value = 0.1
+
+
+	KPSS Test for Trend Stationarity
+
+data:  trm
+KPSS Trend = 0.27297, Truncation lag parameter = 4, p-value = 0.01
+
+
+	Augmented Dickey-Fuller Test
+
+data:  AirPassengers
+Dickey-Fuller = -7.3186, Lag order = 5, p-value = 0.01
+alternative hypothesis: stationary
+
+[1] 5
+
+	Augmented Dickey-Fuller Test
+
+data:  AirPassengers
+Dickey-Fuller = -1.5094, Lag order = 12, p-value = 0.7807
+alternative hypothesis: stationary
+
+
+	Augmented Dickey-Fuller Test
+
+data:  log(AirPassengers)
+Dickey-Fuller = -1.5325, Lag order = 12, p-value = 0.7711
+alternative hypothesis: stationary
+
+
+	Augmented Dickey-Fuller Test
+
+data:  sa
+Dickey-Fuller = -2.1524, Lag order = 5, p-value = 0.513
+alternative hypothesis: stationary
+
+
+	KPSS Test for Trend Stationarity
+
+data:  sa
+KPSS Trend = 0.38637, Truncation lag parameter = 4, p-value = 0.01
+
+=========== bloque #9 (python) · import os
+138
+(-1.9783, 0.6132, 5)
+(-3.8801, 0.0129, 5)
+2.2427 0.01
+
+=========== bloque #10 (r) · library(forecast)
+[1] 131
+[1] 1
+[1] 1
+[1] 0
+[1] 0
+[1] 0
+[1] 1
+
+	KPSS Test for Level Stationarity
+
+data:  d12
+KPSS Level = 0.36816, Truncation lag parameter = 4, p-value = 0.09088
+
+[1] 0.19488 0.01135 0.01823 0.04691
+[1]  0.9537  0.1998 -0.2926 -0.5335
+[1] 0
+[1] 2.497 1.033
+[1] -0.148
+[1] 1
+[1] 1.096 1.513
+[1] -0.483
+
+=========== bloque #11 (python) · import numpy as np
+131
+0 0.19488 0.9537
+1 0.01135 0.1998
+2 0.01823 -0.2926
+3 0.04691 -0.5335
+
+=========== bloque #12 (r) · library(forecast)
+[1] -0.2947
+[1] TRUE
+[1] -4.83  2.00
+
+=========== bloque #13 (python) · import numpy as np
+0.148
+-0.2947
+True
+
+=========== bloque #14 (r) · library(forecast); library(tseries)
+[1] 1
+[1] 1
+[1] -0.2947
+[1] 9.17e-05
+[1] 0.1
+[1] 131
+
+=========== bloque #15 (python) · import numpy as np
+1 1 0.0021 0.1
+
+=========== bloque #16 (r) · library(forecast); library(tseries)
+[1] 0.159
+[1] -0.0343
+[1] 1
+[1] 1
+[1] 0.9909 0.9284
+[1] 0.7998 0.7196 0.6284
+[1] 0
+[1] 0
+[1] 0.1
+      n      r1   fuera 
+455.000  -0.302   5.000 
+
+=========== bloque #17 (r) · library(tseries)
+[1] 4.6
+[1] 9.2
+[1] 93.8
+
+=========== bloque #18 (r) · library(forecast)
+[1] 0
+[1] 1
+[1] 1
+          serie  n varianza      r1     r12 fuera ljung_box_p
+1      original 72   917290  0.7075  0.6286    14      0.0000
+2         nabla 71   540735  0.0233  0.7087     6      0.0000
+3       nabla12 60   288866  0.6899 -0.0768     6      0.0000
+4 nabla12 nabla 59   154530 -0.3534 -0.3357     2      0.0333
+
+=========== bloque #19 (r) · library(tseries); library(jsonlite)
+[1] 142
+
+	Augmented Dickey-Fuller Test
+
+data:  trm_hoy
+Dickey-Fuller = -1.354, Lag order = 5, p-value = 0.8454
+alternative hypothesis: stationary
+
+
+	KPSS Test for Level Stationarity
+
+data:  trm_hoy
+KPSS Level = 2.0554, Truncation lag parameter = 4, p-value = 0.01
+
+
+	Augmented Dickey-Fuller Test
+
+data:  diff(trm_hoy)
+Dickey-Fuller = -3.8915, Lag order = 5, p-value = 0.0166
+alternative hypothesis: stationary
+
+
+	KPSS Test for Level Stationarity
+
+data:  diff(trm_hoy)
+KPSS Level = 0.32299, Truncation lag parameter = 4, p-value = 0.1
+
+[1] 0.585 0.017
+[1] 54
+[1] 0.071
+
+── Attaching packages ──────────────────────────────────────────── fpp3 1.0.3 ──
+✔ tibble      3.3.1     ✔ tsibble     1.2.0
+✔ dplyr       1.2.1     ✔ tsibbledata 0.4.1
+✔ tidyr       1.3.2     ✔ ggtime      0.2.0
+✔ lubridate   1.9.5     ✔ feasts      0.5.0
+✔ ggplot2     4.0.3     ✔ fable       0.5.0
+── Conflicts ───────────────────────────────────────────────── fpp3_conflicts ──
+✖ lubridate::date()    masks base::date()
+✖ dplyr::filter()      masks stats::filter()
+✖ tsibble::intersect() masks base::intersect()
+✖ tsibble::interval()  masks lubridate::interval()
+✖ dplyr::lag()         masks stats::lag()
+✖ tsibble::setdiff()   masks base::setdiff()
+✖ tsibble::union()     masks base::union()
+Warning in kpss.test(trm) : p-value smaller than printed p-value
+Warning in kpss.test(diff(trm)) : p-value greater than printed p-value
+Warning in kpss.test(trm, null = "Trend") :
+  p-value smaller than printed p-value
+Warning in adf.test(AirPassengers) :
+  p-value smaller than printed p-value
+Warning in kpss.test(sa, null = "Trend") :
+  p-value smaller than printed p-value
+Warning in kpss.test(trm_hoy) : p-value smaller than printed p-value
+Warning in kpss.test(diff(trm_hoy)) :
+  p-value greater than printed p-value
+
+=========== bloque #20 (python) · import pandas as pd
+142
+(-1.354, 0.8739, 5)
+(-3.8915, 0.0125, 5)
+
+/tmp/verifica_cap6/bloques.py:138: InterpolationWarning: The test statistic is outside of the range of p-values available in the
+look-up table. The actual p-value is smaller than the p-value returned.
+
+  est, p, *_ = kpss(trm, regression="c", nlags=int(4 * (len(trm) / 100) ** 0.25))
+/tmp/verifica_cap6/bloques.py:226: InterpolationWarning: The test statistic is outside of the range of p-values available in the
+look-up table. The actual p-value is greater than the p-value returned.
+
+  est, p, *_ = kpss(w, regression="c", nlags=nlags)
+
+sesión de r: código de salida 0
+
+sesión de python: código de salida 0
+
+=== 93 de 93 líneas #> aparecen literales en la salida de su bloque ===

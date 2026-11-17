@@ -1,0 +1,46 @@
+[OK] bloque  0 r      l. 2374  rc=0  #>=2  no casan=0
+[OK] bloque  1 python l. 2392  rc=0  #>=2  no casan=0
+[OK] bloque  2 r      l. 2538  rc=0  #>=1  no casan=0
+[OK] bloque  3 python l. 2554  rc=0  #>=1  no casan=0
+[OK] bloque  4 r      l. 2724  rc=0  #>=1  no casan=0
+[OK] bloque  5 python l. 2740  rc=0  #>=2  no casan=0
+[OK] bloque  6 r      l. 2898  rc=0  #>=2  no casan=0
+[OK] bloque  7 python l. 2926  rc=0  #>=1  no casan=0
+[REVISAR] bloque  8 r      l. 3193  rc=0  #>=17  no casan=5
+      esperado y no visto (en orden): 'Warning: p-value smaller than printed p-value'
+      esperado y no visto (en orden): 'Warning: p-value greater than printed p-value'
+      esperado y no visto (en orden): 'Warning: p-value smaller than printed p-value'
+      esperado y no visto (en orden): 'Warning: p-value smaller than printed p-value'
+      esperado y no visto (en orden): 'Warning: p-value smaller than printed p-value'
+[OK] bloque  9 python l. 3252  rc=0  #>=4  no casan=0
+[OK] bloque 10 r      l. 3583  rc=0  #>=13  no casan=0
+[OK] bloque 11 python l. 3636  rc=0  #>=5  no casan=0
+[OK] bloque 12 r      l. 3772  rc=0  #>=3  no casan=0
+[OK] bloque 13 python l. 3799  rc=0  #>=3  no casan=0
+[OK] bloque 14 r      l. 3999  rc=0  #>=6  no casan=0
+[OK] bloque 15 python l. 4042  rc=0  #>=1  no casan=0
+[REVISAR] bloque 16 r      l. 4208  rc=0  #>=8  no casan=1
+      esperado y no visto (en orden): 'Warning: p-value greater than printed p-value'
+[OK] bloque 17 r      l. 4281  rc=0  #>=3  no casan=0
+[OK] bloque 18 r      l. 4325  rc=0  #>=8  no casan=0
+[REVISAR] bloque 19 r      l. 4412  rc=1  #>=3  no casan=3
+      esperado y no visto (en orden): '[1] 0.585 0.017'
+      esperado y no visto (en orden): '[1] 54'
+      esperado y no visto (en orden): '[1] 0.071'
+      cola de la salida:
+          method            from
+          as.zoo.data.frame zoo 
+        Warning message:
+        In kpss.test(trm_hoy) : p-value smaller than printed p-value
+        Warning message:
+        In kpss.test(diff(trm_hoy)) : p-value greater than printed p-value
+        Error: object 'trm' not found
+        Execution halted
+[REVISAR] bloque 20 python l. 4448  rc=1  #>=0  no casan=0
+      cola de la salida:
+        142
+        
+        Traceback (most recent call last):
+          File "/var/folders/hc/hdqkq_t95179_wgp60z9p7d40000gn/T/tmpk36albwu.py", line 16, in <module>
+            print(adf_como_en_r(trm_hoy))
+        NameError: name 'adf_como_en_r' is not defined

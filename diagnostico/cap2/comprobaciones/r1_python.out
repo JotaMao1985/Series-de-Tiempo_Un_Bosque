@@ -1,0 +1,87 @@
+statsmodels 0.14.6 · scipy 1.15.3 · numpy 2.2.6 · pandas 2.3.3
+
+[1] PACF: ywm, ldb y pacf() de R sobre AirPassengers
+ywm[:3] = [ 0.948  -0.2294  0.0381] · ldb[:3] = [ 0.948  -0.2294  0.0381] · R[:3] = [ 0.948  -0.2294  0.0381]
+max|ywm - ldb| = 1.058875209736243e-14 · max|ywm - R| = 4.874019563727572e-05 · max|ldb - R| = 4.8740195643631745e-05
+pacf_yw llama a yule_walker: True · a levinson_durbin: False
+   doc: - "yw" or "ywadjusted" : Yule-Walker with sample-size adjustment in
+   doc: - "ywm" or "ywmle" : Yule-Walker without adjustment.
+   doc: - "ld" or "ldadjusted" : Levinson-Durbin recursion with bias
+   doc: - "ldb" or "ldbiased" : Levinson-Durbin recursion without bias
+   doc: Partial autocorrelation estimation using Yule-Walker.
+   doc: the best methods based on root MSE are Yule-Walker (MLW), Levinson-Durbin
+   doc: Yule-Walker (adjusted) and Levinson-Durbin (adjusted) performed
+pacf(method='ldb') usa levinson_durbin: True
+
+[2] Box-Cox: scipy (máxima verosimilitud) y statsmodels (Guerrero)
+scipy.stats.boxcox: lambda = 0.148
+statsmodels BoxCox().transform_boxcox {'method': 'guerrero', 'window_length': 12} -> lambda = -0.2947
+statsmodels BoxCox {'method': 'guerrero', 'window_length': 12, 'scale': 'sd', 'options': {'bounds': (-1, 2)}} ERROR TypeError _minimize_scalar_bounded() got multiple values for argument 'bounds'
+statsmodels BoxCox().transform_boxcox {'method': 'loglik'} -> lambda = 0.148
+firma: (x, lmbda=None, method='guerrero', **kwargs)
+   |     def _guerrero_cv(self, x, bounds, window_length=4, scale='sd',
+   |                      options={'maxiter': 25}):
+   |         """
+   |         Computes lambda using guerrero's coefficient of variation. If no
+   |         seasonality is present in the data, window_length is set to 4 (as
+   |         per Guerrero and Perera, (2004)).
+   | 
+   |         NOTE: Seasonality-specific auxiliaries *should* provide their own
+   |         seasonality parameter.
+   | 
+   |         Parameters
+   |         ----------
+   |         x : array_like
+   |         bounds : tuple
+   |             Numeric 2-tuple, that indicate the solution space for the lambda
+   |             parameter.
+   |         window_length : int
+   |             Seasonality/grouping parameter. Default 4, as per Guerrero and
+   |             Perera (2004). NOTE: this indicates the length of the individual
+   |             groups, not the total number of groups!
+   |         scale : {'sd', 'mad'}
+   |             The dispersion measure to be used. 'sd' indicates the sample
+   |             standard deviation, but the more robust 'mad' is also available.
+   |         options : dict
+   |             The options (as a dict) to be passed to the optimizer.
+   |         """
+   |         nobs = len(x)
+   |         groups = int(nobs / window_length)
+   | 
+   |         # remove the first n < window_length observations from consideration.
+   |         grouped_data = np.reshape(x[nobs - (groups * window_length): nobs],
+   |                                   (groups, window_length))
+   |         mean = np.mean(grouped_data, 1)
+   | 
+   |         scale = scale.lower()
+   |         if scale == 'sd':
+   |             dispersion = np.std(grouped_data, 1, ddof=1)
+   |         elif scale == 'mad':
+   |             dispersion = mad(grouped_data, axis=1)
+   |         else:
+   |             raise ValueError(f"Scale '{scale}' not understood.")
+   | 
+   |         def optim(lmbda):
+   |             rat = np.divide(dispersion, np.power(mean, 1 - lmbda))  # eq 6, p 40
+   |             return np.std(rat, ddof=1) / np.mean(rat)
+   | 
+   |         res = minimize_scalar(optim,
+   |                               bounds=bounds,
+   |                               method='bounded',
+   |                               options=options)
+   |         return res.x
+lambda de Guerrero en R (forecast::BoxCox.lambda): -0.2947
+max|exp(log y) - y| = 2.2737367544323206e-13
+
+[3] KPSS sobre diff12 de log(AirPassengers) con los dos truncamientos
+n = 132 · floor(3*sqrt(n)/13) = 2 · KPSS = 0.5367 · p = 0.0334
+n = 132 · floor(4*(n/100)^0.25) = 4 · KPSS = 0.3682 · p = 0.0909
+
+[4] pmdarima
+pmdarima 2.1.1
+ndiffs(lap, test="kpss") -> 1
+nsdiffs(lap, m=12, test="ocsb") -> 1
+nsdiffs(lap, m=12, test="ch") -> 0
+ndiffs(lap.diff(12).dropna(), test="kpss") -> 0
+BoxCoxEndogTransformer().fit(pasajeros).lam1_ = 0.148 (scipy: 0.148 )
+su fit llama a stats.boxcox: True
