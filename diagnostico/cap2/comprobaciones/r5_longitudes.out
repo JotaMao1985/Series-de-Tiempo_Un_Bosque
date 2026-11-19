@@ -1,0 +1,74 @@
+
+=== ANTES de la R5 (51a5c88) ===
+ítem tipo      longitudes (✔ = correcta)                    correcta más larga media dist.  ¿la correcta es la más larga?
+Q1   opcion    45  42  55✔  45                                    55        55        44.0  SÍ
+Q2   numerica  (sin opciones)
+Q3   grafico   89✔  57  54  47                                    89        89        52.7  SÍ
+Q4   multiple  66✔  33  70✔  62✔  63                               -        70        48.0  (múltiple) media correctas 66.0 · media falsas 48.0
+Q5   opcion    35  20  49  50✔                                    50        50        34.7  SÍ
+Q6   grafico   51  83✔  49  48                                    83        83        49.3  SÍ
+Q7   numerica  (sin opciones)
+Q8   opcion    49  37  66  85✔                                    85        85        50.7  SÍ
+-> eligiendo siempre la opción más larga se aciertan 5 de 5 ítems de una sola respuesta; eligiendo siempre la más corta, 0
+   Q1    45  Sí, porque el nivel promedio anual no cambia.
+   Q1    42  Sí, siempre que la varianza sea constante.
+   Q1 ✔  55  No, porque la media depende del mes y, por tanto, de t.
+   Q1    45  No se puede saber sin aplicar una prueba ADF.
+   Q3 ✔  89  Queda estacionalidad sin tratar: el pico del rezago 12 pide una diferencia estacional 12.
+   Q3    57  Ya es ruido blanco: la diferenciación terminó el trabajo.
+   Q3    54  Falta otra diferencia regular, porque la ACF no decae.
+   Q3    47  Hay una tendencia determinista que no se quitó.
+   Q4 ✔  66  Antes de diferenciar, la ACF ya caía rápido y ndiffs() devolvía 0.
+   Q4    33  La varianza subió al diferenciar.
+   Q4 ✔  70  Aparece autocorrelación negativa fuerte en el rezago 1, cerca de -0.5.
+   Q4 ✔  62  Queda inducido un MA(1), t - t-1, que además no es invertible.
+   Q4    63  Aparecen picos en los rezagos múltiplos del periodo estacional.
+   Q5    35  Que las dos pruebas se contradicen.
+   Q5    20  Que es estacionaria.
+   Q5    49  Que los datos son poco informativos para decidir.
+   Q5 ✔  50  Que no es estacionaria: las dos pruebas coinciden.
+   Q6    51  Nada: ya es estacionaria, solo tiene memoria larga.
+   Q6 ✔  83  Diferenciarla: el decaimiento lento y casi lineal es la firma de una raíz unitaria.
+   Q6    49  Aplicarle logaritmo para estabilizar la varianza.
+   Q6    48  Modelarla como un MA(1), porque la ACF se corta.
+   Q8    49  Porque el logaritmo estabiliza mejor la varianza.
+   Q8    37  Porque un negativo no está permitido.
+   Q8    66  Porque el criterio de Guerrero solo es válido para series anuales.
+   Q8 ✔  85  Porque = 0 es interpretable y el óptimo es a su vez una estimación con incertidumbre.
+
+=== DESPUÉS de la R5 (archivo de trabajo) ===
+ítem tipo      longitudes (✔ = correcta)                    correcta más larga media dist.  ¿la correcta es la más larga?
+Q1   opcion    79  74  73✔  66                                    73        79        73.0  no
+Q2   numerica  (sin opciones)
+Q3   grafico   89✔  86  97  87                                    89        97        90.0  no
+Q4   multiple  47  66✔  73  64✔  66                                -        73        62.0  (múltiple) media correctas 65.0 · media falsas 62.0
+Q5   opcion    81  78  74  79✔                                    79        81        77.7  no
+Q6   grafico   86  79✔  73  73                                    79        86        77.3  no
+Q7   numerica  (sin opciones)
+Q8   opcion    79  77  77  80✔                                    80        80        77.7  SÍ
+-> eligiendo siempre la opción más larga se aciertan 1 de 5 ítems de una sola respuesta; eligiendo siempre la más corta, 0
+   Q1    79  Sí: el nivel promedio de cada año es siempre el mismo, y eso es lo que se pide.
+   Q1    74  Sí, siempre que además su varianza se mantenga constante de un año a otro.
+   Q1 ✔  73  No: su media depende del mes y, por tanto, del instante t en que se mire.
+   Q1    66  No se puede saber sin aplicarle antes una prueba de raíz unitaria.
+   Q3 ✔  89  Queda estacionalidad sin tratar: el pico del rezago 12 pide una diferencia estacional 12.
+   Q3    86  Ya es ruido blanco: que alguna barra asome fuera de la banda es lo esperable por azar.
+   Q3    97  Falta otra diferencia regular: la ACF no decae y eso delata una raíz unitaria todavía sin tratar.
+   Q3    87  Queda una tendencia determinista: hay que restar una recta en lugar de diferenciar más.
+   Q4    47  La varianza de la serie subió al diferenciarla.
+   Q4 ✔  66  Antes de diferenciar, la ACF ya caía rápido y ndiffs() devolvía 0.
+   Q4    73  En la ACF aparecen picos en los rezagos múltiplos del periodo estacional.
+   Q4 ✔  64  En la serie diferenciada aparece un r1 negativo, cercano a -0.5.
+   Q4    66  El KPSS de la serie diferenciada ya no rechaza la estacionariedad.
+   Q5    81  Las dos coinciden: la serie no es estacionaria y basta con diferenciarla una vez.
+   Q5    78  Las dos coinciden: la serie es estacionaria alrededor de una tendencia lineal.
+   Q5    74  Ninguna concluye: los datos son poco informativos y hay que conseguir más.
+   Q5 ✔  79  Se contradicen: hay que revisar la especificación de las dos antes de concluir.
+   Q6    86  Nada: es una serie estacionaria, solo que con una memoria que tarda mucho en apagarse.
+   Q6 ✔  79  Diferenciarla: un decaimiento tan lento y casi lineal delata una raíz unitaria.
+   Q6    73  Tomar su logaritmo: la ACF muestra una dispersión que crece con el nivel.
+   Q6    73  Modelarla como un MA(1): la ACF se corta después de los primeros rezagos.
+   Q8    79  El logaritmo empeora la serie: su criterio es más del triple que el del óptimo.
+   Q8    77  El logaritmo capta el 36 % de la mejora posible: apenas cambia la dispersión.
+   Q8    77  Un negativo dice que la dispersión baja con el nivel: no hay que transformar.
+   Q8 ✔  80  El logaritmo capta el 71 % de la mejora posible y deja amplitud sin estabilizar.

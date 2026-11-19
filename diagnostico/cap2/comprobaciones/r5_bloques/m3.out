@@ -1,0 +1,29 @@
+y <- as.numeric(window(discoveries, start = 1927, end = 1936))
+y
+#>  [1] 2 4 7 5 3 3 0 2 2 2
+n <- length(y)
+d <- y - mean(y)                          # desviaciones respecto de la media
+mean(y)
+#> [1] 3
+
+# (a) y (b) Con el divisor T, aunque la suma del rezago k tenga T - k terminos
+g0 <- sum(d^2) / n
+g1 <- sum(d[1:(n - 1)] * d[2:n]) / n
+g2 <- sum(d[1:(n - 2)] * d[3:n]) / n
+c(g0 = g0, g1 = g1, g2 = g2)
+#>  g0  g1  g2 
+#> 3.4 1.6 0.2 
+round(c(r1 = g1 / g0, r2 = g2 / g0), 4)
+#>     r1     r2 
+#> 0.4706 0.0588 
+
+# (c) acf() da lo mismo; dividiendo cada suma entre T - k, no
+round(acf(y, lag.max = 2, plot = FALSE)$acf[2:3], 4)
+#> [1] 0.4706 0.0588
+round(c(sum(d[1:(n - 1)] * d[2:n]) / (n - 1),
+        sum(d[1:(n - 2)] * d[3:n]) / (n - 2)) / g0, 4)
+#> [1] 0.5229 0.0735
+
+# (d) La banda con T = 10
+round(1.96 / sqrt(n), 3)
+#> [1] 0.62

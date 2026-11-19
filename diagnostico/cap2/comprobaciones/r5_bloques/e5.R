@@ -1,0 +1,9 @@
+library(tseries)
+y <- UKDriverDeaths
+# Con los rezagos por defecto, menos que el periodo
+trunc((length(y) - 1)^(1/3))
+adf <- suppressWarnings(adf.test(y))
+round(c(estadistico = unname(adf$statistic), p = adf$p.value), 3)     # 0.01: p < 0.01
+# La prediccion: con k = 12 el resultado debe cambiar
+adf12 <- adf.test(y, k = 12)
+round(c(estadistico = unname(adf12$statistic), p = adf12$p.value), 3)

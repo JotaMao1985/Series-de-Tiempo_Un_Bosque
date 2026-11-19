@@ -1,0 +1,22 @@
+library(tseries)
+# De cada prueba, el estadistico y el p-valor. suppressWarnings() calla el aviso
+# de que el p-valor es un tope de la tabla: 0.01 se lee p < 0.01 y 0.1, p > 0.10
+linea <- function(prueba) round(c(estadistico = unname(prueba$statistic), p = prueba$p.value), 3)
+
+# (a) Las dos pruebas tal como vienen
+linea(adf.test(nhtemp))
+linea(suppressWarnings(kpss.test(nhtemp)))
+
+# (b) El KPSS que corresponde a la regresion de adf.test(): el de tendencia
+linea(suppressWarnings(kpss.test(nhtemp, null = "Trend")))
+
+# (c) El p-valor del ADF con k = 1, 2, 3, 4 y 5 terminos (por defecto, k = 3)
+trunc((length(nhtemp) - 1)^(1/3))
+round(sapply(1:5, function(k) suppressWarnings(adf.test(nhtemp, k = k))$p.value), 3)
+
+# (d) El correlograma desempata: r1 tras cada uno de los dos tratamientos
+t <- time(nhtemp)
+sin_recta <- residuals(lm(nhtemp ~ t))
+round(c(sin_recta    = acf(sin_recta,    plot = FALSE)$acf[2],
+        diferenciada = acf(diff(nhtemp), plot = FALSE)$acf[2]), 3)
+round(1.96 / sqrt(length(nhtemp)), 3)

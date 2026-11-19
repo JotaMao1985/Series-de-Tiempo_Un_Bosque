@@ -1,0 +1,31 @@
+library(tseries)
+set.seed(2026)
+caminatas <- replicate(500, cumsum(rnorm(144)))     # una caminata por columna
+rechaza <- function(x) suppressWarnings(adf.test(x)$p.value) < 0.05
+
+# (a) Caminatas puras: porcentaje de falsos rechazos al 5 %
+100 * mean(apply(caminatas, 2, rechaza))
+#> [1] 3
+
+# (b) Error de Monte Carlo: la desviacion tipica de un porcentaje calculado
+#     con 500 series si el verdadero fuera el 5 %, y el intervalo de +/- 2
+ee <- 100 * sqrt(0.05 * 0.95 / 500)
+round(ee, 2)
+#> [1] 0.97
+round(5 + c(-2, 2) * ee, 1)
+#> [1] 3.1 6.9
+# Con diez veces mas series el error se divide entre la raiz de 10
+set.seed(2026)
+100 * mean(replicate(5000, rechaza(cumsum(rnorm(144)))))
+#> [1] 4.32
+
+# (c) Las MISMAS caminatas, mas una oscilacion anual de amplitud 4
+onda <- 4 * sin(2 * pi * (1:144) / 12)
+100 * mean(apply(caminatas + onda, 2, rechaza))
+#> [1] 21.6
+
+# Y no es que la prueba nunca rechace: sobre ruido blanco, donde H0 es FALSA,
+# rechaza casi siempre
+set.seed(2026)
+100 * mean(replicate(500, rechaza(rnorm(144))))
+#> [1] 99.8

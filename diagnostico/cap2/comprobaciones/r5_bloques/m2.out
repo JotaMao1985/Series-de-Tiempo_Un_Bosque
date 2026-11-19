@@ -1,0 +1,28 @@
+dax <- EuStockMarkets[, "DAX"]
+r <- diff(log(dax))                       # rendimiento de cada dia
+banda <- 1.96 / sqrt(length(r))
+c(n = length(r), banda = round(banda, 4))
+#>         n     banda 
+#> 1859.0000    0.0455 
+
+# Rezagos, de 24, cuya autocorrelacion sale de la banda
+fuera <- function(x) {
+  rk <- acf(x, lag.max = 24, plot = FALSE)$acf[-1]
+  which(abs(rk) > banda)
+}
+
+# (a) Los rendimientos
+fuera(r)
+#> [1] 11 17
+# (b) Sus cuadrados
+fuera(r^2)
+#>  [1]  1  2  3  4  5  6  7 14 15 24
+round(acf(r^2, lag.max = 24, plot = FALSE)$acf[2:4], 3)     # r1, r2 y r3
+#> [1] 0.079 0.171 0.074
+
+# (c) Los mismos rendimientos en un orden al azar: cuantos rezagos salen
+set.seed(2026)
+b <- sample(r)
+c(barajados = length(fuera(b)), sus_cuadrados = length(fuera(b^2)))
+#>     barajados sus_cuadrados 
+#>             1             0 

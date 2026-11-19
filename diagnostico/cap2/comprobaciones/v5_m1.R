@@ -1,0 +1,35 @@
+set.seed(11)
+n <- 20000
+impares <- seq(1, n, by = 2); pares <- seq(2, n, by = 2)
+y <- numeric(n)
+y[impares] <- rnorm(n / 2)
+y[pares]   <- runif(n / 2, -sqrt(3), sqrt(3))
+print(round(c(impar = mean(y[impares]), par = mean(y[pares])), 3))
+print(round(c(impar = var(y[impares]), par = var(y[pares])), 3))
+print(round(cor(y[-n], y[-1]), 3))
+print(round(c(impar = mean(y[impares] > 2), par = mean(y[pares] > 2)), 4))
+print(round(1 - pnorm(2), 4)); print(round(sqrt(3), 3))
+set.seed(11)
+z <- rcauchy(1e6)
+print(round(sapply(c(1e2, 1e4, 1e6), function(k) var(z[1:k]))))
+# robustez: otras semillas
+for (s in 1:5) { set.seed(s); z <- rcauchy(1e6); print(round(sapply(c(1e2, 1e4, 1e6), function(k) var(z[1:k])))) }
+cat("---M2\n")
+dax <- EuStockMarkets[, "DAX"]
+r <- diff(log(dax)); banda <- 1.96 / sqrt(length(r))
+print(c(n = length(r), banda = round(banda, 4)))
+fuera <- function(x) { rk <- acf(x, lag.max = 24, plot = FALSE)$acf[-1]; which(abs(rk) > banda) }
+print(fuera(r)); print(fuera(r^2))
+print(round(acf(r^2, lag.max = 24, plot = FALSE)$acf[2:4], 3))
+print(round(acf(r, lag.max = 24, plot = FALSE)$acf[c(12,18)], 4))
+set.seed(2026); b <- sample(r)
+print(c(barajados = length(fuera(b)), sus_cuadrados = length(fuera(b^2))))
+print(length(EuStockMarkets[, "DAX"])); print(tsp(EuStockMarkets))
+cat("---M3\n")
+y <- as.numeric(window(discoveries, start = 1927, end = 1936)); print(y)
+n <- length(y); d <- y - mean(y); print(mean(y))
+g0 <- sum(d^2)/n; g1 <- sum(d[1:(n-1)]*d[2:n])/n; g2 <- sum(d[1:(n-2)]*d[3:n])/n
+print(c(g0=g0,g1=g1,g2=g2)); print(round(c(r1=g1/g0,r2=g2/g0),4))
+print(round(acf(y, lag.max = 2, plot = FALSE)$acf[2:3], 4))
+print(round(c(sum(d[1:(n-1)]*d[2:n])/(n-1), sum(d[1:(n-2)]*d[3:n])/(n-2))/g0, 4))
+print(round(1.96/sqrt(n),3)); print(round(1.96/sqrt(200),3)); print(tsp(discoveries))

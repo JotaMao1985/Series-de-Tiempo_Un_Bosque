@@ -1,0 +1,33 @@
+library(forecast)
+y <- USAccDeaths
+
+# (a) Las pruebas, en el orden de la regla. ndiffs() sobre la serie cruda
+#     devuelve 0: la estacionalidad confunde a la prueba
+ndiffs(y)
+#> [1] 0
+nsdiffs(y)
+#> [1] 1
+ndiffs(diff(y, lag = 12))     # sobre lo que deja la diferencia estacional
+#> [1] 1
+
+# (b) El correlograma de cada serie, con SU banda: las cuatro tienen distinta n
+resumen <- function(x, nombre) {
+  r <- acf(x, lag.max = 24, plot = FALSE)$acf[-1]
+  banda <- 1.96 / sqrt(length(x))
+  data.frame(serie = nombre, n = length(x), banda = round(banda, 3),
+             r1 = round(r[1], 3), r12 = round(r[12], 3),
+             fuera = sum(abs(r) > banda))
+}
+rbind(resumen(y, "original"),
+      resumen(diff(y), "nabla"),
+      resumen(diff(y, lag = 12), "nabla12"),
+      resumen(diff(diff(y), lag = 12), "nabla12 nabla"))
+#>           serie  n banda     r1    r12 fuera
+#> 1      original 72 0.231  0.707  0.629    14
+#> 2         nabla 71 0.233  0.023  0.709     6
+#> 3       nabla12 60 0.253  0.690 -0.077     6
+#> 4 nabla12 nabla 59 0.255 -0.353 -0.336     2
+
+# Cuantas de 24 barras se esperan fuera por azar en un ruido blanco
+0.05 * 24
+#> [1] 1.2

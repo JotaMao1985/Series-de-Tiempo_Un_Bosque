@@ -1,0 +1,24 @@
+# El proceso del enunciado: normal en los instantes impares, uniforme en los pares
+set.seed(11)
+n <- 20000
+impares <- seq(1, n, by = 2)
+pares   <- seq(2, n, by = 2)
+y <- numeric(n)
+y[impares] <- rnorm(n / 2)
+y[pares]   <- runif(n / 2, -sqrt(3), sqrt(3))
+
+# (c) Media, varianza y correlacion entre vecinos: no distinguen pares de impares
+round(c(impar = mean(y[impares]), par = mean(y[pares])), 3)
+round(c(impar = var(y[impares]), par = var(y[pares])), 3)
+round(cor(y[-n], y[-1]), 3)
+
+# La distribucion si los distingue: proporcion de valores por encima de 2
+round(c(impar = mean(y[impares] > 2), par = mean(y[pares] > 2)), 4)
+round(1 - pnorm(2), 4)     # la probabilidad teorica en un instante impar
+round(sqrt(3), 3)          # el mayor valor posible en un instante par
+
+# (d) Cauchy: la misma distribucion en todo instante, sin varianza finita.
+#     La varianza muestral de los primeros 100, 10 000 y 1 000 000 valores
+set.seed(11)
+z <- rcauchy(1e6)
+round(sapply(c(1e2, 1e4, 1e6), function(k) var(z[1:k])))

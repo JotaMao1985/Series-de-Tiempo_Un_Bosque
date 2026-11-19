@@ -19,7 +19,7 @@ simuladores** interactivos, autoevaluación con retroalimentación por opción y
 | 6 | [Pronóstico y evaluación](capitulo-6-pronostico-evaluacion.html) | Métricas de error, fuga de información, origen móvil, backtesting, Diebold–Mariano, cobertura, auditoría de IA | 12 | 14 |
 
 La portada [`index.html`](index.html) enlaza los seis capítulos. En total: **65 módulos, 73
-simuladores, 61 preguntas de autoevaluación y 25 ejercicios guiados con solución comentada.**
+simuladores, 61 preguntas de autoevaluación y 32 ejercicios guiados con solución comentada.**
 
 ## Talleres y preparcial
 
