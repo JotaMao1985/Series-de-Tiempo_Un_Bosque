@@ -13,7 +13,7 @@ con una sola regla para decidir cuántas veces diferenciar, con gráficas que se
 teléfono, con sus fuentes contrastadas y con práctica en cada módulo. Es la segunda aplicación
 del molde del capítulo 1 ([[PLAN_Mejora_Cap1]] §9).
 
-**Estado: aprobado por Javier el 2026-11-16 (D1–D9, con D4: los arreglos de gráficas se propagan a los capítulos 3–6). R1 publicada el mismo día; R2, R3 y R4, el 17; la R5, hecha el 18 y pendiente de publicar.** Lo que sigue es el
+**Estado: aprobado por Javier el 2026-11-16 (D1–D9, con D4: los arreglos de gráficas se propagan a los capítulos 3–6). R1 publicada el mismo día; R2, R3 y R4, el 17; la R5, el 18. Las cinco rondas están publicadas.** Lo que sigue es el
 diagnóstico y el plan; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-16
@@ -194,7 +194,7 @@ Cada una lleva mi recomendación; las decide Javier.
   aplicarse el tope global por obra; F13 falla si un literal vuelve al registro. Detalle y lo que queda con
   texto de fuente en archivos versionados: `diagnostico/cap2/R4_citas_fuera_de_git.md`.
 
-- **R5 · práctica — hecha el 2026-11-18, sin publicar.** Siete «Para practicar» (M1, M2, M3, M4, M5, M6 y
+- **R5 · práctica — hecha y PUBLICADA el 2026-11-18** (`main` `fd4684e` · gh-pages `54a5659`). Siete «Para practicar» (M1, M2, M3, M4, M5, M6 y
   M8), con series distintas por módulo y la solución calculada en R bajo `#>`; el del M4 es la primera
   práctica de la PACF del capítulo. Quiz: P2, P5, P7 y P8 rehechas, P4 con retro por opción y dos correctas,
   pistas reescritas; la opción más larga acertaba 5 de 5 y ahora 1. Los cinco ejercicios del M9 revisados
