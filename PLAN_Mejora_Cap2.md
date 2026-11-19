@@ -3,7 +3,7 @@ tipo: plan
 curso: "[[20948 Series de Tiempo]]"
 capitulo: "[[20948-02 Estacionariedad, ACF y PACF]]"
 fecha: 2026-11-16
-estado: aprobado
+estado: CERRADO (2026-11-18) — R1–R5 publicadas · main fd4684e · gh-pages 54a5659
 ---
 
 # Plan — Mejora del capítulo 2 · Estacionariedad, ACF y PACF (Fase 2)
@@ -13,8 +13,10 @@ con una sola regla para decidir cuántas veces diferenciar, con gráficas que se
 teléfono, con sus fuentes contrastadas y con práctica en cada módulo. Es la segunda aplicación
 del molde del capítulo 1 ([[PLAN_Mejora_Cap1]] §9).
 
-**Estado: aprobado por Javier el 2026-11-16 (D1–D9, con D4: los arreglos de gráficas se propagan a los capítulos 3–6). R1 publicada el mismo día; R2, R3 y R4, el 17; la R5, el 18. Las cinco rondas están publicadas.** Lo que sigue es el
-diagnóstico y el plan; las rondas se registrarán en §4.
+**Estado: CERRADO por Javier el 2026-11-18.** Aprobado el 2026-11-16 (D1–D9, con D4: los arreglos de
+gráficas se propagan a los capítulos 3–6); R1 publicada el mismo día; R2, R3 y R4, el 17; R5, el 18. Lo
+que sigue es el diagnóstico y el plan; las rondas se registran en §4, y lo que la Fase 2 deja fuera está
+en §9.
 
 ## 1. El hueco — diagnóstico del 2026-11-16
 
@@ -206,16 +208,27 @@ Cada una lleva mi recomendación; las decide Javier.
 
 ## 5. Criterios de aceptación
 
-- [ ] Cada uno de los 7 errores tiene su comprobación en R y deja de reproducirse.
-- [ ] `verifica_bloques_cap6.py --html` sobre el capítulo 2 comprueba sus cifras y da 0 discrepancias.
-- [ ] Ningún término se usa antes de definirse o de anunciarse como adelanto.
-- [ ] Los 20 lienzos, y los correlogramas de los capítulos 3–6, se leen a 1200, 800 y 375 px, con
-      los rezagos 12 y 24 rotulados.
+- [x] Cada uno de los 7 errores tiene su comprobación en R y deja de reproducirse
+      (`diagnostico/cap2/comprobaciones/maestra_errores.R` y `r1_*`; R1).
+- [x] `verifica_bloques_cap6.py --html` sobre el capítulo 2 comprueba sus cifras y da 0 discrepancias:
+      de 0 cifras comprobadas antes de la R1 a 487/487 al cerrar la R5.
+- [x] Ningún término se usa antes de definirse o de anunciarse como adelanto, en lo que pedía D7:
+      hecho en la R3 y revisado por su verificador. Nadie ha releído el capítulo entero después de que
+      la R4 reescribiera 17 frases y la R5 añadiera siete ejercicios.
+- [x] Los 20 lienzos, y los correlogramas de los capítulos 3–6, se leen a 1200, 800 y 375 px, con
+      los rezagos 12 y 24 rotulados: 168 de 168 correlogramas por ancho en la R2, verificados a 1200,
+      1024, 800 y 375 px en los cinco capítulos. Las rondas siguientes no añadieron lienzos.
 - [ ] `audita_citas.py --cierre` en verde con las afirmaciones de prioridad alta y media registradas.
-- [ ] Cada módulo tiene al menos una práctica dentro del capítulo; la opción más larga no acierta
-      más de una pregunta.
-- [ ] La duración declarada de cada módulo dista menos de 3 min de la medida.
-- [ ] `verifica_todo.py` en verde y los capítulos 3–6 reproducibles.
+      **Falla**: quedan 8 `pendiente`, que esperan la 4.ª de Shumway y Stoffer, Kwiatkowski et al.
+      (1992) y Guerrero (1993). Además, 34 frases de prioridad alta o media siguen sin marcar, cada una
+      con su motivo en el inventario (5 viven en cadenas de JavaScript, que el auditor no lee).
+- [x] Cada módulo tiene al menos una práctica dentro del capítulo: un «Para practicar» en el M1–M6 y el
+      M8, el M7 con los ejercicios 1 y 3 del M9, y el M9 con sus cinco. La opción más larga acierta 1
+      pregunta de 5 (antes, 5 de 5).
+- [x] La duración declarada de cada módulo dista menos de 3 min de la medida: el peor desajuste es de
+      0.6 min, con los paneles abiertos (`r5_minutos_despues.out`).
+- [x] `verifica_todo.py` en verde (11 verificadores) y los capítulos 3–6 reproducibles: el 3 byte a byte
+      desde `ensambla_cap3.py`; los 4–6 no cambiaron después de la R3.
 
 ## 6. Riesgos
 
@@ -236,10 +249,42 @@ Resueltas el 2026-11-16: Javier aprobó D1–D9 tal como están, D4 incluida.
 1. ¿Descargas tú, con el acceso institucional, los capítulos de la 4.ª de Shumway y Stoffer y el
    artículo de Kwiatkowski et al. (1992), o te preparo la lista exacta de qué hace falta?
 
+## 9. Cierre (2026-11-18)
+
+Javier cerró la Fase 2 con las cinco rondas publicadas. De los ocho criterios de §5 se cumplen siete;
+el de las fuentes no, y queda con lo demás **fuera de esta fase**, sin plan:
+
+- **Las 8 afirmaciones `pendiente`** y la pregunta 1 de §7: hace falta el texto de la 4.ª de Shumway y
+  Stoffer, de Kwiatkowski et al. (1992) y de Guerrero (1993). Lo consigue Javier con el acceso
+  institucional; después basta una ronda corta de contraste.
+- **Las 34 frases de prioridad alta o media sin marcar**, con su motivo en
+  `bibliografia/contraste/cap2_inventario.tsv`; una, sobre la experiencia docente con asistentes de IA,
+  la decide Javier.
+- **Una relectura completa del capítulo ya corregido** por un par que no haya visto ninguna ronda.
+- **Lo que anotaron las rondas sin resolver:** el M7 toma `log(UKgas)` sin decir que el logaritmo deja
+  amplitud sin estabilizar; la frase del M6 «3.2 %, cerca del 5 % nominal», que el ejercicio 2 del M9
+  matiza; el gráfico de la P6, que repite la caminata del M3 y el M4; las retros de la P4, que
+  adelantan el criterio del ejercicio 3 del M9; las 38 de 169 tablas desplazables en las que apenas se
+  ve la pista de que siguen.
+- **Lo que no es del capítulo, sino del sistema:**
+  - El motor del quiz, que tras el primer fallo de la múltiple dice cuántas correctas faltan.
+  - La plantilla, que quedó distinta de los ayudantes del capítulo 2 desde la R2; tocarla mueve la
+    guía del proyecto.
+  - El lenguaje de los capítulos 4 y 5 sobre la regla de la varianza mínima, que debe alinearse con lo
+    que ahora enseña el 2.
+  - La sección «1b» de `ensambla_cap3.py`, que se borra cuando el capítulo 3 haga su R4.
+  - Una copia de `bibliografia/_local/citas/` fuera de este equipo.
+
+En la fase, el capítulo pasó de 98 a 146 minutos declarados y de 5 a 12 ejercicios. El molde se mantuvo: un solo
+redactor por ronda, un verificador independiente de contexto limpio sobre el diff y la sesión maestra
+volviendo a medir en R. El verificador encontró problemas en lo «terminado» en todas las rondas: 15 en
+la R1, 23 entradas devueltas en la primera lectura de la R4 y 14 en la R5, nunca una clave del quiz mal
+puesta.
+
 ## 8. Enlaces
 
 - Plan del curso: [[PLAN_Material_Series_de_Tiempo]]
 - Fase 0: [[PLAN_Gestion_Documental]] · Fase 1: [[PLAN_Mejora_Cap1]]
 - Capítulo: [[20948-02 Estacionariedad, ACF y PACF]]
 - Criterio: [[Criterio de contenido]] · [[Capa de fuentes]]
-- Bitácora: [[2026-11-16]]
+- Bitácora: [[2026-11-16]] · [[2026-11-17]] · [[2026-11-18]]
