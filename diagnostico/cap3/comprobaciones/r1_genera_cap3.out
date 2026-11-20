@@ -1,0 +1,104 @@
+Escrito: cap3_arma.json / cap3_datos.js
+
+=== ACF/PACF teoricas: corte y decaimiento ========================
+ar1_pos    p=1 q=0 | ACF(1..4)= 0.800  0.640  0.512  0.410 | PACF(1..4)= 0.800  0.000 -0.000  0.000
+ar1_neg    p=1 q=0 | ACF(1..4)=-0.700  0.490 -0.343  0.240 | PACF(1..4)=-0.700 -0.000  0.000  0.000
+ar2_real   p=2 q=0 | ACF(1..4)= 0.714  0.657  0.543  0.469 | PACF(1..4)= 0.714  0.300  0.000  0.000
+ar2_comp   p=2 q=0 | ACF(1..4)= 0.800  0.370 -0.082 -0.392 | PACF(1..4)= 0.800 -0.750  0.000  0.000
+ma1_pos    p=0 q=1 | ACF(1..4)= 0.488  0.000  0.000  0.000 | PACF(1..4)= 0.488 -0.312  0.222 -0.165
+ma1_neg    p=0 q=1 | ACF(1..4)=-0.488  0.000  0.000  0.000 | PACF(1..4)=-0.488 -0.312 -0.222 -0.165
+ma2        p=0 q=2 | ACF(1..4)= 0.553  0.263  0.000  0.000 | PACF(1..4)= 0.553 -0.061 -0.174  0.127
+arma11     p=1 q=1 | ACF(1..4)= 0.831  0.582  0.407  0.285 | PACF(1..4)= 0.831 -0.351  0.169 -0.084
+
+Corte exacto (deben ser 0 hasta el redondeo):
+  PACF del AR(1) en el rezago 2: 0 
+  PACF del AR(2) en el rezago 3: 0 
+  ACF  del MA(1) en el rezago 2: 0 
+  ACF  del MA(2) en el rezago 3: 0 
+
+=== Manchas solares 1770-1869 (n = 100 ) =====================
+ACF (1..6) :  0.806  0.428  0.069 -0.171 -0.268 -0.214 
+PACF(1..6) :  0.806 -0.634  0.077 -0.059 -0.003  0.174 
+banda      : +/- 0.196 
+
+AR(2) por tres metodos:
+  yule_walker    phi1= 1.3173  phi2= -0.6338  sigma2=  298.96
+  css            phi1= 1.4032  phi2= -0.7099  sigma2=  229.03
+  ml             phi1= 1.4059  phi2= -0.7111  sigma2=  229.43
+  YW - ML: dif phi1 = -0.0886 (-1.26 errores estandar), dif phi2 = +0.0773 (1.10 e.e.)
+  pseudo-periodo: YW = 10.53 anios | ML = 10.74 anios
+Raices (ML): 0.9885 +/- 0.6550i, modulo 1.1859 -> periodo 10.7369 anios
+  (formula cerrada del AR(2): 10.7369 anios)
+
+=== Rejilla de modelos (todos con d = 0) =========================
+modelo            k    loglik      AICc       BIC LB(12) p
+ARMA(1,0)         2   -449.04    904.33    911.89   0.0000
+ARMA(2,0)         3   -414.94    838.30    848.30   0.0461
+ARMA(3,0)         4   -412.94    836.52    848.91   0.1658
+ARMA(4,0)         5   -411.94    836.78    851.51   0.1118
+ARMA(0,1)         2   -450.94    908.13    915.70   0.0000
+ARMA(0,2)         3   -422.57    853.56    863.56   0.0000
+ARMA(0,3)         4   -417.36    845.35    857.74   0.0010
+ARMA(1,1)         3   -421.04    850.50    860.50   0.0000
+ARMA(2,1)         4   -412.05    834.73    847.12   0.2246  <- min AICc
+ARMA(1,2)         4   -414.94    840.51    852.90   0.0110
+ARMA(2,2)         5   -411.86    836.63    851.36   0.1510
+Minimo BIC: ARMA(2,1) 
+
+=== Diagnostico de residuales ====================================
+ARMA(1,0)    ACF resid(1..3)= 0.556  0.011 -0.280  LB(12) p=0.0000  Shapiro p=0.0000
+ARMA(2,0)    ACF resid(1..3)= 0.130 -0.148  0.029  LB(12) p=0.0461  Shapiro p=0.0007
+ARMA(3,0)    ACF resid(1..3)= 0.018 -0.105  0.044  LB(12) p=0.1658  Shapiro p=0.0119
+ARMA(2,1)    ACF resid(1..3)=-0.025 -0.021  0.007  LB(12) p=0.2246  Shapiro p=0.0428
+
+=== La resolucion: raiz cuadrada antes de modelar =================
+El logaritmo NO es opcion: min = 0 manchas, con 1 anio(s) en cero dentro de la ventana ( 3 en la serie 1700-1988).
+Elasticidad amplitud-nivel (b=0.5 -> sqrt, b=1 -> log):
+   bloques de 10 anios: b = 0.8165  IC95 [0.593, 1.040]  R2 = 0.899  (10 bloques)
+   bloques de  5 anios: b = 0.7034  IC95 [0.475, 0.931]  R2 = 0.700  (20 bloques)
+   bloques de 11 anios: b = 0.7658  IC95 [0.533, 0.998]  R2 = 0.897  (9 bloques)
+   -> los tres IC excluyen 0 (hay que transformar) pero no separan sqrt de log;
+      el cero de la serie decide, y sqrt es el estabilizador de conteos.
+lambda de Guerrero: 0.3062 
+
+AR(2) sobre sqrt: phi=(1.4027, -0.6853)  |raiz| = 1.2080 -> periodo 11.2178 anios
+   AICc 324.00 | BIC 334.00 | Ljung-Box(12) p = 0.1644 | Shapiro p = 0.0470
+Con el lambda de Guerrero (0.3062) en vez de 0.5: periodo 11.3883, LB p = 0.4892
+   -> la conclusion no depende de haber elegido exactamente 0.5.
+
+Rejilla sobre sqrt(manchas):
+modelo            AICc       BIC LB(12) p
+ARMA(1,0)       383.86    391.42   0.0000
+ARMA(2,0)       324.00    334.00   0.1644  <- min AICc  <- min BIC
+ARMA(3,0)       325.35    337.74   0.2005
+ARMA(4,0)       327.61    342.34   0.1473
+ARMA(0,1)       398.15    405.72   0.0000
+ARMA(0,2)       343.21    353.21   0.0000
+ARMA(0,3)       333.59    345.98   0.0011
+ARMA(1,1)       343.68    353.68   0.0000
+ARMA(2,1)       325.41    337.80   0.1856
+ARMA(1,2)       328.14    340.52   0.0231
+ARMA(2,2)       327.42    342.14   0.1833
+
+COMPARACION CRUDA vs. SQRT (el hallazgo del capitulo):
+   cruda: mejor AICc = ARMA(2,1); el AR(2) falla Ljung-Box (p = 0.0461)
+   sqrt : mejor AICc y mejor BIC = AR(2); pasa Ljung-Box (p = 0.1644)
+   pseudo-periodo: 10.74 anios (cruda) -> 11.22 anios (sqrt); ciclo solar ~11
+   asimetria de los residuales: 0.791 -> 0.573 | Shapiro 0.0007 -> 0.0470
+
+=== Log-retornos de la TRM (n = 137 ) ==================
+ACF (1..6):  0.105 -0.077 -0.078  0.006  0.193  0.123  banda +/- 0.1675 
+  Ljung-Box( 6): Q= 10.852  p=0.0931
+  Ljung-Box(12): Q= 20.387  p=0.0601
+  Ljung-Box(20): Q= 30.655  p=0.0599
+MA(1): theta = 0.1262 (e.e. 0.0912, t = 1.38) | AICc 724.05 vs. ruido blanco 723.80
+auto.arima(ret) por defecto propone ARMA(0,0) (incluye media: FALSE)
+auto.arima(d = 0, seasonal = FALSE, stepwise = FALSE, approximation = FALSE, max.p = 4, max.q = 4) propone ARMA(0,1) (incluye media: FALSE)
+   MA(1) sin media: theta = 0.1326 (e.e. 0.0905, t = 1.47)
+   la media mensual 0.2681% tiene e.e. 0.3195 -> t = 0.84: no significativa
+   sin media: MA(1) AICc = 722.653 vs. ruido blanco AICc = 722.663 (dif. 0.010)
+   -> sin media, el MA(1) y el ruido blanco son INDISTINGUIBLES.
+Ljung-Box(12) sobre el NIVEL p = 0.0601 | sobre los CUADRADOS p = 0.9166
+
+=== Verificacion de los pesos psi ================================
+Error maximo de la ACF teorica por pesos psi vs. ARMAacf: 6.66e-16 (2000 terminos) | 6.66e-16 (600 terminos, los del navegador)

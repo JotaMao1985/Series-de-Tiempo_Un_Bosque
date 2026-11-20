@@ -1,0 +1,169 @@
+
+=== CAP2 · Ej.1 · co2: cuantas diferencias ===
+  rango relativo = 15.9% -> lambda mal identificado (Guerrero da -0.0343, pero da igual)
+  nsdiffs = 1 ; tras nabla12 -> ndiffs = 1   (d = 1, D = 1)
+  ACF de la serie cruda: r1 = 0.9909, r12 = 0.9284 (banda +/- 0.0906)
+  varianza tras nabla12, por d = 0.3882  0.1543  0.4023  1.3123  -> minimo en d = 1
+  serie final nabla nabla12: n = 455, var = 0.15433, r1 = -0.3020, KPSS p = 0.1000, fuera de banda = 5 de 24
+
+=== CAP2 · Ej.2 · 500 caminatas aleatorias: falso rechazo del ADF ===
+  rechaza H0 al 5%  en 4.6% de 500 caminatas (nominal: 5%)
+  rechaza H0 al 10% en 9.2% (nominal: 10%)
+  sobre ruido blanco (H0 FALSA) rechaza en 93.8% -> la prueba si tiene potencia
+
+=== CAP2 · Ej.3 · USAccDeaths: tres diferenciaciones ===
+  nsdiffs = 1 ; ndiffs sobre la serie cruda = 0 ; ndiffs TRAS nabla12 = 1
+  transformacion      n   varianza       r1      r12  fuera LjungBox p
+  original           72   917290.1   0.7075   0.6286     14    0.0000
+  nabla              71   540735.1   0.0233   0.7087      6    0.0000
+  nabla12            60   288865.8   0.6899  -0.0768      6    0.0000
+  nabla12_nabla      59   154529.9  -0.3534  -0.3357      2    0.0333
+
+=== CAP2 · Ej.4 · TRM al corte de hoy (referencia) ===
+  n = 138 · ADF p = 0.5855 · KPSS p = 0.0100 · ndiffs = 1
+
+=== CAP1 · Ej.1 · co2: aditiva o multiplicativa ===
+  co2          : b = 1.083  IC95 [0.575, 1.591]  R2 = 0.335  (nivel 315.8->363.8, amplitud 4.95->6.60)
+  AirPassengers: b = 1.291  IC95 [1.149, 1.432]  R2 = 0.976  (nivel 126.7->476.2, amplitud 44.00->232.00)
+  (b = 0 => aditiva ; b = 1 => multiplicativa)
+  co2: el IC95 de b abarca de 0.575 a 1.591 y el R2 es 0.335 -> los datos NO distinguen
+  co2: la amplitud SI crece: +0.0239 ppm/anio (p = 0.00021, R2 = 0.314)
+
+=== CAP1 · Ej.2 · Fuerza de tendencia y estacionalidad ===
+  co2                  F_T = 0.9997   F_S = 0.9841
+  USAccDeaths          F_T = 0.7991   F_S = 0.9426
+  log(AirPassengers)   F_T = 0.9940   F_S = 0.9368
+
+=== CAP1 · Ej.3 · Atipico: clasica vs STL ===
+  atipico: julio de 1955, 364 -> 546 (+50%)
+  indice de julio · clasica          : 1.2266 -> 1.2758 (+4.02%)
+  indice de julio · STL robust=TRUE  : 1.2562 -> 1.2458 (-0.82%)
+  indice de julio · STL robust=FALSE : 1.2416 -> 1.2806 (+3.14%)
+  distorsion maxima entre los 12 meses · clasica 4.02% | STL robusto 0.82% | STL sin robust 3.14%
+
+=== CAP3 · Ej.1 · lh: identificacion y seleccion ===
+    modelo   AICc    BIC   LB10
+ ARMA(1,0) 65.304 70.372 0.4050
+ ARMA(2,0) 65.434 71.989 0.4185
+ ARMA(3,0) 65.613 73.541 0.7958
+ ARMA(0,1) 68.649 73.717 0.1962
+ ARMA(0,2) 63.991 70.545 0.8492
+ ARMA(1,1) 66.454 73.009 0.3927
+  banda = 0.2829 | min AICc = ARMA(0,2) | min BIC = ARMA(1,0) (diferencia BIC = 0.173)
+  AR(1): phi = 0.5739 (e.e. 0.1161) · Shapiro p = 0.008349
+
+=== CAP3 · Ej.2 · MA(2) theta = (0.6, 0.4) ===
+  raices -0.7500 +/- 1.3919i · modulo 1.5811 -> invertible: TRUE
+  rho1 = 0.5526 (a mano) = 0.5526 (ARMAacf) · rho2 = 0.2632
+  |rho_1| > 0.5: TRUE  <- la cota del MA(1) NO vale para el MA(2)
+
+=== CAP3 · Ej.3 · estabilidad del AR(2) por ventanas ===
+   ventana   n   phi1    phi2    ee1 modulo periodo   LB12
+ 1770-1869 100 1.4027 -0.6853 0.0727 1.2080  11.218 0.1644
+ 1700-1988 289 1.4086 -0.7006 0.0427 1.1947  11.007 0.0000
+ 1870-1988 119 1.4219 -0.7321 0.0645 1.1687  10.648 0.0007
+ 1900-1988  89 1.4146 -0.7556 0.0718 1.1504  10.129 0.0010
+ 1889-1988 100 1.4101 -0.7431 0.0689 1.1600  10.249 0.0006
+  ventanas de 100 anios: 190; no rechazan al 5 %: 52 (una empieza en 1700; las demas, entre 1734-1785)
+  phi1 en [1.4027, 1.4219] · phi2 en [-0.7556, -0.6853] · periodo en [10.129, 11.218]
+
+=== CAP4 · Ej.1 · BJsales de principio a fin ===
+  n = 150 | ndiffs = 1 | ADF nivel p = 0.5302 -> d = 1
+  varianza por d: 461.3769 2.0851 2.8823 8.5626 
+       modelo    aicc     bic   lb20 min_raiz_ma
+ ARIMA(1,1,1) 514.902 523.748 0.6216      1.5589
+ ARIMA(1,1,2) 516.914 528.652 0.5592      1.6633
+ ARIMA(2,1,1) 516.922 528.660 0.5576      1.6474
+ ARIMA(2,1,2) 518.575 533.175 0.4613      1.2236
+ ARIMA(2,1,0) 520.088 528.935 0.2627          NA
+ ARIMA(1,1,0) 526.209 532.134 0.1830          NA
+ ARIMA(0,1,2) 527.856 536.702 0.1346      2.2741
+ ARIMA(0,1,1) 533.348 539.274 0.0340      3.9028
+ ARIMA(0,1,0) 545.544 548.521 0.0000          NA
+  min AICc = ARIMA(1,1,1) | min BIC = ARIMA(1,1,1) | auto.arima -> ARIMA(1,1,1)
+  GANADOR (1,1,1): phi = 0.8799 (e.e. 0.0644), theta = -0.6415 (e.e. 0.1035)
+           LB(20) p = 0.6216 | Shapiro p = 0.6295
+  EL DE LIBRO (0,1,1) NO PASA: LB(20) p = 0.0340 | ACF residual r1..r4 = 0.0142, 0.2483, 0.1185, 0.2087 (banda 0.1600)
+  TRAMPA d=2: mejor es ARIMA(1,2,2) con AICc 515.859 sobre n = 148 y |raiz MA| = 1.0000
+
+=== CAP4 · Ej.2 · log(lynx): ciclo, no raiz unitaria ===
+  n = 114 | ndiffs(kpss) = 0, ndiffs(adf) = 0 | KPSS p = 0.1000, ADF p = 0.0100
+  varianza d=0 -> d=1: 1.6532 -> 0.6871 (-58.4 %). La regla de la varianza NO DISPARA
+       modelo    aicc min_raiz_ma lb20_p
+ ARIMA(2,1,0) 226.442          NA 0.0000
+ ARIMA(2,1,1) 187.673      1.0000 0.0071
+ ARIMA(0,1,1) 231.105      1.5076 0.0000
+  -> el ARIMA(2,1,1) pone |raiz MA| = 1 exacto: el MA cancela la diferencia.
+  AR(2) sin diferenciar: phi = (1.3776, -0.7399) | |raiz| = 1.1626 -> periodo 9.78 anios
+  pero LB(20) p = 0.0094: tampoco basta | auto.arima -> ARIMA(2,0,3) with non-zero mean
+
+=== CAP4 · Ej.3 · el intervalo, a mano, desde los pesos psi ===
+  phi = 0.8800, theta = -0.6415 -> psi con ar* = (1.8800, -0.8800)
+  psi_0..psi_4: 1 1.2385 1.4485 1.6332 1.7958 
+  psi_j tiende a (1+theta)/(1-phi) = 2.9883 (calculado: 2.5593)
+  sigma_h (h=1..5): 1.3416 2.1356 2.8874 3.6246 4.3523 
+  semiancho 95 % de forecast(): 2.6295 4.1857 5.6592 7.1042 8.5303 
+  error maximo entre las dos vias: 2.398e-14
+  sigma_12/sigma_1 = 6.7963, frente a sqrt(12) = 3.4641
+  deriva = 0.4001 (e.e. 0.2557, t = 1.56) | AICc 515.062 con deriva vs. 514.902 sin
+  pronostico a h=12: 266.99 con deriva vs. 263.76 sin
+
+=== CAP5 · Ej.1 · co2 de Mauna Loa, recorrido SARIMA ===
+  n = 468 | ndiffs = 1 (tras la estacional: 1) | nsdiffs = 1
+  Varianzas: cruda 223.9877 | d=1 1.4555 | D=1 0.3882 | ambas 0.1543 -> minimo en d1D1
+  Rejilla de 47 modelos (todos d=1, D=1): mejor por AICc (0,1,3)(0,1,1)[12] (176.998), por BIC (0,1,1)(0,1,1)[12]
+  auto.arima: ARIMA(0,1,3)(0,1,1)[12] (AICc 176.998) | airline: AICc 178.209 (1.211 peor) | LB p = 0.4081
+  TRAMPA: (0,1,1)(0,0,1)[12] da AICc 988.100 con 467 obs. frente a 178.209 con 455 obs. del airline
+          y su Ljung-Box(24) da p = 0.0000: el modelo 'ganador' no pasa el diagnostico.
+
+=== CAP5 · Ej.2 · USAccDeaths: el orden en que se decide d y D ===
+  Orden equivocado: ndiffs(crudo) = 0 -> nsdiffs despues = 1 -> (0,0,1)(0,1,1)[12]
+  Orden correcto : nsdiffs(crudo) = 1 -> ndiffs despues = 1 -> (0,1,1)(0,1,1)[12]
+  Los operadores conmutan: diferencia maxima 0
+  Lo que decide es el DIAGNOSTICO: Ljung-Box(24) p = 0.0000 (orden equivocado) y 0.2477 (correcto)
+  (sus AICc, 905.963 con n=60 y 857.316 con n=59, NO son comparables: distinto d)
+  auto.arima confirma: ARIMA(0,1,1)(0,1,1)[12] (AICc 857.316) | theta = -0.4303, Theta = -0.5528
+  Aviso: nsdiffs(test='ocsb') devuelve 0, no 1. La prueba por defecto cambio de version.
+
+=== CAP5 · Ej.3 · La TRM sin estacionalidad, y armonicos vs. SARIMA ===
+  (a) TRM, n = 138
+      1. nsdiffs = 0
+      2. ACF de la diferencia en 12/24/36 = -0.0025 / -0.0672 / 0.0714 (banda 0.1675): 0 fuera
+      3. Al forzar un SAR(1): Phi = 0.0013 (e.e. 0.0899, t = 0.01), AICc 1708.001 vs 1705.941 del simple
+      auto.arima: ARIMA(0,1,0)
+  (b) co2, armonicos frente al SARIMA:
+      K=1 ( 2 terminos) AICc   435.509  n=467  Regression with ARIMA(5,1,0) errors  LB p=0.0000
+      K=2 ( 4 terminos) AICc   268.475  n=467  Regression with ARIMA(0,1,5) errors  LB p=0.0000
+      K=3 ( 6 terminos) AICc   223.402  n=467  Regression with ARIMA(0,1,4) errors  LB p=0.0000
+      K=4 ( 8 terminos) AICc   180.200  n=467  Regression with ARIMA(3,1,1) errors  LB p=0.0439
+      K=5 (10 terminos) AICc   181.494  n=467  Regression with ARIMA(3,1,1) errors  LB p=0.0516
+      K=6 (11 terminos) AICc   183.624  n=467  Regression with ARIMA(3,1,1) errors  LB p=0.0515
+      Mejor armonico K=4 con AICc 180.200 (n=467) frente al airline 178.209 (n=455)
+      -> NO son comparables: distinto D, distinto n efectivo.
+
+=== CAPÍTULO 6 ===
+  Ej. 1 USAccDeaths, origen móvil ( 25 orígenes, h = 12):
+      snaive   RMSE   331.33  MASE  0.400  cob95 100.00  W95   2641.62
+      airline  RMSE   434.92  MASE  0.521  cob95  99.00  W95   2529.36
+      auto     RMSE   417.39  MASE  0.501  cob95  99.00  W95   2686.24
+      media    RMSE   942.47  MASE  1.152  cob95 100.00  W95   4022.93
+      partición única: airline > auto > snaive > media 
+      origen móvil   : snaive > auto > airline > media 
+      DM airline vs snaive h= 1:   0.0638  p = 0.9497
+      DM airline vs snaive h= 6:   0.9115  p = 0.3711
+      DM airline vs snaive h=12:   1.2659  p = 0.2177
+  Ej. 2 co2 (variación relativa 17.13 %):
+      media    RMSE 27.6893  MAE 27.6147  MAPE  7.5992  MASE 21.9883
+      naive    RMSE  3.2306  MAE  2.7471  MAPE  0.7538  MASE  2.1874
+      snaive   RMSE  2.4333  MAE  2.3379  MAPE  0.6433  MASE  1.8616
+      deriva   RMSE  2.4794  MAE  2.1479  MAPE  0.5902  MASE  1.7103
+      airline  RMSE  0.3541  MAE  0.2767  MAPE  0.0761  MASE  0.2203
+      razón peor/mejor: MAPE 99.86  frente a MASE 99.81
+  Ej. 3 Nilo, cobertura empírica por nivel nominal:
+      nivel   :     50    80    90    95    99 
+      ARIMA   :   63.9  87.8  97.2 100.0 100.0 
+      naive   :   79.4  96.1  99.4 100.0 100.0 
+      ancho medio 95%: ARIMA 631.2  naive 1138.4 | Shapiro p = 0.7312
+
+Escrito: salidas/soluciones_ejercicios.json
+Listo.

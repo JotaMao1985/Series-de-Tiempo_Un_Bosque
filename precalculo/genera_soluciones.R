@@ -395,10 +395,12 @@ cat(sprintf("  |rho_1| > 0.5: %s  <- la cota del MA(1) NO vale para el MA(2)\n",
             sol$cap3_ej2$supera_cota_ma1))
 
 # ---- Ej. 3: estabilidad del AR(2) sobre sqrt(manchas) ---------------------
-# Tres lecturas distintas: coeficientes estables, periodo sensible y
-# diagnostico que se derrumba al crecer n (la prueba gana potencia).
+# Tres lecturas distintas: coeficientes estables, periodo sensible y un
+# diagnostico que se derrumba en las ventanas que llegan al siglo XX. NO es
+# cuestion de potencia: 1889-1988 tiene la misma n que 1770-1869 y rechaza.
 cat("\n=== CAP3 · Ej.3 · estabilidad del AR(2) por ventanas ===\n")
-ventanas <- list(c(1770, 1869), c(1700, 1988), c(1870, 1988), c(1900, 1988))
+ventanas <- list(c(1770, 1869), c(1700, 1988), c(1870, 1988), c(1900, 1988),
+                 c(1889, 1988))
 tabla_vent <- do.call(rbind, lapply(ventanas, function(v) {
   x <- sqrt(window(sunspot.year, v[1], v[2]))
   f <- arima(x, order = c(2, 0, 0), method = "ML")
@@ -416,11 +418,25 @@ sol$cap3_ej3 <- list(
   rango_phi1 = round(range(tabla_vent$phi1), 4),
   rango_phi2 = round(range(tabla_vent$phi2), 4),
   rango_periodo = round(range(tabla_vent$periodo), 3),
+  # Cuantas de las ventanas de 100 anios que caben en 1700-1988 pasan la prueba
+  cien_anios = local({
+    ini <- 1700:1889
+    p <- sapply(ini, function(a) {
+      x <- sqrt(window(sunspot.year, a, a + 99))
+      Box.test(residuals(arima(x, order = c(2, 0, 0), method = "ML")), lag = 12,
+               type = "Ljung-Box", fitdf = 2)$p.value
+    })
+    list(ventanas = length(ini), no_rechazan = sum(p > 0.05),
+         inicios_no_rechazan = ini[p > 0.05])
+  }),
   nota = paste("Los coeficientes apenas se mueven, el periodo cae de 11.22 a",
-               "10.13 anios y el diagnostico falla fuera de la ventana de Yule",
-               "porque la prueba gana potencia con n, no porque el modelo empeore.")
+               "10.13 anios y el diagnostico falla en las ventanas que llegan al",
+               "siglo XX, con n = 89, 100, 119 o 289: no es cuestion de potencia.")
 )
 print(tabla_vent, row.names = FALSE)
+cat(sprintf("  ventanas de 100 anios: %d; no rechazan al 5 %%: %d (una empieza en 1700; las demas, entre %s)\n",
+            sol$cap3_ej3$cien_anios$ventanas, sol$cap3_ej3$cien_anios$no_rechazan,
+            paste(range(sol$cap3_ej3$cien_anios$inicios_no_rechazan[-1]), collapse = "-")))
 cat(sprintf("  phi1 en [%.4f, %.4f] · phi2 en [%.4f, %.4f] · periodo en [%.3f, %.3f]\n",
             sol$cap3_ej3$rango_phi1[1], sol$cap3_ej3$rango_phi1[2],
             sol$cap3_ej3$rango_phi2[1], sol$cap3_ej3$rango_phi2[2],

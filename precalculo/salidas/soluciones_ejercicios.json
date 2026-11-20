@@ -272,12 +272,27 @@
         "modulo": 1.1504,
         "periodo": 10.129,
         "LB12": 0.001
+      },
+      {
+        "ventana": "1889-1988",
+        "n": 100,
+        "phi1": 1.4101,
+        "phi2": -0.7431,
+        "ee1": 0.0689,
+        "modulo": 1.16,
+        "periodo": 10.249,
+        "LB12": 0.0006
       }
     ],
     "rango_phi1": [1.4027, 1.4219],
     "rango_phi2": [-0.7556, -0.6853],
     "rango_periodo": [10.129, 11.218],
-    "nota": "Los coeficientes apenas se mueven, el periodo cae de 11.22 a 10.13 anios y el diagnostico falla fuera de la ventana de Yule porque la prueba gana potencia con n, no porque el modelo empeore."
+    "cien_anios": {
+      "ventanas": 190,
+      "no_rechazan": 52,
+      "inicios_no_rechazan": [1700, 1734, 1736, 1737, 1738, 1739, 1740, 1741, 1742, 1743, 1744, 1745, 1746, 1747, 1748, 1749, 1750, 1751, 1752, 1753, 1754, 1755, 1756, 1757, 1758, 1759, 1760, 1761, 1762, 1763, 1764, 1765, 1766, 1767, 1768, 1769, 1770, 1771, 1772, 1773, 1774, 1775, 1776, 1777, 1778, 1779, 1780, 1781, 1782, 1783, 1784, 1785]
+    },
+    "nota": "Los coeficientes apenas se mueven, el periodo cae de 11.22 a 10.13 anios y el diagnostico falla en las ventanas que llegan al siglo XX, con n = 89, 100, 119 o 289: no es cuestion de potencia."
   },
   "cap4_ej1": {
     "serie": "BJsales (Box & Jenkins, Serie M)",
@@ -789,7 +804,7 @@
     "shapiro_p": 0.7312
   },
   "metadatos": {
-    "generado": "2026-07-27",
+    "generado": "2026-11-20",
     "generador": "precalculo/genera_soluciones.R",
     "versiones": {
       "R": "4.6.0",

@@ -1,0 +1,195 @@
+R version 4.6.0 (2026-04-24) · forecast 9.0.2 
+
+==== E1 · Ejercicio 3: Ljung-Box(12) del AR(2) en raíz, por ventana ==========================
+-- las cuatro del ejercicio y la de control (misma n que 1770-1869)
+1770-1869 (n=100): phi=(1.4027, -0.6853) ee=(0.0727, 0.0724) |raiz|=1.2080 periodo=11.218 LB12 p=0.164400  s2=1.3410
+1700-1988 (n=289): phi=(1.4086, -0.7006) ee=(0.0427, 0.0427) |raiz|=1.1947 periodo=11.007 LB12 p=0.000000  s2=1.3854
+1870-1988 (n=119): phi=(1.4219, -0.7321) ee=(0.0645, 0.0644) |raiz|=1.1687 periodo=10.648 LB12 p=0.000668  s2=1.5240
+1900-1988 (n= 89): phi=(1.4146, -0.7556) ee=(0.0718, 0.0721) |raiz|=1.1504 periodo=10.129 LB12 p=0.001016  s2=1.5981
+1889-1988 (n=100): phi=(1.4101, -0.7431) ee=(0.0689, 0.0688) |raiz|=1.1600 periodo=10.249 LB12 p=0.000601  s2=1.5729
+-- otras ventanas de exactamente 100 años
+1700-1799 (n=100): phi=(1.3824, -0.6669) ee=(0.0737, 0.0745) |raiz|=1.2245 periodo=11.187 LB12 p=0.054437  s2=1.3350
+1720-1819 (n=100): phi=(1.3605, -0.6503) ee=(0.0739, 0.0735) |raiz|=1.2401 periodo=11.083 LB12 p=0.012239  s2=1.2914
+1750-1849 (n=100): phi=(1.3914, -0.6712) ee=(0.0741, 0.0748) |raiz|=1.2206 periodo=11.293 LB12 p=0.137615  s2=1.3430
+1789-1888 (n=100): phi=(1.4333, -0.6900) ee=(0.0722, 0.0725) |raiz|=1.2039 periodo=11.854 LB12 p=0.024544  s2=1.1371
+1800-1899 (n=100): phi=(1.4087, -0.6896) ee=(0.0720, 0.0715) |raiz|=1.2042 periodo=11.255 LB12 p=0.010215  s2=1.1607
+1820-1919 (n=100): phi=(1.3699, -0.6866) ee=(0.0713, 0.0717) |raiz|=1.2068 periodo=10.512 LB12 p=0.019698  s2=1.2852
+1850-1949 (n=100): phi=(1.3899, -0.7204) ee=(0.0685, 0.0694) |raiz|=1.1782 periodo=10.275 LB12 p=0.009244  s2=1.2320
+1880-1979 (n=100): phi=(1.4072, -0.7325) ee=(0.0687, 0.0683) |raiz|=1.1684 periodo=10.373 LB12 p=0.001949  s2=1.4586
+-- todas las ventanas de 100 años (inicio 1700..1889): cuántas no rechazan al 5 %
+ventanas: 190  con p > 0.05: 52  inicios: 1700 1734 1736 1737 1738 1739 1740 1741 1742 1743 1744 1745 1746 1747 1748 1749 1750 1751 1752 1753 1754 1755 1756 1757 1758 1759 1760 1761 1762 1763 1764 1765 1766 1767 1768 1769 1770 1771 1772 1773 1774 1775 1776 1777 1778 1779 1780 1781 1782 1783 1784 1785 
+p máximo: 0.2675 en inicio 1771 
+
+==== E2 · ARMA(2,1) phi=(0.5,0.3) theta=0.4: la recursión del AR en k = 1 ====================
+rho_1 verdadero: 0.8614 
+con rho_{-1} = 1 (mal planteada):  0.5*1 + 0.3*1       = 0.8 
+con rho_{-1} = rho_1 (bien):       0.5*rho_0 + 0.3*rho_1 = 0.7584 
+resuelta como AR puro: 0.5/(1-0.3) = 0.7143 
+rho_2..rho_5: 0.7307 0.6238 0.5311 0.4527  | recursión: 0.7307 0.6238 0.5311 0.4527 
+
+==== E3 · Envolvente de los psi del AR(2) final ===============================================
+R = 0.8278  omega = 0.5601  sin(omega) = 0.5313  1/sin(omega) = 1.8823 
+|psi_j| > R^j en 16 de 25; j = 1 2 3 6 7 8 9 12 13 14 17 18 19 20 23 24 
+|psi_j| > R^j/sin(omega) en 0 de 25
+max |psi_j| / (R^j/sin w) = 0.9999 
+vida media del envolvente: log(0.5)/log(R) = 3.67 
+psi_0..psi_5: 1 1.4027 1.2822 0.8372 0.2957 -0.159 
+cruces por cero: (j+1)*omega = k*pi -> j+1 = 5.61 11.22  j = 4.61 10.22 
+
+==== E4/E6 · TRM: auto.arima, MA(1) con y sin media, AICc con y sin media =====================
+n = 137  banda = 0.1675 
+ACF 1..8: 0.105 -0.077 -0.078 0.006 0.193 0.123 -0.072 -0.198 
+MA(1) con media: theta=0.1262 ee=0.0912 t=1.38 | media=0.2681 ee=0.3195 t=0.84 | AICc=724.046
+MA(1) sin media: theta=0.1326 ee=0.0905 t=1.47 | AICc=722.653
+ruido blanco con media: media=0.2745 ee=0.2859 t=0.96 | AICc=723.804
+ruido blanco sin media: AICc=722.663
+
+-- auto.arima(ret), argumentos por defecto
+Series: ret 
+ARIMA(0,0,0) with zero mean 
+
+sigma^2 = 11.27:  log likelihood = -360.32
+AIC=722.63   AICc=722.66   BIC=725.55
+
+-- auto.arima(ret, trace = TRUE): compara con y sin media
+
+ ARIMA(2,0,2)(1,0,1)[12] with non-zero mean : Inf
+ ARIMA(0,0,0)            with non-zero mean : 723.8043
+ ARIMA(1,0,0)(1,0,0)[12] with non-zero mean : 726.385
+ ARIMA(0,0,1)(0,0,1)[12] with non-zero mean : 726.0751
+ ARIMA(0,0,0)            with zero mean     : 722.6633
+ ARIMA(0,0,0)(1,0,0)[12] with non-zero mean : 725.8787
+ ARIMA(0,0,0)(0,0,1)[12] with non-zero mean : 725.8758
+ ARIMA(0,0,0)(1,0,1)[12] with non-zero mean : 726.5523
+ ARIMA(1,0,0)            with non-zero mean : 724.3348
+ ARIMA(0,0,1)            with non-zero mean : 724.0464
+ ARIMA(1,0,1)            with non-zero mean : 725.8252
+
+ Best model: ARIMA(0,0,0)            with zero mean     
+
+
+-- auto.arima(ret, stepwise = FALSE, approximation = FALSE)
+Series: ret 
+ARIMA(0,0,1) with zero mean 
+
+Coefficients:
+         ma1
+      0.1326
+s.e.  0.0905
+
+sigma^2 = 11.18:  log likelihood = -359.28
+AIC=722.56   AICc=722.65   BIC=728.4
+
+-- la llamada de genera_cap3.R
+Series: ret 
+ARIMA(0,0,1) with zero mean 
+
+Coefficients:
+         ma1
+      0.1326
+s.e.  0.0905
+
+sigma^2 = 11.18:  log likelihood = -359.28
+AIC=722.56   AICc=722.65   BIC=728.4
+
+Ljung-Box(12) de ret^2: 0.9166 
+
+==== E6b · TRM: promedio mensual de datos diarios (rho_1 inducido) ============================
+m =  2 valores por mes: rho_1 = 0.1667 | (m^2-1)/(2(2m^2+1)) = 0.1667
+m =  5 valores por mes: rho_1 = 0.2353 | (m^2-1)/(2(2m^2+1)) = 0.2353
+m = 20 valores por mes: rho_1 = 0.2491 | (m^2-1)/(2(2m^2+1)) = 0.2491
+m = 21 valores por mes: rho_1 = 0.2492 | (m^2-1)/(2(2m^2+1)) = 0.2492
+m = 30 valores por mes: rho_1 = 0.2496 | (m^2-1)/(2(2m^2+1)) = 0.2496
+simulación (2000 caminatas, 138 meses de 21 días): media de r_1 = 0.237  media de r_2 = -0.012 
+r_1 observado en los log-retornos de la TRM: 0.105  error estándar aprox. 1/sqrt(n) = 0.085 
+distancia de r_1 a 0.2492 en errores estándar: 1.68 
+theta de un MA(1) con rho_1 = 0.25:  0.2679 
+
+==== E7 · PACF de la serie cruda y de la raíz: qué rezagos salen de la banda ================
+cruda banda ±0.196 | fuera: 1 2 | PACF 3,4 = 0.0767, -0.0587 | 6, 9, 16 = 0.174, 0.075, -0.130
+raiz  banda ±0.196 | fuera: 1 2 6 9 16 | PACF 3,4 = 0.0334, -0.0155 | 6, 9, 16 = 0.200, 0.198, -0.199
+
+==== I1 · Límites del 95 % del AR(2) en raíz desde 1869 y la vuelta al cuadrado =============
+  h media    inf    sup inf_cuadrado inf_truncado sup_cuadrado
+  1 9.654  7.384 11.923       54.522       54.522      142.163
+  2 9.435  5.525 13.345       30.529       30.529      178.087
+  3 8.408  3.534 13.282       12.492       12.492      176.418
+  4 7.118  1.886 12.349        3.559        3.559      152.497
+  5 6.011  0.737 11.285        0.543        0.543      127.357
+  6 5.343  0.057 10.630        0.003        0.003      112.994
+  7 5.165 -0.209 10.539        0.044        0.000      111.073
+  8 5.373 -0.114 10.860        0.013        0.000      117.932
+  9 5.786  0.227 11.345        0.052        0.052      128.708
+ 10 6.223  0.643 11.804        0.413        0.413      139.337
+ 11 6.554  0.973 12.135        0.946        0.946      147.260
+ 12 6.717  1.132 12.303        1.281        1.281      151.372
+semianchos h = 1..12: 2.27 3.91 4.87 5.23 5.27 5.29 5.37 5.49 5.56 5.58 5.58 5.59 
+
+==== I2 · Causalidad: AR(1) con phi = 2 tiene solución estacionaria no causal ================
+comprueba y_t = 2 y_{t-1} + e_t: max |y_t - 2 y_{t-1} - e_t| = 3.77e-15 
+varianza muestral: 0.3363  teórica sigma^2/(phi^2-1) = 0.3333 
+Mod(polyroot(c(1, 1))) (phi = -1) = 1 
+
+==== I3 · Residuales de arima(): R devuelve la innovación estandarizada ======================
+gamma_0/sigma^2 = 6.226 
+t = 1: innovación cruda = 52.54  /sqrt(gamma_0/sigma^2) = 21.06  residuals(ar2)[1] = 21.06 
+t = 2: innovación cruda = -9.83  /sqrt((1-rho1^2) gamma_0/sigma^2) = -6.91  residuals(ar2)[2] = -6.91 
+t = 3, 4: residuals = 8.728 -15.396 
+Ljung-Box(12): residuales de R = 0.0461  | con las dos primeras innovaciones crudas = 0.1086  | descartando las dos primeras = 0.0232 
+ARMA(2,1) descartando las dos primeras: 0.1424 
+
+==== I4 · CSS frente a ML con T = 40 y phi = 0.95, mil réplicas por semilla ==================
+semilla    1: CSS > 1 en 4.6 % | ML > 1 en 0.0 % | ML >= 0.999 en 13.3 % | ML falla en 10 | max ML = 1.000000
+semilla    2: CSS > 1 en 4.4 % | ML > 1 en 0.0 % | ML >= 0.999 en 13.7 % | ML falla en 9 | max ML = 1.000000
+semilla    3: CSS > 1 en 2.8 % | ML > 1 en 0.0 % | ML >= 0.999 en 13.0 % | ML falla en 5 | max ML = 1.000000
+semilla 2026: CSS > 1 en 3.3 % | ML > 1 en 0.0 % | ML >= 0.999 en 13.2 % | ML falla en 10 | max ML = 1.000000
+There were 50 or more warnings (use warnings() to see the first 50)
+ejemplo del capítulo (set.seed(1)): CSS = 1.0086  ML = 0.9808 
+ML con transform.pars = FALSE sobre el mismo ejemplo:    ar1 
+0.9808 
+-- lo que dice ?arima de transform.pars (texto de la ayuda instalada):
+transform.pars: logical; if true, the AR parameters are transformed to
+          ensure that they remain in the region of stationarity.  Not
+          used for 'method = "CSS"'.  For 'method = "ML"', it has been
+          advantageous to set 'transform.pars = FALSE' in some cases,
+          see also 'fixed'.
+-- ?arima.sim, n.start:
+ n.start: length of 'burn-in' period.  If 'NA', the default, a
+          reasonable value is computed.
+-- sin calentamiento, un AR(1) con phi = 0.95 que arranca en cero (5000 réplicas): media y varianza por t
+t =   1: media =  0.006  varianza =  1.026  (teórica (1-phi^(2t))/(1-phi^2) =  1.000; estacionaria = 10.256)
+t =   5: media =  0.035  varianza =  4.172  (teórica (1-phi^(2t))/(1-phi^2) =  4.116; estacionaria = 10.256)
+t =  20: media =  0.046  varianza =  8.960  (teórica (1-phi^(2t))/(1-phi^2) =  8.938; estacionaria = 10.256)
+t =  50: media =  0.002  varianza =  9.934  (teórica (1-phi^(2t))/(1-phi^2) = 10.196; estacionaria = 10.256)
+t = 200: media = -0.006  varianza = 10.321  (teórica (1-phi^(2t))/(1-phi^2) = 10.256; estacionaria = 10.256)
+
+==== I5 · Elasticidades amplitud-nivel: qué contiene cada intervalo ==========================
+bloques_10 b=0.8165 IC=[0.593, 1.040] contiene 0.5: FALSE  contiene 1: TRUE
+bloques_5  b=0.7034 IC=[0.475, 0.931] contiene 0.5: TRUE  contiene 1: FALSE
+bloques_11 b=0.7658 IC=[0.533, 0.998] contiene 0.5: FALSE  contiene 1: FALSE
+
+==== I6 · arima.sim con order = c(0, 1, 0) ====================================================
+largo: 11  | igual a c(0, cumsum(rnorm(10))): TRUE 
+arima.sim(list(ar = 1)):  'ar' part of model is not stationary 
+
+==== D5 · Dos nociones de periodo en el AR(2) de la ventana 1770-1869 (raíz) =================
+2*pi/Arg(raíz)                                  = 11.2178 
+2*pi/acos(phi1/(2 sqrt(-phi2)))                 = 11.2178 
+2*pi/acos(-phi1 (1-phi2)/(4 phi2))  [FPP3 §9.5] = 11.8356 
+periodo en que es máxima la densidad espectral  = 11.8356 
+ACF teórica: primeros máximos locales en k = 11 22 34 
+serie cruda (ML): 2*pi/Arg = 10.7369  FPP3 = 11.1635 
+con módulo de la raíz -> 1 las dos se juntan; phi = (1.6, -0.99): 9.868 9.868 
+
+==== Menores ===================================================================================
+t del AR(2) final sin redondear: 19.31 -9.46  | parámetros (phi1, phi2, media, sigma2): 4 
+LB(12) del AR(2) en raíz: 0.1643997 
+LB(12) descartando los dos primeros residuales: 0.1682 
+Guerrero lambda=0.3062 | sobre manchas^lambda: periodo=11.39 p=0.4892 | sobre la desplazada: periodo=11.28 p=0.22164
+lh AR(1): phi = 0.5739 
+suma psi^2 = 6.136  techo ± 5.62 
+
+==== E1b · Ventanas de 100 años: detalle de las que no rechazan ==============================
+no rechazan: 52 | de ellas, con inicio entre 1734 y 1785: 51 | inicio 1735: p = 0.0427 
+ventanas que alcanzan 1900 (inicio >= 1801): 89 | de ellas no rechazan: 0 
+ventanas con inicio >= 1786: 104 | no rechazan: 0 

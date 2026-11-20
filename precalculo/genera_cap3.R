@@ -441,6 +441,12 @@ lb_ret <- lapply(c(6, 12, 20), function(h) {
 })
 
 ma1_ret  <- arima(ret, order = c(0, 0, 1), method = "ML")
+# El MA(1) SIN media: es el que devuelve la búsqueda exhaustiva de auto.arima.
+ma1_sm_ret <- arima(ret, order = c(0, 0, 1), include.mean = FALSE, method = "ML")
+# auto.arima con sus argumentos por defecto (lo que corre quien copia la
+# llamada sin más) y con la búsqueda exhaustiva. NO dan lo mismo: la primera
+# devuelve ruido blanco con media cero; la segunda, un MA(1) con media cero.
+auto_def <- auto.arima(ret)
 auto_ret <- auto.arima(ret, d = 0, seasonal = FALSE, stepwise = FALSE,
                        approximation = FALSE, max.p = 4, max.q = 4)
 
@@ -467,11 +473,15 @@ retornos <- c(
     ),
     ruido_blanco_aicc = round(aicc_de(arima(ret, order = c(0, 0, 0), method = "ML"),
                                       length(ret)), 3),
-    # auto.arima devuelve un MA(1) SIN media. No es un capricho: la media mensual
-    # estimada tiene t = 0.84, y al quitarla el AICc mejora. Comparados en igualdad
-    # de condiciones (los dos sin media), el MA(1) y el ruido blanco puro se
-    # distinguen en una centésima de AICc: son indistinguibles.
+    # La búsqueda exhaustiva de auto.arima devuelve un MA(1) SIN media, y la
+    # llamada por defecto, ruido blanco sin media. La media mensual estimada
+    # tiene t = 0.84, y al quitarla el AICc mejora (el AICc SÍ compara modelos
+    # con y sin media: se ajustan a los mismos datos). Sin media, el MA(1) y el
+    # ruido blanco puro se distinguen en una centésima de AICc.
     sin_media = list(
+      ma1_theta = round(coef(ma1_sm_ret)[["ma1"]], 4),
+      ma1_se    = round(sqrt(ma1_sm_ret$var.coef[1, 1]), 4),
+      ma1_t     = round(coef(ma1_sm_ret)[["ma1"]] / sqrt(ma1_sm_ret$var.coef[1, 1]), 3),
       ma1_aicc = round(aicc_de(arima(ret, order = c(0, 0, 1), include.mean = FALSE,
                                      method = "ML"), length(ret)), 3),
       ruido_blanco_aicc = round(aicc_de(arima(ret, order = c(0, 0, 0), include.mean = FALSE,
@@ -480,9 +490,16 @@ retornos <- c(
       media_se = round(sqrt(ma1_ret$var.coef[2, 2]), 4)
     ),
     auto_arima = list(
+      argumentos = "d = 0, seasonal = FALSE, stepwise = FALSE, approximation = FALSE, max.p = 4, max.q = 4",
       orden = as.integer(arimaorder(auto_ret)),
       aicc  = round(as.numeric(auto_ret$aicc), 3),
       incluye_media = "intercept" %in% names(coef(auto_ret))
+    ),
+    auto_arima_defecto = list(
+      argumentos = "(los de auto.arima por defecto)",
+      orden = as.integer(arimaorder(auto_def)[c("p", "d", "q")]),
+      aicc  = round(as.numeric(auto_def$aicc), 3),
+      incluye_media = "intercept" %in% names(coef(auto_def))
     ),
     volatilidad = list(
       # La estructura que SÍ tienen los retornos financieros no está en el nivel
@@ -519,6 +536,11 @@ verificacion <- lapply(catalogo, function(p) {
        error_max = signif(max(abs(exacta - aprox)), 3))
 })
 error_psi_global <- signif(max(sapply(verificacion, `[[`, "error_max")), 3)
+# El navegador trunca en 600 términos, no en 2000: se mide también así.
+error_psi_600 <- signif(max(sapply(catalogo, function(p) {
+  exacta <- as.numeric(ARMAacf(ar = p$ar, ma = p$ma, lag.max = MAX_REZAGO_T))[-1]
+  max(abs(exacta - acf_por_psi(p$ar, p$ma, MAX_REZAGO_T, n_terminos = 600)))
+})), 3)
 
 # ----------------------------------------------------------------------------
 # 6. Ensamblado y escritura
@@ -562,7 +584,8 @@ cap3 <- list(
   verificacion = list(
     metodo    = "ACF teorica por pesos psi truncados en 2000 terminos vs. ARMAacf exacta",
     por_proceso = verificacion,
-    error_max = error_psi_global
+    error_max = error_psi_global,
+    error_max_600_terminos = error_psi_600
   ),
   metadatos = list(
     generado    = format(Sys.Date(), "%Y-%m-%d"),
@@ -688,17 +711,24 @@ for (b in lb_ret) cat(sprintf("  Ljung-Box(%2d): Q=%7.3f  p=%.4f\n", b$rezago, b
 cat(sprintf("MA(1): theta = %.4f (e.e. %.4f, t = %.2f) | AICc %.2f vs. ruido blanco %.2f\n",
             retornos$ma1$theta, retornos$ma1$se, retornos$ma1$t,
             retornos$ma1$aicc, retornos$ruido_blanco_aicc))
-cat(sprintf("auto.arima(d=0) propone ARMA(%d,%d) y SIN media (incluye media: %s)\n",
+cat(sprintf("auto.arima(ret) por defecto propone ARMA(%d,%d) (incluye media: %s)\n",
+            retornos$auto_arima_defecto$orden[1], retornos$auto_arima_defecto$orden[3],
+            retornos$auto_arima_defecto$incluye_media))
+cat(sprintf("auto.arima(%s) propone ARMA(%d,%d) (incluye media: %s)\n",
+            retornos$auto_arima$argumentos,
             retornos$auto_arima$orden[1], retornos$auto_arima$orden[3],
             retornos$auto_arima$incluye_media))
+cat(sprintf("   MA(1) sin media: theta = %.4f (e.e. %.4f, t = %.2f)\n",
+            retornos$sin_media$ma1_theta, retornos$sin_media$ma1_se, retornos$sin_media$ma1_t))
 cat(sprintf("   la media mensual %.4f%% tiene e.e. %.4f -> t = %.2f: no significativa\n",
             retornos$ma1$media, retornos$sin_media$media_se, retornos$sin_media$media_t))
 cat(sprintf("   sin media: MA(1) AICc = %.3f vs. ruido blanco AICc = %.3f (dif. %.3f)\n",
             retornos$sin_media$ma1_aicc, retornos$sin_media$ruido_blanco_aicc,
             retornos$sin_media$ruido_blanco_aicc - retornos$sin_media$ma1_aicc))
-cat("   -> comparados en igualdad de condiciones son INDISTINGUIBLES.\n")
+cat("   -> sin media, el MA(1) y el ruido blanco son INDISTINGUIBLES.\n")
 cat(sprintf("Ljung-Box(12) sobre el NIVEL p = %.4f | sobre los CUADRADOS p = %.4f\n",
             retornos$volatilidad$lb12_nivel_p, retornos$volatilidad$lb12_cuadrados_p))
 
 cat("\n=== Verificacion de los pesos psi ================================\n")
-cat("Error maximo de la ACF teorica por pesos psi vs. ARMAacf:", error_psi_global, "\n")
+cat("Error maximo de la ACF teorica por pesos psi vs. ARMAacf:", error_psi_global,
+    "(2000 terminos) |", error_psi_600, "(600 terminos, los del navegador)\n")

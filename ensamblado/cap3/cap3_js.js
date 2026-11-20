@@ -921,11 +921,14 @@
       const sigma2 = TRANSF.sqrt.sigma2;
       const z = 1.959964;                 // qnorm(0.975)
       const psi = pesosPsi(ar, [], N);
-      // R = sqrt(-phi2) es el inverso del módulo de la raíz: el envolvente que
-      // amortigua la oscilación. Módulo 1.
+      // R = sqrt(-phi2) es el inverso del módulo de la raíz y manda en la
+      // amortiguación. El envolvente de psi_j = R^j sin((j+1)w)/sin(w) no es
+      // ±R^j sino ±R^j/sin(w): con el w de este ajuste, 1.88 veces mayor.
       const R = Math.sqrt(-TRANSF.sqrt.phi2);
+      const omega = Math.acos(TRANSF.sqrt.phi1 / (2 * R));   // ángulo de la raíz
+      const factor = 1 / Math.sin(omega);
       const etiquetas = Array.from({ length: N + 1 }, (_, j) => String(j));
-      const envolvente = etiquetas.map((_, j) => Math.pow(R, j));
+      const envolvente = etiquetas.map((_, j) => factor * Math.pow(R, j));
 
       // Cola larga para el límite sum psi_j^2 = gamma_0 / sigma^2: con |B| =
       // 1.21 lo que queda fuera de 600 términos no llega a la decimosexta cifra.
@@ -942,7 +945,8 @@
       // El envolvente no es una recta, así que no cabe en la opción `lineas`
       // de crearGraficoBarras: se añade como dos datasets de línea. El negativo
       // va sin etiqueta para que no salga dos veces en la leyenda.
-      [['±(0.83)ʲ — envolvente', envolvente], ['', envolvente.map(v => -v)]].forEach(
+      [[`±${factor.toFixed(2)} × ${R.toFixed(2)}ʲ — envolvente`, envolvente],
+        ['', envolvente.map(v => -v)]].forEach(
         ([etiqueta, datos]) => gPsi.data.datasets.push({
           type: 'line', label: etiqueta, data: datos,
           borderColor: COLORES_GRAFICO.secundario, borderDash: [5, 4], borderWidth: 1.5,
@@ -969,8 +973,8 @@
         const ee = Math.sqrt(sigma2 * sumaHasta(h));
         actualizarLectura(lectura, [
           {
-            etiqueta: 'Envolvente √(−φ₂) =',
-            valor: `${R.toFixed(4)} — se reduce a la mitad cada ${(Math.log(0.5) / Math.log(R)).toFixed(2)} años`
+            etiqueta: 'Envolvente ±Rʲ/sin ω:',
+            valor: `R = √(−φ₂) = ${R.toFixed(4)} y 1/sin ω = ${factor.toFixed(3)} — se reduce a la mitad cada ${(Math.log(0.5) / Math.log(R)).toFixed(2)} años`
           },
           {
             etiqueta: 'Periodo de la oscilación:',

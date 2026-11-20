@@ -159,7 +159,15 @@ Cada una lleva mi recomendación; las decide Javier.
 
 ### Registro de rondas
 
-(vacío)
+- **R1 · errores — hecha el 2026-11-20, sin publicar.** Los 7 errores de C1 y las imprecisiones y menores
+  del par, cada uno con su comprobación en R (`diagnostico/cap3/R1_cambios.md`). El ejercicio 3 ya no
+  culpa a la potencia: de 190 ventanas de cien años, el AR(2) falla en 138, también en 49 anteriores a 1900
+  y en todas las que llegan al siglo XX. La envolvente de los ψ pasa a ±Rʲ/sin ω (ninguna barra fuera, antes
+  16). El AICc compara con y sin media; la TRM, congelada en la copia de 138 meses (D2), con
+  `auto.arima` que por defecto da ruido blanco y el MA(1) solo con `stepwise = FALSE`; aviso de la TRM
+  promediada (ρ₁ ≈ 0.25 inducido). Nota del periodo con las dos fórmulas (D5). Bloques: 533/534 →
+  557/557. Caps. 4–6 idénticos. El verificador independiente halló 8 puntos; corregidos 6, dos menores
+  anotados (`diagnostico/cap3/R1_verificacion.md`).
 
 ## 5. Criterios de aceptación
 
