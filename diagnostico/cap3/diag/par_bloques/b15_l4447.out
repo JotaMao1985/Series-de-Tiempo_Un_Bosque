@@ -1,0 +1,22 @@
+
+> set.seed(3)
+
+> ar1 <- arima.sim(n = 200, model = list(ar = 0.8))
+
+> ma1 <- arima.sim(n = 200, model = list(ma = 0.8))
+
+> arma <- arima.sim(n = 200, model = list(ar = 0.7, 
++     ma = 0.5))
+
+> par(mfrow = c(3, 3), mar = c(3, 4, 2, 1))
+
+> for (nm in c("ar1", "ma1", "arma")) {
++     x <- get(nm)
++     plot(x, main = nm, ylab = "")
++     acf(x, lag.max = 16, main = "ACF")
++     pacf(x, lag.max = 16, main = "PACF")
++ }
+
+> try(arima.sim(n = 100, model = list(ar = 1)))
+Error in arima.sim(n = 100, model = list(ar = 1)) : 
+  'ar' part of model is not stationary

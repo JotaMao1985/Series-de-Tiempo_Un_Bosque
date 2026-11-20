@@ -1,0 +1,101 @@
+
+====================  E1 · lh  ====================
+n = 48  banda = 0.2829 
+ACF 1:6  0.5755 0.1818 -0.1448 -0.1748 -0.1497 -0.021 
+PACF 1:6 0.5755 -0.2234 -0.2269 0.1028 -0.0759 0.0676 
+ACF fuera (20 rezagos): 1  PACF fuera: 1 
+ARMA(1,0)  AICc= 65.304  BIC= 70.372  LB(10) p=0.4050
+ARMA(2,0)  AICc= 65.434  BIC= 71.989  LB(10) p=0.4185
+ARMA(3,0)  AICc= 65.613  BIC= 73.541  LB(10) p=0.7958
+ARMA(0,1)  AICc= 68.649  BIC= 73.717  LB(10) p=0.1962
+ARMA(0,2)  AICc= 63.991  BIC= 70.545  LB(10) p=0.8492
+ARMA(1,1)  AICc= 66.454  BIC= 73.009  LB(10) p=0.3927
+MA(2): coef 0.6732 0.3753 2.4016  t = 5.08 2.91 19.3 
+AR(1): phi 0.5739  ee 0.1161  Shapiro p 0.008349 
+Shapiro MA(2) p 0.0264 
+auto.arima(lh):
+Series: lh 
+ARIMA(1,0,0) with non-zero mean 
+
+Coefficients:
+         ar1    mean
+      0.5739  2.4133
+s.e.  0.1161  0.1466
+
+sigma^2 = 0.2061:  log likelihood = -29.38
+AIC=64.76   AICc=65.3   BIC=70.37
+auto.arima(lh, ic='bic'):
+Series: lh 
+ARIMA(1,0,0) with non-zero mean 
+
+Coefficients:
+         ar1    mean
+      0.5739  2.4133
+s.e.  0.1161  0.1466
+
+sigma^2 = 0.2061:  log likelihood = -29.38
+AIC=64.76   AICc=65.3   BIC=70.37
+Diferencias: AICc(AR1) - AICc(MA2) = 1.313  BIC(MA2) - BIC(AR1) = 0.173 
+ACF teórica AR(1): 0.5739 0.3294 0.1891 0.1085 
+ACF teórica MA(2): 0.5808 0.2355 0 0 
+
+====================  E2 · MA(2) theta = (0.6, 0.4)  ====================
+|raíces| 1.5811 1.5811 
+ACF 0.5526 0.2632 0 0 
+techo de rho1 en un MA(2): cos(pi/4) = 0.7071 
+Var (sigma2 = 1): 1.52 
+pi_j -0.6 -0.04 0.264 -0.1424 -0.0202 0.0691 -0.0334 -0.0076 
+
+====================  E3 · sqrt(manchas), AR(2) por ventanas  ====================
+1770-1869 n=100 phi=(1.4027, -0.6853) ee=(0.0727, 0.0724) periodo=11.218  LB6/10/12/20 p=0.2927 0.2941 0.1644 0.4399
+1700-1988 n=289 phi=(1.4086, -0.7006) ee=(0.0427, 0.0427) periodo=11.007  LB6/10/12/20 p=0.0220 0.0001 0.0000 0.0000
+1870-1988 n=119 phi=(1.4219, -0.7321) ee=(0.0645, 0.0644) periodo=10.648  LB6/10/12/20 p=0.1574 0.0044 0.0007 0.0061
+1900-1988 n= 89 phi=(1.4146, -0.7556) ee=(0.0718, 0.0721) periodo=10.129  LB6/10/12/20 p=0.1171 0.0011 0.0010 0.0070
+1700-1769 n= 70 phi=(1.4106, -0.6831) ee=(0.0881, 0.0883) periodo=11.456  LB6/10/12/20 p=0.3626 0.3281 0.1004 0.1106
+1889-1988 n=100 phi=(1.4101, -0.7431) ee=(0.0689, 0.0688) periodo=10.249  LB6/10/12/20 p=0.2045 0.0023 0.0006 0.0028
+AR(2) verdadero, n =  89: rechaza LB(12) al 5 % en 5.7 % (1 ajustes fallidos)
+AR(2) verdadero, n = 100: rechaza LB(12) al 5 % en 5.5 % (0 ajustes fallidos)
+AR(2) verdadero, n = 289: rechaza LB(12) al 5 % en 6.0 % (0 ajustes fallidos)
+dif. phi (1900-88 menos 1770-1869) en ee de 1770-1869: 0.16 -0.97 
+ARMA(2,1)/AR(3) en 1900-1988 (sqrt): AICc AR2 305.51  AR3 304.37  ARMA21 304.72 
+sum(sunspot.year == 0) en 1700-1988: 3 
+
+====================  Quiz cap3  ====================
+Q1 |raíces| de 1-1.2B+0.9B^2: 1.0541 1.0541 
+Q2 rho1(0.8) = 0.487805 
+Q4 Var(e_T+2) = 4.88  distractores: 2.44 = 2.44 ; 2.88 = 2.88 ; 2.98 = 2.98 ; 4.40 = 4.4 ; 6.29 = 6.2912 
+Q6 t: 1.68 1.92  suma 0.05 
+Q7 periodo: 11.2185  con grados y 2*pi: 0.1958  con grados y 360: 11.2185  con phi crudos ML (1.4059,-0.7111): 10.7369 
+Q8 LB12 AR(2) crudo con/sin fitdf: 0.04614 0.09957 
+Q9 resid AR(1): r1 = 0.5556  fuera de ±0.196: 1 3 4 5 6 9 10 11  LB12 p = 0 
+    resid AR(2): r1, r2 = 0.1297 -0.1477  fuera:   máx |r| 0.1839 
+Q10 YW - ML en ee: -1.26 1.1  sigma2 YW / ML: 298.96 229.43 
+
+====================  parcial2 · actividad preparatoria (variante 1 del quiz adicional)  ====================
+P2 k = floor((96-1)^(1/3)) = 4 
+P4 E = 118  Var = 144 
+P5 (1-0.3B)(1-B) = 1 3.3333  coef: 1 -1.3 0.3 
+P6 phi=(1,-0.5): phi1+phi2 0.5  phi2-phi1 -1.5  disc -1  |raíz| 1.4142 1.4142  periodo 8 
+P7 c = 10.5126  mu(1-phi1) = 18.9409  mu/(1-s) = 243.4552  mu*s = 40.0774 
+P8 theta = 0.4606 2.171  rho1(0.38) = 0.3321 
+P9 Var(e_T+3) = 2.5683  desfase = 1.7651  signo = 1.0889  AR solo = 1.601 
+P10 rho = 0.75 0.65  pacf = 0.75 0.2 0 
+
+====================  Simulacro M11 · variante 9 (claves calculadas aquí)  ====================
+S1 estacionarios: (-1)^t e_t y 5 + 0.92 y_{t-1} + e_t  -> opciones b y e
+S2 k = floor(115^(1/3)) = 4  -> a) raíz unitaria
+S3 Var = 2*0.81 = 1.62  -> b)
+S4 E = 164  Var = 193.6  -> c)
+S5 (1+0.6B)(1-B) = 1 - 0.4B - 0.6B^2 -> phi = (0.4, 0.6), no estacionario -> d)
+S6 phi=(1.4,-0.45): suma 0.95  dif -1.85  disc 0.16  |raíces| 1.1111 2  -> a) estacionario, reales
+S7 c = 28.4482  mu(1-phi1) = 14.5057  mu/(1-s) = 126.1923  -> b)
+S8 theta = 0.5966 1.6761  -> c)
+S9 psi = 1 0.81 0.7533 0.7006  Var(e_T+3) = 4.8918  desfase = 3.7716  signo MA = 6.7233  AR solo = 5.7485  -> d)
+S10 rho = 0.7143 0.6571  pacf = 0.7143 0.3 0  -> a)
+
+====================  Periodo del AR(2): fórmula del capítulo (ángulo de la raíz) frente a la de FPP3 §9.5 (arima.txt l. 328)  ====================
+phi = (1.4027, -0.6853): capítulo 11.2185 · FPP3 11.8364
+phi = (1.4059, -0.7111): capítulo 10.7369 · FPP3 11.1634
+phi = (1.4000, -0.7500): capítulo 9.9804 · FPP3 10.2135
+phi = (1.0000, -0.5000): capítulo 8.0000 · FPP3 8.6936
+phi = (1.3776, -0.7399): capítulo 9.7835 · FPP3 10.0231

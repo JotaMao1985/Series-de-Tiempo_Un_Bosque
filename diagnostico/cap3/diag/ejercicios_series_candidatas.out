@@ -1,0 +1,140 @@
+
+--- lynx (crudo)  n = 114  banda = 0.184
+  ACF 1:5  0.711 0.214 -0.189 -0.433 -0.502 | fuera: 1,2,3,4,5,6,8,9,10,11,13,14,15,16,18,19,20 
+  PACF 1:5 0.711 -0.588 -0.039 -0.250 -0.094 | fuera: 1,2,4,8 
+  mejores por AICc: ARMA(2,2) 1876.95 (BIC 1892.58, LB10 p 0.058) · ARMA(2,0) 1878.40 (BIC 1888.98, LB10 p 0.012) · ARMA(2,1) 1880.01 (BIC 1893.14, LB10 p 0.003) 
+  mínimo BIC: ARMA(2,0) 
+  ruido blanco: AICc 2006.72; LB10 sobre la serie p = 0.0000
+
+--- log(lynx)  n = 114  banda = 0.184
+  ACF 1:5  0.785 0.340 -0.132 -0.494 -0.621 | fuera: 1,2,4,5,6,8,9,10,11,13,14,15,16,18,19,20 
+  PACF 1:5 0.785 -0.720 -0.143 -0.206 0.115 | fuera: 1,2,4,7,10,11 
+  mejores por AICc: ARMA(2,0) 185.52 (BIC 196.09, LB10 p 0.025) · ARMA(3,0) 186.11 (BIC 199.23, LB10 p 0.014) · ARMA(2,2) 186.53 (BIC 202.16, LB10 p 0.029) 
+  mínimo BIC: ARMA(2,0) 
+  ruido blanco: AICc 383.93; LB10 sobre la serie p = 0.0000
+Warning message:
+In arima(y, order = c(pq[1], 0, pq[2]), method = "ML") :
+  possible convergence problem: optim gave code = 1
+  AR(2) log(lynx): phi 1.3776 -0.7399  |raíz| 1.1626  periodo 9.78 
+  Guerrero lynx: 0.1522  min 39 
+
+--- LakeHuron  n = 98  banda = 0.198
+  ACF 1:5  0.832 0.610 0.458 0.371 0.326 | fuera: 1,2,3,4,5,6,7,8,9 
+  PACF 1:5 0.832 -0.267 0.131 0.034 0.062 | fuera: 1,2,10 
+  mejores por AICc: ARMA(1,1) 214.92 (BIC 224.83, LB10 p 0.774) · ARMA(2,0) 215.70 (BIC 225.61, LB10 p 0.653) · ARMA(3,0) 216.69 (BIC 228.96, LB10 p 0.753) 
+  mínimo BIC: ARMA(1,1) 
+  ruido blanco: AICc 335.40; LB10 sobre la serie p = 0.0000
+Warning message:
+In arima(y, order = c(pq[1], 0, pq[2]), method = "ML") :
+  possible convergence problem: optim gave code = 1
+
+--- Nile  n = 100  banda = 0.196
+  ACF 1:5  0.498 0.385 0.328 0.239 0.228 | fuera: 1,2,3,4,5,6,7,8,11,12,13 
+  PACF 1:5 0.498 0.181 0.111 0.006 0.065 | fuera: 1 
+  mejores por AICc: ARMA(1,1) 1282.50 (BIC 1292.50, LB10 p 0.265) · ARMA(2,1) 1283.18 (BIC 1295.56, LB10 p 0.190) · ARMA(1,2) 1283.70 (BIC 1296.09, LB10 p 0.186) 
+  mínimo BIC: ARMA(1,1) 
+  ruido blanco: AICc 1313.16; LB10 sobre la serie p = 0.0000
+
+--- diff(Nile)  n = 99  banda = 0.197
+  ACF 1:5  -0.402 -0.044 0.027 -0.088 0.001 | fuera: 1,8 
+  PACF 1:5 -0.402 -0.246 -0.119 -0.173 -0.155 | fuera: 1,2,7,10 
+  mejores por AICc: ARMA(1,1) 1268.06 (BIC 1278.02, LB10 p 0.367) · ARMA(0,2) 1268.97 (BIC 1278.92, LB10 p 0.330) · ARMA(2,1) 1269.78 (BIC 1282.11, LB10 p 0.280) 
+  mínimo BIC: ARMA(1,1) 
+  ruido blanco: AICc 1298.77; LB10 sobre la serie p = 0.0008
+  MA(1) sobre diff(Nile): theta -0.7645 
+
+--- diff(WWWusage)  n = 99  banda = 0.197
+  ACF 1:5  0.792 0.520 0.406 0.382 0.332 | fuera: 1,2,3,4,5,6,17,18,19,20 
+  PACF 1:5 0.792 -0.287 0.303 0.008 -0.030 | fuera: 1,2,3 
+  mejores por AICc: ARMA(3,0) 514.31 (BIC 526.64, LB10 p 0.745) · ARMA(1,1) 516.00 (BIC 525.96, LB10 p 0.486) · ARMA(2,1) 518.22 (BIC 530.55, LB10 p 0.381) 
+  mínimo BIC: ARMA(1,1) 
+  ruido blanco: AICc 627.74; LB10 sobre la serie p = 0.0000
+Warning message:
+In arima(y, order = c(pq[1], 0, pq[2]), method = "ML") :
+  possible convergence problem: optim gave code = 1
+
+--- diff(BJsales)  n = 149  banda = 0.161
+  ACF 1:5  0.312 0.278 0.226 0.252 0.150 | fuera: 1,2,3,4 
+  PACF 1:5 0.312 0.200 0.109 0.138 -0.003 | fuera: 1,2 
+  mejores por AICc: ARMA(1,1) 515.06 (BIC 526.80, LB10 p 0.698) · ARMA(1,2) 517.05 (BIC 531.65, LB10 p 0.635) · ARMA(2,1) 517.06 (BIC 531.66, LB10 p 0.630) 
+  mínimo BIC: ARMA(1,1) 
+  ruido blanco: AICc 535.41; LB10 sobre la serie p = 0.0000
+
+--- nhtemp  n = 60  banda = 0.253
+  ACF 1:5  0.315 0.375 0.264 0.241 0.106 | fuera: 1,2,3,6,8 
+  PACF 1:5 0.315 0.307 0.105 0.065 -0.077 | fuera: 1,2 
+  mejores por AICc: ARMA(2,2) 192.95 (BIC 203.93, LB10 p 0.759) · ARMA(1,1) 193.02 (BIC 200.67, LB10 p 0.471) · ARMA(2,0) 193.67 (BIC 201.32, LB10 p 0.612) 
+  mínimo BIC: ARMA(1,1) 
+  ruido blanco: AICc 201.74; LB10 sobre la serie p = 0.0000
+
+--- discoveries  n = 100  banda = 0.196
+  ACF 1:5  0.274 0.252 0.231 0.119 0.060 | fuera: 1,2,3 
+  PACF 1:5 0.274 0.191 0.138 -0.005 -0.039 | fuera: 1 
+  mejores por AICc: ARMA(1,1) 440.62 (BIC 450.62, LB10 p 0.670) · ARMA(0,3) 441.96 (BIC 454.35, LB10 p 0.387) · ARMA(2,0) 442.04 (BIC 452.04, LB10 p 0.497) 
+  mínimo BIC: ARMA(1,1) 
+  ruido blanco: AICc 449.45; LB10 sobre la serie p = 0.0017
+
+--- sqrt(discoveries)  n = 100  banda = 0.196
+  ACF 1:5  0.205 0.268 0.171 0.019 0.041 | fuera: 1,2 
+  PACF 1:5 0.205 0.236 0.090 -0.091 -0.014 | fuera: 1,2 
+  mejores por AICc: ARMA(0,3) 215.28 (BIC 227.67, LB10 p 0.816) · ARMA(2,0) 215.29 (BIC 225.29, LB10 p 0.821) · ARMA(1,1) 216.05 (BIC 226.05, LB10 p 0.674) 
+  mínimo BIC: ARMA(2,0) 
+  ruido blanco: AICc 221.44; LB10 sobre la serie p = 0.0344
+
+--- rendimientos DAX (%)  n = 1859  banda = 0.045
+  ACF 1:5  -0.000 -0.027 -0.010 0.000 -0.032 | fuera: 11,17 
+  PACF 1:5 -0.000 -0.027 -0.010 -0.000 -0.032 | fuera: 11,17 
+  mejores por AICc: ARMA(1,0) 5390.83 (BIC 5407.40, LB10 p 0.703) · ARMA(0,1) 5390.83 (BIC 5407.40, LB10 p 0.703) · ARMA(2,0) 5391.50 (BIC 5413.59, LB10 p 0.725) 
+  mínimo BIC: ARMA(1,0) 
+  ruido blanco: AICc 5388.82; LB10 sobre la serie p = 0.7837
+Warning messages:
+1: In arima(y, order = c(pq[1], 0, pq[2]), method = "ML") :
+  possible convergence problem: optim gave code = 1
+2: In arima(y, order = c(pq[1], 0, pq[2]), method = "ML") :
+  possible convergence problem: optim gave code = 1
+3: In arima(y, order = c(pq[1], 0, pq[2]), method = "ML") :
+  possible convergence problem: optim gave code = 1
+  LB12 de los cuadrados: 0 
+
+--- treering (n grande)  n = 7980  banda = 0.022
+  ACF 1:5  0.223 0.105 0.078 0.063 0.045 | fuera: 1,2,3,4,5,6,7,8,9,10,19 
+  PACF 1:5 0.223 0.058 0.046 0.034 0.018 | fuera: 1,2,3,4,6,8,10 
+  mejores por AICc: ARMA(2,1) 2966.96 (BIC 3001.88, LB10 p 0.007) · ARMA(1,2) 2968.89 (BIC 3003.81, LB10 p 0.002) · ARMA(2,2) 2968.98 (BIC 3010.88, LB10 p 0.003) 
+  mínimo BIC: ARMA(2,1) 
+  ruido blanco: AICc 3452.86; LB10 sobre la serie p = 0.0000
+
+--- M7 · tres estimadores sobre log(lynx), AR(2)
+  YW  1.3504 -0.72  CSS 1.3842 -0.7478  ML 1.3776 -0.7399 
+  (YW-ML)/ee -0.44 0.32  (CSS-ML)/ee 0.11 -0.13 
+  LakeHuron AR(2): YW 1.0538 -0.2668  ML 1.0436 -0.2495 
+
+--- Procesos teóricos candidatos
+  MA(2) theta=(1.2, 0.5): |raíces| 1.4142 1.4142  rho 0.6691 0.1859 0  gamma0 2.69
+  MA(2) theta=(-0.9, 0.4): |raíces| 1.5811 1.5811  rho -0.6396 0.203 0  gamma0 1.97
+  MA(2) theta=(0.5, -0.6): |raíces| 0.9399 1.7732  rho 0.1242 -0.3727 0  gamma0 1.61
+  MA(2) theta=(0.9, 0.2): |raíces| 2 2.5  rho 0.5838 0.1081 0  gamma0 1.85
+  AR(2) phi=(0.4, 0.4): |raíces| 1.1583 2.1583  rho 0.6667 0.6667 0.5333  gamma0/s2 2.1429  pacf 0.6667 0.4 0
+  AR(2) phi=(-0.5, 0.3): |raíces| 1.1736 2.8403  rho -0.7143 0.6571 -0.5429  gamma0/s2 2.2436  pacf -0.7143 0.3 0
+  AR(2) phi=(1.2, -0.5): |raíces| 1.4142 1.4142  rho 0.8 0.46 0.152  gamma0/s2 3.7037  pacf 0.8 -0.5 0
+  AR(2) phi=(0.9, -0.2): |raíces| 2 2.5  rho 0.75 0.475 0.2775  gamma0/s2 2.3810  pacf 0.75 -0.2 0
+  ARMA(1,1) phi=0.6 theta=-0.3: rho 0.337 0.2022 0.1213  gamma0/s2 1.1406  psi 0.3 0.18 0.108 0.0648
+  ARMA(1,1) phi=-0.5 theta=0.8: rho 0.2143 -0.1071 0.0536  gamma0/s2 1.1200  psi 0.3 -0.15 0.075 -0.0375
+  ARMA(1,1) phi=0.8 theta=-0.8: rho 0 0 0  gamma0/s2 1.0000  psi 0 0 0 0
+
+--- FPP3 9.11 ej. 6f: AR(2) phi = (-0.8, 0.3)
+  |raíces| 0.9274 3.5941  phi2 - phi1 = 1.1 
+  RB n =   50: barras fuera de 20 — media 0.51, P(>=2) = 0.102, P(>=3) = 0.026
+  RB n =  200: barras fuera de 20 — media 0.85, P(>=2) = 0.215, P(>=3) = 0.058
+  RB n = 1000: barras fuera de 20 — media 0.96, P(>=2) = 0.244, P(>=3) = 0.078
+
+--- lh: auto.arima(stepwise = FALSE)
+Series: lh 
+ARIMA(0,0,2) with non-zero mean 
+
+Coefficients:
+         ma1     ma2    mean
+      0.6732  0.3753  2.4016
+s.e.  0.1326  0.1291  0.1244
+
+sigma^2 = 0.1943:  log likelihood = -27.53
+AIC=63.06   AICc=63.99   BIC=70.55

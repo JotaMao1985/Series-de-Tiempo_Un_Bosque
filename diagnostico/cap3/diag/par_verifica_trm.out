@@ -1,0 +1,55 @@
+n = 137  banda = 0.1675 
+ACF fuera: 5 8 0.193 -0.198 
+PACF fuera: 5 0.184 
+ACF 1:8 0.105 -0.077 -0.078 0.006 0.193 0.123 -0.072 -0.198 
+MA(1) con media: theta 0.1262 se 0.0912 media 0.2681 se media 0.3195 
+MA(1) sin media: theta 0.1326 se 0.0905 
+media muestral 0.2745  sd/sqrt(n) 0.2869  t 0.957 
+Series: ret 
+ARIMA(0,0,0) with zero mean 
+
+sigma^2 = 11.27:  log likelihood = -360.32
+AIC=722.63   AICc=722.66   BIC=725.55
+auto.arima trace (que compara con y sin media):
+
+ ARIMA(2,0,2)(1,0,1)[12] with non-zero mean : Inf
+ ARIMA(0,0,0)            with non-zero mean : 723.8043
+ ARIMA(1,0,0)(1,0,0)[12] with non-zero mean : 726.385
+ ARIMA(0,0,1)(0,0,1)[12] with non-zero mean : 726.0751
+ ARIMA(0,0,0)            with zero mean     : 722.6633
+ ARIMA(0,0,0)(1,0,0)[12] with non-zero mean : 725.8787
+ ARIMA(0,0,0)(0,0,1)[12] with non-zero mean : 725.8758
+ ARIMA(0,0,0)(1,0,1)[12] with non-zero mean : 726.5523
+ ARIMA(1,0,0)            with non-zero mean : 724.3348
+ ARIMA(0,0,1)            with non-zero mean : 724.0464
+ ARIMA(1,0,1)            with non-zero mean : 725.8252
+
+ Best model: ARIMA(0,0,0)            with zero mean     
+
+AICc: ruido con media 723.804  ruido sin media 722.663 
+
+== auto.arima con los argumentos del precalculo (d=0, seasonal=FALSE, stepwise=FALSE, approximation=FALSE)
+Series: ret 
+ARIMA(0,0,1) with zero mean 
+
+Coefficients:
+         ma1
+      0.1326
+s.e.  0.0905
+
+sigma^2 = 11.18:  log likelihood = -359.28
+AIC=722.56   AICc=722.65   BIC=728.4
+
+== auto.arima por defecto sobre la misma serie (lo que haria un estudiante)
+Series: ret 
+ARIMA(0,0,0) with zero mean 
+
+sigma^2 = 11.27:  log likelihood = -360.32
+AIC=722.63   AICc=722.66   BIC=725.55
+
+== auto.arima por defecto, sin estacionalidad
+Series: ret 
+ARIMA(0,0,0) with zero mean 
+
+sigma^2 = 11.27:  log likelihood = -360.32
+AIC=722.63   AICc=722.66   BIC=725.55

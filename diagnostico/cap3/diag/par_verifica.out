@@ -1,0 +1,128 @@
+R 4.6.0 | forecast 9.0.2 
+
+== M2: periodo del triangulo con (1.40, -0.69) y con (1.4, -0.75)
+p140_069  p14_075 
+ 11.0519   9.9804 
+
+== M2: AR(1) phi=+-1 en el circulo: phi=-1 NO es caminata aleatoria
+[1] 1
+
+== M3: techo de rho_1 en un MA(q) frente a cos(pi/(q+2))
+q=1  max numerico=0.5000  cos(pi/(q+2))=0.5000
+q=2  max numerico=0.7071  cos(pi/(q+2))=0.7071
+q=3  max numerico=0.8090  cos(pi/(q+2))=0.8090
+There were 20 warnings (use warnings() to see them)
+
+== M4: ACF por psi truncados en 600 terminos (la del JS) frente a ARMAacf, 8 procesos
+[1] 3.33e-16 2.22e-16 3.89e-16 7.22e-16 0.00e+00 0.00e+00 0.00e+00 2.22e-16
+max: 7.22e-16 
+peor caso del laboratorio (phi1+phi2=0.95, |root| cerca de 1): 2.33e-15 
+
+== M4: parsimonia: |pi_j| del ARMA(1,1) 0.7/0.5
+ [1] 1.20000 0.60000 0.30000 0.15000 0.07500 0.03750 0.01875 0.00938 0.00469 0.00234
+
+== M5: ARMA(2,1) phi=(0.5,0.3) theta=0.4: la recursion AR aplicada a k=1
+rho1 verdadero = 0.8614 
+recursion correcta en k=1: phi1*rho0 + phi2*rho_{-1} = 0.5 + 0.3*rho1 = 0.7584 
+la del capitulo: 0.5*rho0 + 0.3*rho0 = 0.8 (usa rho_{-1} = rho0 = 1, en contra de rho_{-k}=rho_k)
+rho1 si fuera AR(2) puro (resolver la ecuacion): 0.5/(1-0.3) = 0.7143 
+
+== M7: CSS > 1 con T=40, phi=0.95: frecuencia en 1000 simulaciones (varias semillas)
+seed    1: CSS>1 = 4.6 %   ML>=1 = 0.0 %  (max ML 1.0000)
+   fallos de optim (NA): CSS 0  ML 10 
+seed    2: CSS>1 = 4.4 %   ML>=1 = 0.0 %  (max ML 1.0000)
+   fallos de optim (NA): CSS 0  ML 9 
+seed    3: CSS>1 = 2.8 %   ML>=1 = 0.0 %  (max ML 1.0000)
+   fallos de optim (NA): CSS 0  ML 5 
+seed 2026: CSS>1 = 3.3 %   ML>=1 = 0.0 %  (max ML 1.0000)
+   fallos de optim (NA): CSS 0  ML 10 
+
+== M7: sigma2 de YW (ar) y su factor n/(n-(p+1))
+var.pred 
+ 298.964 
+
+== M8: residuales de R: estandarizados en el arranque?
+y1 - mu = 52.5384 | (y1-mu)/sqrt(gamma0/s2) = 21.0556 | residuo R[1] = 21.0556 
+residuos R[1:4]: 21.0556 -6.9107 8.7279 -15.396 
+mayores |acf resid| AR(2): rezagos 11 9 4 valores 0.1839 0.1718 0.159 | banda 0.196 | fuera: 0 
+LB recortado (max(p,q) primeros fuera), R:
+  ARMA(2,0): 0.0232
+  ARMA(2,1): 0.1424
+  ARMA(2,2): 0.1057
+ARMA(2,1) cruda: coef 1.2274 -0.562 0.3732 48.5307  t(theta) = 2.777 
+  raiz MA: -2.6795+0i   raices AR: 1.092+0.7661i 1.092-0.7661i  mod 1.3339 
+
+== M9: ceros de sunspot.year completa
+[1] 1711 1712 1810
+
+== M9: elasticidades (misma receta que genera_cap3.R)
+         b  2.5 % 97.5 %     r2  k
+b10 0.8165 0.5928 1.0401 0.8986 10
+b11 0.7658 0.5335 0.9982 0.8967  9
+b5  0.7034 0.4754 0.9314 0.7000 20
+
+== M9: rejilla de 11 modelos sobre sqrt(manchas)
+         m   AICc    BIC   LB12
+ ARMA(2,0) 324.00 334.00 0.1644
+ ARMA(3,0) 325.35 337.74 0.2005
+ ARMA(2,1) 325.41 337.80 0.1856
+ ARMA(2,2) 327.42 342.14 0.1833
+ ARMA(4,0) 327.61 342.34 0.1473
+ ARMA(1,2) 328.14 340.52 0.0231
+ ARMA(0,3) 333.59 345.98 0.0011
+ ARMA(0,2) 343.21 353.21 0.0000
+ ARMA(1,1) 343.68 353.68 0.0000
+ ARMA(1,0) 383.86 391.42 0.0000
+ ARMA(0,1) 398.15 405.72 0.0000
+
+AR(2) sqrt: coef 1.4027 -0.6853 6.3317  se 0.0727 0.0724 0.4101  t 19.31 -9.46  sigma2 1.341 
+LB recortado (2 primeros fuera), R: 0.1682 
+
+== M9: Guerrero
+lambda = 0.3062 
+  original: phi=(1.3040, -0.5861) periodo=11.3883 LB12 p=0.4892
+  desplazada: phi=(1.3729, -0.6541) periodo=11.2759 LB12 p=0.2216
+
+== M9: polinomio con el signo cambiado 1 - 1.4027B - 0.6853B^2
+[1]  0.5598+0i -2.6066+0i
+
+== M9: psi frente al envolvente R^j y R^j/sin(w)
+sin(w) = 0.5313  1/sin(w) = 1.8823 
+j con |psi_j| > R^j: 1 2 3 6 7 8 9 12 13 14 17 18 19 20 23 24 
+j con |psi_j| > R^j/sin(w):  
+vida media del envolvente: 3.668  cruces por cero j=k*pi/w-1: 4.609 10.218 
+
+== M9: bandas en escala de la raiz y su vuelta al cuadrado (pronostico desde 1869)
+       h media    inf    sup
+ [1,]  1 9.654  7.384 11.923
+ [2,]  2 9.435  5.525 13.345
+ [3,]  3 8.408  3.534 13.282
+ [4,]  4 7.118  1.886 12.349
+ [5,]  5 6.011  0.737 11.285
+ [6,]  6 5.343  0.057 10.630
+ [7,]  7 5.165 -0.209 10.539
+ [8,]  8 5.373 -0.114 10.860
+ [9,]  9 5.786  0.227 11.345
+[10,] 10 6.223  0.643 11.804
+[11,] 11 6.554  0.973 12.135
+[12,] 12 6.717  1.132 12.303
+limites inferiores negativos en la escala de la raiz: 2 de 12
+semiancho h=1..12: 2.27 3.91 4.87 5.23 5.27 5.29 5.37 5.49 5.56 5.58 5.58 5.59 
+techo: 5.622  fraccion a h=6: 0.9403 
+
+== M9: asimetria y Shapiro de residuales
+cruda: 0.8033 7e-04  | sqrt: 0.5821 0.047 
+
+== Ejercicio 3: p-valor exacto 1900-1988 y 1870-1988
+1870 1988 : p = 0.000668047  n = 119 
+1900 1988 : p = 0.00101593  n = 89 
+misma n que la ventana de Yule pero otro siglo: 1889-1988
+  n = 100  p = 6e-04 
+
+== M10: ARMA(2,2) (1.1,-0.28 | 0.1,-0.2) frente a ARMA(1,1) (0.7 | 0.5)
+max diff ACF: 1.110223e-16 
+
+== M9 caso 2: TRM desde el CSV del repo
+      mes     trm
+1 2015-01 2400.97
+2 2015-02 2425.65

@@ -1,0 +1,27 @@
+
+> theta <- c(0.6, 0.4)
+
+> raices <- polyroot(c(1, theta))
+
+> round(raices, 4)
+[1] -0.75+1.3919i -0.75-1.3919i
+
+> round(Mod(raices), 4)
+[1] 1.5811 1.5811
+
+> denominador <- 1 + sum(theta^2)
+
+> rho1 <- (1 * theta[1] + theta[1] * theta[2])/denominador
+
+> rho2 <- (1 * theta[2])/denominador
+
+> round(c(rho1 = rho1, rho2 = rho2), 4)
+  rho1   rho2 
+0.5526 0.2632 
+
+> round(ARMAacf(ma = theta, lag.max = 4)[-1], 4)
+     1      2      3      4 
+0.5526 0.2632 0.0000 0.0000 
+
+> round(ARMAtoMA(ar = -theta, lag.max = 8), 4)
+[1] -0.6000 -0.0400  0.2640 -0.1424 -0.0202  0.0691 -0.0334 -0.0076

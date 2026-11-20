@@ -1,0 +1,38 @@
+
+> round(ARMAacf(ma = 0.5, lag.max = 3)[-1], 4)
+  1   2   3 
+0.4 0.0 0.0 
+
+> round(ARMAacf(ma = 2, lag.max = 3)[-1], 4)
+  1   2   3 
+0.4 0.0 0.0 
+
+> Mod(polyroot(c(1, 0.5)))
+[1] 2
+
+> Mod(polyroot(c(1, 2)))
+[1] 0.5
+
+> Mod(polyroot(c(1, 1.5, 0.6)))
+[1] 1.290994 1.290994
+
+> Mod(polyroot(c(1, 0.5, -0.6)))
+[1] 0.9399017 1.7732350
+
+> th <- seq(-3, 3, by = 0.01)
+
+> max(abs(th/(1 + th^2)))
+[1] 0.5
+
+> set.seed(1)
+
+> y <- arima.sim(n = 500, list(ma = 2))
+
+> m <- arima(y, order = c(0, 0, 1))
+
+> coef(m)["ma1"]
+      ma1 
+0.4794171 
+
+> m$sigma2
+[1] 4.081804

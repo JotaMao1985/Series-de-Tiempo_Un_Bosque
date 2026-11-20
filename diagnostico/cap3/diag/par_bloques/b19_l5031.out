@@ -1,0 +1,65 @@
+
+> manchas <- window(sunspot.year, start = 1770, end = 1869)
+
+> n <- length(manchas)
+
+> aicc <- function(ajuste, n) {
++     k <- length(ajuste$coef) + 1
++     ajuste$aic + 2 * k * (k + 1)/(n - k - 1)
++ }
+
+> rejilla <- list(c(1, 0), c(2, 0), c(3, 0), c(4, 0), 
++     c(0, 1), c(0, 2), c(0, 3), c(1, 1), c(2, 1), c(1, 2), c(2, 
++         2))
+
+> resultado <- do.call(rbind, lapply(rejilla, function(pq) {
++     p <- pq[1]
++     q <- pq[2]
++     aj <- arima(manchas, order = c(p, 0, q), method = "ML")
++     data.frame(modelo = sprintf("ARMA(%d,%d)", p, q), AICc = round(aicc(aj, 
++         n), 2), BIC = round(BIC(aj), 2), LB12 = round(Box.test(residuals(aj), 
++         lag = 12, type = "Ljung-Box", fitdf = p + q)$p.value, 
++         4))
++ }))
+
+> resultado[order(resultado$AICc), ]
+      modelo   AICc    BIC   LB12
+9  ARMA(2,1) 834.73 847.12 0.2246
+3  ARMA(3,0) 836.52 848.91 0.1658
+11 ARMA(2,2) 836.63 851.36 0.1510
+4  ARMA(4,0) 836.78 851.51 0.1118
+2  ARMA(2,0) 838.30 848.30 0.0461
+10 ARMA(1,2) 840.51 852.90 0.0110
+7  ARMA(0,3) 845.35 857.74 0.0010
+8  ARMA(1,1) 850.50 860.50 0.0000
+6  ARMA(0,2) 853.56 863.56 0.0000
+1  ARMA(1,0) 904.33 911.89 0.0000
+5  ARMA(0,1) 908.13 915.70 0.0000
+
+> ar2 <- arima(manchas, order = c(2, 0, 0), method = "ML")
+
+> round(acf(residuals(ar2), lag.max = 3, plot = FALSE)$acf[-1], 
++     4)
+[1]  0.1297 -0.1477  0.0285
+
+> Box.test(residuals(ar2), lag = 12, type = "Ljung-Box", 
++     fitdf = 2)$p.value
+[1] 0.04614324
+
+> Box.test(residuals(ar2), lag = 12, type = "Ljung-Box")$p.value
+[1] 0.09957107
+
+> set.seed(8)
+
+> p_valores <- replicate(3000, {
++     y <- arima.sim(list(ar = c(1.4, -0.7)), n = 100)
++     e <- residuals(suppressWarnings(arima(y, order = c(2, 0, 
++         0), method = "ML")))
++     c(sin_fitdf = Box.test(e, lag = 12, type = "Ljung-Box")$p.value, 
++         con_fitdf = Box.test(e, lag = 12, type = "Ljung-Box", 
++             fitdf = 2)$p.value)
++ })
+
+> round(rowMeans(p_valores < 0.05), 4)
+sin_fitdf con_fitdf 
+   0.0257    0.0490 

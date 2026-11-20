@@ -1,0 +1,218 @@
+
+######## cap3 (10 preguntas)
+
+Q1 · opcion · módulo 1
+  a)    65 · retro sí · No, porque las raíces deberían estar dentro del círculo unitario.
+  b)    38 · retro sí · No, porque x1 + x2 = -0.3 es negativo.
+  c)    33 · retro sí · No se puede saber sin conocer x2.
+  d) *  80 · retro sí · Sí, porque el módulo es mayor que 1: las raíces caen fuera del círculo unitario.
+  -> correcta d (80); otras 33–65; ES LA MÁS LARGA; posición 4
+
+Q2 · numerica · módulo 3 · respuesta 0.4878, tolerancia 0.0006
+
+Q3 · grafico · módulo 5
+  a)    55 · retro sí · Un AR(2): tiene dos barras significativas, luego p = 2.
+  b) *  59 · retro sí · Un MA(2): la ACF se corta tras el rezago 2 y la PACF decae.
+  c)    53 · retro sí · Un ARMA(2,2), porque hay dos rezagos en cada función.
+  d)    38 · retro sí · Ruido blanco con dos valores atípicos.
+  -> correcta b (59); otras 38–55; ES LA MÁS LARGA; posición 2
+
+Q4 · numerica · módulo 4 · respuesta 4.88, tolerancia 0.006
+
+Q5 · multiple · módulo 3
+  a)    44 · retro NO · Un MA no invertible tampoco es estacionario.
+  b) *  81 · retro NO · Si |x| > 1 en un MA(1), los pesos x de la representación AR(x) crecen sin límite
+  c)    54 · retro NO · La invertibilidad se comprueba con las raíces de x(B).
+  d) *  89 · retro NO · Los valores x y 1/x producen exactamente la misma ACF, así que ningún dato los d
+  e) *  79 · retro NO · arima() devuelve siempre la solución invertible, aunque hayas simulado la otra.
+  -> 3 correctas en bde; marcar las 3 más largas: ACIERTA; las 3 más cortas: falla
+
+Q6 · opcion · módulo 5
+  a)   104 · retro sí · Me quedo con el ARMA(1,1): los dos coeficientes son grandes en valor absoluto, a
+  b)    84 · retro sí · Paso a un ARMA(2,2): si el optimizador no converge, es que el modelo se queda co
+  c)    85 · retro sí · Diferencio la serie: unos coeficientes tan inestables indican que no es estacion
+  d) *  85 · retro sí · Pruebo AR(1), MA(1) y ruido blanco, y los comparo por AICc antes de interpretar 
+  -> correcta d (85); otras 84–104; ni la más larga ni la más corta; posición 4
+
+Q7 · numerica · módulo 9 · respuesta 11.22, tolerancia 0.06
+
+Q8 · opcion · módulo 8
+  a)    61 · retro sí · Ninguno: Box.test() descuenta los parámetros automáticamente.
+  b)    63 · retro sí · Falta fitdf = 3, y sin él la prueba rechaza demasiado a menudo.
+  c) * 101 · retro sí · Falta fitdf = 3: sin él la prueba usa demasiados grados de libertad y se vuelve 
+  d)    52 · retro sí · El rezago 12 es demasiado alto para una serie anual.
+  -> correcta c (101); otras 52–63; ES LA MÁS LARGA; posición 3
+
+Q9 · grafico · módulo 8
+  a) *  79 · retro sí · Rechazo el modelo: quedan autocorrelaciones grandes, hay que aumentar el orden.
+  b)    73 · retro sí · Lo acepto: uno o dos picos fuera de la banda son normales con 20 rezagos.
+  c)    68 · retro sí · Diferencio la serie, porque la ACF de los residuales decae despacio.
+  d)    67 · retro sí · Aplico una transformación logarítmica para estabilizar la varianza.
+  -> correcta a (79); otras 67–73; ES LA MÁS LARGA; posición 1
+
+Q10 · multiple · módulo 7
+  a) *  96 · retro NO · Yule–Walker solo sirve para modelos AR puros, porque parte de las ecuaciones de 
+  b)    83 · retro NO · Los tres métodos dan siempre las mismas estimaciones salvo por errores de redond
+  c) *  76 · retro NO · CSS ignora la contribución de las primeras observaciones a la verosimilitud.
+  d)    86 · retro NO · El 2 de Yule–Walker es comparable con el de máxima verosimilitud para calcular e
+  e) *  96 · retro NO · Por defecto arima() usa "CSS-ML": arranca con CSS y termina maximizando la veros
+  -> 3 correctas en ace; marcar las 3 más largas: falla; las 3 más cortas: falla
+
+cap3: «la más larga» acierta 4 de 5; «la más corta», 0 de 5
+
+######## parcial2 (10 preguntas)
+
+Q1 · multiple
+  a) *  14 · retro sí · yt = (x t),xt.
+  b)    20 · retro sí · yt = 1.05,yt-1 + xt.
+  c) *  19 · retro sí · yt = xt + 1.6,xt-1.
+  d)    10 · retro sí · yt = t;xt.
+  e)    15 · retro sí · yt = yt-1 + xt.
+  -> 2 correctas en ac; marcar las 2 más largas: falla; las 2 más cortas: falla
+
+Q2 · opcion
+  a)   170 · retro sí · Es estacionaria. El primer ADF, con sus k =  (T-1)1/3  = 4 rezagos, es el fiable
+  b)   156 · retro sí · Hay raíz unitaria. El primer ADF no vale: su p-valor quedó fuera de la tabla, co
+  c)   154 · retro sí · Es estacionaria. El KPSS sobre la serie sin estacionalidad da un p-valor pequeño
+  d) * 142 · retro sí · Hay raíz unitaria. El primer ADF usa k =  (T-1)1/3  = 4 rezagos, menos que el pe
+  -> correcta d (142); otras 154–170; ES LA MÁS CORTA; posición 4
+
+Q3 · opcion
+  a) * 111 · retro sí · Un MA(1) con x = -1: Var(wt) = 0.5, x1 = -0.5, y no es invertible: la raíz de 1 
+  b)    93 · retro sí · Un MA(1) con x = -1: Var(wt) = 0.25, x1 = -0.5, y es invertible, porque |x| = 1 
+  c)   110 · retro sí · Ruido blanco, con Var(wt) = 0.5 y x1 = 0: si los xt son incorrelados entre sí, s
+  d)   117 · retro sí · Ruido blanco, con la misma Var(wt) = 0.25 y x1 = 0: restar el valor anterior no 
+  -> correcta a (111); otras 93–117; ni la más larga ni la más corta; posición 1
+
+Q4 · opcion
+  a)    85 · retro sí · E[y36] = 118, Var(y36) = 4. Se vuelve estacionaria restando la recta: yt - (y0 +
+  b) *  82 · retro sí · E[y36] = 118, Var(y36) = 144. Se vuelve estacionaria diferenciando: x yt = c + x
+  c)    82 · retro sí · E[y36] = 100, Var(y36) = 144. Se vuelve estacionaria diferenciando: x yt = c + x
+  d)    76 · retro sí · E[y36] = 100, Var(y36) = 4. Ya es estacionaria: no hace falta transformarla.
+  -> correcta b (82); otras 76–85; ni la más larga ni la más corta; posición 2
+
+Q5 · opcion
+  a)   107 · retro sí · x1 = 1.3, x2 = -0.3. Es estacionario, porque la raíz de (1 - 0.3B) es B x 3.33, 
+  b)    56 · retro sí · x1 = 0.7, x2 = 0.3. No es estacionario: x1 + x2 = 1 x 1.
+  c) *  57 · retro sí · x1 = 1.3, x2 = -0.3. No es estacionario: x1 + x2 = 1 x 1.
+  d)   106 · retro sí · x1 = 0.7, x2 = 0.3. Es estacionario, porque la raíz de (1 - 0.3B) es B x 3.33, f
+  -> correcta c (57); otras 56–107; ni la más larga ni la más corta; posición 3
+
+Q6 · opcion
+  a)    32 · retro sí · Estacionario, con raíces reales.
+  b) *  35 · retro sí · Estacionario, con raíces complejas.
+  c)    35 · retro sí · No estacionario, con raíces reales.
+  d)    38 · retro sí · No estacionario, con raíces complejas.
+  -> correcta b (35); otras 32–38; ni la más larga ni la más corta; posición 2
+
+Q7 · opcion
+  a) *   9 · retro sí · c = 10.51
+  b)     9 · retro sí · c = 50.59
+  c)     9 · retro sí · c = 18.94
+  d)    10 · retro sí · c = 243.46
+  -> correcta a (9); otras 9–10; ni la más larga ni la más corta; posición 1
+
+Q8 · opcion
+  a)    98 · retro sí · x = 2.1710. También x = 0.4606 da x1 = 0.38, pero se toma la de mayor |x|, que d
+  b) *  96 · retro sí · x = 0.4606. También x = 2.1710 da x1 = 0.38, pero se toma la solución invertible
+  c)    89 · retro sí · x = 0.3800, porque en un MA(1) el coeficiente coincide con la autocorrelación de
+  d)   124 · retro sí · Ningún valor de x: como x y 1/x dan la misma ACF, no hay forma de elegir entre e
+  -> correcta b (96); otras 89–124; ni la más larga ni la más corta; posición 2
+
+Q9 · opcion
+  a)    18 · retro sí · Var(eT+3) = 1.7651
+  b)    18 · retro sí · Var(eT+3) = 1.0889
+  c) *  18 · retro sí · Var(eT+3) = 2.5683
+  d)    18 · retro sí · Var(eT+3) = 1.6010
+  -> correcta c (18); otras 18–18; ni la más larga ni la más corta; posición 3
+
+Q10 · opcion
+  a)    52 · retro sí · x1 = 0.7500, x2 = 0.6500; x22 = 0.6500, x33 = 0.5400
+  b)    52 · retro sí · x1 = 0.8000, x2 = 0.6800; x22 = 0.2000, x33 = 0.0000
+  c)    52 · retro sí · x1 = 0.8000, x2 = 0.6800; x22 = 0.6800, x33 = 0.5680
+  d) *  52 · retro sí · x1 = 0.7500, x2 = 0.6500; x22 = 0.2000, x33 = 0.0000
+  -> correcta d (52); otras 52–52; ni la más larga ni la más corta; posición 4
+
+parcial2: «la más larga» acierta 0 de 9; «la más corta», 1 de 9
+
+######## simulacro (10 preguntas)
+
+Q1 · multiple
+  a)    19 · retro — · yt = 1.25,yt-1 + xt
+  b) *  13 · retro — · yt = (-1)t,xt
+  c)    21 · retro — · yt = 10(2x t/12) + xt
+  d)    14 · retro — · yt = yt-1 + xt
+  e) *  23 · retro — · yt = 5 + 0.92,yt-1 + xt
+  -> 2 correctas en be; marcar las 2 más largas: falla; las 2 más cortas: falla
+
+Q2 · opcion
+  a) * 142 · retro — · Hay raíz unitaria. El primer ADF usa k =  (T-1)1/3  = 4 rezagos, menos que el pe
+  b)   170 · retro — · Es estacionaria. El primer ADF, con sus k =  (T-1)1/3  = 4 rezagos, es el fiable
+  c)   156 · retro — · Hay raíz unitaria. El primer ADF no vale: su p-valor quedó fuera de la tabla, co
+  d)   154 · retro — · Es estacionaria. El KPSS sobre la serie sin estacionalidad da un p-valor pequeño
+  -> correcta a (142); otras 154–170; ES LA MÁS CORTA; posición 1
+
+Q3 · opcion
+  a)    93 · retro — · Un MA(1) con x = -1: Var(wt) = 0.81, x1 = -0.5, y es invertible, porque |x| = 1 
+  b) * 112 · retro — · Un MA(1) con x = -1: Var(wt) = 1.62, x1 = -0.5, y no es invertible: la raíz de 1
+  c)   111 · retro — · Ruido blanco, con Var(wt) = 1.62 y x1 = 0: si los xt son incorrelados entre sí, 
+  d)   117 · retro — · Ruido blanco, con la misma Var(wt) = 0.81 y x1 = 0: restar el valor anterior no 
+  -> correcta b (112); otras 93–117; ni la más larga ni la más corta; posición 2
+
+Q4 · opcion
+  a)    88 · retro — · E[y40] = 164, Var(y40) = 4.84. Se vuelve estacionaria restando la recta: yt - (y
+  b)    84 · retro — · E[y40] = 120, Var(y40) = 193.6. Se vuelve estacionaria diferenciando: x yt = c +
+  c) *  84 · retro — · E[y40] = 164, Var(y40) = 193.6. Se vuelve estacionaria diferenciando: x yt = c +
+  d)    79 · retro — · E[y40] = 120, Var(y40) = 4.84. Ya es estacionaria: no hace falta transformarla.
+  -> correcta c (84); otras 79–88; ni la más larga ni la más corta; posición 3
+
+Q5 · opcion
+  a)   107 · retro — · x1 = 0.4, x2 = 0.6. Es estacionario, porque la raíz de (1 + 0.6B) es B x -1.67, 
+  b)    57 · retro — · x1 = 1.6, x2 = -0.6. No es estacionario: x1 + x2 = 1 x 1.
+  c)   108 · retro — · x1 = 1.6, x2 = -0.6. Es estacionario, porque la raíz de (1 + 0.6B) es B x -1.67,
+  d) *  56 · retro — · x1 = 0.4, x2 = 0.6. No es estacionario: x1 + x2 = 1 x 1.
+  -> correcta d (56); otras 57–108; ES LA MÁS CORTA; posición 4
+
+Q6 · opcion
+  a) *  32 · retro — · Estacionario, con raíces reales.
+  b)    35 · retro — · Estacionario, con raíces complejas.
+  c)    35 · retro — · No estacionario, con raíces reales.
+  d)    38 · retro — · No estacionario, con raíces complejas.
+  -> correcta a (32); otras 35–38; ES LA MÁS CORTA; posición 1
+
+Q7 · opcion
+  a)     9 · retro — · c = 59.92
+  b) *   9 · retro — · c = 28.45
+  c)     9 · retro — · c = 14.51
+  d)    10 · retro — · c = 126.19
+  -> correcta b (9); otras 9–10; ni la más larga ni la más corta; posición 2
+
+Q8 · opcion
+  a)    98 · retro — · x = 1.6761. También x = 0.5966 da x1 = 0.44, pero se toma la de mayor |x|, que d
+  b)    89 · retro — · x = 0.4400, porque en un MA(1) el coeficiente coincide con la autocorrelación de
+  c) *  96 · retro — · x = 0.5966. También x = 1.6761 da x1 = 0.44, pero se toma la solución invertible
+  d)   124 · retro — · Ningún valor de x: como x y 1/x dan la misma ACF, no hay forma de elegir entre e
+  -> correcta c (96); otras 89–124; ni la más larga ni la más corta; posición 3
+
+Q9 · opcion
+  a)    18 · retro — · Var(eT+3) = 3.7716
+  b)    18 · retro — · Var(eT+3) = 6.7233
+  c)    18 · retro — · Var(eT+3) = 5.7485
+  d) *  18 · retro — · Var(eT+3) = 4.8918
+  -> correcta d (18); otras 18–18; ni la más larga ni la más corta; posición 4
+
+Q10 · opcion
+  a) *  52 · retro — · x1 = 0.7143, x2 = 0.6571; x22 = 0.3000, x33 = 0.0000
+  b)    52 · retro — · x1 = 0.7143, x2 = 0.6571; x22 = 0.6571, x33 = 0.5429
+  c)    52 · retro — · x1 = 0.8000, x2 = 0.7000; x22 = 0.3000, x33 = 0.0000
+  d)    52 · retro — · x1 = 0.8000, x2 = 0.7000; x22 = 0.7000, x33 = 0.5900
+  -> correcta a (52); otras 52–52; ni la más larga ni la más corta; posición 1
+
+simulacro: «la más larga» acierta 0 de 9; «la más corta», 3 de 9
+
+Simulacro, posición de la correcta en las de una sola: 1 2 3 4 1 2 3 4 1
+
+######## Tolerancias (motor: Math.abs(dada - respuesta) <= tolerancia)
+Q2 (respuesta 0.4878, tol 0.0006): 0.4878→acepta  0.488→acepta  0.4872→acepta  0.4884→acepta  0.487→rechaza  0.49→rechaza  0.48→rechaza  0.8→rechaza  0.4444→rechaza  0.6098→rechaza
+Q4 (respuesta 4.88, tol 0.006): 4.88→acepta  4.9→rechaza  4.874→rechaza  4.886→rechaza  4.87→rechaza  4.89→rechaza  2.44→rechaza  2.88→rechaza  2.98→rechaza  4.4→rechaza  6.29→rechaza  3.44→rechaza
+Q7 (respuesta 11.22, tol 0.06): 11.22→acepta  11.2→acepta  11.3→rechaza  11.16→rechaza  11.28→acepta  11.15→rechaza  11.29→rechaza  11→rechaza  11.218→acepta  10.74→rechaza  0.196→rechaza

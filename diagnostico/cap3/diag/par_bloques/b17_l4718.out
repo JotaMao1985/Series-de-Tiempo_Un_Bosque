@@ -1,0 +1,61 @@
+
+> manchas <- window(sunspot.year, start = 1770, end = 1869)
+
+> yw <- ar(manchas, order.max = 2, aic = FALSE, method = "yule-walker")
+
+> round(yw$ar, 4)
+[1]  1.3173 -0.6338
+
+> css <- arima(manchas, order = c(2, 0, 0), method = "CSS")
+
+> round(coef(css)[1:2], 4)
+    ar1     ar2 
+ 1.4032 -0.7099 
+
+> ml <- arima(manchas, order = c(2, 0, 0), method = "ML")
+
+> ml
+
+Call:
+arima(x = manchas, order = c(2, 0, 0), method = "ML")
+
+Coefficients:
+         ar1      ar2  intercept
+      1.4059  -0.7111    48.2616
+s.e.  0.0706   0.0702     4.9751
+
+sigma^2 estimated as 229.4:  log likelihood = -414.94,  aic = 837.88
+
+> ee <- sqrt(diag(ml$var.coef))[1:2]
+
+> round((yw$ar - coef(ml)[1:2])/ee, 2)
+  ar1   ar2 
+-1.26  1.10 
+
+> raices <- polyroot(c(1, -coef(ml)[1:2]))
+
+> round(Mod(raices), 4)
+[1] 1.1859 1.1859
+
+> round(2 * pi/Arg(raices[1]), 4)
+[1] 10.7369
+
+> phi <- coef(ml)[1:2]
+
+> round(2 * pi/acos(phi[1]/(2 * sqrt(-phi[2]))), 4)
+    ar1 
+10.7369 
+
+> set.seed(1)
+
+> z <- arima.sim(list(ar = 0.95), n = 40)
+
+> round(coef(arima(z, order = c(1, 0, 0), include.mean = FALSE, 
++     method = "CSS")), 4)
+   ar1 
+1.0086 
+
+> round(coef(arima(z, order = c(1, 0, 0), include.mean = FALSE, 
++     method = "ML")), 4)
+   ar1 
+0.9808 

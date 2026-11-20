@@ -1,0 +1,27 @@
+# Pesos psi (respuesta al impulso) de un ARMA(1,1)
+psi <- ARMAtoMA(ar = 0.7, ma = 0.5, lag.max = 8)
+round(psi, 4)
+#> [1] 1.2000 0.8400 0.5880 0.4116 0.2881 0.2017 0.1412 0.0988
+#   ojo: ARMAtoMA NO devuelve psi_0 = 1, empieza en psi_1
+
+# Un AR(1) puro: los psi son las potencias de phi
+round(ARMAtoMA(ar = 0.8, lag.max = 5), 4)
+#> [1] 0.8000 0.6400 0.5120 0.4096 0.3277
+round(0.8^(1:5), 4)
+#> [1] 0.8000 0.6400 0.5120 0.4096 0.3277   <- identicos
+
+# Pesos pi: como pi(B) = phi(B)/theta(B), son los psi del proceso que
+# intercambia los dos polinomios. Ojo a los signos: el "ar" de aqui es
+# -theta y el "ma" es -phi, por el convenio de signos del Modulo 1.
+pi_w <- ARMAtoMA(ar = -0.5, ma = -0.7, lag.max = 8)
+round(pi_w, 4)
+#> [1] -1.2000  0.6000 -0.3000  0.1500 -0.0750  0.0375 -0.0187  0.0094
+# se alternan de signo y se desvanecen: el MA(1) con theta = 0.5 SI es invertible
+
+# La ACF teorica a partir de los psi (lo que hace el simulador)
+psi0 <- c(1, ARMAtoMA(ar = 0.7, ma = 0.5, lag.max = 2000))
+g <- sapply(0:5, function(k) sum(psi0[1:(2001 - k)] * psi0[(1 + k):2001]))
+round((g / g[1])[-1], 4)
+#> [1] 0.8308 0.5815 0.4071 0.2850 0.1995
+round(ARMAacf(ar = 0.7, ma = 0.5, lag.max = 5)[-1], 4)   # exacta
+#> [1] 0.8308 0.5815 0.4071 0.2850 0.1995   <- coinciden

@@ -1,0 +1,58 @@
+== Ayuda de R: ¿dice lo que el capítulo le atribuye? (solo booleanos)
+?arima Details: MA con signo distinto de S-PLUS: TRUE 
+?arima: CSS-ML por defecto (CSS para arrancar, luego ML): TRUE 
+?arima: MA convertidos a forma invertible 'if transform.pars is true': TRUE 
+?arima: aic 'Only valid for method = ML': TRUE 
+?arima: intercept = media (la fórmula se aplica a X - m): TRUE 
+?arima: matriz de varianzas 'may only be a rough guide': TRUE 
+?arima.sim: admite order = c(p,d,q) (modelos integrados): TRUE 
+?arima.sim: n.start = burn-in, NA por defecto: TRUE 
+?polyroot: coeficientes en orden creciente: TRUE 
+?Box.test: fitdf = p+q, 'provided of course that lag > fitdf': TRUE 
+?sunspot.year dice 'Wolf'?: FALSE  · dice 'rounded to one digit': TRUE 
+?lh: 48 muestras cada 10 minutos: TRUE 
+
+== c3-m6-03: arima.sim sí simula una caminata aleatoria con order = c(0,1,0)
+clase: ts  longitud: 101  (n=100 más el valor inicial 0)
+
+== c3-m3-13: ¿arima() devuelve siempre la raíz invertible? MA(1) con theta = 2
+CSS     ma1 = 0.4797  sigma2 = 4.083
+ML      ma1 = 0.4794  sigma2 = 4.082
+CSS-ML  ma1 = 0.4794  sigma2 = 4.082
+ML      ma1 = 0.4794  (transform.pars = FALSE)
+
+== c3-m9-04 y c3-m9-05: ceros de sunspot.year y aviso de Guerrero
+ceros en 1770-1869: 1  en 1700-1988: 3  años: 1711 1712 1810 
+AVISO de forecast: Guerrero's method for selecting a Box-Cox parameter (lambda) is given for strictly positive data. 
+lambda sobre la serie cruda = 0.3333 · sobre manchas + 1 = 0.3062
+
+== c3-m8-18: primer residual de arima(): ¿innovación cruda o estandarizada?
+residuals()[1:3] = 21.056 -6.911 8.728
+y1 - mu = 52.538 · gamma0/sigma2 = 6.226 · (y1 - mu)/sqrt(gamma0/sigma2) = 21.056
+
+== c3-m3-12: techo de rho_1 en un MA(q) frente a cos(pi/(q+2))
+q = 1  máximo numérico = 0.50000  cos(pi/(q+2)) = 0.50000
+q = 2  máximo numérico = 0.70711  cos(pi/(q+2)) = 0.70711
+q = 3  máximo numérico = 0.80902  cos(pi/(q+2)) = 0.80902
+q = 4  máximo numérico = 0.86603  cos(pi/(q+2)) = 0.86603
+
+== c3-m2-12 y c3-m10-76: dos fórmulas para el periodo del ciclo de un AR(2)
+phi = (1.4027, -0.6853)  ángulo de la raíz (Cryer, Shumway, capítulo) = 11.219  FPP3 9.5 = 11.836
+phi = (1.4000, -0.6900)  ángulo de la raíz (Cryer, Shumway, capítulo) = 11.052  FPP3 9.5 = 11.616
+phi = (1.4000, -0.7500)  ángulo de la raíz (Cryer, Shumway, capítulo) = 9.980  FPP3 9.5 = 10.213
+phi = (1.0000, -0.5000)  ángulo de la raíz (Cryer, Shumway, capítulo) = 8.000  FPP3 9.5 = 8.694
+
+== c3-m2-17: la varianza del AR(2) solo vale dentro del triángulo
+phi = (0, 2): gamma0/sigma2 por la fórmula cerrada = -0.3333 (negativo: no es una varianza)
+phi = (0.5, 0.3), dentro: 2.2436
+
+== c3-m10-28: ARMA(2,2) (1.1,-0.28; 0.1,-0.20) frente a ARMA(1,1) (0.7; 0.5)
+máxima diferencia de las ACF a 8 rezagos: 1.11e-16 
+
+== c3-m3-14, c3-m4-10 y c3-m4-08: cifras del Módulo 3 y 4
+PACF del MA(1) con theta = 0.8: 0.4878 -0.3123 0.2215 -0.1652 
+pesos pi del ARMA(1,1) (0.7; 0.5): -1.2 0.6 -0.3 0.15 -0.075 0.0375 -0.0187 0.0094 -0.0047 · primer j con |pi_j| < 0.01: 9 
+ejemplo de ?ARMAtoMA: ARMAtoMA(c(1,-0.25),1,10) = (1+3n)2^-n (empieza en psi_1): TRUE 
+
+== Hallazgo colateral (caso TRM): promediar un paseo aleatorio induce autocorrelación en las primeras diferencias
+rho_1 de las diferencias de promedios de 21 pasos de un paseo aleatorio = 0.254 (teoría asintótica 0.25) · r1 observado en los log-retornos de la TRM = 0.105
