@@ -3,7 +3,7 @@ tipo: plan
 curso: "[[20948 Series de Tiempo]]"
 capitulo: "[[20948-03 Modelos AR, MA y ARMA]]"
 fecha: 2026-11-19
-estado: propuesto
+estado: aprobado
 ---
 
 # Plan — Mejora del capítulo 3 · Modelos AR, MA y ARMA (Fase 3)
@@ -14,8 +14,8 @@ con sus fuentes contrastadas y con práctica en cada módulo. Es la tercera apli
 [[PLAN_Mejora_Cap1]] y [[PLAN_Mejora_Cap2]]: cinco rondas, un redactor por ronda, un verificador
 independiente sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: propuesto el 2026-11-19, pendiente de la aprobación de Javier.** Lo que sigue es el
-diagnóstico y el plan; las rondas se registrarán en §4.
+**Estado: aprobado por Javier el 2026-11-19 (D1–D9, y las recomendaciones de §7.1 y §7.2).** Lo que
+sigue es el diagnóstico y el plan; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-19
 
@@ -190,6 +190,10 @@ Cada una lleva mi recomendación; las decide Javier.
 - **Sesiones concurrentes**: commits por archivo y fusión probada antes de cada publicación.
 
 ## 7. Preguntas abiertas
+
+Resueltas el 2026-11-19: Javier aprobó D1–D9 y las recomendaciones de las preguntas 1 y 2 (la
+actividad se queda con otro título, sin tocar el banco; el simulacro se anota para revisarlo en el
+banco, fuera de esta fase). La 3 sigue abierta.
 
 1. **La actividad preparatoria del Parcial 2** (final del M10). El Parcial 2 ya se aplicó. ¿Se
    queda con otro título, como práctica de repaso de los caps. 2 y 3.1–3.4, o se retira del
