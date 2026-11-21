@@ -14,7 +14,7 @@ con sus fuentes contrastadas y con práctica en cada módulo. Es la tercera apli
 [[PLAN_Mejora_Cap1]] y [[PLAN_Mejora_Cap2]]: cinco rondas, un redactor por ronda, un verificador
 independiente sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: aprobado por Javier el 2026-11-19 (D1–D9, y las recomendaciones de §7.1 y §7.2).** Lo que
+**Estado: aprobado por Javier el 2026-11-19 (D1–D9, y las recomendaciones de §7.1 y §7.2). R1 publicada el 21; sigue la R2.** Lo que
 sigue es el diagnóstico y el plan; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-19
@@ -159,7 +159,7 @@ Cada una lleva mi recomendación; las decide Javier.
 
 ### Registro de rondas
 
-- **R1 · errores — hecha el 2026-11-20, sin publicar.** Los 7 errores de C1 y las imprecisiones y menores
+- **R1 · errores — hecha el 2026-11-20 y PUBLICADA el 21** (`main` `5d67632` · gh-pages `8bfaebe`). Los 7 errores de C1 y las imprecisiones y menores
   del par, cada uno con su comprobación en R (`diagnostico/cap3/R1_cambios.md`). El ejercicio 3 ya no
   culpa a la potencia: de 190 ventanas de cien años, el AR(2) falla en 138, también en 49 anteriores a 1900
   y en todas las que llegan al siglo XX. La envolvente de los ψ pasa a ±Rʲ/sin ω (ninguna barra fuera, antes
