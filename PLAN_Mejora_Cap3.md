@@ -14,7 +14,7 @@ con sus fuentes contrastadas y con práctica en cada módulo. Es la tercera apli
 [[PLAN_Mejora_Cap1]] y [[PLAN_Mejora_Cap2]]: cinco rondas, un redactor por ronda, un verificador
 independiente sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: aprobado por Javier el 2026-11-19 (D1–D9, y las recomendaciones de §7.1 y §7.2). R1 y R2 publicadas el 21; sigue la R3.** Lo que
+**Estado: aprobado por Javier el 2026-11-19 (D1–D9, y las recomendaciones de §7.1 y §7.2). R1 y R2 publicadas el 21; R3 hecha el 21, sin publicar.** Lo que
 sigue es el diagnóstico y el plan; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-19
@@ -180,6 +180,19 @@ Cada una lleva mi recomendación; las decide Javier.
   (`diagnostico/cap3/R2_cambios.md`). El verificador independiente halló 9 puntos, entre ellos un error nuevo
   (la PACF del ARMA(1,1) «nula» por redondeo) y una regresión del eje en el cap. 5; corregidos 6, tres leves
   anotados (`diagnostico/cap3/R2_verificacion.md`).
+
+- **R3 · estructura — hecha el 2026-11-21, sin publicar.** Sin renumerar: el M1 empieza por las raíces y los
+  convenios de signo y R/Python pasan a su final; el M4 presenta el ARMA y saca la recursión de ψ y π del plegado;
+  el M5 en el orden tabla → laboratorio → ciclo, con AICc, BIC, Ljung–Box y `fitdf` anunciados; `auto.arima`
+  presentado en el M9; lo que citaban los «paso 6» y «paso 4» de los plegados, a la vista. El M9 presenta la
+  elasticidad amplitud–nivel (no se retira: es su pivote) y cada cifra sin código recibe su bloque con `#>`. El M10
+  en tres partes con un solo nombre, «Cierre: redes, resumen y evaluación» (también en la lista de
+  `preparcial-corte-2.html`); la actividad, «Práctica de repaso · capítulo 2 y módulos 3.1–3.4», sin tocar sus
+  preguntas. Notación: `T`, «identificable»/«identificación», «abanico», «caminata», «pseudo-periodo». Minutos
+  medidos con la herramienta corregida (contaba de menos en cuatro módulos): 10, 14, 15, 13, 18, 7, 9, 11, 31, 22 y
+  30; todos a < 0.5 min. Bloques: 557/557 → 732/732. Caps. 2 y 4–6 sin cambios (`diagnostico/cap3/R3_cambios.md`).
+  El verificador independiente no halló nada falso ni regresiones; 7 puntos menores, 5 corregidos por la maestra,
+  uno resuelto con el commit y uno a la R5 (`diagnostico/cap3/R3_verificacion.md`).
 
 ## 5. Criterios de aceptación
 

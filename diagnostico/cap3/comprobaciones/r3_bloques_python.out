@@ -1,0 +1,159 @@
+15 bloques de R y 12 de Python en capitulo-3-modelos-ar-ma-arma.html
+
+===== Módulo 1 · línea 2841 · código de salida 0 =====
+[0.93333333+0.67986927j 0.93333333-0.67986927j]
+[1.15470054 1.15470054]
+True
+[0.93333333-0.67986927j 0.93333333+0.67986927j] True
+--- cifras con decimales de los comentarios que NO están en la salida: 0
+
+===== Módulo 1 · línea 2919 · código de salida 0 =====
+[1.     0.4698 0.     0.    ]
+0.4575
+['ma.L1', 'sigma2'] [0.6979 0.9847]
+[0.6] [0.6    0.36   0.216  0.1296]
+[-0.6] [-0.6     0.36   -0.216   0.1296]
+--- cifras con decimales de los comentarios que NO están en la salida: 1
+             0.7  <- # Convenio de suma tambien en statsmodels: rho_1 positiva para theta = +0.7
+
+===== Módulo 2 · línea 3265 · código de salida 0 =====
+[0.7143 0.6571 0.5429 0.4686 0.3971]
+[ 0.7143  0.3     0.      0.     -0.    ]
+2.2436
+2.2436
+True
+--- cifras con decimales de los comentarios que NO están en la salida: 0
+
+===== Módulo 3 · línea 3558 · código de salida 0 =====
+theta=0.5: acf=[0.4 0.  0. ]  invertible=True
+theta=2.0: acf=[0.4 0.  0. ]  invertible=False
+theta=(1.5, 0.6): |raices|=[1.291 1.291]  invertible=True
+theta=(0.5, -0.6): |raices|=[0.9399 1.7732]  invertible=False
+0.5
+[-0.5  0.   0. ]
+[1.]
+[0.5051] 3.8888
+--- cifras con decimales de los comentarios que NO están en la salida: 0
+
+===== Módulo 4 · línea 3871 · código de salida 0 =====
+[1.     1.2    0.84   0.588  0.4116 0.2881 0.2017 0.1412 0.0988]
+[ 1.     -1.2     0.6    -0.3     0.15   -0.075   0.0375 -0.0188  0.0094]
+[0.8308 0.5815 0.4071 0.285  0.1995]
+[0.8308 0.5815 0.4071 0.285  0.1995]
+--- cifras con decimales de los comentarios que NO están en la salida: 0
+
+===== Módulo 5 · línea 4379 · código de salida 0 =====
+[0.8308 0.5815 0.4071 0.285  0.1995]
+[0.8308 0.5815 0.4071 0.285  0.1995]
+[0.7    0.49   0.343  0.2401 0.1681]
+[0.7307 0.6238 0.5311 0.4527]
+[0.7307 0.6238 0.5311 0.4527]
+0.7584 frente a 0.8614
+3.8235
+3.8235
+3.1765 0.8308
+--- cifras con decimales de los comentarios que NO están en la salida: 0
+
+===== Módulo 5 · línea 4488 · código de salida 0 =====
+[0. 0. 0. 0. 0.]
+[0.0515 0.0257 0.0129 0.0064 0.0032]
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+const          0.0181      0.069      0.263      0.792      -0.117       0.153
+ar.L1         -0.0798      1.534     -0.052      0.959      -3.085       2.926
+ma.L1          0.1254      1.531      0.082      0.935      -2.876       3.127
+sigma2         0.8505      0.093      9.148      0.000       0.668       1.033
+==============================================================================
+suma ar1 + ma1 = 0.0457
+--- cifras con decimales de los comentarios que NO están en la salida: 6
+             0.5  <- # Redundancia CASI exacta: phi = 0.5, theta = -0.45
+           -0.45  <- # Redundancia CASI exacta: phi = 0.5, theta = -0.45
+            0.83  <- # R estimo (0.83, -0.80) y Python (-0.08, 0.13): dos parejas muy distintas
+           -0.80  <- # R estimo (0.83, -0.80) y Python (-0.08, 0.13): dos parejas muy distintas
+           -0.08  <- # R estimo (0.83, -0.80) y Python (-0.08, 0.13): dos parejas muy distintas
+            0.13  <- # R estimo (0.83, -0.80) y Python (-0.08, 0.13): dos parejas muy distintas
+
+===== Módulo 6 · línea 4576 · código de salida 0 =====
+
+--- cifras con decimales de los comentarios que NO están en la salida: 0
+
+===== Módulo 7 · línea 4889 · código de salida 0 =====
+100
+[ 1.3173 -0.6338]
+[ 1.4032 -0.7099]
+[ 1.4059 -0.7111]
+[ 1.4059 -0.7111]
+[1.1859 1.1859]
+10.7365
+--- cifras con decimales de los comentarios que NO están en la salida: 2
+            0.13  <- #    retirado en statsmodels 0.13. Pero en un AR puro el CSS es la regresion
+         10.7369  <- # R daba 10.7369: los optimizadores convergen a puntos ligerisimamente
+
+===== Módulo 8 · línea 5233 · código de salida 0 =====
+   modelo   AICc    BIC   LB12
+ARMA(2,1) 834.73 847.12 0.3211
+ARMA(3,0) 836.52 848.91 0.3176
+ARMA(2,2) 836.63 851.36 0.1939
+ARMA(4,0) 836.78 851.51 0.1677
+ARMA(2,0) 838.30 848.30 0.1085
+ARMA(1,2) 840.51 852.90 0.0439
+ARMA(0,3) 845.35 857.74 0.0037
+ARMA(1,1) 850.50 860.50 0.0001
+ARMA(0,2) 853.56 863.56 0.0000
+ARMA(1,0) 904.33 911.89 0.0000
+ARMA(0,1) 908.13 915.70 0.0000
+ARMA(2,0) recortado: 0.0232
+ARMA(2,1) recortado: 0.1420
+ARMA(2,2) recortado: 0.1051
+--- cifras con decimales de los comentarios que NO están en la salida: 3
+          0.0461  <- # ARMA(2,0) 838.30 848.30 0.1085   <- en R da 0.0461
+          0.1424  <- # ARMA(2,1) recortado: 0.1420      (R: 0.1424)
+          0.1057  <- # ARMA(2,2) recortado: 0.1051      (R: 0.1057)
+
+===== Módulo 9 · línea 5847 · código de salida 0 =====
+[[0.816 0.593 1.04  0.899]
+ [0.766 0.533 0.998 0.897]
+ [0.703 0.475 0.931 0.7  ]]
+0.0 1
+3
+{1: 0.806, 2: -0.634}
+{1: 0.818, 2: -0.617, 6: 0.2, 9: 0.198, 16: -0.199}
+[ 1.4027 -0.6853]
+0.178
+11.218
+[ 1.     -1.4027  0.6853]
+1.208 0.5601
+[ 1.      1.4027  1.2822  0.8372  0.2957 -0.159  -0.4256 -0.4881 -0.3929
+ -0.2167 -0.0346  0.0999]
+[2.2697 3.9098 4.8739 5.2312 5.2741 5.2864]
+[2.2697 3.9098 4.8739 5.2312 5.2741 5.2864]
+--- cifras con decimales de los comentarios que NO están en la salida: 5
+          -0.196  <- # La PACF en las dos escalas: que rezagos salen de la banda +-0.196
+          0.1644  <- # R daba 0.1644: devuelve estandarizados los dos primeros residuales, y
+          0.1682  <- # statsmodels no (Modulo 8). Descartando esos dos, los dos programas dan 0.1682.
+         11.2178  <- print(round(2 * np.pi / np.angle(raices[0]), 4))  # 11.218 (en R, 11.2178)
+         -0.4257  <- # El septimo peso sale -0.4256 y en R -0.4257: los dos optimizadores no dan
+
+===== Módulo 9 · línea 6125 · TRM desde la página del curso · código de salida 0 =====
+137 0.1675
+[ 0.105 -0.077 -0.078  0.006  0.193  0.123]
+{5: 0.193, 8: -0.198}
+[0.0931 0.0601 0.0599]
+0.249 0.105 1.68
+[0.1326]
+722.653 722.663
+0.9166
+--- cifras con decimales de los comentarios que NO están en la salida: 0
+
+===== Módulo 9 · línea 6125 · TRM desde la carpeta de trabajo · código de salida 0 =====
+137 0.1675
+[ 0.105 -0.077 -0.078  0.006  0.193  0.123]
+{5: 0.193, 8: -0.198}
+[0.0931 0.0601 0.0599]
+0.249 0.105 1.68
+[0.1326]
+722.653 722.663
+0.9166
+--- cifras con decimales de los comentarios que NO están en la salida: 0
+

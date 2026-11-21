@@ -1413,7 +1413,7 @@
     TABLAS_RANKING['criterios'] = function () {
       return {
         descripcion: 'Los once candidatos ARMA sobre las manchas solares crudas. ' +
-          'Los once comparten $d = 0$ y el mismo $n$, así que sus criterios son ' +
+          'Los once comparten $d = 0$ y el mismo $T$, así que sus criterios son ' +
           'comparables entre sí. Pulsa una cabecera para reordenar.',
         columnas: [
           { clave: 'modelo', titulo: 'Modelo', tipo: 'texto' },

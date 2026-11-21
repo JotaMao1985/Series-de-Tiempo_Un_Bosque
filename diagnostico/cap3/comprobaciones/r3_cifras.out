@@ -1,0 +1,137 @@
+
+==== M1 · el convenio de signo, sin arima(): MA(1) con theta = 0.7, n = 600 ====
+rho_1 teorica theta/(1+theta^2): 0.4698 
+     0      1      2      3 
+1.0000 0.4698 0.0000 0.0000 
+r_1 muestral: 0.4614 
+ma1 estimado: 0.6887   s.e.: 0.0313 
+
+Call:
+arima(x = x, order = c(0, 0, 1), include.mean = FALSE)
+
+Coefficients:
+         ma1
+      0.6887
+s.e.  0.0313
+
+sigma^2 estimated as 1.01:  log likelihood = -854.77,  aic = 1713.55
+AR(1) con phi = 0.6: ACF teorica  0.6 0.36 0.216 0.1296 
+AR(1) con phi = -0.6: ACF teorica -0.6 0.36 -0.216 0.1296 
+
+==== M3 · sobrediferenciar un ruido blanco: MA(1) con theta = -1 ====
+   0    1    2    3 
+ 1.0 -0.5  0.0  0.0 
+[1] 1
+r_1 de diff(ruido blanco): -0.5164 
+
+==== M5 · gamma_1 y rho_1 del ARMA(1,1) con phi = 0.7 y theta = 0.5 ====
+gamma0 = 3.823529  gamma1 = 3.176471  rho1 = 0.8307692 
+1+2 phi theta + theta^2 = 1.95  (1+phi theta)(phi+theta) = 1.62 
+
+==== M9 · elasticidad amplitud-nivel: la versión corta frente a la de genera_cap3.R ====
+          b  2.5 % 97.5 %     R2 bloques
+[1,] 0.8165 0.5928 1.0401 0.8986      10
+[2,] 0.7658 0.5335 0.9982 0.8967       9
+[3,] 0.7034 0.4754 0.9314 0.7000      20
+          b  2.5 % 97.5 %     R2
+[1,] 0.8165 0.5928 1.0401 0.8986
+[2,] 0.7658 0.5335 0.9982 0.8967
+[3,] 0.7034 0.4754 0.9314 0.7000
+¿iguales a la de genera_cap3.R?  TRUE 
+
+==== M9 · ceros ====
+ceros en la ventana: 1  en la serie completa: 3  año del cero: 1810 
+
+==== M9 · PACF fuera de la banda, cruda y raíz (lag.max = 20) ====
+cruda : fuera de la banda en rezagos 1 2 
+     1      2 
+ 0.806 -0.634 
+raiz : fuera de la banda en rezagos 1 2 6 9 16 
+     1      2      6      9     16 
+ 0.818 -0.617  0.200  0.198 -0.199 
+banda: 0.196 
+
+==== M9 · la rejilla del Módulo 8 sobre la raíz cuadrada ====
+      modelo   AICc    BIC   LB12
+2  ARMA(2,0) 324.00 334.00 0.1644
+3  ARMA(3,0) 325.35 337.74 0.2005
+9  ARMA(2,1) 325.41 337.80 0.1856
+11 ARMA(2,2) 327.42 342.14 0.1833
+4  ARMA(4,0) 327.61 342.34 0.1473
+10 ARMA(1,2) 328.14 340.52 0.0231
+7  ARMA(0,3) 333.59 345.98 0.0011
+6  ARMA(0,2) 343.21 353.21 0.0000
+8  ARMA(1,1) 343.68 353.68 0.0000
+1  ARMA(1,0) 383.86 391.42 0.0000
+5  ARMA(0,1) 398.15 405.72 0.0000
+mínimo AICc: ARMA(2,0)  mínimo BIC: ARMA(2,0) 
+      modelo   AICc    BIC   LB12
+9  ARMA(2,1) 834.73 847.12 0.2246
+3  ARMA(3,0) 836.52 848.91 0.1658
+11 ARMA(2,2) 836.63 851.36 0.1510
+4  ARMA(4,0) 836.78 851.51 0.1118
+2  ARMA(2,0) 838.30 848.30 0.0461
+10 ARMA(1,2) 840.51 852.90 0.0110
+7  ARMA(0,3) 845.35 857.74 0.0010
+8  ARMA(1,1) 850.50 860.50 0.0000
+6  ARMA(0,2) 853.56 863.56 0.0000
+1  ARMA(1,0) 904.33 911.89 0.0000
+5  ARMA(0,1) 908.13 915.70 0.0000
+
+==== M9 · AR(2) final sobre sqrt: se, sigma2, polinomio mal escrito, PACF teórica ====
+coef: 1.4027 -0.6853 6.3317  se: 0.0727 0.0724 0.4101  sigma2: 1.341 
+t: 19.31 -9.46 
+polinomio bien escrito, raíces: 1.0234+0.6418i 1.0234-0.6418i 
+polinomio MAL escrito 1 - 1.4027B - 0.6853B^2, raíces: 0.5598+0i -2.6066+0i 
+PACF teórica AR(2) final: 0.8323 -0.6853 0 
+R = 0.8278  1/sin(w) = 1.8823  mitad (años) = 3.6684  pi/w = 5.6089  2pi/w = 11.2178 
+
+==== M9 · variantes de lambda ====
+lambda: 0.3062 
+                    periodo   LB12
+raiz                11.2178 0.1644
+guerrero            11.3883 0.4892
+guerrero_desplazada 11.2759 0.2216
+Guerrero sin desplazar (aviso):
+[1] 0.3333
+
+==== M9 · ARMA(2,1) sobre la cruda ====
+      ar1       ar2       ma1 intercept 
+   1.2274   -0.5620    0.3732   48.5307 
+      ar1       ar2       ma1 intercept 
+   0.1134    0.1084    0.1344    6.0126 
+t de theta1: 2.78 
+raíz MA: -2.6795+0i  módulo 2.6795 
+raíces AR: 1.092+0.7661i 1.092-0.7661i  módulo 1.3339 1.3339 
+
+==== M9 · tabla de psi, cumsum, errores estándar y semianchos, 12 filas ====
+       j     psi  h   suma     ee   semi
+ [1,]  0  1.0000  1 1.0000 1.1580 2.2697
+ [2,]  1  1.4027  2 2.9675 1.9948 3.9098
+ [3,]  2  1.2822  3 4.6115 2.4867 4.8739
+ [4,]  3  0.8372  4 5.3124 2.6691 5.2312
+ [5,]  4  0.2957  5 5.3998 2.6909 5.2741
+ [6,]  5 -0.1590  6 5.4251 2.6972 5.2864
+ [7,]  6 -0.4257  7 5.6063 2.7419 5.3740
+ [8,]  7 -0.4881  8 5.8446 2.7995 5.4870
+ [9,]  8 -0.3929  9 5.9990 2.8363 5.5590
+[10,]  9 -0.2167 10 6.0459 2.8474 5.5807
+[11,] 10 -0.0346 11 6.0471 2.8476 5.5813
+[12,] 11  0.0999 12 6.0571 2.8500 5.5859
+suma psi^2 = 6.136  gamma0 = 8.2283  var muestral = 8.149 
+techo del semiancho: 5.6222  fracción a h = 6: 0.9403 
+lower h = 7, 8: -0.209 -0.114  al cuadrado: 0.044 0.013 
+
+==== M9 · residuales: asimetría y Shapiro, cruda frente a raíz ====
+cruda: asimetría 0.791  Shapiro p 7e-04 
+raíz : asimetría 0.573  Shapiro p 0.047 
+(con la definición de momentos:  0.7913 )
+cruda (m3/m2^1.5): 0.803  raíz: 0.582 
+
+==== M9 · TRM ====
+n = 137  banda = 0.1675 
+     5      8 
+ 0.193 -0.198 
+r1 = 0.1053 
+rho1 inducido, m = 21: 0.2492  fórmula cerrada: 0.2492 
+distancia en errores estándar (1/sqrt(137)): 1.68 
