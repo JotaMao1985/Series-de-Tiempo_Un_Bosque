@@ -14,7 +14,7 @@ con sus fuentes contrastadas y con práctica en cada módulo. Es la tercera apli
 [[PLAN_Mejora_Cap1]] y [[PLAN_Mejora_Cap2]]: cinco rondas, un redactor por ronda, un verificador
 independiente sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: aprobado por Javier el 2026-11-19 (D1–D9, y las recomendaciones de §7.1 y §7.2). R1 publicada el 21; sigue la R2.** Lo que
+**Estado: aprobado por Javier el 2026-11-19 (D1–D9, y las recomendaciones de §7.1 y §7.2). R1 y R2 publicadas el 21; sigue la R3.** Lo que
 sigue es el diagnóstico y el plan; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-19
@@ -169,7 +169,7 @@ Cada una lleva mi recomendación; las decide Javier.
   557/557. Caps. 4–6 idénticos. El verificador independiente halló 8 puntos; corregidos 6, dos menores
   anotados (`diagnostico/cap3/R1_verificacion.md`).
 
-- **R2 · gráficas — hecha el 2026-11-21, sin publicar.** En el armazón (cap. 2 → 3–6, D3): el rezago 1 rotulado
+- **R2 · gráficas — hecha y PUBLICADA el 2026-11-21** (`main` `495254f` · gh-pages `56e1007`). En el armazón (cap. 2 → 3–6, D3): el rezago 1 rotulado
   en todos los correlogramas a 800 y 375 px sin que ningún eje pierda rótulos ni el 12, el 24 o el 36 (prueba
   sintética de 3850 ejes), y el signo menos en las lecturas; los caps. 4–6 reciben el mismo diff, solo del
   armazón. En el cap. 3: los procesos explosivos se ven despegar, la ACF teórica se oculta cuando no existe,
