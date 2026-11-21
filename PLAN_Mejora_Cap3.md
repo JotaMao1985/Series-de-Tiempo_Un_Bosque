@@ -14,7 +14,7 @@ con sus fuentes contrastadas y con práctica en cada módulo. Es la tercera apli
 [[PLAN_Mejora_Cap1]] y [[PLAN_Mejora_Cap2]]: cinco rondas, un redactor por ronda, un verificador
 independiente sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: aprobado por Javier el 2026-11-19 (D1–D9, y las recomendaciones de §7.1 y §7.2). R1 y R2 publicadas el 21; R3 hecha el 21, sin publicar.** Lo que
+**Estado: aprobado por Javier el 2026-11-19 (D1–D9, y las recomendaciones de §7.1 y §7.2). R1, R2 y R3 publicadas el 21.** Lo que
 sigue es el diagnóstico y el plan; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-19
@@ -181,7 +181,7 @@ Cada una lleva mi recomendación; las decide Javier.
   (la PACF del ARMA(1,1) «nula» por redondeo) y una regresión del eje en el cap. 5; corregidos 6, tres leves
   anotados (`diagnostico/cap3/R2_verificacion.md`).
 
-- **R3 · estructura — hecha el 2026-11-21, sin publicar.** Sin renumerar: el M1 empieza por las raíces y los
+- **R3 · estructura — hecha y PUBLICADA el 2026-11-21** (`main` `3cf564c` · gh-pages `739a297`). Sin renumerar: el M1 empieza por las raíces y los
   convenios de signo y R/Python pasan a su final; el M4 presenta el ARMA y saca la recursión de ψ y π del plegado;
   el M5 en el orden tabla → laboratorio → ciclo, con AICc, BIC, Ljung–Box y `fitdf` anunciados; `auto.arima`
   presentado en el M9; lo que citaban los «paso 6» y «paso 4» de los plegados, a la vista. El M9 presenta la
