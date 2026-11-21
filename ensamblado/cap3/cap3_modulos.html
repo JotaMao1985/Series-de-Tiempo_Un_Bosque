@@ -335,8 +335,9 @@ print(proceso.arroots, proceso.isstationary)</code></pre>
       <div class="simulador" data-simulador="panel-ar-teorico">
         <h4><i class="fas fa-chart-column" aria-hidden="true"></i> Las cuatro firmas del AR</h4>
         <p class="simulador-intro">ACF y PACF <strong>teóricas</strong> —calculadas con <code>ARMAacf()</code>, no
-          simuladas— de cuatro procesos autorregresivos. Fíjate en que la PACF cae a cero de golpe en el rezago $p$
-          y se queda ahí, mientras la ACF nunca termina de cortarse.</p>
+          simuladas— de cuatro procesos autorregresivos. Fíjate en que la PACF cae a cero de golpe después del
+          rezago $p$ —la barra de $p$ es la última distinta de cero— y se queda ahí, mientras la ACF nunca termina
+          de cortarse.</p>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">ACF teórica</p>
         <div class="grafico-wrapper" style="height:190px;">
@@ -382,7 +383,7 @@ print(proceso.arroots, proceso.isstationary)</code></pre>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">Región de estacionariedad</p>
         <div class="grafico-wrapper" style="height:280px;">
-          <canvas aria-label="Triángulo de estacionariedad del AR(2) con el punto (phi1, phi2) marcado" role="img"></canvas>
+          <canvas aria-label="Triángulo de estacionariedad del AR(2) con el punto (φ₁, φ₂) marcado" role="img"></canvas>
         </div>
         <p class="grafico-etiqueta">Realización simulada del proceso</p>
         <div class="grafico-wrapper" style="height:190px;">
@@ -973,7 +974,7 @@ print(np.round(res.maparams, 4), np.round(res.params[-1], 4))
           <canvas aria-label="Pesos psi de la representación de medias móviles infinita" role="img"></canvas>
         </div>
         <p class="grafico-etiqueta">Pesos $\pi_j$ — representación AR($\infty$)</p>
-        <div class="grafico-wrapper" style="height:190px;">
+        <div class="grafico-wrapper" style="height:250px;">
           <canvas aria-label="Pesos pi de la representación autorregresiva infinita" role="img"></canvas>
         </div>
         <div class="simulador-lectura"></div>
@@ -981,7 +982,9 @@ print(np.round(res.maparams, 4), np.round(res.params[-1], 4))
 
       <div class="warning">
         <p><strong>Lo que acabas de ver con $|\theta| > 1$.</strong> Los pesos $\pi$ crecen sin límite en vez de
-          desvanecerse. Eso significa que reconstruir el choque de hoy exigiría dar un peso cada vez
+          desvanecerse (en la frontera, $|\theta| = 1$, ni crecen ni se desvanecen: conservan su magnitud, y el
+          proceso tampoco es invertible). Cuando el mayor pasa de 20 en valor absoluto, el simulador los dibuja en
+          un eje logarítmico, que deja ver los doce a la vez. Eso significa que reconstruir el choque de hoy exigiría dar un peso cada vez
           <em>mayor</em> a observaciones cada vez <strong>más antiguas</strong>, lo cual es absurdo. Esa es la
           traducción operativa de la no invertibilidad, y la razón de fondo por la que el software siempre te devuelve
           la raíz invertible.</p>
@@ -1629,7 +1632,7 @@ print(round(g1, 4), round(g1 / (sigma2 * (psi**2).sum()), 4))
       <div class="simulador" data-simulador="laboratorio-arma">
         <h4><i class="fas fa-flask" aria-hidden="true"></i> Laboratorio ARMA</h4>
         <p class="simulador-intro">Mueve los cuatro parámetros y compara la ACF/PACF <strong>teórica</strong> (barras
-          sólidas) con la <strong>muestral</strong> de una realización de longitud $T$ (barras claras). Cambia $T$ y
+          oscuras) con la <strong>muestral</strong> de una realización de longitud $T$ (barras grises). Cambia $T$ y
           verás lo que de verdad ocurre al identificar: con $T = 60$ el patrón teórico casi no se reconoce, y con
           $T = 1000$ emerge limpio. La banda punteada es $\pm 1.96/\sqrt{T}$. Pulsa <strong>Otra realización</strong> sin
           tocar nada más: la teoría no cambia, pero cada muestra dibuja su propio correlograma. Y prueba la redundancia
@@ -1855,7 +1858,8 @@ x = procesos["ar1"].generate_sample(nsample=200, burnin=100,
         <h4><i class="fas fa-chart-column" aria-hidden="true"></i> Teórica frente a muestral, $T = 200$</h4>
         <p class="simulador-intro">Tres procesos de orden conocido. Fíjate sobre todo en los rezagos donde la teoría
           dice <strong>exactamente cero</strong>: la muestra pone ahí valores pequeños pero no nulos, y alguno se
-          asoma fuera de la banda. Eso, y no otra cosa, es lo que ves en un correlograma real.</p>
+          asoma fuera de la banda (va en rojo y con un rombo, y la lectura dice en qué rezago). Eso, y no otra
+          cosa, es lo que ves en un correlograma real.</p>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">ACF</p>
         <div class="grafico-wrapper" style="height:200px;">
@@ -2291,11 +2295,11 @@ print(round(2 * np.pi / np.angle(raices[0]), 4))   # 10.7365
           <canvas aria-label="Residuales del modelo seleccionado" role="img"></canvas>
         </div>
         <p class="grafico-etiqueta">ACF de los residuales</p>
-        <div class="grafico-wrapper" style="height:180px;">
+        <div class="grafico-wrapper" style="height:200px;">
           <canvas aria-label="Función de autocorrelación de los residuales" role="img"></canvas>
         </div>
-        <p class="grafico-etiqueta">$p$-valor de Ljung–Box por rezago</p>
-        <div class="grafico-wrapper" style="height:180px;">
+        <p class="grafico-etiqueta">$p$-valor de Ljung–Box por rezago (eje ampliado: de $0$ a $0.10$)</p>
+        <div class="grafico-wrapper" style="height:230px;">
           <canvas aria-label="p-valor de la prueba de Ljung-Box acumulada por rezago" role="img"></canvas>
         </div>
         <div class="simulador-lectura"></div>

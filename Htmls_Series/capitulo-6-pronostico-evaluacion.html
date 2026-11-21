@@ -5834,7 +5834,7 @@ round(c(d_1872_1930 = sd(diff(x[1:60])), d_1931_1970 = sd(diff(x[60:100]))), 1)
     //     retardos u horizontes —enteros seguidos que empiezan por debajo de
     //     12: k, j, h—, los múltiplos de un divisor de 12 (1, 2, 3, 4, 6, 12,
     //     24…), de modo que el 12 y el 24 salgan siempre que el eje llegue a
-    //     ellos; y el primer valor, si cabe (el horizonte 1). Lo decide la
+    //     ellos; y el 1 (el rezago o el horizonte 1), siempre. Lo decide la
     //     forma de las etiquetas, no el título del eje: en un gráfico de
     //     barras, siempre; en uno de líneas, hasta 60 valores (más son los
     //     instantes de una serie, que van con paso redondo).
@@ -5922,15 +5922,39 @@ round(c(d_1872_1930 = sd(diff(x[1:60])), d_1931_1970 = sd(diff(x[60:100]))), 1)
           [1, 2, 2.5, 5].forEach(f => candidatos.push(f * p0 * Math.pow(10, k)));
         }
       }
+      const paso = eje.width / (hasta - desde + 1);
+      const texto = t => Math.max(1, t.length) * fuente * 0.62;
       for (const p of candidatos) {
         if (p < h * (1 - 1e-6) || !multiplo(p, h)) continue;
-        const marcas = elegidas(p);
+        let marcas = elegidas(p);
         if (marcas.length <= caben) {
+          // Si del paso elegido no salen dos marcas, el eje es demasiado
+          // estrecho para rotularlo aquí: se deja a Chart.js, como siempre.
           if (marcas.length < 2) return false;
-          // El primer valor de un eje de rezagos (el rezago o el horizonte
-          // 1), si no es ya una marca y hay sitio hasta la siguiente
-          if (cuentaRezagos && marcas[0] > desde && marcas.length < caben &&
-              (marcas[0] - desde) * (eje.width / (hasta - desde + 1)) >= ancho) {
+          if (cuentaRezagos && valores[0] === 1 && marcas[0] > desde) {
+            // El rezago 1 (o el horizonte 1) lleva siempre su número: es donde
+            // se lee un AR(1) frente a un AR(2), o dónde se corta un MA. Antes
+            // solo se rotulaba si sobraba sitio, y a 800 y 375 px no sobraba
+            // nunca. Ahora se antepone al paso ya elegido —que no cambia—, y
+            // se quitan las marcas que se le montarían (la del 2 o la del 3,
+            // según el ancho). El 1 cuenta para el tope de marcas del eje
+            // (`maxMarcas`): si con él se pasa, se quita la marca siguiente,
+            // y no una de cada dos, que es lo que haría Chart.js. Un múltiplo
+            // de 12 no se quita nunca; si no hay otra que quitar, el eje se
+            // queda sin el 1.
+            const fija = i => multiplo(valores[i - desde], 12);
+            const junto = i => (i - desde) * paso <
+              (texto(etiquetas[desde]) + texto(etiquetas[i])) / 2 + 4;
+            const resto = marcas.filter(i => !junto(i) || fija(i));
+            while (resto.length + 1 > tope) {
+              const k = resto.findIndex(i => !fija(i));
+              if (k < 0) break;
+              resto.splice(k, 1);
+            }
+            if (resto.length + 1 <= tope) marcas = [desde].concat(resto);
+          } else if (cuentaRezagos && marcas[0] > desde &&
+              marcas.length < caben && (marcas[0] - desde) * paso >= ancho) {
+            // Otro primer valor (un eje que empieza en 2 o en 3), si hay sitio
             marcas.unshift(desde);
           }
           eje.ticks = marcas.map(i => ({ value: i }));
@@ -6395,6 +6419,16 @@ round(c(d_1872_1930 = sd(diff(x[1:60])), d_1931_1970 = sd(diff(x[60:100]))), 1)
     }
     let anuncioPendiente = null;
 
+    // Signo menos tipográfico en las cifras de un texto: «-0.634» pasa a
+    // «−0.634», como en las tablas y en los ejes. Solo toca el guion que abre
+    // una cifra (al principio, o tras un espacio, un paréntesis, un igual, una
+    // coma…): «1770-1869», «2015-01», «AR(1)-GARCH» o «e-05» quedan como están,
+    // y lo que va dentro de una etiqueta HTML no se mira.
+    function conSignoMenos(texto) {
+      return String(texto).split(/(<[^>]*>)/).map((trozo, i) => i % 2 ? trozo
+        : trozo.replace(/(^|[\s(\[=:,;±×|])-(?=\.?\d)/g, '$1−')).join('');
+    }
+
     // Escribe una lectura numérica bajo un simulador. Lo que se ve cambia al
     // instante; lo que se anuncia, no: la lectura se reescribe en cada paso
     // del deslizador, y una región viva sobre ella encolaría una frase larga
@@ -6402,7 +6436,7 @@ round(c(d_1872_1930 = sd(diff(x[1:60])), d_1931_1970 = sd(diff(x[60:100]))), 1)
     // la región común. El primer llenado (al abrir el módulo) no se anuncia.
     function actualizarLectura(elemento, campos) {
       elemento.innerHTML = campos
-        .map(c => `<span><b>${c.etiqueta}</b> ${c.valor}</span>`)
+        .map(c => `<span><b>${conSignoMenos(c.etiqueta)}</b> ${conSignoMenos(c.valor)}</span>`)
         .join('');
       if (!elemento.dataset.lecturaLista) {
         elemento.dataset.lecturaLista = 'si';
@@ -6415,6 +6449,27 @@ round(c(d_1872_1930 = sd(diff(x[1:60])), d_1931_1970 = sd(diff(x[60:100]))), 1)
         regionDeAnuncios().textContent =
           Array.from(elemento.children, s => s.textContent.trim()).join('; ');
       }, 700);
+    }
+
+    // Cifra de una lectura, escrita como en las tablas y en los ejes: punto
+    // decimal, miles agrupados con un espacio fino desde cinco cifras enteras
+    // (338 834; con cuatro van juntas) y signo menos tipográfico.
+    function cifra(x, decimales) {
+      const s = Math.abs(x).toFixed(decimales);
+      const partes = s.split('.');
+      const entero = partes[0].length >= 5
+        ? partes[0].replace(/\B(?=(\d{3})+$)/g, '\u202F') : partes[0];
+      const negativo = x < 0 && Number(s) !== 0;
+      return (negativo ? '−' : '') + entero + (partes[1] ? '.' + partes[1] : '');
+    }
+
+    // Lo que un correlograma muestra, para el `aria-label` de su lienzo:
+    // cuántas barras se salen de la banda y cuánto vale la primera. Se
+    // reescribe cada vez que el simulador cambia de serie o de parámetro.
+    function descripcionCorrelograma(tipo, nombre, valores, b) {
+      const fuera = valores.filter(r => Math.abs(r) > b).length;
+      return `${tipo} de ${nombre}, rezagos 1 a ${valores.length}: ${fuera} de ${valores.length} ` +
+        `barras fuera de la banda ±${b.toFixed(3)}; la del rezago 1 vale ${cifra(valores[0], 3)}`;
     }
 
     // ================================================================

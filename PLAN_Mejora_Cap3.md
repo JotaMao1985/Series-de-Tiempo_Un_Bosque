@@ -169,6 +169,18 @@ Cada una lleva mi recomendación; las decide Javier.
   557/557. Caps. 4–6 idénticos. El verificador independiente halló 8 puntos; corregidos 6, dos menores
   anotados (`diagnostico/cap3/R1_verificacion.md`).
 
+- **R2 · gráficas — hecha el 2026-11-21, sin publicar.** En el armazón (cap. 2 → 3–6, D3): el rezago 1 rotulado
+  en todos los correlogramas a 800 y 375 px sin que ningún eje pierda rótulos ni el 12, el 24 o el 36 (prueba
+  sintética de 3850 ejes), y el signo menos en las lecturas; los caps. 4–6 reciben el mismo diff, solo del
+  armazón. En el cap. 3: los procesos explosivos se ven despegar, la ACF teórica se oculta cuando no existe,
+  ejes de los gráficos de dispersión con ±2, ±1 y ±0.5, la muestral en gris (3.04:1), el panel de Ljung–Box del
+  M8 en un eje de 0 a 0.10 donde 0.0461 queda bajo la línea, el M6 con un rombo en lo que se asoma, los π del M4
+  en eje logarítmico con signo, alturas de 98–149 px en estrecho, y `aria-label` que cambian con el estado. De
+  los 42 problemas del diagnóstico: 30 arreglados, 5 en parte, 2 en la R1, 5 leves sin tocar
+  (`diagnostico/cap3/R2_cambios.md`). El verificador independiente halló 9 puntos, entre ellos un error nuevo
+  (la PACF del ARMA(1,1) «nula» por redondeo) y una regresión del eje en el cap. 5; corregidos 6, tres leves
+  anotados (`diagnostico/cap3/R2_verificacion.md`).
+
 ## 5. Criterios de aceptación
 
 - [ ] Cada uno de los errores de C1 tiene su comprobación en R y deja de reproducirse.
