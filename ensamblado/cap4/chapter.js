@@ -686,7 +686,7 @@
         ];
         campos.push(degenerado
           ? { etiqueta: '⚠ diagnóstico', valor: 'raíz unitaria en el MA: sobrediferenciado' }
-          : { etiqueta: 'diagnóstico', valor: d === 1 ? 'mínimo de varianza' : 'sin diferenciar' });
+          : { etiqueta: 'diagnóstico', valor: d === 1 ? 'raíz MA fuera del círculo' : 'sin diferenciar' });
         actualizarLectura(lectura, campos);
       }
 
@@ -789,7 +789,7 @@
         clave: 'modelo', etiqueta: 'Modelo',
         opciones: [
           { valor: 'd0', texto: 'ARIMA(1,0,1) con media — vuelve a la media' },
-          { valor: 'd1', texto: 'ARIMA(1,1,1) sin constante — se queda plano' },
+          { valor: 'd1', texto: 'ARIMA(1,1,1) sin constante — se aplana' },
           { valor: 'd1_deriva', texto: 'ARIMA(1,1,1) con deriva — recta' },
           { valor: 'd2', texto: 'ARIMA(1,2,1) — recta, e intervalo enorme' }
         ]
@@ -1215,14 +1215,14 @@
         pregunta: 'Marca <strong>todas</strong> las afirmaciones correctas sobre la constante en un modelo ARIMA.',
         pista: 'Son tres. Piensa en: qué significa la constante cuando $d = 1$, qué hace <code>stats::arima</code> con <code>include.mean</code> si $d \\ge 1$, y qué grado de tendencia genera cada $d$.',
         opciones: [
-          { texto: 'Con $d = 1$ la constante es la media de las <em>diferencias</em>, es decir una tendencia lineal en la serie original.', correcta: true },
+          { texto: 'Con $d = 1$ la deriva, $\\mu_w = c/\\phi(1)$, es la media de las <em>diferencias</em>: una tendencia lineal en la serie.', correcta: true },
           { texto: 'Con $d \\ge 1$, <code>stats::arima</code> ignora <code>include.mean</code> sin avisar.', correcta: true },
           { texto: 'Sin constante, un modelo con $d = 2$ pronostica una parábola.', correcta: false },
           { texto: 'Con $d \\ge 2$, <code>forecast::Arima</code> avisa y no ajusta la deriva.', correcta: true },
           { texto: 'La constante de un ARIMA($p,0,q$) es la ordenada al origen de una regresión, no la media del proceso.', correcta: false }
         ],
         retroAcierto: 'Las tres. Y las dos falsas son justo las que el capítulo desmiente midiendo: con $d = 2$ y sin constante la segunda diferencia del pronóstico tiende a cero ($\\nabla^2\\hat y \\to 0$), es decir a largo plazo sale una <strong>recta</strong>; y el <code>intercept</code> que devuelve R para un ARIMA($p,0,q$) <strong>es</strong> la media del proceso, $920.70$ en el Nilo, pese al nombre.',
-        retroFallo: 'Las tres correctas son las que hablan de la constante con $d = 1$, de <code>include.mean</code> con $d \\ge 1$ y de la deriva con $d \\ge 2$. Sobre las falsas: la parábola necesitaría constante <em>con</em> $d = 2$, y <code>forecast</code> se niega precisamente a eso; sin constante, el pronóstico con $d = 2$ es una recta (lo verifica el Módulo 9 midiendo $\\nabla^2\\hat y$). Y el <code>intercept</code> de R en un modelo con $d = 0$ es la media, no una ordenada al origen: el nombre despista.'
+        retroFallo: 'Las tres correctas son las que hablan de la deriva con $d = 1$ (que es $\\mu_w = c/\\phi(1)$, no la $c$ de la ecuación salvo con $p = 0$), de <code>include.mean</code> con $d \\ge 1$ y de la deriva con $d \\ge 2$. Sobre las falsas: la parábola necesitaría constante <em>con</em> $d = 2$, y <code>forecast</code> se niega precisamente a eso; sin constante, el pronóstico con $d = 2$ es una recta (lo verifica el Módulo 9 midiendo $\\nabla^2\\hat y$). Y el <code>intercept</code> de R en un modelo con $d = 0$ es la media, no una ordenada al origen: el nombre despista.'
       },
       {
         tipo: 'opcion',
@@ -1267,7 +1267,7 @@
           {
             texto: 'Es un AR de orden alto, porque hay muchas barras fuera de la banda.',
             correcta: false,
-            retro: 'Es el error de principiante más caro del capítulo. Un AR estacionario tiene una ACF que decae <strong>geométricamente</strong> y acaba entrando en la banda; esta lleva veinte rezagos sin acercarse a cero. Lo que ves no es memoria larga del proceso: es que el nivel de la serie está vagando.'
+            retro: 'Es el error de principiante más caro del capítulo. Un AR estacionario tiene una ACF que decae <strong>geométricamente</strong> y pronto entra en la banda; esta baja despacio y, pasado el rezago 3, sigue fuera de la banda en $8$ de los $17$ rezagos que quedan hasta el 20 (aún $0.237$ en el 13). Lo que ves no es memoria del proceso: es que el nivel de la serie se mueve.'
           },
           {
             texto: 'Es un MA($q$) con $q$ igual al número de barras significativas.',
@@ -1277,12 +1277,12 @@
           {
             texto: 'Que $d = 1$, porque el primer valor es $0.498$, cercano a $0.5$.',
             correcta: false,
-            retro: 'La conclusión sobre $d$ es correcta pero el argumento no: el valor de $\\hat\\rho_1$ no determina $d$. Lo que indica no estacionariedad es la <strong>forma</strong> del decaimiento —lento y sin cortar—, no la altura de la primera barra. Un AR(1) con $\\phi = 0.5$ tendría también $\\rho_1 = 0.5$ y sería perfectamente estacionario.'
+            retro: 'Que la serie no sea estacionaria es razonable, pero de ahí no sale $d = 1$, y el argumento tampoco sirve: el valor de $\\hat\\rho_1$ no determina $d$. Lo que indica no estacionariedad es la <strong>forma</strong> del decaimiento —lento y sin cortar—, no la altura de la primera barra. Un AR(1) con $\\phi = 0.5$ tendría también $\\rho_1 = 0.5$ y sería perfectamente estacionario.'
           },
           {
-            texto: 'Nada todavía: esa forma indica no estacionariedad, y hay que diferenciar antes de leer $p$ y $q$.',
+            texto: 'Nada todavía: esa forma indica no estacionariedad, y hay que resolver $d$ antes de leer $p$ y $q$.',
             correcta: true,
-            retro: 'Una ACF que decae despacio y no corta —aquí $0.498,\\ 0.385,\\ 0.328,\\ 0.239,\\dots$— es el retrato de una serie no estacionaria. La tabla de identificación presupone estacionariedad; aplicarla aquí no informa de nada. Tras diferenciar, la ACF corta: solo destacan el rezago 1 ($-0.402$) y, aislado, el 8 ($0.231$).'
+            retro: 'Una ACF que decae despacio y no corta —aquí $0.498,\\ 0.385,\\ 0.328,\\ 0.239,\\dots$— es el retrato de una serie que no es estacionaria alrededor de una media fija: por una raíz unitaria o por un cambio de nivel como el de 1899 (Módulos 3 y 8). La tabla de identificación presupone estacionariedad; aplicarla aquí no informa de nada. Con $d = 1$, la ACF corta: solo destacan el rezago 1 ($-0.402$) y, aislado, el 8 ($0.231$).'
           }
         ]
       },

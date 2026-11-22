@@ -40,8 +40,9 @@ las otras. El detalle, con línea y evidencia, está en `diagnostico/cap4/`; mis
 
 Además, comprobado por mí:
 - **El umbral de 1.01** es el del código de `forecast` 9.0.2 (`minroot < 1 + 0.01` en `myarima`); el
-  artículo dice 1.001. El ARIMA(2,1,2) del Nilo tiene la raíz AR en 1.0009 con CSS-ML, así que **el
-  ejemplo depende del umbral del código, no del del artículo**; con ML la menor raíz AR es 2.2407 ✔.
+  artículo dice 1.001. El ARIMA(2,1,2) del Nilo tiene la raíz AR en 1.0009 con CSS-ML, por debajo de
+  los dos umbrales, así que lo descartaría cualquiera de ellos (corregido el 2026-11-22: antes decía que
+  dependía del umbral del código; lo vio el verificador de la R1); con ML la menor raíz AR es 2.2407 ✔.
 - **La pregunta 4 del quiz** da por cierta «con $d = 1$ la constante es la media de las diferencias».
   En el ARIMA(1,1,1) con deriva, la deriva de `forecast` es −2.88, la constante $c = \mu_w(1-\hat\phi)$
   es −2.10 y la media muestral de las diferencias es −3.84 ✔.
@@ -153,6 +154,26 @@ Cada una lleva mi recomendación; las decide Javier.
 | T4.2 | R4 | Contrastar, marcar, citar y registrar (D8); pie generado; sección 0 a `ensambla_cap5.py`; lecturas del M10 con localizadores leídos | L | R3, T4.1 |
 | T5.1 | R5 | Los «Para practicar» de M1–M9 (D9), con solución calculada en R bajo `#>` | L | R3 |
 | T5.2 | R5 | Ejercicios 1, 2 y 3; quiz | M | R3 |
+
+### Registro de rondas
+
+- **R1 (errores) — hecha el 2026-11-22, sin publicar.** Redactor: `diagnostico/cap4/R1_cambios.md`;
+  verificador independiente: `R1_verificacion.md`, con lo que hizo la sesión maestra al final.
+  - Los dos errores corregidos: la tabla del M9 dice que el ARIMA(1,1,1) sin constante se aplana en
+    842.17, no en el último dato, con un bloque que lo comprueba. La varianza deja de decidir $d$: las
+    evidencias son el gráfico con la ACF, las pruebas y los síntomas de diferenciar de más, con la raíz MA
+    primero y el $\hat\rho_1$ como indicio que falla en los dos sentidos (Módulo 2.7).
+  - Las 7 imprecisiones y los 7 menores del par, más σ̂² (factor 99/97), el AICc de statsmodels y el
+    φ = 0.271 del M5. Las cifras sin generador salen de `genera_cap4.R` (`nilo.sim_raiz_unitaria`) o de
+    un bloque. La TRM se lee de la copia congelada. El M12 queda en pasado.
+  - Tres diapositivas (y las que repetían lo mismo), con su guion: 469 claims, 0 que no coinciden;
+    50 diapositivas a escala ≥ 88 %.
+  - El verificador halló 2 errores, 2 imprecisiones y 7 menores en lo hecho. Entre ellos: el M11 afirmaba
+    que el quiz ya se aplicó, y no consta (vuelve a su texto); la solución del ejercicio 1 leía un $r_1$
+    positivo como prueba de que no sobra la diferencia; y la nueva tercera evidencia no traía la salvedad
+    del cap. 2. También corrigió una frase de §1 de este plan (el 1.0009 queda bajo los dos umbrales).
+  - Verificador de bloques: 762/762 (antes 713/735). `verifica_todo.py`, 11 en verde. Revisión por HTTP
+    sin errores. Caps. 5 y 6 idénticos.
 
 ## 5. Criterios de aceptación
 

@@ -1,0 +1,53 @@
+R 4 6.0 · forecast 9.0.2 · tseries 0.10.62 
+
+== [E1 · M9] ARIMA(1,1,1) sin constante: de 740 a 816.18 y se aplana en 842.17
+ultimo observado: 740 · h = 1, 2, 3, 10, 30: 816.18 835.56 840.49 842.17 842.17 
+limite y_T + (phi*dy_T + theta*e_T)/(1-phi): 842.17 
+primer h con |m_h - limite| < 0.005: 8 
+
+== [E2 · varianza] el cociente de varianzas repite r1 (cap. 2, c2-m7-08)
+Nile       r1 = 0.4984 · 2(1 - r1) = 1.0032 · Var(dy)/Var(y) = 0.9871
+log(lynx)  r1 = 0.7851 · 2(1 - r1) = 0.4298 · Var(dy)/Var(y) = 0.4156
+BJsales    r1 = 0.9833 · 2(1 - r1) = 0.0334 · Var(dy)/Var(y) = 0.0045
+r1 de la serie diferenciada (sintoma de sobrediferenciar si se acerca a -0.5):
+  Nile       d = 1: -0.4020 · d = 2: -0.6264
+  log(lynx)  d = 1: 0.5649 · d = 2: 0.0498
+  BJsales    d = 1: 0.3118 · d = 2: -0.4756
+
+== [I · M2] raiz MA unitaria con pareja AR: el ARIMA(2,1,2) de la TRM
+AR: 1.0042 1.0042 · MA: 1 1 
+
+== [I · sigma2] arima(ML) frente a Arima(): el factor 99/97
+arima ML sigma2 = 19769.29 · Arima defecto (CSS-ML) = 20176.91 · Arima method='ML' = 20176.92
+razon Arima/arima = 1.02062 · 99/97 = 1.02062
+SCR = 1957160.74 · SCR/97 = 20176.91 · SCR/99 = 19769.30
+codigo de forecast::Arima que reescala sigma2:
+        tmp$sigma2 <- sum(tmp$residuals^2, na.rm = TRUE)/(nstar - 
+BJsales ARIMA(1,1,1): arima ML sigma2 = 1.7755 · Arima = 1.7999 · razon = 1.01376 · 149/147 = 1.01361
+
+== [I · M7] ARIMA(2,1,2) del Nilo segun el estimador
+CSS-ML logL = -630.169 · AICc = 1270.98 · min|raiz AR| = 1.0009 · min|raiz MA| = 1.0064
+ML     logL = -630.445 · AICc = 1271.54 · min|raiz AR| = 2.2407 · min|raiz MA| = 1.1218
+stats::arima ML: logL = -630.445 · min|raiz AR| = 2.2407
+
+== [I · quiz 4] deriva frente a c y a la media muestral de las diferencias
+    ar1     ma1   drift 
+ 0.2707 -0.9054 -2.8827 
+c = drift*(1-phi): -2.1 · media de las diferencias: -3.84 
+
+== [M · M9] ARIMA(1,0,1): la 'media' segun el estimador
+Arima (CSS-ML): 920.5567 · arima ML: 920.7037 
+
+== [N1 · M3] Monte Carlo: PP y ADF con raiz unitaria verdadera (replica de verifica_directo_r46_cap4.R)
+PP rechaza: 1 · adf.test(k = 4) rechaza: 0.513 
+
+== [N2-N4 · M9/M10] TRM: cobertura del 80 % a un mes, asimetria, razon de cuadrados medios
+cubre el 80 % a un mes: 0.8394 ( 115 de 137 )
+asimetria de los cambios mensuales: 0.7605 · de los residuales: 0.7643 
+cuadrado medio de los cambios a h = 3, 6, 12 / (h sigma2): 1.0967 1.1443 1.0686 
+con solo rho1 = 0.0876 : 1 + 2 rho1 (h-1)/h = 1.1167 1.1459 1.1605 
+cobertura del 95 % a 12 meses dentro de la muestra: 0.9127 
+
+== [M · M10] efecto Working: rho1 de los cambios del promedio mensual de una caminata diaria
+rho1 simulado (m = 21): 0.2695 · limite teorico (m^2 - 1)/(2(2m^2 + 1)): 0.2492 
+rho1 de la TRM: 0.0876 · e.e. aprox 1/sqrt(137): 0.0854 

@@ -305,7 +305,11 @@ cat(sprintf("   Ljung-Box(10) p = %.4f | Ljung-Box(20) p = %.4f | Shapiro p = %.
 cat(sprintf("   |raiz AR| = %.4f (>1: estacionario tras diferenciar) | |raiz MA| = %.4f (>1: invertible)\n",
             diagnostico$raices$ar_modulo, diagnostico$raices$ma_modulo))
 
-# ---- arima(ML) frente a Arima(CSS-ML): mismos coeficientes, distinta sigma^2 --
+# ---- arima(ML) frente a Arima(): mismos coeficientes, distinta sigma^2 -------
+# La diferencia de sigma^2 NO viene de CSS-ML frente a ML (Arima(method = "ML")
+# da la misma 20176.92): forecast::Arima reescala la suma de cuadrados de los
+# residuales por los grados de libertad, SCR / (n* - k) = SCR / 97, mientras
+# stats::arima da la de máxima verosimilitud, SCR / n* = SCR / 99.
 final_cssml <- Arima(nilo, order = c(1, 1, 1))     # método por defecto de forecast
 metodos_estimacion <- list(
   ml = list(ar1 = round(as.numeric(final$coef["ar1"]), 6),
@@ -315,12 +319,13 @@ metodos_estimacion <- list(
                 ma1 = round(as.numeric(coef(final_cssml)["ma1"]), 6),
                 sigma2 = round(as.numeric(final_cssml$sigma2), 2)),
   dif_relativa_sigma2 = round(abs(final_cssml$sigma2 - final$sigma2) / final$sigma2, 5),
-  nota = paste("stats::arima(method='ML') y forecast::Arima() (CSS-ML por defecto)",
-               "dan coeficientes iguales a 5 decimales pero sigma^2 distinta:",
-               "el ancho de los intervalos hereda esa diferencia.")
+  nota = paste("stats::arima(method='ML') y forecast::Arima() dan coeficientes iguales",
+               "a 5 decimales pero sigma^2 distinta: Arima divide la suma de cuadrados",
+               "de los residuales entre n* - k = 99 - 2 y arima entre n* = 99 (razon",
+               "99/97). El ancho de los intervalos hereda esa diferencia.")
 )
 diagnostico$metodos_estimacion <- metodos_estimacion
-cat(sprintf("   ML vs CSS-ML: coeficientes iguales a 5 decimales, sigma^2 %.2f vs %.2f (%.2f%%)\n",
+cat(sprintf("   arima(ML) vs Arima(): coeficientes iguales a 5 decimales, sigma^2 %.2f vs %.2f (%.2f%%, razon 99/97)\n",
             metodos_estimacion$ml$sigma2, metodos_estimacion$css_ml$sigma2,
             100 * metodos_estimacion$dif_relativa_sigma2))
 
@@ -992,6 +997,33 @@ if (file.exists(ruta_fase0)) {
 }
 
 # ============================================================================
+# 11b. NILO — PP y ADF cuando la raíz unitaria SÍ existe (Módulo 3)
+# ============================================================================
+# Se simula el ARIMA(1,1,1) del Nilo con raíz unitaria verdadera y se cuenta
+# cuántas veces rechaza cada prueba. Con un MA fuerte y negativo, PP rechaza
+# casi siempre una raíz unitaria que sí está: por eso su -6.690 apenas informa.
+# Va al final y con su propia semilla para no mover ninguna cifra anterior.
+set.seed(2026)
+phi_sim <- round(as.numeric(final$coef["ar1"]), 4)
+theta_sim <- round(as.numeric(final$coef["ma1"]), 4)
+N_REP_RU <- 1000
+rech_pp <- 0; rech_adf <- 0
+for (i in seq_len(N_REP_RU)) {
+  x <- 900 + cumsum(arima.sim(list(ar = phi_sim, ma = theta_sim), n = n_nilo))
+  if (suppressWarnings(PP.test(x)$p.value) < 0.05) rech_pp <- rech_pp + 1
+  if (suppressWarnings(adf.test(x, k = 4)$p.value) < 0.05) rech_adf <- rech_adf + 1
+}
+sim_raiz_unitaria <- list(
+  modelo = "ARIMA(1,1,1) con los coeficientes del Nilo, raiz unitaria verdadera",
+  phi = phi_sim, theta = theta_sim, n = n_nilo, n_replicas = N_REP_RU, nivel = 0.05,
+  pp_rechaza = round(rech_pp / N_REP_RU, 4),
+  adf_k4_rechaza = round(rech_adf / N_REP_RU, 4))
+cat("\n=== NILO: PP y ADF con raíz unitaria verdadera ===\n")
+cat(sprintf("   %d réplicas (phi = %.4f, theta = %.4f): PP.test rechaza %.1f%% | adf.test(k = 4) %.1f%%\n",
+            N_REP_RU, phi_sim, theta_sim, 100 * sim_raiz_unitaria$pp_rechaza,
+            100 * sim_raiz_unitaria$adf_k4_rechaza))
+
+# ============================================================================
 # 12. Escritura de las salidas
 # ============================================================================
 
@@ -1021,7 +1053,8 @@ datos <- list(
     sobrediferenciacion = sobredif,
     hyndman_khandakar = hk,
     formas_pronostico = formas,
-    intervalos = intervalos
+    intervalos = intervalos,
+    sim_raiz_unitaria = sim_raiz_unitaria
   ),
   trm = trm_caso,
   puente_estacional = puente,

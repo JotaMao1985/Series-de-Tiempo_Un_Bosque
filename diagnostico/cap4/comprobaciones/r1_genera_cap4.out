@@ -1,0 +1,192 @@
+Series cargadas: Nilo n = 100 | TRM n = 138 | AirPassengers n = 144 
+Warning messages:
+1: In adf.test(dif(nilo, 1)) : p-value smaller than printed p-value
+2: In adf.test(dif(nilo, 1)) : p-value smaller than printed p-value
+3: In adf.test(dif(nilo, 1)) : p-value smaller than printed p-value
+4: In kpss.test(nilo) : p-value smaller than printed p-value
+5: In kpss.test(nilo) : p-value smaller than printed p-value
+6: In kpss.test(dif(nilo, 1)) : p-value greater than printed p-value
+7: In kpss.test(dif(nilo, 1)) : p-value greater than printed p-value
+
+=== NILO: identificación ===
+ADF nivel: -3.3657 (p = 0.0642, k = 4) | KPSS nivel: 0.9654 (p = 0.0100)
+ADF d=1  : -6.5924 (p = 0.0100)          | KPSS d=1  : 0.0233 (p = 0.1000)
+ndiffs: kpss = 1, adf = 0, pp = 0
+   var(d = 0) =   28637.95  (n = 100)
+   var(d = 1) =   28268.34  (n = 99)
+   var(d = 2) =   80055.01  (n = 98)
+   var(d = 3) =  262507.29  (n = 97)
+
+=== NILO: rejilla ARIMA(p,d,q) ===
+modelo             n_ef    loglik      AICc       BIC  LB(20) p
+ARIMA(0,0,0)        100   -654.52   1313.16   1318.24    0.0000
+ARIMA(0,0,1)        100   -644.72   1295.69   1303.26    0.0001
+ARIMA(0,0,2)        100   -641.74   1291.90   1301.90    0.0080
+ARIMA(1,0,0)        100   -639.95   1286.15   1293.72    0.2117
+ARIMA(1,0,1)        100   -637.04   1282.50   1292.50    0.6954  <- min AICc (d=0)  <- min BIC (d=0)
+ARIMA(1,0,2)        100   -636.53   1283.70   1296.09    0.7003
+ARIMA(2,0,0)        100   -637.98   1284.38   1294.38    0.4731
+ARIMA(2,0,1)        100   -636.27   1283.18   1295.56    0.7038
+ARIMA(2,0,2)        100   -636.12   1285.14   1299.87    0.6419
+ARIMA(0,1,0)         99   -647.35   1296.74   1299.29    0.0100
+ARIMA(0,1,1)         99   -632.55   1269.22   1274.28    0.6737  <- min BIC (d=1)
+ARIMA(0,1,2)         99   -630.98   1268.21   1275.74    0.7959
+ARIMA(1,1,0)         99   -638.74   1281.61   1286.67    0.1853
+ARIMA(1,1,1)         99   -630.63   1267.51   1275.04    0.7997  <- min AICc (d=1)
+ARIMA(1,1,2)         99   -630.46   1269.35   1279.30    0.7556
+ARIMA(2,1,0)         99   -635.74   1277.74   1285.27    0.3898
+ARIMA(2,1,1)         99   -630.45   1269.32   1279.28    0.7503
+ARIMA(2,1,2)         99   -630.45   1271.54   1283.87    0.6916
+ARIMA(0,2,0)         98   -691.79   1385.61   1388.16    0.0000
+ARIMA(0,2,1)         98   -643.58   1291.28   1296.33    0.0069
+ARIMA(0,2,2)         98   -629.87   1266.00   1273.50    0.6167  <- min BIC (d=2)
+ARIMA(1,2,0)         98   -667.39   1338.91   1343.96    0.0002
+ARIMA(1,2,1)         98   -635.35   1276.95   1284.45    0.1505
+ARIMA(1,2,2)         98   -628.08   1264.60   1274.51    0.7560  <- min AICc (d=2)
+ARIMA(2,2,0)         98   -654.64   1315.54   1323.04    0.0210
+ARIMA(2,2,1)         98   -632.56   1273.55   1283.46    0.3293
+ARIMA(2,2,2)         98   -627.82   1266.30   1278.57    0.7136
+
+AVISO METODOLOGICO: las columnas AICc/BIC solo se comparan DENTRO de un mismo d.
+   n efectivo: d=0 -> 100, d=1 -> 99, d=2 -> 98 observaciones.
+
+=== NILO: modelo final ARIMA(1,1,1) ===
+   ar1      0.2544  (e.e. 0.1194, t =   2.13)
+   ma1     -0.8741  (e.e. 0.0605, t = -14.45)
+   sigma^2 = 19769.29 | AICc = 1267.51 | BIC = 1275.04
+   Ljung-Box(10) p = 0.2863 | Ljung-Box(20) p = 0.7997 | Shapiro p = 0.7312
+   |raiz AR| = 3.9313 (>1: estacionario tras diferenciar) | |raiz MA| = 1.1440 (>1: invertible)
+   arima(ML) vs Arima(): coeficientes iguales a 5 decimales, sigma^2 19769.29 vs 20176.91 (2.06%, razon 99/97)
+
+--- Comparación fuera de muestra (entrena hasta 1950, prueba 20 años) ---
+   ARIMA(1,1,1)             RMSE =  125.05 | MAE =  106.16
+   Escalón 1899 (d = 0)    RMSE =  127.99 | MAE =  106.99
+   Escalón 1899 + AR(1)    RMSE =  128.31 | MAE =  107.40
+   Naïve (último valor)   RMSE =  123.06 | MAE =  101.95
+   Media de la muestra      RMSE =  133.31 | MAE =  108.01
+   sd de los residuales del ARIMA(1,1,1) = 139.67: el abanico de RMSE (123-133)
+   es pequeño frente a él -> los modelos son prácticamente indistinguibles aquí.
+
+--- Monte Carlo: ¿confunde KPSS un escalón con una raíz unitaria? ---
+   1000 réplicas de ruido blanco (n = 100, sigma = 127.0), escalón de -247.8 en t = 29
+   SIN escalón: KPSS rechaza 4.8% | ndiffs(kpss) >= 1 en 5.2% | ndiffs(adf) >= 1 en 0.0%
+   CON escalón: KPSS rechaza 100.0% | ndiffs(kpss) >= 1 en 100.0% | ndiffs(adf) >= 1 en 0.5%
+   (por construcción NINGUNA de estas series tiene raíz unitaria)
+
+--- Malla sobre el tamaño del escalón (para el simulador) ---
+   delta   delta/sd   KPSS medio    % rechazo     ndiffs
+       0       0.00       0.1728         4.5%       0.05
+      25       0.20       0.2150         9.5%       0.10
+      50       0.39       0.3232        22.8%       0.25
+      75       0.59       0.4686        48.2%       0.54
+     100       0.79       0.6360        70.8%       0.78
+     150       1.18       0.8962        96.0%       0.97
+     200       1.57       1.0677       100.0%       1.00
+     250       1.97       1.1709       100.0%       1.00
+     300       2.36       1.2288       100.0%       1.00
+
+=== NILO: el cambio de nivel de 1899 ===
+   media antes = 1097.75 | media después = 849.97 | escalón = -247.78 (e.e. 28.15, t = -8.80)
+   AICc del escalón solo = 1257.91 | con AR(1) = 1257.50 | mejor d=0 de la rejilla = 1282.50
+   Ljung-Box(20) de los residuales del escalón: p = 0.8124
+
+=== NILO: sobrediferenciación ===
+  d     n     varianza   ACF(1) theta MA(1)     e.e.
+  0   100     28637.95   0.4984     0.3783   0.0791
+  1    99     28268.34  -0.4020    -0.7329   0.1143
+  2    98     80055.01  -0.6264    -1.0000   0.0254
+  3    97    262507.29  -0.7188    -1.0000   0.0253
+   -> theta se acerca a -1: es la firma de haber diferenciado de más.
+
+=== NILO: Hyndman-Khandakar ===
+Búsqueda escalonada: 18 modelos evaluados -> ARIMA(1,1,1) (AICc 1267.507)
+   ARIMA(2,1,2) with drift            AICc        Inf 
+   ARIMA(0,1,0) with drift            AICc   1298.770   <- mejora
+   ARIMA(1,1,0) with drift            AICc   1283.598   <- mejora
+   ARIMA(0,1,1) with drift            AICc   1270.562   <- mejora
+   ARIMA(0,1,0)                       AICc   1296.738 
+   ARIMA(1,1,1) with drift            AICc   1268.063   <- mejora
+   ARIMA(2,1,1) with drift            AICc   1269.777 
+   ARIMA(1,1,2) with drift            AICc   1269.779 
+   ARIMA(0,1,2) with drift            AICc   1268.969 
+   ARIMA(2,1,0) with drift            AICc   1279.708 
+   ARIMA(1,1,1)                       AICc   1267.507   <- mejora
+   ARIMA(0,1,1)                       AICc   1269.216 
+   ARIMA(1,1,0)                       AICc   1281.605 
+   ARIMA(2,1,1)                       AICc   1269.322 
+   ARIMA(1,1,2)                       AICc   1269.348 
+   ARIMA(0,1,2)                       AICc   1268.210 
+   ARIMA(2,1,0)                       AICc   1277.737 
+   ARIMA(2,1,2)                       AICc        Inf 
+Búsqueda exhaustiva: 42 modelos -> ARIMA(1,1,1) (AICc 1267.507)
+   Cinco mejores de la búsqueda completa:
+      ARIMA(1,1,1)                       1267.507
+      ARIMA(1,1,1) with drift            1268.063
+      ARIMA(0,1,2)                       1268.210
+      ARIMA(0,1,2) with drift            1268.969
+      ARIMA(0,1,1)                       1269.216
+   Coinciden: TRUE | diferencia de AICc = 0.000
+
+=== NILO: forma del pronóstico e intervalos ===
+   ARIMA(1,0,1) con media         y_T+1 =   800.31 | y_T+30 =   918.99 | ancho95(h=30) =   677.33
+   ARIMA(1,1,1) sin constante     y_T+1 =   816.18 | y_T+30 =   842.17 | ancho95(h=30) =   781.49
+   ARIMA(1,1,1) con deriva        y_T+1 =   799.19 | y_T+30 =   738.63 | ancho95(h=30) =   708.25
+   ARIMA(1,2,1)                   y_T+1 =   724.16 | y_T+30 =   610.05 | ancho95(h=30) =  2771.45
+   psi_j -> 0.1688 (constante, no 0: hay raíz unitaria)
+   sigma_h: h=1 -> 142.05, h=30 -> 199.36 (razón 1.40)
+   VERIFICACIÓN psi vs. forecast(): error máximo = 9.08e-11 (sin redondear) / 4.23e-03 (con el redondeo del JSON)
+   Forma MEDIDA de cada pronóstico (1ª y 2ª diferencia al final del horizonte):
+      ARIMA(1,0,1) con media         Δ(h=30) =   0.2535 | Δ²(h=30) = -0.040903 | ancho95 561 -> 677
+      ARIMA(1,1,1) sin constante     Δ(h=30) =   0.0000 | Δ²(h=30) =  0.000000 | ancho95 557 -> 781
+      ARIMA(1,1,1) con deriva        Δ(h=30) =  -2.8827 | Δ²(h=30) = -0.000000 | ancho95 555 -> 708
+      ARIMA(1,2,1)                   Δ(h=30) =  -4.0493 | Δ²(h=30) =  0.000000 | ancho95 613 -> 2771
+   Deriva con d = 2: No drift term fitted as the order of difference is 2 or more.
+Warning messages:
+1: In kpss.test(trm) : p-value smaller than printed p-value
+2: In kpss.test(trm) : p-value smaller than printed p-value
+3: In kpss.test(dif(trm, 1)) : p-value greater than printed p-value
+4: In kpss.test(dif(trm, 1)) : p-value greater than printed p-value
+
+=== TRM en niveles ===
+ADF nivel -1.9783 (p = 0.5855) | KPSS nivel 2.2427 (p = 0.0100) | ndiffs = 1, nsdiffs = 0
+ADF d=1   -3.8801 (p = 0.0172) | KPSS d=1   0.2415 (p = 0.1000)
+modelo                AICc       BIC  LB(20) p
+ARIMA(0,1,0)       1705.94   1708.83    0.1890  <- min BIC
+ARIMA(0,1,1)       1706.70   1712.45    0.2827
+ARIMA(0,1,2)       1708.63   1717.21    0.2847
+ARIMA(1,1,0)       1706.81   1712.56    0.2550
+ARIMA(1,1,1)       1708.69   1717.27    0.2612
+ARIMA(1,1,2)       1710.71   1722.09    0.2422
+ARIMA(2,1,0)       1708.56   1717.14    0.3075
+ARIMA(2,1,1)       1710.63   1722.01    0.2647
+ARIMA(2,1,2)       1703.38   1717.52    0.7218  <- min AICc
+auto.arima (exhaustiva, 192 modelos) -> ARIMA(0,1,0)
+Caminata aleatoria ARIMA(0,1,0): Ljung-Box(20) p = 0.1890 | Shapiro p = 0.0006
+Deriva: 8.0009 (e.e. 10.3559, t = 0.77) -> NO significativa
+Ljung-Box(12) sobre los residuales AL CUADRADO: p = 0.8570
+MÍNIMO DE AICc DEGENERADO: ARIMA(2,1,2) gana 2.56 de AICc al ARIMA(0,1,0)
+   |raíces AR| = 1.0042, 1.0042 | |raíces MA| = 1, 1 -> descartado
+
+Modelos degenerados en la rejilla del Nilo (raíz sobre el círculo unitario):
+   ARIMA(0,2,1)     AICc   1291.28 | min|raiz AR| = NA | min|raiz MA| = 1
+   ARIMA(0,2,2)     AICc   1266.00 | min|raiz AR| = NA | min|raiz MA| = 1
+   ARIMA(1,2,1)     AICc   1276.95 | min|raiz AR| = 2.5485 | min|raiz MA| = 1
+   ARIMA(2,2,1)     AICc   1273.55 | min|raiz AR| = 2.0616 | min|raiz MA| = 1
+
+=== Puente al capítulo 5: log(AirPassengers) sin estacionalidad ===
+auto.arima(seasonal = FALSE) -> ARIMA(0,1,5)
+   ACF residual en el rezago 12 = 0.7245 | en el 24 = 0.6727 | banda = 0.1633
+   Ljung-Box(24): Q = 222.398, p = 0.000000 -> el diagnóstico RECHAZA
+   Modelo airline (cap. 5): Ljung-Box(24) p = 0.2330, ACF(12) = -0.0515
+
+=== Verificación contra la rejilla de la Fase 0 ===
+   27 modelos comparados | diferencia máxima de AICc = 0.0000
+   mejor por d — Fase 0: 101, 111, 122 | ahora: 101, 111, 122
+
+=== NILO: PP y ADF con raíz unitaria verdadera ===
+   1000 réplicas (phi = 0.2544, theta = -0.8741): PP.test rechaza 100.0% | adf.test(k = 4) 51.3%
+
+=== Salidas ===
+   cap4_arima.json (81.1 KB)
+   cap4_datos.js (52.2 KB)
+Listo.

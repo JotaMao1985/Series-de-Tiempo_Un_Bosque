@@ -121,9 +121,10 @@
           Asuán entre 1871 y 1970 ($n = 100$, en $10^8\,\text{m}^3$). Antes de mover nada, mira la serie original:
           más que vagar sin rumbo, su nivel parece caer de golpe hacia 1899. Luego sube $d$ y lee los números de
           abajo, no solo el gráfico. La media cae a casi cero, porque diferenciar convierte el caudal en su cambio de
-          un año al siguiente. La varianza, en cambio, apenas baja con $d = 1$ y casi se triplica con $d = 2$. Y
-          $\hat\rho_1$ cambia de signo: con $d = 2$ queda por debajo de $-0.5$, el valor que tendría la diferencia
-          de un ruido blanco. Si diferenciar una vez gana tan poco, ¿hacía falta diferenciar?</p>
+          un año al siguiente. Fíjate sobre todo en $\hat\rho_1$: cambia de signo, y con $d = 2$ queda por debajo
+          de $-0.5$, el valor que tendría la diferencia de un ruido blanco. La varianza apenas baja con $d = 1$ y
+          casi se triplica con $d = 2$, pero no es una pista aparte: el Módulo 3 explica por qué repite lo que ya
+          dice $\hat\rho_1$. ¿Hacía falta diferenciar?</p>
         <div class="simulador-controles"></div>
         <div class="grafico-wrapper" style="height:260px;">
           <canvas aria-label="Serie del Nilo en el nivel de diferenciación seleccionado" role="img"></canvas>
@@ -165,7 +166,7 @@ round(c(var_w = var(w), var_y = var(y), razon = var(y) / var(w)), 3)
 set.seed(2026)
 w0 &lt;- arima.sim(list(ar = 0.2544), n = 200)
 round(var(cumsum(w0)) / var(w0), 1)
-#&gt; [1] 32.8                  aqui integrar la multiplica por 33
+#&gt; [1] 32.8                  aqui integrar la multiplica por 32.8
 
 # arima.sim lo hace directamente con order = c(p, d, q)
 set.seed(2026)
@@ -206,16 +207,17 @@ razon0 = np.mean([np.cumsum(w).var() / w.var()
                   for w in (proceso0.generate_sample(200, distrvs=rng.standard_normal)
                             for _ in range(500))])
 print(round(razon, 3), round(razon0, 1))
-#&gt; 1.363 56.7      con theta = -0.8741 integrar casi no cambia la varianza;
-#&gt;                 sin el termino MA la multiplica por decenas
-#   (en R, con su propio generador, sale 1.006 y 32.8: el mensaje es el mismo)</code></pre>
+#&gt; 1.363 56.7
+#   con el theta del Nilo integrar casi no cambia la varianza; sin el termino
+#   MA la multiplica por decenas (en R, con su propio generador, sale 1.006 y
+#   32.8: el mensaje es el mismo)</code></pre>
         </div>
       </div>
 
       <div class="note">
         <h4><i class="fas fa-magnifying-glass mr-2" aria-hidden="true"></i>Una anomalía que vale la pena guardar</h4>
         <p>En el bloque de arriba pasa algo que no cuadra. Integrar una serie estacionaria debería disparar su
-          varianza —es lo que ocurre sin el término MA, donde se multiplica por $33$— y con los coeficientes reales
+          varianza —es lo que ocurre sin el término MA, donde se multiplica por $32.8$— y con los coeficientes reales
           del Nilo, en esta realización, la deja prácticamente igual: una razón de $1.006$ (el bloque de Python,
           promediando 500 réplicas, obtiene $1.363$; sin el término MA, decenas). La causa está en el valor de
           $\theta$. Escrito con sus raíces, el modelo del Nilo es</p>
@@ -317,9 +319,9 @@ print(round(razon, 3), round(razon0, 1))
         <div class="ciclo-panel" id="ciclo-box-jenkins-identificacion" role="tabpanel">
           <div class="ciclo-campo">
             <span class="ciclo-etiqueta">Qué haces</span>
-            <p>Decidir $(p, d, q)$. <strong>Primero $d$</strong>, mirando el gráfico, la varianza por orden de
-              diferencia y las pruebas de raíz unitaria; y solo después $p$ y $q$, leyendo la ACF y la PACF de la
-              serie <em>ya diferenciada</em>. El orden importa: la ACF de una serie no estacionaria no dice nada
+            <p>Decidir $(p, d, q)$. <strong>Primero $d$</strong>, mirando el gráfico y la ACF, las pruebas de raíz
+              unitaria y, si ya se diferenció, los síntomas de haberlo hecho de más; y solo después $p$ y $q$,
+              leyendo la ACF y la PACF de la serie <em>ya diferenciada</em>. El orden importa: la ACF de una serie no estacionaria no dice nada
               sobre $p$ y $q$ porque no decae.</p>
           </div>
           <div class="ciclo-campo">
@@ -353,7 +355,9 @@ print(round(razon, 3), round(razon0, 1))
               de sobreparametrización): de vuelta a la etapa 1 con $p$ o $q$ más pequeños. Una raíz sobre el círculo
               unitario, o muy cerca, también devuelve, pero el arreglo depende de cuál sea: si es del MA, la serie
               se diferenció de más y hay que <strong>bajar</strong> $d$; si es del AR, le falta una diferencia y hay
-              que <strong>subirlo</strong>.</p>
+              que <strong>subirlo</strong>. Con una salvedad: si el AR tiene una raíz casi igual a la del MA, los dos
+              factores se cancelan entre sí, y lo que sobra no es la diferencia sino $p$ y $q$. Es el caso del
+              ARIMA($2,1,2$) de la TRM del Módulo 10, en una serie donde $d = 1$ no se discute.</p>
           </div>
         </div>
         <div class="ciclo-panel" id="ciclo-box-jenkins-diagnostico" role="tabpanel" hidden>
@@ -424,7 +428,8 @@ ajuste &lt;- arima(Nile, order = c(1, d, 1), method = "ML")
 # ---- Etapa 3: diagnostico -----------------------------------------------
 res &lt;- residuals(ajuste)
 Box.test(res, lag = 20, type = "Ljung-Box", fitdf = 2)$p.value
-#&gt; [1] 0.7997371       &gt; 0.05: no hay evidencia de estructura sobrante
+#&gt; [1] 0.7997371
+# p &gt; 0.05: no hay evidencia de estructura sobrante
 
 # ---- Etapa 4: uso (con el MISMO ajuste de la etapa 2) -------------------
 pron &lt;- forecast(ajuste, h = 10)
@@ -445,15 +450,20 @@ w = np.diff(nilo)
 # Etapa 2
 ajuste = ARIMA(nilo, order=(1, 1, 1), trend="n").fit()
 
-# Etapa 3: model_df descuenta los parametros, como fitdf en R
-lb = acorr_ljungbox(ajuste.resid, lags=[20], model_df=2)
+# Etapa 3: model_df descuenta los parametros, como fitdf en R. El primer
+# "residual" de statsmodels es el dato crudo y_1 = 1120 (arranque difuso),
+# no un error: se descarta, como en los Modulos 4 y 10
+lb = acorr_ljungbox(ajuste.resid[1:], lags=[20], model_df=2)
 print(round(float(lb["lb_pvalue"].iloc[0]), 4))
-#&gt; 0.761     (R da 0.7997: cada programa inicializa el filtro a su manera y
-#&gt;            los primeros residuales difieren. La conclusion no cambia.)
+#&gt; 0.8225
+#   R da 0.7997 (0.8118 sin su primer residual, 1.12): ni los coeficientes
+#   ni el arranque son identicos. La conclusion no cambia: no rechaza.
 
 # Etapa 4
 print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
-#&gt; [816.3  835.75 840.71]     R: 816.18 835.56 840.49</code></pre>
+#&gt; [816.3  835.75 840.71]
+#   R da 816.18, 835.56 y 840.49: los coeficientes no son identicos (difieren
+#   en el cuarto decimal)</code></pre>
         </div>
       </div>
 
@@ -494,16 +504,20 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
             <tr><th>Evidencia</th><th>Qué mirar</th><th>Qué dice sobre el Nilo</th></tr>
           </thead>
           <tbody>
-            <tr><td><strong>1. El gráfico</strong></td><td>¿El nivel vaga sin volver a ningún sitio?
-              ¿Hay saltos?</td><td>A primera vista parece vagar, pero el rasgo dominante es un descenso brusco
-              alrededor de 1899.</td></tr>
-            <tr><td><strong>2. La varianza</strong></td><td>$\operatorname{Var}(\nabla^d y)$ debe
-              <em>bajar</em> y luego <em>subir</em> al pasarse</td><td>$28\,638 \to 28\,268 \to 80\,055 \to
-              262\,507$: el mínimo está en $d = 1$.</td></tr>
-            <tr><td><strong>3. Las pruebas</strong></td><td>ADF y PP ($H_0$: hay raíz unitaria) y KPSS ($H_0$:
+            <tr><td><strong>1. El gráfico y la ACF</strong></td><td>¿El nivel vaga sin volver a ningún sitio?
+              ¿Hay saltos? ¿La ACF decae despacio, sin cortar?</td><td>A primera vista parece vagar, pero el rasgo
+              dominante es un descenso brusco alrededor de 1899. La ACF decae despacio desde $0.498$
+              (Módulo 4).</td></tr>
+            <tr><td><strong>2. Las pruebas</strong></td><td>ADF y PP ($H_0$: hay raíz unitaria) y KPSS ($H_0$:
               es estacionaria)</td><td>ADF de <code>adf.test</code> (constante y tendencia, $k = 4$) $-3.366$
               ($p = 0.064$, no rechaza); KPSS $0.965$ ($p &lt; 0.01$, rechaza la estacionariedad). Estas dos apuntan a
               diferenciar. PP, en cambio, $Z(t_\alpha) = -6.690$ ($p &lt; 0.01$), rechaza la raíz unitaria.</td></tr>
+            <tr><td><strong>3. Los síntomas de haber diferenciado de más</strong></td><td>En el modelo
+              ajustado, una raíz MA cerca de $1$. En la serie diferenciada, un $\hat\rho_1$ cerca de $-0.5$ o por debajo es
+              solo un indicio: falla en los dos sentidos (Módulo 2.7)</td><td>Con $d = 1$, $\hat\rho_1 = -0.402$, no muy
+              lejos de $-0.5$; con $d = 2$, $-0.626$, ya por debajo. La raíz MA del ARIMA($1,1,1$) queda en $1.144$
+              (Módulo 6), más cerca del círculo que la del MA(1) del Módulo 8, en $1.364$; ninguna está sobre
+              él.</td></tr>
           </tbody>
         </table>
       </div>
@@ -524,10 +538,14 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
       <p><code>adf.test()</code> incluye la constante $\alpha_0$ y la tendencia $\alpha_1 t$ con $k = 4$; como se verá
         enseguida, no es la única especificación posible, y el resultado depende de ella.</p>
 
-      <p>La caída de la varianza de $d=0$ a $d=1$ es aquí llamativamente pequeña —de $28\,638$ a $28\,268$, apenas un
-        $1.3\,\%$— mientras que pasar a $d=2$ la casi triplica. Que el mínimo esté en $d=1$ pero por tan poco margen
-        es un aviso: hay algo en esta serie que no encaja con la historia habitual de la raíz unitaria, y el Módulo 8
-        lo destapa.</p>
+      <p>¿Y la varianza de $\nabla^d y$? De $d=0$ a $d=1$ apenas baja —de $28\,638$ a $28\,268$, un
+        $1.3\,\%$— y con $d=2$ casi se triplica. Es una descripción útil, pero <strong>no decide $d$</strong>: el
+        Capítulo 2 (Módulo 2.7) mostró que, en una serie estacionaria, el cociente
+        $\operatorname{Var}(\nabla y)/\operatorname{Var}(y)$ se acerca a $2(1-r_1)$, así que repite lo que ya dice
+        $r_1$, y $r_1$ solo no dice si hay una raíz unitaria. En el Nilo, $r_1 = 0.498$ da $2(1-r_1) = 1.003$, y el
+        cociente medido es $0.987$ (el bloque de código lo calcula): que la varianza casi no cambie es otra forma de
+        decir que $r_1$ está cerca de $0.5$. Lo que esta serie tiene de raro lo destapan el gráfico y, en el
+        Módulo 8, el modelo ajustado.</p>
 
       <div class="warning">
         <h4><i class="fas fa-triangle-exclamation mr-2" aria-hidden="true"></i>Tres pruebas, tres respuestas, la
@@ -668,25 +686,32 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
         <div class="code-tab-panel" data-lang="r">
           <pre><code class="language-r">library(forecast); library(tseries)
 
-# --- Evidencia 2: la varianza por orden de diferencia --------------------
+# --- La varianza por orden de diferencia: describe, pero no decide ------
 # OJO: diff(x, differences = 0) LANZA UN ERROR en R, no es la identidad.
 for (d in 0:3) {
   x &lt;- if (d == 0) Nile else diff(Nile, differences = d)
   cat(sprintf("d = %d  n = %3d  var = %10.2f\n", d, length(x), var(x)))
 }
 #&gt; d = 0  n = 100  var =   28637.95
-#&gt; d = 1  n =  99  var =   28268.34      &lt;- minimo
+#&gt; d = 1  n =  99  var =   28268.34
 #&gt; d = 2  n =  98  var =   80055.01
 #&gt; d = 3  n =  97  var =  262507.29
+# En una serie estacionaria Var(diff(y)) / Var(y) se acerca a 2(1 - r1)
+# (Modulo 2.7): la varianza repite lo que ya dice r1
+r1 &lt;- acf(Nile, plot = FALSE)$acf[2]
+round(c(cociente = var(diff(Nile)) / var(Nile), dos_por_1_menos_r1 = 2 * (1 - r1)), 3)
+#&gt;           cociente dos_por_1_menos_r1
+#&gt;              0.987              1.003
 
-# --- Evidencia 3: las pruebas -------------------------------------------
+# --- Evidencia 2: las pruebas -------------------------------------------
 adf.test(Nile)$p.value          # H0: hay raiz unitaria
-#&gt; [1] 0.06419542                no rechaza (al 5 %): diferenciar
+#&gt; [1] 0.06419542
+# no rechaza al 5 %: apunta a diferenciar
 kpss.test(Nile)$statistic       # H0: es estacionaria
 #&gt; KPSS Level
-#&gt;  0.9654349                    rechaza (p &lt; 0.01): diferenciar
-# (kpss.test avisa "p-value smaller than printed p-value": la tabla se acaba
-#  en 0.01, no es un error)
+#&gt;  0.9654349
+# rechaza (p &lt; 0.01): diferenciar. kpss.test avisa "p-value smaller than
+# printed p-value": la tabla se acaba en 0.01, no es un error
 
 # --- Y las tres respuestas de ndiffs ------------------------------------
 sapply(c("kpss", "adf", "pp"), function(t) ndiffs(Nile, test = t))
@@ -694,6 +719,11 @@ sapply(c("kpss", "adf", "pp"), function(t) ndiffs(Nile, test = t))
 #&gt;    1    0    0            &lt;- el defecto es "kpss", y es el unico que dice 1
 # (el ADF de ndiffs es urca::ur.df(type = "drift", lags = 1): solo constante y
 #  un rezago, no la especificacion con tendencia y k = 4 de adf.test)
+
+# --- Evidencia 3: los sintomas de haber diferenciado de mas --------------
+# r1 de la serie diferenciada: cerca de -0.5, o por debajo, delata que sobra
+round(sapply(1:2, function(d) acf(diff(Nile, differences = d), plot = FALSE)$acf[2]), 3)
+#&gt; [1] -0.402 -0.626
 
 # --- El experimento del escalon -----------------------------------------
 set.seed(2026)
@@ -710,7 +740,7 @@ c(sin_escalon = simula(0), con_el_del_Nilo = simula(-247.78))
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, statsmodels.api as sm
-from statsmodels.tsa.stattools import adfuller, kpss
+from statsmodels.tsa.stattools import adfuller, kpss, acf
 
 nilo = sm.datasets.nile.load_pandas().data["volume"].values
 
@@ -721,6 +751,14 @@ for d in range(4):
 #&gt; d = 1  n =  99  var =   28268.34
 #&gt; d = 2  n =  98  var =   80055.01
 #&gt; d = 3  n =  97  var =  262507.29
+
+# La varianza repite lo que dice r1 (Modulo 2.7); los sintomas de diferenciar
+# de mas se leen en el r1 de la serie diferenciada
+r1 = acf(nilo, nlags=1)[1]
+print(round(np.diff(nilo).var(ddof=1) / nilo.var(ddof=1), 3), round(2 * (1 - r1), 3))
+#&gt; 0.987 1.003
+print([round(float(acf(np.diff(nilo, n=d), nlags=1)[1]), 3) for d in (1, 2)])
+#&gt; [-0.402, -0.626]
 
 # Para reproducir el estadistico de adf.test() de R hacen falta sus opciones:
 est, p, *_ = adfuller(nilo, regression="ct", autolag=None,
@@ -745,7 +783,8 @@ def simula(beta, reps=400):                   # beta = tamano del escalon
                          regression="c", nlags=4)[1] &lt;= 0.05
                     for _ in range(reps)])
 print(simula(0.0), simula(-247.78))
-#&gt; 0.035 1.0     (R: 0.045 y 1.000)</code></pre>
+#&gt; 0.035 1.0
+#   R, con su propio generador, da 0.045 y 1.000</code></pre>
         </div>
       </div>
 

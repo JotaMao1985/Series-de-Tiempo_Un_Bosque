@@ -36,8 +36,8 @@
               <td class="block lg:table-cell pb-1 lg:pb-4 border-b-0 lg:border-b">
                 <strong>1. Identificación de $d$</strong><br><span class="text-gray-500 text-sm">Módulos 1 y 3</span></td>
               <td class="block lg:table-cell pt-0 lg:pt-4">
-                El gráfico muestra un descenso brusco hacia 1899. La varianza apenas baja con $d = 1$
-                ($28\,638 \to 28\,268$, un $1.3\,\%$) y casi se triplica con $d = 2$. Las pruebas no coinciden:
+                El gráfico muestra un descenso brusco hacia 1899, y la ACF decae despacio desde $0.498$. Las
+                pruebas no coinciden:
                 <code>adf.test</code> ($p = 0.064$) y KPSS ($p &lt; 0.01$) apuntan a diferenciar, y PP
                 ($p &lt; 0.01$) rechaza la raíz unitaria. Se sigue a KPSS, la prueba de <code>auto.arima</code>:
                 <strong>$d = 1$</strong>, a título provisional.</td></tr>
@@ -108,8 +108,8 @@
       <div class="note">
         <p><strong>Leído de corrido, el caso deja dos lecciones.</strong> La primera: el ciclo funciona y aun así
           no basta. El ARIMA($1,1,1$) supera cada etapa con las herramientas previstas, y la pista de que $d = 1$
-          podía sobrar asomó en casi todas —la varianza que casi no baja, las pruebas que discrepan, el
-          $\hat\theta$ cerca de $-1$—, pero solo el gráfico la explica. La segunda: la duda final, diferenciar o
+          podía sobrar asomó en casi todas —las pruebas que discrepan, el $\hat\rho_1 = -0.402$ de la serie
+          diferenciada, el $\hat\theta$ cerca de $-1$—, pero solo el gráfico la explica. La segunda: la duda final, diferenciar o
           modelar el escalón, no la resuelve ningún criterio dentro de muestra, porque los dos modelos tienen
           distinto $d$. Hay que medirla fuera de muestra, y eso es el Capítulo 6.</p>
       </div>
@@ -119,8 +119,10 @@
 
       <h3>Caso: la tasa representativa del mercado</h3>
 
-      <p>La TRM mensual (promedio del mes, Superintendencia Financiera vía datos.gov.co) entre enero de 2015 y junio
-        de 2026: $n = 138$ observaciones en pesos por dólar. El Capítulo 3 mostró que sus log-retornos son, a
+      <p>La TRM mensual (promedio del mes de la TRM diaria que publica la Superintendencia Financiera en
+        datos.gov.co) entre enero de 2015 y junio de 2026: $n = 138$ observaciones en pesos por dólar. Los bloques de
+        código no la descargan: leen la copia fija del curso, <code>datos/trm_mensual_2015-01_2026-06.csv</code>,
+        la misma de los Capítulos 2 y 3, para que las cifras no cambien con cada consulta. El Capítulo 3 mostró que sus log-retornos son, a
         efectos prácticos, ruido blanco. Aquí se trata en <strong>niveles</strong> y se recorre el ciclo de
         principio a fin.</p>
 
@@ -203,7 +205,9 @@
           del Capítulo 3. Las del AR quedan en $1.0042$, prácticamente encima. Un ajuste así es numéricamente
           degenerado: los factores AR y MA se cancelan entre sí, los coeficientes no están identificados y el AICc
           premia un espejismo. <code>auto.arima</code> descarta por diseño los modelos con alguna raíz de módulo
-          menor que $1.01$, y aquí acierta. <strong>Comprobar las raíces no es opcional.</strong></p>
+          menor que $1.01$ (el umbral del código de <code>forecast</code>), y aquí acierta. Y es el caso de la
+          salvedad del Módulo 2: la raíz MA unitaria tiene pareja en el AR, así que lo que sobra son $p$ y $q$, no
+          la diferencia. <strong>Comprobar las raíces no es opcional.</strong></p>
       </div>
 
       <div class="note">
@@ -213,8 +217,9 @@
           $\hat\delta = 8.00$ pesos/mes con error estándar $10.36$ ($t = 0.77$): no significativa, así que ni
           siquiera hay una tendencia que extrapolar.</p>
         <p style="margin-bottom:0;">Es un resultado que decepciona y que conviene no maquillar. Coincide con lo que
-          predice la teoría financiera —si el tipo de cambio fuera predecible, alguien ya habría arbitrado la
-          diferencia— y con lo que encontró el Capítulo 3 sobre sus log-retornos. Un modelo que dice
+          predice la teoría financiera para el precio con que se negocia —si el tipo de cambio fuera predecible,
+          alguien ya habría arbitrado la diferencia—, aunque aquí se modela su promedio mensual, que no es
+          exactamente ese precio; y coincide con lo que encontró el Capítulo 3 sobre sus log-retornos. Un modelo que dice
           <em>"no hay señal aquí"</em> es un resultado, no un fracaso. En el Capítulo 6 la caminata aleatoria
           reaparece con otro nombre —el método <em>naïve</em>— y como <strong>referencia que hay que batir</strong>.</p>
       </div>
@@ -314,14 +319,16 @@
         <strong>por arriba</strong>: el intervalo es simétrico y el riesgo no lo es, así que subestima la
         devaluación y sobrestima la revaluación. A doce meses la situación se invierte. Las colas pesadas
         desaparecen —los cambios a doce meses tienen curtosis $2.8$, casi la de una normal— y, aun así, caen fuera
-        $11$ de los $126$ cambios, un $8.7\,\%$; el Capítulo 6 lo confirma fuera de la muestra, con una cobertura
-        del $89.6\,\%$. Una parte se explica porque $\sigma_h^2 = h\,\sigma^2$ supone choques incorrelados, y con
-        $\hat\rho_1 = 0.088$ la varianza real de los cambios a $3$–$12$ meses es entre $1.07$ y $1.14$ veces esa
-        cifra: el abanico sale un poco estrecho, aunque no tanto como para explicar todo el déficit. Modelar la
+        $11$ de los $126$ cambios, un $8.7\,\%$. Fuera de la muestra el Capítulo 6 mide algo parecido: el intervalo
+        del $95\,\%$ del naïve cubre el $89.6\,\%$, contando juntos los horizontes de $1$ a $12$ meses. Una parte se
+        explica porque $\sigma_h^2 = h\,\sigma^2$ supone choques incorrelados y los cambios mensuales tienen
+        $\hat\rho_1 = 0.088$: medido en la muestra, el cuadrado medio de los cambios a $3$, $6$ y $12$ meses es
+        entre $1.07$ y $1.14$ veces $h\,\hat\sigma^2$. El abanico sale un poco estrecho, aunque no tanto como para
+        explicar todo el déficit. Modelar la
         asimetría pide innovaciones asimétricas y de colas pesadas, o modelos con saltos, fuera del alcance de este
         curso; ningún ARIMA la captura.</p>
 
-      <p>El caso entero, de la descarga en datos.gov.co al abanico y a los cambios que caen fuera de él, en
+      <p>El caso entero, de la lectura de la copia fija al abanico y a los cambios que caen fuera de él, en
         un solo bloque:</p>
 
       <div class="code-tabs">
@@ -332,16 +339,15 @@
         <div class="code-tab-panel" data-lang="r">
           <pre><code class="language-r">library(forecast); library(tseries)
 
-# TRM mensual (promedio del mes, SFC via datos.gov.co); necesita internet.
-url &lt;- paste0("https://www.datos.gov.co/resource/32sa-8pi3.json",
-              "?$select=vigenciadesde,valor&amp;$limit=50000")
-crudo &lt;- jsonlite::fromJSON(url)
-fecha &lt;- as.Date(substr(crudo$vigenciadesde, 1, 10))
-desde &lt;- fecha &gt;= as.Date("2015-01-01")
-valor &lt;- as.numeric(crudo$valor)[desde]
-prom  &lt;- tapply(valor, format(fecha[desde], "%Y-%m"), mean)  # ordena por mes
-prom  &lt;- prom[names(prom) &lt;= "2026-06"]           # hasta junio de 2026
-trm   &lt;- ts(as.numeric(prom), start = c(2015, 1), frequency = 12)
+# TRM mensual: promedio de cada mes de la TRM diaria (Superintendencia
+# Financiera, publicada en datos.gov.co), de enero de 2015 a junio de 2026.
+# Copia fija de los 138 meses con que se calcularon estas cifras, la misma de
+# los capitulos 2 y 3: se lee de la carpeta de trabajo si el archivo ya esta
+# ahi; si no, de la pagina del curso.
+archivo &lt;- "trm_mensual_2015-01_2026-06.csv"
+if (!file.exists(archivo))
+  archivo &lt;- paste0("https://jotamao1985.github.io/Series-de-Tiempo_Un_Bosque/datos/", archivo)
+trm &lt;- ts(read.csv(archivo)$trm, start = c(2015, 1), frequency = 12)
 length(trm)
 #&gt; [1] 138
 
@@ -420,14 +426,12 @@ round(cbind(h, sigma_h = s * sqrt(h), semiancho = z * s * sqrt(h),
 #&gt;       h sigma_h semiancho     inf     sup
 #&gt; [1,]  1  121.48    238.09 3259.00 3735.18
 #&gt; [2,]  3  210.40    412.38 3084.71 3909.47
-#&gt; [3,]  6  297.55    583.19 2913.90 4080.29
+#&gt; [3,]  6  297.55    583.19 2913.90 4080.28
 #&gt; [4,] 12  420.80    824.76 2672.33 4321.85
 #&gt; [5,] 24  595.11   1166.39 2330.70 4663.48
-# Una cota baila en el ultimo decimal (4080.29 aqui, 4080.28 en la tabla): la
-# copia congelada de la TRM del capitulo esta redondeada a dos decimales.
 fc &lt;- forecast(rw, h = 24, level = 95)
 max(abs(fc$upper[h] - (yT + z * s * sqrt(h))))
-#&gt; [1] 4.547474e-13      forecast() da el mismo abanico
+#&gt; [1] 0                 forecast() da el mismo abanico
 
 # --- Cuantos cambios reales caen fuera del 95 % -------------------------
 d1 &lt;- diff(trm); d12 &lt;- diff(trm, lag = 12)
@@ -440,24 +444,37 @@ c(fuera_12 = sum(abs(d12) &gt; z * s * sqrt(12)), de = length(d12))
 curtosis &lt;- function(x) mean((x - mean(x))^4) / mean((x - mean(x))^2)^2
 round(c(curtosis_1 = curtosis(d1), curtosis_12 = curtosis(d12)), 1)
 #&gt;  curtosis_1 curtosis_12
-#&gt;         5.1         2.8</code></pre>
+#&gt;         5.1         2.8
+asimetria &lt;- function(x) mean((x - mean(x))^3) / mean((x - mean(x))^2)^1.5
+round(c(asimetria_1 = asimetria(d1)), 2)
+#&gt; asimetria_1
+#&gt;        0.76
+
+# --- Lo que el intervalo nominal no recoge ------------------------------
+# El 80 % a un mes (Modulo 9): cuantos cambios caen dentro
+round(c(cubre_80_a_un_mes = mean(abs(d1) &lt;= qnorm(0.90) * s)), 3)
+#&gt; cubre_80_a_un_mes
+#&gt;             0.839
+# Cuadrado medio de los cambios a 3, 6 y 12 meses frente a h * sigma^2
+round(sapply(c(3, 6, 12), function(h) mean(diff(trm, lag = h)^2) / (h * s^2)), 2)
+#&gt; [1] 1.10 1.14 1.07</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
-          <pre><code class="language-python">import numpy as np, pandas as pd
+          <pre><code class="language-python">import os
+import numpy as np, pandas as pd
 from scipy import stats
 from statsmodels.tsa.stattools import adfuller, kpss, acf
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.stats.diagnostic import acorr_ljungbox
 import warnings; warnings.filterwarnings("ignore")
 
-# TRM mensual (promedio del mes, SFC via datos.gov.co); necesita internet.
-url = ("https://www.datos.gov.co/resource/32sa-8pi3.json"
-       "?$select=vigenciadesde,valor&amp;$limit=50000")
-crudo = pd.read_json(url)
-crudo["fecha"] = pd.to_datetime(crudo["vigenciadesde"]).dt.tz_localize(None)
-crudo = crudo[crudo["fecha"] &gt;= "2015-01-01"]
-mensual = crudo.set_index("fecha")["valor"].resample("MS").mean()
-y = mensual.loc[:"2026-06-01"].values
+# La misma copia fija de 138 meses que lee R (enero de 2015 a junio de
+# 2026): de la carpeta de trabajo si el archivo ya esta ahi; si no, de la
+# pagina del curso.
+archivo = "trm_mensual_2015-01_2026-06.csv"
+if not os.path.exists(archivo):
+    archivo = "https://jotamao1985.github.io/Series-de-Tiempo_Un_Bosque/datos/" + archivo
+y = pd.read_csv(archivo)["trm"].values
 print(len(y))
 #&gt; 138
 
@@ -488,7 +505,7 @@ for (p, q), f in sorted(rej.items(), key=lambda kv: kv[1].aicc)[:3]:
 #&gt; (1, 1, 0) 1706.8 1712.55
 f212 = rej[(2, 2)]
 print(round(f212.aicc, 2), np.round(np.abs(f212.maroots), 3))
-#&gt; 1712.91 [1.088 4.231]
+#&gt; 1712.91 [1.088 4.208]
 # El (2,1,2) degenerado que gana en R no aparece: statsmodels impone
 # estacionariedad e invertibilidad mientras estima, asi que no puede llegar a
 # una raiz sobre el circulo, y su (2,1,2) es otro optimo, 7 puntos peor que el
@@ -521,12 +538,12 @@ print(tabla.round(2).to_string(index=False))
 #&gt;  h  sigma_h  semiancho     inf     sup
 #&gt;  1   121.48     238.09 3259.00 3735.18
 #&gt;  3   210.40     412.38 3084.71 3909.47
-#&gt;  6   297.55     583.19 2913.90 4080.29
+#&gt;  6   297.55     583.19 2913.90 4080.28
 #&gt; 12   420.80     824.76 2672.33 4321.85
 #&gt; 24   595.11    1166.39 2330.70 4663.48
 ic = rw.get_forecast(24).conf_int(alpha=0.05)
 print(f"{np.max(np.abs(ic[h - 1, 1] - tabla['sup'].values)):.1e}")
-#&gt; 9.1e-13        get_forecast da el mismo abanico
+#&gt; 4.5e-13        get_forecast da el mismo abanico
 
 # Cuantos cambios reales caen fuera del 95 %
 d1 = np.diff(y); d12 = y[12:] - y[:-12]
@@ -535,8 +552,14 @@ print(np.sum(np.abs(d1) &gt; z * s), np.sum(d1 &gt; z * s), len(d1))
 print(np.sum(np.abs(d12) &gt; z * s * np.sqrt(12)), len(d12))
 #&gt; 11 126
 curtosis = lambda x: stats.kurtosis(x, fisher=False)
-print(np.round([curtosis(d1), curtosis(d12)], 1))
-#&gt; [5.1 2.8]</code></pre>
+print(np.round([curtosis(d1), curtosis(d12)], 1), round(float(stats.skew(d1)), 2))
+#&gt; [5.1 2.8] 0.76
+
+# Lo que el intervalo nominal no recoge
+print(round(float(np.mean(np.abs(d1) &lt;= stats.norm.ppf(0.90) * s)), 3))
+#&gt; 0.839
+print(np.round([np.mean((y[h:] - y[:-h])**2) / (h * s**2) for h in (3, 6, 12)], 2).tolist())
+#&gt; [1.1, 1.14, 1.07]</code></pre>
         </div>
       </div>
 
@@ -605,19 +628,23 @@ print(np.round([curtosis(d1), curtosis(d12)], 1))
             modelo, no un preprocesamiento.</li>
           <li>El ciclo de <strong>Box–Jenkins</strong> es iterativo: identificar → estimar → diagnosticar, y volver
             atrás cuando el diagnóstico lo pida.</li>
-          <li>$d$ se elige con <strong>tres evidencias</strong> —gráfico, varianza y pruebas— y las pruebas pueden
-            engañar: con un escalón como el del Nilo, KPSS confunde el cambio de nivel con una raíz unitaria el
-            $100\,\%$ de las veces.</li>
+          <li>$d$ se elige con <strong>tres evidencias</strong> —el gráfico con la ACF, las pruebas y los síntomas
+            de haber diferenciado de más— y las pruebas pueden engañar: con un escalón como el del Nilo, KPSS
+            confunde el cambio de nivel con una raíz unitaria el $100\,\%$ de las veces. La varianza por orden de
+            diferencia no es una evidencia más: repite lo que dice $r_1$ (Módulo 2.7).</li>
           <li>$p$ y $q$ se leen en la ACF/PACF de la serie <strong>ya diferenciada</strong>, y se proponen varios
             candidatos, no uno.</li>
           <li>La constante significa <strong>media</strong> si $d=0$ y <strong>deriva</strong> si $d=1$; con
-            $d \ge 2$ el software se niega a ajustarla, y hace bien.</li>
+            $d \ge 2$ <code>forecast::Arima</code> se niega a ajustarla, y hace bien (statsmodels admite un término
+            cuadrático si se le pide).</li>
           <li>El <strong>AICc no es comparable entre distintos $d$</strong>, porque $n^{*} = n - d$ cambia. Hay que
             agrupar siempre por $d$.</li>
           <li><code>auto.arima</code> es un algoritmo con reglas, no un oráculo: elige $d$ con KPSS, busca en un
             vecindario y no mira el gráfico. <code>trace = TRUE</code> lo abre.</li>
           <li>La <strong>sobrediferenciación</strong> tiene una firma exacta: $\hat\theta \to -1$ y una raíz MA sobre
-            el círculo unitario. La regla de la varianza es solo un primer aviso.</li>
+            el círculo unitario, sin pareja en el AR. Antes de ajustar puede avisar el $\hat\rho_1$ de la serie
+            diferenciada, cuando se acerca a $-0.5$ o lo pasa, pero es un indicio que falla en los dos sentidos
+            (Módulo 2.7): en <code>log(lynx)</code> no avisa.</li>
           <li>El <strong>diagnóstico</strong> manda sobre el criterio: Ljung–Box con <code>fitdf = p + q</code>, la ACF
             residual barra por barra y las raíces. Un mínimo de AICc con raíces sobre el círculo —el ARIMA($2,1,2$)
             de la TRM— se descarta.</li>
@@ -663,7 +690,9 @@ print(np.round([curtosis(d1), curtosis(d12)], 1))
           </button>
         </div>
         <div class="ejercicio-panel pista" id="c4e1-pista" hidden>
-          <p style="margin:0;">Para $d$, mira la varianza: cae de $461.4$ a $2.1$ y luego vuelve a subir. Para el
+          <p style="margin:0;">Para $d$, mira el gráfico y las pruebas. El $\hat\rho_1$ de la serie diferenciada es solo
+            un indicio, que falla en los dos sentidos (Módulo 2.7): no basta para decir que la diferencia sobra ni que
+            hace falta. Para el
             diagnóstico del ARIMA($0,1,1$), no te quedes en el $p$-valor global: mira la ACF de sus residuales
             <strong>barra por barra</strong> con la banda $\pm 0.160$, y en particular los rezagos 2 y 4. Y cuando
             compares con $d = 2$, apunta el $n$ efectivo de cada uno antes de mirar ningún AICc.</p>
@@ -676,11 +705,13 @@ aicc &lt;- function(f, n) { k &lt;- length(f$coef) + 1; f$aic + 2*k*(k+1)/(n-k-1
 n &lt;- length(BJsales)   # 150
 
 # --- Etapa 1: d ---------------------------------------------------------
-round(sapply(0:3, function(d) var(if (d == 0) BJsales else diff(BJsales, differences = d))), 4)
-#&gt; [1] 461.3769   2.0851   2.8823   8.5626      minimo en d = 1
 round(c(adf = adf.test(BJsales)$p.value, ndiffs = ndiffs(BJsales)), 4)
 #&gt;    adf ndiffs
 #&gt; 0.5302 1.0000
+# sintomas de diferenciar de mas: r1 de la serie diferenciada una y dos veces
+round(sapply(1:2, function(d) acf(diff(BJsales, differences = d), plot = FALSE)$acf[2]), 4)
+#&gt; [1]  0.3118 -0.4756
+# un indicio, no una regla (Modulo 2.7): con d = 1 no avisa; con d = 2 ronda -0.5
 
 # --- Etapa 2: la rejilla con d = 1 --------------------------------------
 for (q in 0:2) for (p in 0:2) {
@@ -739,8 +770,9 @@ round(min(Mod(polyroot(c(1, coef(f122)[grepl("^ma", names(coef(f122)))])))), 4)
       <div class="ejercicio-guiado">
         <p class="ejercicio-enunciado"><span class="ejercicio-numero">2.</span>La serie <code>lynx</code> (capturas
           anuales de lince canadiense, 1821–1934) tiene un ciclo marcadísimo de unos 10 años. Trabaja con
-          $\log(\text{lynx})$ y responde: <strong>¿hay que diferenciarla?</strong> Aplica el criterio de la varianza
-          y las pruebas de raíz unitaria, y si discrepan, decide con las <em>raíces</em> del modelo ajustado.</p>
+          $\log(\text{lynx})$ y responde: <strong>¿hay que diferenciarla?</strong> Mira qué dicen las pruebas de raíz
+          unitaria, qué le pasa a la varianza al diferenciar y qué <em>raíces</em> tiene un modelo ajustado con
+          $d = 1$.</p>
         <div class="ejercicio-acciones">
           <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c4e2-pista">
             <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
@@ -750,16 +782,16 @@ round(min(Mod(polyroot(c(1, coef(f122)[grepl("^ma", names(coef(f122)))])))), 4)
           </button>
         </div>
         <div class="ejercicio-panel pista" id="c4e2-pista" hidden>
-          <p style="margin:0;">Cuidado: aquí el criterio de la varianza <strong>te va a mentir</strong>. Diferenciar
-            reduce la varianza, que es justo lo contrario de la señal de alarma que aprendiste. Cuando eso pase,
-            ajusta un modelo con $d = 1$ que tenga parte AR suficiente para el ciclo <em>y</em> parte MA —por
+          <p style="margin:0;">Cuidado: aquí diferenciar <strong>reduce</strong> la varianza, y quien la usara como
+            criterio diferenciaría. No es una señal de raíz unitaria: en una serie estacionaria esa caída solo
+            repite que $r_1$ es alto (Módulo 2.7). Para decidir, ajusta un modelo con $d = 1$ que tenga parte AR suficiente para el ciclo <em>y</em> parte MA —por
             ejemplo un ARIMA($2,1,1$)— y mira el módulo de la raíz de $\theta(B)$. Sin la parte AR, el MA se
             ocupa del ciclo y la raíz no delata nada. Un ciclo
             no es una tendencia: una serie que sube y baja regularmente <em>sí</em> vuelve a su media.</p>
         </div>
         <div class="ejercicio-panel solucion" id="c4e2-sol" hidden>
-          <p><strong>Respuesta: no hay que diferenciarla ($d = 0$), y el criterio de la varianza falla en este
-            caso.</strong></p>
+          <p><strong>Respuesta: no hay que diferenciarla ($d = 0$), y la varianza, usada como criterio, llevaría a
+            diferenciar.</strong></p>
           <pre><code class="language-r">library(forecast); library(tseries)
 ly &lt;- log(lynx); n &lt;- length(ly)   # 114
 
@@ -771,11 +803,16 @@ c(kpss_p = kpss.test(ly)$p.value, adf_p = adf.test(ly)$p.value)
 #&gt; kpss_p  adf_p
 #&gt;   0.10   0.01     KPSS no rechaza estacionariedad; ADF rechaza raiz unitaria
 
-# --- El criterio de la varianza: AQUI FALLA ------------------------------
+# --- La varianza: baja al diferenciar, pero solo repite r1 ---------------
 round(sapply(0:3, function(d) var(if (d == 0) ly else diff(ly, differences = d))), 4)
 #&gt; [1] 1.6532 0.6871 0.6026 1.1532
-# la varianza BAJA al diferenciar (-58 %) y su minimo esta en d = 2:
-# la regla no solo no avisa, sino que propone diferenciar DOS veces
+# la varianza BAJA al diferenciar (-58 %) y su minimo esta en d = 2. No es una
+# senal de raiz unitaria: en una serie estacionaria el cociente se acerca a
+# 2(1 - r1) (Modulo 2.7), y aqui r1 es alto
+r1 &lt;- acf(ly, plot = FALSE)$acf[2]
+round(c(r1 = r1, cociente = var(diff(ly)) / var(ly), dos_por_1_menos_r1 = 2 * (1 - r1)), 3)
+#&gt;                 r1           cociente dos_por_1_menos_r1
+#&gt;              0.785              0.416              0.430
 
 # --- Las raices sí lo detectan -------------------------------------------
 for (o in list(c(2,1,0), c(2,1,1), c(0,1,1))) {
@@ -800,12 +837,12 @@ Box.test(residuals(f), lag = 20, type = "Ljung-Box", fitdf = 2)$p.value
 as.character(auto.arima(ly, stepwise = FALSE, approximation = FALSE, seasonal = FALSE))
 #&gt; [1] "ARIMA(2,0,3) with non-zero mean"</code></pre>
           <p><strong>Discusión.</strong> Las dos pruebas coinciden en $d = 0$: la serie es estacionaria, y tiene
-            sentido, porque un ciclo regular <em>sí</em> vuelve a su media. Lo interesante es que
-            <strong>la regla de la varianza no avisa</strong>: diferenciar la reduce un $58\,\%$, así que quien se
-            guíe solo por ella diferenciará tranquilamente, y hasta <strong>dos veces</strong>, porque el mínimo
-            ($0.6026$) está en $d = 2$. La razón es que en una serie con oscilación fuerte la
-            diferencia primera atenúa las oscilaciones lentas, y eso baja la varianza aunque sobre. Lo que sí lo
-            detecta sin ambigüedad es la <strong>raíz</strong>: el ARIMA($2,1,1$) coloca $|\text{raíz MA}| = 1.000$,
+            sentido, porque un ciclo regular <em>sí</em> vuelve a su media. Lo interesante es lo que hace la
+            varianza: diferenciar la reduce un $58\,\%$ y su mínimo ($0.6026$) está en $d = 2$, así que quien la
+            usara como criterio diferenciaría <strong>dos veces</strong>. Pero esa caída no dice nada de raíces
+            unitarias: con $r_1 = 0.785$, lo que cabe esperar en una serie estacionaria es un cociente cercano a
+            $2(1-r_1) = 0.430$, y el medido es $0.416$. Es lo que advirtió el Capítulo 2 (Módulo 2.7): la varianza
+            repite lo que dice $r_1$. Lo que sí lo detecta sin ambigüedad es la <strong>raíz</strong>: el ARIMA($2,1,1$) coloca $|\text{raíz MA}| = 1.000$,
             es decir, el término MA reconstruye el factor $(1-B)$ que acabas de imponer. Nota honesta: el AR(2) de
             libro tampoco pasa Ljung–Box ($p = 0.0094$) y <code>auto.arima</code> propone un ARMA($2,3$); la dinámica
             del lince es más rica que un AR(2), pero eso no cambia la respuesta sobre $d$.</p>
@@ -828,9 +865,10 @@ as.character(auto.arima(ly, stepwise = FALSE, approximation = FALSE, seasonal = 
         <div class="ejercicio-panel pista" id="c4e3-pista" hidden>
           <p style="margin:0;">Los $\psi$ no salen del ARIMA directamente: hay que expandirlo primero como el
             ARMA($2,1$) del Módulo 1, con $\phi^{*} = (1+\phi,\ -\phi)$. Y el $\sigma$ y los $\psi$ tienen que venir
-            del <strong>mismo ajuste</strong> — mezclar <code>arima(method = "ML")</code> con <code>Arima()</code>,
-            que usa CSS-ML, produce $\hat\sigma^2$ distintos y la comprobación falla por esa razón, no por la
-            fórmula.</p>
+            del <strong>mismo ajuste</strong> — mezclar <code>arima(method = "ML")</code> con <code>Arima()</code>
+            produce $\hat\sigma^2$ distintos, sobre todo porque <code>Arima()</code> divide la suma de cuadrados de
+            los residuales entre $n^* - p - q$ ($97$ en el Nilo) y <code>arima()</code> da la de máxima verosimilitud, que divide entre
+            $n^*$; la comprobación falla por esa razón, no por la fórmula.</p>
         </div>
         <div class="ejercicio-panel solucion" id="c4e3-sol" hidden>
           <p><strong>Respuesta: coinciden con error $2.4\times 10^{-14}$, y $\sigma_h$ crece bastante más rápido que

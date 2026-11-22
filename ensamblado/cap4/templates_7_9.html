@@ -44,8 +44,12 @@
           \end{aligned}$$
         </div>
         <p>Se descartan por el camino los ajustes que no convergen y los que tienen raíces demasiado cerca del
-          círculo unitario ($|\text{raíz}| &lt; 1.01$): a esos el algoritmo les asigna AICc $=\infty$. Es lo que le
-          pasa al ARIMA($2,1,2$) del Nilo, que tiene una raíz AR de módulo $1.001$.</p>
+          círculo unitario ($|\text{raíz}| &lt; 1.01$ en el código de <code>forecast</code>): a esos el algoritmo
+          les asigna AICc $=\infty$. Es lo que le pasa al ARIMA($2,1,2$) del Nilo con el ajuste que usa
+          <code>auto.arima</code>, el CSS-ML de <code>Arima()</code>: su menor raíz AR tiene módulo $1.001$. El
+          explorador del Módulo 6, que ajusta por máxima verosimilitud exacta, muestra ese mismo modelo con la raíz
+          AR en $2.241$ y sin aviso: es otro óptimo de la verosimilitud, algo peor ($\log L = -630.445$ frente a
+          $-630.169$). La raíz depende del estimador; el bloque de código de más abajo da las dos.</p>
         <p style="margin-bottom:0;">Si $n &gt; 150$ o la frecuencia es mayor que $12$, la búsqueda usa además una
           verosimilitud aproximada (CSS) y al final reajusta el ganador con la exacta: es la opción
           <code>approximation</code>. Con las $100$ observaciones del Nilo no se activa, así que los AICc de la traza
@@ -106,7 +110,7 @@
       <div class="note">
         <p><strong>Siete modelos a menos de $2$ puntos de AICc.</strong> La regla de referencia habitual es que
           diferencias menores que $2$ no distinguen modelos. Es decir: <code>auto.arima</code> devuelve un ganador
-          con toda la seguridad de una sola línea de salida, y detrás de él hay <strong>siete candidatos
+          con toda la seguridad de una sola línea de salida, y detrás de él hay <strong>seis candidatos
           indistinguibles según el propio criterio</strong>, incluido el ARIMA($0,1,1$) que proponía el correlograma
           del Módulo 4. La función no miente; simplemente no está diseñada para comunicar esa incertidumbre. Pedir
           <code>trace = TRUE</code> no cuesta nada y la enseña.</p>
@@ -165,7 +169,18 @@ c(escalonada = n_modelos(Nile, trace = TRUE, seasonal = FALSE),
   exhaustiva = n_modelos(Nile, trace = TRUE, seasonal = FALSE,
                          stepwise = FALSE, approximation = FALSE))
 #&gt; escalonada exhaustiva
-#&gt;         18         42</code></pre>
+#&gt;         18         42
+
+# El ARIMA(2,1,2), descartado por su raiz AR: depende del estimador
+for (m in c("CSS-ML", "ML")) {
+  a &lt;- Arima(Nile, order = c(2, 1, 2), method = m)
+  cat(sprintf("%-6s logL = %.3f  min|raiz AR| = %.4f\n", m, a$loglik,
+              min(Mod(polyroot(c(1, -coef(a)[c("ar1", "ar2")]))))))
+}
+#&gt; CSS-ML logL = -630.169  min|raiz AR| = 1.0009
+#&gt; ML     logL = -630.445  min|raiz AR| = 2.2407
+# CSS-ML (el de auto.arima) lo deja casi sobre el circulo; ML cae en otro
+# optimo, de verosimilitud algo menor, con las raices lejos</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python"># statsmodels NO trae el algoritmo de Hyndman-Khandakar. Con solo statsmodels
@@ -185,14 +200,14 @@ for p in range(4):
         except Exception:
             continue
         evaluados += 1
-        k = len(f.params)
-        a = f.aic + 2*k*(k+1)/(f.nobs-k-1)
-        if a &lt; mejor_aicc:
-            mejor, mejor_aicc = (p, 1, q), a
+        if f.aicc &lt; mejor_aicc:        # f.aicc ya usa n - d (nobs_effective)
+            mejor, mejor_aicc = (p, 1, q), f.aicc
 print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
-#&gt; (1, 1, 1) 1267.469 (16 modelos)
-#   mismo ganador que auto.arima; el AICc difiere en 0.04 porque statsmodels
-#   no descuenta d en nobs (ver el modulo 6)
+#&gt; (1, 1, 1) 1267.471 (16 modelos)
+#   mismo ganador que auto.arima. El AICc difiere del de R (1267.507) en 0.04
+#   porque la log-verosimilitud no es identica: cada programa inicializa el
+#   filtro a su manera, y el AIC ya difiere (1267.219 aqui, 1267.255 en R).
+#   No es el n: corregir con 100 o con 99 observaciones mueve el AICc 0.003
 
 # ---- Alternativa con una dependencia extra ------------------------------
 # pmdarima.auto_arima es una traduccion directa del algoritmo de R.
@@ -273,7 +288,7 @@ print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
           <tbody>
             <tr><td>0</td><td>$28\,637.95$</td><td>$0.498$</td><td>$0.378$</td><td>Sin diferenciar.</td></tr>
             <tr style="background:rgba(1,40,32,0.05);"><td>1</td><td>$28\,268.34$</td><td>$-0.402$</td>
-              <td>$-0.733$</td><td>Mínimo de varianza.</td></tr>
+              <td>$-0.733$</td><td>Raíz MA en $1.364$, fuera del círculo.</td></tr>
             <tr><td>2</td><td>$80\,055.01$</td><td>$-0.626$</td><td>$\mathbf{-1.000}$</td>
               <td>Raíz unitaria en el MA.</td></tr>
             <tr><td>3</td><td>$262\,507.29$</td><td>$-0.719$</td><td>$\mathbf{-1.000}$</td>
@@ -293,14 +308,18 @@ print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
         un $d$ equivocado: premia los que son <em>numéricamente degenerados</em>.</p>
 
       <div class="warning">
-        <h4><i class="fas fa-triangle-exclamation mr-2" aria-hidden="true"></i>El criterio de la varianza no siempre
-          dispara</h4>
-        <p>La regla habitual —"si al diferenciar la varianza sube, te has pasado"— funcionó en el Nilo, pero
-          <strong>es una heurística, no un teorema</strong>. En una serie con un ciclo marcado puede fallar: sobre
+        <h4><i class="fas fa-triangle-exclamation mr-2" aria-hidden="true"></i>La columna de la varianza no
+          decide $d$</h4>
+        <p>Es tentador leer la tabla con la regla «si al diferenciar la varianza sube, te has pasado». En el Nilo
+          coincide con lo demás, pero <strong>no es una evidencia aparte</strong>: como mostró el Capítulo 2
+          (Módulo 2.7), en una serie estacionaria el cociente de varianzas al diferenciar se acerca a $2(1-r_1)$,
+          así que la varianza repite lo que dice $r_1$, y $r_1$ solo no dice si hay una raíz unitaria. Sobre
           <code>log(lynx)</code>, diferenciar <em>reduce</em> la varianza un $58\,\%$ ($1.653 \to 0.687$) y aun así
           $d = 1$ sobra, como coinciden en señalar ADF, KPSS y Phillips–Perron. Lo que sí lo detecta ahí es la
           raíz: el ARIMA($2,1,1$) sobre esa serie da $|\text{raíz MA}| = 1.000$. <strong>Hay que mirar siempre las
-          raíces</strong>; la varianza es solo un primer aviso. (Es el ejercicio 2 de este capítulo.)</p>
+          raíces.</strong> El $\hat\rho_1$ de la serie diferenciada no avisa aquí: vale $0.565$, positivo y lejos de
+          $-0.5$, que es la manera en que ese indicio falla (Módulo 2.7). (Es el ejercicio 2 de este
+          capítulo.)</p>
       </div>
 
       <h3>El caso del Nilo, cerrado</h3>
@@ -429,15 +448,16 @@ for d in (1, 2, 3):
 #&gt; d = 1  var =     28268  theta = -0.7329  |raiz MA| = 1.3644
 #&gt; d = 2  var =     80055  theta = -0.9988  |raiz MA| = 1.0012
 #&gt; d = 3  var =    262507  theta = -0.9980  |raiz MA| = 1.0020
-#   El optimizador de statsmodels se queda a 0.001 del borde en vez de
-#   clavarse en -1 como el de R. La lectura no cambia: raiz sobre el circulo.
+#   El optimizador de statsmodels se queda a 0.0012 y 0.0020 del borde en vez
+#   de clavarse en -1 como el de R. La lectura no cambia: raiz sobre el circulo.
 
 # El escalon de 1899 como regresor externo
 escalon = (anios &gt;= 1899).astype(float).reshape(-1, 1)
 fe = ARIMA(nilo, order=(0, 0, 0), exog=escalon, trend="c").fit()
-print(round(fe.params[1], 2), round(fe.bse[1], 2))
-#&gt; -247.78 27.77     el coeficiente coincide con R; el error estandar no
-#&gt;                   exactamente (R da 28.15). t = -8.9 frente a -8.8.
+print(round(fe.params[1], 2), round(fe.bse[1], 2), round(fe.params[1] / fe.bse[1], 2))
+#&gt; -247.78 27.77 -8.92
+#   el coeficiente coincide con R; el error estandar no exactamente (R da
+#   28.15 y t = -8.80)
 print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
 #&gt; 0.8124</code></pre>
         </div>
@@ -490,9 +510,11 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
             <tr><th>Modelo</th><th>Forma a largo plazo</th><th>Medido: $\nabla\hat y$ y $\nabla^2\hat y$ en $h=30$</th><th>Ancho 95 %: $h=1 \to h=30$</th></tr>
           </thead>
           <tbody>
-            <tr><td>ARIMA($1,0,1$) con media</td><td>Vuelve a la media $920.56$</td>
+            <tr><td>ARIMA($1,0,1$) con media</td><td>Vuelve a la media $920.56$ (con el ajuste CSS-ML de
+              <code>Arima()</code>; por máxima verosimilitud, la del Módulo 5, es $920.70$)</td>
               <td>$\nabla\hat y = 0.25$, tiende a $0$</td><td>$561 \to 677$</td></tr>
-            <tr><td>ARIMA($1,1,1$) sin constante</td><td><strong>Constante</strong> en el último nivel</td>
+            <tr><td>ARIMA($1,1,1$) sin constante</td><td><strong>Se aplana</strong> en $842.17$: no en el
+              último dato ($740$), sino en el nivel al que lo lleva la parte ARMA</td>
               <td>$\nabla\hat y = 0.00$</td><td>$557 \to 781$</td></tr>
             <tr><td>ARIMA($1,1,1$) con deriva</td><td><strong>Recta</strong> de pendiente $\hat\delta$</td>
               <td>$\nabla\hat y = -2.88$, $\nabla^2\hat y = 0$</td><td>$555 \to 708$</td></tr>
@@ -501,6 +523,19 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
           </tbody>
         </table>
       </div>
+
+      <p>La fila del ARIMA($1,1,1$) sin constante merece una línea, porque es fácil leerla mal: el pronóstico
+        <strong>no se queda en el último dato</strong>. Parte de $740$ (1970), pasa a $816.18$ en $h = 1$ y se
+        aplana en $842.17$. Con $d = 1$, la parte ARMA sigue moviendo la diferencia pronosticada durante unos
+        pasos, $\nabla\hat y_{T+h} = \hat\phi^{\,h-1}(\hat\phi\,\nabla y_T + \hat\theta\,\hat\varepsilon_T)$, y al
+        sumarlos el nivel converge a</p>
+
+      <div class="formula">
+        $$\hat y_{T+\infty} = y_T + \frac{\hat\phi\,\nabla y_T + \hat\theta\,\hat\varepsilon_T}{1-\hat\phi}$$
+      </div>
+
+      <p>Lo constante es ese nivel final, no el último observado; el bloque de código de este módulo lo
+        comprueba.</p>
 
       <div class="note">
         <p><strong>Con $d = 2$ el pronóstico es una recta, no una parábola</strong>, y vale la pena entender por
@@ -678,6 +713,16 @@ for (nm in names(formas)) {
 #&gt; d=2                 1a dif en h=30:  -4.049   2a dif:  0.000000
 # d=2 da una RECTA (2a diferencia nula), no una parabola
 
+# Sin constante y con d = 1 se aplana, pero no en el ultimo dato
+f1  &lt;- formas[["d=1 sin constante"]]
+ph  &lt;- coef(f1)[["ar1"]]; th1 &lt;- coef(f1)[["ma1"]]
+yT  &lt;- as.numeric(tail(Nile, 1)); dyT &lt;- yT - as.numeric(Nile)[99]
+eT  &lt;- as.numeric(tail(residuals(f1), 1))
+round(c(ultimo = yT, h1 = forecast(f1, h = 1)$mean[1], h30 = forecast(f1, h = 30)$mean[30],
+        limite = yT + (ph * dyT + th1 * eT) / (1 - ph)), 2)
+#&gt; ultimo     h1    h30 limite
+#&gt; 740.00 816.18 842.17 842.17
+
 # --- El intervalo, reconstruido desde los pesos psi ----------------------
 f   &lt;- Arima(Nile, order = c(1, 1, 1))
 phi &lt;- coef(f)[["ar1"]]; th &lt;- coef(f)[["ma1"]]; s &lt;- sqrt(f$sigma2)
@@ -732,8 +777,8 @@ semiancho = (ic[:, 1] - ic[:, 0]) / 2
 print(f"{np.max(np.abs(semiancho - 1.959964 * sigma_h)):.3e}")
 #&gt; 3.044e-06        la formula reproduce el intervalo tambien aqui
 
-print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3))
-#&gt; [140.599 140.599 196.925   0.168]
+print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3).tolist())
+#&gt; [140.599, 140.599, 196.925, 0.168]
 #   R da [142.045 142.045 199.363 0.169]. La diferencia viene sobre todo de
 #   sigma^2: forecast::Arima la corrige por grados de libertad (SCR / (n* - k),
 #   con n* = 99 y k = 2) y statsmodels da la de maxima verosimilitud, sin esa

@@ -135,7 +135,7 @@ Verificación: los datos del Nilo y de AirPassengers son idénticos a los de `da
 | 1 | 99 | −3.84 | 28 268 | −0.40 |
 | 2 | 98 | −0.14 | 80 055 | −0.63 |
 
-<kbd>Dato</kbd> La varianza baja solo un 1.3 % con \(d=1\) y casi se triplica con \(d=2\). <kbd>Interpretación</kbd> ¿Hacía falta diferenciar? Los Módulos 3 y 8 lo responden.
+<kbd>Dato</kbd> La varianza baja solo un 1.3 % con \(d=1\) y casi se triplica con \(d=2\). <kbd>Interpretación</kbd> ¿Hacía falta diferenciar? La varianza sola no lo dice; los Módulos 3 y 8 lo responden.
 
 <small>Contexto: `Nile` (R); diferenciar gana poco si el problema es un escalón (~1899). Fuente: J `nilo.varianzas`, `nilo.identificacion` · R</small>
 
@@ -225,7 +225,7 @@ round(as.numeric(pron$mean[1:3]), 2)
 ???
 Es un esqueleto recortado del material: se quitaron el gráfico y los correlogramas de la etapa 1 (`plot(Nile)`, `acf`, `pacf`), y las llamadas a `library(tseries)`. Lo que se proyecta se ejecutó en R 4.3.3 y da exactamente estas salidas. Ojo: la etapa 4 usa el mismo ajuste de la etapa 2, y el orden (1, d, 1) es solo un ejemplo: el orden real se decide en el Módulo 4, donde el candidato es el (0,1,1).
 
-El equivalente en Python está en el material (statsmodels da 0.761 en Ljung–Box: cada programa inicializa el filtro a su manera). Detalle: Módulo 2.
+El equivalente en Python está en el material: statsmodels da 0.761 en Ljung–Box si cuenta como residual el primer dato crudo (y₁ = 1120, su arranque difuso), y 0.8225 sin él, que es como lo hace ahora el material. Detalle: Módulo 2.
 
 # Módulos 3–4 · Elegir d, p y q {seccion=modulo-3}
 
@@ -238,16 +238,16 @@ Un d mal elegido no produce un modelo un poco peor: produce uno cuyos criterios 
 
 | Evidencia | Qué mirar | Qué dice el Nilo |
 |---|---|---|
-| **1. El gráfico** | ¿El nivel vaga sin volver? ¿Hay saltos? | Un descenso brusco hacia 1899 |
-| **2. La varianza** | \(\operatorname{Var}(\nabla^d y)\) baja y luego sube | 28 638 → 28 268 → 80 055 → 262 507: mínimo en \(d=1\) |
-| **3. Las pruebas** | ADF y PP (\(H_0\): raíz unitaria); KPSS (\(H_0\): estacionaria) | ADF −3.366 (\(p=0.064\)), KPSS 0.965 (\(p<0.01\)), PP −6.690 (\(p<0.01\)) |
+| **1. El gráfico y la ACF** | ¿El nivel vaga sin volver? ¿Hay saltos? ¿La ACF decae despacio? | Un descenso brusco hacia 1899; la ACF decae despacio desde 0.498 |
+| **2. Las pruebas** | ADF y PP (\(H_0\): raíz unitaria); KPSS (\(H_0\): estacionaria) | ADF −3.366 (\(p=0.064\)), KPSS 0.965 (\(p<0.01\)), PP −6.690 (\(p<0.01\)) |
+| **3. Síntomas de diferenciar de más** | Raíz MA cerca de 1 en el modelo ajustado; \(\hat\rho_1\) de la diferenciada cerca de −0.5, solo como indicio | \(\hat\rho_1=-0.402\) con \(d=1\); −0.626 con \(d=2\) |
 
 <kbd>Dato</kbd> ADF y KPSS apuntan a diferenciar; PP rechaza la raíz unitaria. <kbd>Interpretación</kbd> Las tres no coinciden.
 
-<small>Contexto: el Nilo, el caso donde las pruebas discrepan. ADF de `adf.test`: constante y tendencia, \(k=4\). Fuente: J `nilo.varianzas`, `nilo.pruebas` · R recalculado</small>
+<small>Contexto: el Nilo, el caso donde las pruebas discrepan. ADF de `adf.test`: constante y tendencia, \(k=4\). Fuente: J `nilo.identificacion`, `nilo.pruebas` · R recalculado</small>
 
 ???
-Las pruebas no contrastan lo mismo: ADF y PP parten de la raíz unitaria (PP corrige la autocorrelación de forma no paramétrica); KPSS invierte la hipótesis nula. La caída de la varianza de d = 0 a d = 1 es llamativamente pequeña, un 1.3 %: aviso de que algo no encaja con la historia habitual de la raíz unitaria. El Módulo 8 lo destapa.
+Las pruebas no contrastan lo mismo: ADF y PP parten de la raíz unitaria (PP corrige la autocorrelación de forma no paramétrica); KPSS invierte la hipótesis nula. La varianza de ∇ᵈy (28 638 → 28 268 → 80 055 → 262 507) ya no figura como evidencia: en una serie estacionaria el cociente Var(∇y)/Var(y) se acerca a 2(1 − r₁), así que repite lo que dice r₁ (Capítulo 2, Módulo 2.7). En el Nilo, 2(1 − 0.498) = 1.003 y el cociente medido es 0.987: que apenas baje, un 1.3 %, solo dice que r₁ está cerca de 0.5. Lo raro del Nilo lo destapa el Módulo 8.
 
 Verificación: las cifras de la tabla están en J y se recalcularon en R (adf.test, kpss.test, PP.test). Detalle: Módulo 3. Sobre el PP: con este mismo ARIMA(1,1,1) simulado con raíz unitaria verdadera (1 000 réplicas), `PP.test` rechaza el 100 % de las veces y `adf.test` con k = 4, el 51.3 %; con un MA fuerte y negativo (θ̂ ≈ −0.87) el PP rechaza casi siempre, así que su −6.690 apenas informa. El capítulo decía «potencias distintas» y ahora trae este mismo experimento (también se repitió en R 4.3.3: 100 % y 51.3 %).
 
@@ -376,7 +376,7 @@ Cada diferencia sube en un grado el polinomio de tendencia que genera la constan
 <small>Fuente: C Módulo 5</small>
 
 ???
-Regla mnemotécnica: cada diferencia sube en un grado el polinomio de la tendencia. Sin constante, d = 0 tiende a cero, d = 1 se queda plano y d = 2 sigue una recta; con constante, d = 0 vuelve a la media, d = 1 recta y d = 2 parábola. El simulador «La forma del pronóstico según d» del Módulo 9 dibuja cuatro de esos seis casos.
+Regla mnemotécnica: cada diferencia sube en un grado el polinomio de la tendencia. Sin constante, d = 0 tiende a cero, d = 1 se aplana (no necesariamente en el último dato) y d = 2 sigue una recta; con constante, d = 0 vuelve a la media, d = 1 recta y d = 2 parábola. El simulador «La forma del pronóstico según d» del Módulo 9 dibuja cuatro de esos seis casos.
 
 Detalle: Módulo 5. Ojo con el nombre: lo que R devuelve como `intercept` o `drift`, y statsmodels como `const` o `x1`, es μ_w (el promedio de la serie diferenciada), no c; c = μ_w·φ(1).
 
@@ -476,7 +476,7 @@ Verificación: los seis valores de la tabla en J y R (el capítulo imprime la mi
 4. **Parar** cuando ninguna variante mejora
 :::
 
-<kbd>Dato</kbd> Los ajustes con alguna raíz ARMA de módulo < 1.01 se descartan (su criterio de selección pasa a ∞). En el Nilo, el ARIMA(2,1,2) ajustado con `Arima()` tiene una raíz AR de módulo **≈ 1.001**. La búsqueda escalonada evalúa **18** modelos; la exhaustiva, **42**.
+<kbd>Dato</kbd> Los ajustes con alguna raíz ARMA de módulo < 1.01 (el umbral del código de `forecast`) se descartan (su criterio de selección pasa a ∞). En el Nilo, el ARIMA(2,1,2) ajustado con `Arima()` tiene una raíz AR de módulo **≈ 1.001**. La búsqueda escalonada evalúa **18** modelos; la exhaustiva, **42**.
 
 <small>Contexto: el algoritmo de Hyndman y Khandakar (2008), sobre el Nilo. Fuente: C Módulo 7 · J `nilo.hyndman_khandakar` · D `citation("forecast")`</small>
 
@@ -522,7 +522,7 @@ Si \(w_t=\nabla y_t\) ya es ruido blanco, una diferencia más produce un MA(1) c
 | \(d\) | Var(\(\nabla^d y\)) | \(\hat\rho_1\) | \(\hat\theta\) de un MA(1) | Lectura |
 |---|---|---|---|---|
 | 0 | 28 638 | 0.498 | 0.378 | Sin diferenciar |
-| 1 | 28 268 | −0.402 | −0.733 | Mínimo de varianza |
+| 1 | 28 268 | −0.402 | −0.733 | Raíz MA en 1.364 |
 | 2 | 80 055 | −0.626 | **−1.000** | Raíz unitaria en el MA |
 | 3 | 262 507 | −0.719 | **−1.000** | Peor todavía |
 
@@ -533,7 +533,7 @@ Si \(w_t=\nabla y_t\) ya es ruido blanco, una diferencia más produce un MA(1) c
 ???
 No es una metáfora, es álgebra, y se ve en el número: con θ̂ = −1 el MA(1) ajustado sobre ∇²y da σ̂² = 28 268.34, exactamente Var(∇y): el modelo recuperó la serie con una sola diferencia. La rejilla no solo premia modelos con un d equivocado: premia los que son numéricamente degenerados. Matiz: la igualdad ∇²y = ε_t − ε_{t−1} es exacta solo si ∇y es ruido blanco; con ρ̂₁ = −0.626 o −0.719, θ̂ = −1 es además la frontera del MA(1), porque |ρ₁| ≤ 0.5 para cualquier MA(1).
 
-Verificación: la tabla completa en J (`sobrediferenciacion`) y los cuatro modelos degenerados en `rejilla` (raíces MA). La tabla del capítulo rotulaba d = 1 «Mínimo de varianza. Correcto.»; se corrigió a «Mínimo de varianza», como aquí, porque el propio Módulo 8 dice que ese mínimo es por poco margen. Detalle: Módulo 8.
+Verificación: la tabla completa en J (`sobrediferenciacion`) y los cuatro modelos degenerados en `rejilla` (raíces MA). La fila d = 1 decía «Mínimo de varianza»; ahora da la raíz MA (1/0.733), como el capítulo, porque la varianza no decide d (Capítulo 2, Módulo 2.7). Detalle: Módulo 8.
 
 ## El escalón de 1899 ajusta casi 25 puntos de AICc mejor que cualquier ARMA del Nilo
 
@@ -586,7 +586,7 @@ El modelo del escalón dominaba dentro de muestra por 25 puntos de AICc y aquí 
 
 Verificación: RMSE y MAE en J (regenerados idénticos en R 4.3.3); 139.67 es la desviación típica de los 100 residuales del ARIMA(1,1,1), recalculada en R. Detalle: Módulo 8.
 
-## La regla de la varianza es un aviso, no un teorema: en log(lynx) falla
+## La varianza no decide d: en log(lynx) baja al diferenciar y aun así sobra
 
 | \(d\) | 0 | 1 | 2 | 3 |
 |---|---|---|---|---|
@@ -599,7 +599,7 @@ Verificación: RMSE y MAE en J (regenerados idénticos en R 4.3.3); 139.67 es la
 <small>Contexto: capturas anuales de lince canadiense, 1821–1934 (\(n=114\)), con un ciclo de unos 10 años; es el ejercicio 2 del capítulo. Fuente: R código ejecutado sobre `lynx` (Brockwell y Davis, 1991, según `?lynx`) · C Ejercicio 2</small>
 
 ???
-En el Nilo la regla funcionó (la varianza subió al pasarse de d = 1); aquí no. En una serie con oscilación fuerte la diferencia primera atenúa las oscilaciones lentas y eso baja la varianza aunque sobre. Es el ejercicio 2 del capítulo: al proyectarlo se adelanta su respuesta, así que conviene pedirles que reproduzcan el cálculo (varianzas, KPSS, ADF y raíces). Nota honesta del propio ejercicio: el AR(2) sin diferenciar tampoco pasa Ljung–Box (p = 0.0094) y auto.arima propone un ARMA(2,3); la dinámica del lince es más rica que un AR(2), pero eso no cambia la respuesta sobre d.
+La varianza no es una evidencia aparte: en una serie estacionaria el cociente Var(∇y)/Var(y) se acerca a 2(1 − r₁) y repite lo que dice r₁ (Capítulo 2, Módulo 2.7). Aquí r₁ = 0.785 da 0.430 y el cociente medido es 0.416: la caída es la que dicta r₁, no una señal de raíz unitaria. Es el ejercicio 2 del capítulo: al proyectarlo se adelanta su respuesta, así que conviene pedirles que reproduzcan el cálculo (varianzas, KPSS, ADF y raíces). Nota honesta del propio ejercicio: el AR(2) sin diferenciar tampoco pasa Ljung–Box (p = 0.0094) y auto.arima propone un ARMA(2,3); la dinámica del lince es más rica que un AR(2), pero eso no cambia la respuesta sobre d.
 
 Verificación: las cuatro varianzas, el 58 %, KPSS y ADF (sus p son las cotas de la tabla de tseries: p mayor que 0.10 y menor que 0.01), la raíz MA 1.0000 del (2,1,1) y el periodo de 9.78 años del AR(2) se recalcularon en R sobre `lynx`. Detalle: Módulo 8, advertencia y Ejercicio 2.
 
@@ -612,7 +612,7 @@ Verificación: las cuatro varianzas, el 58 %, KPSS y ADF (sus p son las cotas de
 <small>Contexto: el Nilo; los cuatro modelos de la tabla siguiente. Fuente: J `nilo.formas_pronostico` · simulador del Módulo 9</small>
 
 ???
-Antes de la tabla, mirar la forma y pedir que digan cuál es cuál: con d = 0 vuelve a la media; con d = 1 sin constante se queda plana en el último nivel; con deriva sigue una recta; con d = 2 también una recta, pero con un intervalo mucho más ancho.
+Antes de la tabla, mirar la forma y pedir que digan cuál es cuál: con d = 0 vuelve a la media; con d = 1 sin constante se aplana, pero no en el último dato: parte de 740, pasa a 816.18 y se queda en 842.17; con deriva sigue una recta; con d = 2 también una recta, pero con un intervalo mucho más ancho.
 
 Las fotos vienen del simulador «La forma del pronóstico según d» del Módulo 9, con h = 30, un panel por modelo; cada panel tiene su propio eje y (el del (d) es más amplio porque su intervalo es mucho más ancho). Detalle: Módulo 9.
 
@@ -621,7 +621,7 @@ Las fotos vienen del simulador «La forma del pronóstico según d» del Módulo
 | Modelo (Nilo) | Forma a largo plazo | \(\nabla\hat y\) en \(h=30\) | Ancho 95 %, \(h=1\to30\) |
 |---|---|---|---|
 | ARIMA(1,0,1) con media | Vuelve a la media | 0.25, tiende a 0 | 561 → 677 |
-| ARIMA(1,1,1) sin constante | **Constante** en el último nivel | 0.00 | 557 → 781 |
+| ARIMA(1,1,1) sin constante | **Se aplana** en 842.17, no en el último dato (740) | 0.00 | 557 → 781 |
 | ARIMA(1,1,1) con deriva | **Recta** de pendiente \(\hat\delta\) | −2.88 | 555 → 708 |
 | ARIMA(1,2,1) | **Recta**, no parábola | −4.05 | 613 → **2771** |
 
@@ -710,9 +710,9 @@ Verificación: p = 0.58549 y el KPSS de ∇TRM = 0.24147 (R 4.6, `verifica_direc
 <small>Contexto: la TRM; el (2,1,2) gana por un espejismo numérico. Fuente: J `trm.mejor_aicc`, `trm.minimo_degenerado`, `trm.auto_arima`, `trm.caminata`, `trm.deriva` · R regenerado</small>
 
 ???
-Los dos polinomios del (2,1,2) son casi el mismo: (1 − 0.661B + 0.992B²)∇y = (1 − 0.623B + 1.000B²)ε. Los factores AR y MA se cancelan entre sí, los coeficientes no están identificados y el AICc premia un espejismo. auto.arima descarta por diseño las raíces de módulo menor que 1.01.
+Los dos polinomios del (2,1,2) son casi el mismo: (1 − 0.661B + 0.992B²)∇y = (1 − 0.623B + 1.000B²)ε. Los factores AR y MA se cancelan entre sí, los coeficientes no están identificados y el AICc premia un espejismo. auto.arima descarta por diseño las raíces de módulo menor que 1.01, el umbral de su código.
 
-Coincide con lo que predice la teoría financiera —si el tipo de cambio fuera predecible, alguien ya habría arbitrado la diferencia— y con lo que encontró el Capítulo 3. La caminata reaparece en el Capítulo 6 como método naïve, la referencia que hay que batir.
+Coincide con lo que predice la teoría financiera para el precio con que se negocia —si el tipo de cambio fuera predecible, alguien ya habría arbitrado la diferencia—, aunque aquí se modela su promedio mensual, que no es exactamente ese precio; y con lo que encontró el Capítulo 3. La caminata reaparece en el Capítulo 6 como método naïve, la referencia que hay que batir.
 
 Verificación: 1703.38, 1708.83, 2.56, raíces, 192 modelos (150 con parte estacional y 42 sin ella, igual que en el Nilo); el capítulo decía «búsqueda exhaustiva sobre 192 modelos» sin distinguir y ahora dice que 42 son sin parte estacional, p-valores y δ̂ en J y R (los estadísticos t del (2,1,2) degenerado difieren entre versiones de R y no se usan). Detalle: Módulo 10.
 
@@ -755,7 +755,7 @@ El intervalo a dos años lo muestra: un pronóstico honesto puede ser inútil. U
 <small>Contexto: cierra el caso de la TRM. Fuente: C Módulo 10, «Lo que hay que llevarse»</small>
 
 ???
-Es la frase del capítulo para el caso TRM. Coincide con lo que predice la teoría financiera —si el tipo de cambio fuera predecible, alguien ya habría arbitrado la diferencia— y con lo que encontró el Capítulo 3. Transición: pero hay series donde sí hay estructura y este modelo no la ve.
+Es la frase del capítulo para el caso TRM. Coincide con lo que predice la teoría financiera para el precio con que se negocia —si el tipo de cambio fuera predecible, alguien ya habría arbitrado la diferencia—, aunque aquí se modela su promedio mensual, que no es exactamente ese precio; y con lo que encontró el Capítulo 3. Transición: pero hay series donde sí hay estructura y este modelo no la ve.
 
 ## Residuales del mejor ARIMA no estacional en log(AirPassengers): ¿qué se concluye? {.pregunta}
 
@@ -793,7 +793,7 @@ Verificación: Q, p y el ρ̂₁₂ del airline en J y R; 143 y 131 son n − d 
 ## Lo que se llevan hoy {.cierre}
 
 - Un ARIMA(\(p,d,q\)) es un ARMA(\(p+d,q\)) con \(d\) raíces unitarias: la diferenciación es **parte del modelo**
-- \(d\) se elige con tres evidencias —gráfico, varianza y pruebas—, y las pruebas **pueden engañar**: KPSS confunde un escalón con una raíz unitaria
+- \(d\) se elige con tres evidencias —gráfico y ACF, pruebas, síntomas de diferenciar de más—, y las pruebas **pueden engañar**: KPSS confunde un escalón con una raíz unitaria
 - El AICc **no** es comparable entre distintos \(d\): se agrupa por \(d\)
 - El **diagnóstico manda** sobre el criterio (raíces, Ljung–Box y ACF residual), y «no hay señal» es un resultado, no un fracaso
 - \(d\) y la constante deciden la forma del pronóstico; con \(d=1\) el intervalo crece como \(\sqrt h\), sin techo
@@ -808,7 +808,7 @@ Fuente: resumen del Módulo 10 («Lo que hay que llevarse»).
 ### Ejercicios propuestos
 
 1. **BJsales**: recorre el ciclo. ¿Sobrevive el IMA(1,1) «de libro» al diagnóstico?
-2. **log(lynx)**: ¿hay que diferenciarla? Si la varianza y las pruebas discrepan, decide con las raíces
+2. **log(lynx)**: ¿hay que diferenciarla? La varianza baja al diferenciar; decide con las pruebas y las raíces
 3. **El intervalo a mano**: construye el de BJsales desde los pesos \(\psi\) y compáralo con `forecast()`
 
 |||

@@ -1,0 +1,94 @@
+R version 4.6.0 (2026-04-24) | forecast 9.0.2 | tseries 0.10.62 
+
+===== M1 · razón sin MA (32.8) =====
+[1] 32.8
+
+===== M2 · residual 1 de R y coeficientes (para cotejar con statsmodels) =====
+      ar1       ma1 
+ 0.254370 -0.874135 
+[1]    1.1200   33.6784 -164.9610
+[1] 0.7997371
+[1] 0.8117996
+
+===== M3 · cociente de varianzas, 2(1-r1), r1 de las diferencias =====
+      r1 cociente      dos 
+  0.4984   0.9871   1.0032 
+[1] -0.4020 -0.6264 -0.7188
+[1]  28637.95  28268.34  80055.01 262507.29
+raiz MA (1,1,1): 1.144  raiz MA de MA(1) con d=1: 1.3644 
+ACF Nile lags 1..20:
+ [1] 0.4984 0.3846 0.3279 0.2392 0.2284 0.2273 0.2220 0.3000 0.1417 0.0898
+[11] 0.2155 0.2129 0.2370 0.1946 0.1544 0.1948 0.1364 0.1897 0.1542 0.1140
+banda: 0.196 
+
+===== M3 · Monte Carlo con raíz unitaria verdadera (réplica del genera_cap4.R y otra semilla) =====
+   pp   adf 
+1.000 0.513 
+   pp   adf 
+1.000 0.554 
+phi, theta redondeados del ajuste: 0.2544 -0.8741 
+
+===== M5 · Arima con deriva =====
+    ar1     ma1   drift 
+ 0.2707 -0.9054 -2.8827 
+   ar1    ma1  drift 
+0.1176 0.0577 2.0167 
+c = delta(1-phi): -2.102 
+
+===== M5/M9 · media del ARIMA(1,0,1): arima ML, Arima CSS-ML, Arima ML =====
+   arima_ML Arima_CSSML    Arima_ML 
+     920.70      920.56      920.70 
+
+===== M7 · ARIMA(2,1,2) con CSS-ML y ML (Arima y stats::arima) =====
+Arima CSS-ML logL = -630.169  min|raiz AR| = 1.0009  min|raiz MA| = 1.0064  AICc = 1270.98
+Arima ML     logL = -630.445  min|raiz AR| = 2.2407  min|raiz MA| = 1.1218  AICc = 1271.54
+stats::arima ML logL = -630.445  min|raiz AR| = 2.2407
+umbral: 1.0009 < 1.001 ? TRUE 
+
+===== M7/M9/E3 · sigma^2: arima ML, Arima CSS-ML, Arima ML; razón 99/97 =====
+       arima_ML     Arima_CSSML        Arima_ML arimaML_x_99_97          SCR_97 
+       19769.29        20176.91        20176.92        20176.90        20176.91 
+      SCR_ml_99 
+       19769.30 
+dif relativa: 0.02062  2/97 = 0.02062 
+diferencia de coeficientes CSS-ML vs ML: 1.77e-06 -1.26e-06 
+
+===== M9 · forma del ARIMA(1,1,1) sin constante =====
+    h1     h2     h3    h30    h60 limite 
+816.18 835.56 840.49 842.17 842.17 842.17 
+            [,1]    [,2]   [,3]   [,4]   [,5]
+formula  76.1813 19.3783 4.9293 1.2539 0.3189
+forecast 76.1813 19.3783 4.9293 1.2539 0.3189
+
+===== M10 · TRM desde la copia fija =====
+      h      inf      sup
+[1,]  1 3259.002 3735.178
+[2,]  3 3084.709 3909.471
+[3,]  6 2913.895 4080.285
+[4,] 12 2672.328 4321.852
+[5,] 24 2330.700 4663.480
+[1] 0
+asimetria d1: 0.7605  residuales: 0.7605 
+cubre 80% a un mes: 0.8394 
+[1] 1.0967 1.1443 1.0686
+rho1 d1: 0.0876 
+razon teorica 1 + 2 rho1 (h-1)/h: 1.1167 1.1459 1.1605 
+fuera 12: 11 de 126 
+residual 1 de R (TRM): 2.401 
+
+===== E1 · BJsales =====
+[1]  0.3118 -0.4756
+
+===== E2 · log(lynx) =====
+      r1 cociente      dos 
+  0.7851   0.4156   0.4298 
+r1 de diff(log lynx), d = 1 y 2: 0.5649 0.0498 
+ARIMA(2,1,1) log lynx |raiz MA|: 1 
+ndiffs: 0 0 0 
+
+===== Quiz 4 · deriva, c y media muestral de diferencias =====
+   deriva         c media_dif 
+   -2.883    -2.102    -3.838 
+
+===== M7 · AIC de R del ARIMA(1,1,1) (para la nota del bloque de Python) =====
+AIC R: 1267.255 

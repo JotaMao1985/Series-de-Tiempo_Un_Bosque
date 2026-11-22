@@ -16,8 +16,8 @@
         </div>
       </div>
 
-      <p>El Módulo 3 dejó $d = 1$ como decisión de trabajo para el Nilo: es el orden que minimiza la varianza y el
-        que pide KPSS, aunque la sospecha del escalón de 1899 sigue abierta y el Módulo 8 la retoma. Con ese $d$
+      <p>El Módulo 3 dejó $d = 1$ como decisión de trabajo para el Nilo: es el orden que pide KPSS, la prueba que
+        usa <code>auto.arima</code>, aunque la sospecha del escalón de 1899 sigue abierta y el Módulo 8 la retoma. Con ese $d$
         provisional, el resto es el Capítulo 3 sin cambios: se leen la ACF y la PACF de
         $w_t = \nabla y_t = y_t - y_{t-1}$ y se cruzan en la tabla de identificación. Lo único nuevo, y es
         importante, es <strong>sobre qué serie se leen</strong>. La ACF de la serie sin diferenciar del Nilo decae
@@ -153,10 +153,12 @@ print(np.round(pacf(w, nlags=6, method="ldb")[1:], 4))
 
 ma1 = ARIMA(nilo, order=(0, 1, 1), trend="n").fit()
 print(round(ma1.params[0], 4))
-#&gt; -0.7334   (R: -0.7329)
+#&gt; -0.7334
+#   R da -0.7329
 # el primer residual es y_1 = 1120 (inicializacion difusa), no un error: se descarta
 print(round(float(acorr_ljungbox(ma1.resid[1:], lags=[20], model_df=1)["lb_pvalue"].iloc[0]), 4))
-#&gt; 0.6984    (R: 0.6737; misma conclusion, no rechaza)</code></pre>
+#&gt; 0.6984
+#   R da 0.6737: misma conclusion, no rechaza</code></pre>
         </div>
       </div>
 
@@ -204,7 +206,8 @@ print(round(float(acorr_ljungbox(ma1.resid[1:], lags=[20], model_df=1)["lb_pvalu
         </ul>
         <p style="margin-bottom:0;">Regla mnemotécnica: <strong>cada diferencia sube en un grado el polinomio de la
           tendencia</strong> que la constante genera: a largo plazo, $\hat y_{n+h}$ crece como
-          $\mu_w\, h^d / d!$. Sin constante: $d=0$ tiende a cero, $d=1$ se queda plano, $d=2$ sigue una recta. Con
+          $\mu_w\, h^d / d!$. Sin constante: $d=0$ tiende a cero, $d=1$ se aplana (no necesariamente en el último
+          dato: el Módulo 9 lo mide), $d=2$ sigue una recta. Con
           constante: $d=0$ vuelve a la media, $d=1$ recta, $d=2$ parábola. El simulador «La forma del pronóstico
           según $d$» del Módulo 9 dibuja cuatro de estos seis casos sobre el Nilo.</p>
       </div>
@@ -258,7 +261,8 @@ print(round(float(acorr_ljungbox(ma1.resid[1:], lags=[20], model_df=1)["lb_pvalu
       </div>
 
       <p>No es significativa (en la ecuación del Módulo 1 equivaldría a
-        $c = \hat\delta\,(1-\hat\phi_1) = -2.883 \times (1 - 0.271) = -2.10$). Y el AICc lo confirma: $1268.06$ con deriva frente a $1267.51$ sin ella —
+        $c = \hat\delta\,(1-\hat\phi_1) = -2.883 \times (1 - 0.271) = -2.10$, con el $\hat\phi_1 = 0.271$ del
+        propio modelo con deriva, que no es el $0.254$ del modelo sin ella). Y el AICc lo confirma: $1268.06$ con deriva frente a $1267.51$ sin ella —
         añadirla empeora. Tiene sentido físico: no hay ninguna razón para creer que el caudal del Nilo disminuya
         <em>indefinidamente</em> a razón de $2.9 \times 10^8\ \text{m}^3$ por año. Y buena parte de esa caída no fue
         gradual. La media de las diferencias es $(y_{1970} - y_{1871})/99 = (740 - 1120)/99 = -3.84$ —la suma de
@@ -300,6 +304,9 @@ names(coef(f1a))
 
 # Para pedirla hay que usar forecast::Arima con include.drift
 f1b &lt;- Arima(Nile, order = c(1, 1, 1), include.drift = TRUE)
+round(coef(f1b), 4)               # el ar1 cambia al anadir la deriva
+#&gt;     ar1     ma1   drift
+#&gt;  0.2707 -0.9054 -2.8827
 round(c(coef(f1b)[["drift"]], sqrt(diag(f1b$var.coef))[["drift"]]), 4)
 #&gt; [1] -2.8827  2.0167
 round(coef(f1b)[["drift"]] / sqrt(diag(f1b$var.coef))[["drift"]], 3)
@@ -328,7 +335,7 @@ f0 = ARIMA(nilo, order=(1, 0, 1), trend="c").fit()
 print(f0.param_names, np.round(f0.params, 4))
 #&gt; ['const', 'ar.L1', 'ma.L1', 'sigma2'] [ 9.19350500e+02  8.61000000e-01
 #&gt;                                        -5.17600000e-01  1.98070486e+04]
-#   919.35 es EXACTAMENTE la media muestral de la serie; R devuelve
+#   919.35 es practicamente la media muestral de la serie; R devuelve
 #   920.7037, el valor que maximiza la verosimilitud junto al resto de
 #   parametros. statsmodels no se aleja del valor inicial porque la
 #   verosimilitud es muy plana en la media (e.e. = 46.67 en R).
@@ -338,8 +345,9 @@ print(f0.param_names, np.round(f0.params, 4))
 f1 = ARIMA(nilo, order=(1, 1, 1), trend="t").fit()
 i = f1.param_names.index("x1")
 print(round(f1.params[i], 4), round(f1.bse[i], 4), round(f1.params[i] / f1.bse[i], 3))
-#&gt; -2.8518 2.124 -1.343       R: -2.8827, 2.0167, t = -1.429
-#   distinto numero, misma conclusion: no es significativa
+#&gt; -2.8518 2.124 -1.343
+#   R da -2.8827, 2.0167 y t = -1.429: distinto numero, misma conclusion,
+#   no es significativa
 
 # d = 2: statsmodels TAMPOCO la ajusta, y ademas lo explica mejor que R
 try:
@@ -501,7 +509,11 @@ subset(rejilla, modelo %in% c("ARIMA(0,1,1)", "ARIMA(1,1,1)"))[, c("modelo","aic
 #&gt;          modelo    aicc     bic
 #&gt; 11 ARIMA(0,1,1) 1269.22 1274.28
 #&gt; 14 ARIMA(1,1,1) 1267.51 1275.04
-# AICc prefiere (1,1,1) por 1.71; BIC prefiere (0,1,1) por 0.76</code></pre>
+# AICc prefiere (1,1,1) y BIC prefiere (0,1,1), por:
+with(subset(rejilla, modelo %in% c("ARIMA(0,1,1)", "ARIMA(1,1,1)")),
+     round(c(aicc = -diff(aicc), bic = diff(bic)), 2))
+#&gt; aicc  bic 
+#&gt; 1.71 0.76 </code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm

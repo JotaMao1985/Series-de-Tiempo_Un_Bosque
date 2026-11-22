@@ -1,6 +1,6 @@
 {
   "descripcion": "Precálculos del Capítulo 4 (modelos ARIMA y metodología Box-Jenkins). Ajustes con stats::arima y forecast::Arima por máxima verosimilitud. AICc = AIC + 2k(k+1)/(n-k-1) con k = nº de coeficientes + 1 y n EFECTIVO = n - d. El AICc solo se compara dentro de un mismo d. Ljung-Box con fitdf = p + q. Trazas de auto.arima capturadas con trace = TRUE (criterio AICc).",
-  "generado": "2026-09-23 12:12:47 -05",
+  "generado": "2026-11-22 10:29:44 -05",
   "max_rezago": 20,
   "horizonte": 30,
   "nilo": {
@@ -1326,7 +1326,7 @@
           "sigma2": 20176.91
         },
         "dif_relativa_sigma2": 0.02062,
-        "nota": "stats::arima(method='ML') y forecast::Arima() (CSS-ML por defecto) dan coeficientes iguales a 5 decimales pero sigma^2 distinta: el ancho de los intervalos hereda esa diferencia."
+        "nota": "stats::arima(method='ML') y forecast::Arima() dan coeficientes iguales a 5 decimales pero sigma^2 distinta: Arima divide la suma de cuadrados de los residuales entre n* - k = 99 - 2 y arima entre n* = 99 (razon 99/97). El ancho de los intervalos hereda esa diferencia."
       }
     },
     "cambio_nivel": {
@@ -2272,6 +2272,16 @@
         "aviso": "No drift term fitted as the order of difference is 2 or more.",
         "nota": "forecast::Arima descarta la deriva cuando d >= 2. Por eso el pronóstico con d = 2 es una RECTA y no una parábola: el caso cuadrático existe en el álgebra, pero el software se niega a ajustarlo porque extrapola sin control."
       }
+    },
+    "sim_raiz_unitaria": {
+      "modelo": "ARIMA(1,1,1) con los coeficientes del Nilo, raiz unitaria verdadera",
+      "phi": 0.2544,
+      "theta": -0.8741,
+      "n": 100,
+      "n_replicas": 1000,
+      "nivel": 0.05,
+      "pp_rechaza": 1,
+      "adf_k4_rechaza": 0.513
     }
   },
   "trm": {
