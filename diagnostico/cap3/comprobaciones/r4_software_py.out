@@ -1,0 +1,108 @@
+
+=== M1: convenio del MA en statsmodels, ArmaProcess pide el polinomio, np.roots descendente (c3-m1-07, -11, -36) ===
+statsmodels 0.14.6 numpy 2.2.6
+[1.     0.4698 0.     0.    ]
+r1 0.4575
+['ma.L1', 'sigma2'] [0.6979 0.9847]
+[0.6] [0.6    0.36   0.216  0.1296]
+[-0.6] [-0.6     0.36   -0.216   0.1296]
+['ar.L1', 'sigma2'] [0.601 1.003]
+np.roots([1,-3,2]) = [2. 1.] (polinomio x^2-3x+2: raices 2 y 1)
+np.roots([2,-3,1]) = [1.  0.5] (mismos coeficientes invertidos: x'=2x^2-3x+1: 1 y 0.5)
+raices ascendente->invertido [0.93333333+0.67986927j 0.93333333-0.67986927j] sin invertir [0.7+0.50990195j 0.7-0.50990195j]
+
+=== M3-M4: ARIMA de statsmodels y la invertibilidad; arma2ma/arma2ar (c3-m3-32, c3-m4-09) ===
+(self, endog, exog=None, order=(0, 0, 0), seasonal_order=(0, 0, 0, 0), trend=None, enforce_stationarity=True, enforce_invertibility=True, concentrate_scale=False, trend_offset=1, dates=None, freq=None, missing='none', validate_specification=True)
+defecto: [0.5051] 3.8888
+enforce_invertibility=False: [0.5051] 3.8888
+enforce_invertibility=False, inicio 2: [1.9799] 0.992
+correspond
+        to a stationarity process.
+    enforce_invertibility : bool, optional
+        Whether or not to require the moving average parameters to correspond
+        to an invertible process.
+    concentrate_scale : bool, optional
+        Whether or not to concentrate the scale (variance of the error term)
+        out of the likelihood. This reduces the number of parameters by one.
+        This is only applicable when considering estimat
+
+=== M3: techo de rho_1 en un MA(q), cos(pi/(q+2)) (c3-m3-12) ===
+q  maximo numerico de rho_1   cos(pi/(q+2))   mayor valor propio de A/2
+1 0.5 0.5 0.5
+2 0.707107 0.707107 0.707107
+3 0.809017 0.809017 0.809017
+4 0.866025 0.866025 0.866025
+5 0.900969 0.900969 0.900969
+6 0.92388 0.92388 0.92388
+
+=== M5: banda de Bartlett de statsmodels (c3-m5-30) ===
+r_k: [ 1.     0.447 -0.025 -0.031 -0.015  0.013  0.013]
+semiancho Bartlett: [0.     0.098  0.116  0.116  0.1161 0.1161 0.1161]
+a mano 1.96*sqrt((1+2*sum r_j^2, j<k)/n): [0.     0.098  0.116  0.116  0.1161 0.1161 0.1161]
+ruido blanco 1.96/sqrt(n): 0.098
+bartlett_confint=False semiancho: [0.098 0.098 0.098 0.098 0.098 0.098 0.098]
+
+=== M5: redundancia de parametros en Python (c3-m5-32) ===
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+const          0.0181      0.069      0.263      0.792      -0.117       0.153
+ar.L1         -0.0798      1.534     -0.052      0.959      -3.085       2.926
+ma.L1          0.1254      1.531      0.082      0.935      -2.876       3.127
+sigma2         0.8505      0.093      9.148      0.000       0.668       1.033
+==============================================================================
+suma ar1 + ma1 = 0.0457
+
+=== M6-M8: generate_sample, yule_walker, acorr_ljungbox, residuales (c3-m6-04, c3-m7-16, -17, c3-m8-18) ===
+statsmodels 0.14.6
+generate_sample: (self, nsample=100, scale=1.0, distrvs=None, axis=0, burnin=0)
+yule_walker: (x, order=1, method='adjusted', df=None, inv=False, demean=True)
+acorr_ljungbox: (x, lags=None, boxpierce=False, model_df=0, period=None, return_df=True, auto_lag=False)
+  Default is 1.
+    method : str, optional
+       Method can be 'adjusted' or 'mle' and this determines
+       denominator in estimate of autocorrelation function (ACF) at
+       lag k. If 'mle', the denominator is n=X.shape[0], if 'adjusted'
+       the denominator is n-k.  The default is adjusted.
+    df : int, option
+100
+adjusted [ 1.3616 -0.6719] 255.86
+mle [ 1.3173 -0.6338] 290.0
+css -> ValueError "css" is not a valid estimator.
+
+        Fit (estimate) the parameters of the model.
+
+        Parameters
+        ----------
+        
+method : str, optional
+            The method used for estimating the parameters of the model. Valid
+            options include 'statespace', 'innovations_mle', 'hannan_rissanen',
+            'burg', 'innovations', and 'yule_walker'. Not all options are
+            available for every specification (for example 'yule_walker' can
+            only be used with AR(p) models).
+        method_kwargs : dict, optional
+            Arguments to pass to the fit function for the parameter estimator
+            described by the `method` argument.
+        gls : bool, optional
+            Whether or not to use generalized least squares (GLS) to estimate
+            regression effects. The default is False if `method='statespace'`
+            and is True otherwise.
+        gls_kwargs : dict, optional
+            Arguments to pass to the GLS estimation fit method. Only applicable
+            if GLS est
+resid[:4] [ 52.536  -9.829   8.727 -15.397]
+aicc True 838.3 848.3
+model_df 0 {'lb_stat': 15.7002, 'lb_pvalue': 0.2054}
+model_df 2 {'lb_stat': 15.7002, 'lb_pvalue': 0.1085}
+2.495195383131349 21.054864222323893
+
+=== M7: tsa.arima_model.ARMA ya no existe; metodo por defecto de ARIMA.fit ===
+arima_model importa: /opt/homebrew/Caskroom/mambaforge/base/lib/python3.10/site-packages/statsmodels/tsa/arima_model.py
+ARMA -> NotImplementedError 
+statsmodels.tsa.arima_model.ARMA and statsmodels.tsa.arima_model.ARIMA have
+been removed in favor of statsmodels.tsa.arima.model.ARIMA (note the .
+between arima and model) and statsmodels.tsa.SARIMAX
+["method = 'statespace'"]
+(self, start_params=None, transformed=True, includes_fixed=False, method=None, method_kwargs=None, gls=None, gls_kwargs=None, cov_type=None, cov_kwds=None, return_params=False, low_memory=False)
+[ 1.4059 -0.7111] [ 1.4059 -0.7111]

@@ -1057,7 +1057,7 @@
         { etiqueta: 'PACF(3):', valor: `${MANCHAS.pacf[2].toFixed(3)} — dentro de la banda, luego p = 2` }
       ]);
       return [
-        serieSimple(c[0], MANCHAS.valores, 'Manchas solares (número de Wolf)',
+        serieSimple(c[0], MANCHAS.valores, 'Manchas solares (número anual)',
           COLORES_GRAFICO.primario, anios),
         crearGraficoBarras(c[1], REZAGOS, MANCHAS.acf, {
           etiqueta: 'ACF', color: COLORES_GRAFICO.primario,
@@ -1249,7 +1249,7 @@
           { etiqueta: 'Ljung–Box(12):', valor: `p = ${TRANSF.sqrt.lb12_p.toFixed(4)} ✓` },
           { etiqueta: 'Pseudo-periodo:', valor: `${TRANSF.sqrt.periodo.toFixed(2)} años (ciclo solar ≈ 11)` }
         ] : [
-          { etiqueta: 'Escala:', valor: 'original (número de Wolf)' },
+          { etiqueta: 'Escala:', valor: 'original (número anual)' },
           { etiqueta: 'PACF(3), PACF(4):', valor: `${MANCHAS.pacf[2].toFixed(4)}, ${MANCHAS.pacf[3].toFixed(4)}` },
           { etiqueta: 'AR(2) — AICc / BIC:', valor: `${MANCHAS.diagnosticos.arma20.aicc.toFixed(2)} / ${MANCHAS.diagnosticos.arma20.bic.toFixed(2)} — no son los mínimos` },
           { etiqueta: 'Ljung–Box(12):', valor: `p = ${MANCHAS.diagnosticos.arma20.lb12_p.toFixed(4)} ✗` },
@@ -1430,7 +1430,7 @@
         formato: fmt,
         inicial: 'aicc',
         destacada: 'ARMA(2,0)',
-        pie: 'El AR($2$) de Yule —la fila marcada— no es el mínimo de ninguno de los ' +
+        pie: 'El AR($2$) —la fila marcada, el que proponía la identificación— no es el mínimo de ninguno de los ' +
           'dos criterios sobre la serie cruda, y ordenando por Ljung–Box se ve además ' +
           'que no pasa el diagnóstico. Sobre $\\sqrt{\\text{manchas}}$ la conclusión cambia.'
       };

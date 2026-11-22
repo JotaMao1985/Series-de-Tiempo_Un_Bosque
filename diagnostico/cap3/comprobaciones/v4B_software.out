@@ -1,0 +1,129 @@
+R version 4.6.0 (2026-04-24) · forecast 9.0.2 
+
+== c3-m7-11 · CSS y ML con T = 40, phi = 0.95, set.seed(1)
+   css     ml 
+1.0086 0.9808 
+
+== c3-m7-11 / c3-m7-33 / c3-m7-34 · 12 semillas x 1000 réplicas
+      semilla css_mayor_1 ml_mayor_1 ml_999 ml_na_por_mil
+ [1,]       1         4.6          0  13.33            10
+ [2,]       2         4.4          0  13.72             9
+ [3,]       3         2.8          0  12.96             5
+ [4,]       4         4.1          0  16.57             4
+ [5,]       5         4.0          0  14.17             5
+ [6,]       6         3.8          0  12.75             4
+ [7,]       7         2.9          0  15.40            13
+ [8,]       8         2.5          0  13.91             8
+ [9,]       9         3.8          0  12.96            12
+[10,]      10         4.3          0  13.00             8
+[11,]      11         2.8          0  14.42             8
+[12,]      12         3.6          0  12.59             7
+rangos: CSS>1 2.5 4.6 | ML>1 0 0 | ML>=0.999 12.59 16.57 | ML sin estimación (por mil) 4 13 
+
+== c3-m7-13 · sesgo de Yule-Walker hacia el interior (AR(2) de las manchas, T = 100, 1000 réplicas)
+Warning messages:
+1: In log(s2) : NaNs produced
+2: In log(s2) : NaNs produced
+3: In log(s2) : NaNs produced
+4: In log(s2) : NaNs produced
+media YW: 1.3448 -0.6668 | media ML: 1.389 -0.705 | módulo medio YW: 1.2309 ML: 1.1955 verdadero: 1.1859 
+AR(1) phi = 0.95, T = 100: media YW = 0.893 
+
+== c3-m7-17 (lado R) · ar() usa divisor n
+[1]  1.3173 -0.6338
+
+== c3-m8-24 · logLik de modelos anidados (ML)
+      p q       ll
+ [1,] 1 0 -449.039
+ [2,] 2 0 -414.940
+ [3,] 3 0 -412.940
+ [4,] 4 0 -411.939
+ [5,] 0 1 -450.941
+ [6,] 0 2 -422.570
+ [7,] 0 3 -417.357
+ [8,] 1 1 -421.041
+ [9,] 2 1 -412.045
+[10,] 1 2 -414.936
+[11,] 2 2 -411.863
+
+== c3-m8-15 / c3-m8-35 · Ljung-Box con y sin fitdf (set.seed(8), 3000 AR(2), T = 100, h = 12)
+   sin    con 
+0.0257 0.0490 
+cociente sin/con: 0.524 
+
+== c3-m8-11 · Var(r_k) de ruido blanco, T = 50, 20000 series
+            [,1]    [,2]    [,3]    [,4]    [,5]
+simulada 0.01877 0.01832 0.01717 0.01551 0.01173
+formula  0.01885 0.01846 0.01731 0.01538 0.01154
+uno_T    0.02000 0.02000 0.02000 0.02000 0.02000
+
+== c3-m8-18 · residuales de R (estandarizados) frente a la innovación cruda
+residuals[1:4]: 21.056 -6.911 8.728 -15.396 | gamma0/sigma2 = 6.226 raíz 2.495 | factor 2.º: 1.422 
+21.056 * raíz = 52.538 
+Ljung-Box AR(2) crudo, lag 12: con fitdf=2 0.0461 | sin fitdf 0.0996   (c3-m10-14)
+sin los 2 primeros residuales, fitdf=2: 0.0232 
+
+== c3-m9-05 / c3-m9-43 · Guerrero
+min(manchas) = 0 | ceros 1770-1869: 1 | ceros 1700-1988: 3 
+sin desplazar: 0.3333 | aviso: Guerrero's method for selecting a Box-Cox parameter (lambda) is given for strictly positive data. 
+manchas + 1: 0.3062 
+guer.cv usa nonseasonal.length:
+$lam
+
+
+$x
+
+
+$nonseasonal.length
+[1] 2
+
+(period <- round(max(nonseasonal.length, frequency(x))))(nobsf <- length(x), 
+    nyr <- floor(nobsf/period))
+BoxCox.lambda: lower por defecto -1 
+
+== c3-m9-08 / c3-m9-47 · AR(2) sobre raíz y sobre la potencia de Guerrero
+           periodo   LB12
+raiz       11.2178 0.1644
+guerrero   11.3883 0.4892
+desplazada 11.2759 0.2216
+phi = 1.4027 -0.6853 sigma2 = 1.341 | suma psi^2 = 6.136 | sigma2*suma = 8.228 | var muestral sqrt = 8.149 | semiancho límite = 5.62 
+
+== c3-m9-45 · pico espectral del AR(2) frente al ángulo de la raíz
+pico: 11.8361 | fórmula FPP3: 11.8364 | ángulo: 11.2185 
+R = 0.828 pico 11.8346 ángulo 11.2185 
+R = 0.95 pico 11.2606 ángulo 11.2185 
+R = 0.99 pico 11.2199 ángulo 11.2185 
+R = 0.999 pico 11.2183 ángulo 11.2185 
+
+== c3-m9-50 · rho_1 inducido por promediar una caminata (m días por mes)
+m = 2 suma de pesos 0.1667 forma cerrada 0.1667 
+m = 5 suma de pesos 0.2353 forma cerrada 0.2353 
+m = 20 suma de pesos 0.2491 forma cerrada 0.2491 
+m = 21 suma de pesos 0.2492 forma cerrada 0.2492 
+m = 30 suma de pesos 0.2496 forma cerrada 0.2496 
+simulación (2000 caminatas, 138 meses de 21 días): media r1 = 0.234 
+
+== c3-m9-20 / c3-m9-52 / c3-m9-24 · auto.arima sobre los log-retornos de la TRM
+n = 137 frecuencia = 12 
+formals ic: c("aicc", "aic", "bic") | stepwise: TRUE | approximation: (length(x) > 150 || frequency(x) > 12) 
+ARIMA(0,0,0) with zero mean  AICc = 722.663  coef:  
+ARIMA(0,0,1) with zero mean  AICc = 722.653  coef: 0.1326 
+ARIMA(0,0,1) with zero mean  AICc = 722.653  coef: 0.1326 
+WN con media AICc 723.804 | MA(1) con media AICc 724.046 media 0.2681 ee 0.3195 
+LB r_t lag 6/12/20: 0.0931 0.0601 0.0599 | LB r_t^2 lag 12: 0.9166 | r1 = 0.105 
+
+== c3-m10-28 · ARMA(2,2) con factor común frente a ARMA(1,1)
+max |dif ACF| = 1.110223e-16 
+raíces AR: 1.4286 2.5 | raíces MA: 2.5 -2 
+c3-m10-24 · PACF ARMA(1,2): 0.717 -0.257 -0.109 0.163 -0.056 -0.031 
+
+== c3-m10-35 · 190 ventanas de cien años, AR(2) sobre la raíz, LB(12) con fitdf = 2
+ventanas: 190 | pasan: 52 | fallan: 138 | fallan y acaban antes de 1900: 49 | inicios que pasan: 1700-1785 fuera de 1734-1785: 1700 | llegan a 1900 y pasan: 0 
+1770 - 1869 p = 0.164 periodo 11.218 
+1870 - 1988 p = 0.000668 periodo 10.648 
+1900 - 1988 p = 0.00102 periodo 10.129 
+1889 - 1988 p = 0.000601 periodo 10.249 
+1700 - 1988 p = 2.61e-07 periodo 11.007 
+
+== c3-m10-25 · t de los coeficientes
+AR(2) raíz: 19.31 -9.46 | ARMA(2,1) crudo theta: 0.3732 t = 2.78 

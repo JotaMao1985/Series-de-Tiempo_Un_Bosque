@@ -1,0 +1,416 @@
+R version 4.6.0 (2026-04-24) · forecast 9.0.2 
+
+=== M1-M2: intercept = media, signo del MA, polyroot, pseudo-periodo, triangulo (c3-m1-07, -36; c3-m2-04, -12, -17) ===
+      ar1 intercept 
+    0.599     9.982 
+[1] "ar1"       "intercept"
+c = mu*(1-phi) = 4  vs intercept = 9.982 
+media de x: 9.982 
+  ma1 
+0.701 
+     0      1      2 
+1.0000 0.4698 0.0000 
+[1] 1+3.569119e-20i 2-3.569119e-20i
+P(1.40,-0.69) = 11.052 
+P(1.4027,-0.6853) = 11.219 
+P(1.5,-0.75) = 12 
+      0       1       2       3       4 
+ 1.0000  0.8000  0.3700 -0.0820 -0.3923 
+[1] 0.7143 0.3000 0.0000 0.0000 0.0000
+gamma0(0.5,0.3)/s2 = 2.2436  gamma0(0,2) = -0.3333  (fuera del triangulo)
+(0.50,0.30): factores (1+p2)=1.300 (1-p1-p2)=0.200 (1+p1-p2)=1.200  | raices>1: TRUE
+(1.40,-0.69): factores (1+p2)=0.310 (1-p1-p2)=0.290 (1+p1-p2)=3.090  | raices>1: TRUE
+(0.90,0.10): factores (1+p2)=1.100 (1-p1-p2)=-0.000 (1+p1-p2)=1.800  | raices>1: FALSE
+(-0.50,0.40): factores (1+p2)=1.400 (1-p1-p2)=1.100 (1+p1-p2)=0.100  | raices>1: TRUE
+rho1,rho2 formula: 0.7143 0.6571  ARMAacf: 0.7143 0.6571 
+
+=== M3-M4: arima() y la raiz invertible, por defecto y con transform.pars = FALSE (c3-m3-32, c3-m4-31) ===
+CSS-ML  transform.pars=TRUE : ma1=0.4794 sigma2=4.0818
+ML      transform.pars=TRUE : ma1=0.4794 sigma2=4.0818
+CSS     transform.pars=TRUE : ma1=0.4797 sigma2=4.0828
+CSS-ML  transform.pars=FALSE: ma1=0.4794 sigma2=4.0818
+ML      transform.pars=FALSE: ma1=0.4794 sigma2=4.0818
+CSS     transform.pars=FALSE: ma1=0.4797 sigma2=4.0828
+ML init ma=2, transform.pars=FALSE: ma1=2.0861 sigma2=0.9380
+ML fixed ma=2: ma1=2.0000 sigma2=1.0209
+
+=== M3-M5: cifras de PACF del MA(1), ARMAtoMA, pacf()$acf (c3-m4-09, c3-m5-08) ===
+PACF MA(1) theta=0.8: 0.4878 -0.3123 0.2215 -0.1652 
+PACF MA(1) theta=-0.8: -0.4878 -0.3123 -0.2215 -0.1652 
+formula Cryer (signo cambiado): 0.4878 -0.3123 0.2215 -0.1652 
+cos(pi/4), cos(pi/5): 0.707 0.809 
+pi_j: -1.2 0.6 -0.3 0.15 -0.075 0.0375 -0.0187 0.0094 -0.0047 0.0023 
+primer |pi_j|<0.01: 8 
+psi: 1.2 0.84 0.588 0.4116 
+rho1 ARMA(1,1): 0.8308 
+ARMAacf MA(1) theta=-1: -0.5 0  Mod(polyroot(c(1,-1)))= 1 
+dim(pacf(y)$acf): 20 1 1 
+ARMA(2,1) rho: 0.8614 0.7307 0.6238 
+MA(1) rho1 con theta=2: 0.4 
+1.96/sqrt(60), 1.96/sqrt(1000): 0.253 0.062 
+PACF ARMA(1,1): 0.8308 -0.3506 0.1687 -0.0836 0.0417 -0.0208 0.0104 -0.0052 
+PACF ARMA(2,1): 0.8614 -0.0438 0.0175 -0.007 0.0028 -0.0011 4e-04 -2e-04 
+
+=== M5: redundancia de parametros (c3-m5-32) ===
+Warning message:
+In arima(y, order = c(1, 0, 1)) :
+  possible convergence problem: optim gave code = 1
+             coef     ee
+ar1        0.8300 0.2307
+ma1       -0.7953 0.2477
+intercept  0.0137 0.0806
+  arma11      ar1    ruido 
+554.3463 552.9939 550.9449 
+suma: 0.0347 
+
+=== M6-M8: arima.sim, varianza sin calentamiento, Yule-Walker, residuales, verosimilitud anidada (c3-m6-05, c3-m7-11, c3-m8-18, c3-m8-24) ===
+R R version 4.6.0 (2026-04-24) 
+ar=1 -> 'ar' part of model is not stationary 
+length order(0,1,0): 101  first value: 0 
+Var t=5: 4.116  estacionaria: 10.256 
+T = 100  sunspot.year: 1700 1988 289 
+YW: 1.3173 -0.6338  var.pred: 298.96 
+YW a mano divisor n: 1.3173 -0.6338 
+YW a mano divisor n-k: 1.3616 -0.6719 
+acf cov lag1 R: 1116.811  a mano /n: 1116.811 
+ML: 1.4059 -0.7111 48.2616  sigma2: 229.43  CSS sigma2: 229.03 
+residuals(ml)[1:4]: 21.056 -6.911 8.728 -15.396 
+gamma0/sigma2: 6.226  sqrt: 2.495 
+   (1,0)    (2,0)    (3,0)    (4,0)    (0,1)    (0,2)    (0,3)    (1,1) 
+-449.039 -414.940 -412.940 -411.939 -450.941 -422.570 -417.357 -421.041 
+   (2,1)    (1,2)    (2,2) 
+-412.045 -414.936 -411.863 
+anidados AR1<=AR2<=AR3<=AR4: TRUE 
+anidados (2,0)<=(2,1)<=(2,2): TRUE  (1,1)<=(2,1)<=(2,2): TRUE  (0,1)<=(0,2)<=(0,3): TRUE 
+CSS: 1.0086  ML: 0.9808 
+
+=== M7-M8: tasa de rechazo con y sin fitdf, sesgo de Yule-Walker, Var(r_k) (c3-m8-15, -35, c3-m7-13, c3-m8-11) ===
+tasa de rechazo al 5%:
+sin_fitdf con_fitdf 
+   0.0257    0.0490 
+verdadero: 1.4059 -0.7111  modulo raiz verdadero: 1.1859 
+    yw1     yw2     ml1     ml2  mod_yw  mod_ml 
+ 1.3414 -0.6629  1.3892 -0.7041  1.2351  1.1965 
+media YW - verdadero: -0.0645 0.0482 
+sd: 0.0826 0.0778 0.0715 0.0701 0.0783 0.0638 
+fraccion de replicas con modulo YW > modulo verdadero: 0.715 
+AR(1) phi=.95 T=100: media YW = 0.89 
+T = 50, Var(r_k) simulada:    0.01887 0.0184 0.01733 0.0153 0.01165 
+(T-k)/(T(T+2)):               0.01885 0.01846 0.01731 0.01538 0.01154 
+1/T:                          0.02 0.02 0.02 0.02 0.02 
+
+=== M7: CSS frente a ML con T = 40, doce semillas (c3-m7-11, c3-m7-34) ===
+There were 50 or more warnings (use warnings() to see the first 50)
+      css_mayor_1 ml_999 ml_falla
+ [1,]         4.6   13.3       10
+ [2,]         4.4   13.7        9
+ [3,]         2.8   13.0        5
+ [4,]         4.1   16.6        4
+ [5,]         4.0   14.2        5
+ [6,]         3.8   12.8        4
+ [7,]         2.9   15.4       13
+ [8,]         2.5   13.9        8
+ [9,]         3.8   13.0       12
+[10,]         4.3   13.0        8
+[11,]         2.8   14.4        8
+[12,]         3.6   12.6        7
+CSS > 1: de 2.5 a 4.6 % | ML >= 0.999: de 12.58812 a 16.56627 % | ML sin estimacion: de 4 a 13 por mil
+
+=== M7: componentes del objeto arima; saturacion de la varianza ===
+ [1] "coef"      "sigma2"    "var.coef"  "mask"      "loglik"    "aic"      
+ [7] "arma"      "residuals" "call"      "series"    "code"      "n.cond"   
+[13] "nobs"      "model"    
+tiene aicc: FALSE 
+t sat:  0.401 0.895 
+primer t con >= 90 %: 23 
+
+=== M9: lambda = 1 - b (c3-m9-41) ===
+b = 0.50: elasticidad en la serie original = 0.505 | tras la potencia lambda = 1-b = 0.50: elasticidad de la desviacion frente al nivel = 0.005
+b = 0.75: elasticidad en la serie original = 0.755 | tras la potencia lambda = 1-b = 0.25: elasticidad de la desviacion frente al nivel = 0.005
+b = 1.00: elasticidad en la serie original = 0.995 | tras la potencia lambda = 1-b = 0.00: elasticidad de la desviacion frente al nivel = -0.005
+
+=== M9: Guerrero con un cero; cuerpo de forecast:::guer.cv (c3-m9-05, c3-m9-43) ===
+min: 0  ceros en la ventana: 1  ceros serie completa: 3 
+--- BoxCox.lambda guerrero sobre la serie cruda (con un cero):
+AVISO: Guerrero's method for selecting a Box-Cox parameter (lambda) is given for strictly positive data. 
+lambda cruda: 0.3333 
+lambda desplazada (+1): 0.3062 
+--- cuerpo de forecast:::guer.cv:
+function (lam, x, nonseasonal.length = 2) 
+{
+    period <- round(max(nonseasonal.length, frequency(x)))
+    nobsf <- length(x)
+    nyr <- floor(nobsf/period)
+    nobst <- floor(nyr * period)
+    x.mat <- matrix(x[(nobsf - nobst + 1):nobsf], period, nyr)
+    x.mean <- colMeans(x.mat, na.rm = TRUE)
+    x.sd <- apply(x.mat, 2, sd, na.rm = TRUE)
+    x.rat <- x.sd/x.mean^(1 - lam)
+    sd(x.rat, na.rm = TRUE)/mean(x.rat, na.rm = TRUE)
+}
+<bytecode: 0x7addae5310>
+<environment: namespace:forecast>
+
+=== M9: periodo de FPP3 y pico de la densidad espectral (c3-m9-45) ===
+periodo del maximo de la densidad espectral (2*pi/omega_max): 11.8366 
+formula FPP3 (9.5): 11.8364 
+angulo de la raiz: 11.2185 
+R = 0.500: periodo del pico = 625.1467 ; periodo del angulo = 11.2180 ; formula FPP3 = NaN
+R = 0.828: periodo del pico = 11.8362 ; periodo del angulo = 11.2180 ; formula FPP3 = 11.8360
+R = 0.950: periodo del pico = 11.2602 ; periodo del angulo = 11.2180 ; formula FPP3 = 11.2602
+R = 0.990: periodo del pico = 11.2197 ; periodo del angulo = 11.2180 ; formula FPP3 = 11.2196
+R = 0.999: periodo del pico = 11.2182 ; periodo del angulo = 11.2180 ; formula FPP3 = 11.2180
+Warning message:
+In acos(-p1 * (1 - p2)/(4 * p2)) : NaNs produced
+
+=== M9: auto.arima(): criterio y busqueda por defecto, con y sin media (c3-m9-20, -24, -52) ===
+n = 137  frequency = 12 
+formals ic: c("aicc", "aic", "bic") 
+formals approximation: (length(x) > 150 || frequency(x) > 12) 
+formals stepwise: TRUE 
+approximation por defecto con esta serie: FALSE 
+--- defecto:
+Series: ret 
+ARIMA(0,0,0) with zero mean 
+
+sigma^2 = 11.27:  log likelihood = -360.32
+AIC=722.63   AICc=722.66   BIC=725.55
+arimaorder: 0 0 0 
+--- stepwise=FALSE, approximation=FALSE:
+Series: ret 
+ARIMA(0,0,1) with zero mean 
+
+Coefficients:
+         ma1
+      0.1326
+s.e.  0.0905
+
+sigma^2 = 11.18:  log likelihood = -359.28
+AIC=722.56   AICc=722.65   BIC=728.4
+--- solo stepwise=FALSE:
+Series: ret 
+ARIMA(0,0,1) with zero mean 
+
+Coefficients:
+         ma1
+      0.1326
+s.e.  0.0905
+
+sigma^2 = 11.18:  log likelihood = -359.28
+AIC=722.56   AICc=722.65   BIC=728.4
+coef ma1, ee: 0.1326 0.0905 
+--- trace por defecto:
+
+ ARIMA(2,0,2)(1,0,1)[12] with non-zero mean : Inf
+ ARIMA(0,0,0)            with non-zero mean : 723.8043
+ ARIMA(1,0,0)(1,0,0)[12] with non-zero mean : 726.385
+ ARIMA(0,0,1)(0,0,1)[12] with non-zero mean : 726.0751
+ ARIMA(0,0,0)            with zero mean     : 722.6633
+ ARIMA(0,0,0)(1,0,0)[12] with non-zero mean : 725.8787
+ ARIMA(0,0,0)(0,0,1)[12] with non-zero mean : 725.8758
+ ARIMA(0,0,0)(1,0,1)[12] with non-zero mean : 726.5523
+ ARIMA(1,0,0)            with non-zero mean : 724.3348
+ ARIMA(0,0,1)            with non-zero mean : 724.0464
+ ARIMA(1,0,1)            with non-zero mean : 725.8252
+
+ Best model: ARIMA(0,0,0)            with zero mean     
+
+--- trace exhaustivo:
+
+ ARIMA(0,0,0)            with zero mean     : 722.6633
+ ARIMA(0,0,0)            with non-zero mean : 723.8043
+ ARIMA(0,0,0)(0,0,1)[12] with zero mean     : 724.6831
+ ARIMA(0,0,0)(0,0,1)[12] with non-zero mean : 725.8758
+ ARIMA(0,0,0)(0,0,2)[12] with zero mean     : 726.107
+ ARIMA(0,0,0)(0,0,2)[12] with non-zero mean : 727.183
+ ARIMA(0,0,0)(1,0,0)[12] with zero mean     : 724.6885
+ ARIMA(0,0,0)(1,0,0)[12] with non-zero mean : 725.8787
+ ARIMA(0,0,0)(1,0,1)[12] with zero mean     : 725.2836
+ ARIMA(0,0,0)(1,0,1)[12] with non-zero mean : 726.5523
+ ARIMA(0,0,0)(1,0,2)[12] with zero mean     : 726.8721
+ ARIMA(0,0,0)(1,0,2)[12] with non-zero mean : 728.0559
+ ARIMA(0,0,0)(2,0,0)[12] with zero mean     : 726.2641
+ ARIMA(0,0,0)(2,0,0)[12] with non-zero mean : 727.3437
+ ARIMA(0,0,0)(2,0,1)[12] with zero mean     : 726.7809
+ ARIMA(0,0,0)(2,0,1)[12] with non-zero mean : 727.9617
+ ARIMA(0,0,0)(2,0,2)[12] with zero mean     : 728.4656
+ ARIMA(0,0,0)(2,0,2)[12] with non-zero mean : 729.7004
+ ARIMA(0,0,1)            with zero mean     : 722.6531
+ ARIMA(0,0,1)            with non-zero mean : 724.0464
+ ARIMA(0,0,1)(0,0,1)[12] with zero mean     : 724.6149
+ ARIMA(0,0,1)(0,0,1)[12] with non-zero mean : 726.0751
+ ARIMA(0,0,1)(0,0,2)[12] with zero mean     : 726.1054
+ ARIMA(0,0,1)(0,0,2)[12] with non-zero mean : 727.4905
+ ARIMA(0,0,1)(1,0,0)[12] with zero mean     : 724.6319
+ ARIMA(0,0,1)(1,0,0)[12] with non-zero mean : 726.0886
+ ARIMA(0,0,1)(1,0,1)[12] with zero mean     : 725.3295
+ ARIMA(0,0,1)(1,0,1)[12] with non-zero mean : 726.8335
+ ARIMA(0,0,1)(1,0,2)[12] with zero mean     : 727.0494
+ ARIMA(0,0,1)(1,0,2)[12] with non-zero mean : 728.5027
+ ARIMA(0,0,1)(2,0,0)[12] with zero mean     : 726.2992
+ ARIMA(0,0,1)(2,0,0)[12] with non-zero mean : 727.6833
+ ARIMA(0,0,1)(2,0,1)[12] with zero mean     : 726.9531
+ ARIMA(0,0,1)(2,0,1)[12] with non-zero mean : 728.3999
+ ARIMA(0,0,1)(2,0,2)[12] with zero mean     : 728.3782
+ ARIMA(0,0,1)(2,0,2)[12] with non-zero mean : 729.8833
+ ARIMA(0,0,2)            with zero mean     : 724.228
+ ARIMA(0,0,2)            with non-zero mean : 725.5394
+ ARIMA(0,0,2)(0,0,1)[12] with zero mean     : 726.2593
+ ARIMA(0,0,2)(0,0,1)[12] with non-zero mean : 727.641
+ ARIMA(0,0,2)(0,0,2)[12] with zero mean     : 727.8688
+ ARIMA(0,0,2)(0,0,2)[12] with non-zero mean : 729.1839
+ ARIMA(0,0,2)(1,0,0)[12] with zero mean     : 726.2707
+ ARIMA(0,0,2)(1,0,0)[12] with non-zero mean : 727.6484
+ ARIMA(0,0,2)(1,0,1)[12] with zero mean     : 727.1573
+ ARIMA(0,0,2)(1,0,1)[12] with non-zero mean : 728.6091
+ ARIMA(0,0,2)(1,0,2)[12] with zero mean     : 728.9347
+ ARIMA(0,0,2)(1,0,2)[12] with non-zero mean : 730.3317
+ ARIMA(0,0,2)(2,0,0)[12] with zero mean     : 728.0157
+ ARIMA(0,0,2)(2,0,0)[12] with non-zero mean : 729.3195
+ ARIMA(0,0,2)(2,0,1)[12] with zero mean     : 728.8484
+ ARIMA(0,0,2)(2,0,1)[12] with non-zero mean : 730.2407
+ ARIMA(0,0,3)            with zero mean     : 726.1198
+ ARIMA(0,0,3)            with non-zero mean : 727.405
+ ARIMA(0,0,3)(0,0,1)[12] with zero mean     : 728.1781
+ ARIMA(0,0,3)(0,0,1)[12] with non-zero mean : 729.5383
+ ARIMA(0,0,3)(0,0,2)[12] with zero mean     : 729.8912
+ ARIMA(0,0,3)(0,0,2)[12] with non-zero mean : 731.1978
+ ARIMA(0,0,3)(1,0,0)[12] with zero mean     : 728.1892
+ ARIMA(0,0,3)(1,0,0)[12] with non-zero mean : 729.5453
+ ARIMA(0,0,3)(1,0,1)[12] with zero mean     : 729.0578
+ ARIMA(0,0,3)(1,0,1)[12] with non-zero mean : 730.4865
+ ARIMA(0,0,3)(2,0,0)[12] with zero mean     : 730.0321
+ ARIMA(0,0,3)(2,0,0)[12] with non-zero mean : 731.3257
+ ARIMA(0,0,4)            with zero mean     : 728.2043
+ ARIMA(0,0,4)            with non-zero mean : 729.4814
+ ARIMA(0,0,4)(0,0,1)[12] with zero mean     : 730.3206
+ ARIMA(0,0,4)(0,0,1)[12] with non-zero mean : 731.6738
+ ARIMA(0,0,4)(1,0,0)[12] with zero mean     : 730.3287
+ ARIMA(0,0,4)(1,0,0)[12] with non-zero mean : 731.6776
+ ARIMA(0,0,5)            with zero mean     : 726.3792
+ ARIMA(0,0,5)            with non-zero mean : 728.0268
+ ARIMA(1,0,0)            with zero mean     : 722.9531
+ ARIMA(1,0,0)            with non-zero mean : 724.3348
+ ARIMA(1,0,0)(0,0,1)[12] with zero mean     : 724.9241
+ ARIMA(1,0,0)(0,0,1)[12] with non-zero mean : 726.3725
+ ARIMA(1,0,0)(0,0,2)[12] with zero mean     : 726.3809
+ ARIMA(1,0,0)(0,0,2)[12] with non-zero mean : 727.752
+ ARIMA(1,0,0)(1,0,0)[12] with zero mean     : 724.9403
+ ARIMA(1,0,0)(1,0,0)[12] with non-zero mean : 726.385
+ ARIMA(1,0,0)(1,0,1)[12] with zero mean     : 725.5874
+ ARIMA(1,0,0)(1,0,1)[12] with non-zero mean : 727.0857
+ ARIMA(1,0,0)(1,0,2)[12] with zero mean     : 727.2836
+ ARIMA(1,0,0)(1,0,2)[12] with non-zero mean : 728.7288
+ ARIMA(1,0,0)(2,0,0)[12] with zero mean     : 726.583
+ ARIMA(1,0,0)(2,0,0)[12] with non-zero mean : 727.9523
+ ARIMA(1,0,0)(2,0,1)[12] with zero mean     : 727.1838
+ ARIMA(1,0,0)(2,0,1)[12] with non-zero mean : 728.6233
+ ARIMA(1,0,0)(2,0,2)[12] with zero mean     : Inf
+ ARIMA(1,0,0)(2,0,2)[12] with non-zero mean : Inf
+ ARIMA(1,0,1)            with zero mean     : 724.4443
+ ARIMA(1,0,1)            with non-zero mean : 725.8252
+ ARIMA(1,0,1)(0,0,1)[12] with zero mean     : 726.4633
+ ARIMA(1,0,1)(0,0,1)[12] with non-zero mean : 727.9113
+ ARIMA(1,0,1)(0,0,2)[12] with zero mean     : 728.0188
+ ARIMA(1,0,1)(0,0,2)[12] with non-zero mean : 729.3893
+ ARIMA(1,0,1)(1,0,0)[12] with zero mean     : 726.4769
+ ARIMA(1,0,1)(1,0,0)[12] with non-zero mean : 727.9212
+ ARIMA(1,0,1)(1,0,1)[12] with zero mean     : 727.3108
+ ARIMA(1,0,1)(1,0,1)[12] with non-zero mean : 728.8152
+ ARIMA(1,0,1)(1,0,2)[12] with zero mean     : 729.0693
+ ARIMA(1,0,1)(1,0,2)[12] with non-zero mean : 730.5192
+ ARIMA(1,0,1)(2,0,0)[12] with zero mean     : 728.1826
+ ARIMA(1,0,1)(2,0,0)[12] with non-zero mean : 729.5474
+ ARIMA(1,0,1)(2,0,1)[12] with zero mean     : 728.9775
+ ARIMA(1,0,1)(2,0,1)[12] with non-zero mean : 730.4219
+ ARIMA(1,0,2)            with zero mean     : Inf
+ ARIMA(1,0,2)            with non-zero mean : 727.5464
+ ARIMA(1,0,2)(0,0,1)[12] with zero mean     : Inf
+ ARIMA(1,0,2)(0,0,1)[12] with non-zero mean : 729.6874
+ ARIMA(1,0,2)(0,0,2)[12] with zero mean     : Inf
+ ARIMA(1,0,2)(0,0,2)[12] with non-zero mean : 731.3088
+ ARIMA(1,0,2)(1,0,0)[12] with zero mean     : 728.3178
+ ARIMA(1,0,2)(1,0,0)[12] with non-zero mean : 729.6937
+ ARIMA(1,0,2)(1,0,1)[12] with zero mean     : Inf
+ ARIMA(1,0,2)(1,0,1)[12] with non-zero mean : 730.6975
+ ARIMA(1,0,2)(2,0,0)[12] with zero mean     : 730.3608
+ ARIMA(1,0,2)(2,0,0)[12] with non-zero mean : 731.7781
+ ARIMA(1,0,3)            with zero mean     : 728.4915
+ ARIMA(1,0,3)            with non-zero mean : 729.5856
+ ARIMA(1,0,3)(0,0,1)[12] with zero mean     : Inf
+ ARIMA(1,0,3)(0,0,1)[12] with non-zero mean : 731.7547
+ ARIMA(1,0,3)(1,0,0)[12] with zero mean     : 730.3746
+ ARIMA(1,0,3)(1,0,0)[12] with non-zero mean : 731.7615
+ ARIMA(1,0,4)            with zero mean     : 729.3491
+ ARIMA(1,0,4)            with non-zero mean : 731.2166
+ ARIMA(2,0,0)            with zero mean     : 723.986
+ ARIMA(2,0,0)            with non-zero mean : 725.2736
+ ARIMA(2,0,0)(0,0,1)[12] with zero mean     : 726.0113
+ ARIMA(2,0,0)(0,0,1)[12] with non-zero mean : 727.3697
+ ARIMA(2,0,0)(0,0,2)[12] with zero mean     : 727.6744
+ ARIMA(2,0,0)(0,0,2)[12] with non-zero mean : 728.9691
+ ARIMA(2,0,0)(1,0,0)[12] with zero mean     : 726.0228
+ ARIMA(2,0,0)(1,0,0)[12] with non-zero mean : 727.3775
+ ARIMA(2,0,0)(1,0,1)[12] with zero mean     : 726.9271
+ ARIMA(2,0,0)(1,0,1)[12] with non-zero mean : 728.3538
+ ARIMA(2,0,0)(1,0,2)[12] with zero mean     : 728.7399
+ ARIMA(2,0,0)(1,0,2)[12] with non-zero mean : 730.1153
+ ARIMA(2,0,0)(2,0,0)[12] with zero mean     : 727.8132
+ ARIMA(2,0,0)(2,0,0)[12] with non-zero mean : 729.0972
+ ARIMA(2,0,0)(2,0,1)[12] with zero mean     : Inf
+ ARIMA(2,0,0)(2,0,1)[12] with non-zero mean : Inf
+ ARIMA(2,0,1)            with zero mean     : 725.9747
+ ARIMA(2,0,1)            with non-zero mean : 727.2413
+ ARIMA(2,0,1)(0,0,1)[12] with zero mean     : 728.0439
+ ARIMA(2,0,1)(0,0,1)[12] with non-zero mean : 729.3842
+ ARIMA(2,0,1)(0,0,2)[12] with zero mean     : 729.7837
+ ARIMA(2,0,1)(0,0,2)[12] with non-zero mean : 731.0727
+ ARIMA(2,0,1)(1,0,0)[12] with zero mean     : 728.0537
+ ARIMA(2,0,1)(1,0,0)[12] with non-zero mean : 729.3899
+ ARIMA(2,0,1)(1,0,1)[12] with zero mean     : 729.003
+ ARIMA(2,0,1)(1,0,1)[12] with non-zero mean : 730.4201
+ ARIMA(2,0,1)(2,0,0)[12] with zero mean     : Inf
+ ARIMA(2,0,1)(2,0,0)[12] with non-zero mean : Inf
+ ARIMA(2,0,2)            with zero mean     : Inf
+ ARIMA(2,0,2)            with non-zero mean : Inf
+ ARIMA(2,0,2)(0,0,1)[12] with zero mean     : Inf
+ ARIMA(2,0,2)(0,0,1)[12] with non-zero mean : Inf
+ ARIMA(2,0,2)(1,0,0)[12] with zero mean     : Inf
+ ARIMA(2,0,2)(1,0,0)[12] with non-zero mean : Inf
+ ARIMA(2,0,3)            with zero mean     : Inf
+ ARIMA(2,0,3)            with non-zero mean : Inf
+ ARIMA(3,0,0)            with zero mean     : 725.7712
+ ARIMA(3,0,0)            with non-zero mean : 726.982
+ ARIMA(3,0,0)(0,0,1)[12] with zero mean     : 727.8453
+ ARIMA(3,0,0)(0,0,1)[12] with non-zero mean : 729.1298
+ ARIMA(3,0,0)(0,0,2)[12] with zero mean     : 729.6447
+ ARIMA(3,0,0)(0,0,2)[12] with non-zero mean : 730.8864
+ ARIMA(3,0,0)(1,0,0)[12] with zero mean     : 727.8537
+ ARIMA(3,0,0)(1,0,0)[12] with non-zero mean : 729.1345
+ ARIMA(3,0,0)(1,0,1)[12] with zero mean     : 728.7716
+ ARIMA(3,0,0)(1,0,1)[12] with non-zero mean : 730.129
+ ARIMA(3,0,0)(2,0,0)[12] with zero mean     : 729.761
+ ARIMA(3,0,0)(2,0,0)[12] with non-zero mean : 730.9874
+ ARIMA(3,0,1)            with zero mean     : 727.9172
+ ARIMA(3,0,1)            with non-zero mean : 729.1654
+ ARIMA(3,0,1)(0,0,1)[12] with zero mean     : 730.02
+ ARIMA(3,0,1)(0,0,1)[12] with non-zero mean : 731.3444
+ ARIMA(3,0,1)(1,0,0)[12] with zero mean     : 730.0289
+ ARIMA(3,0,1)(1,0,0)[12] with non-zero mean : 731.3495
+ ARIMA(3,0,2)            with zero mean     : Inf
+ ARIMA(3,0,2)            with non-zero mean : Inf
+ ARIMA(4,0,0)            with zero mean     : 727.8493
+ ARIMA(4,0,0)            with non-zero mean : 729.1347
+ ARIMA(4,0,0)(0,0,1)[12] with zero mean     : 729.9104
+ ARIMA(4,0,0)(0,0,1)[12] with non-zero mean : 731.2917
+ ARIMA(4,0,0)(1,0,0)[12] with zero mean     : 729.9247
+ ARIMA(4,0,0)(1,0,0)[12] with non-zero mean : 731.2998
+ ARIMA(4,0,1)            with zero mean     : 729.7775
+ ARIMA(4,0,1)            with non-zero mean : 730.9981
+ ARIMA(5,0,0)            with zero mean     : 724.7242
+ ARIMA(5,0,0)            with non-zero mean : 726.3406
+
+
+
+ Best model: ARIMA(0,0,1)            with zero mean     
+

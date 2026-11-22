@@ -1,0 +1,311 @@
+######## MÓDULO 1: 19 líneas quitadas, 23 añadidas
+@@ -10,2 +10 @@
+-explicar el nombre de la raíz unitaria. Ese atajo de notación es en realidad la herramienta central del
+-análisis clásico de series de tiempo, y conviene presentarla en serio antes de construir modelos con ella. El
++explicar el nombre de la raíz unitaria. Ese atajo de notación es en realidad una herramienta muy útil para escribir los modelos de series de tiempo , y conviene presentarla en serio antes de construir modelos con ella. El
+@@ -15 +14 @@
+-El operador de rezago $B$ retrasa una serie un periodo:
++El operador de rezago $B$ retrasa una serie un periodo :
+@@ -20 +19 @@
+-sumar, multiplicar, elevar a potencias y factorizar. Eso convierte manipulaciones de recursiones —que son
++sumar, multiplicar, elevar a potencias y factorizar . Eso convierte manipulaciones de recursiones —que son
+@@ -24 +23 @@
+-$(1-B^m)(1-B)y_t$, y basta multiplicar para saber exactamente qué combinación de rezagos interviene:
++$(1-B^m)(1-B)y_t$, y basta multiplicar para saber exactamente qué combinación de rezagos interviene :
+@@ -36 +35 @@
+-orden $q$:
++orden $q$ :
+@@ -51 +50 @@
+-$B_i$ (incluyendo el módulo si la raíz es compleja).
++$B_i$ (incluyendo el módulo si la raíz es compleja) .
+@@ -53 +52 @@
+-causal: que $y_t$ depende solo de los choques hasta $t$, que es lo que hace falta para
++causal: que $y_t$ depende solo de los choques hasta $t$ , que es lo que hace falta para
+@@ -73 +72 @@
+-estacionaria que dependa solo de los choques pasados. Con $|\phi| > 1$ existe otra, estacionaria
++estacionaria que dependa solo de los choques pasados . Con $|\phi| > 1$ existe otra, estacionaria
+@@ -75 +74 @@
+-no sirve para pronosticar y por eso queda fuera. Con $|\phi| = 1$ no hay ninguna.
++no sirve para pronosticar y por eso queda fuera . Con $|\phi| = 1$ no hay ninguna.
+@@ -84,4 +83,4 @@
+-($|B| = 1$) el proceso no es estacionario. En el AR(1) eso ocurre con $\phi = 1$ y con $\phi = -1$; el
+-primer caso, la raíz $B = 1$, es la caminata aleatoria: la ACF que no decaía
+-y el KPSS que rechazaba. De ahí el nombre raíz unitaria. Diferenciar es multiplicar la serie por
+-ese mismo factor $(1-B)$: lo que queda, $\nabla y_t$, ya no tiene esa raíz.
++($|B| = 1$) el proceso no es estacionario . En el AR(1) eso ocurre con $\phi = 1$ y con $\phi = -1$; el
++primer caso, la raíz $B = 1$, es la caminata aleatoria : la ACF que no decaía
++y el KPSS que rechazaba. Se dice entonces que el polinomio tiene una raíz unitaria . Diferenciar es multiplicar la serie por
++ese mismo factor $(1-B)$ : lo que queda, $\nabla y_t$, ya no tiene esa raíz.
+@@ -122,2 +121,2 @@
+-sumando— es el que usan R y Python, pero algunos textos —y algún paquete— invierten el signo
+-de $\theta$. Si un $\theta$ estimado te sale con el signo contrario al que esperabas, comprueba el convenio
++sumando— es el que usan R y Python , pero algunos textos —y algún paquete— invierten el signo
++de $\theta$ . Si un $\theta$ estimado te sale con el signo contrario al que esperabas, comprueba el convenio
+@@ -128 +127 @@
+-y el convenio de resta —el del Box–Jenkins clásico y el de S-PLUS— lo escribe así:
++y el convenio de resta —el de algunos textos y el de S-PLUS — lo escribe así:
+@@ -179 +178 @@
+-La regla que ahorra la tarde. En R los coeficientes son coeficientes en todas partes. En
++La regla que ahorra la tarde. En R los coeficientes son coeficientes del modelo tanto al estimar como al simular (arima() y arima.sim()) . En
+@@ -188 +187 @@
+-$\rho_1 = \theta/(1+\theta^2)$, así que $r_1$ y $\hat\theta$ tienen que salir con el mismo
++$\rho_1 = \theta/(1+\theta^2)$ , así que $r_1$ y $\hat\theta$ tienen que salir con el mismo
+@@ -190,0 +190,5 @@
++Fuentes citadas en este módulo
++Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3
++Hamilton, J. D. (1994). Time series analysis. Princeton University Press.
++Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
++R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/
+######## MÓDULO 2: 14 líneas quitadas, 17 añadidas
+@@ -11 +11 @@
+-de sus $p$ valores anteriores más un choque de ruido blanco:
++de sus $p$ valores anteriores más un choque de ruido blanco :
+@@ -20,3 +20,2 @@
+-por $x_1$, $y_{t-2}$ por $x_2$ y así, tienes una regresión múltiple corriente. La diferencia —y no es
+-menor— es que los regresores no son fijos: son la propia variable desplazada, y por eso los errores estándar
+-y la teoría asintótica no son las de la regresión clásica.
++por $x_1$, $y_{t-2}$ por $x_2$ y así, tienes una regresión múltiple corriente . La diferencia —y no es
++menor— es que los regresores no son fijos: son la propia variable desplazada, y por eso no valen los resultados de muestra finita de la regresión clásica: el estimador de mínimos cuadrados es sesgado y los estadísticos $t$ y $F$ habituales solo se justifican de forma asintótica .
+@@ -25,2 +24,2 @@
+-$\mu = c/(1 - \phi_1 - \cdots - \phi_p)$. Por eso arima() de R reporta una columna
+-intercept que en realidad es $\hat\mu$, no $\hat c$. Es una de las confusiones
++$\mu = c/(1 - \phi_1 - \cdots - \phi_p)$ . Por eso arima() de R reporta una columna
++intercept que en realidad es $\hat\mu$, no $\hat c$ . Es una de las confusiones
+@@ -34 +33 @@
+-coeficiente: $\phi_{pp} = \phi_p$. La ACF, en cambio, decae hacia cero sin cortarse nunca.
++coeficiente: $\phi_{pp} = \phi_p$ . La ACF, en cambio, decae hacia cero sin cortarse nunca .
+@@ -48 +47 @@
+-pseudo-ciclo —su longitud, que da la fórmula de más abajo, es el pseudo-periodo—, y es el
++pseudo-ciclo —su longitud, que da la fórmula de más abajo, es el pseudo-periodo —, y es el
+@@ -54 +53 @@
+-$(\phi_1,\phi_2)$ cumple las tres condiciones:
++$(\phi_1,\phi_2)$ cumple las tres condiciones :
+@@ -76 +75 @@
+-Media, varianza y autocorrelaciones de un AR($p$) estacionario:
++Media, varianza y autocorrelaciones de un AR($p$) estacionario :
+@@ -91 +90 @@
+-AR(2), con $(\phi_1,\phi_2)$ dentro del triángulo:
++AR(2), con $(\phi_1,\phi_2)$ dentro del triángulo :
+@@ -116,2 +115 @@
+-¿De dónde salen esas fórmulas? De un mismo sistema de ecuaciones que relaciona los $\phi$ con las
+-autocovarianzas del proceso, y que además será nuestro primer método de estimación en el Módulo 7.
++¿De dónde salen esas fórmulas? De un mismo sistema de ecuaciones, el de Yule–Walker, que relaciona los $\phi$ con las autocovarianzas del proceso , y que además será nuestro primer método de estimación en el Módulo 7.
+@@ -127 +125 @@
+-$k \ge 1$ garantiza que $y_{t-k}$ pertenece al pasado.
++$k \ge 1$ garantiza que $y_{t-k}$ pertenece al pasado .
+@@ -207,0 +206,5 @@
++Fuentes citadas en este módulo
++Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3
++Hamilton, J. D. (1994). Time series analysis. Princeton University Press.
++Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
++R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/
+######## MÓDULO 3: 24 líneas quitadas, 29 añadidas
+@@ -7 +7 @@
+-corta tras el rezago $q$— y entender qué es la invertibilidad y por qué el software la impone.
++corta tras el rezago $q$— y entender qué es la invertibilidad y por qué el software la impone por defecto.
+@@ -15 +15 @@
+-lineal del choque presente y de los $q$ choques anteriores:
++lineal del choque presente y de los $q$ choques anteriores :
+@@ -24 +24 @@
+-qué ser positivos. Coinciden solo en el nombre, que es un accidente histórico.
++qué ser positivos. Coinciden en el nombre, no en el uso: un modelo de medias móviles sirve para pronosticar valores futuros, y el suavizamiento, para estimar la tendencia-ciclo de valores pasados .
+@@ -28,2 +28,2 @@
+-rezago. Es estacionario para cualquier valor de los $\theta$.
+-Varianza y autocorrelaciones de un MA($q$):
++rezago. Es estacionario para cualquier valor de los $\theta$ .
++Varianza y autocorrelaciones de un MA($q$) :
+@@ -36,2 +36,2 @@
+-Ese $\rho_k = 0$ para $k > q$ es exacto y es la firma que buscamos: si dos observaciones están
+-separadas por más de $q$ periodos, no comparten ni un solo choque, luego su covarianza es cero. El MA tiene
++Ese $\rho_k = 0$ para $k > q$ es exacto y es la firma que buscamos : si dos observaciones están
++separadas por más de $q$ periodos, no comparten ni un solo choque, luego su covarianza es cero . El MA tiene
+@@ -56 +56 @@
+-$\sigma^2$ también se estima, ningún dato puede separarlos: el parámetro $\theta$ no es identificable
++$\sigma^2$ también se estima, ningún dato puede separarlos : el parámetro $\theta$ no es identificable
+@@ -58 +58 @@
+-$q$). Hace falta una regla que elija uno de los dos, y se elige el de $|\theta| invertible: es el único con el que se puede reconstruir cada choque a partir de lo observado,
++$q$). Hace falta una regla que elija uno de los dos, y se elige el de $|\theta| invertible : es el único con el que se puede reconstruir cada choque a partir de lo observado ,
+@@ -91 +91 @@
+-valor absoluto. Y los dos extremos caen en $|\theta| = 1$, justo en la frontera de la invertibilidad:
++valor absoluto . Y los dos extremos caen en $|\theta| = 1$, justo en la frontera de la invertibilidad :
+@@ -98 +98 @@
+-están fuera del círculo unitario. Es la misma condición que la estacionariedad del AR, aplicada al otro
++están fuera del círculo unitario . Es la misma condición que la estacionariedad del AR, aplicada al otro
+@@ -102,2 +102,2 @@
+-$\theta = -1$: su raíz, la de $1 - B$, cae justo sobre el círculo unitario, así que no es invertible, y su
+-$\rho_1 = \theta/(1+\theta^2)$ vale $-0.5$, el mínimo que un MA(1) puede alcanzar. Es el $-0.5$ que el
++$\theta = -1$ : su raíz, la de $1 - B$, cae justo sobre el círculo unitario, así que no es invertible , y su
++$\rho_1 = \theta/(1+\theta^2)$ vale $-0.5$, el mínimo que un MA(1) puede alcanzar . Es el $-0.5$ que el
+@@ -108 +108 @@
+-Un MA(2) es invertible si y solo si el par $(\theta_1,\theta_2)$ cumple las tres condiciones:
++Un MA(2) es invertible si y solo si el par $(\theta_1,\theta_2)$ cumple las tres condiciones :
+@@ -119 +119 @@
+-muestral ves $r_1 = 0.8$ y quisieras ajustar un MA(1), no hay ningún $\theta$ que lo produzca. Pero la cota
++muestral ves $r_1 = 0.8$ y quisieras ajustar un MA(1), no hay ningún $\theta$ cuya $\rho_1$ valga eso, y el MA(1) queda en duda: una $r_1$ muestral puede pasar de $0.5$ aunque la $\rho_1$ verdadera no lo haga . Pero la cota
+@@ -121,3 +121,2 @@
+-$q = 2$ y $0.809$ con $q = 3$. Así que $r_1 = 0.8$ descarta también el MA(2), y un MA(3) solo llegaría
+-rozando su techo; lo razonable es buscar un componente autorregresivo. Sirve para descartar modelos sin
+-ajustar nada.
++$q = 2$ y $0.809$ con $q = 3$. Así que $r_1 = 0.8$ pone en duda también el MA(2), y un MA(3) solo llegaría
++rozando su techo; lo razonable es buscar un componente autorregresivo. Sirve para poner en duda modelos sin ajustar nada.
+@@ -164,4 +163,4 @@
+-Queda sin justificar una afirmación del simulador: la PACF de un MA decae sin cortarse nunca. La PACF en el
+-rezago $k$ es la correlación entre $y_t$ e $y_{t-k}$ una vez descontados los rezagos intermedios, o, lo que es
+-lo mismo, el último coeficiente de la regresión de $y_t$ sobre sus $k$ valores anteriores. En un AR($p$) esa
+-regresión ya contiene todo lo que importa cuando $k = p$, y por eso más allá de $p$ la PACF vale cero.
++Queda sin justificar una afirmación del simulador: la PACF de un MA decae sin cortarse nunca . La PACF en el
++rezago $k$ es la correlación entre $y_t$ e $y_{t-k}$ una vez descontados los rezagos intermedios , o, lo que es
++lo mismo, el último coeficiente de la regresión de $y_t$ sobre sus $k$ valores anteriores . En un AR($p$) esa
++regresión ya contiene todo lo que importa cuando $k = p$, y por eso más allá de $p$ la PACF vale cero .
+@@ -176,2 +175,4 @@
+-y cada observación pasada sigue aportando algo, cada vez menos. Por eso la PACF decae como $|\theta|^k$,
+-alternando el signo si $\theta > 0$ y siempre negativa si $\theta
++y cada observación pasada sigue aportando algo, cada vez menos. Por eso la PACF decae exponencialmente, a un ritmo que acaba siendo el de $|\theta|^k$,
++alternando el signo si $\theta > 0$ y siempre negativa si $\theta Es lo que dibuja el simulador:
++$0.4878,\ -0.3123,\ 0.2215,\ -0.1652$ con $\theta = 0.8$, y con $\theta = -0.8$ las mismas magnitudes, todas
++negativas. La suma solo converge si $|\theta|
+@@ -179,0 +181,4 @@
++Fuentes citadas en este módulo
++Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3
++Hamilton, J. D. (1994). Time series analysis. Princeton University Press.
++Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
+######## MÓDULO 4: 15 líneas quitadas, 18 añadidas
+@@ -25,2 +25,2 @@
+-estacionario, con las raíces de $\phi(B)$ fuera del círculo unitario; la AR($\infty$), si es
+-invertible, con las de $\theta(B)$ fuera. Cada polinomio responde por su escritura, y cuando
++estacionario, con las raíces de $\phi(B)$ fuera del círculo unitario ; la AR($\infty$), si es
++invertible, con las de $\theta(B)$ fuera . Cada polinomio responde por su escritura, y cuando
+@@ -29 +29 @@
+-ocurrido hace $j$ periodos sigue presente hoy: son la función de respuesta al impulso. Los
++ocurrido hace $j$ periodos sigue presente hoy: son la función de respuesta al impulso . Los
+@@ -38 +38 @@
+-pronóstico lineal se queda con la suma, y su error a un paso es exactamente $\varepsilon_t$. El signo menos
++pronóstico lineal se queda con la suma, y su error a un paso es exactamente $\varepsilon_t$ . El signo menos
+@@ -53 +53 @@
+-proceso tampoco es invertible). Cuando el mayor pasa de 20 en valor absoluto, el simulador los dibuja en
++proceso tampoco es invertible) . Cuando el mayor pasa de 20 en valor absoluto, el simulador los dibuja en
+@@ -55,3 +55,2 @@
+-mayor a observaciones cada vez más antiguas, lo cual es absurdo. Esa es la
+-traducción operativa de la no invertibilidad, y la razón de fondo por la que el software siempre te devuelve
+-la raíz invertible.
++mayor a observaciones cada vez más antiguas, lo cual no tiene mucho sentido. Esa es la
++traducción operativa de la no invertibilidad , y la razón de fondo por la que el software, por defecto, te devuelve la raíz invertible .
+@@ -92 +91 @@
+-$\varepsilon$ son incorrelados:
++$\varepsilon$ son incorrelados :
+@@ -135 +134 @@
+-forma cerrada para $j \ge 1$:
++forma cerrada para $j \ge 1$ :
+@@ -190 +189 @@
+-varianza del pronóstico se acerca a la del propio proceso. El control $h$ del simulador de arriba recorre esa
++varianza del pronóstico se acerca a la del propio proceso . El control $h$ del simulador de arriba recorre esa
+@@ -197 +196 @@
+-nunca.
++nunca .
+@@ -200 +199 @@
+-en la caminata aleatoria da $\sigma^2 h$, un abanico que se abre sin límite. Así es como el Capítulo 4 usará
++en la caminata aleatoria da $\sigma^2 h$, un abanico que se abre sin límite . Así es como el Capítulo 4 usará
+@@ -205 +204 @@
+-La primera es la parsimonia. Un ARMA(1,1) es un AR($\infty$) cuyos pesos decaen como
++La primera es la parsimonia . Un ARMA(1,1) es un AR($\infty$) cuyos pesos decaen como
+@@ -210 +209 @@
+-$\psi(B) = \theta(B)/\phi(B)$ lo cancela. Basta llevar el simulador de arriba a $\phi = 0.5$ y
++$\psi(B) = \theta(B)/\phi(B)$ lo cancela . Basta llevar el simulador de arriba a $\phi = 0.5$ y
+@@ -212,0 +212,4 @@
++Fuentes citadas en este módulo
++Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3
++Hamilton, J. D. (1994). Time series analysis. Princeton University Press.
++Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
+######## MÓDULO 5: 30 líneas quitadas, 31 añadidas
+@@ -15 +15 @@
+-Combina las dos partes anteriores en un solo modelo:
++Combina las dos partes anteriores en un solo modelo :
+@@ -22,3 +22,3 @@
+-estacionario si las raíces de $\phi(B)$ están fuera del círculo unitario, e
+-invertible si lo están las de $\theta(B)$: cada polinomio responde por lo suyo.
+-¿Para qué mezclarlos? Por parsimonia. El ARMA(1,1) del Módulo 4, con $\phi = 0.7$ y
++estacionario si las raíces de $\phi(B)$ están fuera del círculo unitario , e
++invertible si lo están las de $\theta(B)$ : cada polinomio responde por lo suyo.
++¿Para qué mezclarlos? Por parsimonia . El ARMA(1,1) del Módulo 4, con $\phi = 0.7$ y
+@@ -26,2 +26 @@
+-descarta bajara de $0.01$, y el ARMA lo describe con dos. Menos parámetros significa estimaciones más precisas
+-y pronósticos más estables, que es de lo que se trata.
++descarta bajara de $0.01$, y el ARMA lo describe con dos. Tener menos parámetros deja menos margen de error al estimarlos y, con frecuencia, mejores pronósticos fuera de la muestra, que es de lo que se trata .
+@@ -29 +28 @@
+-Con lo que dejaron los Módulos 2 y 3, la regla para proponer un modelo cabe en una tabla. En ella
++Con lo que dejaron los Módulos 2 y 3, la regla para proponer un modelo cabe en una tabla . En ella
+@@ -44 +43 @@
+-Decae tras el rezago $p$
++Decae, sin cortarse
+@@ -49 +48 @@
+-correlograma ni el correlograma parcial identifican los órdenes de un ARMA mixto. En la práctica se propone
++correlograma ni el correlograma parcial identifican los órdenes de un ARMA mixto . En la práctica se propone
+@@ -69,2 +68 @@
+-real que no encaja en ninguna fila de la tabla, recuerda este simulador: casi nunca es que el modelo no
+-exista, es que la muestra es corta.
++real que no encaja en ninguna fila de la tabla, recuerda este simulador: con una muestra corta, hasta un proceso que sí corresponde a una fila de la tabla puede dar un correlograma que no encaja .
+@@ -73,2 +71 @@
+-es una muestra ruidosa, como acaba de verse. Identificar deja de ser leer una fila de una tabla: es un ciclo de
+-cuatro pasos que se repite hasta que el diagnóstico queda limpio, y la tabla solo interviene en el tercero.
++es una muestra ruidosa, como acaba de verse. Identificar deja de ser leer una fila de una tabla: es un ciclo que se repite hasta que el diagnóstico queda limpio , y que aquí se recorre en cuatro pasos, de los cuales la tabla solo interviene en el tercero.
+@@ -76 +73 @@
+-información (AICc y BIC) comparan modelos ajustados a los mismos datos y penalizan cada parámetro; la prueba de
++información (AICc y BIC) comparan modelos ajustados a los mismos datos y penalizan cada parámetro ; la prueba de
+@@ -78 +75 @@
+-fitdf descuenta de los grados de libertad los parámetros que se estimaron.
++fitdf descuenta de los grados de libertad los parámetros que se estimaron .
+@@ -93,5 +90,5 @@
+-Si la ACF corta tras el rezago $q$, hay una parte MA($q$). Si decae —geométrica o con ondas—, la parte MA no manda y hay que mirar la PACF.
+-Con qué
+-acf(y, lag.max = 20); en Python, plot_acf(y, bartlett_confint=False). La banda $\pm 1.96/\sqrt{T}$ marca qué es ruido. Sin ese argumento, statsmodels dibuja la banda de Bartlett, que no supone ruido blanco y se ensancha con el rezago porque cuenta las autocorrelaciones de los rezagos anteriores.
+-Qué te devuelve atrás
+-Si la ACF decae despacio y casi en línea recta, la serie no es estacionaria: esto no es un problema de identificación sino del Capítulo 2.
++Si la ACF corta tras el rezago $q$, hay una parte MA($q$). Si decae —geométrica o con ondas—, no es un MA puro y hay que mirar la PACF .
++Con qué
++acf(y, lag.max = 20); en Python, plot_acf(y, bartlett_confint=False). La banda $\pm 1.96/\sqrt{T}$ marca qué es ruido . Sin ese argumento, statsmodels dibuja la banda de Bartlett, que no supone ruido blanco y se ensancha con el rezago porque cuenta las autocorrelaciones de los rezagos anteriores .
++Qué te devuelve atrás
++Si la ACF decae despacio y casi en línea recta, suele ser síntoma de que la serie no es estacionaria : esto no es un problema de identificación sino del Capítulo 2.
+@@ -105 +102 @@
+-Cruzar las dos lecturas en la tabla de identificación. Proponer varios candidatos vecinos, no uno: la tabla acota la búsqueda, no la resuelve.
++Cruzar las dos lecturas en la tabla de identificación. Proponer varios candidatos vecinos, no uno: la tabla acota la búsqueda, no la resuelve .
+@@ -113 +110 @@
+-ARMAacf() para la teórica y Box.test(..., type = "Ljung-Box", fitdf = p + q) para los residuales.
++ARMAacf() para la teórica y Box.test(..., type = "Ljung-Box", fitdf = p + q) para los residuales .
+@@ -126 +123 @@
+-con los pesos $\psi_j$ de la representación MA($\infty$) del Módulo 4.
++con los pesos $\psi_j$ de la representación MA($\infty$) del Módulo 4 .
+@@ -129,2 +126 @@
+-$\theta$ en una suma de $q+1$ términos; aquí, para $p \ge 1$, no hay forma corta en función de los
+-parámetros y hay que sumar la serie de los $\psi$. Es el precio de mezclar, y es la misma razón por la que el
++$\theta$ en una suma de $q+1$ términos; aquí, para $p \ge 1$, no hay una forma corta general en función de los parámetros y hay que pasar por los $\psi$: sumando su serie, como en la derivación de más abajo, o resolviendo un sistema lineal en el que entran . Es el precio de mezclar, y es la misma razón por la que el
+@@ -139 +135 @@
+-ARMA(1,1), $y_t = c + \phi y_{t-1} + \varepsilon_t + \theta\varepsilon_{t-1}$:
++ARMA(1,1), $y_t = c + \phi y_{t-1} + \varepsilon_t + \theta\varepsilon_{t-1}$ :
+@@ -186 +182 @@
+-recursión que la de un AR($p$):
++recursión que la de un AR($p$) :
+@@ -202 +198 @@
+-ARMA(1,1), el factor $\phi$—, y la parte MA solo decide con qué valor arranca. Un AR(1) con $\phi = 0.7$ decae
++ARMA(1,1), el factor $\phi$—, y la parte MA solo decide con qué valor arranca . Un AR(1) con $\phi = 0.7$ decae
+@@ -252 +248 @@
+-cancela y el modelo es en realidad más pequeño de lo que aparenta. El Módulo 4 ya lo dejó ver con los mismos
++cancela y el modelo es en realidad más pequeño de lo que aparenta . El Módulo 4 ya lo dejó ver con los mismos
+@@ -265 +261 @@
+-antes de interpretar nada.
++antes de interpretar nada .
+@@ -293,0 +290,5 @@
++Fuentes citadas en este módulo
++Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3
++Hamilton, J. D. (1994). Time series analysis. Princeton University Press.
++Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
++R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/
+######## MÓDULO 6: 3 líneas quitadas, 5 añadidas
+@@ -71,3 +71,5 @@
+-rezago por separado. Si miras 20 rezagos de una serie que es ruido blanco puro, esperas que
+-$20 \times 0.05 = 1$ de ellos se salga por puro azar. Ver uno o dos picos fuera de la banda no es evidencia
+-de nada; por eso existe la prueba de Ljung–Box del Módulo 8, que evalúa todos los rezagos a la vez.
++rezago por separado . Si miras 20 rezagos de una serie que es ruido blanco puro, esperas que
++$20 \times 0.05 = 1$ de ellos se salga por puro azar . Ver uno o dos picos fuera de la banda no basta como evidencia ; por eso existe la prueba de Ljung–Box del Módulo 8, que evalúa todos los rezagos a la vez .
++Fuentes citadas en este módulo
++Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
++R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/

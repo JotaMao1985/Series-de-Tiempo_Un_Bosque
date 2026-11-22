@@ -1,0 +1,1969 @@
+[
+ {
+  "id": "c3-m1-21",
+  "prosa": [
+   [
+    "Ese atajo de notación es en realidad la herramienta central del análisis clásico de series de tiempo, y conviene presentarla en serio",
+    "Ese atajo de notación es en realidad una herramienta muy útil para escribir los modelos de series de tiempo, y conviene presentarla en serio",
+    "«La herramienta central del análisis clásico» es una valoración que ninguna fuente hace: FPP3 §9.2 y Hamilton (cap. 2) lo presentan como un recurso muy útil. Se ajusta la frase a eso."
+   ]
+  ],
+  "marcas": [
+   "[[c3-m1-21]]Ese atajo de notación es en realidad una herramienta muy útil para escribir los modelos de series de tiempo{{F|§9.2}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m1-01",
+  "prosa": [],
+  "marcas": [
+   "<p[[@c3-m1-01]]>El <strong>operador de rezago</strong> $B$ retrasa una serie un periodo{{F|§9.2}}:</p>"
+  ]
+ },
+ {
+  "id": "c3-m1-02",
+  "prosa": [],
+  "marcas": [
+   "<p>[[c3-m1-02]]Lo interesante es que $B$ <strong>se comporta como un número</strong> en las operaciones algebraicas: se puede sumar, multiplicar, elevar a potencias y factorizar{{F|§9.2}}[[/]]."
+  ]
+ },
+ {
+  "id": "c3-m1-03",
+  "prosa": [],
+  "marcas": [
+   "<p[[@c3-m1-03]]><strong>Un ejemplo de lo que compra la notación.</strong> La diferencia estacional de orden $m$ aplicada después de una diferencia regular es $\\nabla_m \\nabla y_t$. Con polinomios, eso es $(1-B^m)(1-B)y_t$, y basta multiplicar para saber exactamente qué combinación de rezagos interviene{{F|§9.2}}:</p>"
+  ]
+ },
+ {
+  "id": "c3-m1-04",
+  "prosa": [
+   [
+    "que verás en el Capítulo 5,",
+    "que se verá en el Capítulo 5,",
+    "segunda pasada: voz impersonal"
+   ]
+  ],
+  "marcas": [
+   "<p style=\"margin-bottom:0;\">[[c3-m1-04]]Ese es exactamente el preprocesamiento del modelo <em>airline</em>{{C|pp. 240–241}} que se verá en el Capítulo 5[[/]], obtenido sin escribir una sola recursión."
+  ]
+ },
+ {
+  "id": "c3-m1-05",
+  "prosa": [],
+  "marcas": [
+   "<p[[@c3-m1-05]]>Polinomio <strong>autorregresivo</strong> de orden $p$ y polinomio de <strong>medias móviles</strong> de orden $q${{F|§9.7}}:</p>"
+  ]
+ },
+ {
+  "id": "c3-m1-07",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m1-07]]El convenio de este capítulo —los $\\phi$ restando, los $\\theta$ sumando— es <strong>el que usan R y Python</strong>{{R|§Details}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m1-08",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m1-08]]pero algunos textos —y algún paquete— invierten el signo de $\\theta${{C|p. 57}}{{R|§Details}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m1-09",
+  "prosa": [
+   [
+    "—el del Box–Jenkins clásico y el de S-PLUS—",
+    "—el de algunos textos y el de S-PLUS—",
+    "La atribución a «Box–Jenkins clásico» no tiene texto en la caché (la biblioteca tiene las ediciones de Box y Jenkins sin PDF) y ninguna obra leída la hace. Lo que sí dicen las fuentes leídas: Cryer y Chan escriben el MA con signo menos (p. 57) y la ayuda de R atribuye ese signo a la documentación de S-PLUS."
+   ]
+  ],
+  "marcas": [
+   "[[c3-m1-09]]el convenio de <strong>resta</strong> —el de algunos textos{{C|p. 57}} y el de S-PLUS{{R|§Details}}— lo escribe así[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m1-10",
+  "prosa": [],
+  "marcas": [
+   "<p style=\"margin-bottom:0;\"[[@c3-m1-10]]>Es <strong>el mismo modelo</strong>, no dos modelos rivales. Ajustado a los mismos datos da la misma verosimilitud, los mismos residuales y los mismos pronósticos; lo único que cambia es la etiqueta impresa. Un $\\hat\\theta = 0.69$ en un convenio es $\\hat\\theta = -0.69$ en el otro.</p>"
+  ]
+ },
+ {
+  "id": "c3-m1-11",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m1-11]]En Python son coeficientes al <em>estimar</em> y coeficientes del <em>polinomio</em> al <em>simular</em>, de modo que la parte AR cambia de signo al pasar de <code>ARIMA(...)</code> a <code>ArmaProcess(...)</code>[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m1-12",
+  "prosa": [
+   [
+    "En R los coeficientes son coeficientes en todas partes.",
+    "En R los coeficientes son coeficientes del modelo tanto al estimar como al simular (<code>arima()</code> y <code>arima.sim()</code>).",
+    "«En todas partes» va más allá de lo que respalda la ayuda de R: polyroot(), por ejemplo, recibe los coeficientes del polinomio (el propio capítulo lo usa así). Se acota a lo que la ayuda de arima() y arima.sim() dice."
+   ]
+  ],
+  "marcas": [
+   "<p><strong>La regla que ahorra la tarde.</strong> [[c3-m1-12]]En R los coeficientes son coeficientes del modelo tanto al estimar como al simular (<code>arima()</code> y <code>arima.sim()</code>){{R|§Details}}[[/]]."
+  ]
+ },
+ {
+  "id": "c3-m1-13",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m1-13]]en un MA(1) bajo el convenio de suma se cumple $\\rho_1 = \\theta/(1+\\theta^2)${{H|p. 49}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m1-14",
+  "prosa": [],
+  "marcas": [
+   "<p style=\"margin-bottom:0;\"[[@c3-m1-14]]>Un proceso autorregresivo es <strong>estacionario</strong> si todas las raíces de $\\phi(B) = 0$ están <strong>fuera</strong> del círculo unitario, es decir, si $|B_i| > 1$ para toda raíz $B_i$ (incluyendo el módulo si la raíz es compleja){{F|§9.7}}{{C|p. 76}}.</p>"
+  ]
+ },
+ {
+  "id": "c3-m1-34",
+  "prosa": [],
+  "marcas": [
+   "<p style=\"margin-bottom:0; margin-top:0.6rem;\">[[c3-m1-34]]En este capítulo «estacionario» quiere decir además <strong>causal</strong>: que $y_t$ depende solo de los choques hasta $t${{C|p. 71}}[[/]], que es lo que hace falta para pronosticar."
+  ]
+ },
+ {
+  "id": "c3-m1-15",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m1-15]]no existe una solución estacionaria que dependa solo de los choques pasados{{C|p. 71}}. Con $|\\phi| > 1$ existe otra, estacionaria pero escrita con los choques <em>futuros</em>, $y_t = -\\sum_{j \\ge 1}\\phi^{-j}\\varepsilon_{t+j}$: no sirve para pronosticar y por eso queda fuera{{C|ejercicio 4.16}}. Con $|\\phi| = 1$ no hay ninguna{{C|ejercicio 4.15}}[[/]]."
+  ]
+ },
+ {
+  "id": "c3-m1-35",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m1-35]]Cuando una raíz cae <em>exactamente</em> sobre el círculo ($|B| = 1$) el proceso no es estacionario{{C|p. 76}}. En el AR(1) eso ocurre con $\\phi = 1$ y con $\\phi = -1$; el primer caso, la raíz $B = 1$, es la <strong>caminata aleatoria</strong>{{F|§9.3}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m1-16",
+  "prosa": [
+   [
+    "De ahí el nombre <em>raíz unitaria</em>.",
+    "Se dice entonces que el polinomio tiene una <em>raíz unitaria</em>.",
+    "«De ahí el nombre» afirma un origen del término que ninguna fuente leída da. Cryer y Chan (p. 128) usan el término en este sentido; se reescribe para afirmar solo el uso."
+   ]
+  ],
+  "marcas": [
+   "[[c3-m1-16]]Se dice entonces que el polinomio tiene una <em>raíz unitaria</em>{{C|p. 128}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m1-17",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m1-17]]Diferenciar es multiplicar la serie por ese mismo factor $(1-B)${{F|§9.2}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m1-18",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m1-18]]<code>polyroot()</code> de R los toma en orden <strong>ascendente</strong> de potencia{{R|§Arguments}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m1-36",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m1-36]]<code>np.roots()</code> de NumPy en orden <strong>descendente</strong>[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m2-01",
+  "prosa": [],
+  "marcas": [
+   "<p[[@c3-m2-01]]>Un proceso <strong>autorregresivo de orden $p$</strong> explica el valor actual como una combinación lineal de sus $p$ valores anteriores más un choque de ruido blanco{{F|§9.3}}:</p>"
+  ]
+ },
+ {
+  "id": "c3-m2-30",
+  "prosa": [
+   [
+    "Si sustituyes $y_{t-1}$ por $x_1$, $y_{t-2}$ por $x_2$ y así, tienes una regresión múltiple corriente.",
+    "Si se sustituye $y_{t-1}$ por $x_1$, $y_{t-2}$ por $x_2$ y así, queda una regresión múltiple corriente.",
+    "segunda pasada: voz impersonal"
+   ]
+  ],
+  "marcas": [
+   "<p>[[c3-m2-30]]El nombre lo dice todo: es una <strong>regresión de la serie sobre sí misma</strong>. Si se sustituye $y_{t-1}$ por $x_1$, $y_{t-2}$ por $x_2$ y así, queda una regresión múltiple corriente{{F|§9.3}}[[/]]."
+  ]
+ },
+ {
+  "id": "c3-m2-02",
+  "prosa": [
+   [
+    "y por eso los errores estándar y la teoría asintótica no son las de la regresión clásica.",
+    "y por eso no valen los resultados de muestra finita de la regresión clásica: el estimador de mínimos cuadrados es sesgado y los estadísticos $t$ y $F$ habituales solo se justifican de forma asintótica.",
+    "La frase decía que la teoría asintótica no es la de la regresión clásica; Hamilton (§8.2, caso 4, pp. 215-216) dice lo contrario: con una autorregresión estacionaria y errores independientes los resultados asintóticos son los mismos que para regresores estocásticos independientes, y los estadísticos t y F usuales dan pruebas asintóticamente válidas. Lo que falla son los resultados de muestra finita."
+   ]
+  ],
+  "marcas": [
+   "[[c3-m2-02]]La diferencia —y no es menor— es que los regresores no son fijos: son la propia variable desplazada, y por eso no valen los resultados de muestra finita de la regresión clásica: el estimador de mínimos cuadrados es sesgado y los estadísticos $t$ y $F$ habituales solo se justifican de forma asintótica{{H|p. 215}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m2-03",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m2-03]]$c$ no es la media del proceso. Tomando esperanzas en la definición y usando que $E[y_t] = \\mu$ para todo $t$ (estacionariedad), se obtiene $\\mu = c/(1 - \\phi_1 - \\cdots - \\phi_p)${{H|p. 59}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m2-04",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m2-04]]Por eso <code>arima()</code> de R reporta una columna <code>intercept</code> que en realidad es $\\hat\\mu$, <strong>no</strong> $\\hat c${{R|§Details}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m2-05",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m2-05]]$\\;\\phi_{kk} = 0\\;$ para todo $k > p$, <strong>exactamente cero</strong>, no aproximadamente; y la última barra distinta de cero, la del rezago $p$, vale el propio coeficiente: $\\phi_{pp} = \\phi_p${{C|p. 114}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m2-06",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m2-06]]La ACF, en cambio, decae hacia cero sin cortarse nunca{{C|p. 73}}{{F|§9.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m2-08",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m2-08]]Esa oscilación es un <em>pseudo-ciclo</em> —su longitud, que da la fórmula de más abajo, es el <em>pseudo-periodo</em>{{C|p. 74}}—[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m2-12",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m2-12]]Cuando $\\phi_1^2 + 4\\phi_2 < 0$ las raíces son complejas conjugadas{{C|pp. 73–74}} y la ACF oscila con un pseudo-periodo $P$ de[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m2-14",
+  "prosa": [],
+  "marcas": [
+   "Por eso [[c3-m2-14]]un ciclo económico se modela así{{F|§9.5}}[[/]] y una estacionalidad mensual no."
+  ]
+ },
+ {
+  "id": "c3-m2-10",
+  "prosa": [],
+  "marcas": [
+   "<p[[@c3-m2-10]]>Un AR(2) es estacionario —y causal, en el sentido del Módulo 1— si y solo si el par $(\\phi_1,\\phi_2)$ cumple las tres condiciones{{C|p. 72}}{{F|§9.3}}:</p>"
+  ]
+ },
+ {
+  "id": "c3-m2-15",
+  "prosa": [],
+  "marcas": [
+   "<div class=\"formula\"[[@c3-m2-15]]> <p>Media, varianza y autocorrelaciones de un AR($p$) estacionario{{C|pp. 76–77}}{{H|p. 59}}:</p>"
+  ]
+ },
+ {
+  "id": "c3-m2-16",
+  "prosa": [],
+  "marcas": [
+   "<div class=\"formula\"[[@c3-m2-16]]> <p><strong>AR(1)</strong>, con $|\\phi| < 1${{H|pp. 53–54}}:</p>",
+   "<p><strong>AR(2)</strong>, con $(\\phi_1,\\phi_2)$ dentro del triángulo{{C|p. 73}}{{C|p. 75}}:</p>"
+  ]
+ },
+ {
+  "id": "c3-m2-17",
+  "prosa": [],
+  "marcas": [
+   "<p style=\"margin-bottom:0;\"[[@c3-m2-17]]><strong>El denominador es el triángulo.</strong>"
+  ]
+ },
+ {
+  "id": "c3-m2-18",
+  "prosa": [
+   [
+    "De un mismo sistema de ecuaciones que relaciona los $\\phi$ con las autocovarianzas del proceso",
+    "De un mismo sistema de ecuaciones, el de Yule–Walker, que relaciona los $\\phi$ con las autocovarianzas del proceso",
+    "El nombre estaba solo en el encabezado; se nombra en la frase que lleva la cita, para que la cita vaya pegada al nombre. Ninguna fuente leída atribuye las ecuaciones a Yule y a Walker con año ni obra: el capítulo no lo hace."
+   ]
+  ],
+  "marcas": [
+   "<p>¿De dónde salen esas fórmulas? [[c3-m2-18]]De un mismo sistema de ecuaciones, el de Yule–Walker, que relaciona los $\\phi$ con las autocovarianzas del proceso{{C|p. 76}}[[/]], y que además será nuestro primer método de estimación en el Módulo 7.</p>"
+  ]
+ },
+ {
+  "id": "c3-m2-19",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m2-19]]El término del ruido <strong>se anula</strong>: $\\varepsilon_t$ es independiente de todo lo anterior a $t$, y $k \\ge 1$ garantiza que $y_{t-k}$ pertenece al pasado{{C|p. 72}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m3-01",
+  "prosa": [],
+  "marcas": [
+   "<div class=\"definition\"[[@c3-m3-01]]> <h4><i class=\"fas fa-book mr-2\" aria-hidden=\"true\"></i>Definición: proceso MA($q$)</h4> <p>Un proceso de <strong>medias móviles de orden $q$</strong> expresa el valor actual como una combinación lineal del choque presente y de los $q$ choques anteriores{{F|§9.4}}:</p>"
+  ]
+ },
+ {
+  "id": "c3-m3-02",
+  "prosa": [
+   [
+    "Coinciden solo en el nombre, que es un accidente histórico.",
+    "Coinciden en el nombre, no en el uso: un modelo de medias móviles sirve para pronosticar valores futuros, y el suavizamiento, para estimar la tendencia-ciclo de valores pasados.",
+    "«Un accidente histórico» no tiene pasaje en ninguna fuente leída (afirma algo sobre el origen del nombre); Cryer y Chan (p. 57) dan incluso una razón para el nombre (los pesos 'se mueven'). FPP3 §9.4 sí dice en qué se distinguen."
+   ]
+  ],
+  "marcas": [
+   "[[c3-m3-02]]Coinciden en el nombre, no en el uso: un modelo de medias móviles sirve para pronosticar valores futuros, y el suavizamiento, para estimar la tendencia-ciclo de valores pasados{{F|§9.4}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m3-03",
+  "prosa": [],
+  "marcas": [
+   "<p[[@c3-m3-03]]>Aquí no hay condición que verificar. Un MA($q$) es una suma",
+   "Es estacionario para cualquier valor de los $\\theta${{H|p. 51}}."
+  ]
+ },
+ {
+  "id": "c3-m3-04",
+  "prosa": [],
+  "marcas": [
+   "<div class=\"formula\"[[@c3-m3-04]]> <p>Varianza y autocorrelaciones de un MA($q$){{H|p. 51}}:</p>"
+  ]
+ },
+ {
+  "id": "c3-m3-05",
+  "prosa": [],
+  "marcas": [
+   "<p[[@c3-m3-05]]>Ese $\\rho_k = 0$ para $k > q$ es <strong>exacto</strong> y es la firma que buscamos{{C|p. 65}}: si dos observaciones están separadas por más de $q$ periodos, no comparten ni un solo choque,",
+   "luego su covarianza es cero{{H|p. 51}}. El MA tiene <em>memoria finita</em>, literalmente de $q$ periodos.</p>"
+  ]
+ },
+ {
+  "id": "c3-m3-06",
+  "prosa": [],
+  "marcas": [
+   "Queda sin justificar una afirmación del simulador: [[c3-m3-06]]la PACF de un MA decae sin cortarse nunca{{C|p. 114}}.[[/]] La PACF en el rezago"
+  ]
+ },
+ {
+  "id": "c3-m3-07",
+  "prosa": [],
+  "marcas": [
+   "Pero basta reescalar el ruido para igualarla. [[c3-m3-07]]En general, $(\\theta,\\ \\sigma^2)$ y $(1/\\theta,\\ \\theta^2\\sigma^2)$ producen exactamente las mismas autocovarianzas —y, con ruido gaussiano, la misma distribución—, y como $\\sigma^2$ también se estima, ningún dato puede separarlos{{H|p. 65}}: el parámetro $\\theta$ no es <em>identificable</em>[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m3-08",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m3-08]]Hace falta una regla que elija uno de los dos, y se elige el de $|\\theta| < 1$, que se llama <strong>invertible</strong>{{C|p. 80}}: es el único con el que se puede reconstruir cada choque a partir de lo observado{{H|p. 67}}[[/]], como muestra el final del módulo."
+  ]
+ },
+ {
+  "id": "c3-m3-09",
+  "prosa": [],
+  "marcas": [
+   "<div class=\"definition\"[[@c3-m3-09]]> <h4><i class=\"fas fa-book mr-2\" aria-hidden=\"true\"></i>Condición de invertibilidad</h4> <p style=\"margin-bottom:0;\">Un MA($q$) es <strong>invertible</strong> si todas las raíces de $\\theta(B) = 0$ están fuera del círculo unitario{{C|p. 80}}."
+  ]
+ },
+ {
+  "id": "c3-m3-10",
+  "prosa": [],
+  "marcas": [
+   "<div class=\"formula\"[[@c3-m3-10]]> <p>Un MA(2) es invertible si y solo si el par $(\\theta_1,\\theta_2)$ cumple las tres condiciones{{F|§9.4}}:</p>"
+  ]
+ },
+ {
+  "id": "c3-m3-11",
+  "prosa": [
+   [
+    "no hay ningún $\\theta$ que lo produzca. Pero la cota",
+    "no hay ningún $\\theta$ cuya $\\rho_1$ valga eso, y el MA(1) queda en duda: una $r_1$ muestral puede pasar de $0.5$ aunque la $\\rho_1$ verdadera no lo haga. Pero la cota",
+    "Cryer y Chan (p. 150) advierten que |r1| > 0.5 es posible aunque |ρ1| < 0.5: entonces el método de momentos falla y el MA(1) queda 'en considerable duda'. 'No hay ningún θ que lo produzca' sin más trataba la r1 muestral como si fuera la ρ1 teórica."
+   ],
+   [
+    "Así que $r_1 = 0.8$ descarta también el MA(2)",
+    "Así que $r_1 = 0.8$ pone en duda también el MA(2)",
+    "Coherencia con la frase anterior: la fuente habla de duda, no de descarte."
+   ],
+   [
+    "Sirve para descartar modelos sin ajustar nada.",
+    "Sirve para poner en duda modelos sin ajustar nada.",
+    "Coherencia con las dos frases anteriores."
+   ],
+   [
+    "ver $r_1 = 0.55$ descarta un MA(1), <strong>no</strong> descarta un MA(2).</p>",
+    "ver $r_1 = 0.55$ pone en duda un MA(1), <strong>no</strong> un MA(2).</p>",
+    "ejercicio 2 del M10: repite c3-m3-11; la fuente (Cryer y Chan, p. 150) habla de duda, no de descarte"
+   ],
+   [
+    "Si en un correlograma muestral ves $r_1 = 0.8$ y quisieras ajustar un MA(1),",
+    "Si un correlograma muestral da $r_1 = 0.8$ y se quisiera ajustar un MA(1),",
+    "segunda pasada: voz impersonal"
+   ]
+  ],
+  "marcas": [
+   "[[c3-m3-11]]Si un correlograma muestral da $r_1 = 0.8$ y se quisiera ajustar un MA(1), no hay ningún $\\theta$ cuya $\\rho_1$ valga eso, y el MA(1) queda en duda: una $r_1$ muestral puede pasar de $0.5$ aunque la $\\rho_1$ verdadera no lo haga{{C|p. 150}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m3-12",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m3-12]]Pero la cota es propia del MA(1): en un MA($q$) el techo de $\\rho_1$ es $\\cos\\big(\\pi/(q+2)\\big)$, que vale $0.707$ con $q = 2$ y $0.809$ con $q = 3$.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m3-14",
+  "prosa": [
+   [
+    "Por eso la PACF decae como $|\\theta|^k$,",
+    "Por eso la PACF decae exponencialmente, a un ritmo que acaba siendo el de $|\\theta|^k$,",
+    "La forma exacta (Cryer y Chan, ec. 6.2.6) es −θ^k(1−θ²)/(1−θ^(2(k+1))) con su convenio de resta: es |θ|^k multiplicado por un factor que tiende a 1−θ²; 'decae como |θ|^k' a secas era una aproximación asintótica."
+   ]
+  ],
+  "marcas": [
+   "[[c3-m3-14]]Por eso la PACF decae exponencialmente, a un ritmo que acaba siendo el de $|\\theta|^k$, alternando el signo si $\\theta > 0$ y siempre negativa si $\\theta < 0${{C|p. 114}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m3-15",
+  "prosa": [
+   [
+    "el último coeficiente de la regresión de $y_t$ sobre sus $k$ valores anteriores. En un AR($p$) esa regresión ya contiene",
+    "el último coeficiente de la proyección lineal (la regresión poblacional) de $y_t$ sobre sus $k$ valores anteriores. En un AR($p$) esa proyección ya contiene",
+    "segunda pasada, c3-m3-15 (verificador A): Hamilton (p. 111) habla de la proyección lineal poblacional; con datos, el último coeficiente de una regresión por MCO no coincide con pacf() (lo mismo que c2-m4-05)"
+   ]
+  ],
+  "marcas": [
+   "[[c3-m3-15]]La PACF en el rezago $k$ es la correlación entre $y_t$ e $y_{t-k}$ una vez descontados los rezagos intermedios{{C|p. 112}}, o, lo que es lo mismo, el último coeficiente de la proyección lineal (la regresión poblacional) de $y_t$ sobre sus $k$ valores anteriores{{H|p. 111}}. En un AR($p$) esa proyección ya contiene todo lo que importa cuando $k = p$, y por eso más allá de $p$ la PACF vale cero{{C|p. 114}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m3-30",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m3-30]]Allí, diferenciar un ruido blanco —sobrediferenciarlo— daba $\\nabla\\varepsilon_t = \\varepsilon_t - \\varepsilon_{t-1}$, que es un MA(1) con $\\theta = -1${{C|p. 126}}: su raíz, la de $1 - B$, cae justo sobre el círculo unitario, así que no es invertible{{C|p. 127}}, y su $\\rho_1 = \\theta/(1+\\theta^2)$ vale $-0.5$, el mínimo que un MA(1) puede alcanzar{{H|p. 49}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m3-31",
+  "prosa": [],
+  "marcas": [
+   "<p[[@c3-m3-31]]>Un MA(1) <strong>no puede</strong> producir una autocorrelación de primer orden mayor que $0.5$ en valor absoluto{{H|p. 49}}. Y los dos extremos caen en $|\\theta| = 1$, justo en la frontera de la invertibilidad{{H|p. 65}}: un MA(1) invertible se queda siempre estrictamente por debajo.</p>"
+  ]
+ },
+ {
+  "id": "c3-m3-32",
+  "prosa": [
+   [
+    "por qué el software la impone.</p>",
+    "por qué el software la impone por defecto.</p>",
+    "«La impone» sin matiz es falso en R y en statsmodels: es el comportamiento por defecto y se puede evitar (ver c3-m4-31)."
+   ],
+   [
+    "# arima() devuelve siempre la version invertible",
+    "# arima() devuelve por defecto la version invertible",
+    "comentario del bloque de R del M3: el «siempre» que c3-m3-32 y c3-m4-31 quitan de la prosa (con transform.pars = FALSE no la devuelve; r4_software.R)"
+   ]
+  ],
+  "marcas": [
+   "<p class=\"text-gray-600 text-sm\" style=\"margin:0;\"[[@c3-m3-32]]>Reconocer un MA($q$) por su firma"
+  ]
+ },
+ {
+  "id": "c3-m4-01",
+  "prosa": [],
+  "marcas": [
+   "<div class=\"definition\"[[@c3-m4-01]]> <h4><i class=\"fas fa-book mr-2\" aria-hidden=\"true\"></i>Las dos representaciones</h4>",
+   "La escritura MA($\\infty$) existe si el proceso es <strong>estacionario</strong>, con las raíces de $\\phi(B)$ fuera del círculo unitario{{C|p. 78}}; la AR($\\infty$), si es <strong>invertible</strong>, con las de $\\theta(B)$ fuera{{C|p. 80}}."
+  ]
+ },
+ {
+  "id": "c3-m4-02",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m4-02]]Los <strong>pesos $\\psi$</strong> dicen cuánto de un choque ocurrido hace $j$ periodos sigue presente hoy: son la <em>función de respuesta al impulso</em>{{H|p. 54}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m4-03",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m4-03]]El choque $\\varepsilon_t$ es incorrelado con todo el pasado, así que nada de ese pasado lo anticipa: el mejor pronóstico lineal se queda con la suma, y su error a un paso es exactamente $\\varepsilon_t${{C|p. 197}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m4-04",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m4-04]]Los pesos $\\pi$ crecen sin límite en vez de desvanecerse (en la frontera, $|\\theta| = 1$, ni crecen ni se desvanecen: conservan su magnitud, y el proceso tampoco es invertible){{F|§9.4}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m4-05",
+  "prosa": [
+   [
+    "lo cual es absurdo.",
+    "lo cual no tiene mucho sentido.",
+    "FPP3 §9.4 dice que ninguna de las dos situaciones ('make much sense') tiene sentido y por eso exige |θ1| < 1; 'absurdo' era más fuerte que la fuente."
+   ]
+  ],
+  "marcas": [
+   "[[c3-m4-05]]Eso significa que reconstruir el choque de hoy exigiría dar un peso cada vez <em>mayor</em> a observaciones cada vez <strong>más antiguas</strong>, lo cual no tiene mucho sentido. Esa es la traducción operativa de la no invertibilidad{{F|§9.4}}[[/]],"
+  ]
+ },
+ {
+  "id": "c3-m4-31",
+  "prosa": [
+   [
+    "y la razón de fondo por la que el software siempre te devuelve la raíz invertible.",
+    "y la razón de fondo por la que el software, por defecto, devuelve la raíz invertible.",
+    "'Siempre' es falso: arima() de R con transform.pars = FALSE y un valor inicial no invertible, y ARIMA de statsmodels con enforce_invertibility = False, devuelven una raíz no invertible (ejecutado, ver `software`). (segunda pasada: además, voz impersonal.)"
+   ]
+  ],
+  "marcas": [
+   "[[c3-m4-31]]la razón de fondo por la que el software, por defecto, devuelve la raíz invertible{{H|p. 67}}[[/]].</p>"
+  ]
+ },
+ {
+  "id": "c3-m4-06",
+  "prosa": [],
+  "marcas": [
+   "<p[[@c3-m4-06]]>Con los $\\psi$ se obtiene además la autocovarianza sin resolver ningún sistema, porque los $\\varepsilon$ son incorrelados{{C|p. 56}}:</p>"
+  ]
+ },
+ {
+  "id": "c3-m4-09",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m4-09]]<code>ARMAtoMA()</code> de R empieza en $\\psi_1$ y <code>arma2ma()</code> de statsmodels empieza en $\\psi_0 = 1$; con los $\\pi$ ocurre exactamente lo mismo[[/]]."
+  ]
+ },
+ {
+  "id": "c3-m4-10",
+  "prosa": [],
+  "marcas": [
+   "<p[[@c3-m4-10]]>La primera es la <strong>parsimonia</strong>{{C|p. 8}}. Un ARMA(1,1) es un AR($\\infty$)"
+  ]
+ },
+ {
+  "id": "c3-m4-11",
+  "prosa": [],
+  "marcas": [
+   "<p>La segunda es la <strong>redundancia</strong>. [[c3-m4-11]]Si $\\phi(B)$ y $\\theta(B)$ comparten un factor, el cociente $\\psi(B) = \\theta(B)/\\phi(B)$ lo cancela{{C|p. 77}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m4-12",
+  "prosa": [],
+  "marcas": [
+   "<p[[@c3-m4-12]]><strong>Por qué esto reaparece en los capítulos 4, 5 y 6.</strong> La varianza del error de pronóstico a $h$ pasos de un ARMA{{C|p. 202}} es</p>"
+  ]
+ },
+ {
+  "id": "c3-m4-13",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m4-13]]En un proceso estacionario, sin embargo, el abanico no crece sin fin: la suma tiende a $\\sum_j \\psi_j^2 = \\gamma_0/\\sigma^2$, así que la varianza del pronóstico se acerca a la del propio proceso{{C|p. 197}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m4-14",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m4-14]]En la caminata aleatoria, $\\phi(B) = 1 - B$, salen todos iguales, $\\psi_j = 1$, porque ningún choque se desvanece nunca{{C|p. 199}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m4-32",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m4-32]]La varianza del pronóstico, en cambio, solo suma $h$ términos y sigue valiendo: en la caminata aleatoria da $\\sigma^2 h$, un abanico que se abre sin límite{{C|p. 199}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m4-30",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m4-30]]Desde $j = 2$ cada paso es una sola multiplicación —por $\\phi$ en los $\\psi$, por $-\\theta$ en los $\\pi$—, así que las dos sucesiones son geométricas y tienen forma cerrada para $j \\ge 1${{C|p. 78}}[[/]]:"
+  ]
+ },
+ {
+  "id": "c3-m5-01",
+  "prosa": [],
+  "marcas": [
+   "<div class=\"definition\"[[@c3-m5-01]]> <h4><i class=\"fas fa-book mr-2\" aria-hidden=\"true\"></i>Definición: proceso ARMA($p,q$)</h4> <p>Combina las dos partes anteriores en un solo modelo{{H|p. 59}}:</p>",
+   "Es <strong>estacionario</strong> si las raíces de $\\phi(B)$ están fuera del círculo unitario{{H|p. 60}}, e <strong>invertible</strong> si lo están las de $\\theta(B)${{C|p. 80}}: cada polinomio responde por lo suyo."
+  ]
+ },
+ {
+  "id": "c3-m5-03",
+  "prosa": [
+   [
+    "Menos parámetros significa estimaciones más precisas y pronósticos más estables, que es de lo que se trata.",
+    "Tener menos parámetros deja menos margen de error al estimarlos y, con frecuencia, mejores pronósticos fuera de la muestra, que es de lo que se trata.",
+    "Ninguna fuente leída dice 'estimaciones más precisas y pronósticos más estables' como regla general: Hamilton (p. 109) dice que cuantos más parámetros hay que estimar, más margen hay para equivocarse, y que los ARMA univariantes con p o q pequeños a menudo pronosticaron mejor que los modelos grandes."
+   ]
+  ],
+  "marcas": [
+   "<p[[@c3-m5-03]]>¿Para qué mezclarlos? Por <strong>parsimonia</strong>{{C|p. 8}}. El ARMA(1,1) del Módulo 4,",
+   "Tener menos parámetros deja menos margen de error al estimarlos y, con frecuencia, mejores pronósticos fuera de la muestra, que es de lo que se trata{{H|p. 109}}."
+  ]
+ },
+ {
+  "id": "c3-m5-04",
+  "prosa": [
+   [
+    "es un ciclo de cuatro pasos que se repite hasta que el diagnóstico queda limpio, y la tabla solo interviene en el tercero.",
+    "es un ciclo que se repite hasta que el diagnóstico queda limpio, y que aquí se recorre en cuatro pasos, de los cuales la tabla solo interviene en el tercero.",
+    "Cryer y Chan (p. 8) describen el ciclo en tres pasos y FPP3 §9.7 en siete: 'cuatro pasos' es la división del capítulo, no de la fuente."
+   ]
+  ],
+  "marcas": [
+   "[[c3-m5-04]]Identificar deja de ser leer una fila de una tabla: es un ciclo que se repite hasta que el diagnóstico queda limpio{{C|p. 8}}, y que aquí se recorre en cuatro pasos, de los cuales la tabla solo interviene en el tercero.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m5-05",
+  "prosa": [
+   [
+    "la parte MA no manda y hay que mirar la PACF",
+    "no es un MA puro y hay que mirar la PACF",
+    "'La parte MA no manda' no tiene pasaje, y en un ARMA mixto la ACF también decae (c3-m5-12). Lo que sí dice FPP3 §9.5 es que la huella de un MA(q) es el pico en el rezago q de la ACF y nada más allá; si decae, no es un MA puro."
+   ]
+  ],
+  "marcas": [
+   "<p[[@c3-m5-05]]>Si la ACF <strong>corta</strong> tras el rezago $q$, hay una parte MA($q$). Si <strong>decae</strong> —geométrica o con ondas—, no es un MA puro y hay que mirar la PACF{{F|§9.5}}.</p>"
+  ]
+ },
+ {
+  "id": "c3-m5-06",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m5-06]]La banda $\\pm 1.96/\\sqrt{T}$ marca qué es ruido{{F|§2.9}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m5-30",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m5-30]]Sin ese argumento, statsmodels dibuja la banda de Bartlett, que no supone ruido blanco y se ensancha con el rezago porque cuenta las autocorrelaciones de los rezagos anteriores{{C|p. 112}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m5-07",
+  "prosa": [
+   [
+    "la serie no es estacionaria: esto no es un problema de identificación",
+    "suele ser síntoma de que la serie no es estacionaria: esto no es un problema de identificación",
+    "Cryer y Chan (p. 128) dicen que el decaimiento lineal de la ACF muestral 'suele tomarse como síntoma' de no estacionariedad; la frase decía 'la serie no es estacionaria' sin matiz."
+   ]
+  ],
+  "marcas": [
+   "<p[[@c3-m5-07]]>Si la ACF decae despacio y casi en línea recta, suele ser síntoma de que la serie no es estacionaria{{C|p. 128}}: esto no es un problema de identificación"
+  ]
+ },
+ {
+  "id": "c3-m5-08",
+  "prosa": [
+   [
+    "envuélvelo en <code>as.numeric()</code>.",
+    "conviene envolverlo en <code>as.numeric()</code>.",
+    "segunda pasada: voz impersonal"
+   ]
+  ],
+  "marcas": [
+   "<p[[@c3-m5-08]]><code>pacf(y)</code> — ojo,"
+  ]
+ },
+ {
+  "id": "c3-m5-09",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m5-09]]Proponer <strong>varios</strong> candidatos vecinos, no uno: la tabla acota la búsqueda, no la resuelve{{F|§9.7}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m5-10",
+  "prosa": [],
+  "marcas": [
+   "<p[[@c3-m5-10]]><code>ARMAacf()</code> para la teórica y <code>Box.test(..., type = \"Ljung-Box\", fitdf = p + q)</code> para los residuales{{R|§Details}}.</p>"
+  ]
+ },
+ {
+  "id": "c3-m5-31",
+  "prosa": [],
+  "marcas": [
+   "<p[[@c3-m5-31]]>El ciclo nombra herramientas que el Módulo 8 desarrolla y que aquí solo se anuncian: los criterios de información (AICc y BIC) comparan modelos ajustados a los mismos datos y penalizan cada parámetro{{F|§9.6}};",
+   "<code>fitdf</code> descuenta de los grados de libertad los parámetros que se estimaron{{R|§Arguments}}.</p>"
+  ]
+ },
+ {
+  "id": "c3-m5-11",
+  "prosa": [
+   [
+    "<td>Decae tras el rezago $p$</td>",
+    "<td>Decae, sin cortarse</td>",
+    "La celda 'decae tras el rezago p' de la PACF del ARMA no tiene pasaje: Cryer y Chan (cuadro 6.3, p. 116) escriben 'tails off' para la ACF y la PACF del ARMA y dicen que sus valores no nulos son infinitos (p. 116). Con las ACF y PACF teóricas de dos ARMA ejecutadas (ARMA(1,1) con φ = 0.7 y θ = 0.5; ARMA(2,1)) la PACF sí decae geométricamente desde el rezago p, pero eso es comprobación de dos casos, no un resultado de la fuente."
+   ]
+  ],
+  "marcas": [
+   "<p[[@c3-m5-11]]>Con lo que dejaron los Módulos 2 y 3, la regla para proponer un modelo cabe en una tabla{{C|p. 116}}. En ella"
+  ]
+ },
+ {
+  "id": "c3-m5-12",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m5-12]]\"Las dos decaen\" no dice cuáles son $p$ y $q$: ni el correlograma ni el correlograma parcial identifican los órdenes de un ARMA mixto{{F|§9.5}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m5-13",
+  "prosa": [],
+  "marcas": [
+   "<div class=\"formula\"[[@c3-m5-13]]> <p>Media y autocovarianzas de un ARMA($p,q$) estacionario:</p>",
+   "con los pesos $\\psi_j$ de la representación MA($\\infty$) del Módulo 4{{C|p. 56}}{{H|p. 60}}."
+  ]
+ },
+ {
+  "id": "c3-m5-14",
+  "prosa": [
+   [
+    "aquí, para $p \\ge 1$, no hay forma corta en función de los parámetros y hay que sumar la serie de los $\\psi$.",
+    "aquí, para $p \\ge 1$, no hay una forma corta general en función de los parámetros y hay que pasar por los $\\psi$: sumando su serie, como en la derivación de más abajo, o resolviendo un sistema lineal en el que entran.",
+    "Cryer y Chan (apéndice C, p. 85) calculan la ACF de un ARMA resolviendo un sistema lineal en el que entran los ψ, y la ayuda de ARMAacf cita otro sistema lineal (Brockwell y Davis); sumar la serie de ψ es una vía, no la única. 'Sin forma corta' vale en general (el ARMA(1,1) sí la tiene y el capítulo la da a continuación)."
+   ]
+  ],
+  "marcas": [
+   "[[c3-m5-14]]aquí, para $p \\ge 1$, no hay una forma corta general en función de los parámetros y hay que pasar por los $\\psi$: sumando su serie, como en la derivación de más abajo, o resolviendo un sistema lineal en el que entran{{C|p. 85}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m5-15",
+  "prosa": [],
+  "marcas": [
+   "<div class=\"formula\"[[@c3-m5-15]]> <p><strong>ARMA(1,1)</strong>, $y_t = c + \\phi y_{t-1} + \\varepsilon_t + \\theta\\varepsilon_{t-1}${{C|p. 78}}:</p>"
+  ]
+ },
+ {
+  "id": "c3-m5-16",
+  "prosa": [],
+  "marcas": [
+   "<p[[@c3-m5-16]]>La fila del ARMA esconde un resultado exacto.",
+   "la ACF cumple la misma recursión que la de un AR($p$){{H|p. 60}}:</p>"
+  ]
+ },
+ {
+  "id": "c3-m5-17",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m5-17]]El ritmo del decaimiento lo pone la parte AR —en el ARMA(1,1), el factor $\\phi$—, y la parte MA solo decide con qué valor arranca{{C|p. 78}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m5-18",
+  "prosa": [
+   [
+    "recuerda este simulador: casi nunca es que el modelo no exista, es que la muestra es corta.",
+    "conviene recordar este simulador: con una muestra corta, hasta un proceso que sí corresponde a una fila de la tabla puede dar un correlograma que no encaja.",
+    "'Casi nunca' es una generalización empírica sin fuente: las fuentes (Cryer y Chan, p. 112) piden no esperar que la ACF muestral imite a la teórica en detalle, y piden varios candidatos y diagnóstico (FPP3 §9.5–9.7). La frase nueva dice lo que el simulador muestra."
+   ],
+   [
+    "Cuando en el Módulo 9 veas un correlograma",
+    "Cuando en el Módulo 9 aparezca un correlograma",
+    "segunda pasada: voz impersonal"
+   ]
+  ],
+  "marcas": [
+   "[[c3-m5-18]]Cuando en el Módulo 9 aparezca un correlograma real que no encaja en ninguna fila de la tabla, conviene recordar este simulador: con una muestra corta, hasta un proceso que sí corresponde a una fila de la tabla puede dar un correlograma que no encaja{{C|p. 112}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m5-19",
+  "prosa": [],
+  "marcas": [
+   "<p>Hay una trampa específica de los modelos mixtos. [[c3-m5-19]]Si $\\phi(B)$ y $\\theta(B)$ comparten un factor, ese factor se cancela y el modelo es en realidad más pequeño de lo que aparenta{{C|p. 77}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m5-20",
+  "prosa": [
+   [
+    "Si ves un ARMA con $\\hat\\phi_1 \\approx -\\hat\\theta_1$ y errores estándar grandes, prueba el modelo más pequeño antes de interpretar nada.",
+    "Ante un ARMA con $\\hat\\phi_1 \\approx -\\hat\\theta_1$ y errores estándar grandes, conviene probar el modelo más pequeño antes de interpretar nada.",
+    "segunda pasada: voz impersonal"
+   ]
+  ],
+  "marcas": [
+   "[[c3-m5-20]]Ante un ARMA con $\\hat\\phi_1 \\approx -\\hat\\theta_1$ y errores estándar grandes{{H|p. 60}}, conviene probar el modelo más pequeño antes de interpretar nada{{C|p. 187}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m5-32",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m5-32]]Cuando dos factores casi se cancelan, la verosimilitud es casi plana en esa dirección: los coeficientes salen con <strong>errores estándar enormes</strong>, el optimizador puede no converger, y valores muy distintos de $(\\phi,\\theta)$ dan ajustes casi idénticos.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m6-01",
+  "prosa": [],
+  "marcas": [
+   "<strong>Una diferencia real entre R y Python.</strong> [[c3-m6-01]]<code>arima.sim()</code> descarta por su cuenta un tramo de calentamiento (<em>burn-in</em>){{R|§Arguments}}[[/]] para que la serie salga ya en régimen estacionario;"
+  ]
+ },
+ {
+  "id": "c3-m6-04",
+  "prosa": [],
+  "marcas": [
+   "régimen estacionario; [[c3-m6-04]]<code>generate_sample()</code> de statsmodels <strong>no lo hace</strong> salvo que se le pase <code>burnin=</code>[[/]]."
+  ]
+ },
+ {
+  "id": "c3-m6-05",
+  "prosa": [],
+  "marcas": [
+   ". [[c3-m6-05]]Sin él la serie arranca en cero y su primer tramo tiene menos varianza que el resto: con $\\phi = 0.95$, la varianza en $t = 5$ es $4.1$ cuando la del régimen estacionario es $10.3$. Con procesos muy persistentes ese arranque comprimido dura decenas de observaciones.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m6-06",
+  "prosa": [
+   [
+    "Si miras 20 rezagos de una serie que es ruido blanco puro, esperas que $20 \\times 0.05 = 1$ de ellos se salga por puro azar.",
+    "Al mirar 20 rezagos de una serie que es ruido blanco puro, lo esperable es que $20 \\times 0.05 = 1$ de ellos se salga por puro azar.",
+    "segunda pasada: voz impersonal"
+   ]
+  ],
+  "marcas": [
+   "<strong>La regla del 5 %.</strong> [[c3-m6-06]]La banda $\\pm 1.96/\\sqrt{T}$ es un intervalo al 95 % <em>para cada rezago por separado</em>{{F|§2.9}}. Al mirar 20 rezagos de una serie que es ruido blanco puro, lo esperable es que $20 \\times 0.05 = 1$ de ellos se salga por puro azar{{F|§5.4}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m6-07",
+  "prosa": [
+   [
+    "Ver uno o dos picos fuera de la banda no es evidencia de nada; por eso existe la prueba de Ljung–Box del Módulo 8, que evalúa todos los rezagos a la vez.</p>",
+    "Uno o dos picos que apenas asoman fuera de la banda no bastan como evidencia; uno muy grande, o bastantes más del 5 % de los rezagos fuera, sí. Por eso existe la prueba de Ljung–Box del Módulo 8, que evalúa esos 20 rezagos a la vez.</p>",
+    "segunda pasada, c3-m6-07 y c3-m6-08 (verificador A): FPP3 §2.9 dice que una barra grande, o bastante más del 5 % fuera, sí indican que no es ruido blanco (como quedó c2-m2-08); y §5.4, que la prueba mira las primeras ℓ autocorrelaciones, no «todos los rezagos»"
+   ]
+  ],
+  "marcas": [
+   "[[c3-m6-07]]Uno o dos picos que apenas asoman fuera de la banda no bastan como evidencia; uno muy grande, o bastantes más del 5 % de los rezagos fuera, sí{{F|§2.9}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m6-08",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m6-08]]Por eso existe la prueba de Ljung–Box del Módulo 8, que evalúa esos 20 rezagos a la vez{{F|§5.4}}.[[/]]</p>"
+  ]
+ },
+ {
+  "id": "c3-m7-01",
+  "prosa": [
+   [
+    "Número anual de manchas solares (<em>Wolf number</em>) entre <strong>1770 y 1869</strong>, $T = 100$ observaciones. Es la ventana centenaria sobre la que <strong>Udny Yule</strong> inventó en 1927 el modelo autorregresivo, precisamente para explicar por qué el Sol tiene un ciclo que se repite \"más o menos\" cada once años sin ser nunca exactamente periódico. Está en R como <code>sunspot.year</code>.",
+    "Número anual de manchas solares entre <strong>1770 y 1869</strong>, $T = 100$ observaciones, un tramo de <code>sunspot.year</code>, la serie de R que va de 1700 a 1988. Con los números de manchas de Wolfer de 1749 a 1924, <strong>Udny Yule</strong> propuso en 1927 lo que hoy se llama un modelo autorregresivo: ajustó la regresión de cada valor sobre los dos anteriores y comparó las manchas con un péndulo que recibe pequeños impulsos al azar, de trazo suave pero con amplitud y fase que cambian sin cesar. El periodo de las manchas se estimaba entonces en algo más de once años.",
+    "c3-m7-01 a -03: leído Yule (1927). No usó la ventana 1770–1869 sino la serie de Wolfer entera (1749–1924, p. 275); no dice «inventar» ni «autorregresivo»: ajusta una ecuación de regresión sobre los dos valores anteriores y la compara con un péndulo perturbado (p. 294); da como estimación habitual del periodo algo más de 11 años (p. 276). «Wolf number» no está en ninguna fuente leída: Yule escribe «Wolfer»."
+   ],
+   [
+    "El AR(2) es el modelo que la identificación proponía y el que hizo famoso a Yule, pero:",
+    "El AR(2) es el modelo que la identificación proponía, pero:",
+    "M8: retira «el que hizo famoso a Yule», valoración sin pasaje; lo que Yule hizo queda dicho, con su cita, en el recuadro del M7 (c3-m7-02)"
+   ]
+  ],
+  "marcas": [
+   "observaciones, [[c3-m7-01]]un tramo de <code>sunspot.year</code>, la serie de R que va de 1700 a 1988{{R|§Description}}[[/]]. Con los números"
+  ]
+ },
+ {
+  "id": "c3-m7-03",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m7-03]]El periodo de las manchas se estimaba entonces en algo más de once años{{Y|p. 276}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m7-02",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m7-02]]Con los números de manchas de Wolfer de 1749 a 1924{{Y|p. 281}}, <strong>Udny Yule</strong> propuso en 1927 lo que hoy se llama un modelo autorregresivo: ajustó la regresión de cada valor sobre los dos anteriores y comparó las manchas con un péndulo que recibe pequeños impulsos al azar, de trazo suave pero con amplitud y fase que cambian sin cesar{{Y|p. 294}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m7-04",
+  "prosa": [],
+  "marcas": [
+   "<strong>AR(2)</strong> — y [[c3-m7-04]]la ondulación anticipa raíces complejas{{C|p. 73}}[[/]].</p>"
+  ]
+ },
+ {
+  "id": "c3-m7-05",
+  "prosa": [],
+  "marcas": [
+   "<li>[[c3-m7-05]]<strong>Yule–Walker</strong> (método de momentos). Toma las ecuaciones del Módulo 2, sustituye las $\\rho_k$ teóricas por las muestrales $r_k$ y resuelve el sistema{{C|p. 150}}[[/]]."
+  ]
+ },
+ {
+  "id": "c3-m7-06",
+  "prosa": [
+   [
+    "Solo sirve para modelos AR puros. Es explícito, rápido y no necesita optimización.",
+    "Es explícito, rápido y no necesita optimización. Da estimaciones bastante buenas en modelos AR puros y es muy ineficiente si hay parte MA.",
+    "«Solo sirve para modelos AR puros» es más fuerte que las fuentes: Cryer y Chan (p. 152) dicen que con parte MA los estimadores de momentos son muy ineficientes (y p. 150, que con MA(1) pueden no existir), no que no sirvan; Shumway y Stoffer 3.ª (p. 123) dicen que no son óptimos."
+   ]
+  ],
+  "marcas": [
+   "optimización. [[c3-m7-06]]Da estimaciones bastante buenas en modelos AR puros y es muy ineficiente si hay parte MA{{C|p. 152}}[[/]].</li>"
+  ]
+ },
+ {
+  "id": "c3-m7-07",
+  "prosa": [],
+  "marcas": [
+   "<li>[[c3-m7-07]]<strong>CSS</strong> (<em>conditional sum of squares</em>). Minimiza $\\sum \\hat\\varepsilon_t^2$ condicionando en los primeros valores observados{{C|p. 154}}. Es mínimos cuadrados —ordinarios en un AR puro, no lineales si hay parte MA—{{C|p. 157}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m7-08",
+  "prosa": [],
+  "marcas": [
+   " [[c3-m7-08]]y descarta la información que aportan las primeras observaciones{{R|§Arguments}}[[/]].</li>"
+  ]
+ },
+ {
+  "id": "c3-m7-09",
+  "prosa": [
+   [
+    "Es el más eficiente y el que da errores estándar fiables.",
+    "Aprovecha toda la información de los datos; sus errores estándar salen de la hessiana de la log-verosimilitud y pueden ser solo una guía aproximada.",
+    "Cryer y Chan (p. 160) dicen que las propiedades de muestra grande de máxima verosimilitud y de mínimos cuadrados (condicionales o no) son idénticas, así que «el más eficiente» no se sostiene; la ayuda de R advierte que la matriz de varianzas sale de la hessiana y puede ser solo una guía aproximada, así que «fiables» tampoco."
+   ]
+  ],
+  "marcas": [
+   "<li>[[c3-m7-09]]<strong>Máxima verosimilitud</strong>. Maximiza la verosimilitud gaussiana <em>exacta</em>, que incluye la contribución de las primeras observaciones{{C|p. 159}}. Aprovecha toda la información de los datos; sus errores estándar salen de la hessiana de la log-verosimilitud y pueden ser solo una guía aproximada{{R|§Details}}[[/]].</li>"
+  ]
+ },
+ {
+  "id": "c3-m7-30",
+  "prosa": [],
+  "marcas": [
+   "<p>[[c3-m7-30]]Entre CSS y máxima verosimilitud la diferencia está en la primera observación: ML incluye su densidad y CSS la ignora, y ese término <strong>penaliza</strong> los $\\phi$ cercanos a la frontera de la región estacionaria{{C|p. 160}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m7-31",
+  "prosa": [],
+  "marcas": [
+   ". [[c3-m7-31]]Con $T$ grande pesa poco y los dos métodos coinciden; con $T$ pequeño o $\\phi$ cerca de $1$, no{{C|p. 160}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m7-32",
+  "prosa": [],
+  "marcas": [
+   ", y [[c3-m7-32]]CSS puede incluso salirse de la región estacionaria, cosa que ML no hace en el ejemplo{{R|§Arguments}}[[/]]."
+  ]
+ },
+ {
+  "id": "c3-m7-10",
+  "prosa": [],
+  "marcas": [
+   "estacionaria. [[c3-m7-10]]Con $T$ grande, un único término frente a los $T-1$ de la parte condicional es despreciable y los dos métodos convergen; con $T$ pequeño o $\\phi$ cerca de la frontera, no{{C|p. 160}}[[/]].</p>"
+  ]
+ },
+ {
+  "id": "c3-m7-11",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m7-11]]CSS estima $\\hat\\phi = 1.0086$, <strong>fuera</strong> de la región estacionaria, y ML se queda en $0.9808$. No es lo habitual —en mil simulaciones iguales CSS pasa de $1$ entre un 2.5 y un 4.6&nbsp;% de las veces, según la semilla—[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m7-33",
+  "prosa": [],
+  "marcas": [
+   " y [[c3-m7-33]]ML no lo hace en ninguna de las que estima, por dos razones: el sumando $\\tfrac{1}{2}\\log(1-\\phi^2)$ cae a $-\\infty$ en la frontera, y <code>arima()</code>, al maximizar la verosimilitud, reparametriza los $\\phi$ para no salir de la región estacionaria (<code>transform.pars = TRUE</code>, su valor por defecto){{R|§Arguments}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m7-34",
+  "prosa": [],
+  "marcas": [
+   ". [[c3-m7-34]]Quedarse dentro no es quedarse lejos: en un 13 a 17&nbsp;% de las simulaciones la estimación ML es $\\ge 0.999$, y en 4 a 13 de cada mil el optimizador no llega a dar estimación.[[/]]</p>"
+  ]
+ },
+ {
+  "id": "c3-m7-35",
+  "prosa": [
+   [
+    "CSS es más barato y sirve para arrancar; ML es más preciso.",
+    "CSS es más barato y sirve para arrancar; ML cuenta además con las primeras observaciones, cuyo efecto pesa más en series de longitud moderada.",
+    "segunda pasada, c3-m7-35 (verificador B): Hamilton (p. 123) no dice que ML sea «más preciso» (con muestra grande coinciden); lo que dicen Cryer y Chan (p. 158) es que en series de longitud moderada los valores iniciales pesan más"
+   ]
+  ],
+  "marcas": [
+   "densidad conjunta. [[c3-m7-35]]De ahí la jerarquía: CSS es más barato y sirve para arrancar{{H|p. 123}}; ML cuenta además con las primeras observaciones, cuyo efecto pesa más en series de longitud moderada{{C|p. 158}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m7-12",
+  "prosa": [],
+  "marcas": [
+   ". [[c3-m7-12]]Por eso <code>arima()</code> usa por defecto <code>method = \"CSS-ML\"</code>, que estima por CSS para obtener valores iniciales y termina maximizando la verosimilitud exacta{{R|§Arguments}}[[/]].</p>"
+  ]
+ },
+ {
+  "id": "c3-m7-13",
+  "prosa": [],
+  "marcas": [
+   "no es un error de cálculo ni un detalle numérico —[[c3-m7-13]]Yule–Walker está sesgado hacia el interior de la región estacionaria con muestras cortas[[/]]— pero tampoco cambia las conclusiones"
+  ]
+ },
+ {
+  "id": "c3-m7-14",
+  "prosa": [
+   [
+    "parece un abismo, pero no miden lo mismo:",
+    "parece un abismo, pero no salen del mismo cálculo:",
+    "Los dos estiman la varianza de la innovación: Cryer y Chan dan σ² de Yule–Walker como (1 − φ̂1 r1 − … − φ̂p rp)·s² (p. 151) y la ayuda de R llama a sigma2 de arima() «la MLE de la varianza de las innovaciones». Lo que difiere es el cálculo, no lo que miden."
+   ]
+  ],
+  "marcas": [
+   "salen del mismo cálculo: [[c3-m7-14]]Yule–Walker lo obtiene de la ecuación de la varianza del proceso{{C|p. 151}} y ML lo maximiza junto al resto{{R|§Value}}[[/]]."
+  ]
+ },
+ {
+  "id": "c3-m7-15",
+  "prosa": [],
+  "marcas": [
+   ". [[c3-m7-15]]Los criterios de información del Módulo 8 se construyen sobre la verosimilitud, así que solo tienen sentido con ajustes de <code>arima()</code>, nunca mezclando salidas de <code>ar()</code> y <code>arima()</code>{{R|§Details}}[[/]].</p>"
+  ]
+ },
+ {
+  "id": "c3-m7-17",
+  "prosa": [],
+  "marcas": [
+   "</strong> [[c3-m7-17]]<code>yule_walker()</code> de statsmodels usa por defecto <code>method=\"adjusted\"</code> (divisor $T-k$) y <code>ar()</code> de R usa el divisor $T$. Con las opciones por defecto, las estimaciones <strong>no coinciden</strong>.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m7-16",
+  "prosa": [],
+  "marcas": [
+   " [[c3-m7-16]]Hay que pedir <code>method=\"mle\"</code> —nombre desafortunado, porque no es máxima verosimilitud, solo indica el divisor— para reproducir la salida de R.[[/]] Es la misma clase de discrepancia"
+  ]
+ },
+ {
+  "id": "c3-m8-24",
+  "prosa": [
+   [
+    "Añadir parámetros siempre mejora la verosimilitud.",
+    "Añadir parámetros nunca empeora la verosimilitud.",
+    "segunda pasada (verificador B): el M8 decía «siempre mejora» y el M10 «casi siempre mejora»; lo que se cumple siempre es que no empeora"
+   ],
+   [
+    "Añadir un parámetro casi siempre mejora la verosimilitud;",
+    "Añadir un parámetro nunca empeora la verosimilitud;",
+    "segunda pasada: resumen del M10, la misma frase"
+   ]
+  ],
+  "marcas": [
+   "<p>[[c3-m8-24]]Añadir parámetros nunca empeora la verosimilitud.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m8-30",
+  "prosa": [],
+  "marcas": [
+   " [[c3-m8-30]]Los criterios de información compensan esa mejora con una penalización por complejidad, y se elige el modelo con el <strong>menor</strong> valor{{F|§9.6}}[[/]]."
+  ]
+ },
+ {
+  "id": "c3-m8-01",
+  "prosa": [],
+  "marcas": [
+   "<div class=\"formula\"[[@c3-m8-01]]> $$\\begin{aligned} \\text{AIC} &= -2\\log L + 2k \\\\[0.3em]",
+   "donde $k$ es el número de parámetros estimados —incluido $\\sigma^2$— y $T$ el número de observaciones{{F|§9.6}}.</p>"
+  ]
+ },
+ {
+  "id": "c3-m8-03",
+  "prosa": [],
+  "marcas": [
+   "<strong>Cuál usar.</strong> [[c3-m8-03]]El AICc corrige el sesgo del AIC en muestras pequeñas{{C|p. 130}}[[/]] y converge a él cuando $T$ crece, así que"
+  ]
+ },
+ {
+  "id": "c3-m8-04",
+  "prosa": [],
+  "marcas": [
+   "así que [[c3-m8-04]]<strong>no hay razón para preferir el AIC</strong>{{F|§9.6}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m8-05",
+  "prosa": [],
+  "marcas": [
+   ". [[c3-m8-05]]El BIC penaliza más ($\\log T > 2$ en cuanto $T > 7$) y por eso tiende a elegir modelos más pequeños{{F|§7.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m8-06",
+  "prosa": [],
+  "marcas": [
+   ". [[c3-m8-06]]Si buscas pronosticar, AICc{{F|§7.5}}; si buscas identificar el modelo \"verdadero\", BIC{{C|p. 131}}[[/]].</p>"
+  ]
+ },
+ {
+  "id": "c3-m8-07",
+  "prosa": [],
+  "marcas": [
+   "<strong>La trampa que reaparecerá en el Capítulo 4.</strong> [[c3-m8-07]]Los criterios solo son comparables entre modelos ajustados a <strong>los mismos datos</strong>. Diferenciar cambia los datos: un ARIMA con $d=1$ se ajusta sobre $T-1$ observaciones distintas de las del modelo con $d=0$. Comparar sus AIC no significa nada{{F|§9.6}}[[/]]."
+  ]
+ },
+ {
+  "id": "c3-m8-34",
+  "prosa": [],
+  "marcas": [
+   "$\\hat\\varepsilon_t$: [[c3-m8-34]]si el modelo ha capturado toda la estructura, lo que queda no debe tener ninguna{{F|§5.4}}[[/]].</p>"
+  ]
+ },
+ {
+  "id": "c3-m8-08",
+  "prosa": [],
+  "marcas": [
+   "<div class=\"definition\"[[@c3-m8-08]]> <h4><i class=\"fas fa-book mr-2\" aria-hidden=\"true\"></i>Prueba de Ljung–Box</h4> <p>Contrasta si las primeras $h$ autocorrelaciones de los residuales son <strong>conjuntamente</strong> nulas{{F|§5.4}}:</p>",
+   "significa que <strong>queda estructura sin modelar</strong>: el modelo no basta{{C|p. 184}}.</p>"
+  ]
+ },
+ {
+  "id": "c3-m8-31",
+  "prosa": [],
+  "marcas": [
+   "<p>[[c3-m8-31]]Los grados de libertad son $h-p-q$ y no $h$ porque los residuales no son ruido blanco observado, sino lo que queda tras estimar $p+q$ parámetros, y esa estimación los deja menos correlacionados de lo que estarían por azar{{F|§9.7}}. Si no se descuentan, la prueba rechaza menos de lo que debería.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m8-13",
+  "prosa": [],
+  "marcas": [
+   " [[c3-m8-13]]En R el descuento es el argumento <code>fitdf = p + q</code> de <code>Box.test()</code>, que <strong>no</strong> se aplica solo, y solo tiene sentido evaluar en $h > p+q${{R|§Details}}[[/]]."
+  ]
+ },
+ {
+  "id": "c3-m8-15",
+  "prosa": [],
+  "marcas": [
+   "este módulo: [[c3-m8-15]]con tres mil series que de verdad son AR(2), $T = 100$ y $h = 12$, la prueba al 5&nbsp;% rechaza el $4.9$&nbsp;% de las veces con <code>fitdf = 2</code> y solo el $2.6$&nbsp;% sin él[[/]].</p>"
+  ]
+ },
+ {
+  "id": "c3-m8-09",
+  "prosa": [],
+  "marcas": [
+   "<p>[[c3-m8-09]]Si una serie es ruido blanco, cada autocorrelación muestral cumple aproximadamente $\\hat r_k \\sim N(0,\\,1/T)${{C|p. 110}}. Entonces $T\\hat r_k^2$ es aproximadamente $\\chi^2_1$, y sumando $h$ rezagos aproximadamente independientes se obtiene el estadístico de Box–Pierce{{C|p. 183}}[[/]]:</p>"
+  ]
+ },
+ {
+  "id": "c3-m8-10",
+  "prosa": [],
+  "marcas": [
+   "<p>[[c3-m8-10]]Esa aproximación es mala con $T$ moderado{{C|p. 184}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m8-11",
+  "prosa": [],
+  "marcas": [
+   ", [[c3-m8-11]]porque la varianza real de $\\hat r_k$ es algo menor que $1/T$, y tanto menor cuanto mayor es $k$ —el numerador de $\\hat r_k$ suma solo $T-k$ productos, pero el denominador sigue sumando las $T$ observaciones, y eso encoge $\\hat r_k$ hacia cero—: $\\operatorname{Var}(\\hat r_k) \\approx (T-k)/\\big(T(T+2)\\big)$[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m8-36",
+  "prosa": [
+   [
+    "$$Q^{*}(h) = T\\sum_{k=1}^{h}\\hat r_k^2 \\;\\sim\\; \\chi^2_h$$",
+    "$$Q_{BP}(h) = T\\sum_{k=1}^{h}\\hat r_k^2 \\;\\sim\\; \\chi^2_h$$",
+    "segunda pasada, notación (verificador B): el capítulo llamaba Q* al de Box–Pierce y Q al de Ljung–Box, al revés que FPP3 §5.4 y Cryer y Chan (pp. 183–184); Q(h) se conserva para Ljung–Box (como en el capítulo 4) y el de Box–Pierce pasa a Q_BP(h)"
+   ],
+   [
+    "Con el factor $T$, $Q^{*}$ sale pequeño y la prueba rechaza menos de lo que debería.",
+    "Con el factor $T$, $Q_{BP}$ sale pequeño y la prueba rechaza menos de lo que debería (en Cryer y Chan el estadístico de Box–Pierce se escribe $Q$ y el de Ljung–Box, $Q^{*}$).",
+    "segunda pasada, notación: la frase citaba la p. 184 con los símbolos cambiados"
+   ]
+  ],
+  "marcas": [
+   ". [[c3-m8-36]]Con el factor $T$, $Q_{BP}$ sale pequeño y la prueba rechaza menos de lo que debería (en Cryer y Chan el estadístico de Box–Pierce se escribe $Q$ y el de Ljung–Box, $Q^{*}$). Ljung y Box (1978) reemplazaron ese factor por el inverso de la varianza, que por eso <em>crece</em> con el rezago{{C|p. 184}}[[/]]:</p>"
+  ]
+ },
+ {
+  "id": "c3-m8-12",
+  "prosa": [],
+  "marcas": [
+   "<p>[[c3-m8-12]]Ignorarlo infla el $p$-valor y hace que la prueba <strong>no rechace cuando debería</strong>. La corrección consiste en descontar esos parámetros de los grados de libertad{{F|§9.7}}[[/]]:</p>"
+  ]
+ },
+ {
+  "id": "c3-m8-32",
+  "prosa": [],
+  "marcas": [
+   "<p>[[c3-m8-32]]En R eso es el argumento <code>fitdf = p + q</code> de <code>Box.test()</code>, que <strong>no</strong> se aplica solo. Solo tiene sentido evaluar en $h > p+q${{R|§Details}}[[/]].</p>"
+  ]
+ },
+ {
+  "id": "c3-m8-35",
+  "prosa": [],
+  "marcas": [
+   "<p>[[c3-m8-35]]Sin el descuento la prueba rechaza cerca de la mitad de lo que debería[[/]]: es el Monte Carlo del"
+  ]
+ },
+ {
+  "id": "c3-m8-16",
+  "prosa": [],
+  "marcas": [
+   "<p class=\"derivacion-resultado\"[[@c3-m8-16]]>Regla práctica: sobre los residuales de un ARMA($p,q$) hay que llamar a",
+   "fitdf = p + q)</code>{{R|§Details}}. Si omites <code>fitdf</code>"
+  ]
+ },
+ {
+  "id": "c3-m8-33",
+  "prosa": [],
+  "marcas": [
+   "Y sin embargo Ljung–Box lo rechaza, [[c3-m8-33]]porque evalúa las doce <strong>a la vez</strong>: $Q$ suma los <strong>cuadrados</strong> de todas, de modo que media docena de autocorrelaciones moderadas, cada una insignificante por separado, acumulan un $Q$ que sí lo es{{C|p. 183}}[[/]]. Para eso existe la prueba"
+  ]
+ },
+ {
+  "id": "c3-m8-18",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m8-18]]Comparándolos uno a uno: del tercero en adelante son los mismos ($8.728$ frente a $8.727$, $-15.396$ frente a $-15.397$…); los que difieren son los <strong>dos primeros</strong> (R da $21.06$ y statsmodels $52.54$ para el primero). El modelo y el filtro son los mismos; cambia lo que cada programa <em>devuelve</em>. El error de predicción de la primera observación, que no tiene pasado, tiene varianza $\\gamma_0$ y no $\\sigma^2$: statsmodels lo entrega tal cual y R lo entrega dividido entre $\\sqrt{\\gamma_0/\\sigma^2}$, para que todos los residuales queden en la misma escala ($52.54/\\sqrt{6.226} = 21.06$). Con el segundo pasa lo mismo.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-01",
+  "prosa": [
+   [
+    "Los números de manchas solares son <strong>conteos</strong>.",
+    "Los números de manchas solares son <strong>índices construidos a partir de conteos</strong>.",
+    "c3-m9-01: el número de manchas es una suma ponderada de conteos de manchas y de grupos (Cryer y Chan, p. 392), y la ayuda de R lo da redondeado a un decimal: no son conteos enteros"
+   ]
+  ],
+  "marcas": [
+   "[[c3-m9-01]]Los números de manchas solares son <strong>índices construidos a partir de conteos</strong>{{C|p. 392}}.[[/]] Es de esperar que su variabilidad crezca con el nivel"
+  ]
+ },
+ {
+  "id": "c3-m9-02",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m9-02]]con $b = 1$ crece en proporción, y el remedio es el logaritmo{{C|p. 98}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-41",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m9-41]]con $b = 0.5$, la raíz cuadrada. En general la potencia que estabiliza es $\\lambda = 1 - b$[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-42",
+  "prosa": [
+   [
+    ", la escala de Box–Cox del Capítulo 2, cuyo criterio de Guerrero busca justamente que $s_i/\\bar y_i^{\\,1-\\lambda}$ sea homogéneo entre bloques.",
+    ", la escala de Box–Cox del Capítulo 2. [[c3-m9-42]]El criterio de Guerrero, el que {{^F|§3.1|narrativa}} ofrecen para elegir $\\lambda$, busca justamente que $s_i/\\bar y_i^{\\,1-\\lambda}$ sea homogéneo entre bloques.",
+    "c3-m9-42: la atribución a Guerrero se respalda con FPP3 §3.1 (como en c2-m8-13) y la cita se genera en modo narrativo; la descripción de cómo funciona el criterio queda aparte (c3-m9-43)"
+   ]
+  ],
+  "marcas": [
+   "ofrecen para elegir $\\lambda$[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-43",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m9-43]]busca justamente que $s_i/\\bar y_i^{\\,1-\\lambda}$ sea homogéneo entre bloques[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-03",
+  "prosa": [
+   [
+    "La raíz cuadrada, en cambio, está definida en cero y es la transformación estabilizadora clásica para conteos.",
+    "La raíz cuadrada, en cambio, está definida en cero y se señala como útil con datos de tipo Poisson.",
+    "c3-m9-03: «la transformación clásica para conteos» no tiene obra detrás; Cryer y Chan (p. 101) dicen que la raíz cuadrada es útil con datos de tipo Poisson"
+   ]
+  ],
+  "marcas": [
+   "[[c3-m9-03]]La raíz cuadrada, en cambio, está definida en cero y se señala como útil con datos de tipo Poisson{{C|p. 101}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-05",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m9-05]]Además, el $\\lambda$ de Guerrero del Capítulo 2 sobre esta serie —desplazada una unidad{{C|p. 101}}, porque el criterio exige datos estrictamente positivos y está ese cero— da $0.3062$, que cae <strong>entre</strong> el logaritmo y la raíz cuadrada.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-06",
+  "prosa": [
+   [
+    "El ciclo solar documentado por los astrónomos es de aproximadamente <strong>11 años</strong>. Corregir la escala no solo arregló el diagnóstico: acercó la estimación al valor físico.",
+    "Ya en 1927 se daba como estimación habitual del periodo de las manchas solares algo más de <strong>11 años</strong>. Corregir la escala no solo arregló el diagnóstico: acercó la estimación a ese valor.",
+    "c3-m9-06: «documentado por los astrónomos» y «valor físico» no tenían obra; Yule (1927, p. 276) sí da la estimación habitual de algo más de 11 años"
+   ],
+   [
+    "y el pseudo-periodo se acercó al ciclo solar real.</li>",
+    "y el pseudo-periodo se acercó a la estimación habitual del ciclo de las manchas.</li>",
+    "resumen del M10: repite c3-m9-06, con las mismas palabras que ahora usa el M9"
+   ],
+   [
+    "anios; el ciclo solar documentado es ~11",
+    "anios; la estimacion habitual del periodo es algo mas de 11 (Modulo 9)",
+    "segunda pasada (verificador B): el comentario de código repetía «documentado», que la prosa ya no dice"
+   ]
+  ],
+  "marcas": [
+   "[[c3-m9-06]]Ya en 1927 se daba como estimación habitual del periodo de las manchas solares algo más de <strong>11 años</strong>{{Y|p. 276}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-08",
+  "prosa": [
+   [
+    "cualquier transformación de potencia moderada hace el mismo trabajo",
+    "las dos transformaciones de potencia probadas hacen el mismo trabajo",
+    "c3-m9-08: «cualquier potencia moderada» generaliza a partir de dos valores de λ (0.5 y 0.3062)"
+   ]
+  ],
+  "marcas": [
+   "[[c3-m9-08]]La conclusión <strong>no depende</strong> de haber elegido exactamente $0.5$: las dos transformaciones de potencia probadas hacen el mismo trabajo.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-53",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m9-53]]El módulo mayor que uno es el veredicto de estacionariedad{{C|p. 71}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-09",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m9-09]]<strong>Todo AR puro es invertible</strong>[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-10",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m9-10]]El módulo dice <em>cuánto se amortigua</em> la oscilación; el ángulo, <em>cada cuánto</em> oscila{{C|p. 73}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-40",
+  "prosa": [
+   [
+    "El texto de Hyndman y Athanasopoulos (FPP3, sección 9.5) da para el AR(2)",
+    "[[c3-m9-40]]{{^F|§9.5|narrativa}} dan para el AR(2)",
+    "c3-m9-40: la cita se genera en modo narrativo en lugar del nombre y la sección tecleados"
+   ]
+  ],
+  "marcas": [
+   "con raíces complejas el <em>periodo medio de los ciclos</em>, $2\\pi/\\arccos\\!\\big(-\\phi_1(1-\\phi_2)/(4\\phi_2)\\big)$[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-44",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m9-44]]El $11.22$ es el pseudo-periodo con que oscilan la ACF y los pesos $\\psi$ del modelo, el ángulo de la raíz{{C|p. 75}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-45",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m9-45]]el $11.84$ coincide con el periodo en que es máxima la densidad espectral del proceso —el reparto de su varianza por frecuencias, que este curso no desarrolla—. Las dos se juntan cuando el módulo de la raíz se acerca a $1$[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-11",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m9-11]]y en un AR(2) con raíces complejas tiene forma cerrada{{C|p. 75}}[[/]], que es donde se ve de dónde sale cada pieza:"
+  ]
+ },
+ {
+  "id": "c3-m9-46",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m9-46]]La varianza del error de pronóstico del Módulo 4, con $\\hat\\sigma^2 = 1.3410$, se obtiene sumando sus cuadrados{{C|p. 201}}[[/]]:"
+  ]
+ },
+ {
+  "id": "c3-m9-47",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m9-47]]La suma $\\sum_j \\psi_j^2$ <strong>converge</strong>, a $6.136$, así que la varianza del pronóstico no puede pasar de $1.3410 \\times 6.136 = 8.23$ —que es $\\hat\\gamma_0$, la varianza del propio proceso{{C|p. 201}}[[/]]: la varianza muestral de"
+  ]
+ },
+ {
+  "id": "c3-m9-48",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m9-48]]Esa es la firma de un proceso <strong>estacionario</strong>{{F|§9.8}}; en el Capítulo 4, con una raíz unitaria, la suma diverge y el abanico se abre sin techo{{C|p. 202}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-13",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m9-13]]Volver a las manchas es elevar al cuadrado los extremos: sobre valores no negativos el cuadrado es creciente, así que respeta los cuantiles y el $95\\,\\%$ sigue siendo el $95\\,\\%${{F|§5.6}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-12",
+  "prosa": [
+   [
+    "<strong>mediana</strong> de las manchas, no su media.",
+    "<strong>mediana</strong> de las manchas, y no su media, si la distribución en la escala de la raíz es simétrica.",
+    "c3-m9-12: FPP3 §5.6 lo dice con su condición: por lo común, y suponiendo simetría en la escala transformada"
+   ]
+  ],
+  "marcas": [
+   "[[c3-m9-12]]El <em>centro</em>, en cambio, no se transforma igual: el cuadrado del pronóstico es la <strong>mediana</strong> de las manchas, y no su media, si la distribución en la escala de la raíz es simétrica{{F|§5.6}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-14",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m9-14]]el $p$-valor de Shapiro–Wilk{{R|§Description}}[[/]] sube de $0.0007$ a $0.0470$"
+  ]
+ },
+ {
+  "id": "c3-m9-15",
+  "prosa": [
+   [
+    "y esa asimetría es una <strong>no linealidad</strong> que ningún modelo lineal ARMA puede capturar.",
+    "y esa asimetría sugiere una <strong>no linealidad</strong> que un modelo ARMA con errores normales no puede capturar.",
+    "c3-m9-15: Cryer y Chan (pp. 384 y 396) lo dicen de los procesos ARMA gaussianos (reversibles en el tiempo) y como sugerencia de no linealidad, no de «ningún modelo lineal»"
+   ]
+  ],
+  "marcas": [
+   "[[c3-m9-15]]El número de manchas solares sube más rápido de lo que baja{{C|p. 392}}, y esa asimetría sugiere una <strong>no linealidad</strong> que un modelo ARMA con errores normales no puede capturar{{C|p. 396}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-16",
+  "prosa": [
+   [
+    "quedarán algo mal calibrados.",
+    "pueden quedar algo mal calibrados.",
+    "c3-m9-16: FPP3 §9.8 dice «pueden ser incorrectos», no que lo serán"
+   ]
+  ],
+  "marcas": [
+   "[[c3-m9-16]]Los intervalos de pronóstico del Capítulo 6, que suponen normalidad, pueden quedar algo mal calibrados{{F|§9.8}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-17",
+  "prosa": [
+   [
+    "Allí quedó establecido que tiene una raíz unitaria",
+    "Allí se concluyó que tiene una raíz unitaria",
+    "c3-m9-17: «establecido» es más fuerte que lo que el Módulo 6 del capítulo 2 hace (dos pruebas sobre una muestra finita); Hamilton (p. 445) advierte que con muestra finita no se distingue una raíz unitaria de una cercana a 1"
+   ]
+  ],
+  "marcas": [
+   "[[c3-m9-17]]Allí se concluyó que tiene una raíz unitaria y que su primera diferencia es estacionaria.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-18",
+  "prosa": [
+   [
+    ", que es la variación porcentual mensual y la magnitud habitual en finanzas ($T = 137$).",
+    ", el rendimiento continuo de las finanzas, multiplicado por $100$ para leerlo como variación porcentual, lectura que es una buena aproximación mientras la variación sea pequeña ($T = 137$).",
+    "c3-m9-18: log(1 + X) ≈ X solo para X pequeño (Cryer y Chan, p. 99); «la magnitud habitual en finanzas» se respalda con la definición de p. 278"
+   ]
+  ],
+  "marcas": [
+   "[[c3-m9-18]]$r_t = 100 \\times \\log(y_t/y_{t-1})$, el rendimiento continuo de las finanzas, multiplicado por $100$ para leerlo como variación porcentual{{C|p. 278}}, lectura que es una buena aproximación mientras la variación sea pequeña{{C|p. 99}}[[/]] ($T = 137$)."
+  ]
+ },
+ {
+  "id": "c3-m9-20",
+  "prosa": [
+   [
+    "y se queda con el de menor AICc (el Capítulo 4 detalla cómo busca).",
+    "y se queda con el de menor AICc (el artículo que la presentó usaba el AIC; el AICc es hoy el criterio por defecto del paquete; el Capítulo 4 detalla cómo busca).",
+    "segunda pasada, c3-m9-20 (verificador B): la cita de Hyndman y Khandakar (2008) cerraba una frase que decía AICc, y el artículo elige por AIC; el AICc por defecto se comprobó con formals(auto.arima)$ic"
+   ]
+  ],
+  "marcas": [
+   "[[c3-m9-20]]<code>auto.arima()</code>, del paquete <code>forecast</code>, ajusta por sí sola varios modelos ARIMA{{K|p. 16}} y se queda con el de menor AICc (el artículo que la presentó usaba el AIC; el AICc es hoy el criterio por defecto del paquete; el Capítulo 4 detalla cómo busca). Con sus argumentos por defecto devuelve un ARIMA(0,0,0) con media cero, es decir, ruido blanco.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-52",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m9-52]]Solo con la búsqueda exhaustiva (<code>stepwise = FALSE</code>; <code>approximation = FALSE</code> no cambia nada aquí, porque con 137 datos ya es su valor por defecto), que prueba modelos a los que la búsqueda por pasos no llega{{F|§9.7}}, devuelve un MA(1), también sin media[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-51",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m9-51]]la serie cruda y su raíz son datos distintos, y los criterios solo comparan modelos ajustados a los mismos{{F|§9.6}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-24",
+  "prosa": [
+   [
+    "Lo que el AICc no puede comparar son modelos ajustados a datos distintos: otro orden de diferenciación u otra transformación.",
+    "Lo que el AICc no puede comparar son modelos ajustados a datos distintos, como los de otro orden de diferenciación o los de otra transformación.",
+    "c3-m9-24: la cita de FPP3 §9.6 cubre la diferenciación; se separa la parte de la transformación, que es extensión del capítulo"
+   ]
+  ],
+  "marcas": [
+   "[[c3-m9-24]]Esa comparación es legítima —con media o sin ella, los dos modelos se ajustan a los mismos datos y el criterio solo cobra el parámetro de más{{F|§9.6}}—, y es la que hace <code>auto.arima()</code> para decidir si la incluye{{K|p. 11}}. Lo que el AICc no puede comparar son modelos ajustados a datos distintos, como los de otro orden de diferenciación{{F|§9.6}} o los de otra transformación.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-23",
+  "prosa": [
+   [
+    "pronóstico de la variación del mes que viene es la media histórica.",
+    "pronóstico de la variación del mes que viene es una constante: la media histórica, o cero si, como aquí, la media no se distingue de cero.",
+    "segunda pasada, c3-m9-23 (verificador B): dos párrafos antes el capítulo elige el ruido blanco sin media, cuyo pronóstico es cero"
+   ]
+  ],
+  "marcas": [
+   "[[c3-m9-23]]pronóstico de la variación del mes que viene es una constante: la media histórica, o cero si, como aquí, la media no se distingue de cero[[/]]."
+  ]
+ },
+ {
+  "id": "c3-m9-49",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m9-49]]Esta TRM mensual es el <em>promedio</em> de los valores diarios de cada mes[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-50",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m9-50]]Si la tasa diaria fuera una caminata aleatoria pura, las variaciones del promedio mensual no serían ruido blanco: tendrían $\\rho_1 \\approx 0.25$ ($0.249$ con 21 días por mes).[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-27",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m9-27]]Ljung–Box sobre $r_t$ da $p = 0.0601$, y sobre $r_t^2${{C|p. 282}} da $p = 0.9166$: en esta serie mensual tampoco hay agrupamiento de volatilidad detectable.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m9-26",
+  "prosa": [
+   [
+    "En datos diarios de la misma tasa el resultado suele ser el opuesto —el nivel es ruido blanco y el cuadrado no— y esa es la puerta de entrada a los modelos ARCH y GARCH. La frecuencia de muestreo cambia el fenómeno que se ve.",
+    "En los rendimientos diarios de series financieras es frecuente el resultado opuesto —el nivel es ruido blanco y el cuadrado no— y esa es la puerta de entrada a los modelos ARCH y GARCH. Saber si ocurre con la TRM exigiría repetir la prueba con los datos diarios.",
+    "c3-m9-26 y c3-m9-28: ninguna fuente leída habla de «datos diarios de la misma tasa» (el ejemplo de Cryer y Chan es un fondo bursátil) ni de que la frecuencia de muestreo cambie el fenómeno; sí dicen que esa estructura es común en series financieras y que los modelos GARCH se introducen para ella"
+   ]
+  ],
+  "marcas": [
+   "[[c3-m9-26]]En los rendimientos diarios de series financieras es frecuente el resultado opuesto —el nivel es ruido blanco y el cuadrado no— y esa es la puerta de entrada a los modelos ARCH y GARCH{{C|p. 285}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m10-01",
+  "prosa": [
+   [
+    "Es exactamente una <strong>neurona lineal</strong>",
+    "Equivale a una <strong>neurona lineal</strong>",
+    "FPP3 §12.4 dice «equivalente», y con una salvedad: la red sin neuronas ocultas coincide con el AR(p) salvo que no impone las restricciones de estacionariedad; «exactamente» iba más allá."
+   ]
+  ],
+  "marcas": [
+   "<p>[[c3-m10-01]]Equivale a una <strong>neurona lineal</strong> con una ventana de $p$ entradas: los $\\phi_j$ son los pesos y $c$ es el sesgo{{F|§12.4}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m10-02",
+  "prosa": [
+   [
+    "Todo lo que hicieron los métodos secuenciales modernos fue relajar, uno por uno, los supuestos que hay detrás de esa expresión.",
+    "Los métodos secuenciales modernos pueden leerse como una forma de relajar, uno por uno, los supuestos que hay detrás de esa expresión.",
+    "«Todo lo que hicieron… fue» es una afirmación histórica sobre el desarrollo de esos métodos y ninguna obra de la biblioteca la respalda; se reescribe como una lectura del capítulo."
+   ],
+   [
+    "Situar el AR como el antepasado directo de los métodos secuenciales del aprendizaje profundo",
+    "Situar el AR como el punto de partida de los métodos secuenciales del aprendizaje profundo",
+    "«Antepasado directo» es una genealogía de ideas sin fuente. FPP3 §12.4 solo respalda que una red autorregresiva usa los rezagos como entradas igual que un AR."
+   ],
+   [
+    "<h3>El AR es la idea original</h3>",
+    "<h3>El AR como punto de partida</h3>",
+    "«La idea original» afirma una prioridad histórica que ninguna obra de la biblioteca respalda (c3-m10-47)."
+   ]
+  ],
+  "marcas": [
+   "[[c3-m10-02]]Los métodos secuenciales modernos pueden leerse como una forma de relajar, uno por uno, los supuestos que hay detrás de esa expresión.[[/]]</p>"
+  ]
+ },
+ {
+  "id": "c3-m10-03",
+  "prosa": [],
+  "marcas": [
+   "<td[[@c3-m10-03]]>La <strong>linealidad</strong>: capas ocultas y activaciones no lineales{{F|§12.4}}</td>"
+  ]
+ },
+ {
+  "id": "c3-m10-04",
+  "prosa": [],
+  "marcas": [
+   "<tr[[@c3-m10-04]]> <td><strong>RNN / LSTM / GRU</strong></td>"
+  ]
+ },
+ {
+  "id": "c3-m10-05",
+  "prosa": [],
+  "marcas": [
+   "<tr[[@c3-m10-05]]> <td><strong>Transformers temporales</strong></td>"
+  ]
+ },
+ {
+  "id": "c3-m10-07",
+  "prosa": [
+   [
+    "<em>es</em> un AR(1): $h_t = w\\,h_{t-1} + u\\,x_t$.",
+    "sigue la misma recursión que un AR(1): $h_t = w\\,h_{t-1} + u\\,x_t$, con la entrada $u\\,x_t$ en el lugar de la innovación $\\varepsilon_t$.",
+    "La recursión h_t = w h_{t-1} + u x_t es un AR(1) solo si u x_t es ruido blanco; con una serie observada como entrada es un filtro autorregresivo de esa entrada. «Es un AR(1)» necesitaba esa condición."
+   ]
+  ],
+  "marcas": [
+   "<p><strong>Un puente concreto.</strong> [[c3-m10-07]]El estado oculto de una RNN sin activación no lineal y con una sola unidad sigue la misma recursión que un AR(1): $h_t = w\\,h_{t-1} + u\\,x_t$, con la entrada $u\\,x_t$ en el lugar de la innovación $\\varepsilon_t$.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m10-08",
+  "prosa": [
+   [
+    "El problema del gradiente que se desvanece en las RNN y el desvanecimiento de $\\phi^k$ que vimos al desarrollar el AR(1) hacia atrás son el mismo fenómeno matemático.",
+    "En este caso lineal, el gradiente que se desvanece en una RNN y el desvanecimiento de $\\phi^k$ que se vio al desarrollar el AR(1) hacia atrás son el mismo fenómeno matemático.",
+    "Se acota a lo que se deriva en el recuadro (el caso lineal de una unidad): la afirmación general sobre el problema del gradiente en las RNN necesitaría una obra de aprendizaje profundo que la biblioteca no tiene. Se quita el «vimos» (voz impersonal)."
+   ]
+  ],
+  "marcas": [
+   "[[c3-m10-08]]La condición para que ese estado no explote ($|w| < 1$) es la <strong>misma condición de estacionariedad</strong> del Módulo 1, y tiene el mismo precio. La derivada de $h_t$ respecto al estado de $k$ pasos atrás es $w^k$: con $|w| < 1$ <strong>se desvanece</strong>, y con $|w| > 1$ explota. En este caso lineal, el gradiente que se desvanece en una RNN y el desvanecimiento de $\\phi^k$ que se vio al desarrollar el AR(1) hacia atrás son el mismo fenómeno matemático.[[/]]</p>"
+  ]
+ },
+ {
+  "id": "c3-m10-09",
+  "prosa": [
+   [
+    "sobre cien observaciones memoriza la muestra",
+    "sobre cien observaciones puede memorizar la muestra",
+    "Sin fuente, «memoriza» es una afirmación categórica sobre el comportamiento de una red; se vuelve condicional."
+   ]
+  ],
+  "marcas": [
+   "<li[[@c3-m10-09]]><strong>Pocos datos.</strong> El caso de este capítulo tiene $T = 100$."
+  ]
+ },
+ {
+  "id": "c3-m10-10",
+  "prosa": [
+   [
+    "<strong>Intervalos de pronóstico calibrados.</strong> Un ARMA da intervalos con una teoría detrás (los pesos $\\psi$ del Módulo 4). Cuantificar bien la incertidumbre en una red exige trabajo adicional que a menudo no se hace.",
+    "<strong>Intervalos de pronóstico con una teoría detrás.</strong> Un ARMA da intervalos que parten de los pesos $\\psi$ del Módulo 4, aunque tienden a quedar estrechos. Una red no parte de un modelo estocástico bien definido, y sus intervalos exigen simular trayectorias futuras.",
+    "FPP3 §9.8 dice que los intervalos de un ARIMA tienden a ser demasiado estrechos, así que «calibrados» contradice la fuente (y el propio Módulo 9 admite que quedan algo mal calibrados). Lo de la red se acota a lo que dice FPP3 §12.4 (no hay modelo estocástico bien definido y se simula); «a menudo no se hace» es una generalización empírica sin respaldo."
+   ]
+  ],
+  "marcas": [
+   "[[c3-m10-10]]Un ARMA da intervalos que parten de los pesos $\\psi$ del Módulo 4, aunque tienden a quedar estrechos{{F|§9.8}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m10-11",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m10-11]]Una red no parte de un modelo estocástico bien definido, y sus intervalos exigen simular trayectorias futuras{{F|§12.4}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m10-12",
+  "prosa": [
+   [
+    "Aunque vayas a usar una red, el ARMA es el <em>benchmark</em> que hay que batir. Un modelo complejo que no supera a un AR(2) no es un modelo complejo: es un modelo complejo mal ajustado.",
+    "Aunque vayas a usar una red, el ARMA es, en este curso, el <em>benchmark</em> que hay que batir: un método nuevo se compara con alternativas simples, y si no las supera no merece consideración. Un modelo complejo que no supera a un AR(2) no justifica su complejidad.",
+    "FPP3 §5.2 fija como referencia cuatro métodos simples (no el ARMA) y concluye que un método que no los supera «no merece consideración»; no dice que un modelo complejo que no gana esté «mal ajustado» (puede no haber estructura no lineal que aprender)."
+   ]
+  ],
+  "marcas": [
+   "[[c3-m10-12]]Aunque vayas a usar una red, el ARMA es, en este curso, el <em>benchmark</em> que hay que batir: un método nuevo se compara con alternativas simples, y si no las supera no merece consideración{{F|§5.2}}. Un modelo complejo que no supera a un AR(2) no justifica su complejidad.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m10-14",
+  "prosa": [
+   [
+    "en los que esa interpretación suele estar mal y",
+    "en los que esa interpretación puede estar mal y",
+    "«Suele estar mal» es una afirmación empírica sobre el comportamiento de los asistentes, sin medición ni fuente; se vuelve condicional."
+   ]
+  ],
+  "marcas": [
+   "<p><strong>Uso crítico de los asistentes de IA.</strong> [[c3-m10-14]]Un asistente te dará en segundos el código de un <code>arima()</code> y una interpretación convincente de la salida. Este capítulo contiene al menos cuatro puntos en los que esa interpretación puede estar mal y <strong>tú tienes que verificarlos</strong>[[/]]:"
+  ]
+ },
+ {
+  "id": "c3-m10-15",
+  "prosa": [],
+  "marcas": [
+   "(3) el AICc no compara modelos [[c3-m10-15]]con distinto $d${{F|§9.6}} ni en otra escala —con media o sin ella, sí{{F|§9.7}}[[/]]—;"
+  ]
+ },
+ {
+  "id": "c3-m10-19",
+  "prosa": [],
+  "marcas": [
+   "<td[[@c3-m10-19]]>Decae sin cortar: geométrica si las raíces son reales, <strong>en ondas</strong> si son complejas{{C|p. 73}}</td>"
+  ]
+ },
+ {
+  "id": "c3-m10-20",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m10-20]]Esa última barra además <strong>estima $\\phi_p$</strong>, que es lo que la teórica vale (Módulo 2): en el AR(2) del Módulo 9 la PACF teórica en $2$ vale $-0.6853$, el coeficiente mismo{{C|pp. 114–115}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m10-23",
+  "prosa": [],
+  "marcas": [
+   "<td[[@c3-m10-23]]>Decae; desde el rezago $q+1$, al ritmo de un <span style=\"white-space:nowrap;\">AR($p$)</span>{{H|p. 60}}</td>"
+  ]
+ },
+ {
+  "id": "c3-m10-24",
+  "prosa": [
+   [
+    "<td>Decae; desde el rezago $p+1$</td>",
+    "<td>Decae</td>",
+    "Ninguna fuente fija desde qué rezago decae la PACF de un ARMA. Cryer y Chan (Exhibit 6.3) y la tabla de Shumway dicen solo que «decae». Además, «desde p+1» no vale en general: con ARMAacf(pacf = TRUE) en un ARMA(1,2) (φ = 0.3; θ = 0.6 y 0.4) la PACF no es monótona a partir del rezago 2 (|φ44| > |φ33|)."
+   ]
+  ],
+  "marcas": [
+   "<td[[@c3-m10-24]]>Decae{{C|p. 116}}</td> <td><strong>La lectura no los da.</strong>"
+  ]
+ },
+ {
+  "id": "c3-m10-25",
+  "prosa": [],
+  "marcas": [
+   "<li><strong>El coeficiente de mayor orden.</strong> [[c3-m10-25]]Si $\\hat\\phi_p$ o $\\hat\\theta_q$ no es significativo, sobra{{C|p. 186}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m10-28",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m10-28]]Un <span style=\"white-space:nowrap;\">ARMA($2,2$)</span> con $\\phi = (1.1,\\,-0.28)$ y $\\theta = (0.1,\\,-0.20)$ tiene <strong>exactamente</strong> la misma ACF que el <span style=\"white-space:nowrap;\">ARMA($1,1$)</span> de $\\phi = 0.7$ y $\\theta = 0.5$ —coinciden hasta el último decimal—, porque el factor $(1-0.4B)$ está en los dos polinomios y se cancela{{H|p. 61}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m10-91",
+  "prosa": [
+   [
+    "que penaliza al grande y suele acertar, sino la <strong>estimación</strong>: los cuatro coeficientes del modelo grande no son identificables, sus errores estándar se disparan y ninguno parece significativo.",
+    "que penaliza al grande, sino la <strong>estimación</strong>: los cuatro coeficientes del modelo grande no son identificables, sus errores estándar pueden dispararse y es posible que ninguno parezca significativo.",
+    "«Suele acertar», «se disparan» y «ninguno parece significativo» son generalizaciones sin fuente que además fallan en una simulación propia (cinco semillas, ARMA(1,1) verdadero con φ = 0.7 y θ = 0.5, n = 300, ML: en una los cuatro coeficientes del ARMA(2,2) salen significativos y su AIC es menor que el del ARMA(1,1); en otras dos salen con errores estándar grandes y casi todos insignificantes; en las dos restantes los errores estándar no se pueden calcular). Cryer y Chan p. 187 respaldan que los parámetros no son únicos; no dicen nada de los errores estándar."
+   ]
+  ],
+  "marcas": [
+   "[[c3-m10-91]]los cuatro coeficientes del modelo grande no son identificables{{C|p. 187}}[[/]], sus errores estándar pueden dispararse"
+  ]
+ },
+ {
+  "id": "c3-m10-31",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m10-31]](48 mediciones de hormona luteinizante, una cada 10 minutos){{R|§Description}}[[/]]."
+  ]
+ },
+ {
+  "id": "c3-m10-33",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m10-33]]valdría la pena comparar los dos por validación de origen móvil{{F|§5.10}}[[/]], que es lo que hará el Capítulo 6"
+  ]
+ },
+ {
+  "id": "c3-m10-34",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m10-34]]la cota $|\\rho_1|\\le 0.5$ se dedujo <strong>solo para el MA(1)</strong>, maximizando $\\theta/(1+\\theta^2)${{C|p. 58}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m10-90",
+  "prosa": [],
+  "marcas": [
+   "residuales se rechaza ($p = 0.0083$), [[c3-m10-90]]un aviso para los intervalos de pronóstico{{F|§9.8}}[[/]]."
+  ]
+ },
+ {
+  "id": "c3-m10-35",
+  "prosa": [
+   [
+    "tengan más datos que la de Yule o menos.",
+    "tengan más datos que la de 1770–1869 o menos.",
+    "Yule (1927, p. 275) usó la serie entera, 1749–1924: 1770–1869 no es «su» ventana"
+   ],
+   [
+    "no un artefacto de la ventana de Yule.",
+    "no un artefacto de la ventana 1770–1869.",
+    "Yule (1927, p. 275) usó la serie entera, 1749–1924: 1770–1869 no es «su» ventana"
+   ],
+   [
+    "<em>menos</em> datos que la ventana de Yule ($n = 89$)",
+    "<em>menos</em> datos que la ventana 1770–1869 ($n = 89$)",
+    "Yule (1927, p. 275) usó la serie entera, 1749–1924: 1770–1869 no es «su» ventana"
+   ],
+   [
+    "La de Yule es una de las favorables;",
+    "La de 1770–1869 es una de las favorables;",
+    "Yule (1927, p. 275) usó la serie entera, 1749–1924: 1770–1869 no es «su» ventana"
+   ]
+  ],
+  "marcas": [
+   "<li[[@c3-m10-35]]><strong>El diagnóstico se derrumba</strong>"
+  ]
+ },
+ {
+  "id": "c3-m10-46",
+  "prosa": [
+   [
+    "Sobre la serie completa da $11.007$, notablemente cerca del ciclo documentado.",
+    "Sobre la serie completa da $11.007$, dentro del rango de duración que se da al ciclo de las manchas.",
+    "«Notablemente cerca del ciclo documentado» no tenía fuente (el ciclo físico no está en ninguna obra en caché). FPP3 §12.4 sí da un rango de duración del ciclo de las manchas, y 11.007 cae dentro de él. La redacción no repite las cifras del rango."
+   ]
+  ],
+  "marcas": [
+   "Sobre la serie completa da $11.007$, [[c3-m10-46]]dentro del rango de duración que se da al ciclo de las manchas{{F|§12.4}}[[/]]."
+  ]
+ },
+ {
+  "id": "c3-m10-38",
+  "prosa": [
+   [
+    "<strong>Hyndman &amp; Athanasopoulos, <em>FPP3</em></strong> — secciones <strong>9.3</strong> (modelos autorregresivos), <strong>9.4</strong> (modelos de medias móviles) y <strong>5.4</strong> (diagnóstico de residuales). Acceso abierto en",
+    ", <em>Forecasting: Principles and Practice</em> (3.ª ed.): esa sección (modelos autorregresivos), la <strong>9.4</strong> (modelos de medias móviles) y la <strong>5.4</strong> (diagnóstico de residuales). Acceso abierto en",
+    "La obra y la primera sección las escribe el generador de citas (modo narrativo), como en el capítulo 2 (c2-m9-23); el título y la edición coinciden con referencias.json."
+   ]
+  ],
+  "marcas": [
+   "<li[[@c3-m10-38]]>{{^F|§9.3|narrativa}}, <em>Forecasting: Principles and Practice</em> (3.ª ed.): esa sección"
+  ]
+ },
+ {
+  "id": "c3-m10-39",
+  "prosa": [
+   [
+    "<strong>Shumway &amp; Stoffer, <em>Time Series Analysis and Its Applications</em></strong> — capítulo <strong>3</strong>, secciones 3.1 a 3.5: es el tratamiento formal de ARMA, causalidad, invertibilidad y estimación, con las manchas solares entre sus ejemplos.",
+    "<strong>Shumway &amp; Stoffer, <em>Time Series Analysis and Its Applications</em></strong> (4.ª ed.): el tratamiento formal de ARMA, causalidad, invertibilidad y estimación. En la 3.ª edición (2011) son las secc. 3.2 (modelos ARMA, con la causalidad y la invertibilidad) y 3.6 (estimación); la numeración de la 4.ª puede ser otra.",
+    "En la 3.ª edición el cap. 3 numera 3.2 ARMA (causalidad e invertibilidad dentro de ella) y 3.6 estimación, de modo que «3.1 a 3.5» no cubría la estimación. «Con las manchas solares entre sus ejemplos» no aparece en el cap. 3 de la 3.ª edición (solo en el cap. 1 y en la lista de datos); la 4.ª no se leyó, así que se retira. Mismo tratamiento que c2-m9-24."
+   ]
+  ],
+  "marcas": [
+   "<li[[@c3-m10-39]]><strong>Shumway &amp; Stoffer, <em>Time Series Analysis and Its Applications</em></strong> (4.ª ed.):"
+  ]
+ },
+ {
+  "id": "c3-m10-41",
+  "prosa": [
+   [
+    "<strong>Box, Jenkins, Reinsel &amp; Ljung</strong> — capítulos 3 y 6, la fuente original de la metodología de identificación y de la prueba de Ljung–Box.",
+    "<strong>Box, Jenkins, Reinsel &amp; Ljung</strong>, <em>Time Series Analysis: Forecasting and Control</em> (5.ª ed.): una edición del texto clásico de Box y Jenkins que popularizó el modelado ARIMA, a quienes se asocia la estrategia de identificación, ajuste y diagnóstico.",
+    "Sin el texto del libro no se sostienen ni «capítulos 3 y 6» ni «la fuente original de la prueba de Ljung–Box» (Cryer y Chan §8.1 atribuyen esa prueba a un artículo de Ljung y Box de 1978, no a este libro). La frase queda reducida a lo que FPP3 §9.12 y Cryer y Chan p. 8 dicen de la obra y de sus autores."
+   ]
+  ],
+  "marcas": [
+   "<li[[@c3-m10-41]]><strong>Box, Jenkins, Reinsel &amp; Ljung</strong>, <em>Time Series Analysis: Forecasting and Control</em> (5.ª ed.): una edición del texto clásico de Box y Jenkins que popularizó el modelado ARIMA{{F|§9.12}}, a quienes se asocia la estrategia de identificación, ajuste y diagnóstico{{C|p. 8}}."
+  ]
+ },
+ {
+  "id": "c3-m10-43",
+  "prosa": [
+   [
+    "Hyndman &amp; Athanasopoulos, sección <strong>12.4</strong> (redes neuronales autorregresivas, <code>NNETAR</code>), que es literalmente un AR con una capa oculta.",
+    ", la sección sobre redes neuronales: la red autorregresiva que ajusta <code>NNETAR</code> es una red con una capa oculta que toma como entradas los rezagos de la serie y que, sin neuronas ocultas, equivale a un AR sin las restricciones de estacionariedad.",
+    "FPP3 §12.4 no dice que NNETAR sea «literalmente un AR con una capa oculta»: la red autorregresiva NNAR(p, k) tiene p rezagos como entradas y k neuronas en una capa oculta, y con k = 0 equivale a un ARIMA(p,0,0) sin las restricciones de estacionariedad. La obra y la sección las escribe el generador de citas (modo narrativo)."
+   ]
+  ],
+  "marcas": [
+   "<li[[@c3-m10-43]]><em>Opcional, para el puente con el aprendizaje profundo:</em> {{^F|§12.4|narrativa}}, la sección sobre redes neuronales: la red autorregresiva"
+  ]
+ },
+ {
+  "id": "c3-m10-92",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m10-92]]se añade la pieza que falta —la integración, el orden $d$— para llegar a los modelos <strong>ARIMA</strong>[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m10-44",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m10-44]]la metodología completa de Box–Jenkins{{C|p. 8}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m10-45",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m10-45]]el algoritmo de Hyndman–Khandakar que automatiza la búsqueda{{F|§9.7}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m10-93",
+  "prosa": [],
+  "marcas": [
+   "[[c3-m10-93]]la advertencia sobre comparar criterios de información entre modelos con distinto $d${{F|§9.6}}[[/]]"
+  ]
+ },
+ {
+  "id": "c3-m10-94",
+  "prosa": [],
+  "marcas": [
+   "<p style=\"margin-bottom:0;\"[[@c3-m10-94]]><code>AirPassengers</code>, la serie con que terminó"
+  ]
+ }
+]

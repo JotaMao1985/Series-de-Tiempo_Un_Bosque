@@ -14,7 +14,7 @@ con sus fuentes contrastadas y con práctica en cada módulo. Es la tercera apli
 [[PLAN_Mejora_Cap1]] y [[PLAN_Mejora_Cap2]]: cinco rondas, un redactor por ronda, un verificador
 independiente sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: aprobado por Javier el 2026-11-19 (D1–D9, y las recomendaciones de §7.1 y §7.2). R1, R2 y R3 publicadas el 21.** Lo que
+**Estado: aprobado por Javier el 2026-11-19 (D1–D9, y las recomendaciones de §7.1 y §7.2). R1, R2 y R3 publicadas el 21; R4 hecha el 21, sin publicar.** Lo que
 sigue es el diagnóstico y el plan; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-19
@@ -193,6 +193,25 @@ Cada una lleva mi recomendación; las decide Javier.
   30; todos a < 0.5 min. Bloques: 557/557 → 732/732. Caps. 2 y 4–6 sin cambios (`diagnostico/cap3/R3_cambios.md`).
   El verificador independiente no halló nada falso ni regresiones; 7 puntos menores, 5 corregidos por la maestra,
   uno resuelto con el commit y uno a la R5 (`diagnostico/cap3/R3_verificacion.md`).
+
+- **R4 · fuentes — hecha el 2026-11-21, sin publicar.** El capítulo pasa de 0 a **213 afirmaciones marcadas y
+  registradas** (`bibliografia/contraste/cap3.yml`): 119 `respaldada`, 53 `con-matiz`, 37 `propia` (lo que se dice del
+  software, comprobado ejecutando) y 4 `pendiente` (Guerrero 1993, Shumway 4.ª y una obra de aprendizaje profundo para
+  RNN/LSTM y transformers). **213 citas visibles**: Cryer y Chan 98, FPP3 62, Hamilton 25, ayuda de R 22, Yule 4 y
+  Hyndman y Khandakar 2; 353 citas literales comprobadas contra la caché, ninguna en git. Con permiso de Javier entraron
+  los PDF de acceso abierto de **Yule (1927)** (Royal Society, OCR) y **Hyndman y Khandakar (2008)** (JSS): la lectura de
+  Yule deshizo «la ventana centenaria de Yule» (usó 1749–1924, p. 275; el AR(2) es su ec. 31, p. 281), también en
+  `genera_cap3.R` y en tres cadenas de `cap3_js.js` (pie de la tabla ordenable y rótulos «número de Wolf»); y el título
+  de Yule, sin «in» en Crossref, va corregido por `enmiendas.yml`. Prosa: 64 cambios en la primera pasada, todos por lo
+  que la fuente decía, y 16 en la segunda, entre ellos el error de c3-m6-07 (un pico grande fuera de la banda SÍ es
+  evidencia, FPP3 §2.9), la notación de Ljung–Box (Q(h) = Ljung–Box, como el cap. 4; Q_BP(h) = Box–Pierce),
+  `auto.arima` (el artículo usa AIC; el paquete, AICc por defecto) y la voz impersonal en ocho afirmaciones. La sección
+  «1b» de `ensambla_cap3.py` sale: el pie y las listas los escribe `genera_referencias.py` al ensamblar; la protección
+  pasa a `ensambla_cap4.py` y los caps. 4–6 quedan byte a byte iguales. Inventario: 179 de las 254 filas registradas
+  (93 de alta), 68 sin marcar con su motivo (13 viven en cadenas del quiz, la práctica de repaso o el simulacro), 7
+  salen; **la media no queda cerrada entera** (32 sin marcar). Dos verificadores independientes en paralelo (M1–M6,
+  M7–M10) firmaron 203 en la primera lectura y las 20 restantes tras la corrección (`diagnostico/cap3/R4_cambios.md`,
+  `R4_verificacion_A.md`, `R4_verificacion_B.md`). Bloques: 732/732 → 733/733.
 
 ## 5. Criterios de aceptación
 

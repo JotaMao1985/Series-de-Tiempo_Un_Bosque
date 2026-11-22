@@ -1,0 +1,116 @@
+R R version 4.6.0 (2026-04-24) 
+
+== c3-m1-10 · suma vs resta: misma verosimilitud con theta' = -theta
+theta (suma) = 0.7047  SSR suma(theta) = 398.0503  SSR resta(-theta) = 398.0503 
+
+== c3-m1-18 · polyroot ascendente
+[1] 0.9333333+0.6798693i 0.9333333-0.6798693i
+[1] 1.154701 1.154701
+
+== c3-m1-07 · R: ma1 positivo para theta = +0.7
+      ma1 
+0.7091959 
+ARMAacf(ma=0.7): 1 0.4697987 0 
+
+== c3-m1-13 · rho1 = theta/(1+theta^2), mismo signo
+-0.8 -0.4878049 -0.4878049 
+0.5 0.4 0.4 
+
+== c3-m2-04 · intercept = media
+      ar1 intercept 
+0.5988768 9.9819793 
+mean(x) = 9.982396  c = mu(1-phi) = 4.004003 
+
+== c3-m2-10 · triángulo del AR(2) frente a raíces (rejilla)
+puntos: 1952  discrepancias triángulo vs raíces: 5 
+
+== c3-m2-12 · pseudo-periodo
+11.05191 11.21852 12 
+
+== c3-m2-16/17 · gamma0 del AR(2)
+g0(0.5,0.3) = 2.24359 2.24359  sum psi^2 = 2.24359 
+Cryer 4.3.20: 2.24359 
+rho1, rho2 AR(2): 0.7142857 0.6571429  ARMAacf: 0.7142857 0.6571429 
+factores en (0.9,0.1): 1.1 -2.775558e-17 1.8 
+
+== c3-m3-10 · MA(2) invertible frente a raíces (rejilla)
+discrepancias: 8 
+
+== c3-m3-12 · techo de rho1 del MA(q)
+q = 1  cos(pi/(q+2)) = 0.5  max eigen = 0.5  rho1 con theta=v: 0.5 
+q = 2  cos(pi/(q+2)) = 0.707107  max eigen = 0.707107  rho1 con theta=v: 0.707107 
+q = 3  cos(pi/(q+2)) = 0.809017  max eigen = 0.809017  rho1 con theta=v: 0.809017 
+q = 4  cos(pi/(q+2)) = 0.866025  max eigen = 0.866025  rho1 con theta=v: 0.866025 
+
+== c3-m3-14 · PACF del MA(1)
+[1]  0.4878 -0.3123  0.2215 -0.1652
+[1] -0.4878 -0.3123 -0.2215 -0.1652
+fórmula Cryer con theta_C = -theta: 0.4878 -0.3123 0.2215 -0.1652 
+
+== c3-m3-32 / c3-m4-31 · raíz invertible por defecto
+CSS-ML TRUE ma1 = 0.4794 
+CSS-ML FALSE ma1 = 0.4794 
+ML TRUE ma1 = 0.4794 
+ML FALSE ma1 = 0.4794 
+CSS TRUE ma1 = 0.4797 
+CSS FALSE ma1 = 0.4797 
+init 2, ML, sin transform: ma1 = 2.0861  sigma2 = 0.938 
+
+== c3-m4-09 · ARMAtoMA empieza en psi1
+[1] 1.2000 0.8400 0.5880 0.4116
+[1] -1.2000  0.6000 -0.3000  0.1500 -0.0750  0.0375 -0.0187  0.0094
+
+== c3-m4-10 / c3-m5-03 · |pi_j| < 0.01
+primer j con |pi_j|<0.01: 8  |pi_7|,|pi_8| = 0.01875 0.009375 
+
+== c3-m4-30 · formas cerradas
+TRUE TRUE 
+
+== c3-m5-15 · ARMA(1,1) phi=0.7 theta=0.5
+1+2pt+t^2 = 1.95  1-phi^2 = 0.51  g0 = 3.823529  sum psi^2 = 3.823529 
+(1+pt)(p+t) = 1.62  g1 = 3.176471  sum psi psi+1 = 3.176471 
+rho1 = 0.8307692  ARMAacf: 0.8307692 
+
+== c3-m5-16 · ARMA(2,1) phi=(0.5,0.3) theta=0.4
+     0      1      2      3      4 
+1.0000 0.8614 0.7307 0.6238 0.5311 
+recursión k=2..4: 0.7307 0.6238 0.5311   k=1 lado derecho 0.5+0.3*rho1 = 0.7584 
+
+== c3-m5-08 · dim(pacf()$acf)
+[1] 20  1  1
+
+== c3-m5-32 · redundancia casi exacta
+AVISO: possible convergence problem: optim gave code = 1 
+      ar1       ma1 intercept 
+   0.8300   -0.7953    0.0137 
+      ar1       ma1 intercept 
+   0.2307    0.2477    0.0806 
+suma: 0.03465185 
+
+== c3-m6-05 · varianza al arrancar en cero
+4.115519 10.25641 23 
+
+== c3-m5-32 · perfil de la verosimilitud a lo largo de phi (theta optimizado)
+phi = -0.5  theta = 0.502  loglik = -273.441 
+phi = 0  theta = -0.008  loglik = -273.436 
+phi = 0.3  theta = -0.292  loglik = -273.434 
+phi = 0.5  theta = -0.477  loglik = -273.356 
+phi = 0.83  theta = -0.795  loglik = -273.071 
+ruido blanco: loglik = -273.442 
+discrepancias AR(2) (todas en un lado del triángulo):
+        p1    p2     s    df
+125  -1.96 -0.96 -2.92  1.00
+497  -1.54 -0.54 -2.08  1.00
+721   1.33 -0.33  1.00 -1.66
+781   1.26 -0.26  1.00 -1.52
+1675 -0.21  0.79  0.58  1.00
+discrepancias MA(2) (todas en un lado):
+        p1 p2    s    df
+1848 -0.91  1 0.09  1.91
+1853 -0.56  1 0.44  1.56
+1854 -0.49  1 0.51  1.49
+1855 -0.42  1 0.58  1.42
+1856 -0.35  1 0.65  1.35
+1857 -0.28  1 0.72  1.28
+1876  1.05  1 2.05 -0.05
+1877  1.12  1 2.12 -0.12

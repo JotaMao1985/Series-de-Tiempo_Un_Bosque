@@ -1,0 +1,278 @@
+2049: «1869» … 1770 y 1869
+2054: «Según» … o de la banda $\pm 0.196$. La ACF, en cambio, ondula y cruza el cero. Según la tabla del Módulo 5, eso es un
+2171: «Yule» … Yule–Walker
+2171: «Walker» … Yule–Walker
+2185: «Yule» …  de máxima verosimilitud son $0.0706$ y $0.0702$. La diferencia entre Yule–Walker y ML es de $-0.0886$ en $\phi_1$ y $+0.0773$ en $\phi_2$, es d
+2185: «Walker» … áxima verosimilitud son $0.0706$ y $0.0702$. La diferencia entre Yule–Walker y ML es de $-0.0886$ en $\phi_1$ y $+0.0773$ en $\phi_2$, es decir
+2195: «Yule» … No compares un $\hat\sigma^2$ de Yule–Walker con uno de ML.
+2195: «Walker» … No compares un $\hat\sigma^2$ de Yule–Walker con uno de ML.
+2208: «1869» … manchas <- window(sunspot.year, start = 1770, end = 1869) # T = 100 # 1. Yule-Walker (metodo de momentos) yw <- ar(manchas, or
+2208: «Yule» … chas <- window(sunspot.year, start = 1770, end = 1869) # T = 100 # 1. Yule-Walker (metodo de momentos) yw <- ar(manchas, order.max = 2, aic = FA
+2208: «Walker» … <- window(sunspot.year, start = 1770, end = 1869) # T = 100 # 1. Yule-Walker (metodo de momentos) yw <- ar(manchas, order.max = 2, aic = FALSE, me
+2208: «yule» …  de momentos) yw <- ar(manchas, order.max = 2, aic = FALSE, method = "yule-walker") round(yw$ar, 4) #> [1] 1.3173 -0.6338 # 2. Suma de cuadrados
+2208: «walker» … omentos) yw <- ar(manchas, order.max = 2, aic = FALSE, method = "yule-walker") round(yw$ar, 4) #> [1] 1.3173 -0.6338 # 2. Suma de cuadrados condic
+2208: «1859» … ices <- polyroot(c(1, -coef(ml)[1:2])) round(Mod(raices), 4) #> [1] 1.1859 1.1859 (> 1: estacionario) round(2 * pi / Arg(raices[1]), 4) #> [1] 1
+2208: «1859» …  polyroot(c(1, -coef(ml)[1:2])) round(Mod(raices), 4) #> [1] 1.1859 1.1859 (> 1: estacionario) round(2 * pi / Arg(raices[1]), 4) #> [1] 10.7369 
+2260: «statsmodels» … import numpy as np import statsmodels.api as sm from statsmodels.tsa.arima.model import ARIMA from statsmod
+2260: «statsmodels» … import numpy as np import statsmodels.api as sm from statsmodels.tsa.arima.model import ARIMA from statsmodels.tsa.ar_model import Aut
+2260: «statsmodels» … tsmodels.api as sm from statsmodels.tsa.arima.model import ARIMA from statsmodels.tsa.ar_model import AutoReg from statsmodels.regression.linear_model 
+2260: «statsmodels» … .model import ARIMA from statsmodels.tsa.ar_model import AutoReg from statsmodels.regression.linear_model import yule_walker datos = sm.datasets.sunspo
+2260: «yule» … _model import AutoReg from statsmodels.regression.linear_model import yule_walker datos = sm.datasets.sunspots.load_pandas().data manchas = dato
+2260: «1869» … ndas().data manchas = datos.loc[(datos.YEAR >= 1770) & (datos.YEAR <= 1869), "SUNACTIVITY"].values print(len(manchas)) # 100 # 1. Yule-Walker. O
+2260: «Yule» … s.YEAR <= 1869), "SUNACTIVITY"].values print(len(manchas)) # 100 # 1. Yule-Walker. OJO: statsmodels usa por defecto el divisor n-k ("adjusted");
+2260: «Walker» … R <= 1869), "SUNACTIVITY"].values print(len(manchas)) # 100 # 1. Yule-Walker. OJO: statsmodels usa por defecto el divisor n-k ("adjusted"); # para
+2260: «statsmodels» … SUNACTIVITY"].values print(len(manchas)) # 100 # 1. Yule-Walker. OJO: statsmodels usa por defecto el divisor n-k ("adjusted"); # para reproducir ar() d
+2260: «yule» … ) de R hay que pedir method="mle", que usa el divisor n. rho, sigma = yule_walker(manchas - manchas.mean(), order=2, method="mle") print(np.roun
+2260: «yule» … n statespace, # innovations_mle, hannan_rissanen, burg, innovations y yule_walker; # fit(method="css") lanza ValueError: "css" is not a valid es
+2260: «statsmodels» … uo tsa.arima_model.ARMA, que si tenia method="css", fue # retirado en statsmodels 0.13. Pero en un AR puro el CSS es la regresion # de y_t sobre sus re
+2260: «1859» … p.roots(np.r_[1, -phi][::-1]) print(np.round(np.abs(raices), 4)) # [1.1859 1.1859] print(round(2 * np.pi / np.angle(raices[0]), 4)) # 10.7365 # 
+2260: «1859» … (np.r_[1, -phi][::-1]) print(np.round(np.abs(raices), 4)) # [1.1859 1.1859] print(round(2 * np.pi / np.angle(raices[0]), 4)) # 10.7365 # R daba 
+2302: «Yule» … Yule–Walker no es el mismo en R y en Python.
+2302: «Walker» … Yule–Walker no es el mismo en R y en Python.
+2312: «Cryer» … Cryer, J. D., y Chan, K.-S. (2008).
+2312: «Chan» … Cryer, J. D., y Chan, K.-S. (2008).
+2312: «2008» … Cryer, J. D., y Chan, K.-S. (2008).
+2313: «Hamilton» … Hamilton, J. D. (1994).
+2313: «1994» … Hamilton, J. D. (1994).
+2314: «2026» … R Core Team. (2026).
+2315: «Yule» … Yule, G. U. (1927). VII. On a method of investigating periodicities distur
+2315: «1927» … Yule, G. U. (1927). VII. On a method of investigating periodicities disturbed series, w
+2315: «Wolfer» … vestigating periodicities disturbed series, with special reference to Wolfer’s sunspot numbers.
+2315: «1927» … https://doi.org/10.1098/rsta.1927.0007
+2446: «Ljung» … el modelo que la identificación proponía. Observa que su $p$-valor de Ljung–Box en el rezago 12 se queda
+2446: «Box» … elo que la identificación proponía. Observa que su $p$-valor de Ljung–Box en el rezago 12 se queda
+2458: «Ljung» … $p$-valor de Ljung–Box por rezago (eje ampliado: de $0$ a $0.10$)
+2458: «Box» … $p$-valor de Ljung–Box por rezago (eje ampliado: de $0$ a $0.10$)
+2476: «Ljung» … Ljung–Box(12)
+2476: «Box» … Ljung–Box(12)
+2496: «Ljung» … su Ljung–Box en el rezago 12 da $p = 0.0461$, es decir,
+2496: «Box» … su Ljung–Box en el rezago 12 da $p = 0.0461$, es decir,
+2504: «Ljung» … R y Python no dan el mismo $p$-valor de Ljung–Box, y aquí la conclusión cambia.
+2504: «Box» … R y Python no dan el mismo $p$-valor de Ljung–Box, y aquí la conclusión cambia.
+2504: «statsmodels» … Sobre el AR(2), R da $0.0461$ (se rechaza) y statsmodels $0.1085$ (no se rechaza). Los ajustes son idénticos —AICc y BIC coinc
+2517: «statsmodels» … 0.0461$); lo que relaja la prueba en statsmodels son esos primeros residuales sin estandarizar. Moraleja general: cuan
+2524: «1839» … relaciones residuales se sale de la banda $\pm 0.196$: la mayor es $0.1839$ en el rezago 11 y la siguiente $0.1718$ en el 9 — dentro, pero la pr
+2524: «Ljung» … grama barra por barra habrías dado el modelo por bueno. Y sin embargo Ljung–Box lo rechaza,
+2524: «Box» … barra por barra habrías dado el modelo por bueno. Y sin embargo Ljung–Box lo rechaza,
+2541: «1869» … manchas <- window(sunspot.year, start = 1770, end = 1869) n <- length(manchas) # arima() reporta AIC pero NO AICc: hay que cal
+2541: «Box» … p + q es IMPRESCINDIBLE: sin el, la prueba es indulgente LB12 = round(Box.test(residuals(aj), lag = 12, type = "Ljung-Box", fitdf = p + q)$p.va
+2541: «Ljung» …  es indulgente LB12 = round(Box.test(residuals(aj), lag = 12, type = "Ljung-Box", fitdf = p + q)$p.value, 4) ) })) resultado[order(resultado$AICc
+2541: «Box» … dulgente LB12 = round(Box.test(residuals(aj), lag = 12, type = "Ljung-Box", fitdf = p + q)$p.value, 4) ) })) resultado[order(resultado$AICc), ]
+2541: «Box» … , lag.max = 3, plot = FALSE)$acf[-1], 4) #> [1] 0.1297 -0.1477 0.0285 Box.test(residuals(ar2), lag = 12, type = "Ljung-Box", fitdf = 2)$p.value
+2541: «Ljung» …  [1] 0.1297 -0.1477 0.0285 Box.test(residuals(ar2), lag = 12, type = "Ljung-Box", fitdf = 2)$p.value #> [1] 0.04614324
+2541: «Box» … .1297 -0.1477 0.0285 Box.test(residuals(ar2), lag = 12, type = "Ljung-Box", fitdf = 2)$p.value #> [1] 0.04614324
+2589: «Box» … aza al 5% # Lo que pasa si se OLVIDA fitdf: el mismo modelo "aprueba" Box.test(residuals(ar2), lag = 12, type = "Ljung-Box")$p.value #> [1] 0.0
+2589: «Ljung» …  el mismo modelo "aprueba" Box.test(residuals(ar2), lag = 12, type = "Ljung-Box")$p.value #> [1] 0.09957107
+2589: «Box» … smo modelo "aprueba" Box.test(residuals(ar2), lag = 12, type = "Ljung-Box")$p.value #> [1] 0.09957107
+2593: «Box» … sWarnings(arima(y, order = c(2, 0, 0), method = "ML"))) c(sin_fitdf = Box.test(e, lag = 12, type = "Ljung-Box")$p.value, con_fitdf = Box.test(e
+2593: «Ljung» … , 0, 0), method = "ML"))) c(sin_fitdf = Box.test(e, lag = 12, type = "Ljung-Box")$p.value, con_fitdf = Box.test(e, lag = 12, type = "Ljung-Box", 
+2593: «Box» … ), method = "ML"))) c(sin_fitdf = Box.test(e, lag = 12, type = "Ljung-Box")$p.value, con_fitdf = Box.test(e, lag = 12, type = "Ljung-Box", fitd
+2593: «Box» … itdf = Box.test(e, lag = 12, type = "Ljung-Box")$p.value, con_fitdf = Box.test(e, lag = 12, type = "Ljung-Box", fitdf = 2)$p.value) }) round(ro
+2593: «Ljung» … ype = "Ljung-Box")$p.value, con_fitdf = Box.test(e, lag = 12, type = "Ljung-Box", fitdf = 2)$p.value) }) round(rowMeans(p_valores < 0.05), 4) # t
+2593: «Box» … "Ljung-Box")$p.value, con_fitdf = Box.test(e, lag = 12, type = "Ljung-Box", fitdf = 2)$p.value) }) round(rowMeans(p_valores < 0.05), 4) # tasa 
+2608: «statsmodels» … import numpy as np import pandas as pd import statsmodels.api as sm from statsmodels.tsa.arima.model import ARIMA from statsmod
+2608: «statsmodels» … ort numpy as np import pandas as pd import statsmodels.api as sm from statsmodels.tsa.arima.model import ARIMA from statsmodels.stats.diagnostic import
+2608: «statsmodels» … tsmodels.api as sm from statsmodels.tsa.arima.model import ARIMA from statsmodels.stats.diagnostic import acorr_ljungbox datos = sm.datasets.sunspots.l
+2608: «1869» … ndas().data manchas = datos.loc[(datos.YEAR >= 1770) & (datos.YEAR <= 1869), "SUNACTIVITY"].values # La misma lista de once candidatos que en R,
+2608: «1939» … 2 0.3211 # ARMA(3,0) 836.52 848.91 0.3176 # ARMA(2,2) 836.63 851.36 0.1939 # ARMA(4,0) 836.78 851.51 0.1677 # ARMA(2,0) 838.30 848.30 0.1085
+2637: «Ljung» … ICc y BIC coinciden con R hasta el ultimo decimal. Los p-valores de # Ljung-Box NO: ver la advertencia de abajo. # Reconciliacion: descartando lo
+2637: «Box» … BIC coinciden con R hasta el ultimo decimal. Los p-valores de # Ljung-Box NO: ver la advertencia de abajo. # Reconciliacion: descartando los ma
+2637: «statsmodels» … rtado: 0.1420 (R: 0.1424) # ARMA(2,2) recortado: 0.1051 (R: 0.1057) # statsmodels SI trae aicc; R no lo trae en arima() y hay que calcularlo. # Cuidado
+2660: «Cryer» … Cryer, J. D., y Chan, K.-S. (2008).
+2660: «Chan» … Cryer, J. D., y Chan, K.-S. (2008).
+2660: «2008» … Cryer, J. D., y Chan, K.-S. (2008).
+2661: «Hyndman» … Hyndman, R. J., y Athanasopoulos, G. (2021).
+2661: «Athanasopoulos» … Hyndman, R. J., y Athanasopoulos, G. (2021).
+2661: «2021» … Hyndman, R. J., y Athanasopoulos, G. (2021).
+2661: «fpp3» … https://otexts.com/fpp3/
+2662: «2026» … R Core Team. (2026).
+2693: «Ljung» … Nos quedamos con un AR(2) que no pasaba Ljung–Box y un ARMA(2,1) que ganaba por AICc. Antes de aceptar el parámetro
+2693: «Box» … Nos quedamos con un AR(2) que no pasaba Ljung–Box y un ARMA(2,1) que ganaba por AICc. Antes de aceptar el parámetro ext
+2703: «Box» … , la escala de Box–Cox del Capítulo 2.
+2708: «según» … Elasticidad amplitud-nivel de las manchas solares según el tamaño de bloque
+2730: «1810» … (1810; en la serie completa 1700–1988 hay tres). El logaritmo de cero no ex
+2730: «1988» … (1810; en la serie completa 1700–1988 hay tres). El logaritmo de cero no existe.
+2769: «2005» … $0.2005$
+2771: «1856» … $0.1856$
+2772: «1833» … $0.1833$
+2778: «Ljung» … 4.00$ y $334.00$, ambos mínimos de la rejilla) y sus residuales pasan Ljung–Box ($p = 0.1644$). El término MA que el AICc pedía sobre la serie cr
+2778: «Box» … y $334.00$, ambos mínimos de la rejilla) y sus residuales pasan Ljung–Box ($p = 0.1644$). El término MA que el AICc pedía sobre la serie cruda
+2801: «Guerrero» … Con el $\lambda = 0.3062$ de Guerrero en vez de la raíz cuadrada, el AR(2) da un pseudo-periodo de $11.39$ 
+2801: «Ljung» …  la raíz cuadrada, el AR(2) da un pseudo-periodo de $11.39$ años y un Ljung–Box de $p = 0.4892$. Conviene notar dónde se aplica cada cosa: ese $\
+2801: «Box» … íz cuadrada, el AR(2) da un pseudo-periodo de $11.39$ años y un Ljung–Box de $p = 0.4892$. Conviene notar dónde se aplica cada cosa: ese $\lamb
+2803: «Guerrero» … , porque Guerrero exige datos estrictamente positivos y la serie tiene un cero, pero se
+2861: «siempre» … . Este capítulo usa siempre la primera.
+2961: «forecast» … forecast()
+2985: «según» … Semiancho del intervalo del 95 % según el horizonte
+2995: «1869» … Con una salvedad: un límite inferior negativo —pronosticando desde 1869 ocurre en $h = 7$ y $h = 8$, con $-0.209$ y $-0.114$— se trunca en ce
+3012: «Shapiro» … las de la serie cruda que el caso añade (el ARMA(2,1), la asimetría y Shapiro–Wilk); las demás de la serie cruda, de los bloques de los Módulos 7 y
+3012: «Wilk» … a serie cruda que el caso añade (el ARMA(2,1), la asimetría y Shapiro–Wilk); las demás de la serie cruda, de los bloques de los Módulos 7 y 8.
+3022: «1869» … ----------------- manchas <- window(sunspot.year, start = 1770, end = 1869) # Elasticidad amplitud-nivel: pendiente de log(desviacion) contra lo
+3022: «1988» … as == 0) #> [1] 1 sum(sunspot.year == 0) # en la serie completa, 1700-1988 #> [1] 3 library(forecast) # Guerrero exige datos ESTRICTAMENTE posit
+3022: «forecast» … sunspot.year == 0) # en la serie completa, 1700-1988 #> [1] 3 library(forecast) # Guerrero exige datos ESTRICTAMENTE positivos y aqui hay un cero, a
+3022: «Guerrero» …  == 0) # en la serie completa, 1700-1988 #> [1] 3 library(forecast) # Guerrero exige datos ESTRICTAMENTE positivos y aqui hay un cero, asi que # se 
+3022: «Box» … laza la serie una unidad (con el cero crudo, R lanza un aviso). round(BoxCox.lambda(manchas + 1, method = "guerrero"), 4) #> [1] 0.3062 entre e
+3022: «guerrero» …  crudo, R lanza un aviso). round(BoxCox.lambda(manchas + 1, method = "guerrero"), 4) #> [1] 0.3062 entre el logaritmo (0) y la raiz cuadrada (0.5) #
+3022: «Box» …  round(aicc(aj, length(x)), 2), BIC = round(BIC(aj), 2), LB12 = round(Box.test(residuals(aj), lag = 12, type = "Ljung-Box", fitdf = sum(pq))$p.
+3022: «Ljung» … d(BIC(aj), 2), LB12 = round(Box.test(residuals(aj), lag = 12, type = "Ljung-Box", fitdf = sum(pq))$p.value, 4)) })) sq <- compara(sqrt(manchas)) 
+3022: «Box» … aj), 2), LB12 = round(Box.test(residuals(aj), lag = 12, type = "Ljung-Box", fitdf = sum(pq))$p.value, 4)) })) sq <- compara(sqrt(manchas)) sq[o
+3022: «2005» … 12 #> 2 ARMA(2,0) 324.00 334.00 0.1644 #> 3 ARMA(3,0) 325.35 337.74 0.2005 #> 9 ARMA(2,1) 325.41 337.80 0.1856 #> 11 ARMA(2,2) 327.42 342.14 0.1
+3022: «1856» … 44 #> 3 ARMA(3,0) 325.35 337.74 0.2005 #> 9 ARMA(2,1) 325.41 337.80 0.1856 #> 11 ARMA(2,2) 327.42 342.14 0.1833 c(AICc = sq$modelo[which.min(sq$
+3022: «1833» … 5 #> 9 ARMA(2,1) 325.41 337.80 0.1856 #> 11 ARMA(2,2) 327.42 342.14 0.1833 c(AICc = sq$modelo[which.min(sq$AICc)], BIC = sq$modelo[which.min(sq$
+3022: «Box» … sticos t #> ar1 ar2 #> 19.31 -9.46 round(ar2s$sigma2, 4) #> [1] 1.341 Box.test(residuals(ar2s), lag = 12, type = "Ljung-Box", fitdf = 2)$p.valu
+3022: «Ljung» … s$sigma2, 4) #> [1] 1.341 Box.test(residuals(ar2s), lag = 12, type = "Ljung-Box", fitdf = 2)$p.value #> [1] 0.1643997 <- ahora SI pasa phi <- coe
+3022: «Box» … a2, 4) #> [1] 1.341 Box.test(residuals(ar2s), lag = 12, type = "Ljung-Box", fitdf = 2)$p.value #> [1] 0.1643997 <- ahora SI pasa phi <- coef(ar
+3022: «documentado» … Arg(polyroot(c(1, -phi))[1]), 4) #> [1] 11.2178 anios; el ciclo solar documentado es ~11 # Cambiar la raiz por la potencia de Guerrero (lambda = 0.3062
+3022: «Guerrero» … l ciclo solar documentado es ~11 # Cambiar la raiz por la potencia de Guerrero (lambda = 0.3062): la lectura no cambia ajusta <- function(x) { f <- 
+3022: «Box» … ") c(periodo = 2 * pi / Arg(polyroot(c(1, -coef(f)[1:2]))[1]), LB12 = Box.test(residuals(f), lag = 12, type = "Ljung-Box", fitdf = 2)$p.value) 
+3022: «Ljung» …  -coef(f)[1:2]))[1]), LB12 = Box.test(residuals(f), lag = 12, type = "Ljung-Box", fitdf = 2)$p.value) } lam <- BoxCox.lambda(manchas + 1, method 
+3022: «Box» … (f)[1:2]))[1]), LB12 = Box.test(residuals(f), lag = 12, type = "Ljung-Box", fitdf = 2)$p.value) } lam <- BoxCox.lambda(manchas + 1, method = "g
+3022: «Box» … iduals(f), lag = 12, type = "Ljung-Box", fitdf = 2)$p.value) } lam <- BoxCox.lambda(manchas + 1, method = "guerrero") round(rbind(raiz = ajusta
+3022: «guerrero» … x", fitdf = 2)$p.value) } lam <- BoxCox.lambda(manchas + 1, method = "guerrero") round(rbind(raiz = ajusta(sqrt(manchas)), guerrero = ajusta(manchas
+3022: «guerrero» … s + 1, method = "guerrero") round(rbind(raiz = ajusta(sqrt(manchas)), guerrero = ajusta(manchas^lam), # se aplica sobre la serie original guerrero_d
+3022: «guerrero» … , guerrero = ajusta(manchas^lam), # se aplica sobre la serie original guerrero_desplazada = ajusta((manchas + 1)^lam)), 4) #> periodo LB12 #> raiz 1
+3022: «guerrero» … sta((manchas + 1)^lam)), 4) #> periodo LB12 #> raiz 11.2178 0.1644 #> guerrero 11.3883 0.4892 #> guerrero_desplazada 11.2759 0.2216 # --- El modelo 
+3022: «guerrero» …  #> periodo LB12 #> raiz 11.2178 0.1644 #> guerrero 11.3883 0.4892 #> guerrero_desplazada 11.2759 0.2216 # --- El modelo como polinomio: modulo Y an
+3022: «forecast» … 6089 # De los psi salen las bandas del pronostico, que es lo que hace forecast() ee <- sqrt(ar2s$sigma2 * cumsum(psi^2)) round(cumsum(psi^2), 4) # c
+3022: «forecast» … ) * ee[1:6], 4) #> [1] 2.2697 3.9098 4.8739 5.2312 5.2741 5.2864 f <- forecast(ar2s, h = 6, level = 95) round(as.numeric((f$upper - f$lower) / 2), 4
+3022: «forecast» … o, porque su cuadrado seria una cota positiva falsa inf <- as.numeric(forecast(ar2s, h = 8, level = 95)$lower)[7:8] # h = 7 y h = 8 round(inf, 3) #>
+3022: «shapiro» … ia(residuals(ar2s))), 3) #> cruda raiz #> 0.791 0.573 round(c(cruda = shapiro.test(residuals(ml))$p.value, raiz = shapiro.test(residuals(ar2s))$p.v
+3022: «shapiro» … 791 0.573 round(c(cruda = shapiro.test(residuals(ml))$p.value, raiz = shapiro.test(residuals(ar2s))$p.value), 4) #> cruda raiz #> 0.0007 0.0470
+3227: «statsmodels» … import numpy as np import statsmodels.api as sm from statsmodels.tsa.arima.model import ARIMA from statsmod
+3227: «statsmodels» … import numpy as np import statsmodels.api as sm from statsmodels.tsa.arima.model import ARIMA from statsmodels.stats.diagnostic import
+3227: «statsmodels» … tsmodels.api as sm from statsmodels.tsa.arima.model import ARIMA from statsmodels.stats.diagnostic import acorr_ljungbox from statsmodels.tsa.stattools
+3227: «statsmodels» … rt ARIMA from statsmodels.stats.diagnostic import acorr_ljungbox from statsmodels.tsa.stattools import pacf from statsmodels.tsa.arima_process import a
+3227: «statsmodels» … import acorr_ljungbox from statsmodels.tsa.stattools import pacf from statsmodels.tsa.arima_process import arma2ma ## ---- Caso 1: manchas solares en r
+3227: «1869» … ndas().data manchas = datos.loc[(datos.YEAR >= 1770) & (datos.YEAR <= 1869), "SUNACTIVITY"].values # Elasticidad amplitud-nivel: pendiente de lo
+3227: «1988» …  == 0).sum()) # 0.0 1 -> log imposible print((datos.loc[datos.YEAR <= 1988, "SUNACTIVITY"] == 0).sum()) # 3 en 1700-1988 # La PACF en las dos es
+3227: «1988» … datos.loc[datos.YEAR <= 1988, "SUNACTIVITY"] == 0).sum()) # 3 en 1700-1988 # La PACF en las dos escalas: que rezagos salen de la banda +-0.196 b
+3227: «statsmodels» … daba 0.1644: devuelve estandarizados los dos primeros residuales, y # statsmodels no (Modulo 8). Descartando esos dos, los dos programas dan 0.1682. ph
+3227: «statsmodels» … mbda y la normalidad de los residuales # se calculan en la pestana R: statsmodels devuelve sin estandarizar los dos primeros # residuales (Modulo 8) y 
+3227: «Shapiro» … ndarizar los dos primeros # residuales (Modulo 8) y la asimetria y el Shapiro-Wilk saldrian distintos.
+3227: «Wilk» …  los dos primeros # residuales (Modulo 8) y la asimetria y el Shapiro-Wilk saldrian distintos.
+3334: «Ljung» … La rejilla ordenada por AICc y BIC, y el Ljung–Box que primero rechazó y después pasó.
+3334: «Box» … La rejilla ordenada por AICc y BIC, y el Ljung–Box que primero rechazó y después pasó.
+3370: «Ljung» … Ljung–Box sobre la serie da $p = 0.0931$ en el rezago 6, $p = 0.0601$ en el
+3370: «Box» … Ljung–Box sobre la serie da $p = 0.0931$ en el rezago 6, $p = 0.0601$ en el 12 
+3425: «forecast» … 2: log-retornos de la TRM ----------------------------------- library(forecast) aicc <- function(f, n) { k <- length(f$coef) + 1; f$aic + 2*k*(k+1)/
+3425: «2015» … lo 2, el promedio de los valores diarios # de cada mes entre enero de 2015 y junio de 2026. Copia fija de los 138 # meses con que se calcularon 
+3425: «2026» … o de los valores diarios # de cada mes entre enero de 2015 y junio de 2026. Copia fija de los 138 # meses con que se calcularon estas cifras: se
+3425: «2015» … n_Bosque/datos/", archivo) trm <- ts(read.csv(archivo)$trm, start = c(2015, 1), frequency = 12) ret <- diff(log(trm)) * 100 length(ret) #> [1] 1
+3425: «Box» … ))], 3) #> 5 8 #> 0.193 -0.198 sapply(c(6, 12, 20), function(h) round(Box.test(ret, lag = h, type = "Ljung-Box")$p.value, 4)) #> [1] 0.0931 0.0
+3425: «Ljung» … sapply(c(6, 12, 20), function(h) round(Box.test(ret, lag = h, type = "Ljung-Box")$p.value, 4)) #> [1] 0.0931 0.0601 0.0599 # auto.arima(): por de
+3425: «Box» … (c(6, 12, 20), function(h) round(Box.test(ret, lag = h, type = "Ljung-Box")$p.value, 4)) #> [1] 0.0931 0.0601 0.0599 # auto.arima(): por defect
+3425: «Box» … 663 724.046 722.653 # Volatilidad: estructura en los cuadrados? round(Box.test(ret^2, lag = 12, type = "Ljung-Box")$p.value, 4) #> [1] 0.9166 <
+3425: «Ljung» …  estructura en los cuadrados? round(Box.test(ret^2, lag = 12, type = "Ljung-Box")$p.value, 4) #> [1] 0.9166 <- tampoco
+3425: «Box» … ctura en los cuadrados? round(Box.test(ret^2, lag = 12, type = "Ljung-Box")$p.value, 4) #> [1] 0.9166 <- tampoco
+3501: «statsmodels» … import os import numpy as np import pandas as pd from statsmodels.tsa.arima.model import ARIMA from statsmodels.stats.diagnostic import
+3501: «statsmodels» … mport pandas as pd from statsmodels.tsa.arima.model import ARIMA from statsmodels.stats.diagnostic import acorr_ljungbox from statsmodels.tsa.stattools
+3501: «statsmodels» … rt ARIMA from statsmodels.stats.diagnostic import acorr_ljungbox from statsmodels.tsa.stattools import acf ## ---- Caso 2: log-retornos de la TRM -----
+3501: «2015» … -------------- # La misma copia fija de 138 meses que lee R (enero de 2015 a junio de # 2026): de la carpeta de trabajo si el archivo ya esta ah
+3501: «2026» … a misma copia fija de 138 meses que lee R (enero de 2015 a junio de # 2026): de la carpeta de trabajo si el archivo ya esta ahi; si no, de la # 
+3549: «Cryer» … Cryer, J. D., y Chan, K.-S. (2008).
+3549: «Chan» … Cryer, J. D., y Chan, K.-S. (2008).
+3549: «2008» … Cryer, J. D., y Chan, K.-S. (2008).
+3550: «Hyndman» … Hyndman, R. J., y Athanasopoulos, G. (2021).
+3550: «Athanasopoulos» … Hyndman, R. J., y Athanasopoulos, G. (2021).
+3550: «2021» … Hyndman, R. J., y Athanasopoulos, G. (2021).
+3550: «fpp3» … https://otexts.com/fpp3/
+3551: «Hyndman» … Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: Th
+3551: «Khandakar» … Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The
+3551: «2008» … Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The
+3551: «forecast» … forecast
+3551: «1863» … https://doi.org/10.18637/jss.v027.i03
+3552: «2026» … R Core Team. (2026).
+3553: «Yule» … Yule, G. U. (1927). VII. On a method of investigating periodicities distur
+3553: «1927» … Yule, G. U. (1927). VII. On a method of investigating periodicities disturbed series, w
+3553: «Wolfer» … vestigating periodicities disturbed series, with special reference to Wolfer’s sunspot numbers.
+3553: «1927» … https://doi.org/10.1098/rsta.1927.0007
+3660: «Ljung» … , Ljung–Box aprueba modelos insuficientes —aquí el $p$-valor pasaba de $0.046
+3660: «Box» … , Ljung–Box aprueba modelos insuficientes —aquí el $p$-valor pasaba de $0.046$ a 
+3730: «Ljung» … Ljung–Box sobre los residuales
+3730: «Box» … Ljung–Box sobre los residuales
+3735: «siempre» … Añadir un parámetro casi siempre mejora la verosimilitud; que la mejore no significa que haga falta.
+3765: «Yule» … Yule–Walker
+3765: «Walker» … Yule–Walker
+3769: «Ljung» … Ljung–Box sobre los residuales
+3769: «Box» … Ljung–Box sobre los residuales
+3769: «siempre» … , siempre con
+3772: «habitual» … sar a la raíz cuadrada, y el pseudo-periodo se acercó a la estimación habitual del ciclo de las manchas.
+3818: «Ljung» …  el ejercicio. Antes de elegir, comprueba si los dos candidatos pasan Ljung–Box.
+3818: «Box» … ercicio. Antes de elegir, comprueba si los dos candidatos pasan Ljung–Box.
+3824: «1818» …  round(acf(lh, lag.max = 6, plot = FALSE)$acf[-1], 4) #> [1] 0.5755 0.1818 -0.1448 -0.1748 -0.1497 -0.0210 # pacf()$acf devuelve un array de tre
+3824: «Box» … c=%7.3f BIC=%7.3f LB(10) p=%.4f\n", pq[1], pq[2], aicc(f, n), BIC(f), Box.test(residuals(f), lag = 10, type = "Ljung-Box", fitdf = sum(pq))$p.v
+3824: «Ljung» … , pq[2], aicc(f, n), BIC(f), Box.test(residuals(f), lag = 10, type = "Ljung-Box", fitdf = sum(pq))$p.value)) } #> ARMA(1,0) AICc= 65.304 BIC= 70.
+3824: «Box» … ], aicc(f, n), BIC(f), Box.test(residuals(f), lag = 10, type = "Ljung-Box", fitdf = sum(pq))$p.value)) } #> ARMA(1,0) AICc= 65.304 BIC= 70.372 
+3824: «1962» … .541 LB(10) p=0.7958 #> ARMA(0,1) AICc= 68.649 BIC= 73.717 LB(10) p=0.1962 #> ARMA(0,2) AICc= 63.991 BIC= 70.545 LB(10) p=0.8492
+3850: «shapiro» … coef(ar1)[["intercept"]]), 4) #> phi ee media #> 0.5739 0.1161 2.4133 shapiro.test(residuals(ar1))$p.value #> [1] 0.008348901
+3863: «Ljung» … Los dos modelos pasan Ljung–Box con holgura, así que ninguno es inadmisible. El AICc prefiere el 
+3863: «Box» … Los dos modelos pasan Ljung–Box con holgura, así que ninguno es inadmisible. El AICc prefiere el MA(2
+3928: «1869» … ulo 9 ajustó un AR(2) a $\sqrt{\text{manchas}}$ sobre la ventana 1770–1869. Repite el ajuste sobre la serie completa (1700–1988) y sobre 1900–19
+3928: «1988» …  la ventana 1770–1869. Repite el ajuste sobre la serie completa (1700–1988) y sobre 1900–1988. ¿Son estables los coeficientes? ¿Y el pseudo-peri
+3928: «1900» … 70–1869. Repite el ajuste sobre la serie completa (1700–1988) y sobre 1900–1988. ¿Son estables los coeficientes? ¿Y el pseudo-periodo? ¿Sigue pa
+3928: «1988» … 69. Repite el ajuste sobre la serie completa (1700–1988) y sobre 1900–1988. ¿Son estables los coeficientes? ¿Y el pseudo-periodo? ¿Sigue pasando
+3941: «Ljung» … aga y que el diagnóstico se derrumbe. Antes de atribuir un cambio del Ljung–Box al tamaño de la muestra, compara ventanas del mismo tamaño: 1889–
+3941: «Box» … que el diagnóstico se derrumbe. Antes de atribuir un cambio del Ljung–Box al tamaño de la muestra, compara ventanas del mismo tamaño: 1889–1988
+3941: «1889» … Ljung–Box al tamaño de la muestra, compara ventanas del mismo tamaño: 1889–1988 tiene cien años, igual que 1770–1869.
+3941: «1988» … –Box al tamaño de la muestra, compara ventanas del mismo tamaño: 1889–1988 tiene cien años, igual que 1770–1869.
+3941: «1869» …  ventanas del mismo tamaño: 1889–1988 tiene cien años, igual que 1770–1869.
+3948: «1869» … das todas las que llegan al siglo XX, tengan más datos que la de 1770–1869 o menos.
+3951: «1869» … for (v in list(c(1770,1869), c(1700,1988), c(1870,1988), c(1900,1988), c(1889,1988))) { x <- sqr
+3951: «1988» … for (v in list(c(1770,1869), c(1700,1988), c(1870,1988), c(1900,1988), c(1889,1988))) { x <- sqrt(window(sunsp
+3951: «1870» … for (v in list(c(1770,1869), c(1700,1988), c(1870,1988), c(1900,1988), c(1889,1988))) { x <- sqrt(window(sunspot.year, 
+3951: «1988» … for (v in list(c(1770,1869), c(1700,1988), c(1870,1988), c(1900,1988), c(1889,1988))) { x <- sqrt(window(sunspot.year, v[1],
+3951: «1900» … for (v in list(c(1770,1869), c(1700,1988), c(1870,1988), c(1900,1988), c(1889,1988))) { x <- sqrt(window(sunspot.year, v[1], v[2])) f
+3951: «1988» … for (v in list(c(1770,1869), c(1700,1988), c(1870,1988), c(1900,1988), c(1889,1988))) { x <- sqrt(window(sunspot.year, v[1], v[2])) f <- a
+3951: «1889» …  (v in list(c(1770,1869), c(1700,1988), c(1870,1988), c(1900,1988), c(1889,1988))) { x <- sqrt(window(sunspot.year, v[1], v[2])) f <- arima(x, o
+3951: «1988» … n list(c(1770,1869), c(1700,1988), c(1870,1988), c(1900,1988), c(1889,1988))) { x <- sqrt(window(sunspot.year, v[1], v[2])) f <- arima(x, order 
+3951: «Box» … , v[2], length(x), coef(f)[1], coef(f)[2], Mod(r)[1], 2*pi/Arg(r[1]), Box.test(residuals(f), lag = 12, type = "Ljung-Box", fitdf = 2)$p.value))
+3951: «Ljung» … , Mod(r)[1], 2*pi/Arg(r[1]), Box.test(residuals(f), lag = 12, type = "Ljung-Box", fitdf = 2)$p.value)) } #> 1770-1869 (n=100): phi=(1.4027, -0.68
+3951: «Box» … r)[1], 2*pi/Arg(r[1]), Box.test(residuals(f), lag = 12, type = "Ljung-Box", fitdf = 2)$p.value)) } #> 1770-1869 (n=100): phi=(1.4027, -0.6853) 
+3951: «1869» … uals(f), lag = 12, type = "Ljung-Box", fitdf = 2)$p.value)) } #> 1770-1869 (n=100): phi=(1.4027, -0.6853) |raiz|=1.2080 periodo=11.218 LB12 p=0.
+3951: «1988» … =(1.4027, -0.6853) |raiz|=1.2080 periodo=11.218 LB12 p=0.1644 #> 1700-1988 (n=289): phi=(1.4086, -0.7006) |raiz|=1.1947 periodo=11.007 LB12 p=0.
+3951: «1947» … 18 LB12 p=0.1644 #> 1700-1988 (n=289): phi=(1.4086, -0.7006) |raiz|=1.1947 periodo=11.007 LB12 p=0.0000 #> 1870-1988 (n=119): phi=(1.4219, -0.73
+3951: «1870» … : phi=(1.4086, -0.7006) |raiz|=1.1947 periodo=11.007 LB12 p=0.0000 #> 1870-1988 (n=119): phi=(1.4219, -0.7321) |raiz|=1.1687 periodo=10.648 LB12
+3951: «1988» … =(1.4086, -0.7006) |raiz|=1.1947 periodo=11.007 LB12 p=0.0000 #> 1870-1988 (n=119): phi=(1.4219, -0.7321) |raiz|=1.1687 periodo=10.648 LB12 p=0.
+3951: «1900» … : phi=(1.4219, -0.7321) |raiz|=1.1687 periodo=10.648 LB12 p=0.0007 #> 1900-1988 (n= 89): phi=(1.4146, -0.7556) |raiz|=1.1504 periodo=10.129 LB12
+3951: «1988» … =(1.4219, -0.7321) |raiz|=1.1687 periodo=10.648 LB12 p=0.0007 #> 1900-1988 (n= 89): phi=(1.4146, -0.7556) |raiz|=1.1504 periodo=10.129 LB12 p=0.
+3951: «1889» … : phi=(1.4146, -0.7556) |raiz|=1.1504 periodo=10.129 LB12 p=0.0010 #> 1889-1988 (n=100): phi=(1.4101, -0.7431) |raiz|=1.1600 periodo=10.249 LB12
+3951: «1988» … =(1.4146, -0.7556) |raiz|=1.1504 periodo=10.129 LB12 p=0.0010 #> 1889-1988 (n=100): phi=(1.4101, -0.7431) |raiz|=1.1600 periodo=10.249 LB12 p=0.
+3967: «siempre» … eve entre $1.403$ y $1.422$ y $\hat\phi_2$ entre $-0.685$ y $-0.756$, siempre dentro de un error estándar o dos. El AR(2) captura una estructura re
+3967: «1869» … una estructura real y persistente, no un artefacto de la ventana 1770–1869.
+3970: «1869» … de $11.22$ años (1770–1869) a $10.13$ (1900–1988). Como depende de los $\phi$ a través de un arc
+3970: «1900» … de $11.22$ años (1770–1869) a $10.13$ (1900–1988). Como depende de los $\phi$ a través de un arcocoseno, cambios 
+3970: «1988» … de $11.22$ años (1770–1869) a $10.13$ (1900–1988). Como depende de los $\phi$ a través de un arcocoseno, cambios peque
+3983: «nunca» … tamaño de la muestra hay que comparar con $n$ fijo. No rechazar $H_0$ nunca es lo mismo que aceptarla.
+4006: «Cryer» … Cryer, J. D., y Chan, K.-S. (2008).
+4006: «Chan» … Cryer, J. D., y Chan, K.-S. (2008).
+4006: «2008» … Cryer, J. D., y Chan, K.-S. (2008).
+4007: «Hamilton» … Hamilton, J. D. (1994).
+4007: «1994» … Hamilton, J. D. (1994).
+4008: «Hyndman» … Hyndman, R. J., y Athanasopoulos, G. (2021).
+4008: «Athanasopoulos» … Hyndman, R. J., y Athanasopoulos, G. (2021).
+4008: «2021» … Hyndman, R. J., y Athanasopoulos, G. (2021).
+4008: «fpp3» … https://otexts.com/fpp3/
+4009: «Hyndman» … Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: Th
+4009: «Khandakar» … Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The
+4009: «2008» … Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The
+4009: «forecast» … forecast
+4009: «1863» … https://doi.org/10.18637/jss.v027.i03
+4010: «2026» … R Core Team. (2026).
+4011: «Yule» … Yule, G. U. (1927). VII. On a method of investigating periodicities distur
+4011: «1927» … Yule, G. U. (1927). VII. On a method of investigating periodicities disturbed series, w
+4011: «Wolfer» … vestigating periodicities disturbed series, with special reference to Wolfer’s sunspot numbers.
+4011: «1927» … https://doi.org/10.1098/rsta.1927.0007
+4020: «Yule» … , la invertibilidad del MA(1), los pesos $\psi$ y Yule–Walker. Se escribieron como preparación del Parcial 2, que ya se apli
+4020: «Walker» … , la invertibilidad del MA(1), los pesos $\psi$ y Yule–Walker. Se escribieron como preparación del Parcial 2, que ya se aplicó, y s
+4057: «Cryer» … Cryer, J. D., y Chan, K.-S. (2008).
+4057: «Chan» … Cryer, J. D., y Chan, K.-S. (2008).
+4057: «2008» … Cryer, J. D., y Chan, K.-S. (2008).
+4058: «Hamilton» … Hamilton, J. D. (1994).
+4058: «1994» … Hamilton, J. D. (1994).
+4059: «Hyndman» … Hyndman, R. J., y Athanasopoulos, G. (2021).
+4059: «Athanasopoulos» … Hyndman, R. J., y Athanasopoulos, G. (2021).
+4059: «2021» … Hyndman, R. J., y Athanasopoulos, G. (2021).
+4059: «fpp3» … https://otexts.com/fpp3/
+4060: «2026» … R Core Team. (2026).
+
+276 apariciones fuera de marca en módulos 7-10 (líneas 2025-4070).

@@ -1,0 +1,812 @@
+====================================================================================================
+c3-m7-01 · dato · respaldada
+  HTML (cap3_modulos.html:2049): un tramo de sunspot.year, la serie de R que va de 1700 a 1988 ⟦CITA rcoreteam2026r §Description⟧
+  NOTA: La ayuda de R describe sunspot.year como números anuales de manchas de 1700 a 1988 (289 observaciones, §Format). El tramo 1770–1869 y T = 100 son la elección del capítulo y salen del código window(sunspot.year, 1770, 1869). Se retiró «Wolf number»: la ayuda de R no lo dice y Cryer y Chan (p. 392) definen el número anual de manchas como un promedio ponderado de la actividad solar.
+  [1] rcoreteam2026r · §Description · DOC · pdf=None inst=sunspot.year
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m7-02 · historica · con-matiz
+  HTML (cap3_modulos.html:2049): Con los números de manchas de Wolfer de 1749 a 1924 ⟦CITA yule1927method p. 275⟧, Udny Yule propuso en 1927 lo que hoy se llama un modelo autorregresivo: ajustó la regresión de cada valor sobre los dos anteriores y comparó las manchas con un péndulo que recibe pequeños impulsos al azar, de trazo suave pero con amplitud y fase que cambian sin cesar ⟦CITA yule1927method p. 294⟧.
+  NOTA: Leído en Yule (1927), cuyo título nombra los números de manchas de Wolfer: la serie se usó entera, de 1749 a 1924 (p. 275; los años van en la línea siguiente del pasaje citado); el método «mejor y más general» es la ecuación de regresión de cada valor sobre los dos anteriores, resuelta como ecuación en diferencias (p. 294), y el resumen compara las manchas con un péndulo sometido a pequeños impulsos al azar. El matiz: Yule no usa la palabra «autorregresivo» ni dice proponer un modelo nuevo; que ese trabajo sea el origen de los procesos autorregresivos lo dicen Cryer y Chan (p. 66), que lo fechan en 1926 (el artículo se recibió en diciembre de 1926 y se publicó en 1927). El texto de Yule es OCR: las fórmulas no son citables.
+  [1] yule1927method · p. 275 · PDF · pdf=9 inst=None
+      en páginas PDF [9] (esperado (9, 9); encabezado de 9: ['275', '2', '226', '636', '646', '267'])
+  [2] yule1927method · p. 294 · PDF · pdf=28 inst=None
+      en páginas PDF [28] (esperado (28, 28); encabezado de 28: ['294', '226', '636', '646', '267', '22'])
+  [3] yule1927method · p. 294 · PDF · pdf=28 inst=None
+      en páginas PDF [28] (esperado (28, 28); encabezado de 28: ['294', '226', '636', '646', '267', '22'])
+  [4] yule1927method · p. 294 · PDF · pdf=28 inst=None
+      en páginas PDF [28] (esperado (28, 28); encabezado de 28: ['294', '226', '636', '646', '267', '22'])
+  [5] cryer2008time · p. 66 · PDF · pdf=79 inst=None
+      en páginas PDF [79] (esperado None; encabezado de 79: ['66', '4', '3'])
+====================================================================================================
+c3-m7-03 · dato · respaldada
+  HTML (cap3_modulos.html:2049): El periodo de las manchas se estimaba entonces en algo más de once años ⟦CITA yule1927method p. 276⟧.
+  NOTA: Yule (1927, p. 276) da como estimación habitual algo más de 11 años (cita dos valores de otros autores, que no se han leído). FPP3 §12.4 da hoy un rango de duración del ciclo, entre 9 y 14 años: no se contradicen (un valor medio y un rango).
+  [1] yule1927method · p. 276 · PDF · pdf=10 inst=None
+      en páginas PDF [10] (esperado (10, 10); encabezado de 10: ['276', '226', '636', '646', '267', '39'])
+  [2] hyndman2021forecasting · §12.4 · WEB · pdf=None inst=advanced
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m7-04 · regla · con-matiz
+  HTML (cap3_modulos.html:2056): la ondulación anticipa raíces complejas ⟦CITA cryer2008time p. 73⟧
+  NOTA: Cryer y Chan dan la implicación directa: con raíces complejas la ACF teórica es una onda sinusoidal amortiguada. La frase la usa en sentido inverso, como heurística de identificación (una ACF muestral que ondula sugiere raíces complejas), que es lectura del capítulo. Está dentro de la introducción de un simulador (solo se añade un atributo; no se toca el script).
+  [1] cryer2008time · p. 73 · PDF · pdf=86 inst=None
+      en páginas PDF [86] (esperado None; encabezado de 86: ['4', '3', '73', '0', '1', '4'])
+====================================================================================================
+c3-m7-05 · definicion · respaldada
+  HTML (cap3_modulos.html:2077): Yule–Walker (método de momentos). Toma las ecuaciones del Módulo 2, sustituye las $\rho_k$ teóricas por las muestrales $r_k$ y resuelve el sistema ⟦CITA cryer2008time p. 150⟧
+  NOTA: Cryer y Chan §7.1 presentan el método de momentos para un AR así (sustituir ρk por rk en las ecuaciones de Yule–Walker) y llaman a esas estimaciones de Yule–Walker. «Del Módulo 2» es una referencia interna del capítulo. Shumway y Stoffer (3.ª ed.) dicen lo mismo y solo constan en el registro.
+  [1] cryer2008time · p. 150 · PDF · pdf=160 inst=None
+      en páginas PDF [160] (esperado None; encabezado de 160: ['150', '0', '5', '0', '5', '1'])
+  [2] cryer2008time · p. 150 · PDF · pdf=160 inst=None
+      en páginas PDF [160] (esperado None; encabezado de 160: ['150', '0', '5', '0', '5', '1'])
+  [3] shumway2011time · p. 121 · PDF · pdf=134 inst=None
+      en páginas PDF [134] (esperado (134, 134); encabezado de 134: ['3', '6', '121', '3', '6', '2'])
+====================================================================================================
+c3-m7-06 · regla · respaldada
+  HTML (cap3_modulos.html:2078): Da estimaciones bastante buenas en modelos AR puros y es muy ineficiente si hay parte MA ⟦CITA cryer2008time p. 152⟧
+  NOTA: Cryer y Chan (p. 152) lo dicen sobre simulaciones: buenas estimaciones con modelos AR y no aceptables con modelos MA. La frase nueva lo repite sin añadir cifras.
+  [1] cryer2008time · p. 152 · PDF · pdf=162 inst=None
+      en páginas PDF [162] (esperado None; encabezado de 162: ['152', '1', '1', '4', '4', '4'])
+  [2] cryer2008time · p. 152 · PDF · pdf=162 inst=None
+      en páginas PDF [162] (esperado None; encabezado de 162: ['152', '1', '1', '4', '4', '4'])
+  [3] shumway2011time · p. 123 · PDF · pdf=136 inst=None
+      en páginas PDF [136] (esperado (136, 136); encabezado de 136: ['3', '6', '123', '3', '27', '3'])
+====================================================================================================
+c3-m7-07 · definicion · respaldada
+  HTML (cap3_modulos.html:2079): CSS (conditional sum of squares). Minimiza $\sum \hat\varepsilon_t^2$ condicionando en los primeros valores observados ⟦CITA cryer2008time p. 154⟧. Es mínimos cuadrados —ordinarios en un AR puro, no lineales si hay parte MA— ⟦CITA cryer2008time p. 157⟧
+  NOTA: Cryer y Chan llaman función de suma de cuadrados condicional a la suma que empieza en t = 2 (p. 154) y señalan que con parte MA el problema es no lineal en los parámetros (p. 157). Que con un AR sea regresión ordinaria lo dice Hamilton (p. 122) del estimador de máxima verosimilitud condicional, que coincide con CSS. «CSS» es el nombre del método en arima() de R.
+  [1] cryer2008time · p. 154 · PDF · pdf=164 inst=None
+      en páginas PDF [164] (esperado None; encabezado de 164: ['154', '3', '2', '3', '28', '1'])
+  [2] cryer2008time · p. 157 · PDF · pdf=167 inst=None
+      en páginas PDF [167] (esperado None; encabezado de 167: ['7', '2', '157', '2', '1', '2'])
+  [3] hamilton1994time · p. 122 · PDF · pdf=137 inst=None
+      en páginas PDF [137] (esperado (137, 137); encabezado de 137: ['5', '2', '17', '5', '2', '9'])
+====================================================================================================
+c3-m7-08 · regla · con-matiz
+  HTML (cap3_modulos.html:2081): y descarta la información que aportan las primeras observaciones ⟦CITA rcoreteam2026r §Arguments⟧
+  NOTA: La ayuda de R habla de «observaciones iniciales que se ignoran» (n.cond) y Hamilton de tratar la primera observación como determinista y condicionar en ella. «Descarta la información» es más fuerte: esas observaciones siguen entrando como valores condicionantes; lo que no entra es su densidad.
+  [1] rcoreteam2026r · §Arguments · DOC · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [2] hamilton1994time · p. 122 · PDF · pdf=137 inst=None
+      en páginas PDF [137] (esperado (137, 137); encabezado de 137: ['5', '2', '17', '5', '2', '9'])
+====================================================================================================
+c3-m7-09 · resultado · respaldada
+  HTML (cap3_modulos.html:2082): Máxima verosimilitud. Maximiza la verosimilitud gaussiana exacta, que incluye la contribución de las primeras observaciones ⟦CITA cryer2008time p. 159⟧. Aprovecha toda la información de los datos; sus errores estándar salen de la hessiana de la log-verosimilitud y pueden ser solo una guía aproximada ⟦CITA rcoreteam2026r §Details⟧
+  NOTA: Cryer y Chan construyen la verosimilitud del AR(1) multiplicando la condicional por la densidad marginal de Y1 (p. 159) y señalan que usa toda la información de los datos (p. 158). El adjetivo «gaussiana» responde a su supuesto de ruido normal. Se retiró «el más eficiente y el que da errores estándar fiables».
+  [1] cryer2008time · p. 159 · PDF · pdf=169 inst=None
+      en páginas PDF [169] (esperado None; encabezado de 169: ['7', '3', '159'])
+  [2] cryer2008time · p. 158 · PDF · pdf=168 inst=None
+      en páginas PDF [168] (esperado None; encabezado de 168: ['158', '1'])
+  [3] rcoreteam2026r · §Details · DOC · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m7-30 · resultado · con-matiz
+  HTML (cap3_modulos.html:2087): Entre CSS y máxima verosimilitud la diferencia está en la primera observación: ML incluye su densidad y CSS la ignora, y ese término penaliza los $\phi$ cercanos a la frontera de la región estacionaria ⟦CITA cryer2008time p. 160⟧
+  NOTA: Cryer y Chan comparan las sumas de cuadrados incondicional y condicional del AR(1) y hallan una sola diferencia, un término que pesa más cuando el mínimo está cerca de la frontera estacionaria. Que ese término «penalice» (el sumando ½·log(1 − φ²) de su ecuación 7.3.6 tiende a −∞ cuando |φ| → 1) es la lectura del capítulo, que el desarrollo plegado deduce.
+  [1] cryer2008time · p. 160 · PDF · pdf=170 inst=None
+      en páginas PDF [170] (esperado None; encabezado de 170: ['160', '1', '125', '129'])
+  [2] cryer2008time · p. 160 · PDF · pdf=170 inst=None
+      en páginas PDF [170] (esperado None; encabezado de 170: ['160', '1', '125', '129'])
+  [3] hamilton1994time · p. 122 · PDF · pdf=137 inst=None
+      en páginas PDF [137] (esperado (137, 137); encabezado de 137: ['5', '2', '17', '5', '2', '9'])
+====================================================================================================
+c3-m7-31 · resultado · respaldada
+  HTML (cap3_modulos.html:2088): Con $T$ grande pesa poco y los dos métodos coinciden; con $T$ pequeño o $\phi$ cerca de $1$, no ⟦CITA cryer2008time p. 160⟧
+  NOTA: Cryer y Chan (p. 160) dicen que los valores que minimizan las dos sumas deben ser muy parecidos con muestras grandes y que el término extra pesa más cerca de la frontera; Hamilton (p. 123) dice que, con T suficientemente grande, la primera observación aporta poco a la verosimilitud total.
+  [1] cryer2008time · p. 160 · PDF · pdf=170 inst=None
+      en páginas PDF [170] (esperado None; encabezado de 170: ['160', '1', '125', '129'])
+  [2] cryer2008time · p. 160 · PDF · pdf=170 inst=None
+      en páginas PDF [170] (esperado None; encabezado de 170: ['160', '1', '125', '129'])
+  [3] hamilton1994time · p. 123 · PDF · pdf=138 inst=None
+      en páginas PDF [138] (esperado (138, 138); encabezado de 138: ['1', '2', '2', '1', '1', '2'])
+====================================================================================================
+c3-m7-32 · dato · con-matiz
+  HTML (cap3_modulos.html:2089): CSS puede incluso salirse de la región estacionaria, cosa que ML no hace en el ejemplo ⟦CITA rcoreteam2026r §Arguments⟧
+  NOTA: La ayuda de R dice que los parámetros AR se transforman para mantenerlos en la región estacionaria y que la transformación no se usa con CSS: de ahí que CSS pueda salirse. Que en el ejemplo (T = 40, φ = 0.95) CSS dé 1.0086 y ML 0.9808 es resultado del código del módulo (ver c3-m7-11).
+  [1] rcoreteam2026r · §Arguments · DOC · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m7-10 · resultado · respaldada
+  HTML (cap3_modulos.html:2133): Con $T$ grande, un único término frente a los $T-1$ de la parte condicional es despreciable y los dos métodos convergen; con $T$ pequeño o $\phi$ cerca de la frontera, no ⟦CITA cryer2008time p. 160⟧
+  NOTA: Cryer y Chan (p. 160): la suma condicional tiene n − 1 componentes y el término extra no depende de n, así que ambas sumas se parecen con muestras grandes. Hamilton (p. 123) da el mismo argumento para la verosimilitud.
+  [1] cryer2008time · p. 160 · PDF · pdf=170 inst=None
+      en páginas PDF [170] (esperado None; encabezado de 170: ['160', '1', '125', '129'])
+  [2] cryer2008time · p. 160 · PDF · pdf=170 inst=None
+      en páginas PDF [170] (esperado None; encabezado de 170: ['160', '1', '125', '129'])
+  [3] hamilton1994time · p. 123 · PDF · pdf=138 inst=None
+      en páginas PDF [138] (esperado (138, 138); encabezado de 138: ['1', '2', '2', '1', '1', '2'])
+====================================================================================================
+c3-m7-11 · dato · propia
+  HTML (cap3_modulos.html:2137): CSS estima $\hat\phi = 1.0086$, fuera de la región estacionaria, y ML se queda en $0.9808$. No es lo habitual —en mil simulaciones iguales CSS pasa de $1$ entre un 2.5 y un 4.6 % de las veces, según la semilla—
+  NOTA: Resultado de una simulación del propio material (arima.sim con φ = 0.95, T = 40; 12 semillas de 1000 réplicas), no de una fuente. Reproducido en esta ronda. Comprobación: Rscript -e 'set.seed(1); z <- arima.sim(list(ar=.95), n=40); print(round(c(coef(arima(z, order=c(1,0,0), include.mean=FALSE, method="CSS")), coef(arima(z, order=c(1,0,0), include.mean=FALSE, method="ML"))), 4))' -> 1.0086 0.9808. Mil réplicas por semilla, semillas 1 a 12 (diagnostico/cap3/comprobaciones/maestra_r1.R, parte 2, ejecutada de nuevo): «CSS > 1: de 2.5 a 4.6 %». [R 4.6.0]
+====================================================================================================
+c3-m7-33 · dato · con-matiz
+  HTML (cap3_modulos.html:2140): ML no lo hace en ninguna de las que estima, por dos razones: el sumando $\tfrac{1}{2}\log(1-\phi^2)$ cae a $-\infty$ en la frontera, y arima(), al maximizar la verosimilitud, reparametriza los $\phi$ para no salir de la región estacionaria (transform.pars = TRUE, su valor por defecto) ⟦CITA rcoreteam2026r §Arguments⟧
+  NOTA: La ayuda de R respalda la reparametrización y que transform.pars sea TRUE por defecto. «En ninguna de las que estima» es resultado de la simulación del propio capítulo (ver c3-m7-11), y el efecto del sumando ½·log(1 − φ²) se deduce en el desarrollo (Cryer y Chan, ecuación 7.3.6).
+  [1] rcoreteam2026r · §Arguments · DOC · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [2] rcoreteam2026r · §Usage · DOC · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m7-34 · dato · propia
+  HTML (cap3_modulos.html:2143): Quedarse dentro no es quedarse lejos: en un 13 a 17 % de las simulaciones la estimación ML es $\ge 0.999$, y en 4 a 13 de cada mil el optimizador no llega a dar estimación.
+  NOTA: Resultado de la misma simulación del material (T = 40, φ = 0.95, semillas 1 a 12 de 1000 réplicas): ML ≥ 0.999 entre 12.6 y 16.6 % de las veces (redondeado a «13 a 17 %»); ML sin estimación entre 4 y 13 por mil. Reproducido en esta ronda. Comprobación: diagnostico/cap3/comprobaciones/maestra_r1.R (parte 2, ejecutada de nuevo en esta ronda con R 4.6.0): «CSS > 1: de 2.5 a 4.6 % | ML >= 0.999: de 12.58812 a 16.56627 % | ML sin estimacion: de 4 a 13 por mil».
+====================================================================================================
+c3-m7-35 · regla · con-matiz
+  HTML (cap3_modulos.html:2149): De ahí la jerarquía: CSS es más barato y sirve para arrancar; ML es más preciso ⟦CITA hamilton1994time p. 123⟧
+  NOTA: Hamilton (p. 123) dice que las estimaciones condicionales son triviales de calcular y que con muestra grande coinciden en distribución con las exactas; Cryer y Chan (p. 158) dicen que en series de longitud moderada los valores iniciales pesan más y por eso se pasa a máxima verosimilitud. «Más preciso» es la lectura del capítulo para muestras cortas.
+  [1] hamilton1994time · p. 123 · PDF · pdf=138 inst=None
+      en páginas PDF [138] (esperado (138, 138); encabezado de 138: ['1', '2', '2', '1', '1', '2'])
+  [2] cryer2008time · p. 158 · PDF · pdf=168 inst=None
+      en páginas PDF [168] (esperado None; encabezado de 168: ['158', '1'])
+====================================================================================================
+c3-m7-12 · dato · con-matiz
+  HTML (cap3_modulos.html:2150): Por eso arima() usa por defecto method = "CSS-ML", que estima por CSS para obtener valores iniciales y termina maximizando la verosimilitud exacta ⟦CITA rcoreteam2026r §Arguments⟧
+  NOTA: La ayuda de R respalda el método por defecto y su descripción. El adjetivo «exacta» está en la sección «Fitting methods» de ?arima, que el vocabulario de localizadores actual no permite citar (dice que la verosimilitud exacta se calcula por una representación de espacio de estados y un filtro de Kalman). «Por eso» es la explicación del capítulo, no de la ayuda.
+  [1] rcoreteam2026r · §Arguments · DOC · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m7-13 · resultado · propia
+  HTML (cap3_modulos.html:2188): Yule–Walker está sesgado hacia el interior de la región estacionaria con muestras cortas
+  NOTA: Ninguna obra leída del curso lo afirma en general. Se comprobó por simulación con los mismos coeficientes de las manchas: AR(2) con φ = (1.4059, −0.7111) y T = 100, 2000 réplicas, la media de Yule–Walker queda en (1.341, −0.663) y el módulo medio de las raíces en 1.235 frente a 1.186 (más lejos de la frontera); ML queda en (1.389, −0.704), con sesgo menor. Con φ = 0.95 y T = 100 en un AR(1), la media de Yule–Walker es 0.89. Shumway y Stoffer 3.ª (ejemplo 3.35, p. 138) obtienen 0.89 en el mismo caso (con innovaciones no normales); solo consta en el registro. Comprobación: Rscript: set.seed(11); phi <- c(1.4059, -0.7111); 2000 réplicas de arima.sim(list(ar=phi), n=100); ar(y, order.max=2, aic=FALSE, method="yule-walker")$ar y arima(y, order=c(2,0,0), method="ML") -> media YW (1.3414, -0.6629), media ML (1.3892, -0.7041); módulo medio de raíz YW 1.2351, ML 1.1965, verdadero 1.1859; 71.5 % de las réplicas con módulo YW > verdadero. AR(1) con φ=.95, T=100, set.seed(111), 2000 réplicas: media YW 0.89. [R 4.6.0]
+====================================================================================================
+c3-m7-14 · dato · respaldada
+  HTML (cap3_modulos.html:2196): Yule–Walker lo obtiene de la ecuación de la varianza del proceso ⟦CITA cryer2008time p. 151⟧ y ML lo maximiza junto al resto ⟦CITA rcoreteam2026r §Value⟧
+  NOTA: Cryer y Chan (§7.1) estiman σ² a partir de la varianza muestral del proceso y de las relaciones del capítulo 4 entre γ0, σ² y los coeficientes; la ayuda de R dice que sigma2 de arima() es la estimación de máxima verosimilitud de la varianza de la innovación.
+  [1] cryer2008time · p. 151 · PDF · pdf=161 inst=None
+      en páginas PDF [161] (esperado None; encabezado de 161: ['7', '1', '151', '2', '2'])
+  [2] rcoreteam2026r · §Value · DOC · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m7-15 · regla · con-matiz
+  HTML (cap3_modulos.html:2197): Los criterios de información del Módulo 8 se construyen sobre la verosimilitud, así que solo tienen sentido con ajustes de arima(), nunca mezclando salidas de ar() y arima() ⟦CITA rcoreteam2026r §Details⟧
+  NOTA: FPP3 §9.6 define el AIC con la verosimilitud de los datos. La ayuda de ar() advierte que su AIC se calcula como si la varianza fuera la MLE y no es la verosimilitud gaussiana en las estimaciones; la de arima() dice que su aic solo es válido con method = "ML". Por eso mezclar ambos no es válido. «Solo con arima()» es restrictivo: otros programas (statsmodels, fable) también dan verosimilitud; la frase habla de R.
+  [1] hyndman2021forecasting · §9.6 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [2] rcoreteam2026r · §Details · DOC · pdf=None inst=ar
+      en sección: True · en la instantánea: True
+  [3] rcoreteam2026r · §Value · DOC · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m7-17 · dato · propia
+  HTML (cap3_modulos.html:2302): yule_walker() de statsmodels usa por defecto method="adjusted" (divisor $T-k$) y ar() de R usa el divisor $T$. Con las opciones por defecto, las estimaciones no coinciden.
+  NOTA: Software sin obra en la biblioteca (statsmodels) y detalle de ar() que la ayuda de R no da (solo dice que acf se basa en la covarianza muestral): se comprobó ejecutando ambos programas sobre las manchas solares 1770–1869. Comprobación: python3 -I: inspect.signature(yule_walker) -> (x, order=1, method='adjusted', df=None, inv=False, demean=True); docstring: «If 'mle', the denominator is n=X.shape[0], if 'adjusted' the denominator is n-k. The default is adjusted.». yule_walker(m - m.mean(), order=2, method='adjusted') -> (1.3616, -0.6719); method='mle' -> (1.3173, -0.6338). R: ar(manchas, order.max=2, aic=FALSE, method='yule-walker')$ar -> 1.3173 -0.6338; a mano con divisor n da 1.3173 -0.6338 y con divisor n-k 1.3616 -0.6719; acf(type='covariance') lag 1 = sum/n = 1116.811. [statsmodels 0.14.6, R 4.6.0]
+====================================================================================================
+c3-m7-16 · dato · propia
+  HTML (cap3_modulos.html:2304): Hay que pedir method="mle" —nombre desafortunado, porque no es máxima verosimilitud, solo indica el divisor— para reproducir la salida de R.
+  NOTA: Software sin obra en la biblioteca: se comprobó ejecutando. El docstring de yule_walker describe method como el denominador de la autocorrelación (n para 'mle', n − k para 'adjusted'); que el nombre sea «desafortunado» es juicio del capítulo. Comprobación: yule_walker(manchas - manchas.mean(), order=2, method='mle') -> (1.3173, -0.6338) = ar() de R (1.3173 -0.6338). Docstring de yule_walker (statsmodels 0.14.6): «Method can be 'adjusted' or 'mle' and this determines denominator in estimate of autocorrelation function (ACF) at lag k.».
+====================================================================================================
+c3-m8-24 · resultado · propia
+  HTML (cap3_modulos.html:2346): Añadir parámetros siempre mejora la verosimilitud.
+  NOTA: Propiedad de la máxima verosimilitud en modelos anidados (el máximo sobre un espacio de parámetros mayor no puede ser menor). Se comprobó en los candidatos del módulo con arima(method = "ML"): AR(1) ⊂ AR(2) ⊂ AR(3) ⊂ AR(4), ARMA(2,0) ⊂ ARMA(2,1) ⊂ ARMA(2,2), MA(1) ⊂ MA(2) ⊂ MA(3). «Siempre mejora» debe leerse como «no empeora». Comprobación: Rscript sobre window(sunspot.year, 1770, 1869): logLik de arima(order=c(p,0,q), method='ML'): (1,0) -449.039; (2,0) -414.940; (3,0) -412.940; (4,0) -411.939; (0,1) -450.941; (0,2) -422.570; (0,3) -417.357; (1,1) -421.041; (2,1) -412.045; (1,2) -414.936; (2,2) -411.863. Las cadenas anidadas no decrecen. [R 4.6.0]
+====================================================================================================
+c3-m8-30 · regla · respaldada
+  HTML (cap3_modulos.html:2346): Los criterios de información compensan esa mejora con una penalización por complejidad, y se elige el modelo con el menor valor ⟦CITA hyndman2021forecasting §9.6⟧
+  NOTA: FPP3 §9.6: los buenos modelos se obtienen minimizando el AIC, el AICc o el BIC. Cryer y Chan (p. 130): el término 2k es una función de penalización que evita modelos con demasiados parámetros.
+  [1] hyndman2021forecasting · §9.6 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [2] cryer2008time · p. 130 · PDF · pdf=141 inst=None
+      en páginas PDF [141] (esperado None; encabezado de 141: ['130', '0', '1', '0', '1', '2'])
+====================================================================================================
+c3-m8-01 · definicion · respaldada
+  HTML (cap3_modulos.html:2349): $$\begin{aligned} \text{AIC} &= -2\log L + 2k \\[0.3em] \text{AICc} &= \text{AIC} + \frac{2k(k+1)}{T-k-1} \\[0.3em] \text{BIC} &= -2\log L + k\log T \end{aligned}$$ donde $k$ es el número de parámetros estimados —incluido $\sigma^2$— y $T$ el número de observaciones ⟦CITA hyndman2021forecasting §9.6⟧.
+  NOTA: FPP3 aclara que el último término entre paréntesis (el número de parámetros del modelo) incluye σ², la varianza de los residuales. Con k incluyendo σ², las tres fórmulas coinciden con las de FPP3 §9.6 (AICc = AIC + 2K(K+1)/(T − K − 1), BIC = AIC + [log T − 2]K, con K = p + q + k + 1). Cryer y Chan las dan con k sin σ² (su AICc usa k + 1 y k + 2, p. 131): son equivalentes. El capítulo no nombra a Akaike, Schwarz ni Hurvich y Tsai.
+  [1] hyndman2021forecasting · §9.6 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [2] cryer2008time · p. 130 · PDF · pdf=141 inst=None
+      en páginas PDF [141] (esperado None; encabezado de 141: ['130', '0', '1', '0', '1', '2'])
+  [3] cryer2008time · p. 131 · PDF · pdf=142 inst=None
+      en páginas PDF [142] (esperado None; encabezado de 142: ['6', '5', '131', '2', '1', '2'])
+====================================================================================================
+c3-m8-03 · resultado · respaldada
+  HTML (cap3_modulos.html:2360): El AICc corrige el sesgo del AIC en muestras pequeñas ⟦CITA cryer2008time p. 130⟧
+  NOTA: Cryer y Chan (p. 130): el AIC es un estimador sesgado, apreciable cuando hay muchos parámetros por dato, y Hurvich y Tsai mostraron que el AICc elimina aproximadamente ese sesgo. FPP3 §7.5 lo dice para T pequeño. La marca no incluye «y converge a él cuando T crece», que se deduce de la fórmula (la corrección 2k(k+1)/(T−k−1) tiende a 0).
+  [1] cryer2008time · p. 130 · PDF · pdf=141 inst=None
+      en páginas PDF [141] (esperado None; encabezado de 141: ['130', '0', '1', '0', '1', '2'])
+  [2] hyndman2021forecasting · §7.5 · WEB · pdf=None inst=regression
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m8-04 · regla · con-matiz
+  HTML (cap3_modulos.html:2361): no hay razón para preferir el AIC ⟦CITA hyndman2021forecasting §9.6⟧
+  NOTA: FPP3 §9.6 expresa una preferencia por el AICc, y §7.5 recomienda el AICc, el AIC o la validación cruzada para pronosticar; no dice que no haya razón para preferir el AIC. Cryer y Chan (p. 131) señalan que, si el proceso no es un ARMA finito, minimizar el AIC lleva al modelo ARMA más cercano al proceso verdadero. «No hay razón» es la conclusión del capítulo a partir de que la corrección del AICc tiende a 0 con T.
+  [1] hyndman2021forecasting · §9.6 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [2] hyndman2021forecasting · §7.5 · WEB · pdf=None inst=regression
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m8-05 · resultado · respaldada
+  HTML (cap3_modulos.html:2361): El BIC penaliza más ($\log T > 2$ en cuanto $T > 7$) y por eso tiende a elegir modelos más pequeños ⟦CITA hyndman2021forecasting §7.5⟧
+  NOTA: FPP3 §7.5: el modelo elegido por el BIC es el mismo que el del AIC o uno con menos términos, porque el BIC penaliza más. El umbral entre paréntesis es aritmética de la fórmula (BIC − AIC = [log T − 2]K, FPP3 §9.6): log 7 = 1.95 y log 8 = 2.08.
+  [1] hyndman2021forecasting · §7.5 · WEB · pdf=None inst=regression
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m8-06 · regla · con-matiz
+  HTML (cap3_modulos.html:2362): Si buscas pronosticar, AICc ⟦CITA hyndman2021forecasting §7.5⟧; si buscas identificar el modelo "verdadero", BIC ⟦CITA cryer2008time p. 131⟧
+  NOTA: FPP3 §7.5 recomienda el AICc, el AIC o la validación cruzada porque tienen el pronóstico como objetivo (no solo el AICc), y concede que el BIC elige el modelo verdadero si existe, advirtiendo que casi nunca existe un modelo verdadero subyacente. Cryer y Chan (p. 131): si el proceso es un ARMA finito, el orden que minimiza el BIC es consistente.
+  [1] hyndman2021forecasting · §7.5 · WEB · pdf=None inst=regression
+      en sección: True · en la instantánea: True
+  [2] hyndman2021forecasting · §7.5 · WEB · pdf=None inst=regression
+      en sección: True · en la instantánea: True
+  [3] cryer2008time · p. 131 · PDF · pdf=142 inst=None
+      en páginas PDF [142] (esperado None; encabezado de 142: ['6', '5', '131', '2', '1', '2'])
+====================================================================================================
+c3-m8-07 · regla · respaldada
+  HTML (cap3_modulos.html:2367): Los criterios solo son comparables entre modelos ajustados a los mismos datos. Diferenciar cambia los datos: un ARIMA con $d=1$ se ajusta sobre $T-1$ observaciones distintas de las del modelo con $d=0$. Comparar sus AIC no significa nada ⟦CITA hyndman2021forecasting §9.6⟧
+  NOTA: FPP3 §9.6: la diferenciación cambia los datos sobre los que se calcula la verosimilitud, y los AIC de modelos con distinto orden de diferenciación no son comparables. La ayuda de R dice que arima() da la log-verosimilitud de los datos diferenciados. «T − 1 observaciones» es aritmética de una diferencia.
+  [1] hyndman2021forecasting · §9.6 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [2] rcoreteam2026r · §Value · DOC · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m8-34 · regla · respaldada
+  HTML (cap3_modulos.html:2376): si el modelo ha capturado toda la estructura, lo que queda no debe tener ninguna ⟦CITA hyndman2021forecasting §5.4⟧
+  NOTA: FPP3 §5.4: si hay correlación entre los residuales de innovación, queda información en ellos que debería usarse para pronosticar.
+  [1] hyndman2021forecasting · §5.4 · WEB · pdf=None inst=toolbox
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m8-08 · definicion · con-matiz
+  HTML (cap3_modulos.html:2379): Prueba de Ljung–Box Contrasta si las primeras $h$ autocorrelaciones de los residuales son conjuntamente nulas ⟦CITA hyndman2021forecasting §5.4⟧: $$\begin{gathered} Q(h) = T(T+2)\sum_{k=1}^{h}\frac{\hat r_k^2}{T-k} \\[0.4em] Q(h) \;\sim\; \chi^2_{\,h-p-q} \quad\text{bajo } H_0 \end{gathered}$$ $H_0$ es "los residuales son ruido blanco". Un $p$-valor pequeño significa que queda estructura sin modelar: el modelo no basta ⟦CITA cryer2008time p. 184⟧.
+  NOTA: FPP3 §5.4 y Cryer y Chan (p. 184, ecuación 8.1.12) dan el estadístico con el mismo factor n(n+2)/(n−k); Cryer y Chan (pp. 183–184) dan K − p − q grados de libertad y que un modelo erróneo tiende a inflar Q. Diferencia de notación: el capítulo llama Q(h) al estadístico de Ljung–Box (y Q*(h) al de Box–Pierce en el desarrollo); FPP3 y Cryer y Chan escriben Q para Box–Pierce y Q* para Ljung–Box.
+  [1] hyndman2021forecasting · §5.4 · WEB · pdf=None inst=toolbox
+      en sección: True · en la instantánea: True
+  [2] cryer2008time · p. 183 · PDF · pdf=193 inst=None
+      en páginas PDF [193] (esperado None; encabezado de 193: ['8', '1', '183', '8', '10', '2'])
+  [3] cryer2008time · p. 184 · PDF · pdf=194 inst=None
+      en páginas PDF [194] (esperado None; encabezado de 194: ['184', '5', '1'])
+====================================================================================================
+c3-m8-31 · resultado · con-matiz
+  HTML (cap3_modulos.html:2390): Los grados de libertad son $h-p-q$ y no $h$ porque los residuales no son ruido blanco observado, sino lo que queda tras estimar $p+q$ parámetros, y esa estimación los deja menos correlacionados de lo que estarían por azar ⟦CITA hyndman2021forecasting §9.7⟧. Si no se descuentan, la prueba rechaza menos de lo que debería.
+  NOTA: FPP3 §9.7 y Cryer y Chan (p. 183) respaldan la regla (ℓ − K, con K = p + q, grados de libertad) y que así la prueba es más precisa. La explicación (la estimación deja los residuales menos correlacionados) y el sentido del error (rechaza menos sin el descuento) son del capítulo: la simulación del mismo párrafo muestra el segundo (c3-m8-15).
+  [1] hyndman2021forecasting · §9.7 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [2] cryer2008time · p. 183 · PDF · pdf=193 inst=None
+      en páginas PDF [193] (esperado None; encabezado de 193: ['8', '1', '183', '8', '10', '2'])
+====================================================================================================
+c3-m8-13 · dato · respaldada
+  HTML (cap3_modulos.html:2392): En R el descuento es el argumento fitdf = p + q de Box.test(), que no se aplica solo, y solo tiene sentido evaluar en $h > p+q$ ⟦CITA rcoreteam2026r §Details⟧
+  NOTA: La ayuda de Box.test() dice que, para residuales de un ARMA(p, q), se obtiene una mejor aproximación con fitdf = p+q siempre que lag > fitdf; fitdf vale 0 por defecto (§Usage).
+  [1] rcoreteam2026r · §Details · DOC · pdf=None inst=Box.test
+      en sección: True · en la instantánea: True
+  [2] rcoreteam2026r · §Arguments · DOC · pdf=None inst=Box.test
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m8-15 · dato · propia
+  HTML (cap3_modulos.html:2394): con tres mil series que de verdad son AR(2), $T = 100$ y $h = 12$, la prueba al 5 % rechaza el $4.9$ % de las veces con fitdf = 2 y solo el $2.6$ % sin él
+  NOTA: Resultado de una simulación del propio material (set.seed(8), 3000 series AR(2) con φ = (1.4, −0.7), ajuste por ML). Reproducido en esta ronda: 0.0257 y 0.0490. La cifra solo está en el bloque de código del módulo (ni genera_cap3.R ni cap3_arma.json la producen). Comprobación: Rscript -e 'set.seed(8); p <- replicate(3000, {y <- arima.sim(list(ar=c(1.4,-0.7)), n=100); e <- residuals(suppressWarnings(arima(y, order=c(2,0,0), method="ML"))); c(sin=Box.test(e, lag=12, type="Ljung-Box")$p.value, con=Box.test(e, lag=12, type="Ljung-Box", fitdf=2)$p.value)}); print(round(rowMeans(p < 0.05), 4))' -> sin 0.0257, con 0.0490 [R 4.6.0]
+====================================================================================================
+c3-m8-09 · atribucion · con-matiz
+  HTML (cap3_modulos.html:2407): Si una serie es ruido blanco, cada autocorrelación muestral cumple aproximadamente $\hat r_k \sim N(0,\,1/T)$ ⟦CITA cryer2008time p. 110⟧. Entonces $T\hat r_k^2$ es aproximadamente $\chi^2_1$, y sumando $h$ rezagos aproximadamente independientes se obtiene el estadístico de Box–Pierce ⟦CITA cryer2008time p. 183⟧
+  NOTA: Cryer y Chan (p. 110): para ruido blanco la fórmula de Bartlett se reduce a Var(rk) ≈ 1/n con correlación cruzada ≈ 0; atribuyen el estadístico Q a Box y Pierce (p. 183). FPP3 §5.4 da la distribución χ² con ℓ grados de libertad si las autocorrelaciones vienen de ruido blanco. La deducción intermedia (T·r̂k² ≈ χ²₁ y suma de h términos independientes) es del capítulo. Diferencia de notación: el capítulo escribe Q*(h) para el de Box–Pierce; Cryer y Chan y FPP3 escriben Q.
+  [1] cryer2008time · p. 110 · PDF · pdf=121 inst=None
+      en páginas PDF [121] (esperado None; encabezado de 121: ['110', '6', '1', '4', '1'])
+  [2] cryer2008time · p. 183 · PDF · pdf=193 inst=None
+      en páginas PDF [193] (esperado None; encabezado de 193: ['8', '1', '183', '8', '10', '2'])
+  [3] hyndman2021forecasting · §5.4 · WEB · pdf=None inst=toolbox
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m8-10 · resultado · respaldada
+  HTML (cap3_modulos.html:2413): Esa aproximación es mala con $T$ moderado ⟦CITA cryer2008time p. 184⟧
+  NOTA: Cryer y Chan (p. 184) atribuyen a Ljung y Box (1978) el hallazgo de que, incluso con n = 100, la aproximación χ² de Q no es satisfactoria. Ljung y Box (1978) no tiene texto en la caché: la atribución se respalda con Cryer y Chan.
+  [1] cryer2008time · p. 184 · PDF · pdf=194 inst=None
+      en páginas PDF [194] (esperado None; encabezado de 194: ['184', '5', '1'])
+====================================================================================================
+c3-m8-11 · resultado · propia
+  HTML (cap3_modulos.html:2413): porque la varianza real de $\hat r_k$ es algo menor que $1/T$, y tanto menor cuanto mayor es $k$ —el numerador de $\hat r_k$ suma solo $T-k$ productos, pero el denominador sigue sumando las $T$ observaciones, y eso encoge $\hat r_k$ hacia cero—: $\operatorname{Var}(\hat r_k) \approx (T-k)/\big(T(T+2)\big)$
+  NOTA: Ninguna obra leída da la fórmula de la varianza exacta (Ljung y Box, 1978, no tiene texto en la caché). Se comprobó por simulación: con T = 50 y 100 000 series de ruido blanco normal, la varianza muestral de rk para k = 1, 2, 5, 10, 20 coincide con (T − k)/(T(T + 2)) y no con 1/T. La definición de rk (numerador de n − k productos, denominador de n cuadrados) es la de Cryer y Chan (§6.1). Comprobación: Rscript: set.seed(5); Tn <- 50; ks <- c(1,2,5,10,20); R <- replicate(100000, {x <- rnorm(Tn); acf(x, lag.max=20, plot=FALSE)$acf[-1][ks]}); apply(R, 1, var) -> 0.01887 0.01840 0.01733 0.01530 0.01165; (Tn-ks)/(Tn*(Tn+2)) -> 0.01885 0.01846 0.01731 0.01538 0.01154; 1/Tn = 0.02. [R 4.6.0]
+====================================================================================================
+c3-m8-36 · atribucion · con-matiz
+  HTML (cap3_modulos.html:2416): Con el factor $T$, $Q^{*}$ sale pequeño y la prueba rechaza menos de lo que debería. Ljung y Box (1978) reemplazaron ese factor por el inverso de la varianza, que por eso crece con el rezago ⟦CITA cryer2008time p. 184⟧
+  NOTA: Cryer y Chan (p. 184) atribuyen a Ljung y Box (1978) la modificación del estadístico, dan la fórmula con el factor (n+2)/(n−k) en cada término y explican que Q* > Q hace que el original pasara por alto modelos inadecuados. Que el factor nuevo sea el inverso de la varianza de r̂k es la lectura algebraica del capítulo (ver c3-m8-11). Ljung y Box (1978) no tiene texto en la caché.
+  [1] cryer2008time · p. 184 · PDF · pdf=194 inst=None
+      en páginas PDF [194] (esperado None; encabezado de 194: ['184', '5', '1'])
+  [2] cryer2008time · p. 184 · PDF · pdf=194 inst=None
+      en páginas PDF [194] (esperado None; encabezado de 194: ['184', '5', '1'])
+====================================================================================================
+c3-m8-12 · resultado · con-matiz
+  HTML (cap3_modulos.html:2427): Ignorarlo infla el $p$-valor y hace que la prueba no rechace cuando debería. La corrección consiste en descontar esos parámetros de los grados de libertad ⟦CITA hyndman2021forecasting §9.7⟧
+  NOTA: Mismo respaldo y mismo matiz que c3-m8-31: las fuentes dan la regla y que la prueba así es más precisa; el sentido del error («no rechace cuando debería») es del capítulo y lo muestra su simulación (c3-m8-15).
+  [1] hyndman2021forecasting · §9.7 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [2] cryer2008time · p. 183 · PDF · pdf=193 inst=None
+      en páginas PDF [193] (esperado None; encabezado de 193: ['8', '1', '183', '8', '10', '2'])
+====================================================================================================
+c3-m8-32 · dato · respaldada
+  HTML (cap3_modulos.html:2430): En R eso es el argumento fitdf = p + q de Box.test(), que no se aplica solo. Solo tiene sentido evaluar en $h > p+q$ ⟦CITA rcoreteam2026r §Details⟧
+  NOTA: Repite c3-m8-13 en el desarrollo plegado.
+  [1] rcoreteam2026r · §Details · DOC · pdf=None inst=Box.test
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m8-35 · resultado · propia
+  HTML (cap3_modulos.html:2432): Sin el descuento la prueba rechaza cerca de la mitad de lo que debería
+  NOTA: Se deduce de la simulación del capítulo (c3-m8-15): 0.0257 frente a 0.0490 con nivel nominal 0.05, es decir 0.52 de lo debido. Reproducida en esta ronda. Comprobación: Misma simulación que c3-m8-15 (set.seed(8), 3000 series AR(2)): 0.0257/0.0490 = 0.52. [R 4.6.0]
+====================================================================================================
+c3-m8-16 · regla · con-matiz
+  HTML (cap3_modulos.html:2436): Regla práctica: sobre los residuales de un ARMA($p,q$) hay que llamar a Box.test(residuals(ajuste), lag = h, type = "Ljung-Box", fitdf = p + q) ⟦CITA rcoreteam2026r §Details⟧. Si omites fitdf, la prueba es demasiado indulgente y aprobará modelos insuficientes.
+  NOTA: La ayuda de Box.test() y FPP3 §9.7 respaldan el uso de fitdf = p + q y que así la aproximación es mejor. «Demasiado indulgente y aprobará modelos insuficientes» es la consecuencia que el capítulo mide con su simulación (c3-m8-15); las fuentes no la enuncian.
+  [1] rcoreteam2026r · §Details · DOC · pdf=None inst=Box.test
+      en sección: True · en la instantánea: True
+  [2] hyndman2021forecasting · §9.7 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m8-18 · dato · propia
+  HTML (cap3_modulos.html:2507): Comparándolos uno a uno: del tercero en adelante son los mismos ($8.728$ frente a $8.727$, $-15.396$ frente a $-15.397$…); los que difieren son los dos primeros (R da $21.06$ y statsmodels $52.54$ para el primero). El modelo y el filtro son los mismos; cambia lo que cada programa devuelve. El error de predicción de la primera observación, que no tiene pasado, tiene varianza $\gamma_0$ y no $\sigma^2$: statsmodels lo entrega tal cual y R lo entrega dividido entre $\sqrt{\gamma_0/\sigma^2}$, para que todos los residuales queden en la misma escala ($52.54/\sqrt{6.226} = 21.06$). Con el segundo pasa lo mismo.
+  NOTA: La ayuda de R solo dice que residuals son «las innovaciones ajustadas», sin decir que estén estandarizadas; la explicación se comprobó ejecutando R y statsmodels sobre el AR(2) de las manchas 1770–1869 (ver software). Para el segundo residual el cociente es √(1 − ρ1²)·√(γ0/σ²) = 1.422 y coincide con el observado. Comprobación: R: residuals(arima(manchas, order=c(2,0,0), method='ML'))[1:4] -> 21.056 -6.911 8.728 -15.396; gamma0/sigma2 = 1/(1 - sum(phi*ARMAacf(ar=phi, lag.max=2)[2:3])) = 6.226, raiz 2.495. statsmodels 0.14.6: ARIMA(m, order=(2,0,0), trend='c').fit().resid[:4] -> 52.536 -9.829 8.727 -15.397; 52.536/sqrt(6.226) = 21.055. Cocientes: 52.536/21.056 = 2.495 (primero); 9.829/6.911 = 1.422 (segundo, = sqrt(2.0228) con 2.0228 = 6.226*(1 - rho1^2), rho1 = 1.4059/(1+0.7111) = 0.8216). Del tercero en adelante coinciden.
+====================================================================================================
+c3-m8-33 · resultado · respaldada
+  HTML (cap3_modulos.html:2527): porque evalúa las doce a la vez: $Q$ suma los cuadrados de todas, de modo que media docena de autocorrelaciones moderadas, cada una insignificante por separado, acumulan un $Q$ que sí lo es ⟦CITA cryer2008time p. 183⟧
+  NOTA: Cryer y Chan (p. 183) motivan la prueba conjunta con esta misma situación: autocorrelaciones moderadas, algunas cerca de su valor crítico, que tomadas juntas parecen excesivas.
+  [1] cryer2008time · p. 183 · PDF · pdf=193 inst=None
+      en páginas PDF [193] (esperado None; encabezado de 193: ['8', '1', '183', '8', '10', '2'])
+====================================================================================================
+c3-m9-01 · dato · con-matiz
+  HTML (cap3_modulos.html:2696): Los números de manchas solares son índices construidos a partir de conteos ⟦CITA cryer2008time p. 392⟧.
+  NOTA: Decía «son conteos». Cryer y Chan (p. 392, serie americana de 1945 a 2007) describen el número de manchas como un promedio ponderado de la actividad medida en una red de observatorios y, históricamente, como una suma ponderada de conteos de manchas y de grupos; la ayuda de sunspot.year lo da redondeado a un decimal, es decir, no entero. La serie del capítulo es sunspot.year (1770-1869), no la de Cryer y Chan, y la ayuda de R no describe cómo se construye el índice: de ahí el matiz (la descripción de Cryer y Chan es la del número de manchas en general, no de esa serie). La frase siguiente («es de esperar que su variabilidad crezca con el nivel») es una hipótesis que el capítulo comprueba y queda fuera de la marca.
+  [1] cryer2008time · p. 392 · PDF · pdf=402 inst=None
+      en páginas PDF [402] (esperado None; encabezado de 402: ['392', '1'])
+  [2] rcoreteam2026r · §Description · DOC · pdf=None inst=sunspot.year
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m9-02 · resultado · respaldada
+  HTML (cap3_modulos.html:2701): con $b = 1$ crece en proporción, y el remedio es el logaritmo ⟦CITA cryer2008time p. 98⟧
+  NOTA: Cryer y Chan (§5.4, ecs. 5.4.1 y 5.4.2) lo dan con una aproximación de Taylor para Var(Y_t) proporcional a mu_t al cuadrado. El caso b = 1 del capítulo es exactamente ese. Los demás valores de b (la regla general λ = 1 − b) no están en la fuente: son c3-m9-41.
+  [1] cryer2008time · p. 98 · PDF · pdf=110 inst=None
+      en páginas PDF [110] (esperado None; encabezado de 110: ['98'])
+====================================================================================================
+c3-m9-41 · resultado · propia
+  HTML (cap3_modulos.html:2702): con $b = 0.5$, la raíz cuadrada. En general la potencia que estabiliza es $\lambda = 1 - b$
+  NOTA: Aproximación delta del propio material: si s_i es aproximadamente k por (media_i elevada a b), la desviación de y elevada a λ es aproximadamente |λ| por media_i^(λ−1) por s_i, que es proporcional a media_i^(λ−1+b); es constante si y solo si λ = 1 − b. El caso b = 1 (λ = 0, logaritmo) es el de Cryer y Chan, p. 98 (c3-m9-02). Para b = 0.5, Cryer y Chan (p. 101) solo dicen que la raíz cuadrada (λ = 1/2) es útil con datos de tipo Poisson; no la enlazan con b. FPP3 §3.1 dice que una transformación puede ser útil si la variación cambia con el nivel de la serie, pero no da la regla. Comprobada por simulación (ver `software`). Comprobación: Rscript diagnostico/cap3/comprobaciones/r4_software.R (bloque «lambda_b») (set.seed(2026)): series con desviación proporcional a media^b, b = 0.5, 0.75 y 1. La elasticidad de la serie original resulta 0.505, 0.755 y 0.995; tras aplicar y^(1−b) (λ = 0.50, 0.25 y 0: el logaritmo en el último caso), la pendiente de log(desviación) frente a log(nivel original) es 0.005, 0.005 y −0.005, es decir, nula.
+====================================================================================================
+c3-m9-42 · atribucion · respaldada
+  HTML (cap3_modulos.html:2703): El criterio de Guerrero, el que ⟦CITA hyndman2021forecasting §3.1⟧ ofrecen para elegir $\lambda$
+  NOTA: Entrada gemela de c2-m8-13 del capítulo 2. FPP3 §3.1 dice que el método de Guerrero sirve para elegir λ; no dice cómo lo hace. Guerrero (1993) está en la biblioteca sin texto. Las demás menciones de «criterio de Guerrero» y «λ de Guerrero» del módulo repiten el nombre y no llevan marca.
+  [1] hyndman2021forecasting · §3.1 · WEB · pdf=None inst=decomposition
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m9-43 · definicion · pendiente
+  HTML (cap3_modulos.html:2703): busca justamente que $s_i/\bar y_i^{\,1-\lambda}$ sea homogéneo entre bloques
+  NOTA: La descripción coincide con el código de forecast::BoxCox.lambda(method = "guerrero") (función interna guer.cv: coeficiente de variación de sd/media^(1−λ) entre bloques; ver `software`), pero eso describe la implementación, no el artículo. Detalle que conviene saber: para una serie anual sin frecuencia, forecast forma los bloques de 2 observaciones (nonseasonal.length = 2), no de 5, 10 u 11 años como la tabla de la elasticidad. Comprobación: Rscript diagnostico/cap3/comprobaciones/r4_software.R (bloque «guerrero»): print(forecast:::guer.cv) muestra period <- round(max(nonseasonal.length, frequency(x))) con nonseasonal.length = 2; x.rat <- x.sd/x.mean^(1 - lam); devuelve sd(x.rat)/mean(x.rat).
+  MOTIVO: Depende de Guerrero (1993), que está en la biblioteca sin texto (Journal of Forecasting 12(1), 37–48): habría que leer en el artículo qué cociente se minimiza y cómo se forman los bloques. Es la misma situación de c2-m8-04 del capítulo 2, que sigue pendiente. FPP3 §3.1 solo dice que el método elige λ.
+====================================================================================================
+c3-m9-03 · regla · respaldada
+  HTML (cap3_modulos.html:2731): La raíz cuadrada, en cambio, está definida en cero y se señala como útil con datos de tipo Poisson ⟦CITA cryer2008time p. 101⟧.
+  NOTA: Decía «es la transformación estabilizadora clásica para conteos». Ninguna fuente leída la llama clásica ni la atribuye a una tradición. Cryer y Chan (p. 101, §5.4) dicen que λ = 1/2 da la raíz cuadrada, «útil con datos de tipo Poisson». En p. 392 (§15.2) aplican la raíz a números de manchas solares, pero para que se parezcan más a una normal, no para estabilizar la varianza; por eso es fuente de la entrada y no cita visible. Que sea la transformación apropiada para estas manchas lo decide el capítulo con la elasticidad y con Guerrero, no la fuente.
+  [1] cryer2008time · p. 101 · PDF · pdf=113 inst=None
+      en páginas PDF [113] (esperado None; encabezado de 113: ['5', '4', '101', '5', '17'])
+  [2] cryer2008time · p. 392 · PDF · pdf=402 inst=None
+      en páginas PDF [402] (esperado None; encabezado de 402: ['392', '1'])
+====================================================================================================
+c3-m9-05 · dato · con-matiz
+  HTML (cap3_modulos.html:2731): Además, el $\lambda$ de Guerrero del Capítulo 2 sobre esta serie —desplazada una unidad ⟦CITA cryer2008time p. 101⟧, porque el criterio exige datos estrictamente positivos y está ese cero— da $0.3062$, que cae entre el logaritmo y la raíz cuadrada.
+  NOTA: Cryer y Chan (§5.4) respaldan la práctica de sumar una constante positiva para aplicar una transformación de potencia a datos con ceros («la constante se suele fijar de forma subjetiva»). Que el criterio de Guerrero exija datos estrictamente positivos es comportamiento de forecast, comprobado ejecutando (ver `software`); Guerrero (1993) no tiene texto. El valor 0.3062 sale del bloque R del caso y su posición entre 0 y 0.5 es aritmética. La cita va solo sobre el desplazamiento, que es lo que Cryer y Chan dicen. Comprobación: Rscript diagnostico/cap3/comprobaciones/r4_software.R (bloque «guerrero») (forecast 9.0.2): BoxCox.lambda(manchas, method = "guerrero") con el cero emite el aviso «Guerrero's method for selecting a Box-Cox parameter (lambda) is given for strictly positive data» y da 0.3333; BoxCox.lambda(manchas + 1, method = "guerrero") da 0.3062. min(manchas) = 0; un cero en 1770-1869 y tres en 1700-1988.
+  [1] cryer2008time · p. 101 · PDF · pdf=113 inst=None
+      en páginas PDF [113] (esperado None; encabezado de 113: ['5', '4', '101', '5', '17'])
+====================================================================================================
+c3-m9-51 · regla · con-matiz
+  HTML (cap3_modulos.html:2754): la serie cruda y su raíz son datos distintos, y los criterios solo comparan modelos ajustados a los mismos ⟦CITA hyndman2021forecasting §9.6⟧
+  NOTA: FPP3 §9.6 lo dice de la diferenciación: cambia los datos sobre los que se calcula la verosimilitud, de modo que los AIC de modelos con distinto orden de diferenciación no son comparables. El capítulo lo extiende a la transformación (la raíz cuadrada también cambia los datos y su verosimilitud), que es el mismo argumento pero no aparece en la fuente.
+  [1] hyndman2021forecasting · §9.6 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m9-06 · dato · respaldada
+  HTML (cap3_modulos.html:2798): Ya en 1927 se daba como estimación habitual del periodo de las manchas solares algo más de 11 años ⟦CITA yule1927method p. 276⟧.
+  NOTA: Yule (1927, p. 276) habla de la estimación habitual de algo más de 11 años y cita dos valores (11.125 y 11.21, de autores no leídos); FPP3 §12.4 da un rango de 9 a 14 años para la duración del ciclo. Que la raíz cuadrada «acercó la estimación a ese valor» queda fuera de la marca: es una cuenta del capítulo (10.74 y 11.22 salen del bloque de R), y la nota del propio módulo sobre la otra fórmula del periodo (11.84) la matiza.
+  [1] yule1927method · p. 276 · PDF · pdf=10 inst=None
+      en páginas PDF [10] (esperado (10, 10); encabezado de 10: ['276', '226', '636', '646', '267', '39'])
+  [2] hyndman2021forecasting · §12.4 · WEB · pdf=None inst=advanced
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m9-08 · regla · propia
+  HTML (cap3_modulos.html:2806): La conclusión no depende de haber elegido exactamente $0.5$: las dos transformaciones de potencia probadas hacen el mismo trabajo.
+  NOTA: Valoración del capítulo sobre dos valores de λ, con las cifras del bloque R (pseudo-periodos 11.22, 11.39 y 11.28; Ljung–Box 0.1644, 0.4892 y 0.2216). Cryer y Chan (§5.4, p. 101) aconsejan que la estimación precisa de λ no suele hacer falta; es coherente con la lectura, pero no prueba que sirva «cualquier» potencia moderada, de ahí el cambio de «cualquier» a «las dos probadas».
+====================================================================================================
+c3-m9-53 · regla · respaldada
+  HTML (cap3_modulos.html:2843): El módulo mayor que uno es el veredicto de estacionariedad ⟦CITA cryer2008time p. 71⟧.
+  NOTA: Cryer y Chan (§4.3, estacionariedad del AR(2), que dicen que generaliza al orden p) dan la condición de que las raíces de la ecuación característica excedan 1 en valor absoluto. Es la misma condición que el módulo 3.1 y 3.2 registran donde se enuncia; aquí es una referencia.
+  [1] cryer2008time · p. 71 · PDF · pdf=84 inst=None
+      en páginas PDF [84] (esperado None; encabezado de 84: ['4', '3', '71', '4', '1', '1'])
+====================================================================================================
+c3-m9-10 · resultado · con-matiz
+  HTML (cap3_modulos.html:2852): El módulo dice cuánto se amortigua la oscilación; el ángulo, cada cuánto oscila ⟦CITA cryer2008time p. 73⟧.
+  NOTA: Cryer y Chan (§4.3) dicen que con raíces complejas la ACF es una onda seno amortiguada con factor de amortiguamiento R y frecuencia Θ, y que los pesos ψ tienen los mismos R y Θ. Los define con los recíprocos de las raíces (R = raíz de −φ2, cos Θ = φ1/(2 raíz de −φ2)): el módulo de la raíz del capítulo es 1/R y su ángulo es Θ. El período 2π/Θ es lectura del capítulo.
+  [1] cryer2008time · p. 73 · PDF · pdf=86 inst=None
+      en páginas PDF [86] (esperado None; encabezado de 86: ['4', '3', '73', '0', '1', '4'])
+  [2] cryer2008time · p. 75 · PDF · pdf=88 inst=None
+      en páginas PDF [88] (esperado None; encabezado de 88: ['4', '3', '75', '2', '1', '4'])
+====================================================================================================
+c3-m9-40 · definicion · respaldada
+  HTML (cap3_modulos.html:2856): ⟦CITA hyndman2021forecasting §9.5⟧ dan para el AR(2) con raíces complejas el periodo medio de los ciclos, $2\pi/\arccos\!\big(-\phi_1(1-\phi_2)/(4\phi_2)\big)$
+  NOTA: FPP3 §9.5 da la fórmula con la condición φ1² + 4φ2 < 0 para que haya ciclos, que equivale a raíces complejas. La marca abarca la fórmula; que con los coeficientes del caso valga 11.84 sale del bloque R (11.8356) y queda fuera.
+  [1] hyndman2021forecasting · §9.5 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [2] hyndman2021forecasting · §9.5 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m9-44 · resultado · respaldada
+  HTML (cap3_modulos.html:2858): El $11.22$ es el pseudo-periodo con que oscilan la ACF y los pesos $\psi$ del modelo, el ángulo de la raíz ⟦CITA cryer2008time p. 75⟧
+  NOTA: Cryer y Chan, ec. 4.3.23: los ψ de un AR(2) con raíces complejas son una onda seno amortiguada con el mismo R y la misma frecuencia Θ que la ACF (ec. 4.3.17). Θ es el ángulo de los recíprocos de las raíces, igual al de las raíces salvo el signo; con los coeficientes del caso 2π/Θ = 11.22 (bloque R). El nombre «pseudo-periodo» es del capítulo.
+  [1] cryer2008time · p. 75 · PDF · pdf=88 inst=None
+      en páginas PDF [88] (esperado None; encabezado de 88: ['4', '3', '75', '2', '1', '4'])
+  [2] cryer2008time · p. 73 · PDF · pdf=86 inst=None
+      en páginas PDF [86] (esperado None; encabezado de 86: ['4', '3', '73', '0', '1', '4'])
+====================================================================================================
+c3-m9-45 · resultado · propia
+  HTML (cap3_modulos.html:2859): el $11.84$ coincide con el periodo en que es máxima la densidad espectral del proceso —el reparto de su varianza por frecuencias, que este curso no desarrolla—. Las dos se juntan cuando el módulo de la raíz se acerca a $1$
+  NOTA: Derivación: Cryer y Chan (§13.5, p. 336) dan la densidad del AR(2), S(f) = σ²/(1 + φ1² + φ2² − 2φ1(1−φ2)cos(2πf) − 2φ2 cos(4πf)). Derivando el denominador respecto de x = 2πf se obtiene sen x (2φ1(1−φ2) + 8φ2 cos x) = 0, de modo que el máximo interior está en cos x = −φ1(1−φ2)/(4φ2), que es el argumento de la fórmula de FPP3 §9.5. Con φ1 = 1.4027 y φ2 = −0.6853 el periodo es 11.8366 por optimización numérica y 11.8364 por la fórmula. Cuando R = 1/|raíz| tiende a 1, cos x → cos ω (porque −φ1(1−φ2)/(4φ2) = cos ω (1 + R²)/(2R)), y los dos periodos se juntan. Cryer y Chan (p. 337) solo dicen que la forma de la densidad del AR(2) depende de la desigualdad φ1(1−φ2) < 4φ2; no localizan el máximo, y por eso no es cita visible. Comprobación: Rscript diagnostico/cap3/comprobaciones/r4_software.R (bloque «espectro»): con phi = (1.4027, −0.6853), periodo del máximo de |1 − φ1 e^{−iw} − φ2 e^{−2iw}|^−2 = 11.8366; fórmula de FPP3 = 11.8364; periodo del ángulo = 11.2185. Con el ángulo fijo en 0.5601 y R = 0.828, 0.95, 0.99 y 0.999 el periodo del pico es 11.8362, 11.2602, 11.2197 y 11.2182 (periodo del ángulo: 11.2180).
+====================================================================================================
+c3-m9-09 · resultado · propia
+  HTML (cap3_modulos.html:2868): Todo AR puro es invertible
+  NOTA: Consecuencia directa de la condición de invertibilidad del módulo 3 (Cryer y Chan, p. 80: el modelo es invertible si las raíces del polinomio MA exceden 1 en módulo): con θ(B) = 1 no hay raíces. Cryer y Chan no enuncian «todo AR puro es invertible» con esas palabras; es una lectura de la condición, y la forma AR(∞) de un AR(p) es él mismo.
+====================================================================================================
+c3-m9-11 · resultado · respaldada
+  HTML (cap3_modulos.html:2904): y en un AR(2) con raíces complejas tiene forma cerrada ⟦CITA cryer2008time p. 75⟧
+  NOTA: Cryer y Chan, ec. 4.3.23 (p. 75): ψ_j = R^j sen[(j+1)Θ]/sen Θ cuando las raíces son complejas. El capítulo la escribe con ω en lugar de Θ y con R = raíz de −φ2 = 1/|B|; el bloque R comprueba numéricamente que coincide con la recursión. El inventario no encontraba la forma cerrada de los ψ: está aquí y no en la de la ACF (4.3.17).
+  [1] cryer2008time · p. 75 · PDF · pdf=88 inst=None
+      en páginas PDF [88] (esperado None; encabezado de 88: ['4', '3', '75', '2', '1', '4'])
+====================================================================================================
+c3-m9-46 · resultado · respaldada
+  HTML (cap3_modulos.html:2924): La varianza del error de pronóstico del Módulo 4, con $\hat\sigma^2 = 1.3410$, se obtiene sumando sus cuadrados ⟦CITA cryer2008time p. 201⟧
+  NOTA: Cryer y Chan, ec. 9.3.38 (p. 201), repetida como 9.3.45 en la p. 202: Var(e_t(l)) = σ² por la suma de ψ_j² para j de 0 a l−1. El literal es la frase en prosa que antecede a la ecuación (la ecuación sale partida en el texto extraído). La entrada es la misma que registre el módulo 4 donde enuncia la fórmula.
+  [1] cryer2008time · p. 201 · PDF · pdf=211 inst=None
+      en páginas PDF [211] (esperado None; encabezado de 211: ['9', '3', '201'])
+====================================================================================================
+c3-m9-47 · resultado · respaldada
+  HTML (cap3_modulos.html:2963): La suma $\sum_j \psi_j^2$ converge, a $6.136$, así que la varianza del pronóstico no puede pasar de $1.3410 \times 6.136 = 8.23$ —que es $\hat\gamma_0$, la varianza del propio proceso ⟦CITA cryer2008time p. 201⟧
+  NOTA: Cryer y Chan (p. 201, ec. 9.3.39): para horizontes largos en un ARMA estacionario la varianza del error de pronóstico tiende a σ² por la suma de los ψ², que es γ0 (ec. 4.1.4). FPP3 §9.5 lo dice en términos de la desviación estándar del pronóstico, que tiende a la de los datos históricos (con d = 0). Las cifras 6.136, 8.23 y 8.15 salen del bloque R (psi_largo, ar2s$sigma2, var de la raíz de las manchas); el literal de Cryer y Chan antecede a la ecuación, que sale partida en el texto extraído.
+  [1] cryer2008time · p. 201 · PDF · pdf=211 inst=None
+      en páginas PDF [211] (esperado None; encabezado de 211: ['9', '3', '201'])
+  [2] hyndman2021forecasting · §9.5 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m9-48 · resultado · respaldada
+  HTML (cap3_modulos.html:2969): Esa es la firma de un proceso estacionario ⟦CITA hyndman2021forecasting §9.8⟧; en el Capítulo 4, con una raíz unitaria, la suma diverge y el abanico se abre sin techo ⟦CITA cryer2008time p. 202⟧.
+  NOTA: FPP3 §9.8: con d = 0 los intervalos convergen (los de horizontes largos son esencialmente iguales) y con d ≥ 1 siguen creciendo. Cryer y Chan (p. 202): en un modelo no estacionario los pesos ψ no decaen y la varianza del error de pronóstico crece sin cota. «Con una raíz unitaria» es un caso de no estacionariedad (d ≥ 1); que la suma de ψ² diverja es lo que dice Cryer y Chan. «Firma» es del capítulo.
+  [1] hyndman2021forecasting · §9.8 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [2] cryer2008time · p. 202 · PDF · pdf=212 inst=None
+      en páginas PDF [212] (esperado None; encabezado de 212: ['202', '1', '1', '1', '1', '1'])
+====================================================================================================
+c3-m9-13 · resultado · respaldada
+  HTML (cap3_modulos.html:2993): Volver a las manchas es elevar al cuadrado los extremos: sobre valores no negativos el cuadrado es creciente, así que respeta los cuantiles y el $95\,\%$ sigue siendo el $95\,\%$ ⟦CITA hyndman2021forecasting §5.6⟧.
+  NOTA: FPP3 §5.6 lo dice para transformaciones en general (el intervalo se calcula en la escala transformada y se retrotransforman los extremos; la cobertura se conserva, aunque el intervalo deja de ser simétrico). Que el cuadrado sea creciente sobre valores no negativos es el argumento del capítulo. La salvedad del límite inferior negativo (truncar en cero antes de elevar) es del capítulo y sale del bloque R.
+  [1] hyndman2021forecasting · §5.6 · WEB · pdf=None inst=toolbox
+      en sección: True · en la instantánea: True
+  [2] hyndman2021forecasting · §5.6 · WEB · pdf=None inst=toolbox
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m9-12 · resultado · respaldada
+  HTML (cap3_modulos.html:2997): El centro, en cambio, no se transforma igual: el cuadrado del pronóstico es la mediana de las manchas, y no su media, si la distribución en la escala de la raíz es simétrica ⟦CITA hyndman2021forecasting §5.6⟧.
+  NOTA: FPP3 §5.6 habla de la transformación de Box–Cox en general («por lo común» la mediana, suponiendo simetría en la escala transformada). La frase decía «es la mediana» sin condición; se añade la de la fuente. Tiene sentido aquí porque el capítulo reconoce, un párrafo más abajo, que los residuales de la raíz no llegan a normales. Es el mismo asunto de c2-m8-08 del capítulo 2.
+  [1] hyndman2021forecasting · §5.6 · WEB · pdf=None inst=toolbox
+      en sección: True · en la instantánea: True
+  [2] hyndman2021forecasting · §5.6 · WEB · pdf=None inst=toolbox
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m9-14 · atribucion · respaldada
+  HTML (cap3_modulos.html:3005): el $p$-valor de Shapiro–Wilk ⟦CITA rcoreteam2026r §Description⟧
+  NOTA: La ayuda de shapiro.test() dice que realiza la prueba de normalidad de Shapiro–Wilk; en §Value añade que el p-valor es aproximado y que Royston (1995) lo considera adecuado para p < 0.1 (no se cita). Los valores 0.0007 y 0.0470 salen del bloque R. La entrada no atribuye la prueba a Shapiro y Wilk con año: solo el nombre del contraste.
+  [1] rcoreteam2026r · §Description · DOC · pdf=None inst=shapiro.test
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m9-15 · resultado · con-matiz
+  HTML (cap3_modulos.html:3006): El número de manchas solares sube más rápido de lo que baja ⟦CITA cryer2008time p. 392⟧, y esa asimetría sugiere una no linealidad que un modelo ARMA con errores normales no puede capturar ⟦CITA cryer2008time p. 396⟧.
+  NOTA: Cryer y Chan (§15.2, p. 392) observan que la serie de manchas americana de 1945 a 2007 sube más deprisa de lo que baja y la llaman temporalmente irreversible; en §15.3 (p. 396) explican que un ARMA gaussiano estacionario es reversible (sus momentos de primer y segundo orden no cambian al invertir el tiempo) y que la irreversibilidad de las manchas sugiere un proceso subyacente no lineal. Difiere el alcance: la serie de Cryer y Chan no es la ventana 1770-1869 del capítulo, y ellos hablan de errores normales (en p. 384 precisan que su afirmación vale cuando los errores son normales), por lo que «ningún modelo lineal ARMA» se acota a «un modelo ARMA con errores normales». «Asimetría» designa aquí la de subida y bajada, no la asimetría (sesgo) de los residuales de la frase anterior.
+  [1] cryer2008time · p. 392 · PDF · pdf=402 inst=None
+      en páginas PDF [402] (esperado None; encabezado de 402: ['392', '1'])
+  [2] cryer2008time · p. 396 · PDF · pdf=406 inst=None
+      en páginas PDF [406] (esperado None; encabezado de 406: ['396'])
+  [3] cryer2008time · p. 396 · PDF · pdf=406 inst=None
+      en páginas PDF [406] (esperado None; encabezado de 406: ['396'])
+====================================================================================================
+c3-m9-16 · regla · con-matiz
+  HTML (cap3_modulos.html:3006): Los intervalos de pronóstico del Capítulo 6, que suponen normalidad, pueden quedar algo mal calibrados ⟦CITA hyndman2021forecasting §9.8⟧.
+  NOTA: FPP3 §9.8 dice que los intervalos de un ARIMA se basan en residuales incorrelacionados y normales y que, si alguna de las dos falla, pueden ser incorrectos. El «algo» (grado de la descalibración) es juicio del capítulo sobre la normalidad que mejora sin llegar (asimetría 0.573; Shapiro–Wilk p = 0.0470, del bloque R): la fuente no mide cuánto. Antes decía «quedarán».
+  [1] hyndman2021forecasting · §9.8 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [2] hyndman2021forecasting · §9.8 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m9-17 · resultado · propia
+  HTML (cap3_modulos.html:3345): Allí se concluyó que tiene una raíz unitaria y que su primera diferencia es estacionaria.
+  NOTA: Resultado del propio curso: el Módulo 6 del capítulo 2 aplica ADF y KPSS a la TRM en niveles y a su primera diferencia (cap2, «Caso limpio: la TRM colombiana»; precalculo/genera_cap2.R) y concluye raíz unitaria y estacionariedad tras una diferencia. Se cambia «quedó establecido» por «se concluyó» porque son contrastes sobre una muestra finita (y el capítulo 2, c2-m9-20, ya dice «encontró»). Las cifras de los contrastes no se repiten aquí.
+====================================================================================================
+c3-m9-18 · definicion · respaldada
+  HTML (cap3_modulos.html:3347): $r_t = 100 \times \log(y_t/y_{t-1})$, el rendimiento continuo de las finanzas, multiplicado por $100$ para leerlo como variación porcentual ⟦CITA cryer2008time p. 278⟧, lectura que es una buena aproximación mientras la variación sea pequeña ⟦CITA cryer2008time p. 99⟧
+  NOTA: Decía «es la variación porcentual mensual». Cryer y Chan (§12.1, p. 278) definen el rendimiento (con capitalización continua) como la diferencia de logaritmos y dicen que a veces se multiplica por 100 para leerlo como variación porcentual; en §5.4 (p. 99) dicen que log(1+X) ≈ X solo si X es pequeño (ellos lo ilustran con |X| < 0.2) y que en la literatura financiera las diferencias de logaritmos se llaman rendimientos. La cifra de Cryer y Chan no se copia a la prosa. Es el mismo resultado que sale del bloque R (ret = diff(log(trm)) * 100).
+  [1] cryer2008time · p. 278 · PDF · pdf=288 inst=None
+      en páginas PDF [288] (esperado None; encabezado de 288: ['278', '12', '1'])
+  [2] cryer2008time · p. 99 · PDF · pdf=111 inst=None
+      en páginas PDF [111] (esperado None; encabezado de 111: ['5', '4', '99'])
+====================================================================================================
+c3-m9-20 · dato · con-matiz
+  HTML (cap3_modulos.html:3372): auto.arima(), del paquete forecast, ajusta por sí sola varios modelos ARIMA y se queda con el de menor AICc (el Capítulo 4 detalla cómo busca) ⟦CITA hyndman2008automatic p. 16⟧. Con sus argumentos por defecto devuelve un ARIMA(0,0,0) con media cero, es decir, ruido blanco.
+  NOTA: Hyndman y Khandakar (2008) respaldan que auto.arima() ajusta varios modelos y elige por criterio de información (pp. 10–11 y 16). El matiz: el artículo elige por AIC; que el criterio por defecto sea hoy el AICc, que la búsqueda por defecto sea por pasos y que sobre esta serie devuelva un ARIMA(0,0,0) con media cero se comprobó ejecutando (forecast 9.0.2; r4_software.R). FPP3 §9.7 describe la variante de fable, que sí minimiza el AICc. Comprobación: Rscript diagnostico/cap3/comprobaciones/r4_software.R (bloque «auto») (forecast 9.0.2, serie ret de los 137 log-retornos del CSV de la TRM): formals(auto.arima)$ic = c("aicc","aic","bic") (el primero, por defecto); formals(auto.arima)$stepwise = TRUE; auto.arima(ret) -> ARIMA(0,0,0) with zero mean, AICc 722.66; con trace = TRUE lista 11 modelos (seasonal = TRUE por defecto, así que incluye términos estacionales de periodo 12), con y sin media, y elige el de menor AICc (p. ej. ARIMA(0,0,0) with non-zero mean 723.8043 frente a with zero mean 722.6633).
+  [1] hyndman2008automatic · p. 16 · PDF · pdf=16 inst=None
+      en páginas PDF [16] (esperado (16, 16); encabezado de 16: ['16', '2', '80', '95'])
+  [2] hyndman2008automatic · p. 11 · PDF · pdf=11 inst=None
+      en páginas PDF [11] (esperado (11, 11); encabezado de 11: ['11', '1'])
+  [3] hyndman2008automatic · p. 10 · PDF · pdf=10 inst=None
+      en páginas PDF [10] (esperado (10, 10); encabezado de 10: ['10'])
+====================================================================================================
+c3-m9-52 · regla · con-matiz
+  HTML (cap3_modulos.html:3374): Solo con la búsqueda exhaustiva (stepwise = FALSE; approximation = FALSE no cambia nada aquí, porque con 137 datos ya es su valor por defecto), que prueba modelos a los que la búsqueda por pasos no llega ⟦CITA hyndman2021forecasting §9.7⟧, devuelve un MA(1), también sin media
+  NOTA: FPP3 §9.7 lo dice de ARIMA() del paquete fable (los mismos argumentos y la misma idea); el capítulo lo aplica a auto.arima() del paquete forecast. Lo que la fuente no cubre se comprobó ejecutando (ver `software`): el valor por defecto de approximation en forecast, la salida con stepwise = FALSE (MA(1) sin media, AICc 722.65) y que approximation = FALSE no cambia nada con 137 datos. Comprobación: Rscript diagnostico/cap3/comprobaciones/r4_software.R (bloque «auto») (forecast 9.0.2): formals(auto.arima)$approximation = (length(x) > 150 || frequency(x) > 12), que con length 137 y frequency 12 es FALSE; auto.arima(ret, stepwise = FALSE) y auto.arima(ret, stepwise = FALSE, approximation = FALSE) devuelven los dos ARIMA(0,0,1) with zero mean, ma1 = 0.1326 (e.e. 0.0905), AICc 722.65.
+  [1] hyndman2021forecasting · §9.7 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [2] hyndman2021forecasting · §9.7 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m9-23 · regla · propia
+  HTML (cap3_modulos.html:3388): el mejor pronóstico de la variación del mes que viene es la media histórica
+  NOTA: Deducción del propio material: para un ruido blanco con media μ el pronóstico de error cuadrático mínimo es μ, y su estimación es la media muestral. FPP3 §5.2 llama «método de la media» a pronosticar con el promedio histórico, pero no dice que sea el mejor para un ruido blanco (por eso no es cita). Tensión interna que no es de fuentes (ver observaciones): el modelo que el AICc prefiere en el capítulo es el ruido blanco sin media, cuyo pronóstico es 0, no la media histórica.
+====================================================================================================
+c3-m9-49 · dato · propia
+  HTML (cap3_modulos.html:3394): Esta TRM mensual es el promedio de los valores diarios de cada mes
+  NOTA: Construcción del propio curso: el código del ejercicio 4 del capítulo 2 (descarga_trm()) agrega la serie diaria por mes con aggregate(valor ~ mes, FUN = mean); la copia fija está en Htmls_Series/datos/trm_mensual_2015-01_2026-06.csv, que lee precalculo/genera_cap2.R. Que datos.gov.co publique la TRM diaria (conjunto 32sa-8pi3) no se contrasta aquí: sigue pendiente en c2-m4-14 del capítulo 2.
+====================================================================================================
+c3-m9-50 · resultado · propia
+  HTML (cap3_modulos.html:3395): Si la tasa diaria fuera una caminata aleatoria pura, las variaciones del promedio mensual no serían ruido blanco: tendrían $\rho_1 \approx 0.25$ ($0.249$ con 21 días por mes).
+  NOTA: Derivación del propio material, sin atribución a ningún autor: la diferencia de dos promedios contiguos de m valores de una caminata es una suma de 2m−1 choques diarios con pesos triangulares c_k = (1, 2, …, m, m−1, …, 1)/m; su autocorrelación de primer orden es la suma de c_k c_{k+m} dividida por la suma de c_k², que tiene la forma cerrada (m²−1)/(2(2m²+1)) = 0.2492 para m = 21 y tiende a 1/4 cuando m crece. El bloque R del capítulo calcula lo mismo con los pesos (rho1_inducido = 0.249; distancia_ee = 1.683). Comprobada además por simulación (ver `software`). La cifra depende poco de m: 0.2491 con 20 valores y 0.2496 con 30. Comprobación: diagnostico/cap3/comprobaciones/r1_errores.R (sección E6b) y su salida r1_errores.out: forma cerrada y suma de pesos coinciden (m = 2: 0.1667; 5: 0.2353; 20: 0.2491; 21: 0.2492; 30: 0.2496); simulación de 2000 caminatas de 138 meses de 21 días: media de r_1 = 0.237. r3_cifras.out y v3_cifras.out repiten 0.2492 y la simulación 0.254; distancia al r_1 observado (0.105): 1.68 errores estándar de 1/sqrt(137).
+====================================================================================================
+c3-m9-24 · regla · con-matiz
+  HTML (cap3_modulos.html:3409): Esa comparación es legítima —con media o sin ella, los dos modelos se ajustan a los mismos datos y el criterio solo cobra el parámetro de más ⟦CITA hyndman2021forecasting §9.6⟧—, y es la que hace auto.arima() para decidir si la incluye ⟦CITA hyndman2008automatic p. 11⟧. Lo que el AICc no puede comparar son modelos ajustados a datos distintos, como los de otro orden de diferenciación ⟦CITA hyndman2021forecasting §9.6⟧ o los de otra transformación.
+  NOTA: El diagnóstico marcaba [DISCREPA] porque el texto viejo decía que el AICc no compara modelos con y sin media; las rondas R1 y R3 ya lo corrigieron y el texto actual coincide con FPP3. §9.6: en la fórmula del AIC k = 1 si hay constante y 0 si no, y el último término cuenta los parámetros; el AIC no es comparable entre distintos órdenes de diferenciación. §9.7 describe, para ARIMA() de fable, el paso del algoritmo que incluye o excluye c según el AICc; el capítulo lo aplica a auto.arima() de forecast, y que ahí se comparan modelos con y sin media se comprobó ejecutando (ver `software`). La parte «otra transformación» no está en la fuente. Absorbe c3-m9-25. Que auto.arima() prueba el modelo con y sin constante lo dicen Hyndman y Khandakar (2008, p. 11, paso 2 del algoritmo); el artículo compara por AIC, el paquete de hoy por AICc (r4_software.R). Comprobación: Rscript diagnostico/cap3/comprobaciones/r4_software.R (bloque «auto») (forecast 9.0.2): auto.arima(ret, stepwise = FALSE, trace = TRUE) imprime, para cada orden, el modelo «with zero mean» y el «with non-zero mean» con su AICc: ARIMA(0,0,0) 722.6633 (sin media) y 723.8043 (con media); ARIMA(0,0,1) 722.6531 (sin media) y 724.0464 (con media), cifras que coinciden con las del bloque del capítulo.
+  [1] hyndman2021forecasting · §9.6 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [2] hyndman2021forecasting · §9.6 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [3] hyndman2021forecasting · §9.7 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [4] hyndman2008automatic · p. 11 · PDF · pdf=11 inst=None
+      en páginas PDF [11] (esperado (11, 11); encabezado de 11: ['11', '1'])
+====================================================================================================
+c3-m9-27 · resultado · con-matiz
+  HTML (cap3_modulos.html:3415): Ljung–Box sobre $r_t$ da $p = 0.0601$, y sobre $r_t^2$ ⟦CITA cryer2008time p. 282⟧ da $p = 0.9166$: en esta serie mensual tampoco hay agrupamiento de volatilidad detectable.
+  NOTA: Cryer y Chan (§12.1, pp. 281–283) usan la prueba de Box–Ljung sobre los cuadrados de los rendimientos para detectar efectos ARCH (a esa prueba la llaman de McLeod–Li) y explican que, sin efecto ARCH, el estadístico se aproxima a una ji cuadrada con tantos grados de libertad como autocorrelaciones, sin descontar parámetros (sin ajuste de modelo); el bloque R no resta fitdf. La fuente respalda el método; los p-valores 0.0601 y 0.9166 salen del bloque R. El encabezado de la nota («Aquí tampoco») ya es coherente con el texto: la incoherencia que marcaba el diagnóstico quedó resuelta en las rondas anteriores.
+  [1] cryer2008time · p. 282 · PDF · pdf=292 inst=None
+      en páginas PDF [292] (esperado None; encabezado de 292: ['282', '12', '7'])
+  [2] cryer2008time · p. 281 · PDF · pdf=291 inst=None
+      en páginas PDF [291] (esperado None; encabezado de 291: ['12', '1', '281'])
+====================================================================================================
+c3-m9-26 · resultado · respaldada
+  HTML (cap3_modulos.html:3416): En los rendimientos diarios de series financieras es frecuente el resultado opuesto —el nivel es ruido blanco y el cuadrado no— y esa es la puerta de entrada a los modelos ARCH y GARCH ⟦CITA cryer2008time p. 285⟧.
+  NOTA: Decía «en datos diarios de la misma tasa el resultado suele ser el opuesto» y «la frecuencia de muestreo cambia el fenómeno que se ve». Cryer y Chan (§12.1, p. 285) encuentran en los rendimientos diarios del fondo CREF (un fondo de acciones, no una tasa de cambio) incorrelación serial con agrupamiento de volatilidad, dicen que esas características son comunes en las series financieras, y que los modelos GARCH que introducen a continuación sirven para ese marco. Se reescribe a lo que dicen. Ninguna fuente leída compara frecuencias de muestreo ni trata tasas de cambio: se retira esa frase y se deja la pregunta abierta con la TRM. ARCH y GARCH se nombran como clases de modelos, sin autores: la atribución a Engle (ARCH) la hace Cryer y Chan en §12.2 (p. 285) y la de Bollerslev (GARCH) en §12.3, y el capítulo no las necesita.
+  [1] cryer2008time · p. 285 · PDF · pdf=295 inst=None
+      en páginas PDF [295] (esperado None; encabezado de 295: ['12', '2', '1', '285', '1', '2'])
+  [2] cryer2008time · p. 285 · PDF · pdf=295 inst=None
+      en páginas PDF [295] (esperado None; encabezado de 295: ['12', '2', '1', '285', '1', '2'])
+====================================================================================================
+c3-m10-01 · resultado · con-matiz
+  HTML (cap3_modulos.html:3593): Equivale a una neurona lineal con una ventana de $p$ entradas: los $\phi_j$ son los pesos y $c$ es el sesgo ⟦CITA hyndman2021forecasting §12.4⟧.
+  NOTA: FPP3 §12.4 respalda la equivalencia entre una red autorregresiva sin capa oculta y un AR(p), y llama «pesos» a los coeficientes. Difiere en dos detalles: dice «equivalente» (con la salvedad de que la red no impone las restricciones de estacionariedad sobre los parámetros), no «exactamente»; y no usa la palabra «sesgo» para la constante (la escribe b_j en la ecuación de una neurona sin nombrarla). El término «sesgo» es el habitual en redes, pero esa fuente no lo respalda.
+  [1] hyndman2021forecasting · §12.4 · WEB · pdf=None inst=advanced
+      en sección: True · en la instantánea: True
+  [2] hyndman2021forecasting · §12.4 · WEB · pdf=None inst=advanced
+      en sección: True · en la instantánea: True
+  [3] hyndman2021forecasting · §12.4 · WEB · pdf=None inst=advanced
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m10-02 · historica · propia
+  HTML (cap3_modulos.html:3594): Los métodos secuenciales modernos pueden leerse como una forma de relajar, uno por uno, los supuestos que hay detrás de esa expresión.
+  NOTA: Lectura propia del capítulo, desarrollada en la tabla que sigue (linealidad, ventana fija, decaimiento con la distancia). No atribuye una genealogía a ninguna obra. El único tramo con fuente (la red autorregresiva que usa rezagos como entradas, igual que un AR) está en c3-m10-01 y c3-m10-03. Con el cambio de redacción, el encabezado y el objetivo del módulo dejan de afirmar prioridad histórica (c3-m10-47). El «Taller 2» (Htmls_Series/taller-2-modulo-2.html, banco de preguntas, módulo 10) conserva la expresión «antepasado directo»: queda fuera de este capítulo.
+====================================================================================================
+c3-m10-03 · resultado · respaldada
+  HTML (cap3_modulos.html:3613): La linealidad: capas ocultas y activaciones no lineales ⟦CITA hyndman2021forecasting §12.4⟧
+  [1] hyndman2021forecasting · §12.4 · WEB · pdf=None inst=advanced
+      en sección: True · en la instantánea: True
+  [2] hyndman2021forecasting · §12.4 · WEB · pdf=None inst=advanced
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m10-04 · atribucion · pendiente
+  HTML (cap3_modulos.html:3616): RNN / LSTM / GRU La ventana fija: un estado oculto acumula el pasado y la red aprende cuánto recordar y cuánto olvidar Entrenamiento secuencial y costoso; necesita muchos datos
+  MOTIVO: Falta en la biblioteca una obra de aprendizaje profundo que describa las redes recurrentes y las de compuertas (LSTM, GRU) y su coste de entrenamiento. Habría que darla de alta por DOI o ISBN (sin recordar el autor ni el año de memoria), leerla y registrar el pasaje. FPP3 §12.4 solo trata redes de alimentación hacia adelante con una capa oculta, sin recurrencia: no respalda esta fila.
+====================================================================================================
+c3-m10-05 · atribucion · pendiente
+  HTML (cap3_modulos.html:3622): Transformers temporales El decaimiento con la distancia: la atención puede pesar igual el rezago 1 que el rezago 500 Coste cuadrático en la longitud; aún más datos
+  MOTIVO: Falta en la biblioteca una obra de aprendizaje profundo que describa la atención y los transformers y su coste en la longitud de la secuencia. Habría que darla de alta por DOI o ISBN (sin recordar el autor ni el año de memoria), leerla y registrar el pasaje. Ninguna obra en caché trata esta arquitectura. «Aún más datos» es valoración del capítulo.
+====================================================================================================
+c3-m10-07 · resultado · propia
+  HTML (cap3_modulos.html:3632): El estado oculto de una RNN sin activación no lineal y con una sola unidad sigue la misma recursión que un AR(1): $h_t = w\,h_{t-1} + u\,x_t$, con la entrada $u\,x_t$ en el lugar de la innovación $\varepsilon_t$.
+  NOTA: Derivación del propio capítulo, comprobable a mano: la recursión es la del AR(1) con y_t sustituido por h_t, φ por w y la innovación por u x_t. Se reescribe porque la frase decía «es un AR(1)» sin la condición de que la entrada sea ruido blanco; ninguna obra de la biblioteca trata las redes recurrentes.
+====================================================================================================
+c3-m10-08 · resultado · propia
+  HTML (cap3_modulos.html:3633): La condición para que ese estado no explote ($|w| misma condición de estacionariedad del Módulo 1, y tiene el mismo precio. La derivada de $h_t$ respecto al estado de $k$ pasos atrás es $w^k$: con $|w| se desvanece, y con $|w| > 1$ explota. En este caso lineal, el gradiente que se desvanece en una RNN y el desvanecimiento de $\phi^k$ que se vio al desarrollar el AR(1) hacia atrás son el mismo fenómeno matemático.
+  NOTA: Derivación del capítulo: ∂h_t/∂h_{t−k} = w^k por la regla de la cadena sobre h_t = w h_{t−1} + u x_t, y la condición |w| < 1 es la de estacionariedad del AR(1) (Módulo 1). El error que el diagnóstico señaló («|w| < 1 evita que explote y que se desvanezca») ya está corregido en la redacción actual. Lo que no se respalda es la generalización a las RNN no lineales, que el texto ya no afirma.
+====================================================================================================
+c3-m10-09 · regla · propia
+  HTML (cap3_modulos.html:3644): Pocos datos. El caso de este capítulo tiene $T = 100$. Una LSTM con miles de parámetros sobre cien observaciones puede memorizar la muestra; el AR(2) tiene cuatro, contando la media y $\sigma^2$.
+  NOTA: Regla de sentido común sobre parámetros y observaciones, sin cita. El recuento del AR(2) (c, φ1, φ2 y σ², cuatro) sigue la convención del AICc del Módulo 8 (k = coeficientes + 1). «Miles de parámetros» de una LSTM es un orden de magnitud del capítulo: ninguna obra de la biblioteca trata esa arquitectura. Se vuelve condicional («puede memorizar»).
+====================================================================================================
+c3-m10-10 · regla · con-matiz
+  HTML (cap3_modulos.html:3647): Un ARMA da intervalos que parten de los pesos $\psi$ del Módulo 4, aunque tienden a quedar estrechos ⟦CITA hyndman2021forecasting §9.8⟧.
+  NOTA: FPP3 §9.8 respalda que los intervalos de un ARIMA tienden a ser demasiado estrechos, y construye la varianza del pronóstico con los coeficientes MA (los pesos ψ de este capítulo) para el MA(q) y, por la equivalencia con el MA(∞), para el AR(1); para el caso general remite a textos más avanzados. La frase «parten de los pesos ψ» generaliza ese cálculo al ARMA. «Calibrados» se retira porque la fuente dice lo contrario.
+  [1] hyndman2021forecasting · §9.8 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [2] hyndman2021forecasting · §9.8 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m10-11 · regla · respaldada
+  HTML (cap3_modulos.html:3647): Una red no parte de un modelo estocástico bien definido, y sus intervalos exigen simular trayectorias futuras ⟦CITA hyndman2021forecasting §12.4⟧.
+  [1] hyndman2021forecasting · §12.4 · WEB · pdf=None inst=advanced
+      en sección: True · en la instantánea: True
+  [2] hyndman2021forecasting · §12.4 · WEB · pdf=None inst=advanced
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m10-12 · regla · con-matiz
+  HTML (cap3_modulos.html:3651): Aunque vayas a usar una red, el ARMA es, en este curso, el benchmark que hay que batir: un método nuevo se compara con alternativas simples, y si no las supera no merece consideración ⟦CITA hyndman2021forecasting §5.2⟧. Un modelo complejo que no supera a un AR(2) no justifica su complejidad.
+  NOTA: FPP3 §5.2 respalda el principio: todo método nuevo se compara con alternativas simples y no vale la pena si no las supera. Sus referencias son cuatro métodos simples (media, ingenuo, ingenuo estacional y deriva), no el ARMA; que el ARMA sea el punto de comparación es regla del curso, y por eso la frase dice «en este curso». Se retira «mal ajustado» (c3-m10-13).
+  [1] hyndman2021forecasting · §5.2 · WEB · pdf=None inst=toolbox
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m10-14 · regla · propia
+  HTML (cap3_modulos.html:3656): Un asistente te dará en segundos el código de un arima() y una interpretación convincente de la salida. Este capítulo contiene al menos cuatro puntos en los que esa interpretación puede estar mal y tú tienes que verificarlos
+  NOTA: Valoración docente sobre el uso de asistentes de IA, sin atribución a una obra y sin medición. Ninguna obra de la biblioteca la respalda ni la contradice. Se vuelve condicional («puede estar mal»). Los cuatro puntos enumerados se verifican cada uno en el módulo donde se tratan: (1) el intercept de arima() es la media (c3-m2-04); (2) Ljung–Box con y sin fitdf, p = 0.046 frente a 0.100 (R: Box.test sobre los residuales del AR(2) de la serie cruda 1770–1869, lag 12; 0.0461 con fitdf = 2 y 0.0996 sin él); (3) el AICc no compara distinto d (c3-m9-24); (4) el AICc con una escala equivocada (Módulo 9).
+====================================================================================================
+c3-m10-15 · regla · con-matiz
+  HTML (cap3_modulos.html:3661): con distinto $d$ ⟦CITA hyndman2021forecasting §9.6⟧ ni en otra escala —con media o sin ella, sí ⟦CITA hyndman2021forecasting §9.7⟧
+  NOTA: FPP3 §9.6 respalda «distinto d» (la diferenciación cambia los datos sobre los que se calcula la verosimilitud) y §9.7 respalda «con y sin media»: el algoritmo de Hyndman–Khandakar compara por AICc modelos con y sin constante. «Ni en otra escala» no tiene pasaje en la caché: es la misma razón (otros datos, otra verosimilitud) aplicada a una transformación, argumento del Módulo 9 (c3-m9-24). Por eso con-matiz. La redacción actual ya corrige la discrepancia que el diagnóstico señaló (antes decía «ni con y sin media», que FPP3 contradice).
+  [1] hyndman2021forecasting · §9.6 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [2] hyndman2021forecasting · §9.7 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m10-19 · resultado · respaldada
+  HTML (cap3_modulos.html:3685): Decae sin cortar: geométrica si las raíces son reales, en ondas si son complejas ⟦CITA cryer2008time p. 73⟧
+  NOTA: Cryer y Chan p. 73 lo dicen para el AR(2) (en todos los casos la magnitud de ρk decae exponencialmente; con raíces complejas, una sinusoide amortiguada); la celda lo generaliza al AR(p), y el Exhibit 6.3 (p. 116) recoge que la ACF del AR(p) decae. «Geométrica» es el decaimiento exponencial en tiempo discreto.
+  [1] cryer2008time · p. 73 · PDF · pdf=86 inst=None
+      en páginas PDF [86] (esperado None; encabezado de 86: ['4', '3', '73', '0', '1', '4'])
+  [2] cryer2008time · p. 73 · PDF · pdf=86 inst=None
+      en páginas PDF [86] (esperado None; encabezado de 86: ['4', '3', '73', '0', '1', '4'])
+  [3] cryer2008time · p. 116 · PDF · pdf=127 inst=None
+      en páginas PDF [127] (esperado None; encabezado de 127: ['116', '6', '3', '1'])
+====================================================================================================
+c3-m10-20 · resultado · respaldada
+  HTML (cap3_modulos.html:3688): Esa última barra además estima $\phi_p$, que es lo que la teórica vale (Módulo 2): en el AR(2) del Módulo 9 la PACF teórica en $2$ vale $-0.6853$, el coeficiente mismo ⟦CITA cryer2008time pp. 114–115⟧
+  NOTA: Cryer y Chan p. 114 deducen φ_pp = φ_p para un AR(p) (PACF teórica) y p. 115 definen la PACF muestral sustituyendo las ρ por las r. El valor −0.6853 sale del ajuste del AR(2) a √manchas 1770–1869 del Módulo 9 (R, ejercicio 3: phi2 = −0.6853), tomado como proceso verdadero; con datos la barra muestral solo lo estima, como dice el texto.
+  [1] cryer2008time · pp. 114–115 · PDF · pdf=125 inst=None
+      en páginas PDF [125] (esperado None; encabezado de 125: ['114', '1', '1', '2', '2', '0'])
+  [2] cryer2008time · pp. 114–115 · PDF · pdf=125 inst=None
+      en páginas PDF [126] (esperado None; encabezado de 125: ['114', '1', '1', '2', '2', '0'])  <<< pagina_pdf 125 no contiene el literal
+====================================================================================================
+c3-m10-23 · resultado · respaldada
+  HTML (cap3_modulos.html:3701): Decae; desde el rezago $q+1$, al ritmo de un AR($p$) ⟦CITA hamilton1994time p. 60⟧
+  [1] hamilton1994time · p. 60 · PDF · pdf=75 inst=None
+      en páginas PDF [75] (esperado (75, 75); encabezado de 75: ['3', '5', '2', '1', '1', '2'])
+  [2] cryer2008time · p. 116 · PDF · pdf=127 inst=None
+      en páginas PDF [127] (esperado None; encabezado de 127: ['116', '6', '3', '1'])
+====================================================================================================
+c3-m10-24 · regla · respaldada
+  HTML (cap3_modulos.html:3702): Decae ⟦CITA cryer2008time p. 116⟧
+  NOTA: Cryer y Chan, Exhibit 6.3, p. 116: la PACF del AR(p) se corta tras p y la del MA(q) y la del ARMA(p,q) decaen. Se retira «desde el rezago p+1», que ninguna fuente respalda y que no se cumple en general (comprobación propia con ARMAacf(ar = 0.3, ma = c(0.6, 0.4), lag.max = 10, pacf = TRUE): −0.257, −0.109, 0.163…). La parte «desde q+1, al ritmo de un AR(p)» de la celda de la ACF sí tiene fuente (c3-m10-23).
+  [1] cryer2008time · p. 116 · PDF · pdf=127 inst=None
+      en páginas PDF [127] (esperado None; encabezado de 127: ['116', '6', '3', '1'])
+====================================================================================================
+c3-m10-25 · regla · con-matiz
+  HTML (cap3_modulos.html:3727): Si $\hat\phi_p$ o $\hat\theta_q$ no es significativo, sobra ⟦CITA cryer2008time p. 186⟧.
+  NOTA: Cryer y Chan, p. 186 (sobreajuste, §8.2), usan exactamente esa regla: en el AR(2) ajustado el coeficiente φ2 no es significativo y eso «apoya» el AR(1); p. 185 añade que además los demás coeficientes no deben cambiar de forma significativa. La fuente habla de apoyo al modelo menor, no de que el parámetro «sobre» sin más; por eso con-matiz. Las cifras t = 19.31, −9.46 y 2.78 salen de R y se comprobaron (coef/error estándar de arima(sqrt(window(sunspot.year, 1770, 1869)), c(2,0,0)) y de arima(window(sunspot.year, 1770, 1869), c(2,0,1)), método ML).
+  [1] cryer2008time · p. 186 · PDF · pdf=196 inst=None
+      en páginas PDF [196] (esperado None; encabezado de 196: ['186', '1', '8', '13', '1'])
+====================================================================================================
+c3-m10-28 · resultado · respaldada
+  HTML (cap3_modulos.html:3741): Un ARMA($2,2$) con $\phi = (1.1,\,-0.28)$ y $\theta = (0.1,\,-0.20)$ tiene exactamente la misma ACF que el ARMA($1,1$) de $\phi = 0.7$ y $\theta = 0.5$ —coinciden hasta el último decimal—, porque el factor $(1-0.4B)$ está en los dos polinomios y se cancela ⟦CITA hamilton1994time p. 61⟧
+  NOTA: Hamilton p. 61: si los operadores AR y MA tienen una raíz en común, el proceso estacionario es idéntico a un ARMA(p−1, q−1); dos procesos idénticos tienen la misma ACF. Los polinomios se factorizan como 1 − 1.1B + 0.28B² = (1 − 0.7B)(1 − 0.4B) y 1 + 0.1B − 0.20B² = (1 + 0.5B)(1 − 0.4B). Comprobado en R (polyroot da las raíces 1/0.7 y 2.5 en el AR y 2.5 y −2 en el MA; max(abs(ARMAacf(ar = c(1.1, -0.28), ma = c(0.1, -0.20), lag.max = 15) - ARMAacf(ar = 0.7, ma = 0.5, lag.max = 15))) = 1.1e-16, es decir, coinciden hasta el redondeo de la máquina).
+  [1] hamilton1994time · p. 61 · PDF · pdf=76 inst=None
+      en páginas PDF [76] (esperado (76, 76); encabezado de 76: ['3', '5', '2', '2', '4', '3'])
+====================================================================================================
+c3-m10-91 · resultado · respaldada
+  HTML (cap3_modulos.html:3745): los cuatro coeficientes del modelo grande no son identificables ⟦CITA cryer2008time p. 187⟧
+  NOTA: Cryer y Chan, §8.2 (p. 187), muestran con un ARMA(2,3) que, si los polinomios AR y MA comparten el factor (1 − cx), la constante c es arbitraria y los parámetros no son únicos. En el ARMA(2,2) del capítulo, (φ1, φ2, θ1, θ2) = (0.7 + λ, −0.7λ, 0.5 − λ, −0.5λ) describe el mismo proceso para cualquier λ, de modo que los cuatro dependen de λ. La marca se acota a la no identificabilidad; los errores estándar «pueden dispararse» y «es posible» que ninguno salga significativo son hipótesis condicionales que la fuente no cubre (la simulación propia las confirma en cuatro de cinco semillas y no en una).
+  [1] cryer2008time · p. 187 · PDF · pdf=197 inst=None
+      en páginas PDF [197] (esperado None; encabezado de 197: ['8', '2', '187', '8', '15', '1'])
+  [2] cryer2008time · p. 187 · PDF · pdf=197 inst=None
+      en páginas PDF [197] (esperado None; encabezado de 197: ['8', '2', '187', '8', '15', '1'])
+====================================================================================================
+c3-m10-31 · dato · respaldada
+  HTML (cap3_modulos.html:3805): (48 mediciones de hormona luteinizante, una cada 10 minutos) ⟦CITA rcoreteam2026r §Description⟧
+  [1] rcoreteam2026r · §Description · DOC · pdf=None inst=lh
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m10-33 · regla · con-matiz
+  HTML (cap3_modulos.html:3868): valdría la pena comparar los dos por validación de origen móvil ⟦CITA hyndman2021forecasting §5.10⟧
+  NOTA: FPP3 §5.10 describe la validación cruzada de series de tiempo (la «evaluación sobre un origen de pronóstico móvil») y calcula la exactitud del pronóstico promediando sobre los conjuntos de prueba. Que convenga usarla aquí para decidir entre el AR(1) y el MA(2) con n = 48 es una recomendación del capítulo. La remisión al Capítulo 6 es correcta: Htmls_Series/capitulo-6-pronostico-evaluacion.html, módulo 6.7 «Validación de origen móvil» (línea 3744).
+  [1] hyndman2021forecasting · §5.10 · WEB · pdf=None inst=toolbox
+      en sección: True · en la instantánea: True
+  [2] hyndman2021forecasting · §5.10 · WEB · pdf=None inst=toolbox
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m10-90 · regla · respaldada
+  HTML (cap3_modulos.html:3870): un aviso para los intervalos de pronóstico ⟦CITA hyndman2021forecasting §9.8⟧
+  [1] hyndman2021forecasting · §9.8 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [2] hyndman2021forecasting · §9.8 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m10-34 · resultado · respaldada
+  HTML (cap3_modulos.html:3920): la cota $|\rho_1|\le 0.5$ se dedujo solo para el MA(1), maximizando $\theta/(1+\theta^2)$ ⟦CITA cryer2008time p. 58⟧
+  NOTA: Cryer y Chan p. 58 obtienen la cota ±½ para ρ1 = −θ/(1+θ²) de un MA(1) con un argumento de cálculo (convención de signo opuesta a la de R; la cota es simétrica). Que en el MA(2) el techo suba (ρ1 = 0.5526 con θ = (0.6, 0.4)) es cálculo del ejercicio, comprobado en R (ARMAacf). Observación menor: «r1 = 0.55 descarta un MA(1)» sobrestima lo que prueba una autocorrelación muestral; sería más exacto «es difícil de reconciliar con un MA(1)».
+  [1] cryer2008time · p. 58 · PDF · pdf=71 inst=None
+      en páginas PDF [71] (esperado None; encabezado de 71: ['58', '4', '2', '2'])
+====================================================================================================
+c3-m10-46 · dato · respaldada
+  HTML (cap3_modulos.html:3973): dentro del rango de duración que se da al ciclo de las manchas ⟦CITA hyndman2021forecasting §12.4⟧
+  NOTA: FPP3 §12.4 (ejemplo de las manchas solares) da un rango de 9 a 14 años para la duración del ciclo; la frase decía «notablemente cerca del ciclo documentado» y ahora dice solo que 11.007 (cifra de R, ejercicio 3, serie completa) queda dentro de ese rango, sin repetir sus cifras. La estimación habitual de algo más de 11 años está en c3-m9-06, con Yule (1927, p. 276).
+  [1] hyndman2021forecasting · §12.4 · WEB · pdf=None inst=advanced
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m10-35 · resultado · propia
+  HTML (cap3_modulos.html:3974): El diagnóstico se derrumba en todas las ventanas que llegan al siglo XX: $p = 0.0007$ en 1870–1988, $p = 0.0010$ en 1900–1988 y por debajo de $0.0001$ en la serie completa. La explicación cómoda —con más datos la prueba gana potencia— aquí no se sostiene: 1900–1988 tiene menos datos que la ventana 1770–1869 ($n = 89$) y rechaza igual, y 1889–1988, con los mismos cien años, da $p = 0.0006$. Lo que cambia no es $n$ sino el tramo. De las 190 ventanas de cien años que caben entre 1700 y 1988, el AR(2) pasa la prueba en 52, y todas menos una empiezan entre 1734 y 1785; falla en las otras 138, también en 49 que acaban antes de 1900. La de 1770–1869 es una de las favorables; en las que alcanzan el siglo XX el mismo modelo, con coeficientes casi iguales, deja autocorrelación sin explicar y no pasa en ninguna.
+  NOTA: Cifras de R (verificadas en la R1 y recalculadas en esta ronda). El razonamiento (si la potencia explicara el cambio, la ventana de 89 años no rechazaría; lo que cambia es el tramo) es del capítulo. Las cuatro menciones de «la ventana de Yule» pasan a «la ventana 1770–1869»: leído Yule (1927, p. 275), usó la serie de Wolfer entera, de 1749 a 1924, no esa ventana. Comprobación: R (verificado en esta sesión): ini <- 1700:1889; p <- sapply(ini, function(a){ x <- sqrt(window(sunspot.year, a, a+99)); f <- arima(x, order=c(2,0,0), method='ML'); Box.test(residuals(f), lag=12, type='Ljung-Box', fitdf=2)$p.value }); sum(p>=0.05) da 52, sum(p<0.05) da 138, sum(p<0.05 & ini+99<1900) da 49; range(ini[p>=0.05]) da 1700 y 1785 y el único inicio fuera de 1734–1785 es 1700. Es el mismo cálculo de diagnostico/cap3/comprobaciones/maestra_r1.R (salida en maestra_r1.out). Las ventanas que llegan a 1900 o después rechazan las 89.
+====================================================================================================
+c3-m10-38 · atribucion · respaldada
+  HTML (cap3_modulos.html:3994): ⟦CITA hyndman2021forecasting §9.3⟧, Forecasting: Principles and Practice (3.ª ed.): esa sección (modelos autorregresivos), la 9.4 (modelos de medias móviles) y la 5.4 (diagnóstico de residuales). Acceso abierto en otexts.com/fpp3.
+  NOTA: Las tres secciones existen en la caché con esos títulos («Autoregressive models», «Moving average models», «Residual diagnostics») y tratan lo que la lectura dice. Cada literal es la frase con que abre el contenido de su sección.
+  [1] hyndman2021forecasting · §9.3 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [2] hyndman2021forecasting · §9.4 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [3] hyndman2021forecasting · §5.4 · WEB · pdf=None inst=toolbox
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m10-39 · atribucion · pendiente
+  HTML (cap3_modulos.html:3997): Shumway & Stoffer, Time Series Analysis and Its Applications (4.ª ed.): el tratamiento formal de ARMA, causalidad, invertibilidad y estimación. En la 3.ª edición (2011) son las secc. 3.2 (modelos ARMA, con la causalidad y la invertibilidad) y 3.6 (estimación); la numeración de la 4.ª puede ser otra.
+  MOTIVO: La edición que cita el curso (la 4.ª, 2017) no está en la caché; solo se han leído el índice y las secciones 3.2 y 3.6 de la 3.ª (2011), que no es la que cita el curso. Falta leer el índice de la 4.ª para confirmar la numeración y si trata las manchas solares. Hasta entonces la frase dice los temas y la numeración de la 3.ª, y que la de la 4.ª puede ser otra.
+  [1] shumway2011time · §3.2 · PDF · pdf=97 inst=None
+      en páginas PDF [10, 97, 98, 100, 102, 104, 105, 106, 108] (esperado None; encabezado de 97: ['84', '3', '3', '2', '2', '1'])
+  [2] shumway2011time · §3.2 · PDF · pdf=107 inst=None
+      en páginas PDF [107] (esperado None; encabezado de 107: ['94', '3', '3', '2', '3', '5'])
+  [3] shumway2011time · §3.2 · PDF · pdf=108 inst=None
+      en páginas PDF [108] (esperado None; encabezado de 108: ['3', '2', '95', '3', '1', '0'])
+  [4] shumway2011time · §3.6 · PDF · pdf=134 inst=None
+      en páginas PDF [134] (esperado None; encabezado de 134: ['3', '6', '121', '3', '6', '2'])
+====================================================================================================
+c3-m10-41 · atribucion · respaldada
+  HTML (cap3_modulos.html:3998): Box, Jenkins, Reinsel & Ljung, Time Series Analysis: Forecasting and Control (5.ª ed.): una edición del texto clásico de Box y Jenkins que popularizó el modelado ARIMA ⟦CITA hyndman2021forecasting §9.12⟧, a quienes se asocia la estrategia de identificación, ajuste y diagnóstico ⟦CITA cryer2008time p. 8⟧.
+  NOTA: El libro no se ha leído: la frase solo repite lo que FPP3 y Cryer y Chan dicen de él y de sus autores. FPP3 §9.12 llama al texto de Box y Jenkins el clásico que popularizó el modelado ARIMA, y su bibliografía da la 5.ª edición con los cuatro autores y el mismo título. Cryer y Chan p. 8 atribuyen a Box y Jenkins (no a Reinsel ni a Ljung) la estrategia en tres pasos (especificación o identificación, ajuste y diagnóstico). Se retiran «capítulos 3 y 6», «la fuente original» y la mención a Ljung–Box (c3-m10-42), que sin el texto del libro no se pueden sostener.
+  [1] hyndman2021forecasting · §9.12 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [2] hyndman2021forecasting · §9.12 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [3] cryer2008time · p. 8 · PDF · pdf=21 inst=None
+      en páginas PDF [21] (esperado None; encabezado de 21: ['8', '28'])
+====================================================================================================
+c3-m10-43 · atribucion · respaldada
+  HTML (cap3_modulos.html:3999): Opcional, para el puente con el aprendizaje profundo: ⟦CITA hyndman2021forecasting §12.4⟧, la sección sobre redes neuronales: la red autorregresiva que ajusta NNETAR es una red con una capa oculta que toma como entradas los rezagos de la serie y que, sin neuronas ocultas, equivale a un AR sin las restricciones de estacionariedad.
+  NOTA: Se reescribe «es literalmente un AR con una capa oculta»: un AR no tiene capa oculta; lo que dice FPP3 es que la red autorregresiva con una capa oculta usa los rezagos como entradas, y que sin neuronas ocultas equivale a un AR(p) sin las restricciones de estacionariedad. «Redes neuronales autorregresivas» es el nombre de la subsección y NNETAR es la función que ajusta el modelo.
+  [1] hyndman2021forecasting · §12.4 · WEB · pdf=None inst=advanced
+      en sección: True · en la instantánea: True
+  [2] hyndman2021forecasting · §12.4 · WEB · pdf=None inst=advanced
+      en sección: True · en la instantánea: True
+  [3] hyndman2021forecasting · §12.4 · WEB · pdf=None inst=advanced
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m10-92 · dato · propia
+  HTML (cap3_modulos.html:4044): se añade la pieza que falta —la integración, el orden $d$— para llegar a los modelos ARIMA
+  NOTA: Remisión interna comprobada leyendo Htmls_Series/capitulo-4-modelos-arima.html: el módulo 4.1 «De ARMA a ARIMA» (línea 2755) introduce el orden d como parte del modelo y define el proceso ARIMA(p,d,q), y el 4.3 «Elegir d» (línea 3220) lo decide. Contenido propio del curso, no atribución a una obra.
+====================================================================================================
+c3-m10-44 · atribucion · con-matiz
+  HTML (cap3_modulos.html:4045): la metodología completa de Box–Jenkins ⟦CITA cryer2008time p. 8⟧
+  NOTA: Cryer y Chan p. 8 atribuyen a Box y Jenkins la estrategia de construcción de modelos en tres pasos, y FPP3 §9.12 el texto que popularizó el modelado ARIMA. «Completa» es del capítulo: la remisión interna es correcta, porque el módulo 4.2 «La metodología de Box–Jenkins» (Htmls_Series/capitulo-4-modelos-arima.html, línea 3004) recorre el ciclo de identificación, estimación y diagnóstico con sus vueltas atrás. Las dos fuentes no dicen que esa metodología sea «completa» en el sentido de este capítulo.
+  [1] cryer2008time · p. 8 · PDF · pdf=21 inst=None
+      en páginas PDF [21] (esperado None; encabezado de 21: ['8', '28'])
+  [2] hyndman2021forecasting · §9.12 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m10-45 · atribucion · respaldada
+  HTML (cap3_modulos.html:4045): el algoritmo de Hyndman–Khandakar que automatiza la búsqueda ⟦CITA hyndman2021forecasting §9.7⟧
+  NOTA: FPP3 §9.7 describe el algoritmo (pruebas de raíz unitaria, minimización del AICc y máxima verosimilitud) y §9.12 lo presenta como el algoritmo para seleccionar automáticamente un ARIMA. La remisión interna es correcta: el módulo 4.7 «Dentro de auto.arima» (Htmls_Series/capitulo-4-modelos-arima.html, línea 4093) lo desarrolla. El artículo de Hyndman y Khandakar (2008, §3.2, p. 10) propone el algoritmo por pasos.
+  [1] hyndman2021forecasting · §9.7 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [2] hyndman2021forecasting · §9.12 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+  [3] hyndman2008automatic · p. 10 · PDF · pdf=10 inst=None
+      en páginas PDF [10] (esperado (10, 10); encabezado de 10: ['10'])
+====================================================================================================
+c3-m10-93 · regla · respaldada
+  HTML (cap3_modulos.html:4046): la advertencia sobre comparar criterios de información entre modelos con distinto $d$ ⟦CITA hyndman2021forecasting §9.6⟧
+  NOTA: FPP3 §9.6: la diferenciación cambia los datos sobre los que se calcula la verosimilitud, así que los valores del AIC no son comparables entre órdenes de diferenciación distintos. La remisión interna es correcta: el recuadro «El AIC no cruza la frontera de d» está en el módulo 4.6 (Htmls_Series/capitulo-4-modelos-arima.html, línea 3930).
+  [1] hyndman2021forecasting · §9.6 · WEB · pdf=None inst=arima
+      en sección: True · en la instantánea: True
+====================================================================================================
+c3-m10-94 · dato · propia
+  HTML (cap3_modulos.html:4048): AirPassengers, la serie con que terminó el Capítulo 2, no aparece en este capítulo: la dependencia que quedó en $\nabla\nabla_{12}\log y_t$ vuelve en el Capítulo 5, que extiende las herramientas de este a la estacionalidad y le ajusta el modelo airline (módulos 5.5 y 5.7).
+  NOTA: Remisiones internas comprobadas. Capítulo 2 (Htmls_Series/capitulo-2-estacionariedad-acf-pacf.html, líneas 5640–5656): termina con ∇∇12 log y_t, dice que no es ruido blanco y que la dependencia que queda la describen los capítulos 3 y 5. Capítulo 3: ninguna aparición de AirPassengers en cap3_modulos.html fuera de esta nota ni en cap3_js.js. Capítulo 5 (Htmls_Series/capitulo-5-sarima.html): el módulo 5.5 «El modelo airline» (línea 4515) lo presenta y el 5.7 «Caso completo: log(AirPassengers)» (línea 4800) lo ajusta.

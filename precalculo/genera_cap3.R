@@ -197,9 +197,10 @@ for (cl in c("ar1_pos", "ma1_pos", "arma11")) {
 # ----------------------------------------------------------------------------
 # 3. Manchas solares anuales, 1770-1869
 #
-# La ventana centenaria que estudió Yule (1927) al inventar el modelo
-# autorregresivo. Es el caso real del capítulo: un AR(2) con raíces complejas
-# cuyo pseudo-periodo tiene que salir cerca de los 11 años del ciclo solar.
+# Un siglo de sunspot.year (1770-1869). Yule (1927) ajustó una regresión sobre
+# los dos valores anteriores (un AR(2); p. 281, ec. 31) a los números de Wolfer
+# de 1749-1924 (p. 275), no a esta ventana. Es el caso real del capítulo: un AR(2) con raíces complejas cuyo
+# pseudo-periodo tiene que salir cerca de los 11 años del ciclo solar.
 # ----------------------------------------------------------------------------
 
 manchas <- window(sunspot.year, start = 1770, end = 1869)
@@ -562,9 +563,9 @@ cap3 <- list(
   manchas = c(
     list(
       nombre      = "Manchas solares anuales",
-      descripcion = "Numero anual de manchas solares (Wolf), 1770-1869",
-      fuente      = "sunspot.year (datasets de R); ventana centenaria de Yule (1927)",
-      unidad      = "numero de Wolf",
+      descripcion = "Numero anual de manchas solares, 1770-1869",
+      fuente      = "sunspot.year (datasets de R); ventana 1770-1869",
+      unidad      = "manchas solares (numero anual)",
       anios       = anios,
       valores     = round(as.numeric(manchas), 4),
       media       = round(mean(manchas), 4),

@@ -176,66 +176,27 @@ html = reemplazar(
     "pie de página")
 
 # ---------------------------------------------------------------------------
-# 1b. Lo que la ronda de fuentes (R4) del capítulo 2 dejó en el armazón
+# 1b. Las fuentes: el armazón de citas se HEREDA del capítulo 2
 # ---------------------------------------------------------------------------
-# Desde el 2026-11-17 el capítulo 2 lleva sus fuentes contrastadas: el CSS de
-# las citas (`.cita`, `.fuentes-modulo`, `.lista-fuentes`) y un pie que escribe
-# `precalculo/genera_referencias.py` entre los marcadores PIE-REFERENCIAS. El
-# capítulo 3 —y con él el 4, el 5 y el 6, que parten de este— todavía no ha
-# pasado su ronda de fuentes: no tiene ninguna cita ni registro de contraste, y
-# no debe heredar ni la hoja de estilo ni la lista del capítulo 2. Aquí se
-# retira el CSS y se devuelve al pie la lista tecleada que el capítulo 3 tenía,
-# de modo que el capítulo ensamblado no cambia.
+# Hasta la ronda de fuentes (R4) del capítulo 3 (2026-11-21) esta sección
+# retiraba el CSS de las citas (`.cita`, `.fuentes-modulo`, `.lista-fuentes`)
+# que el capítulo 2 deja en el armazón y devolvía al pie una lista tecleada.
+# Ya no: el capítulo 3 tiene sus afirmaciones marcadas y sus citas, que viven
+# en `cap3/cap3_modulos.html` (las escribe
+# `diagnostico/cap3/comprobaciones/r4_marca.py`), y necesita esa hoja de estilo
+# y el pie generado (la bibliografía básica del curso, la misma en todos los
+# capítulos). Aquí solo se COMPRUEBA que lleguen; al final (sección 9b)
+# `genera_referencias.genera()` escribe citas, listas y pie, de modo que el
+# archivo ensamblado es exactamente el que `genera_referencias.py --comprobar`
+# y `audita_citas.py` (F02) esperan.
 #
-# CUANDO EL CAPÍTULO 3 HAGA SU RONDA DE FUENTES, esta sección se borra: entonces
-# sí debe llevar el CSS, y su pie lo escribirá el generador sobre los marcadores.
-PIE_TECLEADO_CAP3 = """\
-      <ul class="space-y-3 text-white/90 text-sm">
-        <li class="flex items-start gap-2">
-          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
-          <span>Hyndman, R.J., &amp; Athanasopoulos, G. (2021). <em class="text-gold">Forecasting: Principles and
-              Practice</em> (3rd ed.). OTexts. Acceso abierto: <a href="https://otexts.com/fpp3/"
-              class="underline text-gold" target="_blank" rel="noopener">otexts.com/fpp3</a>.</span>
-        </li>
-        <li class="flex items-start gap-2">
-          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
-          <span>Shumway, R.H., &amp; Stoffer, D.S. (2017). <em class="text-gold">Time Series Analysis and Its
-              Applications: With R Examples</em> (4th ed.). Springer.</span>
-        </li>
-        <li class="flex items-start gap-2">
-          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
-          <span>Box, G.E.P., Jenkins, G.M., Reinsel, G.C., &amp; Ljung, G.M. (2015). <em class="text-gold">Time Series
-              Analysis: Forecasting and Control</em> (5th ed.). John Wiley &amp; Sons.</span>
-        </li>
-        <li class="flex items-start gap-2">
-          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
-          <span>Brockwell, P.J., &amp; Davis, R.A. (2016). <em class="text-gold">Introduction to Time Series and
-              Forecasting</em> (3rd ed.). Springer.</span>
-        </li>
-      </ul>
-"""
-
-html = recortar(
-    html,
-    "    /* ------------------------------------------------------------------\n"
-    "       Cita con fuente",
-    "    /* SVG Styles */",
-    "",
-    "CSS de las citas del capítulo 2")
-
-_pie_ini = "      <!--PIE-REFERENCIAS:inicio-->\n"
-_pie_fin = "      <!--PIE-REFERENCIAS:fin-->\n"
-for _m in (_pie_ini, _pie_fin):
-    if html.count(_m) != 1:
-        sys.exit(f"ABORTA [pie de referencias]: el marcador {_m.strip()!r} aparece "
-                 f"{html.count(_m)} veces, se esperaba 1. Si el capítulo 2 ya no "
-                 f"genera su pie, la sección 1b de este script sobra.")
-_i = html.index(_pie_ini)
-_j = html.index(_pie_fin) + len(_pie_fin)
-if _j <= _i:
-    sys.exit("ABORTA [pie de referencias]: los marcadores están en orden inverso")
-html = html[:_i] + PIE_TECLEADO_CAP3 + html[_j:]
-sustituciones += 1
+# La protección que había aquí pasó a `ensambla_cap4.py` (sección 0): el
+# capítulo 4 —y con él el 5 y el 6— aún no ha hecho su ronda de fuentes.
+for marca in ("       Cita con fuente", "    .cita {", "    .fuentes-modulo {", "ul.lista-fuentes li {",
+              "      <!--PIE-REFERENCIAS:inicio-->\n", "      <!--PIE-REFERENCIAS:fin-->\n"):
+    if html.count(marca) != 1:
+        sys.exit(f"ABORTA [armazón de citas]: {marca.strip()!r} aparece {html.count(marca)} veces en el "
+                 "capítulo 2, se esperaba 1. El capítulo 3 hereda de él el CSS de las citas y el pie.")
 
 # ---------------------------------------------------------------------------
 # 2. CSS del componente .derivacion
@@ -618,6 +579,36 @@ for sim in re.finditer(r'<div class="simulador" data-simulador="([^"]+)">(.*?)\n
                        html, re.S):
     if "<canvas" not in sim.group(2):
         fallos.append(f"simulador sin canvas: {sim.group(1)}")
+
+# ---------------------------------------------------------------------------
+# 9b. Citas, listas de fuentes y pie: los escribe el generador
+# ---------------------------------------------------------------------------
+# Las marcas `data-afirma` y los `<cite class="cita">` llegan en las plantillas
+# de `cap3/`; el texto visible de cada cita, la lista de cada módulo, la del
+# capítulo y el pie los escribe `precalculo/genera_referencias.py` desde
+# `bibliografia/referencias.json`. Se pasa aquí, al final, para que el
+# ensamblado dé el mismo archivo aunque en Zotero cambie un apellido o un año
+# y alguien regenere solo el HTML final: lo ensamblado y lo regenerado no
+# pueden divergir. Es idempotente (las plantillas ya vienen generadas).
+sys.path.insert(0, str(BASE / "precalculo"))
+import genera_referencias                                               # noqa: E402
+
+try:
+    html = genera_referencias.genera(html, *genera_referencias.carga_biblioteca())
+except genera_referencias.ErrorDeCita as e:
+    sys.exit(f"ABORTA [citas]: {e}")
+for pieza, minimo in (('data-afirma="c3-', 1), ('<cite class="cita"', 1),
+                      ('<aside class="fuentes-modulo"', 1), ("<!--REFERENCIAS-CAPITULO:inicio-->", 1),
+                      ('<li id="pie-', 1)):
+    if html.count(pieza) < minimo:
+        fallos.append(f"fuentes: falta {pieza!r}")
+if 'data-afirma="c2-' in html or 'id="ref-m' not in html:
+    fallos.append("fuentes: quedan marcas del capítulo 2 o faltan las listas de módulo")
+if html.count("<!--REFERENCIAS-CAPITULO:inicio-->") != 1:
+    fallos.append("fuentes: la lista del capítulo aparece "
+                  f"{html.count('<!--REFERENCIAS-CAPITULO:inicio-->')} veces, se esperaba 1")
+if re.search(r'<cite class="cita"[^>]*></cite>', html):
+    fallos.append("fuentes: queda alguna cita vacía tras pasar el generador")
 
 if fallos:
     print("FALLOS DE ENSAMBLADO:")
