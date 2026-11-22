@@ -3,7 +3,7 @@ tipo: plan
 curso: "[[20948 Series de Tiempo]]"
 capitulo: "[[20948-03 Modelos AR, MA y ARMA]]"
 fecha: 2026-11-19
-estado: aprobado
+estado: CERRADO (2026-11-21) — R1–R5 publicadas · main c8683b5 · gh-pages 31136b3
 ---
 
 # Plan — Mejora del capítulo 3 · Modelos AR, MA y ARMA (Fase 3)
@@ -14,8 +14,9 @@ con sus fuentes contrastadas y con práctica en cada módulo. Es la tercera apli
 [[PLAN_Mejora_Cap1]] y [[PLAN_Mejora_Cap2]]: cinco rondas, un redactor por ronda, un verificador
 independiente sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: aprobado por Javier el 2026-11-19 (D1–D9, y las recomendaciones de §7.1 y §7.2). Las cinco rondas, publicadas el 21.** Lo que
-sigue es el diagnóstico y el plan; las rondas se registrarán en §4.
+**Estado: CERRADO por Javier el 2026-11-21.** Aprobado el 2026-11-19 (D1–D9, y las recomendaciones de §7.1 y §7.2);
+R1 hecha el 20 y las cinco rondas publicadas el 21. Lo que sigue es el diagnóstico y el plan; las rondas se registran
+en §4, y lo que la Fase 3 deja fuera está en §9.
 
 ## 1. El hueco — diagnóstico del 2026-11-19
 
@@ -228,21 +229,28 @@ Cada una lleva mi recomendación; las decide Javier.
 
 ## 5. Criterios de aceptación
 
-- [ ] Cada uno de los errores de C1 tiene su comprobación en R y deja de reproducirse.
-- [ ] `verifica_bloques_cap6.py --html` sobre el capítulo 3 da 0 discrepancias, y los bloques de
-      Python reproducen sus comentarios.
-- [ ] El ARMA, Ljung–Box, el AICc, el BIC y `auto.arima` se presentan o se anuncian donde se usan
-      por primera vez.
-- [ ] Los lienzos del capítulo se leen a 1200, 800 y 375 px; el rezago 1 rotulado en todos los
-      correlogramas; ningún proceso explosivo sale plano; las cuatro frases que el dibujo
-      contradecía, de acuerdo con él.
-- [ ] `audita_citas.py --cierre` en verde para lo registrado, con las afirmaciones de prioridad alta
-      registradas.
-- [ ] Cada módulo del M1 al M9 tiene al menos una práctica dentro del capítulo; la opción más larga
-      no acierta más de una pregunta; ninguna retro adelanta un ejercicio.
-- [ ] La duración declarada de cada módulo dista menos de 3 min de la medida.
-- [ ] `verifica_todo.py` en verde, el capítulo 3 reproducible y los 4–6 idénticos salvo lo que la
-      ronda quería cambiar.
+- [x] Cada uno de los errores de C1 tiene su comprobación en R y deja de reproducirse
+      (`diagnostico/cap3/comprobaciones/maestra_errores.R` y `r1_*`; R1).
+- [x] `verifica_bloques_cap6.py --html` sobre el capítulo 3 da 0 discrepancias: de 533/534 antes de la R1 a
+      1084/1084 al cerrar la R5. Los 11 bloques de Python se comprobaron a mano en la R1 (`r1_bloques_python.out`);
+      el verificador no los lee.
+- [x] El ARMA, Ljung–Box, el AICc, el BIC y `auto.arima` se presentan o se anuncian donde se usan por primera
+      vez: R3, revisado por su verificador. Nadie ha releído el capítulo entero después de la R4 y la R5.
+- [x] Los lienzos se leen a 1200, 800 y 375 px; el rezago 1 rotulado en todos los correlogramas; ningún proceso
+      explosivo sale plano; las frases que el dibujo contradecía, corregidas (R2). De los 42 problemas de C4 quedan
+      5 leves sin tocar y 5 arreglados en parte.
+- [ ] `audita_citas.py --cierre` en verde para lo registrado, con las afirmaciones de prioridad alta registradas.
+      **Falla**: quedan 4 `pendiente` (Guerrero 1993, la 4.ª de Shumway y Stoffer y dos de una obra de aprendizaje
+      profundo que la biblioteca no tiene). De las 119 filas de alta del inventario, 93 quedan registradas y 23 sin
+      marcar con su motivo (13 viven en cadenas de JavaScript del quiz, la práctica de repaso o el simulacro); de
+      la media, 32 siguen sin marcar.
+- [x] Cada módulo del M1 al M9 tiene al menos una práctica dentro del capítulo (ocho «Para practicar» y los
+      ejercicios 1 y 3 para el M8); la opción más larga acierta 0 de 5 preguntas (antes, 4); ninguna retro adelanta
+      un ejercicio, tras la corrección del verificador de la R5.
+- [x] La duración declarada de cada módulo dista menos de 3 min de la medida: como mucho 0.5 min, con los paneles
+      abiertos (`r5_minutos_despues.out`).
+- [x] `verifica_todo.py` en verde (11 verificadores), el capítulo 3 reproducible byte a byte y los 4–6 idénticos
+      en todas las rondas salvo el diff del armazón que la R2 quería.
 
 ## 6. Riesgos
 
@@ -271,6 +279,45 @@ banco, fuera de esta fase). La 3 sigue abierta.
 3. **Los textos que solo consigues tú**, con el acceso institucional: Yule (1927), Ljung y Box
    (1978), los capítulos 3 y 6 de Box, Jenkins, Reinsel y Ljung (5.ª ed.) y el capítulo 3 de la 4.ª
    de Shumway y Stoffer (que también cierra 8 pendientes del cap. 2).
+
+## 9. Cierre (2026-11-21)
+
+Javier cerró la Fase 3 con las cinco rondas publicadas, y aceptó que el quiz quede sin ítem del M6 ni del M9
+(los dos se practican en sus «Para practicar»). De los ocho criterios de §5 se cumplen siete; el de las fuentes no,
+y queda con lo demás **fuera de esta fase**, sin plan:
+
+- **Las 4 afirmaciones `pendiente`** y la pregunta 3 de §7: hacen falta Guerrero (1993), la 4.ª de Shumway y
+  Stoffer (que también cierra pendientes del cap. 2) y una obra de aprendizaje profundo dada de alta por DOI o
+  ISBN. Ljung y Box (1978) y Box–Jenkins siguen sin texto; las frases que dependían de ellos se reescribieron para
+  no necesitarlos.
+- **El inventario sin cerrar:** 23 filas de alta y 32 de media sin marcar, cada una con su motivo en
+  `bibliografia/contraste/cap3_inventario.tsv`.
+- **Una relectura completa del capítulo ya corregido** por un par que no haya visto ninguna ronda.
+- **Lo que anotaron las rondas sin resolver:**
+  - las fichas de las lecturas del M10 (`box2016time`, `shumway2017time`) siguen tecleadas: generarlas pide un modo
+    «ficha de lectura» en `genera_referencias.py` y su regla en el auditor;
+  - los localizadores de la ayuda de R («§Details») no dicen de qué función son, y la sección «Fitting methods» de
+    `?arima` no se puede citar con `SECCIONES_R`;
+  - «Apliquemos», en primera persona, en el M7; `n` en el enunciado del ejercicio 3, dentro de la frase marcada
+    c3-m10-35;
+  - la P5 del quiz repite el experimento de la práctica del M3 con otro número: discrimina poco;
+  - de la R2, 5 problemas leves sin tocar y 5 arreglados en parte (`diagnostico/cap3/R2_cambios.md`).
+- **Lo que no es del capítulo, sino del sistema o de otra página:**
+  - El motor del quiz, que tras el primer fallo de la múltiple dice cuántas correctas faltan y que llama
+    «impecable» a un 10 de 10 logrado al segundo intento.
+  - El simulacro del M11 (pregunta 2 de §7): revisar en el banco la posición de la correcta.
+  - Las `aria-label` de los caps. 4–6 y el `descripcionGrafico` del quiz del cap. 4, que la R2 dejó para ellos.
+  - `taller-2-modulo-2.html` dice «antepasado directo».
+  - Una copia de `bibliografia/_local/` fuera de este equipo.
+
+En la fase, el capítulo pasó de 135 a 196 minutos declarados (medidos con todo abierto), de 3 a 11 ejercicios y de 0
+a 214 afirmaciones registradas y firmadas, con 214 citas visibles; y el verificador de bloques, de 533/534 a
+1084/1084. Entraron dos obras de acceso abierto: Yule (1927), cuya lectura deshizo «la ventana centenaria de
+Yule», y Hyndman y Khandakar (2008). El molde se mantuvo: un solo redactor por ronda, un verificador independiente
+de contexto limpio sobre el diff (dos en paralelo en la R4) y la sesión maestra volviendo a medir en R. El
+verificador encontró problemas en lo «terminado» en todas las rondas: 8 en la R1, 9 en la R2, 7 en la R3, 20
+entradas devueltas en la R4 y 13 en la R5, nunca una clave del quiz mal puesta. Y la maestra también corrigió al
+verificador: en la R5, una de sus propuestas ponía el aviso de convergencia de `lynx` en la escala equivocada.
 
 ## 8. Enlaces
 
