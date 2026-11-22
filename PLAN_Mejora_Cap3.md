@@ -14,7 +14,7 @@ con sus fuentes contrastadas y con práctica en cada módulo. Es la tercera apli
 [[PLAN_Mejora_Cap1]] y [[PLAN_Mejora_Cap2]]: cinco rondas, un redactor por ronda, un verificador
 independiente sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: aprobado por Javier el 2026-11-19 (D1–D9, y las recomendaciones de §7.1 y §7.2). R1, R2 y R3 publicadas el 21; R4 hecha el 21, sin publicar.** Lo que
+**Estado: aprobado por Javier el 2026-11-19 (D1–D9, y las recomendaciones de §7.1 y §7.2). R1, R2, R3 y R4 publicadas el 21.** Lo que
 sigue es el diagnóstico y el plan; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-19
@@ -194,7 +194,7 @@ Cada una lleva mi recomendación; las decide Javier.
   El verificador independiente no halló nada falso ni regresiones; 7 puntos menores, 5 corregidos por la maestra,
   uno resuelto con el commit y uno a la R5 (`diagnostico/cap3/R3_verificacion.md`).
 
-- **R4 · fuentes — hecha el 2026-11-21, sin publicar.** El capítulo pasa de 0 a **213 afirmaciones marcadas y
+- **R4 · fuentes — hecha y PUBLICADA el 2026-11-21 (`main` `6447212` · gh-pages `9c060fe`).** El capítulo pasa de 0 a **213 afirmaciones marcadas y
   registradas** (`bibliografia/contraste/cap3.yml`): 119 `respaldada`, 53 `con-matiz`, 37 `propia` (lo que se dice del
   software, comprobado ejecutando) y 4 `pendiente` (Guerrero 1993, Shumway 4.ª y una obra de aprendizaje profundo para
   RNN/LSTM y transformers). **213 citas visibles**: Cryer y Chan 98, FPP3 62, Hamilton 25, ayuda de R 22, Yule 4 y
