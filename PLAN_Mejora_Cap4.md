@@ -3,7 +3,7 @@ tipo: plan
 curso: "[[20948 Series de Tiempo]]"
 capitulo: "[[20948-04 Modelos ARIMA y Box-Jenkins]]"
 fecha: 2026-11-22
-estado: PROPUESTO — diagnóstico hecho, plan sin aprobar
+estado: APROBADO (2026-11-22) — D1–D10 y las recomendaciones de §7.1 y §7.2
 ---
 
 # Plan — Mejora del capítulo 4 · Modelos ARIMA y Box–Jenkins (Fase 4)
@@ -14,8 +14,8 @@ con sus fuentes contrastadas y con práctica antes del final. Es la cuarta aplic
 [[PLAN_Mejora_Cap1]], [[PLAN_Mejora_Cap2]] y [[PLAN_Mejora_Cap3]]: cinco rondas, un redactor por ronda,
 un verificador independiente sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: PROPUESTO.** El diagnóstico es del 2026-11-22; las decisiones de §3 y las preguntas de §7 las
-decide Javier.
+**Estado: APROBADO por Javier el 2026-11-22**, con D1–D10 y las recomendaciones de las preguntas 1 y 2 de §7.
+El diagnóstico es del mismo día; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-22
 
@@ -182,6 +182,10 @@ Cada una lleva mi recomendación; las decide Javier.
 - **Sesiones concurrentes**: commits por archivo y fusión probada antes de cada publicación.
 
 ## 7. Preguntas abiertas
+
+Resueltas el 2026-11-22: Javier aprobó D1–D10 y las recomendaciones de las preguntas 1 y 2 (la
+varianza deja de ser una evidencia de $d$ en el cap. 4; las tres diapositivas que repiten hallazgos
+entran en la R1). La 3 sigue abierta.
 
 1. **La varianza como evidencia de $d$ (D3).** El cap. 2 dice que no decide; el 4 la usa como una de
    tres evidencias, en el resumen, en dos ejercicios, en el simulacro (P10) y en las diapositivas.
