@@ -8258,16 +8258,17 @@ round(c(coef(m), sigma2 = m$sigma2), 4)
     // `opciones` se mezcla con Object.assign, que es superficial: quien pasa
     // `scales` sustituye los dos ejes enteros (y con ellos las marcas
     // legibles y la línea del 0, que son de los ejes por defecto). `tituloX` y
-    // `tituloY` rotulan los ejes sin tener que pasar `scales`.
+    // `tituloY` rotulan los ejes sin tener que pasar `scales`. Quien pasa
+    // `plugins` sustituye también los de aquí (la leyenda y el tooltip), pero
+    // no la muestra de la leyenda, que es del armazón: la dibuja
+    // etiquetasDeLeyendaLinea() aunque el capítulo traiga su propio `legend`
+    // (salvo que traiga también su propio `generateLabels`).
     function crearGraficoLinea(canvas, etiquetas, datasets, opciones = {}) {
       const estrecho = !!canvas.parentNode && canvas.parentNode.clientWidth < 420;
       const propias = Object.assign({}, opciones);
       delete propias.tituloX;
       delete propias.tituloY;
-      return new Chart(canvas, {
-        type: 'line',
-        data: { labels: etiquetas, datasets: datasets },
-        options: Object.assign({
+      const opts = Object.assign({
           responsive: true,
           maintainAspectRatio: false,
           animation: false,
@@ -8304,7 +8305,36 @@ round(c(coef(m), sigma2 = m$sigma2), 4)
               afterBuildTicks: marcasVerticales
             }
           }
-        }, propias)
+        }, propias);
+      // La muestra de cada entrada de la leyenda es del armazón: se mezcla con
+      // lo que el capítulo haya pasado en `plugins.legend.labels` (fuente,
+      // ancho de la muestra, filtro), que gana si repite alguna de estas claves.
+      const plugins = opts.plugins || {};
+      const leyenda = plugins.legend || {};
+      opts.plugins = Object.assign({}, plugins, {
+        legend: Object.assign({}, leyenda, {
+          labels: Object.assign({
+            usePointStyle: true, boxHeight: 8, generateLabels: etiquetasDeLeyendaLinea
+          }, leyenda.labels)
+        })
+      });
+      return new Chart(canvas, {
+        type: 'line',
+        data: { labels: etiquetas, datasets: datasets },
+        options: opts,
+        // La raya y la caja miden lo que diga `boxWidth` (también si un
+        // capítulo lo cambia después de crear el gráfico: el 4 lo reduce en el
+        // teléfono). Con un punto suelto en la leyenda (un círculo, una cruz)
+        // la muestra mide lo de siempre: con un ancho fijo Chart.js lo
+        // estira hasta hacer un óvalo.
+        plugins: [{
+          id: 'anchoDeLaMuestra',
+          beforeUpdate: chart => {
+            const rotulos = chart.options.plugins.legend.labels;
+            const hayPuntos = chart.data.datasets.some(ds => ds.showLine === false && ds.label);
+            rotulos.pointStyleWidth = hayPuntos ? undefined : rotulos.boxWidth;
+          }
+        }]
       });
     }
 
@@ -8419,6 +8449,38 @@ round(c(coef(m), sigma2 = m$sigma2), 4)
         } else {
           item.pointStyle = 'rect';
           item.lineWidth = 0;
+        }
+        return item;
+      });
+    }
+
+    // Leyenda de crearGraficoLinea: cada entrada se dibuja como lo que es.
+    // Las series y las rectas de referencia, con un trozo de su trazo (con su
+    // discontinuidad, si la tienen), y no con la caja gris de borde de color
+    // que salía por defecto; las bandas (un `fill` hacia otra serie: '+1',
+    // '-1', un índice), con una caja de su color y de su borde; los puntos
+    // sueltos (`showLine: false`), con su marca (círculo, cruz…).
+    function etiquetasDeLeyendaLinea(chart) {
+      return Chart.defaults.plugins.legend.labels.generateLabels(chart).map(item => {
+        const ds = chart.data.datasets[item.datasetIndex];
+        if (!ds) return item;
+        const cadena = v => typeof v === 'string';
+        const banda = typeof ds.fill === 'number' || (cadena(ds.fill) && /^[+-]\d+$/.test(ds.fill)) ||
+          (!!ds.fill && typeof ds.fill === 'object');
+        if (banda) {
+          item.pointStyle = 'rect';
+          item.lineWidth = typeof ds.borderWidth === 'number' ? ds.borderWidth : 1;
+        } else if (ds.showLine === false) {
+          item.pointStyle = ds.pointStyle || 'circle';
+          if (cadena(ds.backgroundColor)) item.fillStyle = ds.backgroundColor;
+          if (cadena(ds.borderColor)) item.strokeStyle = ds.borderColor;
+          item.lineWidth = typeof ds.pointBorderWidth === 'number' ? ds.pointBorderWidth : 1.5;
+        } else {
+          item.pointStyle = 'line';
+          if (cadena(ds.borderColor)) item.strokeStyle = ds.borderColor;
+          item.lineWidth = typeof ds.borderWidth === 'number'
+            ? Math.min(3, Math.max(1.5, ds.borderWidth)) : 2;
+          item.lineDash = ds.borderDash || [];
         }
         return item;
       });
