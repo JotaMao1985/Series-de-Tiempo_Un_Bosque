@@ -14,7 +14,7 @@ con sus fuentes contrastadas y con práctica antes del final. Es la cuarta aplic
 [[PLAN_Mejora_Cap1]], [[PLAN_Mejora_Cap2]] y [[PLAN_Mejora_Cap3]]: cinco rondas, un redactor por ronda,
 un verificador independiente sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: APROBADO por Javier el 2026-11-22**, con D1–D10 y las recomendaciones de las preguntas 1 y 2 de §7.
+**Estado: APROBADO por Javier el 2026-11-22; R1 publicada el mismo día**, con D1–D10 y las recomendaciones de las preguntas 1 y 2 de §7.
 El diagnóstico es del mismo día; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-22
@@ -157,7 +157,8 @@ Cada una lleva mi recomendación; las decide Javier.
 
 ### Registro de rondas
 
-- **R1 (errores) — hecha el 2026-11-22, sin publicar.** Redactor: `diagnostico/cap4/R1_cambios.md`;
+- **R1 (errores) — hecha y PUBLICADA el 2026-11-22 (`main` `1f82dec` · gh-pages `adea57a`).** El capítulo 4,
+  su deck y los caps. 3, 5 y 6 en vivo, idénticos al commit. Redactor: `diagnostico/cap4/R1_cambios.md`;
   verificador independiente: `R1_verificacion.md`, con lo que hizo la sesión maestra al final.
   - Los dos errores corregidos: la tabla del M9 dice que el ARIMA(1,1,1) sin constante se aplana en
     842.17, no en el último dato, con un bloque que lo comprueba. La varianza deja de decidir $d$: las
