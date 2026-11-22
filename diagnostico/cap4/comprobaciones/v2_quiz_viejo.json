@@ -1,0 +1,364 @@
+{
+ "quiz": [
+  {
+   "tipo": "opcion",
+   "modulo": 6,
+   "pregunta": "Sobre la misma serie de $n = 100$ obtienes AICc $= 1267.51$ para un ARIMA($1,1,1$) y AICc $= 1264.60$ para un ARIMA($1,2,2$). ¿Cuál eliges?",
+   "pista": "Antes de comparar dos números, pregúntate si están calculados sobre los mismos datos. ¿Cuántas observaciones entran en la verosimilitud de cada uno?",
+   "opciones": [
+    {
+     "texto": "El ARIMA($1,2,2$), porque $1264.60 < 1267.51$.",
+     "correcta": false,
+     "retro": "Es la trampa central del capítulo. Un AICc menor con más diferencias no significa un modelo mejor: es la verosimilitud de <strong>otros datos</strong>, con una observación menos. Y en el Nilo ese modelo concreto tiene además una raíz MA en $1.03$, casi sobre el círculo unitario."
+    },
+    {
+     "texto": "Ninguno de los dos por esta comparación: no son comparables, porque tienen distinto $d$.",
+     "correcta": true,
+     "retro": "El primero se calcula sobre $n^{*} = 99$ diferencias y el segundo sobre $98$ segundas diferencias: <strong>datos distintos</strong>. La comparación por AICc solo vale dentro de un mismo $d$. Para decidir entre distintos $d$ hay que usar las pruebas de raíz unitaria, el gráfico, o una evaluación fuera de muestra."
+    },
+    {
+     "texto": "El ARIMA($1,1,1$), porque menos diferencias es siempre mejor por parsimonia.",
+     "correcta": false,
+     "retro": "La conclusión acierta por casualidad pero el razonamiento no sirve. La parsimonia es un criterio para $p$ y $q$ una vez fijado $d$; el orden de diferenciación no se elige por parsimonia sino por si la serie tiene o no raíz unitaria."
+    },
+    {
+     "texto": "El que tenga mejor BIC, que sí es comparable entre distintos $d$.",
+     "correcta": false,
+     "retro": "El BIC tiene exactamente el mismo problema: también parte de $-2\\log L$, y esa verosimilitud está calculada sobre $n^{*} = n - d$ observaciones. Cambiar de criterio no arregla el que los datos sean distintos."
+    }
+   ],
+   "dibujar": "undefined"
+  },
+  {
+   "tipo": "numerica",
+   "modulo": 9,
+   "pregunta": "Para el ARIMA($1,1,1$) del Nilo, $\\hat\\sigma = 142.045$ y el primer peso es $\\psi_1 = 0.3802$ (con $\\psi_0 = 1$). ¿Cuánto vale $\\sigma_2$, la desviación del error de pronóstico a dos pasos? Da dos decimales.",
+   "pista": "La fórmula es $\\sigma_h = \\sigma\\sqrt{\\sum_{j=0}^{h-1}\\psi_j^2}$. Con $h = 2$ entran solo dos términos: $\\psi_0 = 1$ y $\\psi_1$.",
+   "respuesta": 151.97,
+   "tolerancia": 0.4,
+   "retroAcierto": "$142.045 \\times \\sqrt{1 + 0.3802^2} = 142.045 \\times 1.0699 = 151.97$. Fíjate en que crece poco: el intervalo a dos pasos es apenas un $7\\,\\%$ más ancho que a uno.",
+   "retroFallo": "Es $\\sigma_2 = \\sigma\\sqrt{\\psi_0^2 + \\psi_1^2} = 142.045\\sqrt{1 + 0.1445} = 151.97$. Los dos errores frecuentes: olvidar el término $\\psi_0 = 1$ (daría $54.0$), o sumar los $\\psi$ sin elevarlos al cuadrado. El $\\psi_0$ está siempre, y por eso $\\sigma_1 = \\sigma$ exactamente.",
+   "dibujar": "undefined"
+  },
+  {
+   "tipo": "grafico",
+   "modulo": 10,
+   "alto": 200,
+   "descripcionGrafico": "Correlograma de residuales con barras muy altas en los rezagos 12 y 24, y pequeñas en el resto",
+   "pregunta": "Esta es la ACF de los residuales de un ARIMA ajustado a una serie <strong>mensual</strong>. ¿Qué hay que hacer?",
+   "pista": "No mires solo si hay barras fuera de la banda: mira <em>en qué rezagos</em> están. ¿Tienen algo en común los números 12 y 24 en una serie mensual?",
+   "dibujar": "function",
+   "opciones": [
+    {
+     "texto": "Aumentar $q$ hasta que las barras entren en la banda.",
+     "correcta": false,
+     "retro": "Funcionaría en el sentido técnico, pero necesitarías $q = 24$ para alcanzar el rezago 24, es decir veinticuatro parámetros para describir un patrón que se repite cada doce meses. Un modelo estacional captura lo mismo con dos."
+    },
+    {
+     "texto": "Diferenciar una vez más: la autocorrelación alta indica no estacionariedad.",
+     "correcta": false,
+     "retro": "Diferenciar de nuevo en el rezago 1 no toca el patrón de los rezagos 12 y 24, y además introduciría la raíz unitaria en el MA que estudió el Módulo 8. Lo que hace falta aquí es una diferencia <strong>estacional</strong> $\\nabla_{12}$, que es otra cosa."
+    },
+    {
+     "texto": "Pasar a un modelo estacional: el patrón está en los múltiplos del período $m = 12$.",
+     "correcta": true,
+     "retro": "$\\hat\\rho_{12} = 0.72$ y $\\hat\\rho_{24} = 0.67$ frente a una banda de $0.163$: la estructura sobrante es exactamente estacional. Subir $q$ hasta 24 lo cubriría con dos docenas de parámetros; un SARIMA lo hace con dos. Es el Capítulo 5."
+    },
+    {
+     "texto": "Nada: la mayoría de las barras están dentro de la banda, así que el modelo es adecuado.",
+     "correcta": false,
+     "retro": "Contar cuántas barras se salen no basta, y aquí las que se salen lo hacen por un factor de cuatro. Ljung–Box(24) da $Q = 222.4$ con $p < 10^{-6}$: el rechazo es rotundo. Un patrón sistemático en pocos rezagos es peor señal que ruido repartido en muchos."
+    }
+   ]
+  },
+  {
+   "tipo": "multiple",
+   "modulo": 5,
+   "pregunta": "Marca <strong>todas</strong> las afirmaciones correctas sobre la constante en un modelo ARIMA.",
+   "pista": "Son tres. Piensa en: qué significa la constante cuando $d = 1$, qué hace <code>stats::arima</code> con <code>include.mean</code> si $d \\ge 1$, y qué grado de tendencia genera cada $d$.",
+   "opciones": [
+    {
+     "texto": "Con $d = 1$ la deriva, $\\mu_w = c/\\phi(1)$, es la media de las <em>diferencias</em>: una tendencia lineal en la serie.",
+     "correcta": true
+    },
+    {
+     "texto": "Con $d \\ge 1$, <code>stats::arima</code> ignora <code>include.mean</code> sin avisar.",
+     "correcta": true
+    },
+    {
+     "texto": "Sin constante, un modelo con $d = 2$ pronostica una parábola.",
+     "correcta": false
+    },
+    {
+     "texto": "Con $d \\ge 2$, <code>forecast::Arima</code> avisa y no ajusta la deriva.",
+     "correcta": true
+    },
+    {
+     "texto": "La constante de un ARIMA($p,0,q$) es la ordenada al origen de una regresión, no la media del proceso.",
+     "correcta": false
+    }
+   ],
+   "retroAcierto": "Las tres. Y las dos falsas son justo las que el capítulo desmiente midiendo: con $d = 2$ y sin constante la segunda diferencia del pronóstico tiende a cero ($\\nabla^2\\hat y \\to 0$), es decir a largo plazo sale una <strong>recta</strong>; y el <code>intercept</code> que devuelve R para un ARIMA($p,0,q$) <strong>es</strong> la media del proceso, $920.70$ en el Nilo, pese al nombre.",
+   "retroFallo": "Las tres correctas son las que hablan de la deriva con $d = 1$ (que es $\\mu_w = c/\\phi(1)$, no la $c$ de la ecuación salvo con $p = 0$), de <code>include.mean</code> con $d \\ge 1$ y de la deriva con $d \\ge 2$. Sobre las falsas: la parábola necesitaría constante <em>con</em> $d = 2$, y <code>forecast</code> se niega precisamente a eso; sin constante, el pronóstico con $d = 2$ es una recta (lo verifica el Módulo 9 midiendo $\\nabla^2\\hat y$). Y el <code>intercept</code> de R en un modelo con $d = 0$ es la media, no una ordenada al origen: el nombre despista.",
+   "dibujar": "undefined"
+  },
+  {
+   "tipo": "opcion",
+   "modulo": 3,
+   "pregunta": "Simulas $1000$ series de ruido blanco puro de longitud $100$ y les añades a todas un escalón en la posición $29$ (la de 1899 en el Nilo). ¿Con qué frecuencia rechaza KPSS la hipótesis de estacionariedad?",
+   "pista": "Recuerda cómo se construye el estadístico: sobre las <em>sumas parciales</em> de los residuales respecto de la media global. ¿Qué le pasa a esas sumas cuando todos los residuales de un tramo tienen el mismo signo?",
+   "opciones": [
+    {
+     "texto": "Prácticamente siempre, si el escalón es apreciable: con el del Nilo, el $100\\,\\%$ de las veces.",
+     "correcta": true,
+     "retro": "Es el experimento del Módulo 3. Sin escalón rechaza el $4.8\\,\\%$ —su tamaño nominal—, y con el escalón real del Nilo ($1.95$ desviaciones típicas) el $100\\,\\%$. Basta un escalón de $0.79$ desviaciones para llegar al $70.8\\,\\%$. KPSS no distingue una raíz unitaria de un cambio de nivel."
+    },
+    {
+     "texto": "Alrededor del $5\\,\\%$, porque las series son estacionarias por construcción.",
+     "correcta": false,
+     "retro": "Eso es lo que ocurre <strong>sin</strong> el escalón, y confirma que la prueba está bien calibrada: $4.8\\,\\%$ frente al $5\\,\\%$ nominal. Con el escalón la cosa cambia por completo, porque las sumas parciales dejan de compensarse y el estadístico se dispara."
+    },
+    {
+     "texto": "Nunca, porque KPSS solo detecta raíces unitarias y aquí no hay ninguna.",
+     "correcta": false,
+     "retro": "KPSS no prueba \"hay raíz unitaria\": su hipótesis nula es <strong>la serie es estacionaria alrededor de una media constante</strong>. Una serie con un escalón no lo es, así que la prueba rechaza con toda la razón. El error está en traducir su rechazo por \"hay que diferenciar\"."
+    },
+    {
+     "texto": "Depende del tamaño de la muestra, pero no del tamaño del escalón.",
+     "correcta": false,
+     "retro": "Depende de los dos, y la simulación lo muestra: con $n$ fijo en 100, la tasa de rechazo pasa de alrededor del $5\\,\\%$ al $100\\,\\%$ solo moviendo el tamaño del escalón $\\beta$. Mientras el escalón es pequeño, el estadístico crece aproximadamente como $n\\beta^2/\\hat\\sigma^2_{LP}$."
+    }
+   ],
+   "dibujar": "undefined"
+  },
+  {
+   "tipo": "grafico",
+   "modulo": 4,
+   "alto": 200,
+   "descripcionGrafico": "Correlograma cuyas barras decaen despacio desde 0.50 sin llegar a cortarse en veinte rezagos",
+   "pregunta": "Esta es la ACF de una serie <strong>sin diferenciar</strong>. ¿Qué se puede concluir sobre $p$ y $q$?",
+   "pista": "Antes de leer $p$ y $q$ en un correlograma hay que estar seguro de una cosa. ¿Qué condición exige la tabla de identificación del Capítulo 3?",
+   "dibujar": "function",
+   "opciones": [
+    {
+     "texto": "Es un AR de orden alto, porque hay muchas barras fuera de la banda.",
+     "correcta": false,
+     "retro": "Es el error de principiante más caro del capítulo. Un AR estacionario tiene una ACF que decae <strong>geométricamente</strong> y pronto entra en la banda; esta baja despacio y, pasado el rezago 3, sigue fuera de la banda en $8$ de los $17$ rezagos que quedan hasta el 20 (aún $0.237$ en el 13). Lo que ves no es memoria del proceso: es que el nivel de la serie se mueve."
+    },
+    {
+     "texto": "Es un MA($q$) con $q$ igual al número de barras significativas.",
+     "correcta": false,
+     "retro": "Un MA($q$) tiene la ACF <strong>exactamente</strong> cero a partir del rezago $q$ — un corte limpio, no un descenso gradual. Aquí no hay corte por ninguna parte."
+    },
+    {
+     "texto": "Que $d = 1$, porque el primer valor es $0.498$, cercano a $0.5$.",
+     "correcta": false,
+     "retro": "Que la serie no sea estacionaria es razonable, pero de ahí no sale $d = 1$, y el argumento tampoco sirve: el valor de $\\hat\\rho_1$ no determina $d$. Lo que indica no estacionariedad es la <strong>forma</strong> del decaimiento —lento y sin cortar—, no la altura de la primera barra. Un AR(1) con $\\phi = 0.5$ tendría también $\\rho_1 = 0.5$ y sería perfectamente estacionario."
+    },
+    {
+     "texto": "Nada todavía: esa forma indica no estacionariedad, y hay que resolver $d$ antes de leer $p$ y $q$.",
+     "correcta": true,
+     "retro": "Una ACF que decae despacio y no corta —aquí $0.498,\\ 0.385,\\ 0.328,\\ 0.239,\\dots$— es el retrato de una serie que no es estacionaria alrededor de una media fija: por una raíz unitaria o por un cambio de nivel como el de 1899 (Módulos 3 y 8). La tabla de identificación presupone estacionariedad; aplicarla aquí no informa de nada. Con $d = 1$, la ACF corta: solo destacan el rezago 1 ($-0.402$) y, aislado, el 8 ($0.231$)."
+    }
+   ]
+  },
+  {
+   "tipo": "opcion",
+   "modulo": 7,
+   "pregunta": "<code>auto.arima</code> devuelve un ARIMA($1,1,1$) con AICc $1267.507$. La búsqueda exhaustiva confirma que es el mínimo, y el séptimo clasificado tiene $1269.348$. ¿Qué se concluye?",
+   "pista": "¿Cuánta diferencia de AICc hace falta para distinguir dos modelos? Compara ese umbral con la distancia entre el primero y el séptimo.",
+   "opciones": [
+    {
+     "texto": "Que el ARIMA($1,1,1$) es el modelo verdadero, ya que lo confirman las dos búsquedas.",
+     "correcta": false,
+     "retro": "Que dos búsquedas coincidan dice que el <em>algoritmo</em> es consistente, no que el modelo sea verdadero. Ambas optimizan el mismo criterio sobre los mismos datos, así que coincidir es lo esperable. Y con siete candidatos a menos de $2$ puntos, el criterio apenas los separa."
+    },
+    {
+     "texto": "Que la búsqueda escalonada es innecesaria, porque la exhaustiva llega al mismo sitio.",
+     "correcta": false,
+     "retro": "Aquí llegaron al mismo sitio, pero eso no está garantizado: la escalonada explora un vecindario y puede quedarse en un óptimo local. Es la escalonada la que existe por eficiencia ($18$ modelos frente a $42$); precisamente por eso conviene contrastar con la completa en casos difíciles."
+    },
+    {
+     "texto": "Que hay siete modelos prácticamente indistinguibles, y conviene decirlo en vez de presentar un único ganador.",
+     "correcta": true,
+     "retro": "La diferencia entre el primero y el séptimo es de $1.84$ puntos, por debajo del umbral habitual de $2$. Entre esos siete está el ARIMA($0,1,1$) que proponía el correlograma. <code>auto.arima</code> no miente, pero su salida de una línea no comunica esa incertidumbre; <code>trace = TRUE</code> sí."
+    },
+    {
+     "texto": "Que como la diferencia es menor que $2$, hay que elegir el modelo con menos parámetros de los siete.",
+     "correcta": false,
+     "retro": "La parsimonia es un criterio razonable para desempatar y llevaría al ARIMA($0,1,1$), que es defendible. Pero la conclusión que pide la pregunta es previa: lo primero es <strong>reconocer que hay un empate</strong>. Elegir por parsimonia sin decir que había siete candidatos oculta la misma incertidumbre."
+    }
+   ],
+   "dibujar": "undefined"
+  },
+  {
+   "tipo": "numerica",
+   "modulo": 8,
+   "unidad": "",
+   "pregunta": "Ajustas un MA($1$) a $\\nabla^2$Nilo y obtienes $\\hat\\theta = -1.0000$. ¿Cuál es el módulo de la raíz del polinomio $\\theta(B) = 1 + \\hat\\theta B$? Da cuatro decimales.",
+   "pista": "La raíz de $1 + \\theta B = 0$ es $B = -1/\\theta$. Sustituye $\\theta = -1$ y toma el valor absoluto.",
+   "respuesta": 1,
+   "tolerancia": 0.002,
+   "retroAcierto": "La raíz es $B = -1/(-1) = 1$, de módulo $1.0000$: cae <strong>exactamente sobre el círculo unitario</strong>. Eso significa que $\\theta(B) = 1 - B$, el mismo operador de diferencia, así que el término MA está deshaciendo la segunda diferencia. Es la firma algebraica de la sobrediferenciación.",
+   "retroFallo": "La raíz de $1 + \\theta B$ es $B = -1/\\theta$, y con $\\theta = -1$ da $B = 1$, módulo $1.0000$. Si respondiste $-1$, te faltó el módulo; si respondiste $0$, quizá resolviste $\\theta B = 0$. Lo importante es la lectura: módulo exactamente $1$ significa no invertible, y aquí es porque $(1+\\theta B) = (1-B)$ cancela la diferencia que acabas de imponer.",
+   "dibujar": "undefined"
+  }
+ ],
+ "simulacro": {
+  "minutos": 40,
+  "variante": 9,
+  "preguntas": [
+   {
+    "n": 1,
+    "etiqueta": "cap. 3 · mód. 3.5 · autocorrelación de un ARMA(1,1)",
+    "tipo": "numero",
+    "enunciado": "<p>Un proceso ARMA(1,1) estacionario e invertible sigue yₜ = 0.57 yₜ₋₁ + εₜ + 0.25 εₜ₋₁, con εₜ ruido blanco de varianza σ² (convenio de R: el θ suma). ¿Cuánto vale su autocorrelación en el rezago 2, ρ₂? Responde con cuatro decimales, escritos con punto decimal (no con coma).</p>"
+   },
+   {
+    "n": 2,
+    "etiqueta": "cap. 3 · mód. 3.10 · revisar un informe de ajuste",
+    "tipo": "multiple",
+    "enunciado": "<p>Un asistente de IA recibió una serie de n = 120 observaciones y entregó el informe de abajo. Revísalo paso por paso.</p><ol><li><strong>Identificación.</strong> «La ACF se corta después del rezago 2 y la PACF decae: propongo un AR(2).»</li><li><strong>Ajuste.</strong><pre style=\"white-space:pre;overflow-x:auto;font-weight:400;font-size:0.78rem;line-height:1.45;margin:0.6rem 0;max-height:none;padding:0.8rem 1rem !important;\">&gt; fit &lt;- arima(y, order = c(2, 0, 0))\n&gt; fit\nCoefficients:\n         ar1      ar2  intercept\n      1.2254  -0.3688    67.1246\ns.e.  0.0853   0.0902     0.9829</pre></li><li><strong>Constante.</strong> «La media del proceso es el intercept que imprime arima(), \\(\\hat\\mu = 67.1246\\), y la constante es \\(c = \\hat\\mu(1 - \\hat\\phi_1 - \\hat\\phi_2) = 9.63\\).»</li><li><strong>Comparación.</strong> «Comparé con <code>arima(y, order = c(1, 1, 1))</code>: su AICc es 461.51, frente a 459.67 del AR(2). Me quedo con el AR(2).»</li><li><strong>Diagnóstico.</strong><pre style=\"white-space:pre;overflow-x:auto;font-weight:400;font-size:0.78rem;line-height:1.45;margin:0.6rem 0;max-height:none;padding:0.8rem 1rem !important;\">&gt; Box.test(residuals(fit), lag = 10, type = &quot;Ljung-Box&quot;, fitdf = 2)$p.value\n[1] 0.8784271</pre>«p > 0.05: no hay evidencia de estructura sobrante en los residuales.»</li><li><strong>Estacionariedad.</strong><pre style=\"white-space:pre;overflow-x:auto;font-weight:400;font-size:0.78rem;line-height:1.45;margin:0.6rem 0;max-height:none;padding:0.8rem 1rem !important;\">&gt; round(Mod(polyroot(c(67.1246, -1.2254, 0.3688))), 4)\n[1] 13.4910 13.4910</pre>«Las dos raíces quedan fuera del círculo unitario: el AR(2) estimado es estacionario.»</li></ol><p>¿Cuáles de estas afirmaciones son correctas?</p><p><em>Marca todas las que correspondan. Cada casilla bien resuelta suma y cada una mal resuelta resta, con piso en cero.</em></p>",
+    "opciones": [
+     "Error en el paso 1: si la ACF se corta en 2 y la PACF decae, lo que se sugiere es un MA(2), no un AR(2).",
+     "Error en el paso 3: la media no es el intercept; faltó dividirlo por (1 − φ̂₁ − φ̂₂), porque arima() llama intercept a la constante.",
+     "Error en el paso 4: el AICc de un ARIMA(1,1,1) no se compara con el de un AR(2), porque uno se ajusta a ∇y y el otro a y.",
+     "Error en el paso 5: sobró fitdf = 2; en un AR puro no se descuenta nada de los grados de libertad.",
+     "Error en el paso 6: sobró la media; el polinomio AR que recibe polyroot() empieza en 1, no en μ̂."
+    ]
+   },
+   {
+    "n": 3,
+    "etiqueta": "cap. 3 · mód. 3.5-3.6 · correlogramas muestrales",
+    "tipo": "coincidencia",
+    "enunciado": "<p>Cuatro series estacionarias de n = 300 observaciones. La tabla da sus autocorrelaciones muestrales simples (ACF) y parciales (PACF) en los rezagos 1 a 6; la banda al 95 % es ±0.113.</p><div style=\"overflow-x:auto; max-width:100%;\"><table style=\"border-collapse:collapse; margin:6px 0;\"><thead><tr><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">Serie</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">Función</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">k = 1</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">k = 2</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">k = 3</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">k = 4</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">k = 5</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">k = 6</th></tr></thead><tbody><tr><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\">A</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\">ACF (r<sub>k</sub>)</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.286</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.412</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.184</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.207</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.069</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.097</td></tr><tr><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\"></td><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\">PACF (φ̂<sub>kk</sub>)</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.286</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.360</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.008</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.029</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−0.053</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.009</td></tr><tr><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\">B</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\">ACF (r<sub>k</sub>)</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.819</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.551</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.384</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.276</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.203</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.169</td></tr><tr><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\"></td><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\">PACF (φ̂<sub>kk</sub>)</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.819</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−0.363</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.234</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−0.123</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.089</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.015</td></tr><tr><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\">C</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\">ACF (r<sub>k</sub>)</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−0.605</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.246</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−0.011</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.022</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−0.024</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−0.017</td></tr><tr><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\"></td><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\">PACF (φ̂<sub>kk</sub>)</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−0.605</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−0.190</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.084</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.160</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.066</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−0.070</td></tr><tr><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\">D</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\">ACF (r<sub>k</sub>)</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.653</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.468</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.355</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.230</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.159</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.134</td></tr><tr><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\"></td><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\">PACF (φ̂<sub>kk</sub>)</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.653</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.073</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.041</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−0.058</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.007</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.041</td></tr></tbody></table></div><p>Asocia cada serie con el modelo que sugiere su correlograma (módulos 3.5 y 3.6). Sobran dos modelos.</p>",
+    "filas": [
+     "Serie A",
+     "Serie B",
+     "Serie C",
+     "Serie D"
+    ],
+    "respuestas": [
+     "AR(1)",
+     "AR(2)",
+     "ARMA(1,1)",
+     "MA(1)",
+     "MA(2)",
+     "Ruido blanco"
+    ]
+   },
+   {
+    "n": 4,
+    "etiqueta": "cap. 3 · mód. 3.7 · Yule-Walker",
+    "tipo": "opcion",
+    "enunciado": "<p>De una serie de n = 90 observaciones se obtuvieron las autocovarianzas muestrales (con divisor n, como las calcula <code>acf()</code> de R) \\(\\hat\\gamma_0 = 16.0539\\), \\(\\hat\\gamma_1 = 11.8658\\) y \\(\\hat\\gamma_2 = 4.9091\\). Se quiere un AR(2).</p><p>¿Qué estimaciones da el método de Yule–Walker?</p>",
+    "opciones": [
+     "\\(\\hat\\phi_1 = 1.2692,\\ \\hat\\phi_2 = −0.5301\\)",
+     "\\(\\hat\\phi_1 = 0.9169,\\ \\hat\\phi_2 = −0.2405\\)",
+     "\\(\\hat\\phi_1 = 1.1309,\\ \\hat\\phi_2 = −0.5301\\)",
+     "\\(\\hat\\phi_1 = 0.9796,\\ \\hat\\phi_2 = −0.2405\\)"
+    ]
+   },
+   {
+    "n": 5,
+    "etiqueta": "cap. 3 · mód. 3.8 · criterios de información",
+    "tipo": "orden",
+    "enunciado": "<p>Se ajustaron por máxima verosimilitud, todos con media, cuatro modelos a la misma serie de n = 40 observaciones. Sus log-verosimilitudes:</p><div style=\"overflow-x:auto; max-width:100%;\"><table style=\"border-collapse:collapse; margin:6px 0;\"><thead><tr><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">Modelo</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">log L</th></tr></thead><tbody><tr><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\">MA(1)</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−54.460</td></tr><tr><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\">AR(1)</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−59.190</td></tr><tr><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\">MA(2)</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−52.821</td></tr><tr><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\">ARMA(1,1)</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−53.428</td></tr></tbody></table></div><p>Ordénalos por el AICc, del mejor (arriba) al peor (módulo 3.8). Solo puntúa el orden completo.</p>",
+    "elementos": [
+     "MA(1)",
+     "AR(1)",
+     "MA(2)",
+     "ARMA(1,1)"
+    ]
+   },
+   {
+    "n": 6,
+    "etiqueta": "cap. 3 · mód. 3.9 · intervalo en la escala original",
+    "tipo": "numero",
+    "enunciado": "<p>Una serie anual de conteos tiene una amplitud que crece con su nivel. Como en el caso de las manchas solares (módulo 3.9), se ajustó un AR(2) a xₜ = √yₜ y se obtuvo φ̂₁ = 1.22, φ̂₂ = −0.58 y σ̂² = 2.14 (la varianza de las innovaciones, en la escala de la raíz). El pronóstico puntual a dos pasos en esa escala es x̂ = 5.83. ¿Cuál es el límite superior del intervalo de predicción al 95 % para y a dos pasos, en la escala original de la serie? Usa 1.96. Responde con dos decimales, escritos con punto decimal (no con coma).</p>"
+   },
+   {
+    "n": 7,
+    "etiqueta": "cap. 4 · mód. 4.1 · el modelo escrito con B",
+    "tipo": "coincidencia",
+    "enunciado": "<p>Cada fila es un modelo escrito con el operador de rezago B, con el convenio de R (los θ suman: (1 + θB)εₜ). φ₁* y φ₂* son los coeficientes del modelo escrito en niveles, yₜ = φ₁* yₜ₋₁ + φ₂* yₜ₋₂ + εₜ. Asocia cada modelo con lo que es (módulo 4.1). Sobran cinco respuestas.</p>",
+    "filas": [
+     "(1 − B) yₜ = (1 − 0.32B) εₜ",
+     "(1 + 0.25B)(1 − B) yₜ = (1 − 0.96B) εₜ",
+     "(1 − 0.65B)(1 − B) yₜ = εₜ",
+     "(1 − B) yₜ = 1.4 + εₜ",
+     "(1 − B)² yₜ = (1 − 1.25B + 0.45B²) εₜ"
+    ],
+    "respuestas": [
+     "Un MA con raíz en B = 1.042, fuera del círculo unitario: no sobra nada",
+     "Un ruido blanco con media fija de 1.4",
+     "Un AR(2) en niveles con φ₁* = 1.65 y φ₂* = −0.65",
+     "Equivale al método de Holt con tendencia",
+     "Una caminata aleatoria con deriva 1.4",
+     "Equivale al suavizamiento exponencial simple",
+     "Equivale a una caminata aleatoria sin deriva",
+     "Un MA con raíz en B = 1.042, casi igual a (1 − B): sobra la diferencia",
+     "Un AR(2) en niveles con φ₁* = 0.35 y φ₂* = −0.65",
+     "Equivale a una recta más un ruido blanco"
+    ]
+   },
+   {
+    "n": 8,
+    "etiqueta": "cap. 4 · mód. 4.2 y 3.8 · Ljung-Box y grados de libertad",
+    "tipo": "opcion",
+    "enunciado": "<p>Se ajustó un ARIMA(2,1,1) por máxima verosimilitud a una serie de n = 150 observaciones y se corrió Ljung–Box sobre sus residuales, sin más argumentos (R llama X-squared al estadístico Q):</p><pre style=\"white-space:pre;overflow-x:auto;font-weight:400;font-size:0.78rem;line-height:1.45;margin:0.6rem 0;max-height:none;padding:0.8rem 1rem !important;\">&gt; fit &lt;- arima(y, order = c(2, 1, 1), method = &quot;ML&quot;)\n&gt; Box.test(residuals(fit), lag = 16, type = &quot;Ljung-Box&quot;)\n\n    Box-Ljung test\n\ndata:  residuals(fit)\nX-squared = 23.329, df = 16, p-value = 0.1052</pre><p>Algunos cuantiles 0.95 de la distribución χ²:</p><div style=\"overflow-x:auto; max-width:100%;\"><table style=\"border-collapse:collapse; margin:6px 0;\"><thead><tr><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">gl</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">6</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">7</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">8</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">9</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">10</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">11</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">12</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">13</th></tr></thead><tbody><tr><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\">χ²<sub>0.95</sub></td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">12.59</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">14.07</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">15.51</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">16.92</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">18.31</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">19.68</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">21.03</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">22.36</td></tr></tbody></table></div><div style=\"overflow-x:auto; max-width:100%;\"><table style=\"border-collapse:collapse; margin:6px 0;\"><thead><tr><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">gl</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">14</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">15</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">16</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">17</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">18</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">19</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">20</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">21</th></tr></thead><tbody><tr><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\">χ²<sub>0.95</sub></td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">23.68</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">25.00</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">26.30</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">27.59</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">28.87</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">30.14</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">31.41</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">32.67</td></tr></tbody></table></div><p>¿Qué afirmación es correcta, al 5 %?</p>",
+    "opciones": [
+     "Con 13 grados de libertad, Q = 23.329 supera el valor crítico: se rechaza que los residuales sean ruido blanco.",
+     "Con 12 grados de libertad, Q = 23.329 supera el valor crítico: se rechaza que los residuales sean ruido blanco.",
+     "Con 15 grados de libertad, Q = 23.329 no llega al valor crítico: no se rechaza que los residuales sean ruido blanco.",
+     "Con 16 grados de libertad, Q = 23.329 no llega al valor crítico: no se rechaza que los residuales sean ruido blanco."
+    ]
+   },
+   {
+    "n": 9,
+    "etiqueta": "cap. 4 · mód. 4.3 · ADF, PP y KPSS",
+    "tipo": "multiple",
+    "enunciado": "<p>Para decidir el orden de diferenciación d de una serie de n = 120 observaciones se corrieron en R las tres pruebas del módulo 4.3 (paquete <code>tseries</code>):</p><pre style=\"white-space:pre;overflow-x:auto;font-weight:400;font-size:0.78rem;line-height:1.45;margin:0.6rem 0;max-height:none;padding:0.8rem 1rem !important;\">&gt; adf.test(y)\n\n    Augmented Dickey-Fuller Test\n\ndata:  y\nDickey-Fuller = -2.7522, Lag order = 4, p-value = 0.2642\nalternative hypothesis: stationary\n\n\n&gt; pp.test(y)\n\n    Phillips-Perron Unit Root Test\n\ndata:  y\nDickey-Fuller Z(alpha) = -50.66, Truncation lag parameter = 4, p-value = 0.01\nalternative hypothesis: stationary\n\nWarning message:\nIn pp.test(y) : p-value smaller than printed p-value\n\n&gt; kpss.test(y)\n\n    KPSS Test for Level Stationarity\n\ndata:  y\nKPSS Level = 1.5885, Truncation lag parameter = 4, p-value = 0.01\n\nWarning message:\nIn kpss.test(y) : p-value smaller than printed p-value</pre><p>Al 5 %, ¿qué afirmaciones son correctas?</p><p><em>Marca todas las que correspondan. Cada casilla bien resuelta suma y cada una mal resuelta resta, con piso en cero.</em></p>",
+    "opciones": [
+     "ADF apunta a diferenciar la serie.",
+     "KPSS apunta a no diferenciar la serie.",
+     "PP apunta a diferenciar la serie.",
+     "ADF y KPSS apuntan a la misma decisión sobre d.",
+     "PP y KPSS apuntan a decisiones opuestas sobre d."
+    ]
+   },
+   {
+    "n": 10,
+    "etiqueta": "cap. 4 · mód. 4.3-4.4 · elegir d, p y q",
+    "tipo": "opcion",
+    "enunciado": "<p>Para una serie de n = 151 observaciones se calcularon, para d = 0, 1 y 2, la varianza de \\(\\nabla^d y_t\\), sus autocorrelaciones simples \\(r_k\\) (ACF) y parciales \\(\\hat\\phi_{kk}\\) (PACF) en los rezagos 1 a 4, y la banda \\(\\pm 1.96/\\sqrt{n}\\):</p><div style=\"overflow-x:auto; max-width:100%;\"><table style=\"border-collapse:collapse; margin:6px 0;\"><thead><tr><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">d</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">n</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">varianza</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">banda</th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">r<sub>1</sub></th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">r<sub>2</sub></th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">r<sub>3</sub></th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">r<sub>4</sub></th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">φ̂<sub>11</sub></th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">φ̂<sub>22</sub></th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">φ̂<sub>33</sub></th><th style=\"border:1px solid #999; padding:3px 7px; text-align:center\">φ̂<sub>44</sub></th></tr></thead><tbody><tr><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\">0</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">151</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">67.21</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">±0.160</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.962</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.912</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.862</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.811</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.962</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−0.169</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−0.012</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−0.043</td></tr><tr><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\">1</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">150</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">1.70</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">±0.160</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.411</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.025</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.011</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.013</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.411</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−0.172</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">0.086</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−0.028</td></tr><tr><td style=\"border:1px solid #999; padding:3px 7px; text-align:left\">2</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">149</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">2.01</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">±0.161</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−0.172</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−0.315</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−0.015</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−0.019</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−0.172</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−0.355</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−0.177</td><td style=\"border:1px solid #999; padding:3px 7px; text-align:right\">−0.217</td></tr></tbody></table></div><p>Siguiendo los módulos 4.3 y 4.4, ¿qué modelo se propone como punto de partida?</p>",
+    "opciones": [
+     "ARIMA(1,0,0)",
+     "ARIMA(0,0,1)",
+     "ARIMA(1,1,0)",
+     "ARIMA(0,1,1)"
+    ]
+   }
+  ]
+ },
+ "claves": [
+  "cap4"
+ ],
+ "claves_sim": [
+  "cap4-simulacro"
+ ],
+ "cursoMods": [
+  "De ARMA a ARIMA",
+  "La metodología Box–Jenkins",
+  "Elegir el orden d",
+  "Identificar p y q",
+  "La constante: media y deriva",
+  "Estimar y comparar modelos",
+  "Dentro de auto.arima",
+  "Diagnóstico y errores comunes",
+  "Pronóstico: forma e intervalos",
+  "Caso TRM, puente y cierre",
+  "Simulacro del quiz",
+  "Preparcial del Corte II"
+ ]
+}
