@@ -1,0 +1,92 @@
+
+=== ANTES de la R5 (5c2fdb3) ===
+ítem tipo      longitudes (✔ = correcta)                    correcta más larga media dist.  ¿la correcta es la más larga?
+Q1   opcion    65  36  33  80✔                                    80        80        44.7  SÍ
+Q2   numerica  (sin opciones)
+Q3   grafico   55  59✔  53  38                                    59        59        48.7  SÍ
+Q4   numerica  (sin opciones)
+Q5   multiple  44  77✔  53  86✔  79✔                               -        86        48.5  (múltiple) media correctas 80.7 · media falsas 48.5
+Q6   opcion    104  84  85  85✔                                   85       104        91.0  no
+Q7   numerica  (sin opciones)
+Q8   opcion    61  63  101✔  52                                  101       101        58.7  SÍ
+Q9   grafico   79✔  73  68  67                                    79        79        69.3  SÍ
+Q10  multiple  96✔  83  76✔  87  96✔                               -        96        85.0  (múltiple) media correctas 89.3 · media falsas 85.0
+-> eligiendo siempre la opción más larga se aciertan 4 de 5 ítems de una sola respuesta; eligiendo siempre la más corta, 0
+   Q5 (múltiple, 3 correctas): las 3 más largas son las correctas: SÍ; las 3 más cortas: no
+   Q10 (múltiple, 3 correctas): las 3 más largas son las correctas: no; las 3 más cortas: no
+   Q1    65  No, porque las raíces deberían estar dentro del círculo unitario.
+   Q1    36  No, porque 1 + 2 = -0.3 es negativo.
+   Q1    33  No se puede saber sin conocer ^2.
+   Q1 ✔  80  Sí, porque el módulo es mayor que 1: las raíces caen fuera del círculo unitario.
+   Q3    55  Un AR(2): tiene dos barras significativas, luego p = 2.
+   Q3 ✔  59  Un MA(2): la ACF se corta tras el rezago 2 y la PACF decae.
+   Q3    53  Un ARMA(2,2), porque hay dos rezagos en cada función.
+   Q3    38  Ruido blanco con dos valores atípicos.
+   Q5    44  Un MA no invertible tampoco es estacionario.
+   Q5 ✔  77  Si || > 1 en un MA(1), los pesos de la representación AR() crecen sin límite.
+   Q5    53  La invertibilidad se comprueba con las raíces de (B).
+   Q5 ✔  86  Los valores y 1/ producen exactamente la misma ACF, así que ningún dato los distingue.
+   Q5 ✔  79  arima() devuelve siempre la solución invertible, aunque hayas simulado la otra.
+   Q6   104  Me quedo con el ARMA(1,1): los dos coeficientes son grandes en valor absoluto, así que los dos importan.
+   Q6    84  Paso a un ARMA(2,2): si el optimizador no converge, es que el modelo se queda corto.
+   Q6    85  Diferencio la serie: unos coeficientes tan inestables indican que no es estacionaria.
+   Q6 ✔  85  Pruebo AR(1), MA(1) y ruido blanco, y los comparo por AICc antes de interpretar nada.
+   Q8    61  Ninguno: Box.test() descuenta los parámetros automáticamente.
+   Q8    63  Falta fitdf = 3, y sin él la prueba rechaza demasiado a menudo.
+   Q8 ✔ 101  Falta fitdf = 3: sin él la prueba usa demasiados grados de libertad y se vuelve demasiado indulgente.
+   Q8    52  El rezago 12 es demasiado alto para una serie anual.
+   Q9 ✔  79  Rechazo el modelo: quedan autocorrelaciones grandes, hay que aumentar el orden.
+   Q9    73  Lo acepto: uno o dos picos fuera de la banda son normales con 20 rezagos.
+   Q9    68  Diferencio la serie, porque la ACF de los residuales decae despacio.
+   Q9    67  Aplico una transformación logarítmica para estabilizar la varianza.
+   Q10 ✔  96  Yule–Walker solo sirve para modelos AR puros, porque parte de las ecuaciones de momentos del AR.
+   Q10    83  Los tres métodos dan siempre las mismas estimaciones salvo por errores de redondeo.
+   Q10 ✔  76  CSS ignora la contribución de las primeras observaciones a la verosimilitud.
+   Q10    87  El ^2 de Yule–Walker es comparable con el de máxima verosimilitud para calcular el AIC.
+   Q10 ✔  96  Por defecto arima() usa "CSS-ML": arranca con CSS y termina maximizando la verosimilitud exacta.
+
+=== DESPUÉS de la R5 (archivo de trabajo) ===
+ítem tipo      longitudes (✔ = correcta)                    correcta más larga media dist.  ¿la correcta es la más larga?
+Q1   opcion    84  77  82  81✔                                    81        84        81.0  no
+Q2   numerica  (sin opciones)
+Q3   grafico   58  59✔  61  59                                    59        61        59.3  no
+Q4   numerica  (sin opciones)
+Q5   multiple  63  56✔  61  66✔  70                                -        70        64.7  (múltiple) media correctas 61.0 · media falsas 64.7
+Q6   opcion    97  95  91  93✔                                    93        97        94.3  no
+Q7   numerica  (sin opciones)
+Q8   opcion    77  71  77✔  79                                    77        79        75.7  no
+Q9   grafico   80✔  79  83  82                                    80        83        81.3  no
+Q10  multiple  81✔  99  83✔  81  94✔                               -        99        90.0  (múltiple) media correctas 86.0 · media falsas 90.0
+-> eligiendo siempre la opción más larga se aciertan 0 de 5 ítems de una sola respuesta; eligiendo siempre la más corta, 0
+   Q5 (múltiple, 2 correctas): las 2 más largas son las correctas: no; las 2 más cortas: no
+   Q10 (múltiple, 3 correctas): las 3 más largas son las correctas: no; las 3 más cortas: no
+   Q1    84  No: para ser estacionario, sus raíces tendrían que caer dentro del círculo unitario.
+   Q1    77  No: 1 + 2 = -0.3 es negativo, y con esa suma el proceso no puede ser estable.
+   Q1    82  No se puede saber: falta conocer ^2, la varianza del ruido blanco que lo alimenta.
+   Q1 ✔  81  Sí: el módulo es mayor que 1, así que las raíces caen fuera del círculo unitario.
+   Q3    58  Un AR(2): hay dos barras distintas de cero, así que p = 2.
+   Q3 ✔  59  Un MA(2): la ACF se corta tras el rezago 2 y la PACF decae.
+   Q3    61  Un ARMA(2,2): hay dos rezagos activos en cada una de las dos.
+   Q3    59  Ruido blanco con dos autocorrelaciones altas por puro azar.
+   Q5    63  La serie simulada no es estacionaria, porque || es mayor que 1.
+   Q5 ✔  56  Su 1 coincide con la de otro MA(1), el que tiene = -0.4.
+   Q5    61  Sus pesos se apagan con el rezago, porque |1| no llega a 0.5.
+   Q5 ✔  66  Con sus opciones por defecto, arima() devolverá un cercano a -0.4.
+   Q5    70  El ^2 de ese ajuste quedará cerca de 1, la varianza con que se simuló.
+   Q6    97  Me quedo con el ARMA(1,1): los dos coeficientes son grandes en valor absoluto y los dos importan.
+   Q6    95  Paso a un ARMA(2,2): con errores estándar tan grandes, al modelo le hacen falta más parámetros.
+   Q6    91  Diferencio la serie: unos coeficientes tan mal determinados indican que no es estacionaria.
+   Q6 ✔  93  Pruebo AR(1), MA(1) y ruido blanco, y los comparo por AICc antes de interpretar coeficientes.
+   Q8    77  Ninguno: Box.test() descuenta por sí sola los parámetros del modelo ajustado.
+   Q8    71  Falta fitdf = 3: sin él la prueba es demasiado severa y rechaza de más.
+   Q8 ✔  77  Falta fitdf = 3: sin él la prueba es demasiado indulgente y rechaza de menos.
+   Q8    79  El problema es lag = 12: con un h tan alto la prueba ya no puede detectar nada.
+   Q9 ✔  80  Rechazo el modelo: quedan autocorrelaciones grandes y hay que aumentar el orden.
+   Q9    79  Lo acepto: con 20 rezagos, una o dos barras fuera de la banda son lo esperable.
+   Q9    83  Diferencio la serie: la ACF de los residuales decae despacio, como en una caminata.
+   Q9    82  Aplico el logaritmo: barras tan altas indican una varianza que crece con el nivel.
+   Q10 ✔  81  Yule–Walker estima bastante bien un AR puro y es muy ineficiente si hay parte MA.
+   Q10    99  Con la misma serie y el mismo modelo, los tres métodos dan lo mismo, salvo diferencias de redondeo.
+   Q10 ✔  83  CSS condiciona en las primeras observaciones e ignora su aporte a la verosimilitud.
+   Q10    81  El ^2 que devuelve ar() y el de arima() son intercambiables para calcular un AIC.
+   Q10 ✔  94  Sin indicar método, arima() usa "CSS-ML": empieza con CSS y acaba con la verosimilitud exacta.

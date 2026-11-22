@@ -1,0 +1,61 @@
+library(forecast)
+
+# (a) Hay que transformar? La elasticidad amplitud-nivel del modulo,
+#     en bloques de 10 anios
+elasticidad <- function(x, k) {
+  g <- rep(seq_len(length(x) %/% k), each = k)
+  x <- as.numeric(x)[seq_along(g)]
+  niv <- tapply(x, g, mean); amp <- tapply(x, g, sd)
+  aj <- lm(log(amp) ~ log(niv))
+  c(b = coef(aj)[[2]], confint(aj)[2, ], R2 = summary(aj)$r.squared)
+}
+round(elasticidad(lynx, 10), 3)
+#>      b  2.5 % 97.5 %     R2 
+#>  0.904  0.542  1.266  0.780 
+min(lynx)                      # sin ceros: el logaritmo SI es una opcion
+#> [1] 39
+round(BoxCox.lambda(lynx, method = "guerrero"), 4)
+#> [1] 0.1522
+
+# (b) La rejilla del Modulo 8 (los once candidatos) en las dos escalas
+aicc <- function(f, n) { k <- length(f$coef) + 1; f$aic + 2*k*(k+1)/(n-k-1) }
+rejilla <- list(c(1,0), c(2,0), c(3,0), c(4,0), c(0,1), c(0,2), c(0,3),
+                c(1,1), c(2,1), c(1,2), c(2,2))
+compara <- function(x) do.call(rbind, lapply(rejilla, function(pq) {
+  aj <- suppressWarnings(arima(x, order = c(pq[1], 0, pq[2]), method = "ML"))
+  data.frame(modelo = sprintf("ARMA(%d,%d)", pq[1], pq[2]),
+             AICc = round(aicc(aj, length(x)), 2), BIC = round(BIC(aj), 2),
+             LB12 = round(Box.test(residuals(aj), lag = 12, type = "Ljung-Box",
+                                   fitdf = sum(pq))$p.value, 4))
+}))
+cruda <- compara(lynx); logar <- compara(log(lynx))
+cruda[order(cruda$AICc), ][1:4, ]
+#>       modelo    AICc     BIC   LB12
+#> 4  ARMA(4,0) 1875.01 1890.64 0.0636
+#> 11 ARMA(2,2) 1876.95 1892.58 0.1143
+#> 2  ARMA(2,0) 1878.40 1888.98 0.0312
+#> 9  ARMA(2,1) 1880.01 1893.14 0.0056
+logar[order(logar$AICc), ][1:4, ]
+#>       modelo   AICc    BIC   LB12
+#> 4  ARMA(4,0) 183.56 199.19 0.0090
+#> 2  ARMA(2,0) 185.52 196.09 0.0132
+#> 3  ARMA(3,0) 186.11 199.23 0.0042
+#> 11 ARMA(2,2) 186.53 202.16 0.0097
+mejor <- function(t) c(AICc = t$modelo[which.min(t$AICc)], BIC = t$modelo[which.min(t$BIC)])
+rbind(cruda = mejor(cruda), logaritmo = mejor(logar))
+#>           AICc        BIC        
+#> cruda     "ARMA(4,0)" "ARMA(2,0)"
+#> logaritmo "ARMA(4,0)" "ARMA(2,0)"
+
+# (c) El AR(2) en cada escala: pseudo-periodo, Ljung-Box y normalidad de los residuales
+mira <- function(x) {
+  f <- arima(x, order = c(2, 0, 0), method = "ML")
+  c(phi1 = coef(f)[["ar1"]], phi2 = coef(f)[["ar2"]],
+    pseudoperiodo = 2 * pi / Arg(polyroot(c(1, -coef(f)[1:2]))[1]),
+    LB12 = Box.test(residuals(f), lag = 12, type = "Ljung-Box", fitdf = 2)$p.value,
+    Shapiro = shapiro.test(residuals(f))$p.value)
+}
+round(rbind(cruda = mira(lynx), logaritmo = mira(log(lynx))), 4)
+#>             phi1    phi2 pseudoperiodo   LB12 Shapiro
+#> cruda     1.1474 -0.5997        8.5311 0.0312  0.0000
+#> logaritmo 1.3776 -0.7399        9.7839 0.0132  0.6401

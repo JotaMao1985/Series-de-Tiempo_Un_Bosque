@@ -335,19 +335,20 @@ html = recortar(
         // código), leyendo también la pista y la solución de cada ejercicio.
         // No incluyen el tiempo de resolverlos, los desarrollos plegados
         // (unos 9 min entre siete módulos), la autoevaluación y la práctica de
-        // repaso del Módulo 10 (unos 17 y 29 min de lectura) ni, en el
+        // repaso del Módulo 10 (unos 23 y 29 min de lectura) ni, en el
         // Módulo 11, nada de lo escrito: sus 30 min son el reloj del ensayo.
-        // Medida: diagnostico/cap3/comprobaciones/r3_minutos.py (2026-11-21).
-        { id: 1, title: "Operador de rezago", shortTitle: "Operador B", duration: "10 min" },
-        { id: 2, title: "Procesos AR(p)", shortTitle: "AR(p)", duration: "14 min" },
-        { id: 3, title: "Procesos MA(q)", shortTitle: "MA(q)", duration: "15 min" },
-        { id: 4, title: "Dualidad AR ↔ MA", shortTitle: "Dualidad", duration: "13 min" },
-        { id: 5, title: "ARMA e identificación", shortTitle: "ARMA", duration: "18 min" },
-        { id: 6, title: "Simular y reconocer procesos", shortTitle: "Simulación", duration: "7 min" },
-        { id: 7, title: "Estimación de parámetros", shortTitle: "Estimación", duration: "9 min" },
+        // Medida: diagnostico/cap3/comprobaciones/r3_minutos.py (2026-11-21, tras la
+        // R5: cada módulo del 1 al 9, salvo el 8, lleva un «Para practicar»).
+        { id: 1, title: "Operador de rezago", shortTitle: "Operador B", duration: "15 min" },
+        { id: 2, title: "Procesos AR(p)", shortTitle: "AR(p)", duration: "19 min" },
+        { id: 3, title: "Procesos MA(q)", shortTitle: "MA(q)", duration: "20 min" },
+        { id: 4, title: "Dualidad AR ↔ MA", shortTitle: "Dualidad", duration: "18 min" },
+        { id: 5, title: "ARMA e identificación", shortTitle: "ARMA", duration: "24 min" },
+        { id: 6, title: "Simular y reconocer procesos", shortTitle: "Simulación", duration: "12 min" },
+        { id: 7, title: "Estimación de parámetros", shortTitle: "Estimación", duration: "14 min" },
         { id: 8, title: "Criterios de información y diagnóstico", shortTitle: "Diagnóstico", duration: "11 min" },
-        { id: 9, title: "Dos casos reales", shortTitle: "Casos reales", duration: "31 min" },
-        { id: 10, title: "Cierre: redes, resumen y evaluación", shortTitle: "Cierre", duration: "22 min" },
+        { id: 9, title: "Dos casos reales", shortTitle: "Casos reales", duration: "37 min" },
+        { id: 10, title: "Cierre: redes, resumen y evaluación", shortTitle: "Cierre", duration: "26 min" },
         { id: 11, title: "Simulacro del quiz", shortTitle: "Simulacro", duration: "30 min" }
 """,
     "courseData.modules")

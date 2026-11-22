@@ -1,0 +1,51 @@
+# Cuantas de las 20 primeras barras salen de la banda +-1.96/sqrt(T)
+fuera <- function(x, rezagos = 1:20) {
+  r <- acf(x, lag.max = 20, plot = FALSE)$acf[-1]
+  sum(abs(r[rezagos]) > 1.96 / sqrt(length(x)))
+}
+
+# (a) La cuenta de partida: 20 barras, cada una fuera con probabilidad 0.05
+#     e independientes entre si
+round(c(esperadas = 20 * 0.05, ninguna = dbinom(0, 20, 0.05),
+        dos_o_mas = 1 - pbinom(1, 20, 0.05)), 3)
+#> esperadas   ninguna dos_o_mas 
+#>     1.000     0.358     0.264 
+
+# (b) Ruido blanco: 2000 series de cada longitud
+set.seed(36)
+rb <- sapply(c(50, 200, 1000), function(n) {
+  k <- replicate(2000, fuera(rnorm(n)))
+  c(T = n, media = mean(k), ninguna = mean(k == 0), dos_o_mas = mean(k >= 2))
+})
+round(t(rb), 3)
+#>         T media ninguna dos_o_mas
+#> [1,]   50 0.528   0.619     0.104
+#> [2,]  200 0.845   0.440     0.206
+#> [3,] 1000 0.984   0.349     0.241
+
+# (c) Un MA(1) con theta = 0.8 y T = 200: los rezagos 2 a 20, donde la ACF
+#     teorica vale exactamente cero
+set.seed(36)
+ma <- replicate(2000, fuera(arima.sim(n = 200, model = list(ma = 0.8)), rezagos = 2:20))
+round(c(esperadas_si_fuera_ruido_blanco = 19 * 0.05, media = mean(ma),
+        dos_o_mas = mean(ma >= 2)), 3)
+#> esperadas_si_fuera_ruido_blanco                           media 
+#>                           0.950                           1.782 
+#>                       dos_o_mas 
+#>                           0.498 
+
+# La misma cuenta con una banda que tiene en cuenta rho_1:
+# 1.96 * sqrt((1 + 2 rho_1^2) / T)
+rho1 <- 0.8 / (1 + 0.8^2)
+ancha <- 1.96 * sqrt((1 + 2 * rho1^2) / 200)
+round(c(banda = 1.96 / sqrt(200), banda_ancha = ancha), 4)
+#>       banda banda_ancha 
+#>      0.1386      0.1684 
+set.seed(36)
+ma2 <- replicate(2000, {
+  x <- arima.sim(n = 200, model = list(ma = 0.8))
+  r <- acf(x, lag.max = 20, plot = FALSE)$acf[-1]
+  sum(abs(r[2:20]) > ancha)
+})
+round(mean(ma2), 3)
+#> [1] 0.79

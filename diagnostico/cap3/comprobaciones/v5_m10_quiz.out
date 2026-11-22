@@ -1,0 +1,60 @@
+
+## lynx: que ajuste da el aviso de convergencia 
+AVISO en ARMA( 2 , 1 ) escala n= 114  media= 6.7 : possible convergence problem: optim gave code = 1 
+
+## Ejercicio 1 · lh 
+banda: 0.2829016 
+AICc: 65.30378 63.99079  BIC: 70.37193 70.54537 
+LB10: 0.4050464 0.8491798 
+theta2, t: 0.3753261 2.907284 
+          1      2       3
+[1,] 0.5755 0.1818 -0.1448
+[2,] 0.5739 0.3294  0.1891
+[3,] 0.5808 0.2355  0.0000
+SW: 0.008348901 0.02640408 
+auto.arima: ARIMA(1,0,0) with non-zero mean | ARIMA(0,0,2) with non-zero mean 
+phi y ee AR(1): 0.573937 0.1161398 2.413264 
+
+## Ejercicio 2 · MA(2) 
+triangulo: 1.1 -0.7 0.2  raices: -2-2.916514e-15i -2.5+2.916514e-15i 
+rho a mano: 0.5837838 0.1081081 
+        0         1         2         3         4 
+1.0000000 0.5837838 0.1081081 0.0000000 0.0000000 
+        0         1         2         3         4 
+1.0000000 0.5837838 0.1081081 0.0000000 0.0000000 
+(1+2B)(1+0.4B): 1 2.4 0.8  raices: -0.5-2.728654e-15i -2.5+2.728654e-15i 
+theta= 3 1.25 ACF: 0.5838 0.1081  |raices|: 0.4 2 
+theta= 4.5 5 ACF: 0.5838 0.1081  |raices|: 0.4 0.5 
+seed 2 arima: 0.9035059 0.2298529 4.03508 
+
+## Ejercicio 3 · ventanas 
+1770 1869 100 1.4027 -0.6853 0.0727 0.0724 11.218 0.1644 
+1700 1988 289 1.4086 -0.7006 0.0427 0.0427 11.007 2.614e-07 
+1870 1988 119 1.4219 -0.7321 0.0645 0.0644 10.648 0.000668 
+1900 1988 89 1.4146 -0.7556 0.0718 0.0721 10.129 0.001016 
+1889 1988 100 1.4101 -0.7431 0.0689 0.0688 10.249 0.0006011 
+
+## Quiz 
+P1 |raiz|: 1.054093 1.054093  triangulo: 0.3 -2.1 
+P2 gamma1: 1.68  distractores: solo e_t-1 2.4  sin s2 0.42  signo 3.12  rho1 0.2896552  gamma2 -1.2 
+P2 comprobacion por simulacion: 1.679135 
+P3 PROCESOS.ma2 ACF teorica: 0.5526 0.2632 0 0 
+P4: 5.45  sin s2 1.09  sin psi0 0.45  psi1=phi 6.8  signo 9.05  sin cuadrado 6.5  hasta h 5.612 
+P4 con psi de ARMAtoMA: 5.45 
+M4 practica: phi+theta = 0.3  factor h=2: 1.09  => P4 = 5 x 1.09 
+P5 rho1: -0.3448276 -0.3448276  raiz: 0.4+0i  pi: 2.5 6.25 15.625  g0,g1: 7.25 -2.5 7.25 -2.5 
+P5 seed35: -0.4046034 6.576643 
+P5 200 semillas: theta media -0.4006739  rango -0.4559559 -0.3448618  s2 media 6.22912  rango 5.841767 6.706229 
+P6: -0.5985809 0.6726522 -0.003926109 0.380627 0.347467 0.09543691 
+P6 t: -1.572618 1.935873  suma: 0.07407123 
+P6 AICc: RB 270.4282  MA1 272.4341  AR1 272.4558  ARMA11 273.8762 
+P7: 7.132047  grados: 0.1244777  sin raiz: 13.93085  pico espectral: 7.571639  pasos: 0.7071068 0.6363961 0.8809792 
+P8 AR(2) crudo LB12 fitdf=2: 0.04614324  sin fitdf: 0.09957107 
+P9 r1: 0.555626  banda: 0.196  fuera: 1 3 4 5 6 9 10 11  ( 8 )  LB: 0  r1/banda: 2.834827 
+P9 AR(2) residuales r1 r2: 0.1297122 -0.1477128 
+P10 YW/ML manchas: 298.9642 229.4284 
+
+## Propuesta para la P4 (psi_1 distinto de 0.3) 
+phi 0.6 theta -0.2 : Var = 5.8  sin s2 1.16  sin psi0 0.8  psi1=phi 6.8  signo 8.2  sin cuadrado 7  hasta h 6.088 
+phi 0.7 theta -0.3 : Var = 5.8  sin s2 1.16  sin psi0 0.8  psi1=phi 7.45  signo 10  sin cuadrado 7  hasta h 6.192 
+phi 0.5 theta -0.1 : Var = 5.8  sin s2 1.16  sin psi0 0.8  psi1=phi 6.25  signo 6.8  sin cuadrado 7  hasta h 6 

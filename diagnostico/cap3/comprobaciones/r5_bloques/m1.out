@@ -1,0 +1,25 @@
+# (a) Los polinomios del modelo A, con los coeficientes en orden
+#     ASCENDENTE de potencia
+phi_A   <- c(1, -1.1, 0.3)      # phi(B)   = 1 - 1.1 B + 0.3 B^2
+theta_A <- c(1, 0.4)            # theta(B) = 1 + 0.4 B
+
+# (b) Raices de phi(B) = 0 y veredicto
+round(Re(polyroot(phi_A)), 4)
+#> [1] 1.6667 2.0000
+all(Mod(polyroot(phi_A)) > 1)
+#> [1] TRUE
+
+# (c) El signo de phi_2 sin cambiar: 1 - 1.1 B - 0.3 B^2 es OTRO proceso
+round(Re(polyroot(c(1, -1.1, -0.3))), 4)
+#> [1]  0.7540 -4.4207
+# ... y el otro fallo silencioso, el del orden: con los coeficientes al
+# reves, polyroot() da las raices de 0.3 - 1.1 B + B^2, que son las inversas
+round(Re(polyroot(rev(phi_A))), 4)
+#> [1] 0.5 0.6
+
+# (d) El modelo B: phi(B) = 1 - 1.5 B + 0.5 B^2
+round(Re(polyroot(c(1, -1.5, 0.5))), 4)
+#> [1] 1 2
+# (1 - B)(1 - 0.5 B), multiplicado termino a termino, es el mismo polinomio
+c(1, -1 - 0.5, (-1) * (-0.5))
+#> [1]  1.0 -1.5  0.5

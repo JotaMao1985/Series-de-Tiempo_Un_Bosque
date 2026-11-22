@@ -14,7 +14,7 @@ con sus fuentes contrastadas y con práctica en cada módulo. Es la tercera apli
 [[PLAN_Mejora_Cap1]] y [[PLAN_Mejora_Cap2]]: cinco rondas, un redactor por ronda, un verificador
 independiente sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: aprobado por Javier el 2026-11-19 (D1–D9, y las recomendaciones de §7.1 y §7.2). R1, R2, R3 y R4 publicadas el 21.** Lo que
+**Estado: aprobado por Javier el 2026-11-19 (D1–D9, y las recomendaciones de §7.1 y §7.2). R1, R2, R3 y R4 publicadas el 21; R5 hecha el 21, sin publicar.** Lo que
 sigue es el diagnóstico y el plan; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-19
@@ -212,6 +212,19 @@ Cada una lleva mi recomendación; las decide Javier.
   salen; **la media no queda cerrada entera** (32 sin marcar). Dos verificadores independientes en paralelo (M1–M6,
   M7–M10) firmaron 203 en la primera lectura y las 20 restantes tras la corrección (`diagnostico/cap3/R4_cambios.md`,
   `R4_verificacion_A.md`, `R4_verificacion_B.md`). Bloques: 732/732 → 733/733.
+
+- **R5 · práctica — hecha el 2026-11-21, sin publicar.** Ocho «Para practicar» al final de M1–M7 y M9 (D9), sobre
+  procesos teóricos o simulados con semilla y tres series nuevas en el sitio para la práctica (`diff(WWWusage)`, `treering`
+  1880–1979 y `lynx`), cada uno con solución en R bajo `#>`. Ejercicio 1 con pista sin resultado; el 2 con otro MA(2),
+  θ = (0.9, 0.2), y un apartado de raíz invertida; el 3 al día con la R1. Quiz: P2, P4, P5 y P7 rehechas, retro por opción
+  en las dos múltiples, diez pistas nuevas, las tres cadenas de la R4 y las de la R3 corregidas; la opción más larga
+  acierta 0 de 5 (antes 4). Minutos declarados a ≤ 0.5 de lo medido; el sitio pasa de 32 a 40 ejercicios. Una afirmación
+  nueva, **c3-m6-09** (la banda del MA(1), Cryer y Chan, p. 111), redactada por la maestra y firmada por el verificador:
+  214 afirmaciones, 214 firmadas. Bloques: 733/733 → 1084/1084. El verificador independiente halló 13 puntos —uno que
+  chocaba con el módulo (la práctica del M7 comparaba las σ̂² de Yule–Walker y ML) y la P4, que repetía una cifra resuelta
+  en la práctica del M4—; corregidos 10, uno queda para Javier (el quiz sin ítem del M6 ni del M9) y dos sin cambio
+  (`diagnostico/cap3/R5_cambios.md`, `R5_verificacion.md`). Ninguna frase marcada cambia de texto; `parcial2` y el
+  simulacro, intactos; caps. 4–6 idénticos.
 
 ## 5. Criterios de aceptación
 

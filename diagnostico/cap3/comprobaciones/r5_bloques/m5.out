@@ -1,0 +1,51 @@
+w <- diff(WWWusage)                    # cambios de un minuto al siguiente
+n <- length(w); banda <- 1.96 / sqrt(n)
+round(c(n = n, banda = banda), 4)
+#>      n  banda 
+#> 99.000  0.197 
+
+# (a) Pasos 1 a 3: que rezagos salen de la banda
+a <- acf(w, lag.max = 20, plot = FALSE)$acf[-1]
+p <- as.numeric(pacf(w, lag.max = 20, plot = FALSE)$acf)
+which(abs(a) > banda)
+#>  [1]  1  2  3  4  5  6 17 18 19 20
+which(abs(p) > banda)
+#> [1] 1 2 3
+round(a[1:6], 3)
+#> [1] 0.792 0.520 0.406 0.382 0.332 0.226
+round(p[1:6], 3)
+#> [1]  0.792 -0.287  0.303  0.008 -0.030 -0.088
+
+# Los dos candidatos
+ar3    <- arima(w, order = c(3, 0, 0), method = "ML")
+arma11 <- arima(w, order = c(1, 0, 1), method = "ML")
+round(coef(arma11), 4)
+#>       ar1       ma1 intercept 
+#>    0.6344    0.5297    1.1204 
+
+# (b) El ARMA(1,1) redondeado, con las formulas del modulo
+phi <- 0.63; theta <- 0.53
+rho1 <- (1 + phi * theta) * (phi + theta) / (1 + 2 * phi * theta + theta^2)
+round(rho1 * phi^(0:2), 3)             # rho_1, rho_2, rho_3
+#> [1] 0.794 0.500 0.315
+
+# (c) Paso 4: la ACF teorica de cada modelo ajustado frente a la muestral
+round(rbind(muestral = a[1:6],
+            AR3      = ARMAacf(ar = coef(ar3)[1:3], lag.max = 6)[-1],
+            ARMA11   = ARMAacf(ar = coef(arma11)[["ar1"]], ma = coef(arma11)[["ma1"]],
+                               lag.max = 6)[-1]), 3)
+#>              1     2     3     4     5     6
+#> muestral 0.792 0.520 0.406 0.382 0.332 0.226
+#> AR3      0.795 0.518 0.404 0.387 0.351 0.282
+#> ARMA11   0.796 0.505 0.321 0.203 0.129 0.082
+
+# Adelanto del Modulo 8: los dos criterios (menor es mejor) y Ljung-Box
+aicc <- function(f, n) { k <- length(f$coef) + 1; f$aic + 2*k*(k+1)/(n-k-1) }
+lb <- function(f, k) Box.test(residuals(f), lag = 12, type = "Ljung-Box", fitdf = k)$p.value
+round(rbind(AICc = c(AR3 = aicc(ar3, n), ARMA11 = aicc(arma11, n)),
+            BIC  = c(BIC(ar3), BIC(arma11)),
+            LB12 = c(lb(ar3, 3), lb(arma11, 2))), 3)
+#>          AR3  ARMA11
+#> AICc 514.310 516.005
+#> BIC  526.641 525.960
+#> LB12   0.702   0.515

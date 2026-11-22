@@ -1288,7 +1288,7 @@
       const z = 1.959964;                 // qnorm(0.975)
       const psi = pesosPsi(ar, [], N);
       // R = sqrt(-phi2) es el inverso del módulo de la raíz y manda en la
-      // amortiguación. El envolvente de psi_j = R^j sin((j+1)w)/sin(w) no es
+      // amortiguación. La envolvente de psi_j = R^j sin((j+1)w)/sin(w) no es
       // ±R^j sino ±R^j/sin(w): con el w de este ajuste, 1.88 veces mayor.
       const R = Math.sqrt(-TRANSF.sqrt.phi2);
       const omega = Math.acos(TRANSF.sqrt.phi1 / (2 * R));   // ángulo de la raíz
@@ -1310,7 +1310,7 @@
       const gPsi = crearGraficoBarras(c[0], etiquetas, psi, {
         etiqueta: 'ψⱼ', color: COLORES_GRAFICO.primario, tituloX: 'j (años desde el choque)'
       });
-      // El envolvente no es una recta, así que no cabe en la opción `lineas`
+      // La envolvente no es una recta, así que no cabe en la opción `lineas`
       // de crearGraficoBarras: se añade como dos datasets de línea. El negativo
       // va sin etiqueta para que no salga dos veces en la leyenda.
       [[`±${factor.toFixed(2)} × ${R.toFixed(2)}ʲ — envolvente`, envolvente],
@@ -1343,7 +1343,7 @@
         const ee = Math.sqrt(sigma2 * sumaHasta(h));
         c[0].setAttribute('aria-label', describirBarras(
           'Pesos ψ del AR(2) ajustado a la raíz de las manchas solares, j de', psi, 0) +
-          `, dentro del envolvente ±${factor.toFixed(2)} × ${R.toFixed(4)}ʲ; en color oscuro, ` +
+          `, dentro de la envolvente ±${factor.toFixed(2)} × ${R.toFixed(4)}ʲ; en color oscuro, ` +
           `${h === 1 ? 'el único que entra' : `los ${h} que entran`} en la varianza del pronóstico a ` +
           `${h} ${h === 1 ? 'año' : 'años'}`);
         c[1].setAttribute('aria-label',
@@ -1436,30 +1436,38 @@
       };
     };
 
+    // R5 (2026-11-21). De dónde sale cada cifra que no está bajo un `#>` del capítulo
+    // (etiquetas de diagnostico/cap3/comprobaciones/r5_cifras.out):
+    //   P1 [Q1-01] · P2 [Q2-01] a [Q2-03] · P4 [Q4-01], [Q4-02] · P5 [Q5-01] a [Q5-03]
+    //   P6 [Q6-01] a [Q6-04]: la salida es real, set.seed(329) y
+    //      arima(rnorm(100), order = c(1, 0, 1), method = "ML")
+    //   P7 [Q7-01], [Q7-02] · P9 [Q9-01]
+    // El motor no baraja las opciones: la posición de la correcta la vigila
+    // precalculo/audita_posicion_correcta.py.
     AUTOEVALUACIONES['cap3'] = [
       {
         tipo: 'opcion',
         modulo: 1,
         pregunta: 'Un AR(2) tiene $\\phi(B) = 1 - 1.2B + 0.9B^2$ y sus raíces tienen módulo $1.054$. ¿Es estacionario?',
-        pista: 'La condición no es sobre los coeficientes, es sobre las <em>raíces</em>. Y fíjate bien en la dirección de la desigualdad: ¿dentro o fuera del círculo unitario?',
+        pista: 'Sitúa un número de módulo $1.054$ respecto del círculo unitario. Después relee, en la definición del Módulo 1, a qué lado del círculo tienen que quedar las raíces de $\\phi(B)$, y por qué ese lado sorprende la primera vez.',
         opciones: [
           {
-            texto: 'No, porque las raíces deberían estar dentro del círculo unitario.',
+            texto: 'No: para ser estacionario, sus raíces tendrían que caer dentro del círculo unitario.',
             correcta: false,
             retro: 'Es al revés, y es la confusión más común del capítulo. El polinomio está escrito en $B$, no en $1/B$: para el AR(1) la raíz es $1/\\phi$, así que $|\\phi| < 1$ equivale a $|1/\\phi| > 1$, es decir, raíz <strong>fuera</strong> del círculo.'
           },
           {
-            texto: 'No, porque $\\phi_1 + \\phi_2 = -0.3$ es negativo.',
+            texto: 'No: $\\phi_1 + \\phi_2 = -0.3$ es negativo, y con esa suma el proceso no puede ser estable.',
             correcta: false,
             retro: 'Cuidado con los signos del convenio: en $\\phi(B) = 1 - \\phi_1 B - \\phi_2 B^2$ los coeficientes van restando, así que aquí $\\phi_1 = 1.2$ y $\\phi_2 = -0.9$, y su suma es $0.3$. Además, el signo de esa suma no decide nada por sí solo.'
           },
           {
-            texto: 'No se puede saber sin conocer $\\sigma^2$.',
+            texto: 'No se puede saber: falta conocer $\\sigma^2$, la varianza del ruido blanco que lo alimenta.',
             correcta: false,
             retro: 'La varianza del ruido no interviene: escala la serie, pero no cambia si el proceso olvida o no su pasado. Eso lo deciden únicamente las raíces de $\\phi(B)$.'
           },
           {
-            texto: 'Sí, porque el módulo es mayor que 1: las raíces caen fuera del círculo unitario.',
+            texto: 'Sí: el módulo es mayor que 1, así que las raíces caen fuera del círculo unitario.',
             correcta: true,
             retro: 'La condición es $|B_i| > 1$ para todas las raíces. $1.054 > 1$, aunque por poco: es un proceso muy persistente, cerca de la frontera de la no estacionariedad.'
           }
@@ -1468,12 +1476,12 @@
       {
         tipo: 'numerica',
         modulo: 3,
-        pregunta: 'Un proceso MA(1) tiene $\\theta = 0.8$. ¿Cuánto vale $\\rho_1$? Da cuatro decimales.',
-        pista: 'La fórmula es $\\rho_1 = \\theta/(1+\\theta^2)$. Calcula primero el denominador: $1 + 0.8^2$.',
-        respuesta: 0.4878,
-        tolerancia: 0.0006,
-        retroAcierto: '$0.8/(1+0.64) = 0.8/1.64 = 0.4878$. Fíjate en que se queda por debajo de $0.5$, como tiene que ser: esa es la cota máxima de $|\\rho_1|$ para cualquier MA(1).',
-        retroFallo: 'Es $\\rho_1 = \\theta/(1+\\theta^2) = 0.8/1.64 = 0.4878$. Un error frecuente es responder $0.8$, confundiendo el coeficiente con la autocorrelación. En un AR(1) sí coinciden ($\\rho_1 = \\phi$); en un MA, no.'
+        pregunta: 'Un MA(2) es $y_t = \\varepsilon_t + 0.6\\,\\varepsilon_{t-1} - 0.3\\,\\varepsilon_{t-2}$, con $\\sigma^2 = 4$. ¿Cuánto vale su autocovarianza de orden 1, $\\gamma_1 = \\operatorname{Cov}(y_t,\\,y_{t-1})$? Da dos decimales.',
+        pista: 'Escribe $y_t$ e $y_{t-1}$ una debajo de la otra, cada una con sus tres choques, y marca los que aparecen en las dos: solo esos aportan a la covarianza. Vigila el signo de cada peso y no olvides $\\sigma^2$.',
+        respuesta: 1.68,
+        tolerancia: 0.006,
+        retroAcierto: '$y_t$ e $y_{t-1}$ comparten dos choques: $\\varepsilon_{t-1}$, con pesos $0.6$ y $1$, y $\\varepsilon_{t-2}$, con pesos $-0.3$ y $0.6$. Entonces $\\gamma_1 = 4\\,(0.6 - 0.18) = 1.68$.',
+        retroFallo: 'Es $\\gamma_1 = \\sigma^2(\\theta_1 + \\theta_1\\theta_2) = 4\\,(0.6 - 0.18) = 1.68$: $y_t$ e $y_{t-1}$ comparten los choques $\\varepsilon_{t-1}$ y $\\varepsilon_{t-2}$, y cada uno aporta el producto de sus dos pesos por $\\sigma^2$. Cada tropiezo habitual deja una cifra distinta: $2.40$ es contar solo el choque $\\varepsilon_{t-1}$; $0.42$, olvidar $\\sigma^2$; $3.12$, perder el signo de $\\theta_2$; $0.29$ es $\\rho_1$, la autocorrelación y no la autocovarianza; y $-1.20$ es $\\gamma_2$.'
       },
       {
         tipo: 'grafico',
@@ -1482,122 +1490,142 @@
         descripcionGrafico: describirBarrasQuiz('Función de autocorrelación teórica de un proceso',
           PROCESOS.ma2.acf_teorica),
         pregunta: 'Esta es la ACF <strong>teórica</strong> de un proceso, y su PACF (no mostrada) decae sin cortarse. ¿De qué proceso se trata?',
-        pista: 'Cuenta cuántas barras hay antes de que la función se haga exactamente cero y se quede ahí. Después mira la tabla del Módulo 5 y fíjate en <em>cuál</em> de las dos funciones es la que se corta.',
+        pista: 'Describe cada función con una frase: ¿termina de golpe o se va apagando? Con esas dos frases delante, busca la fila que les corresponde en la tabla del Módulo 5.',
         dibujar: canvas => crearGraficoBarras(canvas, REZAGOS_T, PROCESOS.ma2.acf_teorica, {
           etiqueta: 'ACF teórica', color: COLORES_GRAFICO.primario, tituloX: 'Rezago k'
         }),
         opciones: [
           {
-            texto: 'Un AR(2): tiene dos barras significativas, luego $p = 2$.',
+            texto: 'Un AR(2): hay dos barras distintas de cero, así que $p = 2$.',
             correcta: false,
             retro: 'Contar barras no basta: hay que mirar cuál de las dos funciones se corta. En un AR(2) es la <strong>PACF</strong> la que cae a cero tras el rezago 2, mientras la ACF decae sin cortarse nunca. Aquí ocurre justo lo contrario.'
           },
           {
             texto: 'Un MA(2): la ACF se corta tras el rezago 2 y la PACF decae.',
             correcta: true,
-            retro: 'Es el MA(2) con $\\theta = (0.6,\\ 0.4)$: $\\rho_1 = 0.5526$, $\\rho_2 = 0.2632$ y a partir de ahí <strong>exactamente</strong> cero, porque dos observaciones separadas por más de $q = 2$ periodos no comparten ningún choque.'
+            retro: 'En un MA($q$), dos observaciones separadas por más de $q$ periodos no comparten ningún choque: por eso la ACF vale <strong>exactamente</strong> cero desde el rezago 3, y el corte en el rezago 2 da $q = 2$. La PACF, en cambio, decae sin cortarse.'
           },
           {
-            texto: 'Un ARMA(2,2), porque hay dos rezagos en cada función.',
+            texto: 'Un ARMA(2,2): hay dos rezagos activos en cada una de las dos.',
             correcta: false,
             retro: 'En un ARMA mixto <strong>ninguna</strong> de las dos funciones se corta: las dos decaen. Un corte limpio y exacto como este descarta precisamente el modelo mixto.'
           },
           {
-            texto: 'Ruido blanco con dos valores atípicos.',
+            texto: 'Ruido blanco con dos autocorrelaciones altas por puro azar.',
             correcta: false,
-            retro: 'Es una ACF <strong>teórica</strong>, calculada con <code>ARMAacf()</code>: no hay azar ni atípicos en ella. Y el ruido blanco tendría todas las autocorrelaciones nulas, incluidas las dos primeras.'
+            retro: 'Es una ACF <strong>teórica</strong>, calculada con <code>ARMAacf()</code>: no hay azar en ella. Y el ruido blanco tendría todas las autocorrelaciones nulas, incluidas las dos primeras.'
           }
         ]
       },
       {
         tipo: 'numerica',
         modulo: 4,
-        pregunta: 'Un ARMA(1,1) tiene $\\phi = 0.7$, $\\theta = 0.5$ y $\\sigma^2 = 2$. ¿Cuánto vale la varianza del error de pronóstico a dos pasos, $\\operatorname{Var}(e_{T+2})$? Da dos decimales.',
-        pista: 'La fórmula es $\\sigma^2\\sum_{j=0}^{h-1}\\psi_j^2$. Con $h = 2$ la suma tiene solo dos términos: $\\psi_0$, que siempre vale $1$, y $\\psi_1$, que sale del primer paso de la recursión. Y no te olvides del factor $\\sigma^2$.',
-        respuesta: 4.88,
+        pregunta: 'Un ARMA(1,1) tiene $\\phi = 0.6$, $\\theta = -0.2$ y $\\sigma^2 = 5$. ¿Cuánto vale la varianza del error de pronóstico a dos pasos, $\\operatorname{Var}(e_{T+2})$? Da dos decimales.',
+        pista: 'Calcula primero los pesos $\\psi$ que hacen falta con la recursión del Módulo 4, vigilando el signo de $\\theta$. Después decide cuántos pesos entran en la suma cuando $h = 2$ y qué factor la multiplica.',
+        respuesta: 5.80,
         tolerancia: 0.006,
-        retroAcierto: '$\\psi_1 = \\theta + \\phi = 1.2$, así que $\\operatorname{Var}(e_{T+2}) = 2\\,(1 + 1.2^2) = 2 \\times 2.44 = 4.88$. A un paso sería solo $\\sigma^2 = 2$: el pronóstico a dos pasos arrastra además el choque de $T+1$, amplificado por $\\psi_1$.',
-        retroFallo: 'Es $\\sigma^2(\\psi_0^2 + \\psi_1^2) = 2\\,(1 + 1.2^2) = 4.88$, con $\\psi_1 = \\theta + \\phi = 1.2$. Cada tropiezo habitual deja una cifra distinta: $2.44$ es olvidar $\\sigma^2$; $2.88$, olvidar $\\psi_0 = 1$; $2.98$, tomar $\\psi_1 = \\phi$ como si fuera un AR(1); $4.40$, sumar los $\\psi$ sin elevarlos al cuadrado; y $6.29$, sumar hasta $j = h$ en vez de hasta $h - 1$.'
+        retroAcierto: '$\\psi_1 = \\theta + \\phi = 0.4$, así que $\\operatorname{Var}(e_{T+2}) = 5\\,(1 + 0.4^2) = 5 \\times 1.16 = 5.80$. A un paso sería solo $\\sigma^2 = 5$: el pronóstico a dos pasos arrastra además el choque de $T+1$, que aquí pesa poco porque $\\phi$ y $\\theta$ tienen signos opuestos.',
+        retroFallo: 'Es $\\sigma^2(\\psi_0^2 + \\psi_1^2) = 5\\,(1 + 0.4^2) = 5.80$, con $\\psi_1 = \\theta + \\phi = 0.4$. Cada tropiezo habitual deja una cifra distinta: $1.16$ es olvidar $\\sigma^2$; $0.80$, olvidar $\\psi_0 = 1$; $6.80$, tomar $\\psi_1 = \\phi$ como si fuera un AR(1); $8.20$, perder el signo de $\\theta$ y tomar $\\psi_1 = 0.8$; $7.00$, sumar los $\\psi$ sin elevarlos al cuadrado; y $6.09$, sumar hasta $j = h$ en vez de hasta $h - 1$.'
       },
       {
         tipo: 'multiple',
         modulo: 3,
-        pregunta: 'Marca <strong>todas</strong> las afirmaciones correctas sobre la invertibilidad de un MA.',
-        pista: 'Son tres. Piensa en: qué les pasa a los pesos $\\pi$, si los datos pueden distinguir el modelo, y qué hace el software cuando le pides ajustar un MA.',
+        pregunta: 'Se simula una serie larga de un MA(1) con $\\theta = -2.5$ y $\\sigma^2 = 1$, y se le ajusta un MA(1) con <code>arima()</code>. Marca <strong>todas</strong> las afirmaciones correctas.',
+        pista: 'Separa las dos propiedades del capítulo y qué polinomio responde por cada una. Después escribe $\\gamma_0$ y $\\gamma_1$ del proceso simulado y busca qué otro par $(\\theta,\\ \\sigma^2)$ da exactamente las mismas.',
         opciones: [
-          { texto: 'Un MA no invertible tampoco es estacionario.', correcta: false },
-          { texto: 'Si $|\\theta| > 1$ en un MA(1), los pesos $\\pi$ de la representación AR($\\infty$) crecen sin límite.', correcta: true },
-          { texto: 'La invertibilidad se comprueba con las raíces de $\\phi(B)$.', correcta: false },
-          { texto: 'Los valores $\\theta$ y $1/\\theta$ producen exactamente la misma ACF, así que ningún dato los distingue.', correcta: true },
-          { texto: '<code>arima()</code> devuelve siempre la solución invertible, aunque hayas simulado la otra.', correcta: true }
+          {
+            texto: 'La serie simulada no es estacionaria, porque $|\\theta|$ es mayor que 1.',
+            correcta: false,
+            retro: 'Un MA($q$) es estacionario para cualquier valor de sus $\\theta$: es una suma finita de ruido blanco. Lo que $|\\theta| > 1$ estropea es la invertibilidad, que se lee en $\\theta(B)$ —su raíz, $0.4$, cae dentro del círculo unitario—, no la estacionariedad.'
+          },
+          {
+            texto: 'Su $\\rho_1$ coincide con la de otro MA(1), el que tiene $\\theta = -0.4$.',
+            correcta: true,
+            retro: '$-2.5/(1 + 2.5^2) = -0.4/(1 + 0.4^2) = -0.3448$: $\\theta$ y $1/\\theta$ comparten ACF, así que ningún correlograma los distingue.'
+          },
+          {
+            texto: 'Sus pesos $\\pi$ se apagan con el rezago, porque $|\\rho_1|$ no llega a $0.5$.',
+            correcta: false,
+            retro: 'Con $\\theta = -2.5$ los pesos son $\\pi_j = (-\\theta)^j$: $2.5$, $6.25$, $15.625$… Crecen sin límite, que es lo que significa no ser invertible. Que $|\\rho_1|$ quede por debajo de $0.5$ no dice nada: le pasa a todo MA(1) con $|\\theta| \\ne 1$.'
+          },
+          {
+            texto: 'Con sus opciones por defecto, <code>arima()</code> devolverá un $\\hat\\theta$ cercano a $-0.4$.',
+            correcta: true,
+            retro: 'Por defecto el software devuelve el MA(1) invertible, el de $|\\theta| < 1$, que aquí es $1/(-2.5) = -0.4$. Simulando 2000 valores sale $\\hat\\theta = -0.405$.'
+          },
+          {
+            texto: 'El $\\hat\\sigma^2$ de ese ajuste quedará cerca de $1$, la varianza con que se simuló.',
+            correcta: false,
+            retro: 'Para describir el mismo proceso con $\\theta = -0.4$ hace falta $\\sigma^2 = 2.5^2 = 6.25$: así salen la misma $\\gamma_0 = 7.25$ y la misma $\\gamma_1 = -2.5$. En la simulación de 2000 valores, $\\hat\\sigma^2 = 6.58$.'
+          }
         ],
-        retroAcierto: 'Las tres describen el mismo hecho desde tres ángulos: la representación AR($\\infty$) diverge, el modelo no queda identificado, y por eso el software impone el convenio $|\\theta| < 1$. Puedes verlo en el simulador del Módulo 4 llevando $\\theta$ más allá de 1.',
-        retroFallo: 'Las tres correctas son las que hablan de los pesos de la representación AR($\\infty$), de la identificación del modelo y del convenio que impone el software. Las dos falsas confunden los dos polinomios: un MA($q$) es <strong>siempre estacionario</strong> —es una suma finita de ruido blanco, sin condición alguna— y la invertibilidad se lee en las raíces de $\\theta(B)$, no de $\\phi(B)$. Cada polinomio responde por lo suyo.'
+        retroAcierto: 'Las dos son caras del mismo hecho: $(\\theta,\\ \\sigma^2) = (-2.5,\\ 1)$ y $(-0.4,\\ 6.25)$ dan las mismas autocovarianzas, de modo que $\\theta$ no es identificable, y el software resuelve el empate devolviendo por defecto el invertible.',
+        retroFallo: 'Las correctas son la que compara la $\\rho_1$ de los dos MA(1) y la que dice qué $\\hat\\theta$ devuelve <code>arima()</code>: $(\\theta,\\ \\sigma^2) = (-2.5,\\ 1)$ y $(-0.4,\\ 6.25)$ dan las mismas autocovarianzas, $\\theta$ no es identificable y el software devuelve por defecto el invertible. Las otras tres confunden la estacionariedad con la invertibilidad, leen en la cota $0.5$ algo que no dice, u olvidan que al cambiar $\\theta$ cambia también $\\sigma^2$.'
       },
       {
         tipo: 'opcion',
         modulo: 5,
-        pregunta: 'Ajustas un ARMA(1,1) y <code>arima()</code> devuelve $\\hat\\phi_1 = -0.64$ (error estándar $0.38$) y $\\hat\\theta_1 = 0.69$ (error estándar $0.36$), con un aviso de posible problema de convergencia. ¿Qué haces?',
-        pista: 'Mira la relación entre los dos coeficientes y el tamaño de sus errores estándar. ¿Qué les pasa a $\\phi(B) = 1 - \\phi_1 B$ y a $\\theta(B) = 1 + \\theta_1 B$ cuando $\\phi_1 \\approx -\\theta_1$?',
+        pregunta: 'Ajustas un ARMA(1,1) a una serie de 100 datos y <code>arima()</code> devuelve $\\hat\\phi_1 = -0.60$ (error estándar $0.38$) y $\\hat\\theta_1 = 0.67$ (error estándar $0.35$). ¿Qué haces?',
+        pista: 'Divide cada coeficiente entre su error estándar y, aparte, suma los dos coeficientes. Con esas tres cifras delante, pregúntate qué ha quedado bien determinado por los datos y qué no.',
         opciones: [
           {
-            texto: 'Me quedo con el ARMA(1,1): los dos coeficientes son grandes en valor absoluto, así que los dos importan.',
+            texto: 'Me quedo con el ARMA(1,1): los dos coeficientes son grandes en valor absoluto y los dos importan.',
             correcta: false,
-            retro: 'El tamaño no basta. Con esos errores estándar ninguno de los dos es significativo al 5 % ($0.64/0.38 = 1.68$ y $0.69/0.36 = 1.92$, ambos por debajo de $1.96$), y lo que el ajuste fija de verdad es su suma, $0.05$, no cada coeficiente. Dos parámetros que se cancelan no describen estructura: la esconden.'
+            retro: 'El tamaño no basta. Ninguno de los dos coeficientes llega a $1.96$ veces su error estándar, y lo que el ajuste fija de verdad es su suma, $0.07$, no cada uno por separado. Dos parámetros que casi se cancelan no describen estructura: la esconden.'
           },
           {
-            texto: 'Paso a un ARMA(2,2): si el optimizador no converge, es que el modelo se queda corto.',
+            texto: 'Paso a un ARMA(2,2): con errores estándar tan grandes, al modelo le hacen falta más parámetros.',
             correcta: false,
-            retro: 'Es justo al revés. El aviso de convergencia aparece porque sobra un factor, no porque falte: la verosimilitud es casi plana en la dirección $\\phi_1 \\approx -\\theta_1$. Añadir parámetros abre la puerta a más factores casi comunes y la vuelve todavía más plana.'
+            retro: 'Es justo al revés. Los errores estándar son grandes porque sobra un factor, no porque falte: la verosimilitud es casi plana en la dirección $\\phi_1 \\approx -\\theta_1$. Añadir parámetros abre la puerta a más factores casi comunes y la aplana todavía más.'
           },
           {
-            texto: 'Diferencio la serie: unos coeficientes tan inestables indican que no es estacionaria.',
+            texto: 'Diferencio la serie: unos coeficientes tan mal determinados indican que no es estacionaria.',
             correcta: false,
-            retro: 'Nada apunta a una raíz unitaria: $|\\hat\\phi_1| = 0.64$ está lejos de 1. La inestabilidad no es de la serie sino de la parametrización, porque muchas parejas $(\\phi_1, \\theta_1)$ con $\\phi_1 \\approx -\\theta_1$ dan casi la misma verosimilitud.'
+            retro: 'Nada apunta a una raíz unitaria: $|\\hat\\phi_1| = 0.60$ está lejos de 1. La imprecisión no es de la serie sino de la parametrización, porque muchas parejas $(\\phi_1, \\theta_1)$ con $\\phi_1 \\approx -\\theta_1$ dan casi la misma verosimilitud.'
           },
           {
-            texto: 'Pruebo AR(1), MA(1) y ruido blanco, y los comparo por AICc antes de interpretar nada.',
+            texto: 'Pruebo AR(1), MA(1) y ruido blanco, y los comparo por AICc antes de interpretar coeficientes.',
             correcta: true,
-            retro: '$\\phi(B) = 1 + 0.64B$ y $\\theta(B) = 1 + 0.69B$ casi coinciden, así que el factor casi se cancela y el modelo es más pequeño de lo que aparenta. Es la situación del ejemplo de R del Módulo 5, donde el ARMA(1,1) salía con coeficientes lejos de los verdaderos y el ruido blanco ganaba por AICc.'
+            retro: '$\\phi(B) = 1 + 0.60B$ y $\\theta(B) = 1 + 0.67B$ casi coinciden, así que el factor casi se cancela y el modelo es más pequeño de lo que aparenta. La serie era ruido blanco simulado, y el AICc lo recoge: $270.43$ para el ruido blanco, $272.43$ y $272.46$ para el MA(1) y el AR(1), y $273.88$ para el ARMA(1,1). Es la situación del ejemplo de R del Módulo 5.'
           }
         ]
       },
       {
         tipo: 'numerica',
-        modulo: 9,
-        unidad: 'años',
-        pregunta: 'El AR(2) ajustado a $\\sqrt{\\text{manchas}}$ tiene $\\phi_1 = 1.4027$ y $\\phi_2 = -0.6853$. Calcula su pseudo-periodo con $2\\pi/\\arccos\\!\\big(\\phi_1/(2\\sqrt{-\\phi_2})\\big)$. Da dos decimales.',
-        pista: 'Ve por partes: $\\sqrt{0.6853} = 0.8278$, y el argumento del arcocoseno es $1.4027/(2 \\times 0.8278)$. Asegúrate de que tu calculadora trabaja en <strong>radianes</strong>.',
-        respuesta: 11.22,
-        tolerancia: 0.06,
-        retroAcierto: 'El argumento es $0.8472$, su arcocoseno $0.5601$ radianes y $2\\pi/0.5601 = 11.22$ años. El ciclo solar documentado por los astrónomos es de unos 11 años: el modelo lo recupera de los datos, sin que se le haya dicho nada de astronomía.',
-        retroFallo: 'El cálculo es $2\\pi/\\arccos(1.4027/(2\\sqrt{0.6853})) = 2\\pi/\\arccos(0.8472) = 2\\pi/0.5601 = 11.22$ años. Los dos tropiezos habituales: usar grados en vez de radianes, u olvidar el signo menos dentro de la raíz — $\\phi_2$ es negativo, y $\\sqrt{-\\phi_2}$ es un número real precisamente por eso.'
+        modulo: 2,
+        unidad: 'periodos',
+        pregunta: 'Un AR(2) tiene $\\phi_1 = 0.9$ y $\\phi_2 = -0.5$. Sus raíces son complejas, así que su ACF oscila. ¿Cuánto vale su pseudo-periodo? Da dos decimales.',
+        pista: 'La fórmula está en la nota «Raíces complejas y ciclos» del Módulo 2. Ve por partes —primero la raíz cuadrada, después el cociente, después el arcocoseno—, conserva cuatro decimales en cada paso y comprueba que la calculadora trabaja en <strong>radianes</strong>.',
+        respuesta: 7.13,
+        tolerancia: 0.006,
+        retroAcierto: '$\\sqrt{0.5} = 0.7071$, el argumento del arcocoseno es $0.9/(2 \\times 0.7071) = 0.6364$, su arcocoseno vale $0.8810$ radianes y $2\\pi/0.8810 = 7.13$ periodos. Es el ángulo de la raíz de $\\phi(B)$: la misma cuenta que el Módulo 9 hace con el AR(2) de las manchas solares.',
+        retroFallo: 'El cálculo es $2\\pi/\\arccos\\big(0.9/(2\\sqrt{0.5})\\big) = 2\\pi/\\arccos(0.6364) = 2\\pi/0.8810 = 7.13$ periodos. Los tropiezos habituales: dejar la calculadora en grados (sale $0.12$), olvidar la raíz cuadrada del denominador (sale $13.93$) o usar la otra fórmula, la del periodo medio de los ciclos, que el Módulo 9 distingue de esta (sale $7.57$). Si sale $7.06$, $7.10$ o $7.17$, se redondeó un paso intermedio a dos decimales. Y hace falta la precisión pedida: $7.1$ no basta.'
       },
       {
         tipo: 'opcion',
         modulo: 8,
         pregunta: 'Ajustas un ARMA(2,1) y evalúas Ljung–Box con <code>Box.test(residuals(m), lag = 12, type = "Ljung-Box")</code>, sin más argumentos. ¿Qué problema tiene esa llamada?',
-        pista: 'Compara los grados de libertad que usa la prueba por defecto con los que debería usar cuando los residuales vienen de un modelo <em>estimado</em>. ¿En qué dirección se equivoca?',
+        pista: 'Escribe los grados de libertad que usa la prueba tal como está llamada y los que corresponden a los residuales de un modelo con tres coeficientes estimados. Después piensa qué le pasa al $p$-valor al pasar de unos a otros.',
         opciones: [
           {
-            texto: 'Ninguno: <code>Box.test()</code> descuenta los parámetros automáticamente.',
+            texto: 'Ninguno: <code>Box.test()</code> descuenta por sí sola los parámetros del modelo ajustado.',
             correcta: false,
-            retro: 'No lo hace. <code>fitdf</code> vale $0$ por defecto, porque la función no sabe de dónde vienen los residuales que le pasas: podrían ser datos crudos. Hay que decírselo siempre.'
+            retro: 'No lo hace. <code>fitdf</code> vale $0$ por defecto, porque la función no sabe de dónde vienen los residuales que recibe: podrían ser datos crudos. Hay que indicárselo siempre.'
           },
           {
-            texto: 'Falta <code>fitdf = 3</code>, y sin él la prueba rechaza demasiado a menudo.',
+            texto: 'Falta <code>fitdf = 3</code>: sin él la prueba es demasiado severa y rechaza de más.',
             correcta: false,
-            retro: 'El argumento que falta es el correcto, pero la dirección del error es la contraria. Más grados de libertad significa un valor crítico más alto y por tanto un $p$-valor mayor: la prueba rechaza <em>menos</em>, y aprueba modelos que debería suspender.'
+            retro: 'El argumento que falta es ese, pero la dirección del error es la contraria. Con más grados de libertad de los debidos el valor crítico es más alto y el $p$-valor, mayor: la prueba rechaza <em>menos</em>, y aprueba modelos que debería suspender.'
           },
           {
-            texto: 'Falta <code>fitdf = 3</code>: sin él la prueba usa demasiados grados de libertad y se vuelve demasiado indulgente.',
+            texto: 'Falta <code>fitdf = 3</code>: sin él la prueba es demasiado indulgente y rechaza de menos.',
             correcta: true,
             retro: 'Con $p+q = 3$ parámetros estimados, el estadístico se distribuye $\\chi^2_{12-3}$, no $\\chi^2_{12}$. El caso más elocuente es el AR(2) de las manchas, donde $p+q = 2$: omitir <code>fitdf</code> cambia su $p$-valor de $0.0461$ (se rechaza) a $0.0996$ (no se rechaza). La conclusión se invierte por omitir un argumento.'
           },
           {
-            texto: 'El rezago 12 es demasiado alto para una serie anual.',
+            texto: 'El problema es <code>lag = 12</code>: con un $h$ tan alto la prueba ya no puede detectar nada.',
             correcta: false,
-            retro: 'La elección de $h$ admite discusión —lo habitual es $h \\approx 10$ o $\\min(10,\\ T/5)$— pero no es un error. El problema está en otro sitio, y es uno que invierte la conclusión.'
+            retro: 'La elección de $h$ admite discusión, pero no es el error de esta llamada: el capítulo evalúa en el rezago 12 las manchas solares. El problema está en otro argumento, y es uno que puede invertir la conclusión.'
           }
         ]
       },
@@ -1609,29 +1637,29 @@
           'Función de autocorrelación de los residuales de un AR(1) ajustado a las manchas solares',
           MANCHAS.diagnosticos.arma10.acf_resid, banda(MANCHAS.n)),
         pregunta: 'Esta es la ACF de los residuales de un AR(1) ajustado a las manchas solares. ¿Qué haces?',
-        pista: 'Antes de decidir, mira <em>cuánto</em> se salen las barras de la banda y en qué rezagos. ¿Es un pico aislado y pequeño —compatible con el azar— o hay estructura de verdad?',
+        pista: 'Mide antes de decidir: cuántas barras salen de la banda, en qué rezagos, y cuántas veces la supera la más alta. Compáralo con lo que el Módulo 6 dice que produce el azar.',
         dibujar: canvas => crearGraficoBarras(canvas, REZAGOS, MANCHAS.diagnosticos.arma10.acf_resid, {
           etiqueta: 'ACF de los residuales', color: COLORES_GRAFICO.primario,
           lineas: lineasBanda(MANCHAS.n), tituloX: 'Rezago k'
         }),
         opciones: [
           {
-            texto: 'Rechazo el modelo: quedan autocorrelaciones grandes, hay que aumentar el orden.',
+            texto: 'Rechazo el modelo: quedan autocorrelaciones grandes y hay que aumentar el orden.',
             correcta: true,
-            retro: '$r_1 = 0.556$ frente a una banda de $\\pm 0.196$, y no está sola: eso no es azar, es estructura sin modelar. Ljung–Box da $p < 0.0001$. Subiendo a AR(2), esas autocorrelaciones bajan a $0.1297$ y $-0.1477$.'
+            retro: '$r_1 = 0.556$ frente a una banda de $\\pm 0.196$, y no está sola: salen ocho de las veinte barras. Eso no es azar, es estructura sin modelar, y Ljung–Box da $p < 0.0001$. Subiendo a AR(2), las dos primeras autocorrelaciones residuales bajan a $0.1297$ y $-0.1477$.'
           },
           {
-            texto: 'Lo acepto: uno o dos picos fuera de la banda son normales con 20 rezagos.',
+            texto: 'Lo acepto: con 20 rezagos, una o dos barras fuera de la banda son lo esperable.',
             correcta: false,
-            retro: 'Esa regla es buena, pero se aplica a picos <em>pequeños y aislados</em>, apenas asomados. Aquí $r_1 = 0.556$ casi triplica la banda y hay más barras fuera. La regla del 5 % explica ruido, no una señal así.'
+            retro: 'Esa regla vale para picos <em>pequeños y aislados</em>, apenas asomados. Aquí $r_1 = 0.556$ casi triplica la banda y salen ocho barras de veinte. La regla del 5 % explica ruido, no una señal así.'
           },
           {
-            texto: 'Diferencio la serie, porque la ACF de los residuales decae despacio.',
+            texto: 'Diferencio la serie: la ACF de los residuales decae despacio, como en una caminata.',
             correcta: false,
             retro: 'Diferenciar es la respuesta a una raíz unitaria en la <em>serie</em>, no a un mal ajuste. Estos residuales vienen de un modelo insuficiente sobre una serie que ya es estacionaria; diferenciar aquí sobrediferenciaría e introduciría un MA(1) espurio.'
           },
           {
-            texto: 'Aplico una transformación logarítmica para estabilizar la varianza.',
+            texto: 'Aplico el logaritmo: barras tan altas indican una varianza que crece con el nivel.',
             correcta: false,
             retro: 'La transformación resuelve problemas de <em>escala</em>, que se ven en la serie (amplitud que crece con el nivel), no en la ACF de los residuales. Y en esta serie el logaritmo es además imposible: hay un año con cero manchas.'
           }
@@ -1641,16 +1669,36 @@
         tipo: 'multiple',
         modulo: 7,
         pregunta: 'Marca <strong>todas</strong> las afirmaciones correctas sobre los métodos de estimación.',
-        pista: 'Son tres. Piensa en: para qué modelos sirve Yule–Walker, qué ignora exactamente CSS, y qué hace <code>arima()</code> cuando no le indicas ningún método.',
+        pista: 'Para cada afirmación, localiza en el Módulo 7 la frase de la definición de los tres métodos, o la cifra de la tabla de las manchas, que la respalda o la desmiente.',
         opciones: [
-          { texto: 'Yule–Walker solo sirve para modelos AR puros, porque parte de las ecuaciones de momentos del AR.', correcta: true },
-          { texto: 'Los tres métodos dan siempre las mismas estimaciones salvo por errores de redondeo.', correcta: false },
-          { texto: 'CSS ignora la contribución de las primeras observaciones a la verosimilitud.', correcta: true },
-          { texto: 'El $\\hat\\sigma^2$ de Yule–Walker es comparable con el de máxima verosimilitud para calcular el AIC.', correcta: false },
-          { texto: 'Por defecto <code>arima()</code> usa <code>"CSS-ML"</code>: arranca con CSS y termina maximizando la verosimilitud exacta.', correcta: true }
+          {
+            texto: 'Yule–Walker estima bastante bien un AR puro y es muy ineficiente si hay parte MA.',
+            correcta: true,
+            retro: 'Es lo que el módulo dice de este método, que sale de las ecuaciones de momentos del AR: funciona bien en un AR puro y pierde mucha eficiencia en cuanto el modelo tiene parte MA.'
+          },
+          {
+            texto: 'Con la misma serie y el mismo modelo, los tres métodos dan lo mismo, salvo diferencias de redondeo.',
+            correcta: false,
+            retro: 'No coinciden: sobre las manchas solares, Yule–Walker quedó a $1.26$ y $1.10$ errores estándar de máxima verosimilitud. CSS y máxima verosimilitud sí quedaron muy cerca, pero eso depende de $T$ y de lo cerca que esté $\\phi$ de la frontera.'
+          },
+          {
+            texto: 'CSS condiciona en las primeras observaciones e ignora su aporte a la verosimilitud.',
+            correcta: true,
+            retro: 'Minimiza la suma de cuadrados condicionando en los primeros valores. La verosimilitud exacta añade la densidad de esas primeras observaciones, que es el término que penaliza los $\\phi$ cercanos a la frontera.'
+          },
+          {
+            texto: 'El $\\hat\\sigma^2$ que devuelve <code>ar()</code> y el de <code>arima()</code> son intercambiables para calcular un AIC.',
+            correcta: false,
+            retro: 'No salen del mismo cálculo: en las manchas fueron $298.96$ y $229.43$. Los criterios de información se construyen sobre la verosimilitud, así que solo tienen sentido con ajustes de <code>arima()</code>.'
+          },
+          {
+            texto: 'Sin indicar método, <code>arima()</code> usa <code>"CSS-ML"</code>: empieza con CSS y acaba con la verosimilitud exacta.',
+            correcta: true,
+            retro: 'Es su valor por defecto: CSS da los valores iniciales y la estimación final maximiza la verosimilitud exacta.'
+          }
         ],
-        retroAcierto: 'Las tres. Y el contraejemplo de las dos falsas está en el propio capítulo: sobre las manchas solares, Yule–Walker y ML se separaron $1.26$ y $1.10$ errores estándar, y sus $\\hat\\sigma^2$ fueron $298.96$ frente a $229.43$.',
-        retroFallo: 'Las tres correctas son las que hablan de Yule–Walker, de lo que ignora CSS y del <code>"CSS-ML"</code> por defecto. Las dos falsas son justo lo que el módulo desmiente con números: los métodos <strong>no</strong> coinciden —YW quedó a más de un error estándar de ML— y sus $\\hat\\sigma^2$ no miden lo mismo, así que mezclar salidas de <code>ar()</code> y <code>arima()</code> para comparar criterios de información no tiene sentido.'
+        retroAcierto: 'Son las tres que describen lo que hace cada método. Las dos falsas las desmiente el propio módulo con las manchas solares: Yule–Walker y máxima verosimilitud se separaron $1.26$ y $1.10$ errores estándar, y sus $\\hat\\sigma^2$ fueron $298.96$ y $229.43$.',
+        retroFallo: 'Las correctas son las que dicen para qué modelos funciona bien Yule–Walker, qué deja fuera CSS y qué hace <code>arima()</code> por defecto. Las dos falsas son lo que el módulo desmiente con números: los métodos <strong>no</strong> coinciden —Yule–Walker quedó a más de un error estándar de máxima verosimilitud— y sus $\\hat\\sigma^2$ no miden lo mismo, así que mezclar salidas de <code>ar()</code> y <code>arima()</code> para comparar criterios de información no tiene sentido.'
       }
     ];
 
