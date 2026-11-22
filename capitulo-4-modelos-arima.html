@@ -2869,9 +2869,10 @@
           Asuán entre 1871 y 1970 ($n = 100$, en $10^8\,\text{m}^3$). Antes de mover nada, mira la serie original:
           más que vagar sin rumbo, su nivel parece caer de golpe hacia 1899. Luego sube $d$ y lee los números de
           abajo, no solo el gráfico. La media cae a casi cero, porque diferenciar convierte el caudal en su cambio de
-          un año al siguiente. La varianza, en cambio, apenas baja con $d = 1$ y casi se triplica con $d = 2$. Y
-          $\hat\rho_1$ cambia de signo: con $d = 2$ queda por debajo de $-0.5$, el valor que tendría la diferencia
-          de un ruido blanco. Si diferenciar una vez gana tan poco, ¿hacía falta diferenciar?</p>
+          un año al siguiente. Fíjate sobre todo en $\hat\rho_1$: cambia de signo, y con $d = 2$ queda por debajo
+          de $-0.5$, el valor que tendría la diferencia de un ruido blanco. La varianza apenas baja con $d = 1$ y
+          casi se triplica con $d = 2$, pero no es una pista aparte: el Módulo 3 explica por qué repite lo que ya
+          dice $\hat\rho_1$. ¿Hacía falta diferenciar?</p>
         <div class="simulador-controles"></div>
         <div class="grafico-wrapper" style="height:260px;">
           <canvas aria-label="Serie del Nilo en el nivel de diferenciación seleccionado" role="img"></canvas>
@@ -2913,7 +2914,7 @@ round(c(var_w = var(w), var_y = var(y), razon = var(y) / var(w)), 3)
 set.seed(2026)
 w0 &lt;- arima.sim(list(ar = 0.2544), n = 200)
 round(var(cumsum(w0)) / var(w0), 1)
-#&gt; [1] 32.8                  aqui integrar la multiplica por 33
+#&gt; [1] 32.8                  aqui integrar la multiplica por 32.8
 
 # arima.sim lo hace directamente con order = c(p, d, q)
 set.seed(2026)
@@ -2954,16 +2955,17 @@ razon0 = np.mean([np.cumsum(w).var() / w.var()
                   for w in (proceso0.generate_sample(200, distrvs=rng.standard_normal)
                             for _ in range(500))])
 print(round(razon, 3), round(razon0, 1))
-#&gt; 1.363 56.7      con theta = -0.8741 integrar casi no cambia la varianza;
-#&gt;                 sin el termino MA la multiplica por decenas
-#   (en R, con su propio generador, sale 1.006 y 32.8: el mensaje es el mismo)</code></pre>
+#&gt; 1.363 56.7
+#   con el theta del Nilo integrar casi no cambia la varianza; sin el termino
+#   MA la multiplica por decenas (en R, con su propio generador, sale 1.006 y
+#   32.8: el mensaje es el mismo)</code></pre>
         </div>
       </div>
 
       <div class="note">
         <h4><i class="fas fa-magnifying-glass mr-2" aria-hidden="true"></i>Una anomalía que vale la pena guardar</h4>
         <p>En el bloque de arriba pasa algo que no cuadra. Integrar una serie estacionaria debería disparar su
-          varianza —es lo que ocurre sin el término MA, donde se multiplica por $33$— y con los coeficientes reales
+          varianza —es lo que ocurre sin el término MA, donde se multiplica por $32.8$— y con los coeficientes reales
           del Nilo, en esta realización, la deja prácticamente igual: una razón de $1.006$ (el bloque de Python,
           promediando 500 réplicas, obtiene $1.363$; sin el término MA, decenas). La causa está en el valor de
           $\theta$. Escrito con sus raíces, el modelo del Nilo es</p>
@@ -3065,9 +3067,9 @@ print(round(razon, 3), round(razon0, 1))
         <div class="ciclo-panel" id="ciclo-box-jenkins-identificacion" role="tabpanel">
           <div class="ciclo-campo">
             <span class="ciclo-etiqueta">Qué haces</span>
-            <p>Decidir $(p, d, q)$. <strong>Primero $d$</strong>, mirando el gráfico, la varianza por orden de
-              diferencia y las pruebas de raíz unitaria; y solo después $p$ y $q$, leyendo la ACF y la PACF de la
-              serie <em>ya diferenciada</em>. El orden importa: la ACF de una serie no estacionaria no dice nada
+            <p>Decidir $(p, d, q)$. <strong>Primero $d$</strong>, mirando el gráfico y la ACF, las pruebas de raíz
+              unitaria y, si ya se diferenció, los síntomas de haberlo hecho de más; y solo después $p$ y $q$,
+              leyendo la ACF y la PACF de la serie <em>ya diferenciada</em>. El orden importa: la ACF de una serie no estacionaria no dice nada
               sobre $p$ y $q$ porque no decae.</p>
           </div>
           <div class="ciclo-campo">
@@ -3101,7 +3103,9 @@ print(round(razon, 3), round(razon0, 1))
               de sobreparametrización): de vuelta a la etapa 1 con $p$ o $q$ más pequeños. Una raíz sobre el círculo
               unitario, o muy cerca, también devuelve, pero el arreglo depende de cuál sea: si es del MA, la serie
               se diferenció de más y hay que <strong>bajar</strong> $d$; si es del AR, le falta una diferencia y hay
-              que <strong>subirlo</strong>.</p>
+              que <strong>subirlo</strong>. Con una salvedad: si el AR tiene una raíz casi igual a la del MA, los dos
+              factores se cancelan entre sí, y lo que sobra no es la diferencia sino $p$ y $q$. Es el caso del
+              ARIMA($2,1,2$) de la TRM del Módulo 10, en una serie donde $d = 1$ no se discute.</p>
           </div>
         </div>
         <div class="ciclo-panel" id="ciclo-box-jenkins-diagnostico" role="tabpanel" hidden>
@@ -3172,7 +3176,8 @@ ajuste &lt;- arima(Nile, order = c(1, d, 1), method = "ML")
 # ---- Etapa 3: diagnostico -----------------------------------------------
 res &lt;- residuals(ajuste)
 Box.test(res, lag = 20, type = "Ljung-Box", fitdf = 2)$p.value
-#&gt; [1] 0.7997371       &gt; 0.05: no hay evidencia de estructura sobrante
+#&gt; [1] 0.7997371
+# p &gt; 0.05: no hay evidencia de estructura sobrante
 
 # ---- Etapa 4: uso (con el MISMO ajuste de la etapa 2) -------------------
 pron &lt;- forecast(ajuste, h = 10)
@@ -3193,15 +3198,20 @@ w = np.diff(nilo)
 # Etapa 2
 ajuste = ARIMA(nilo, order=(1, 1, 1), trend="n").fit()
 
-# Etapa 3: model_df descuenta los parametros, como fitdf en R
-lb = acorr_ljungbox(ajuste.resid, lags=[20], model_df=2)
+# Etapa 3: model_df descuenta los parametros, como fitdf en R. El primer
+# "residual" de statsmodels es el dato crudo y_1 = 1120 (arranque difuso),
+# no un error: se descarta, como en los Modulos 4 y 10
+lb = acorr_ljungbox(ajuste.resid[1:], lags=[20], model_df=2)
 print(round(float(lb["lb_pvalue"].iloc[0]), 4))
-#&gt; 0.761     (R da 0.7997: cada programa inicializa el filtro a su manera y
-#&gt;            los primeros residuales difieren. La conclusion no cambia.)
+#&gt; 0.8225
+#   R da 0.7997 (0.8118 sin su primer residual, 1.12): ni los coeficientes
+#   ni el arranque son identicos. La conclusion no cambia: no rechaza.
 
 # Etapa 4
 print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
-#&gt; [816.3  835.75 840.71]     R: 816.18 835.56 840.49</code></pre>
+#&gt; [816.3  835.75 840.71]
+#   R da 816.18, 835.56 y 840.49: los coeficientes no son identicos (difieren
+#   en el cuarto decimal)</code></pre>
         </div>
       </div>
 
@@ -3242,16 +3252,20 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
             <tr><th>Evidencia</th><th>Qué mirar</th><th>Qué dice sobre el Nilo</th></tr>
           </thead>
           <tbody>
-            <tr><td><strong>1. El gráfico</strong></td><td>¿El nivel vaga sin volver a ningún sitio?
-              ¿Hay saltos?</td><td>A primera vista parece vagar, pero el rasgo dominante es un descenso brusco
-              alrededor de 1899.</td></tr>
-            <tr><td><strong>2. La varianza</strong></td><td>$\operatorname{Var}(\nabla^d y)$ debe
-              <em>bajar</em> y luego <em>subir</em> al pasarse</td><td>$28\,638 \to 28\,268 \to 80\,055 \to
-              262\,507$: el mínimo está en $d = 1$.</td></tr>
-            <tr><td><strong>3. Las pruebas</strong></td><td>ADF y PP ($H_0$: hay raíz unitaria) y KPSS ($H_0$:
+            <tr><td><strong>1. El gráfico y la ACF</strong></td><td>¿El nivel vaga sin volver a ningún sitio?
+              ¿Hay saltos? ¿La ACF decae despacio, sin cortar?</td><td>A primera vista parece vagar, pero el rasgo
+              dominante es un descenso brusco alrededor de 1899. La ACF decae despacio desde $0.498$
+              (Módulo 4).</td></tr>
+            <tr><td><strong>2. Las pruebas</strong></td><td>ADF y PP ($H_0$: hay raíz unitaria) y KPSS ($H_0$:
               es estacionaria)</td><td>ADF de <code>adf.test</code> (constante y tendencia, $k = 4$) $-3.366$
               ($p = 0.064$, no rechaza); KPSS $0.965$ ($p &lt; 0.01$, rechaza la estacionariedad). Estas dos apuntan a
               diferenciar. PP, en cambio, $Z(t_\alpha) = -6.690$ ($p &lt; 0.01$), rechaza la raíz unitaria.</td></tr>
+            <tr><td><strong>3. Los síntomas de haber diferenciado de más</strong></td><td>En el modelo
+              ajustado, una raíz MA cerca de $1$. En la serie diferenciada, un $\hat\rho_1$ cerca de $-0.5$ o por debajo es
+              solo un indicio: falla en los dos sentidos (Módulo 2.7)</td><td>Con $d = 1$, $\hat\rho_1 = -0.402$, no muy
+              lejos de $-0.5$; con $d = 2$, $-0.626$, ya por debajo. La raíz MA del ARIMA($1,1,1$) queda en $1.144$
+              (Módulo 6), más cerca del círculo que la del MA(1) del Módulo 8, en $1.364$; ninguna está sobre
+              él.</td></tr>
           </tbody>
         </table>
       </div>
@@ -3272,10 +3286,14 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
       <p><code>adf.test()</code> incluye la constante $\alpha_0$ y la tendencia $\alpha_1 t$ con $k = 4$; como se verá
         enseguida, no es la única especificación posible, y el resultado depende de ella.</p>
 
-      <p>La caída de la varianza de $d=0$ a $d=1$ es aquí llamativamente pequeña —de $28\,638$ a $28\,268$, apenas un
-        $1.3\,\%$— mientras que pasar a $d=2$ la casi triplica. Que el mínimo esté en $d=1$ pero por tan poco margen
-        es un aviso: hay algo en esta serie que no encaja con la historia habitual de la raíz unitaria, y el Módulo 8
-        lo destapa.</p>
+      <p>¿Y la varianza de $\nabla^d y$? De $d=0$ a $d=1$ apenas baja —de $28\,638$ a $28\,268$, un
+        $1.3\,\%$— y con $d=2$ casi se triplica. Es una descripción útil, pero <strong>no decide $d$</strong>: el
+        Capítulo 2 (Módulo 2.7) mostró que, en una serie estacionaria, el cociente
+        $\operatorname{Var}(\nabla y)/\operatorname{Var}(y)$ se acerca a $2(1-r_1)$, así que repite lo que ya dice
+        $r_1$, y $r_1$ solo no dice si hay una raíz unitaria. En el Nilo, $r_1 = 0.498$ da $2(1-r_1) = 1.003$, y el
+        cociente medido es $0.987$ (el bloque de código lo calcula): que la varianza casi no cambie es otra forma de
+        decir que $r_1$ está cerca de $0.5$. Lo que esta serie tiene de raro lo destapan el gráfico y, en el
+        Módulo 8, el modelo ajustado.</p>
 
       <div class="warning">
         <h4><i class="fas fa-triangle-exclamation mr-2" aria-hidden="true"></i>Tres pruebas, tres respuestas, la
@@ -3416,25 +3434,32 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
         <div class="code-tab-panel" data-lang="r">
           <pre><code class="language-r">library(forecast); library(tseries)
 
-# --- Evidencia 2: la varianza por orden de diferencia --------------------
+# --- La varianza por orden de diferencia: describe, pero no decide ------
 # OJO: diff(x, differences = 0) LANZA UN ERROR en R, no es la identidad.
 for (d in 0:3) {
   x &lt;- if (d == 0) Nile else diff(Nile, differences = d)
   cat(sprintf("d = %d  n = %3d  var = %10.2f\n", d, length(x), var(x)))
 }
 #&gt; d = 0  n = 100  var =   28637.95
-#&gt; d = 1  n =  99  var =   28268.34      &lt;- minimo
+#&gt; d = 1  n =  99  var =   28268.34
 #&gt; d = 2  n =  98  var =   80055.01
 #&gt; d = 3  n =  97  var =  262507.29
+# En una serie estacionaria Var(diff(y)) / Var(y) se acerca a 2(1 - r1)
+# (Modulo 2.7): la varianza repite lo que ya dice r1
+r1 &lt;- acf(Nile, plot = FALSE)$acf[2]
+round(c(cociente = var(diff(Nile)) / var(Nile), dos_por_1_menos_r1 = 2 * (1 - r1)), 3)
+#&gt;           cociente dos_por_1_menos_r1
+#&gt;              0.987              1.003
 
-# --- Evidencia 3: las pruebas -------------------------------------------
+# --- Evidencia 2: las pruebas -------------------------------------------
 adf.test(Nile)$p.value          # H0: hay raiz unitaria
-#&gt; [1] 0.06419542                no rechaza (al 5 %): diferenciar
+#&gt; [1] 0.06419542
+# no rechaza al 5 %: apunta a diferenciar
 kpss.test(Nile)$statistic       # H0: es estacionaria
 #&gt; KPSS Level
-#&gt;  0.9654349                    rechaza (p &lt; 0.01): diferenciar
-# (kpss.test avisa "p-value smaller than printed p-value": la tabla se acaba
-#  en 0.01, no es un error)
+#&gt;  0.9654349
+# rechaza (p &lt; 0.01): diferenciar. kpss.test avisa "p-value smaller than
+# printed p-value": la tabla se acaba en 0.01, no es un error
 
 # --- Y las tres respuestas de ndiffs ------------------------------------
 sapply(c("kpss", "adf", "pp"), function(t) ndiffs(Nile, test = t))
@@ -3442,6 +3467,11 @@ sapply(c("kpss", "adf", "pp"), function(t) ndiffs(Nile, test = t))
 #&gt;    1    0    0            &lt;- el defecto es "kpss", y es el unico que dice 1
 # (el ADF de ndiffs es urca::ur.df(type = "drift", lags = 1): solo constante y
 #  un rezago, no la especificacion con tendencia y k = 4 de adf.test)
+
+# --- Evidencia 3: los sintomas de haber diferenciado de mas --------------
+# r1 de la serie diferenciada: cerca de -0.5, o por debajo, delata que sobra
+round(sapply(1:2, function(d) acf(diff(Nile, differences = d), plot = FALSE)$acf[2]), 3)
+#&gt; [1] -0.402 -0.626
 
 # --- El experimento del escalon -----------------------------------------
 set.seed(2026)
@@ -3458,7 +3488,7 @@ c(sin_escalon = simula(0), con_el_del_Nilo = simula(-247.78))
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, statsmodels.api as sm
-from statsmodels.tsa.stattools import adfuller, kpss
+from statsmodels.tsa.stattools import adfuller, kpss, acf
 
 nilo = sm.datasets.nile.load_pandas().data["volume"].values
 
@@ -3469,6 +3499,14 @@ for d in range(4):
 #&gt; d = 1  n =  99  var =   28268.34
 #&gt; d = 2  n =  98  var =   80055.01
 #&gt; d = 3  n =  97  var =  262507.29
+
+# La varianza repite lo que dice r1 (Modulo 2.7); los sintomas de diferenciar
+# de mas se leen en el r1 de la serie diferenciada
+r1 = acf(nilo, nlags=1)[1]
+print(round(np.diff(nilo).var(ddof=1) / nilo.var(ddof=1), 3), round(2 * (1 - r1), 3))
+#&gt; 0.987 1.003
+print([round(float(acf(np.diff(nilo, n=d), nlags=1)[1]), 3) for d in (1, 2)])
+#&gt; [-0.402, -0.626]
 
 # Para reproducir el estadistico de adf.test() de R hacen falta sus opciones:
 est, p, *_ = adfuller(nilo, regression="ct", autolag=None,
@@ -3493,7 +3531,8 @@ def simula(beta, reps=400):                   # beta = tamano del escalon
                          regression="c", nlags=4)[1] &lt;= 0.05
                     for _ in range(reps)])
 print(simula(0.0), simula(-247.78))
-#&gt; 0.035 1.0     (R: 0.045 y 1.000)</code></pre>
+#&gt; 0.035 1.0
+#   R, con su propio generador, da 0.045 y 1.000</code></pre>
         </div>
       </div>
 
@@ -3551,8 +3590,8 @@ print(simula(0.0), simula(-247.78))
         </div>
       </div>
 
-      <p>El Módulo 3 dejó $d = 1$ como decisión de trabajo para el Nilo: es el orden que minimiza la varianza y el
-        que pide KPSS, aunque la sospecha del escalón de 1899 sigue abierta y el Módulo 8 la retoma. Con ese $d$
+      <p>El Módulo 3 dejó $d = 1$ como decisión de trabajo para el Nilo: es el orden que pide KPSS, la prueba que
+        usa <code>auto.arima</code>, aunque la sospecha del escalón de 1899 sigue abierta y el Módulo 8 la retoma. Con ese $d$
         provisional, el resto es el Capítulo 3 sin cambios: se leen la ACF y la PACF de
         $w_t = \nabla y_t = y_t - y_{t-1}$ y se cruzan en la tabla de identificación. Lo único nuevo, y es
         importante, es <strong>sobre qué serie se leen</strong>. La ACF de la serie sin diferenciar del Nilo decae
@@ -3688,10 +3727,12 @@ print(np.round(pacf(w, nlags=6, method="ldb")[1:], 4))
 
 ma1 = ARIMA(nilo, order=(0, 1, 1), trend="n").fit()
 print(round(ma1.params[0], 4))
-#&gt; -0.7334   (R: -0.7329)
+#&gt; -0.7334
+#   R da -0.7329
 # el primer residual es y_1 = 1120 (inicializacion difusa), no un error: se descarta
 print(round(float(acorr_ljungbox(ma1.resid[1:], lags=[20], model_df=1)["lb_pvalue"].iloc[0]), 4))
-#&gt; 0.6984    (R: 0.6737; misma conclusion, no rechaza)</code></pre>
+#&gt; 0.6984
+#   R da 0.6737: misma conclusion, no rechaza</code></pre>
         </div>
       </div>
 
@@ -3739,7 +3780,8 @@ print(round(float(acorr_ljungbox(ma1.resid[1:], lags=[20], model_df=1)["lb_pvalu
         </ul>
         <p style="margin-bottom:0;">Regla mnemotécnica: <strong>cada diferencia sube en un grado el polinomio de la
           tendencia</strong> que la constante genera: a largo plazo, $\hat y_{n+h}$ crece como
-          $\mu_w\, h^d / d!$. Sin constante: $d=0$ tiende a cero, $d=1$ se queda plano, $d=2$ sigue una recta. Con
+          $\mu_w\, h^d / d!$. Sin constante: $d=0$ tiende a cero, $d=1$ se aplana (no necesariamente en el último
+          dato: el Módulo 9 lo mide), $d=2$ sigue una recta. Con
           constante: $d=0$ vuelve a la media, $d=1$ recta, $d=2$ parábola. El simulador «La forma del pronóstico
           según $d$» del Módulo 9 dibuja cuatro de estos seis casos sobre el Nilo.</p>
       </div>
@@ -3793,7 +3835,8 @@ print(round(float(acorr_ljungbox(ma1.resid[1:], lags=[20], model_df=1)["lb_pvalu
       </div>
 
       <p>No es significativa (en la ecuación del Módulo 1 equivaldría a
-        $c = \hat\delta\,(1-\hat\phi_1) = -2.883 \times (1 - 0.271) = -2.10$). Y el AICc lo confirma: $1268.06$ con deriva frente a $1267.51$ sin ella —
+        $c = \hat\delta\,(1-\hat\phi_1) = -2.883 \times (1 - 0.271) = -2.10$, con el $\hat\phi_1 = 0.271$ del
+        propio modelo con deriva, que no es el $0.254$ del modelo sin ella). Y el AICc lo confirma: $1268.06$ con deriva frente a $1267.51$ sin ella —
         añadirla empeora. Tiene sentido físico: no hay ninguna razón para creer que el caudal del Nilo disminuya
         <em>indefinidamente</em> a razón de $2.9 \times 10^8\ \text{m}^3$ por año. Y buena parte de esa caída no fue
         gradual. La media de las diferencias es $(y_{1970} - y_{1871})/99 = (740 - 1120)/99 = -3.84$ —la suma de
@@ -3835,6 +3878,9 @@ names(coef(f1a))
 
 # Para pedirla hay que usar forecast::Arima con include.drift
 f1b &lt;- Arima(Nile, order = c(1, 1, 1), include.drift = TRUE)
+round(coef(f1b), 4)               # el ar1 cambia al anadir la deriva
+#&gt;     ar1     ma1   drift
+#&gt;  0.2707 -0.9054 -2.8827
 round(c(coef(f1b)[["drift"]], sqrt(diag(f1b$var.coef))[["drift"]]), 4)
 #&gt; [1] -2.8827  2.0167
 round(coef(f1b)[["drift"]] / sqrt(diag(f1b$var.coef))[["drift"]], 3)
@@ -3863,7 +3909,7 @@ f0 = ARIMA(nilo, order=(1, 0, 1), trend="c").fit()
 print(f0.param_names, np.round(f0.params, 4))
 #&gt; ['const', 'ar.L1', 'ma.L1', 'sigma2'] [ 9.19350500e+02  8.61000000e-01
 #&gt;                                        -5.17600000e-01  1.98070486e+04]
-#   919.35 es EXACTAMENTE la media muestral de la serie; R devuelve
+#   919.35 es practicamente la media muestral de la serie; R devuelve
 #   920.7037, el valor que maximiza la verosimilitud junto al resto de
 #   parametros. statsmodels no se aleja del valor inicial porque la
 #   verosimilitud es muy plana en la media (e.e. = 46.67 en R).
@@ -3873,8 +3919,9 @@ print(f0.param_names, np.round(f0.params, 4))
 f1 = ARIMA(nilo, order=(1, 1, 1), trend="t").fit()
 i = f1.param_names.index("x1")
 print(round(f1.params[i], 4), round(f1.bse[i], 4), round(f1.params[i] / f1.bse[i], 3))
-#&gt; -2.8518 2.124 -1.343       R: -2.8827, 2.0167, t = -1.429
-#   distinto numero, misma conclusion: no es significativa
+#&gt; -2.8518 2.124 -1.343
+#   R da -2.8827, 2.0167 y t = -1.429: distinto numero, misma conclusion,
+#   no es significativa
 
 # d = 2: statsmodels TAMPOCO la ajusta, y ademas lo explica mejor que R
 try:
@@ -4041,7 +4088,11 @@ subset(rejilla, modelo %in% c("ARIMA(0,1,1)", "ARIMA(1,1,1)"))[, c("modelo","aic
 #&gt;          modelo    aicc     bic
 #&gt; 11 ARIMA(0,1,1) 1269.22 1274.28
 #&gt; 14 ARIMA(1,1,1) 1267.51 1275.04
-# AICc prefiere (1,1,1) por 1.71; BIC prefiere (0,1,1) por 0.76</code></pre>
+# AICc prefiere (1,1,1) y BIC prefiere (0,1,1), por:
+with(subset(rejilla, modelo %in% c("ARIMA(0,1,1)", "ARIMA(1,1,1)")),
+     round(c(aicc = -diff(aicc), bic = diff(bic)), 2))
+#&gt; aicc  bic 
+#&gt; 1.71 0.76 </code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm
@@ -4130,8 +4181,12 @@ print(tabla.loc[tabla.groupby("d")["aicc"].idxmin(), ["d","modelo","nobs","n_ef"
           \end{aligned}$$
         </div>
         <p>Se descartan por el camino los ajustes que no convergen y los que tienen raíces demasiado cerca del
-          círculo unitario ($|\text{raíz}| &lt; 1.01$): a esos el algoritmo les asigna AICc $=\infty$. Es lo que le
-          pasa al ARIMA($2,1,2$) del Nilo, que tiene una raíz AR de módulo $1.001$.</p>
+          círculo unitario ($|\text{raíz}| &lt; 1.01$ en el código de <code>forecast</code>): a esos el algoritmo
+          les asigna AICc $=\infty$. Es lo que le pasa al ARIMA($2,1,2$) del Nilo con el ajuste que usa
+          <code>auto.arima</code>, el CSS-ML de <code>Arima()</code>: su menor raíz AR tiene módulo $1.001$. El
+          explorador del Módulo 6, que ajusta por máxima verosimilitud exacta, muestra ese mismo modelo con la raíz
+          AR en $2.241$ y sin aviso: es otro óptimo de la verosimilitud, algo peor ($\log L = -630.445$ frente a
+          $-630.169$). La raíz depende del estimador; el bloque de código de más abajo da las dos.</p>
         <p style="margin-bottom:0;">Si $n &gt; 150$ o la frecuencia es mayor que $12$, la búsqueda usa además una
           verosimilitud aproximada (CSS) y al final reajusta el ganador con la exacta: es la opción
           <code>approximation</code>. Con las $100$ observaciones del Nilo no se activa, así que los AICc de la traza
@@ -4192,7 +4247,7 @@ print(tabla.loc[tabla.groupby("d")["aicc"].idxmin(), ["d","modelo","nobs","n_ef"
       <div class="note">
         <p><strong>Siete modelos a menos de $2$ puntos de AICc.</strong> La regla de referencia habitual es que
           diferencias menores que $2$ no distinguen modelos. Es decir: <code>auto.arima</code> devuelve un ganador
-          con toda la seguridad de una sola línea de salida, y detrás de él hay <strong>siete candidatos
+          con toda la seguridad de una sola línea de salida, y detrás de él hay <strong>seis candidatos
           indistinguibles según el propio criterio</strong>, incluido el ARIMA($0,1,1$) que proponía el correlograma
           del Módulo 4. La función no miente; simplemente no está diseñada para comunicar esa incertidumbre. Pedir
           <code>trace = TRUE</code> no cuesta nada y la enseña.</p>
@@ -4251,7 +4306,18 @@ c(escalonada = n_modelos(Nile, trace = TRUE, seasonal = FALSE),
   exhaustiva = n_modelos(Nile, trace = TRUE, seasonal = FALSE,
                          stepwise = FALSE, approximation = FALSE))
 #&gt; escalonada exhaustiva
-#&gt;         18         42</code></pre>
+#&gt;         18         42
+
+# El ARIMA(2,1,2), descartado por su raiz AR: depende del estimador
+for (m in c("CSS-ML", "ML")) {
+  a &lt;- Arima(Nile, order = c(2, 1, 2), method = m)
+  cat(sprintf("%-6s logL = %.3f  min|raiz AR| = %.4f\n", m, a$loglik,
+              min(Mod(polyroot(c(1, -coef(a)[c("ar1", "ar2")]))))))
+}
+#&gt; CSS-ML logL = -630.169  min|raiz AR| = 1.0009
+#&gt; ML     logL = -630.445  min|raiz AR| = 2.2407
+# CSS-ML (el de auto.arima) lo deja casi sobre el circulo; ML cae en otro
+# optimo, de verosimilitud algo menor, con las raices lejos</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python"># statsmodels NO trae el algoritmo de Hyndman-Khandakar. Con solo statsmodels
@@ -4271,14 +4337,14 @@ for p in range(4):
         except Exception:
             continue
         evaluados += 1
-        k = len(f.params)
-        a = f.aic + 2*k*(k+1)/(f.nobs-k-1)
-        if a &lt; mejor_aicc:
-            mejor, mejor_aicc = (p, 1, q), a
+        if f.aicc &lt; mejor_aicc:        # f.aicc ya usa n - d (nobs_effective)
+            mejor, mejor_aicc = (p, 1, q), f.aicc
 print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
-#&gt; (1, 1, 1) 1267.469 (16 modelos)
-#   mismo ganador que auto.arima; el AICc difiere en 0.04 porque statsmodels
-#   no descuenta d en nobs (ver el modulo 6)
+#&gt; (1, 1, 1) 1267.471 (16 modelos)
+#   mismo ganador que auto.arima. El AICc difiere del de R (1267.507) en 0.04
+#   porque la log-verosimilitud no es identica: cada programa inicializa el
+#   filtro a su manera, y el AIC ya difiere (1267.219 aqui, 1267.255 en R).
+#   No es el n: corregir con 100 o con 99 observaciones mueve el AICc 0.003
 
 # ---- Alternativa con una dependencia extra ------------------------------
 # pmdarima.auto_arima es una traduccion directa del algoritmo de R.
@@ -4359,7 +4425,7 @@ print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
           <tbody>
             <tr><td>0</td><td>$28\,637.95$</td><td>$0.498$</td><td>$0.378$</td><td>Sin diferenciar.</td></tr>
             <tr style="background:rgba(1,40,32,0.05);"><td>1</td><td>$28\,268.34$</td><td>$-0.402$</td>
-              <td>$-0.733$</td><td>Mínimo de varianza.</td></tr>
+              <td>$-0.733$</td><td>Raíz MA en $1.364$, fuera del círculo.</td></tr>
             <tr><td>2</td><td>$80\,055.01$</td><td>$-0.626$</td><td>$\mathbf{-1.000}$</td>
               <td>Raíz unitaria en el MA.</td></tr>
             <tr><td>3</td><td>$262\,507.29$</td><td>$-0.719$</td><td>$\mathbf{-1.000}$</td>
@@ -4379,14 +4445,18 @@ print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
         un $d$ equivocado: premia los que son <em>numéricamente degenerados</em>.</p>
 
       <div class="warning">
-        <h4><i class="fas fa-triangle-exclamation mr-2" aria-hidden="true"></i>El criterio de la varianza no siempre
-          dispara</h4>
-        <p>La regla habitual —"si al diferenciar la varianza sube, te has pasado"— funcionó en el Nilo, pero
-          <strong>es una heurística, no un teorema</strong>. En una serie con un ciclo marcado puede fallar: sobre
+        <h4><i class="fas fa-triangle-exclamation mr-2" aria-hidden="true"></i>La columna de la varianza no
+          decide $d$</h4>
+        <p>Es tentador leer la tabla con la regla «si al diferenciar la varianza sube, te has pasado». En el Nilo
+          coincide con lo demás, pero <strong>no es una evidencia aparte</strong>: como mostró el Capítulo 2
+          (Módulo 2.7), en una serie estacionaria el cociente de varianzas al diferenciar se acerca a $2(1-r_1)$,
+          así que la varianza repite lo que dice $r_1$, y $r_1$ solo no dice si hay una raíz unitaria. Sobre
           <code>log(lynx)</code>, diferenciar <em>reduce</em> la varianza un $58\,\%$ ($1.653 \to 0.687$) y aun así
           $d = 1$ sobra, como coinciden en señalar ADF, KPSS y Phillips–Perron. Lo que sí lo detecta ahí es la
           raíz: el ARIMA($2,1,1$) sobre esa serie da $|\text{raíz MA}| = 1.000$. <strong>Hay que mirar siempre las
-          raíces</strong>; la varianza es solo un primer aviso. (Es el ejercicio 2 de este capítulo.)</p>
+          raíces.</strong> El $\hat\rho_1$ de la serie diferenciada no avisa aquí: vale $0.565$, positivo y lejos de
+          $-0.5$, que es la manera en que ese indicio falla (Módulo 2.7). (Es el ejercicio 2 de este
+          capítulo.)</p>
       </div>
 
       <h3>El caso del Nilo, cerrado</h3>
@@ -4515,15 +4585,16 @@ for d in (1, 2, 3):
 #&gt; d = 1  var =     28268  theta = -0.7329  |raiz MA| = 1.3644
 #&gt; d = 2  var =     80055  theta = -0.9988  |raiz MA| = 1.0012
 #&gt; d = 3  var =    262507  theta = -0.9980  |raiz MA| = 1.0020
-#   El optimizador de statsmodels se queda a 0.001 del borde en vez de
-#   clavarse en -1 como el de R. La lectura no cambia: raiz sobre el circulo.
+#   El optimizador de statsmodels se queda a 0.0012 y 0.0020 del borde en vez
+#   de clavarse en -1 como el de R. La lectura no cambia: raiz sobre el circulo.
 
 # El escalon de 1899 como regresor externo
 escalon = (anios &gt;= 1899).astype(float).reshape(-1, 1)
 fe = ARIMA(nilo, order=(0, 0, 0), exog=escalon, trend="c").fit()
-print(round(fe.params[1], 2), round(fe.bse[1], 2))
-#&gt; -247.78 27.77     el coeficiente coincide con R; el error estandar no
-#&gt;                   exactamente (R da 28.15). t = -8.9 frente a -8.8.
+print(round(fe.params[1], 2), round(fe.bse[1], 2), round(fe.params[1] / fe.bse[1], 2))
+#&gt; -247.78 27.77 -8.92
+#   el coeficiente coincide con R; el error estandar no exactamente (R da
+#   28.15 y t = -8.80)
 print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
 #&gt; 0.8124</code></pre>
         </div>
@@ -4576,9 +4647,11 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
             <tr><th>Modelo</th><th>Forma a largo plazo</th><th>Medido: $\nabla\hat y$ y $\nabla^2\hat y$ en $h=30$</th><th>Ancho 95 %: $h=1 \to h=30$</th></tr>
           </thead>
           <tbody>
-            <tr><td>ARIMA($1,0,1$) con media</td><td>Vuelve a la media $920.56$</td>
+            <tr><td>ARIMA($1,0,1$) con media</td><td>Vuelve a la media $920.56$ (con el ajuste CSS-ML de
+              <code>Arima()</code>; por máxima verosimilitud, la del Módulo 5, es $920.70$)</td>
               <td>$\nabla\hat y = 0.25$, tiende a $0$</td><td>$561 \to 677$</td></tr>
-            <tr><td>ARIMA($1,1,1$) sin constante</td><td><strong>Constante</strong> en el último nivel</td>
+            <tr><td>ARIMA($1,1,1$) sin constante</td><td><strong>Se aplana</strong> en $842.17$: no en el
+              último dato ($740$), sino en el nivel al que lo lleva la parte ARMA</td>
               <td>$\nabla\hat y = 0.00$</td><td>$557 \to 781$</td></tr>
             <tr><td>ARIMA($1,1,1$) con deriva</td><td><strong>Recta</strong> de pendiente $\hat\delta$</td>
               <td>$\nabla\hat y = -2.88$, $\nabla^2\hat y = 0$</td><td>$555 \to 708$</td></tr>
@@ -4587,6 +4660,19 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
           </tbody>
         </table>
       </div>
+
+      <p>La fila del ARIMA($1,1,1$) sin constante merece una línea, porque es fácil leerla mal: el pronóstico
+        <strong>no se queda en el último dato</strong>. Parte de $740$ (1970), pasa a $816.18$ en $h = 1$ y se
+        aplana en $842.17$. Con $d = 1$, la parte ARMA sigue moviendo la diferencia pronosticada durante unos
+        pasos, $\nabla\hat y_{T+h} = \hat\phi^{\,h-1}(\hat\phi\,\nabla y_T + \hat\theta\,\hat\varepsilon_T)$, y al
+        sumarlos el nivel converge a</p>
+
+      <div class="formula">
+        $$\hat y_{T+\infty} = y_T + \frac{\hat\phi\,\nabla y_T + \hat\theta\,\hat\varepsilon_T}{1-\hat\phi}$$
+      </div>
+
+      <p>Lo constante es ese nivel final, no el último observado; el bloque de código de este módulo lo
+        comprueba.</p>
 
       <div class="note">
         <p><strong>Con $d = 2$ el pronóstico es una recta, no una parábola</strong>, y vale la pena entender por
@@ -4764,6 +4850,16 @@ for (nm in names(formas)) {
 #&gt; d=2                 1a dif en h=30:  -4.049   2a dif:  0.000000
 # d=2 da una RECTA (2a diferencia nula), no una parabola
 
+# Sin constante y con d = 1 se aplana, pero no en el ultimo dato
+f1  &lt;- formas[["d=1 sin constante"]]
+ph  &lt;- coef(f1)[["ar1"]]; th1 &lt;- coef(f1)[["ma1"]]
+yT  &lt;- as.numeric(tail(Nile, 1)); dyT &lt;- yT - as.numeric(Nile)[99]
+eT  &lt;- as.numeric(tail(residuals(f1), 1))
+round(c(ultimo = yT, h1 = forecast(f1, h = 1)$mean[1], h30 = forecast(f1, h = 30)$mean[30],
+        limite = yT + (ph * dyT + th1 * eT) / (1 - ph)), 2)
+#&gt; ultimo     h1    h30 limite
+#&gt; 740.00 816.18 842.17 842.17
+
 # --- El intervalo, reconstruido desde los pesos psi ----------------------
 f   &lt;- Arima(Nile, order = c(1, 1, 1))
 phi &lt;- coef(f)[["ar1"]]; th &lt;- coef(f)[["ma1"]]; s &lt;- sqrt(f$sigma2)
@@ -4818,8 +4914,8 @@ semiancho = (ic[:, 1] - ic[:, 0]) / 2
 print(f"{np.max(np.abs(semiancho - 1.959964 * sigma_h)):.3e}")
 #&gt; 3.044e-06        la formula reproduce el intervalo tambien aqui
 
-print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3))
-#&gt; [140.599 140.599 196.925   0.168]
+print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3).tolist())
+#&gt; [140.599, 140.599, 196.925, 0.168]
 #   R da [142.045 142.045 199.363 0.169]. La diferencia viene sobre todo de
 #   sigma^2: forecast::Arima la corrige por grados de libertad (SCR / (n* - k),
 #   con n* = 99 y k = 2) y statsmodels da la de maxima verosimilitud, sin esa
@@ -4874,8 +4970,8 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3))
               <td class="block lg:table-cell pb-1 lg:pb-4 border-b-0 lg:border-b">
                 <strong>1. Identificación de $d$</strong><br><span class="text-gray-500 text-sm">Módulos 1 y 3</span></td>
               <td class="block lg:table-cell pt-0 lg:pt-4">
-                El gráfico muestra un descenso brusco hacia 1899. La varianza apenas baja con $d = 1$
-                ($28\,638 \to 28\,268$, un $1.3\,\%$) y casi se triplica con $d = 2$. Las pruebas no coinciden:
+                El gráfico muestra un descenso brusco hacia 1899, y la ACF decae despacio desde $0.498$. Las
+                pruebas no coinciden:
                 <code>adf.test</code> ($p = 0.064$) y KPSS ($p &lt; 0.01$) apuntan a diferenciar, y PP
                 ($p &lt; 0.01$) rechaza la raíz unitaria. Se sigue a KPSS, la prueba de <code>auto.arima</code>:
                 <strong>$d = 1$</strong>, a título provisional.</td></tr>
@@ -4946,8 +5042,8 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3))
       <div class="note">
         <p><strong>Leído de corrido, el caso deja dos lecciones.</strong> La primera: el ciclo funciona y aun así
           no basta. El ARIMA($1,1,1$) supera cada etapa con las herramientas previstas, y la pista de que $d = 1$
-          podía sobrar asomó en casi todas —la varianza que casi no baja, las pruebas que discrepan, el
-          $\hat\theta$ cerca de $-1$—, pero solo el gráfico la explica. La segunda: la duda final, diferenciar o
+          podía sobrar asomó en casi todas —las pruebas que discrepan, el $\hat\rho_1 = -0.402$ de la serie
+          diferenciada, el $\hat\theta$ cerca de $-1$—, pero solo el gráfico la explica. La segunda: la duda final, diferenciar o
           modelar el escalón, no la resuelve ningún criterio dentro de muestra, porque los dos modelos tienen
           distinto $d$. Hay que medirla fuera de muestra, y eso es el Capítulo 6.</p>
       </div>
@@ -4957,8 +5053,10 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3))
 
       <h3>Caso: la tasa representativa del mercado</h3>
 
-      <p>La TRM mensual (promedio del mes, Superintendencia Financiera vía datos.gov.co) entre enero de 2015 y junio
-        de 2026: $n = 138$ observaciones en pesos por dólar. El Capítulo 3 mostró que sus log-retornos son, a
+      <p>La TRM mensual (promedio del mes de la TRM diaria que publica la Superintendencia Financiera en
+        datos.gov.co) entre enero de 2015 y junio de 2026: $n = 138$ observaciones en pesos por dólar. Los bloques de
+        código no la descargan: leen la copia fija del curso, <code>datos/trm_mensual_2015-01_2026-06.csv</code>,
+        la misma de los Capítulos 2 y 3, para que las cifras no cambien con cada consulta. El Capítulo 3 mostró que sus log-retornos son, a
         efectos prácticos, ruido blanco. Aquí se trata en <strong>niveles</strong> y se recorre el ciclo de
         principio a fin.</p>
 
@@ -5041,7 +5139,9 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3))
           del Capítulo 3. Las del AR quedan en $1.0042$, prácticamente encima. Un ajuste así es numéricamente
           degenerado: los factores AR y MA se cancelan entre sí, los coeficientes no están identificados y el AICc
           premia un espejismo. <code>auto.arima</code> descarta por diseño los modelos con alguna raíz de módulo
-          menor que $1.01$, y aquí acierta. <strong>Comprobar las raíces no es opcional.</strong></p>
+          menor que $1.01$ (el umbral del código de <code>forecast</code>), y aquí acierta. Y es el caso de la
+          salvedad del Módulo 2: la raíz MA unitaria tiene pareja en el AR, así que lo que sobra son $p$ y $q$, no
+          la diferencia. <strong>Comprobar las raíces no es opcional.</strong></p>
       </div>
 
       <div class="note">
@@ -5051,8 +5151,9 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3))
           $\hat\delta = 8.00$ pesos/mes con error estándar $10.36$ ($t = 0.77$): no significativa, así que ni
           siquiera hay una tendencia que extrapolar.</p>
         <p style="margin-bottom:0;">Es un resultado que decepciona y que conviene no maquillar. Coincide con lo que
-          predice la teoría financiera —si el tipo de cambio fuera predecible, alguien ya habría arbitrado la
-          diferencia— y con lo que encontró el Capítulo 3 sobre sus log-retornos. Un modelo que dice
+          predice la teoría financiera para el precio con que se negocia —si el tipo de cambio fuera predecible,
+          alguien ya habría arbitrado la diferencia—, aunque aquí se modela su promedio mensual, que no es
+          exactamente ese precio; y coincide con lo que encontró el Capítulo 3 sobre sus log-retornos. Un modelo que dice
           <em>"no hay señal aquí"</em> es un resultado, no un fracaso. En el Capítulo 6 la caminata aleatoria
           reaparece con otro nombre —el método <em>naïve</em>— y como <strong>referencia que hay que batir</strong>.</p>
       </div>
@@ -5152,14 +5253,16 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3))
         <strong>por arriba</strong>: el intervalo es simétrico y el riesgo no lo es, así que subestima la
         devaluación y sobrestima la revaluación. A doce meses la situación se invierte. Las colas pesadas
         desaparecen —los cambios a doce meses tienen curtosis $2.8$, casi la de una normal— y, aun así, caen fuera
-        $11$ de los $126$ cambios, un $8.7\,\%$; el Capítulo 6 lo confirma fuera de la muestra, con una cobertura
-        del $89.6\,\%$. Una parte se explica porque $\sigma_h^2 = h\,\sigma^2$ supone choques incorrelados, y con
-        $\hat\rho_1 = 0.088$ la varianza real de los cambios a $3$–$12$ meses es entre $1.07$ y $1.14$ veces esa
-        cifra: el abanico sale un poco estrecho, aunque no tanto como para explicar todo el déficit. Modelar la
+        $11$ de los $126$ cambios, un $8.7\,\%$. Fuera de la muestra el Capítulo 6 mide algo parecido: el intervalo
+        del $95\,\%$ del naïve cubre el $89.6\,\%$, contando juntos los horizontes de $1$ a $12$ meses. Una parte se
+        explica porque $\sigma_h^2 = h\,\sigma^2$ supone choques incorrelados y los cambios mensuales tienen
+        $\hat\rho_1 = 0.088$: medido en la muestra, el cuadrado medio de los cambios a $3$, $6$ y $12$ meses es
+        entre $1.07$ y $1.14$ veces $h\,\hat\sigma^2$. El abanico sale un poco estrecho, aunque no tanto como para
+        explicar todo el déficit. Modelar la
         asimetría pide innovaciones asimétricas y de colas pesadas, o modelos con saltos, fuera del alcance de este
         curso; ningún ARIMA la captura.</p>
 
-      <p>El caso entero, de la descarga en datos.gov.co al abanico y a los cambios que caen fuera de él, en
+      <p>El caso entero, de la lectura de la copia fija al abanico y a los cambios que caen fuera de él, en
         un solo bloque:</p>
 
       <div class="code-tabs">
@@ -5170,16 +5273,15 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3))
         <div class="code-tab-panel" data-lang="r">
           <pre><code class="language-r">library(forecast); library(tseries)
 
-# TRM mensual (promedio del mes, SFC via datos.gov.co); necesita internet.
-url &lt;- paste0("https://www.datos.gov.co/resource/32sa-8pi3.json",
-              "?$select=vigenciadesde,valor&amp;$limit=50000")
-crudo &lt;- jsonlite::fromJSON(url)
-fecha &lt;- as.Date(substr(crudo$vigenciadesde, 1, 10))
-desde &lt;- fecha &gt;= as.Date("2015-01-01")
-valor &lt;- as.numeric(crudo$valor)[desde]
-prom  &lt;- tapply(valor, format(fecha[desde], "%Y-%m"), mean)  # ordena por mes
-prom  &lt;- prom[names(prom) &lt;= "2026-06"]           # hasta junio de 2026
-trm   &lt;- ts(as.numeric(prom), start = c(2015, 1), frequency = 12)
+# TRM mensual: promedio de cada mes de la TRM diaria (Superintendencia
+# Financiera, publicada en datos.gov.co), de enero de 2015 a junio de 2026.
+# Copia fija de los 138 meses con que se calcularon estas cifras, la misma de
+# los capitulos 2 y 3: se lee de la carpeta de trabajo si el archivo ya esta
+# ahi; si no, de la pagina del curso.
+archivo &lt;- "trm_mensual_2015-01_2026-06.csv"
+if (!file.exists(archivo))
+  archivo &lt;- paste0("https://jotamao1985.github.io/Series-de-Tiempo_Un_Bosque/datos/", archivo)
+trm &lt;- ts(read.csv(archivo)$trm, start = c(2015, 1), frequency = 12)
 length(trm)
 #&gt; [1] 138
 
@@ -5258,14 +5360,12 @@ round(cbind(h, sigma_h = s * sqrt(h), semiancho = z * s * sqrt(h),
 #&gt;       h sigma_h semiancho     inf     sup
 #&gt; [1,]  1  121.48    238.09 3259.00 3735.18
 #&gt; [2,]  3  210.40    412.38 3084.71 3909.47
-#&gt; [3,]  6  297.55    583.19 2913.90 4080.29
+#&gt; [3,]  6  297.55    583.19 2913.90 4080.28
 #&gt; [4,] 12  420.80    824.76 2672.33 4321.85
 #&gt; [5,] 24  595.11   1166.39 2330.70 4663.48
-# Una cota baila en el ultimo decimal (4080.29 aqui, 4080.28 en la tabla): la
-# copia congelada de la TRM del capitulo esta redondeada a dos decimales.
 fc &lt;- forecast(rw, h = 24, level = 95)
 max(abs(fc$upper[h] - (yT + z * s * sqrt(h))))
-#&gt; [1] 4.547474e-13      forecast() da el mismo abanico
+#&gt; [1] 0                 forecast() da el mismo abanico
 
 # --- Cuantos cambios reales caen fuera del 95 % -------------------------
 d1 &lt;- diff(trm); d12 &lt;- diff(trm, lag = 12)
@@ -5278,24 +5378,37 @@ c(fuera_12 = sum(abs(d12) &gt; z * s * sqrt(12)), de = length(d12))
 curtosis &lt;- function(x) mean((x - mean(x))^4) / mean((x - mean(x))^2)^2
 round(c(curtosis_1 = curtosis(d1), curtosis_12 = curtosis(d12)), 1)
 #&gt;  curtosis_1 curtosis_12
-#&gt;         5.1         2.8</code></pre>
+#&gt;         5.1         2.8
+asimetria &lt;- function(x) mean((x - mean(x))^3) / mean((x - mean(x))^2)^1.5
+round(c(asimetria_1 = asimetria(d1)), 2)
+#&gt; asimetria_1
+#&gt;        0.76
+
+# --- Lo que el intervalo nominal no recoge ------------------------------
+# El 80 % a un mes (Modulo 9): cuantos cambios caen dentro
+round(c(cubre_80_a_un_mes = mean(abs(d1) &lt;= qnorm(0.90) * s)), 3)
+#&gt; cubre_80_a_un_mes
+#&gt;             0.839
+# Cuadrado medio de los cambios a 3, 6 y 12 meses frente a h * sigma^2
+round(sapply(c(3, 6, 12), function(h) mean(diff(trm, lag = h)^2) / (h * s^2)), 2)
+#&gt; [1] 1.10 1.14 1.07</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
-          <pre><code class="language-python">import numpy as np, pandas as pd
+          <pre><code class="language-python">import os
+import numpy as np, pandas as pd
 from scipy import stats
 from statsmodels.tsa.stattools import adfuller, kpss, acf
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.stats.diagnostic import acorr_ljungbox
 import warnings; warnings.filterwarnings("ignore")
 
-# TRM mensual (promedio del mes, SFC via datos.gov.co); necesita internet.
-url = ("https://www.datos.gov.co/resource/32sa-8pi3.json"
-       "?$select=vigenciadesde,valor&amp;$limit=50000")
-crudo = pd.read_json(url)
-crudo["fecha"] = pd.to_datetime(crudo["vigenciadesde"]).dt.tz_localize(None)
-crudo = crudo[crudo["fecha"] &gt;= "2015-01-01"]
-mensual = crudo.set_index("fecha")["valor"].resample("MS").mean()
-y = mensual.loc[:"2026-06-01"].values
+# La misma copia fija de 138 meses que lee R (enero de 2015 a junio de
+# 2026): de la carpeta de trabajo si el archivo ya esta ahi; si no, de la
+# pagina del curso.
+archivo = "trm_mensual_2015-01_2026-06.csv"
+if not os.path.exists(archivo):
+    archivo = "https://jotamao1985.github.io/Series-de-Tiempo_Un_Bosque/datos/" + archivo
+y = pd.read_csv(archivo)["trm"].values
 print(len(y))
 #&gt; 138
 
@@ -5326,7 +5439,7 @@ for (p, q), f in sorted(rej.items(), key=lambda kv: kv[1].aicc)[:3]:
 #&gt; (1, 1, 0) 1706.8 1712.55
 f212 = rej[(2, 2)]
 print(round(f212.aicc, 2), np.round(np.abs(f212.maroots), 3))
-#&gt; 1712.91 [1.088 4.231]
+#&gt; 1712.91 [1.088 4.208]
 # El (2,1,2) degenerado que gana en R no aparece: statsmodels impone
 # estacionariedad e invertibilidad mientras estima, asi que no puede llegar a
 # una raiz sobre el circulo, y su (2,1,2) es otro optimo, 7 puntos peor que el
@@ -5359,12 +5472,12 @@ print(tabla.round(2).to_string(index=False))
 #&gt;  h  sigma_h  semiancho     inf     sup
 #&gt;  1   121.48     238.09 3259.00 3735.18
 #&gt;  3   210.40     412.38 3084.71 3909.47
-#&gt;  6   297.55     583.19 2913.90 4080.29
+#&gt;  6   297.55     583.19 2913.90 4080.28
 #&gt; 12   420.80     824.76 2672.33 4321.85
 #&gt; 24   595.11    1166.39 2330.70 4663.48
 ic = rw.get_forecast(24).conf_int(alpha=0.05)
 print(f"{np.max(np.abs(ic[h - 1, 1] - tabla['sup'].values)):.1e}")
-#&gt; 9.1e-13        get_forecast da el mismo abanico
+#&gt; 4.5e-13        get_forecast da el mismo abanico
 
 # Cuantos cambios reales caen fuera del 95 %
 d1 = np.diff(y); d12 = y[12:] - y[:-12]
@@ -5373,8 +5486,14 @@ print(np.sum(np.abs(d1) &gt; z * s), np.sum(d1 &gt; z * s), len(d1))
 print(np.sum(np.abs(d12) &gt; z * s * np.sqrt(12)), len(d12))
 #&gt; 11 126
 curtosis = lambda x: stats.kurtosis(x, fisher=False)
-print(np.round([curtosis(d1), curtosis(d12)], 1))
-#&gt; [5.1 2.8]</code></pre>
+print(np.round([curtosis(d1), curtosis(d12)], 1), round(float(stats.skew(d1)), 2))
+#&gt; [5.1 2.8] 0.76
+
+# Lo que el intervalo nominal no recoge
+print(round(float(np.mean(np.abs(d1) &lt;= stats.norm.ppf(0.90) * s)), 3))
+#&gt; 0.839
+print(np.round([np.mean((y[h:] - y[:-h])**2) / (h * s**2) for h in (3, 6, 12)], 2).tolist())
+#&gt; [1.1, 1.14, 1.07]</code></pre>
         </div>
       </div>
 
@@ -5443,19 +5562,23 @@ print(np.round([curtosis(d1), curtosis(d12)], 1))
             modelo, no un preprocesamiento.</li>
           <li>El ciclo de <strong>Box–Jenkins</strong> es iterativo: identificar → estimar → diagnosticar, y volver
             atrás cuando el diagnóstico lo pida.</li>
-          <li>$d$ se elige con <strong>tres evidencias</strong> —gráfico, varianza y pruebas— y las pruebas pueden
-            engañar: con un escalón como el del Nilo, KPSS confunde el cambio de nivel con una raíz unitaria el
-            $100\,\%$ de las veces.</li>
+          <li>$d$ se elige con <strong>tres evidencias</strong> —el gráfico con la ACF, las pruebas y los síntomas
+            de haber diferenciado de más— y las pruebas pueden engañar: con un escalón como el del Nilo, KPSS
+            confunde el cambio de nivel con una raíz unitaria el $100\,\%$ de las veces. La varianza por orden de
+            diferencia no es una evidencia más: repite lo que dice $r_1$ (Módulo 2.7).</li>
           <li>$p$ y $q$ se leen en la ACF/PACF de la serie <strong>ya diferenciada</strong>, y se proponen varios
             candidatos, no uno.</li>
           <li>La constante significa <strong>media</strong> si $d=0$ y <strong>deriva</strong> si $d=1$; con
-            $d \ge 2$ el software se niega a ajustarla, y hace bien.</li>
+            $d \ge 2$ <code>forecast::Arima</code> se niega a ajustarla, y hace bien (statsmodels admite un término
+            cuadrático si se le pide).</li>
           <li>El <strong>AICc no es comparable entre distintos $d$</strong>, porque $n^{*} = n - d$ cambia. Hay que
             agrupar siempre por $d$.</li>
           <li><code>auto.arima</code> es un algoritmo con reglas, no un oráculo: elige $d$ con KPSS, busca en un
             vecindario y no mira el gráfico. <code>trace = TRUE</code> lo abre.</li>
           <li>La <strong>sobrediferenciación</strong> tiene una firma exacta: $\hat\theta \to -1$ y una raíz MA sobre
-            el círculo unitario. La regla de la varianza es solo un primer aviso.</li>
+            el círculo unitario, sin pareja en el AR. Antes de ajustar puede avisar el $\hat\rho_1$ de la serie
+            diferenciada, cuando se acerca a $-0.5$ o lo pasa, pero es un indicio que falla en los dos sentidos
+            (Módulo 2.7): en <code>log(lynx)</code> no avisa.</li>
           <li>El <strong>diagnóstico</strong> manda sobre el criterio: Ljung–Box con <code>fitdf = p + q</code>, la ACF
             residual barra por barra y las raíces. Un mínimo de AICc con raíces sobre el círculo —el ARIMA($2,1,2$)
             de la TRM— se descarta.</li>
@@ -5501,7 +5624,9 @@ print(np.round([curtosis(d1), curtosis(d12)], 1))
           </button>
         </div>
         <div class="ejercicio-panel pista" id="c4e1-pista" hidden>
-          <p style="margin:0;">Para $d$, mira la varianza: cae de $461.4$ a $2.1$ y luego vuelve a subir. Para el
+          <p style="margin:0;">Para $d$, mira el gráfico y las pruebas. El $\hat\rho_1$ de la serie diferenciada es solo
+            un indicio, que falla en los dos sentidos (Módulo 2.7): no basta para decir que la diferencia sobra ni que
+            hace falta. Para el
             diagnóstico del ARIMA($0,1,1$), no te quedes en el $p$-valor global: mira la ACF de sus residuales
             <strong>barra por barra</strong> con la banda $\pm 0.160$, y en particular los rezagos 2 y 4. Y cuando
             compares con $d = 2$, apunta el $n$ efectivo de cada uno antes de mirar ningún AICc.</p>
@@ -5514,11 +5639,13 @@ aicc &lt;- function(f, n) { k &lt;- length(f$coef) + 1; f$aic + 2*k*(k+1)/(n-k-1
 n &lt;- length(BJsales)   # 150
 
 # --- Etapa 1: d ---------------------------------------------------------
-round(sapply(0:3, function(d) var(if (d == 0) BJsales else diff(BJsales, differences = d))), 4)
-#&gt; [1] 461.3769   2.0851   2.8823   8.5626      minimo en d = 1
 round(c(adf = adf.test(BJsales)$p.value, ndiffs = ndiffs(BJsales)), 4)
 #&gt;    adf ndiffs
 #&gt; 0.5302 1.0000
+# sintomas de diferenciar de mas: r1 de la serie diferenciada una y dos veces
+round(sapply(1:2, function(d) acf(diff(BJsales, differences = d), plot = FALSE)$acf[2]), 4)
+#&gt; [1]  0.3118 -0.4756
+# un indicio, no una regla (Modulo 2.7): con d = 1 no avisa; con d = 2 ronda -0.5
 
 # --- Etapa 2: la rejilla con d = 1 --------------------------------------
 for (q in 0:2) for (p in 0:2) {
@@ -5577,8 +5704,9 @@ round(min(Mod(polyroot(c(1, coef(f122)[grepl("^ma", names(coef(f122)))])))), 4)
       <div class="ejercicio-guiado">
         <p class="ejercicio-enunciado"><span class="ejercicio-numero">2.</span>La serie <code>lynx</code> (capturas
           anuales de lince canadiense, 1821–1934) tiene un ciclo marcadísimo de unos 10 años. Trabaja con
-          $\log(\text{lynx})$ y responde: <strong>¿hay que diferenciarla?</strong> Aplica el criterio de la varianza
-          y las pruebas de raíz unitaria, y si discrepan, decide con las <em>raíces</em> del modelo ajustado.</p>
+          $\log(\text{lynx})$ y responde: <strong>¿hay que diferenciarla?</strong> Mira qué dicen las pruebas de raíz
+          unitaria, qué le pasa a la varianza al diferenciar y qué <em>raíces</em> tiene un modelo ajustado con
+          $d = 1$.</p>
         <div class="ejercicio-acciones">
           <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c4e2-pista">
             <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
@@ -5588,16 +5716,16 @@ round(min(Mod(polyroot(c(1, coef(f122)[grepl("^ma", names(coef(f122)))])))), 4)
           </button>
         </div>
         <div class="ejercicio-panel pista" id="c4e2-pista" hidden>
-          <p style="margin:0;">Cuidado: aquí el criterio de la varianza <strong>te va a mentir</strong>. Diferenciar
-            reduce la varianza, que es justo lo contrario de la señal de alarma que aprendiste. Cuando eso pase,
-            ajusta un modelo con $d = 1$ que tenga parte AR suficiente para el ciclo <em>y</em> parte MA —por
+          <p style="margin:0;">Cuidado: aquí diferenciar <strong>reduce</strong> la varianza, y quien la usara como
+            criterio diferenciaría. No es una señal de raíz unitaria: en una serie estacionaria esa caída solo
+            repite que $r_1$ es alto (Módulo 2.7). Para decidir, ajusta un modelo con $d = 1$ que tenga parte AR suficiente para el ciclo <em>y</em> parte MA —por
             ejemplo un ARIMA($2,1,1$)— y mira el módulo de la raíz de $\theta(B)$. Sin la parte AR, el MA se
             ocupa del ciclo y la raíz no delata nada. Un ciclo
             no es una tendencia: una serie que sube y baja regularmente <em>sí</em> vuelve a su media.</p>
         </div>
         <div class="ejercicio-panel solucion" id="c4e2-sol" hidden>
-          <p><strong>Respuesta: no hay que diferenciarla ($d = 0$), y el criterio de la varianza falla en este
-            caso.</strong></p>
+          <p><strong>Respuesta: no hay que diferenciarla ($d = 0$), y la varianza, usada como criterio, llevaría a
+            diferenciar.</strong></p>
           <pre><code class="language-r">library(forecast); library(tseries)
 ly &lt;- log(lynx); n &lt;- length(ly)   # 114
 
@@ -5609,11 +5737,16 @@ c(kpss_p = kpss.test(ly)$p.value, adf_p = adf.test(ly)$p.value)
 #&gt; kpss_p  adf_p
 #&gt;   0.10   0.01     KPSS no rechaza estacionariedad; ADF rechaza raiz unitaria
 
-# --- El criterio de la varianza: AQUI FALLA ------------------------------
+# --- La varianza: baja al diferenciar, pero solo repite r1 ---------------
 round(sapply(0:3, function(d) var(if (d == 0) ly else diff(ly, differences = d))), 4)
 #&gt; [1] 1.6532 0.6871 0.6026 1.1532
-# la varianza BAJA al diferenciar (-58 %) y su minimo esta en d = 2:
-# la regla no solo no avisa, sino que propone diferenciar DOS veces
+# la varianza BAJA al diferenciar (-58 %) y su minimo esta en d = 2. No es una
+# senal de raiz unitaria: en una serie estacionaria el cociente se acerca a
+# 2(1 - r1) (Modulo 2.7), y aqui r1 es alto
+r1 &lt;- acf(ly, plot = FALSE)$acf[2]
+round(c(r1 = r1, cociente = var(diff(ly)) / var(ly), dos_por_1_menos_r1 = 2 * (1 - r1)), 3)
+#&gt;                 r1           cociente dos_por_1_menos_r1
+#&gt;              0.785              0.416              0.430
 
 # --- Las raices sí lo detectan -------------------------------------------
 for (o in list(c(2,1,0), c(2,1,1), c(0,1,1))) {
@@ -5638,12 +5771,12 @@ Box.test(residuals(f), lag = 20, type = "Ljung-Box", fitdf = 2)$p.value
 as.character(auto.arima(ly, stepwise = FALSE, approximation = FALSE, seasonal = FALSE))
 #&gt; [1] "ARIMA(2,0,3) with non-zero mean"</code></pre>
           <p><strong>Discusión.</strong> Las dos pruebas coinciden en $d = 0$: la serie es estacionaria, y tiene
-            sentido, porque un ciclo regular <em>sí</em> vuelve a su media. Lo interesante es que
-            <strong>la regla de la varianza no avisa</strong>: diferenciar la reduce un $58\,\%$, así que quien se
-            guíe solo por ella diferenciará tranquilamente, y hasta <strong>dos veces</strong>, porque el mínimo
-            ($0.6026$) está en $d = 2$. La razón es que en una serie con oscilación fuerte la
-            diferencia primera atenúa las oscilaciones lentas, y eso baja la varianza aunque sobre. Lo que sí lo
-            detecta sin ambigüedad es la <strong>raíz</strong>: el ARIMA($2,1,1$) coloca $|\text{raíz MA}| = 1.000$,
+            sentido, porque un ciclo regular <em>sí</em> vuelve a su media. Lo interesante es lo que hace la
+            varianza: diferenciar la reduce un $58\,\%$ y su mínimo ($0.6026$) está en $d = 2$, así que quien la
+            usara como criterio diferenciaría <strong>dos veces</strong>. Pero esa caída no dice nada de raíces
+            unitarias: con $r_1 = 0.785$, lo que cabe esperar en una serie estacionaria es un cociente cercano a
+            $2(1-r_1) = 0.430$, y el medido es $0.416$. Es lo que advirtió el Capítulo 2 (Módulo 2.7): la varianza
+            repite lo que dice $r_1$. Lo que sí lo detecta sin ambigüedad es la <strong>raíz</strong>: el ARIMA($2,1,1$) coloca $|\text{raíz MA}| = 1.000$,
             es decir, el término MA reconstruye el factor $(1-B)$ que acabas de imponer. Nota honesta: el AR(2) de
             libro tampoco pasa Ljung–Box ($p = 0.0094$) y <code>auto.arima</code> propone un ARMA($2,3$); la dinámica
             del lince es más rica que un AR(2), pero eso no cambia la respuesta sobre $d$.</p>
@@ -5666,9 +5799,10 @@ as.character(auto.arima(ly, stepwise = FALSE, approximation = FALSE, seasonal = 
         <div class="ejercicio-panel pista" id="c4e3-pista" hidden>
           <p style="margin:0;">Los $\psi$ no salen del ARIMA directamente: hay que expandirlo primero como el
             ARMA($2,1$) del Módulo 1, con $\phi^{*} = (1+\phi,\ -\phi)$. Y el $\sigma$ y los $\psi$ tienen que venir
-            del <strong>mismo ajuste</strong> — mezclar <code>arima(method = "ML")</code> con <code>Arima()</code>,
-            que usa CSS-ML, produce $\hat\sigma^2$ distintos y la comprobación falla por esa razón, no por la
-            fórmula.</p>
+            del <strong>mismo ajuste</strong> — mezclar <code>arima(method = "ML")</code> con <code>Arima()</code>
+            produce $\hat\sigma^2$ distintos, sobre todo porque <code>Arima()</code> divide la suma de cuadrados de
+            los residuales entre $n^* - p - q$ ($97$ en el Nilo) y <code>arima()</code> da la de máxima verosimilitud, que divide entre
+            $n^*$; la comprobación falla por esa razón, no por la fórmula.</p>
         </div>
         <div class="ejercicio-panel solucion" id="c4e3-sol" hidden>
           <p><strong>Respuesta: coinciden con error $2.4\times 10^{-14}$, y $\sigma_h$ crece bastante más rápido que
@@ -5854,16 +5988,18 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
           <span class="text-xl">🎯</span>
           <div>
             <h3 class="font-bold text-gray-800 text-sm" style="margin:0;">Objetivo</h3>
-            <p class="text-gray-600 text-sm" style="margin:0;">Llegar al Parcial 2 sabiendo qué módulo de los capítulos
-              3 y 4 te falta, y con la lista de lo que hay que releer en la mano.</p>
+            <p class="text-gray-600 text-sm" style="margin:0;">Saber qué módulo de los capítulos 3 y 4 te falta, y
+              tener la lista de lo que hay que releer en la mano. Se escribió para preparar el Parcial 2, que ya se
+              aplicó.</p>
           </div>
         </div>
       </div>
 
-      <p>Con este módulo se cierra lo que entra al <strong>Parcial 2</strong>: el <strong>miércoles 14 de
-          octubre</strong>, en Brightspace, unos <strong>70 minutos</strong>, con calculadora y tus fórmulas escritas,
-        <strong>sin R</strong>. Evalúa los capítulos 3 y 4 completos. El simulacro del Módulo 11 ensaya el quiz, que
-        solo llega hasta el 4.4; el preparcial recorre los veinte módulos.</p>
+      <p>Con este módulo se cerraba lo que entraba al <strong>Parcial 2</strong>, que se aplicó el <strong>miércoles
+          14 de octubre</strong> en Brightspace: unos <strong>70 minutos</strong>, con calculadora y las fórmulas
+        escritas, <strong>sin R</strong>, sobre los capítulos 3 y 4 completos. El preparcial se escribió para
+        prepararlo y sigue sirviendo de repaso: el simulacro del Módulo 11 ensaya lo que llega hasta el 4.4, y el
+        preparcial recorre los veinte módulos.</p>
 
       <p>El preparcial es una página aparte. Tiene <strong>32 ítems de diagnóstico</strong> repartidos en cuatro
         bloques —conceptos, procedimientos a mano, interpretación de salidas de R y lectura de gráficos— y, al terminar,
@@ -5877,9 +6013,9 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
           opción incorrecta explica por qué lo es.</p>
       </div>
 
-      <h3>Qué pesa cada cosa en el parcial</h3>
+      <h3>Qué pesaba cada cosa en el parcial</h3>
 
-      <p>Es la tabla con la que está construido el parcial, y la misma con la que se reparten los 32 ítems del
+      <p>Es la tabla con la que se construyó el parcial, y la misma con la que se reparten los 32 ítems del
         diagnóstico.</p>
 
       <div class="overflow-x-auto">
@@ -5933,8 +6069,8 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
       <div class="tip-box">
         <p style="margin:0;"><strong>Cómo aprovecharlo.</strong> Haz los cuatro bloques con el material a mano —la meta
           no es acertar, es descubrir qué falta—, mira el diagnóstico y relee los módulos que te marque. Deja el
-          simulacro para el final y hazlo sin consultar nada más que tus fórmulas: es lo más parecido a la condición del
-          parcial.</p>
+          simulacro para el final y hazlo sin consultar nada más que tus fórmulas: es lo más parecido a la condición en
+          que se presentó el parcial.</p>
       </div>
 
       <p style="text-align:center; margin-top:1.5rem;">
@@ -5965,9 +6101,9 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
       ]
     };
 
-    // Generado por precalculo/genera_cap4.R el 2026-09-23
+    // Generado por precalculo/genera_cap4.R el 2026-11-22
     // Precalculos ARIMA y Box-Jenkins (Capitulo 4). No editar a mano.
-    const DATOS_CAP4 = {"descripcion":"Precálculos del Capítulo 4 (modelos ARIMA y metodología Box-Jenkins). Ajustes con stats::arima y forecast::Arima por máxima verosimilitud. AICc = AIC + 2k(k+1)/(n-k-1) con k = nº de coeficientes + 1 y n EFECTIVO = n - d. El AICc solo se compara dentro de un mismo d. Ljung-Box con fitdf = p + q. Trazas de auto.arima capturadas con trace = TRUE (criterio AICc).","generado":"2026-09-23 12:12:47 -05","max_rezago":20,"horizonte":30,"nilo":{"nombre":"Nile","fuente":"Cobb (1978) (datasets de R)","unidad":"10^8 m^3","n":100,"inicio":[1871,1],"identificacion":{"cruda":{"n":100,"banda":0.196,"acf":[0.4984,0.3846,0.3279,0.2392,0.2284,0.2273,0.222,0.3,0.1417,0.0898,0.2155,0.2129,0.237,0.1946,0.1544,0.1948,0.1364,0.1897,0.1542,0.114],"pacf":[0.4984,0.1812,0.1109,0.0062,0.065,0.0706,0.0603,0.1629,-0.148,-0.0646,0.1904,0.0871,0.0649,-0.0526,-0.0298,0.0729,0.0171,0.115,-0.1237,-0.0593]},"d1":{"n":99,"banda":0.197,"acf":[-0.402,-0.0443,0.0274,-0.0879,0.0005,0.0465,-0.1332,0.2312,-0.0849,-0.1849,0.1459,-0.0436,0.0679,0.008,-0.0827,0.0934,-0.1004,0.0731,-0.0092,-0.0032],"pacf":[-0.402,-0.2456,-0.1187,-0.1733,-0.1554,-0.0737,-0.2205,0.0736,0.0168,-0.2343,-0.1024,-0.0981,0.0142,-0.0151,-0.0738,-0.001,-0.1318,0.0863,-0.0054,-0.0242]},"d2":{"n":98,"banda":0.198,"acf":[-0.6264,0.1003,0.0669,-0.0717,0.0174,0.0742,-0.1915,0.2453,-0.0788,-0.1527,0.1835,-0.106,0.0615,0.0105,-0.096,0.134,-0.1336,0.0915,-0.0297,0.0031],"pacf":[-0.6264,-0.4806,-0.3018,-0.2651,-0.2734,-0.1124,-0.3526,-0.2127,0.0378,-0.1199,-0.1173,-0.1972,-0.1318,-0.055,-0.1094,0.0223,-0.1835,-0.0666,-0.0375,-0.0242]}},"pruebas":{"adf_nivel":{"estadistico":-3.3657,"p":0.0642,"rezagos":4},"adf_d1":{"estadistico":-6.5924,"p":0.01,"rezagos":4},"kpss_nivel":{"estadistico":0.9654,"p":0.01},"kpss_d1":{"estadistico":0.0233,"p":0.1},"pp_nivel":{"estadistico":-6.6901,"p":0.01},"ndiffs_kpss":1,"ndiffs_adf":0,"ndiffs_pp":0},"varianzas":[{"d":0,"varianza":28637.95,"n_efectivo":100},{"d":1,"varianza":28268.34,"n_efectivo":99},{"d":2,"varianza":80055.01,"n_efectivo":98},{"d":3,"varianza":262507.29,"n_efectivo":97}],"rejilla":{"000":{"p":0,"d":0,"q":0,"etiqueta":"ARIMA(0,0,0)","convergio":true,"k":2,"n_efectivo":100,"loglik":-654.5157,"sigma2":28351.57,"aic":1313.03,"aicc":1313.16,"bic":1318.24,"ljung_box_p":0,"ljung_box_12_p":0,"acf_residuales":[0.4984,0.3846,0.3279,0.2392,0.2284,0.2273,0.222,0.3,0.1417,0.0898,0.2155,0.2129,0.237,0.1946,0.1544,0.1948,0.1364,0.1897,0.1542,0.114],"coeficientes":[{"nombre":"intercept","valor":919.35,"ee":16.8379,"t":54.5999}],"raices":{"ar":[],"ma":[],"min_ar":null,"min_ma":null,"degenerado":false}},"001":{"p":0,"d":0,"q":1,"etiqueta":"ARIMA(0,0,1)","convergio":true,"k":3,"n_efectivo":100,"loglik":-644.7209,"sigma2":23271.76,"aic":1295.44,"aicc":1295.69,"bic":1303.26,"ljung_box_p":0.0001,"ljung_box_12_p":0.0001,"acf_residuales":[0.0988,0.3144,0.2019,0.1395,0.1439,0.1672,0.086,0.2705,0.0572,0.0099,0.1942,0.1026,0.1746,0.1307,0.0617,0.1752,0.0305,0.1649,0.0856,0.079],"coeficientes":[{"nombre":"ma1","valor":0.3783,"ee":0.0791,"t":4.7816},{"nombre":"intercept","valor":919.2359,"ee":20.9684,"t":43.8392}],"raices":{"ar":[],"ma":2.6437,"min_ar":null,"min_ma":2.6437,"degenerado":false}},"002":{"p":0,"d":0,"q":2,"etiqueta":"ARIMA(0,0,2)","convergio":true,"k":4,"n_efectivo":100,"loglik":-641.7373,"sigma2":21910.28,"aic":1291.47,"aicc":1291.9,"bic":1301.9,"ljung_box_p":0.008,"ljung_box_12_p":0.0032,"acf_residuales":[0.0523,0.0846,0.2637,0.0677,0.1174,0.1123,0.0479,0.2822,0.0173,-0.0625,0.191,0.0927,0.133,0.0968,0.0406,0.1425,0.0114,0.1275,0.0937,0.0346],"coeficientes":[{"nombre":"ma1","valor":0.3805,"ee":0.0983,"t":3.8706},{"nombre":"ma2","valor":0.2378,"ee":0.0988,"t":2.4062},{"nombre":"intercept","valor":919.8444,"ee":23.8309,"t":38.5988}],"raices":{"ar":[],"ma":[2.0505,2.0505],"min_ar":null,"min_ma":2.0505,"degenerado":false}},"100":{"p":1,"d":0,"q":0,"etiqueta":"ARIMA(1,0,0)","convergio":true,"k":3,"n_efectivo":100,"loglik":-639.9522,"sigma2":21124.83,"aic":1285.9,"aicc":1286.15,"bic":1293.72,"ljung_box_p":0.2117,"ljung_box_12_p":0.1117,"acf_residuales":[-0.0991,0.0923,0.1341,0.0201,0.0738,0.0858,0,0.2549,-0.0235,-0.098,0.1632,0.0464,0.1195,0.0675,-0.0076,0.13,-0.0361,0.1202,0.0539,0.0325],"coeficientes":[{"nombre":"ar1","valor":0.5063,"ee":0.0867,"t":5.8427},{"nombre":"intercept","valor":919.5499,"ee":29.1419,"t":31.5542}],"raices":{"ar":1.9751,"ma":[],"min_ar":1.9751,"min_ma":null,"degenerado":false}},"101":{"p":1,"d":0,"q":1,"etiqueta":"ARIMA(1,0,1)","convergio":true,"k":4,"n_efectivo":100,"loglik":-637.0388,"sigma2":19891.68,"aic":1282.08,"aicc":1282.5,"bic":1292.5,"ljung_box_p":0.6954,"ljung_box_12_p":0.3551,"acf_residuales":[0.026,-0.0395,-0.011,-0.0962,-0.0342,-0.0006,-0.0174,0.1913,-0.0879,-0.1806,0.0813,0.0481,0.0992,0.036,-0.0362,0.0695,-0.0505,0.0813,0.0456,0.0155],"coeficientes":[{"nombre":"ar1","valor":0.861,"ee":0.1067,"t":8.0719},{"nombre":"ma1","valor":-0.5177,"ee":0.1908,"t":-2.713},{"nombre":"intercept","valor":920.7037,"ee":46.6692,"t":19.7283}],"raices":{"ar":1.1614,"ma":1.9318,"min_ar":1.1614,"min_ma":1.9318,"degenerado":false}},"102":{"p":1,"d":0,"q":2,"etiqueta":"ARIMA(1,0,2)","convergio":true,"k":5,"n_efectivo":100,"loglik":-636.5299,"sigma2":19653.96,"aic":1283.06,"aicc":1283.7,"bic":1296.09,"ljung_box_p":0.7003,"ljung_box_12_p":0.3125,"acf_residuales":[0.0043,0.0464,0.0114,-0.0981,-0.0553,-0.0285,-0.0753,0.1423,-0.1159,-0.1877,0.0623,0.0039,0.0768,0.0253,-0.0442,0.0747,-0.0594,0.0807,0.0289,0.0082],"coeficientes":[{"nombre":"ar1","valor":0.9535,"ee":0.0647,"t":14.7458},{"nombre":"ma1","valor":-0.6043,"ee":0.1269,"t":-4.7634},{"nombre":"ma2","valor":-0.146,"ee":0.1175,"t":-1.2431},{"nombre":"intercept","valor":929.8796,"ee":67.4538,"t":13.7854}],"raices":{"ar":1.0487,"ma":[1.267,5.4057],"min_ar":1.0487,"min_ma":1.267,"degenerado":false}},"200":{"p":2,"d":0,"q":0,"etiqueta":"ARIMA(2,0,0)","convergio":true,"k":4,"n_efectivo":100,"loglik":-637.9813,"sigma2":20290.61,"aic":1283.96,"aicc":1284.38,"bic":1294.38,"ljung_box_p":0.4731,"ljung_box_12_p":0.1972,"acf_residuales":[-0.0263,-0.0678,0.0719,-0.0258,0.0311,0.0372,0.0081,0.2428,-0.0579,-0.1603,0.1227,0.0672,0.1053,0.0421,-0.0247,0.0883,-0.0404,0.092,0.0577,0.0168],"coeficientes":[{"nombre":"ar1","valor":0.4097,"ee":0.0974,"t":4.2053},{"nombre":"ar2","valor":0.1986,"ee":0.099,"t":2.0074},{"nombre":"intercept","valor":919.7614,"ee":35.6431,"t":25.8047}],"raices":{"ar":[1.4381,3.5005],"ma":[],"min_ar":1.4381,"min_ma":null,"degenerado":false}},"201":{"p":2,"d":0,"q":1,"etiqueta":"ARIMA(2,0,1)","convergio":true,"k":5,"n_efectivo":100,"loglik":-636.2691,"sigma2":19543.65,"aic":1282.54,"aicc":1283.18,"bic":1295.56,"ljung_box_p":0.7038,"ljung_box_12_p":0.3098,"acf_residuales":[-0.0193,0.0296,0.0318,-0.085,-0.0398,-0.0209,-0.0735,0.154,-0.1136,-0.1901,0.0685,0.0019,0.0719,0.02,-0.0486,0.0738,-0.0631,0.0783,0.028,0.0041],"coeficientes":[{"nombre":"ar1","valor":1.2096,"ee":0.1502,"t":8.0533},{"nombre":"ar2","valor":-0.2356,"ee":0.1307,"t":-1.8028},{"nombre":"ma1","valor":-0.8427,"ee":0.106,"t":-7.9491},{"nombre":"intercept","valor":933.811,"ee":72.1545,"t":12.9418}],"raices":{"ar":[1.0356,4.0992],"ma":1.1867,"min_ar":1.0356,"min_ma":1.1867,"degenerado":false}},"202":{"p":2,"d":0,"q":2,"etiqueta":"ARIMA(2,0,2)","convergio":true,"k":6,"n_efectivo":100,"loglik":-636.1184,"sigma2":19487.89,"aic":1284.24,"aicc":1285.14,"bic":1299.87,"ljung_box_p":0.6419,"ljung_box_12_p":0.228,"acf_residuales":[-0.0105,-0.0053,0.0238,-0.0819,-0.0336,-0.0153,-0.0572,0.1664,-0.1094,-0.1943,0.0695,0.014,0.0748,0.0185,-0.0499,0.0679,-0.0623,0.0752,0.031,0.0036],"coeficientes":[{"nombre":"ar1","valor":1.4378,"ee":0.3691,"t":3.8954},{"nombre":"ar2","valor":-0.4548,"ee":0.354,"t":-1.2848},{"nombre":"ma1","valor":-1.08,"ee":0.3873,"t":-2.7883},{"nombre":"ma2","valor":0.1842,"ee":0.305,"t":0.6038},{"nombre":"intercept","valor":934.6491,"ee":72.2192,"t":12.9418}],"raices":{"ar":[1.0332,2.1279],"ma":[1.1524,4.7119],"min_ar":1.0332,"min_ma":1.1524,"degenerado":false}},"010":{"p":0,"d":1,"q":0,"etiqueta":"ARIMA(0,1,0)","convergio":true,"k":1,"n_efectivo":99,"loglik":-647.3486,"sigma2":27997.54,"aic":1296.7,"aicc":1296.74,"bic":1299.29,"ljung_box_p":0.01,"ljung_box_12_p":0.0009,"acf_residuales":[-0.402,-0.0446,0.0278,-0.088,0.0005,0.0459,-0.1325,0.2314,-0.0853,-0.1851,0.1458,-0.0433,0.0677,0.0081,-0.0828,0.0938,-0.1011,0.0734,-0.0089,-0.0032],"coeficientes":[],"raices":{"ar":[],"ma":[],"min_ar":null,"min_ma":null,"degenerado":false}},"011":{"p":0,"d":1,"q":1,"etiqueta":"ARIMA(0,1,1)","convergio":true,"k":2,"n_efectivo":99,"loglik":-632.5456,"sigma2":20599.87,"aic":1269.09,"aicc":1269.22,"bic":1274.28,"ljung_box_p":0.6737,"ljung_box_12_p":0.2504,"acf_residuales":[0.1154,-0.0111,-0.054,-0.1469,-0.0938,-0.0512,-0.0872,0.1069,-0.1209,-0.1978,0.0444,0.0264,0.0885,0.0278,-0.0391,0.0465,-0.0391,0.055,0.0142,-0.0102],"coeficientes":[{"nombre":"ma1","valor":-0.7329,"ee":0.1143,"t":-6.4113}],"raices":{"ar":[],"ma":1.3644,"min_ar":null,"min_ma":1.3644,"degenerado":false}},"012":{"p":0,"d":1,"q":2,"etiqueta":"ARIMA(0,1,2)","convergio":true,"k":3,"n_efectivo":99,"loglik":-630.9786,"sigma2":19912.62,"aic":1267.96,"aicc":1268.21,"bic":1275.74,"ljung_box_p":0.7959,"ljung_box_12_p":0.4011,"acf_residuales":[-0.0015,0.0647,0.0024,-0.0988,-0.0557,-0.0202,-0.1071,0.1239,-0.1126,-0.1815,0.0653,-0.0071,0.0784,0.022,-0.0478,0.0658,-0.0526,0.066,0.0056,-0.0063],"coeficientes":[{"nombre":"ma1","valor":-0.6437,"ee":0.095,"t":-6.778},{"nombre":"ma2","valor":-0.1739,"ee":0.0947,"t":-1.8355}],"raices":{"ar":[],"ma":[1.1784,4.8802],"min_ar":null,"min_ma":1.1784,"degenerado":false}},"110":{"p":1,"d":1,"q":0,"etiqueta":"ARIMA(1,1,0)","convergio":true,"k":2,"n_efectivo":99,"loglik":-638.7401,"sigma2":23487.58,"aic":1281.48,"aicc":1281.61,"bic":1286.67,"ljung_box_p":0.1853,"ljung_box_12_p":0.0244,"acf_residuales":[-0.1021,-0.239,-0.0237,-0.1086,-0.0174,0.0009,-0.0532,0.2171,-0.0955,-0.2278,0.0935,0.0411,0.0765,0.0049,-0.0665,0.0432,-0.0618,0.0484,0.0213,-0.0129],"coeficientes":[{"nombre":"ar1","valor":-0.3975,"ee":0.0915,"t":-4.3447}],"raices":{"ar":2.5155,"ma":[],"min_ar":2.5155,"min_ma":null,"degenerado":false}},"111":{"p":1,"d":1,"q":1,"etiqueta":"ARIMA(1,1,1)","convergio":true,"k":3,"n_efectivo":99,"loglik":-630.6274,"sigma2":19769.29,"aic":1267.25,"aicc":1267.51,"bic":1275.04,"ljung_box_p":0.7997,"ljung_box_12_p":0.4091,"acf_residuales":[-0.0323,0.0325,0.0188,-0.0892,-0.0383,-0.0093,-0.0996,0.1443,-0.1054,-0.1831,0.0757,-0.0043,0.0768,0.0189,-0.0514,0.0659,-0.0553,0.0652,0.0078,-0.0076],"coeficientes":[{"nombre":"ar1","valor":0.2544,"ee":0.1194,"t":2.1305},{"nombre":"ma1","valor":-0.8741,"ee":0.0605,"t":-14.4526}],"raices":{"ar":3.9313,"ma":1.144,"min_ar":3.9313,"min_ma":1.144,"degenerado":false}},"112":{"p":1,"d":1,"q":2,"etiqueta":"ARIMA(1,1,2)","convergio":true,"k":4,"n_efectivo":99,"loglik":-630.4613,"sigma2":19706.14,"aic":1268.92,"aicc":1269.35,"bic":1279.3,"ljung_box_p":0.7556,"ljung_box_12_p":0.3276,"acf_residuales":[-0.0223,-0.0065,0.0072,-0.0895,-0.0334,-0.0045,-0.0831,0.1556,-0.1013,-0.1878,0.0757,0.0079,0.0794,0.0176,-0.0531,0.0596,-0.0541,0.0628,0.0113,-0.0073],"coeficientes":[{"nombre":"ar1","valor":0.4734,"ee":0.3393,"t":1.3953},{"nombre":"ma1","valor":-1.1035,"ee":0.359,"t":-3.0738},{"nombre":"ma2","valor":0.1892,"ee":0.299,"t":0.6326}],"raices":{"ar":2.1125,"ma":[1.122,4.7117],"min_ar":2.1125,"min_ma":1.122,"degenerado":false}},"210":{"p":2,"d":1,"q":0,"etiqueta":"ARIMA(2,1,0)","convergio":true,"k":3,"n_efectivo":99,"loglik":-635.7421,"sigma2":22080.15,"aic":1277.48,"aicc":1277.74,"bic":1285.27,"ljung_box_p":0.3898,"ljung_box_12_p":0.1009,"acf_residuales":[-0.0341,-0.0859,-0.1792,-0.1231,-0.0619,0.0178,-0.0303,0.1699,-0.1005,-0.2022,0.0575,0.0407,0.1032,0.0184,-0.0682,0.0374,-0.0671,0.062,0.0062,0.0144],"coeficientes":[{"nombre":"ar1","valor":-0.4948,"ee":0.0971,"t":-5.096},{"nombre":"ar2","valor":-0.2417,"ee":0.0971,"t":-2.4895}],"raices":{"ar":[2.034,2.034],"ma":[],"min_ar":2.034,"min_ma":null,"degenerado":false}},"211":{"p":2,"d":1,"q":1,"etiqueta":"ARIMA(2,1,1)","convergio":true,"k":4,"n_efectivo":99,"loglik":-630.4481,"sigma2":19700.24,"aic":1268.9,"aicc":1269.32,"bic":1279.28,"ljung_box_p":0.7503,"ljung_box_12_p":0.3161,"acf_residuales":[-0.0202,-0.0172,0.0154,-0.0868,-0.0311,-0.0068,-0.0834,0.1572,-0.1015,-0.1901,0.0762,0.0095,0.0778,0.0165,-0.0527,0.0591,-0.053,0.0617,0.0124,-0.0089],"coeficientes":[{"nombre":"ar1","valor":0.2566,"ee":0.1164,"t":2.2048},{"nombre":"ar2","valor":0.0664,"ee":0.111,"t":0.5979},{"nombre":"ma1","valor":-0.8897,"ee":0.059,"t":-15.0918}],"raices":{"ar":[2.4035,6.2703],"ma":1.124,"min_ar":2.4035,"min_ma":1.124,"degenerado":false}},"212":{"p":2,"d":1,"q":2,"etiqueta":"ARIMA(2,1,2)","convergio":true,"k":5,"n_efectivo":99,"loglik":-630.4453,"sigma2":19699.53,"aic":1270.89,"aicc":1271.54,"bic":1283.87,"ljung_box_p":0.6916,"ljung_box_12_p":0.2398,"acf_residuales":[-0.0196,-0.016,0.0104,-0.0876,-0.0317,-0.0056,-0.0817,0.1573,-0.1012,-0.1897,0.0757,0.01,0.0787,0.0168,-0.053,0.0587,-0.0533,0.062,0.0122,-0.0081],"coeficientes":[{"nombre":"ar1","valor":0.3514,"ee":0.8682,"t":0.4047},{"nombre":"ar2","valor":0.0424,"ee":0.257,"t":0.1648},{"nombre":"ma1","valor":-0.9847,"ee":0.8633,"t":-1.1407},{"nombre":"ma2","valor":0.0831,"ee":0.7572,"t":0.1098}],"raices":{"ar":[2.2407,10.5373],"ma":[1.1218,10.7214],"min_ar":2.2407,"min_ma":1.1218,"degenerado":false}},"020":{"p":0,"d":2,"q":0,"etiqueta":"ARIMA(0,2,0)","convergio":true,"k":1,"n_efectivo":98,"loglik":-691.7864,"sigma2":79238.14,"aic":1385.57,"aicc":1385.61,"bic":1388.16,"ljung_box_p":0,"ljung_box_12_p":0,"acf_residuales":[-0.6263,0.1002,0.067,-0.0717,0.0175,0.0741,-0.1914,0.2453,-0.0789,-0.1528,0.1835,-0.106,0.0615,0.0105,-0.096,0.1342,-0.1338,0.0915,-0.0297,0.003],"coeficientes":[],"raices":{"ar":[],"ma":[],"min_ar":null,"min_ma":null,"degenerado":false}},"021":{"p":0,"d":2,"q":1,"etiqueta":"ARIMA(0,2,1)","convergio":true,"k":2,"n_efectivo":98,"loglik":-643.5789,"sigma2":28268.35,"aic":1291.16,"aicc":1291.28,"bic":1296.33,"ljung_box_p":0.0069,"ljung_box_12_p":0.0006,"acf_residuales":[-0.398,-0.0475,0.0246,-0.0886,0.0109,0.0408,-0.1381,0.2335,-0.0796,-0.1856,0.1393,-0.041,0.0696,0.0073,-0.0899,0.1015,-0.1008,0.0712,-0.0083,-0.0036],"coeficientes":[{"nombre":"ma1","valor":-1,"ee":0.0254,"t":-39.3514}],"raices":{"ar":[],"ma":1,"min_ar":null,"min_ma":1,"degenerado":true}},"022":{"p":0,"d":2,"q":2,"etiqueta":"ARIMA(0,2,2)","convergio":true,"k":3,"n_efectivo":98,"loglik":-629.8728,"sigma2":20702.58,"aic":1265.75,"aicc":1266,"bic":1273.5,"ljung_box_p":0.6167,"ljung_box_12_p":0.2046,"acf_residuales":[0.1028,-0.0223,-0.0679,-0.1529,-0.0738,-0.0403,-0.0928,0.1115,-0.1123,-0.2005,0.0343,0.0217,0.0889,0.0202,-0.0578,0.0495,-0.0333,0.0597,0.0188,-0.0049],"coeficientes":[{"nombre":"ma1","valor":-1.7087,"ee":0.1277,"t":-13.3785},{"nombre":"ma2","valor":0.7087,"ee":0.1256,"t":5.6414}],"raices":{"ar":[],"ma":[1,1.4109],"min_ar":null,"min_ma":1,"degenerado":true}},"120":{"p":1,"d":2,"q":0,"etiqueta":"ARIMA(1,2,0)","convergio":true,"k":2,"n_efectivo":98,"loglik":-667.3942,"sigma2":47923.72,"aic":1338.79,"aicc":1338.91,"bic":1343.96,"ljung_box_p":0.0002,"ljung_box_12_p":0,"acf_residuales":[-0.3006,-0.3474,0.1827,-0.0826,0.0498,-0.0058,-0.1176,0.2835,-0.0837,-0.2408,0.1539,0.0085,0.0422,-0.0084,-0.0761,0.074,-0.071,0.0385,0.0294,-0.0422],"coeficientes":[{"nombre":"ar1","valor":-0.6246,"ee":0.078,"t":-8.0079}],"raices":{"ar":1.6009,"ma":[],"min_ar":1.6009,"min_ma":null,"degenerado":false}},"121":{"p":1,"d":2,"q":1,"etiqueta":"ARIMA(1,2,1)","convergio":true,"k":3,"n_efectivo":98,"loglik":-635.3479,"sigma2":23697.25,"aic":1276.7,"aicc":1276.95,"bic":1284.45,"ljung_box_p":0.1505,"ljung_box_12_p":0.0173,"acf_residuales":[-0.0997,-0.238,-0.0317,-0.1104,0,0.001,-0.0677,0.2152,-0.0871,-0.2256,0.0852,0.0401,0.0808,0.0032,-0.0776,0.0523,-0.055,0.0474,0.0212,-0.0126],"coeficientes":[{"nombre":"ar1","valor":-0.3924,"ee":0.0921,"t":-4.2581},{"nombre":"ma1","valor":-1,"ee":0.0261,"t":-38.258}],"raices":{"ar":2.5485,"ma":1,"min_ar":2.5485,"min_ma":1,"degenerado":true}},"122":{"p":1,"d":2,"q":2,"etiqueta":"ARIMA(1,2,2)","convergio":true,"k":4,"n_efectivo":98,"loglik":-628.0837,"sigma2":19977.08,"aic":1264.17,"aicc":1264.6,"bic":1274.51,"ljung_box_p":0.756,"ljung_box_12_p":0.3405,"acf_residuales":[-0.0296,0.0365,0.0157,-0.0865,-0.0205,-0.0062,-0.1083,0.1441,-0.0978,-0.1866,0.0585,-0.0146,0.0701,0.0062,-0.0719,0.0649,-0.0515,0.065,0.0091,-0.0046],"coeficientes":[{"nombre":"ar1","valor":0.2671,"ee":0.1352,"t":1.9752},{"nombre":"ma1","valor":-1.8743,"ee":0.0735,"t":-25.4833},{"nombre":"ma2","valor":0.8772,"ee":0.0766,"t":11.452}],"raices":{"ar":3.7443,"ma":[1.0316,1.1051],"min_ar":3.7443,"min_ma":1.0316,"degenerado":false}},"220":{"p":2,"d":2,"q":0,"etiqueta":"ARIMA(2,2,0)","convergio":true,"k":3,"n_efectivo":98,"loglik":-654.6406,"sigma2":36742.8,"aic":1315.28,"aicc":1315.54,"bic":1323.04,"ljung_box_p":0.021,"ljung_box_12_p":0.0012,"acf_residuales":[-0.1468,-0.2389,-0.2504,0.0976,-0.0227,0.0112,0.0027,0.215,-0.0837,-0.231,0.0462,0.0955,0.0799,-0.0162,-0.0838,0.0423,-0.0688,0.0666,-0.0145,0.0246],"coeficientes":[{"nombre":"ar1","valor":-0.9256,"ee":0.0881,"t":-10.5069},{"nombre":"ar2","valor":-0.4819,"ee":0.0887,"t":-5.4356}],"raices":{"ar":[1.4406,1.4406],"ma":[],"min_ar":1.4406,"min_ma":null,"degenerado":false}},"221":{"p":2,"d":2,"q":1,"etiqueta":"ARIMA(2,2,1)","convergio":true,"k":4,"n_efectivo":98,"loglik":-632.5604,"sigma2":22264.1,"aic":1273.12,"aicc":1273.55,"bic":1283.46,"ljung_box_p":0.3293,"ljung_box_12_p":0.0751,"acf_residuales":[-0.0338,-0.0873,-0.1826,-0.1265,-0.0428,0.0212,-0.0411,0.1661,-0.0944,-0.2005,0.0508,0.0383,0.1053,0.0161,-0.0803,0.0451,-0.0605,0.0649,0.0078,0.0148],"coeficientes":[{"nombre":"ar1","valor":-0.4887,"ee":0.0979,"t":-4.9928},{"nombre":"ar2","valor":-0.2353,"ee":0.0979,"t":-2.4043},{"nombre":"ma1","valor":-1,"ee":0.0268,"t":-37.3329}],"raices":{"ar":[2.0616,2.0616],"ma":1,"min_ar":2.0616,"min_ma":1,"degenerado":true}},"222":{"p":2,"d":2,"q":2,"etiqueta":"ARIMA(2,2,2)","convergio":true,"k":5,"n_efectivo":98,"loglik":-627.8233,"sigma2":19932.19,"aic":1265.65,"aicc":1266.3,"bic":1278.57,"ljung_box_p":0.7136,"ljung_box_12_p":0.2628,"acf_residuales":[-0.0141,-0.0195,0.0154,-0.0789,-0.0081,-0.0021,-0.0893,0.1602,-0.0915,-0.1931,0.0585,0.0008,0.0708,0.0017,-0.0751,0.0556,-0.0482,0.0599,0.0126,-0.009],"coeficientes":[{"nombre":"ar1","valor":0.2849,"ee":0.1244,"t":2.2915},{"nombre":"ar2","valor":0.084,"ee":0.1136,"t":0.7394},{"nombre":"ma1","valor":-1.9057,"ee":0.073,"t":-26.1021},{"nombre":"ma2","valor":0.91,"ee":0.0755,"t":12.0533}],"raices":{"ar":[2.1488,5.5426],"ma":[1.0483,1.0483],"min_ar":2.1488,"min_ma":1.0483,"degenerado":false}}},"mejor_por_d":{"d0":{"d":0,"n_efectivo":100,"mejor_aicc":"101","valor_aicc":1282.5,"mejor_bic":"101","valor_bic":1292.5},"d1":{"d":1,"n_efectivo":99,"mejor_aicc":"111","valor_aicc":1267.51,"mejor_bic":"011","valor_bic":1274.28},"d2":{"d":2,"n_efectivo":98,"mejor_aicc":"122","valor_aicc":1264.6,"mejor_bic":"022","valor_bic":1273.5}},"diagnostico":{"orden":[1,1,1],"coeficientes":[{"nombre":"ar1","valor":0.2544,"ee":0.1194,"t":2.1305},{"nombre":"ma1","valor":-0.8741,"ee":0.0605,"t":-14.4526}],"sigma2":19769.29,"loglik":-630.6274,"aicc":1267.51,"bic":1275.04,"residuales":[1.12,33.678,-164.961,156.186,14.436,24.016,-319.279,228.61,227.585,-68.493,-144.795,-148.02,61.309,-106.811,-37.491,-99.136,148.557,-306.963,-12.129,130.883,28.034,144.619,38.382,148.774,114.568,57.582,-129.485,5.153,-339.284,-147.634,-111.832,-286.395,41.443,-133.347,-221.341,55.096,-230.527,183.467,106.941,4.849,-113.157,-168.811,-390.854,95.021,-132.547,333.169,164.908,-118.761,-103.642,-16.3,-81.747,19.023,16.043,7.19,-157.206,51.297,-93.551,-4.085,227.202,-144.461,-32.801,49.732,2.105,105.928,107.412,-3.282,-55.739,158.355,-148.398,-163.926,-146.128,76.132,-17.561,-76.702,9.758,232.522,-37.539,26.973,-5.983,43.383,-118.761,-61.675,33.816,218.921,5.44,106.332,-113.349,74.994,85.504,-98.485,159.61,-26.625,0.724,270.905,-89.618,-178.711,59.008,-193.425,-121.951,-79.584],"acf_residuales":[-0.0323,0.0325,0.0188,-0.0892,-0.0383,-0.0093,-0.0996,0.1443,-0.1054,-0.1831,0.0757,-0.0043,0.0768,0.0189,-0.0514,0.0659,-0.0553,0.0652,0.0078,-0.0076],"banda_residuales":0.196,"ljung_box_acumulado":[{"rezago":3,"Q":0.2543,"p":0.6141},{"rezago":4,"Q":1.1002,"p":0.5769},{"rezago":5,"Q":1.2577,"p":0.7392},{"rezago":6,"Q":1.267,"p":0.8669},{"rezago":7,"Q":2.3541,"p":0.7983},{"rezago":8,"Q":4.6618,"p":0.5879},{"rezago":9,"Q":5.9066,"p":0.5507},{"rezago":10,"Q":9.7056,"p":0.2863},{"rezago":11,"Q":10.3624,"p":0.322},{"rezago":12,"Q":10.3645,"p":0.4091},{"rezago":13,"Q":11.0566,"p":0.4385},{"rezago":14,"Q":11.0992,"p":0.5204},{"rezago":15,"Q":11.4158,"p":0.576},{"rezago":16,"Q":11.9424,"p":0.6109},{"rezago":17,"Q":12.3182,"p":0.6548},{"rezago":18,"Q":12.8465,"p":0.6839},{"rezago":19,"Q":12.8541,"p":0.7459},{"rezago":20,"Q":12.8615,"p":0.7997}],"ljung_box_20":{"Q":12.8615,"p":0.7997},"ljung_box_10":{"Q":9.7056,"p":0.2863},"shapiro_p":0.7312,"media_residual":-16.0659,"ee_media_residual":13.9673,"raices":{"ar_modulo":3.9313,"ma_modulo":1.144},"metodos_estimacion":{"ml":{"ar1":0.25437,"ma1":-0.874135,"sigma2":19769.29},"css_ml":{"ar1":0.254371,"ma1":-0.874136,"sigma2":20176.91},"dif_relativa_sigma2":0.02062,"nota":"stats::arima(method='ML') y forecast::Arima() (CSS-ML por defecto) dan coeficientes iguales a 5 decimales pero sigma^2 distinta: el ancho de los intervalos hereda esa diferencia."}},"cambio_nivel":{"anio":1899,"fuente":"Cobb (1978); el descenso coincide con la construcción de la presa baja de Asuán","media_antes":1097.75,"media_despues":849.97,"escalon":{"coef":-247.78,"ee":28.15,"t":-8.8,"aicc":1257.91,"bic":1265.48,"ljung_box_20_p":0.8124},"escalon_ar1":{"aicc":1257.5,"bic":1267.5,"ar1":0.1596,"ar1_t":1.62},"mejor_d0_rejilla":1282.5,"advertencia":"El ARIMA(1,1,1) tiene d = 1: su AICc se calcula sobre 99 observaciones y NO es comparable con estos.","fuera_muestra":{"corte":1950,"n_entrenamiento":80,"h":20,"modelos":[{"etiqueta":"ARIMA(1,1,1)","rmse":125.05,"mae":106.16},{"etiqueta":"Escalón 1899 (d = 0)","rmse":127.99,"mae":106.99},{"etiqueta":"Escalón 1899 + AR(1)","rmse":128.31,"mae":107.4},{"etiqueta":"Naïve (último valor)","rmse":123.06,"mae":101.95},{"etiqueta":"Media de la muestra","rmse":133.31,"mae":108.01}],"nota":"Única comparación válida entre modelos con distinto d. La media de toda la muestra es un mal referente aquí porque mezcla los dos regímenes; el naïve y el escalón coinciden casi en todo porque ambos pronostican una constante cercana al nivel posterior a 1899."},"monte_carlo":{"n_replicas":1000,"n":100,"delta":-247.78,"sigma":127.03,"posicion_escalon":29,"sin_escalon":{"kpss_rechaza":0.048,"adf_test_no_rechaza":0.054,"ndiffs_kpss_1_o_mas":0.052,"ndiffs_adf_1_o_mas":0},"con_escalon":{"kpss_rechaza":1,"adf_test_no_rechaza":0.864,"ndiffs_kpss_1_o_mas":1,"ndiffs_adf_1_o_mas":0.005}},"malla_delta":{"n_replicas":400,"n":100,"sigma":127.03,"posicion":29,"valor_critico_kpss_5":0.463,"delta_del_nilo":247.78,"puntos":[{"delta":0,"kpss_medio":0.1728,"kpss_rechaza":0.045,"kpss_rechaza_l12":0.035,"ndiffs_medio":0.0475,"salto_en_sigmas":0},{"delta":25,"kpss_medio":0.215,"kpss_rechaza":0.095,"kpss_rechaza_l12":0.0625,"ndiffs_medio":0.1,"salto_en_sigmas":0.197},{"delta":50,"kpss_medio":0.3232,"kpss_rechaza":0.2275,"kpss_rechaza_l12":0.1475,"ndiffs_medio":0.25,"salto_en_sigmas":0.394},{"delta":75,"kpss_medio":0.4686,"kpss_rechaza":0.4825,"kpss_rechaza_l12":0.27,"ndiffs_medio":0.535,"salto_en_sigmas":0.59},{"delta":100,"kpss_medio":0.636,"kpss_rechaza":0.7075,"kpss_rechaza_l12":0.445,"ndiffs_medio":0.7775,"salto_en_sigmas":0.787},{"delta":150,"kpss_medio":0.8962,"kpss_rechaza":0.96,"kpss_rechaza_l12":0.7275,"ndiffs_medio":0.9725,"salto_en_sigmas":1.181},{"delta":200,"kpss_medio":1.0677,"kpss_rechaza":1,"kpss_rechaza_l12":0.87,"ndiffs_medio":1,"salto_en_sigmas":1.574},{"delta":250,"kpss_medio":1.1709,"kpss_rechaza":1,"kpss_rechaza_l12":0.9425,"ndiffs_medio":1,"salto_en_sigmas":1.968},{"delta":300,"kpss_medio":1.2288,"kpss_rechaza":1,"kpss_rechaza_l12":0.98,"ndiffs_medio":1,"salto_en_sigmas":2.362}]}},"sobrediferenciacion":[{"d":0,"n":100,"varianza":28637.95,"acf1":0.4984,"theta_ma1":0.3783,"theta_ee":0.0791,"sigma2_ma1":23271.76},{"d":1,"n":99,"varianza":28268.34,"acf1":-0.402,"theta_ma1":-0.7329,"theta_ee":0.1143,"sigma2_ma1":20599.87},{"d":2,"n":98,"varianza":80055.01,"acf1":-0.6264,"theta_ma1":-1,"theta_ee":0.0254,"sigma2_ma1":28268.34},{"d":3,"n":97,"varianza":262507.29,"acf1":-0.7188,"theta_ma1":-1,"theta_ee":0.0253,"sigma2_ma1":80055.05}],"hyndman_khandakar":{"serie":"nilo","criterio":"AICc","escalonada":{"pasos":[{"orden":[2,1,2],"etiqueta":"ARIMA(2,1,2) with drift","constante":"with drift","aicc":null,"infinito":true,"mejora":false,"mejor_hasta_aqui":null},{"orden":[0,1,0],"etiqueta":"ARIMA(0,1,0) with drift","constante":"with drift","aicc":1298.77,"infinito":false,"mejora":true,"mejor_hasta_aqui":1298.77},{"orden":[1,1,0],"etiqueta":"ARIMA(1,1,0) with drift","constante":"with drift","aicc":1283.598,"infinito":false,"mejora":true,"mejor_hasta_aqui":1283.598},{"orden":[0,1,1],"etiqueta":"ARIMA(0,1,1) with drift","constante":"with drift","aicc":1270.562,"infinito":false,"mejora":true,"mejor_hasta_aqui":1270.562},{"orden":[0,1,0],"etiqueta":"ARIMA(0,1,0)","constante":"","aicc":1296.738,"infinito":false,"mejora":false,"mejor_hasta_aqui":1270.562},{"orden":[1,1,1],"etiqueta":"ARIMA(1,1,1) with drift","constante":"with drift","aicc":1268.063,"infinito":false,"mejora":true,"mejor_hasta_aqui":1268.063},{"orden":[2,1,1],"etiqueta":"ARIMA(2,1,1) with drift","constante":"with drift","aicc":1269.777,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.063},{"orden":[1,1,2],"etiqueta":"ARIMA(1,1,2) with drift","constante":"with drift","aicc":1269.779,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.063},{"orden":[0,1,2],"etiqueta":"ARIMA(0,1,2) with drift","constante":"with drift","aicc":1268.969,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.063},{"orden":[2,1,0],"etiqueta":"ARIMA(2,1,0) with drift","constante":"with drift","aicc":1279.708,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.063},{"orden":[1,1,1],"etiqueta":"ARIMA(1,1,1)","constante":"","aicc":1267.507,"infinito":false,"mejora":true,"mejor_hasta_aqui":1267.507},{"orden":[0,1,1],"etiqueta":"ARIMA(0,1,1)","constante":"","aicc":1269.216,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[1,1,0],"etiqueta":"ARIMA(1,1,0)","constante":"","aicc":1281.605,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[2,1,1],"etiqueta":"ARIMA(2,1,1)","constante":"","aicc":1269.322,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[1,1,2],"etiqueta":"ARIMA(1,1,2)","constante":"","aicc":1269.348,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[0,1,2],"etiqueta":"ARIMA(0,1,2)","constante":"","aicc":1268.21,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[2,1,0],"etiqueta":"ARIMA(2,1,0)","constante":"","aicc":1277.737,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[2,1,2],"etiqueta":"ARIMA(2,1,2)","constante":"","aicc":null,"infinito":true,"mejora":false,"mejor_hasta_aqui":1267.507}],"n_modelos":18,"resultado":"ARIMA(1,1,1)","orden":[1,1,1],"aicc":1267.507,"incluye_deriva":false,"incluye_media":false},"exhaustiva":{"pasos":[{"orden":[0,1,0],"etiqueta":"ARIMA(0,1,0)","constante":"","aicc":1296.738,"infinito":false,"mejora":true,"mejor_hasta_aqui":1296.738},{"orden":[0,1,0],"etiqueta":"ARIMA(0,1,0) with drift","constante":"with drift","aicc":1298.77,"infinito":false,"mejora":false,"mejor_hasta_aqui":1296.738},{"orden":[0,1,1],"etiqueta":"ARIMA(0,1,1)","constante":"","aicc":1269.216,"infinito":false,"mejora":true,"mejor_hasta_aqui":1269.216},{"orden":[0,1,1],"etiqueta":"ARIMA(0,1,1) with drift","constante":"with drift","aicc":1270.562,"infinito":false,"mejora":false,"mejor_hasta_aqui":1269.216},{"orden":[0,1,2],"etiqueta":"ARIMA(0,1,2)","constante":"","aicc":1268.21,"infinito":false,"mejora":true,"mejor_hasta_aqui":1268.21},{"orden":[0,1,2],"etiqueta":"ARIMA(0,1,2) with drift","constante":"with drift","aicc":1268.969,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.21},{"orden":[0,1,3],"etiqueta":"ARIMA(0,1,3)","constante":"","aicc":1269.633,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.21},{"orden":[0,1,3],"etiqueta":"ARIMA(0,1,3) with drift","constante":"with drift","aicc":1270.249,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.21},{"orden":[0,1,4],"etiqueta":"ARIMA(0,1,4)","constante":"","aicc":1271.117,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.21},{"orden":[0,1,4],"etiqueta":"ARIMA(0,1,4) with drift","constante":"with drift","aicc":1271.603,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.21},{"orden":[0,1,5],"etiqueta":"ARIMA(0,1,5)","constante":"","aicc":1273.375,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.21},{"orden":[0,1,5],"etiqueta":"ARIMA(0,1,5) with drift","constante":"with drift","aicc":1273.92,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.21},{"orden":[1,1,0],"etiqueta":"ARIMA(1,1,0)","constante":"","aicc":1281.605,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.21},{"orden":[1,1,0],"etiqueta":"ARIMA(1,1,0) with drift","constante":"with drift","aicc":1283.598,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.21},{"orden":[1,1,1],"etiqueta":"ARIMA(1,1,1)","constante":"","aicc":1267.507,"infinito":false,"mejora":true,"mejor_hasta_aqui":1267.507},{"orden":[1,1,1],"etiqueta":"ARIMA(1,1,1) with drift","constante":"with drift","aicc":1268.063,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[1,1,2],"etiqueta":"ARIMA(1,1,2)","constante":"","aicc":1269.348,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[1,1,2],"etiqueta":"ARIMA(1,1,2) with drift","constante":"with drift","aicc":1269.779,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[1,1,3],"etiqueta":"ARIMA(1,1,3)","constante":"","aicc":1271.504,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[1,1,3],"etiqueta":"ARIMA(1,1,3) with drift","constante":"with drift","aicc":1271.998,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[1,1,4],"etiqueta":"ARIMA(1,1,4)","constante":"","aicc":null,"infinito":true,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[1,1,4],"etiqueta":"ARIMA(1,1,4) with drift","constante":"with drift","aicc":1273.92,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[2,1,0],"etiqueta":"ARIMA(2,1,0)","constante":"","aicc":1277.737,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[2,1,0],"etiqueta":"ARIMA(2,1,0) with drift","constante":"with drift","aicc":1279.708,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[2,1,1],"etiqueta":"ARIMA(2,1,1)","constante":"","aicc":1269.322,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[2,1,1],"etiqueta":"ARIMA(2,1,1) with drift","constante":"with drift","aicc":1269.777,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[2,1,2],"etiqueta":"ARIMA(2,1,2)","constante":"","aicc":null,"infinito":true,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[2,1,2],"etiqueta":"ARIMA(2,1,2) with drift","constante":"with drift","aicc":null,"infinito":true,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[2,1,3],"etiqueta":"ARIMA(2,1,3)","constante":"","aicc":null,"infinito":true,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[2,1,3],"etiqueta":"ARIMA(2,1,3) with drift","constante":"with drift","aicc":null,"infinito":true,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[3,1,0],"etiqueta":"ARIMA(3,1,0)","constante":"","aicc":1278.622,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[3,1,0],"etiqueta":"ARIMA(3,1,0) with drift","constante":"with drift","aicc":1280.597,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[3,1,1],"etiqueta":"ARIMA(3,1,1)","constante":"","aicc":1271.518,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[3,1,1],"etiqueta":"ARIMA(3,1,1) with drift","constante":"with drift","aicc":1271.971,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[3,1,2],"etiqueta":"ARIMA(3,1,2)","constante":"","aicc":1273.659,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[3,1,2],"etiqueta":"ARIMA(3,1,2) with drift","constante":"with drift","aicc":1274.144,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[4,1,0],"etiqueta":"ARIMA(4,1,0)","constante":"","aicc":1277.978,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[4,1,0],"etiqueta":"ARIMA(4,1,0) with drift","constante":"with drift","aicc":1279.902,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[4,1,1],"etiqueta":"ARIMA(4,1,1)","constante":"","aicc":1273.149,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[4,1,1],"etiqueta":"ARIMA(4,1,1) with drift","constante":"with drift","aicc":1273.81,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[5,1,0],"etiqueta":"ARIMA(5,1,0)","constante":"","aicc":1278.038,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[5,1,0],"etiqueta":"ARIMA(5,1,0) with drift","constante":"with drift","aicc":1279.905,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507}],"n_modelos":42,"resultado":"ARIMA(1,1,1)","orden":[1,1,1],"aicc":1267.507,"ranking":[{"etiqueta":"ARIMA(1,1,1)","aicc":1267.507},{"etiqueta":"ARIMA(1,1,1) with drift","aicc":1268.063},{"etiqueta":"ARIMA(0,1,2)","aicc":1268.21},{"etiqueta":"ARIMA(0,1,2) with drift","aicc":1268.969},{"etiqueta":"ARIMA(0,1,1)","aicc":1269.216}]},"coinciden":true,"diferencia_aicc":0},"formas_pronostico":{"d0":{"etiqueta":"ARIMA(1,0,1) con media","orden":[1,0,1],"deriva":false,"media":[800.31,817.02,831.4,843.79,854.45,863.64,871.54,878.35,884.22,889.26,893.61,897.35,900.58,903.35,905.74,907.8,909.57,911.1,912.41,913.54,914.52,915.36,916.08,916.7,917.24,917.7,918.1,918.44,918.73,918.99],"lo80":[616.79,622.98,629.92,636.96,643.74,650.1,655.93,661.22,665.96,670.18,673.91,677.2,680.09,682.61,684.82,686.74,688.41,689.86,691.12,692.21,693.16,693.97,694.68,695.29,695.81,696.27,696.66,697,697.29,697.54],"hi80":[983.83,1011.06,1032.88,1050.62,1065.16,1077.17,1087.15,1095.49,1102.47,1108.35,1113.31,1117.51,1121.07,1124.09,1126.67,1128.86,1130.73,1132.33,1133.7,1134.88,1135.88,1136.74,1137.48,1138.12,1138.66,1139.13,1139.53,1139.88,1140.17,1140.43],"lo95":[519.64,520.26,523.26,527.47,532.2,537.06,541.79,546.27,550.42,554.2,557.61,560.66,563.37,565.76,567.87,569.72,571.34,572.75,573.98,575.05,575.97,576.78,577.47,578.08,578.6,579.05,579.44,579.78,580.07,580.32],"hi95":[1080.98,1113.77,1139.54,1160.11,1176.7,1190.21,1201.29,1210.43,1218.01,1224.33,1229.62,1234.05,1237.79,1240.94,1243.62,1245.88,1247.81,1249.45,1250.85,1252.04,1253.06,1253.94,1254.68,1255.33,1255.88,1256.35,1256.75,1257.1,1257.4,1257.65],"aicc":1282.5,"sigma":143.202,"coeficientes":[{"nombre":"ar1","valor":0.8611,"ee":0.1067},{"nombre":"ma1","valor":-0.5177,"ee":0.1908},{"nombre":"intercept","valor":920.5567,"ee":46.6736}]},"d1":{"etiqueta":"ARIMA(1,1,1) sin constante","orden":[1,1,1],"deriva":false,"media":[816.18,835.56,840.49,841.74,842.06,842.14,842.16,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17],"lo80":[634.14,640.81,641.56,640.06,637.96,635.72,633.46,631.21,628.98,626.78,624.6,622.44,620.3,618.19,616.09,614.01,611.95,609.91,607.88,605.88,603.89,601.91,599.96,598.02,596.09,594.18,592.28,590.4,588.53,586.68],"hi80":[998.22,1030.31,1039.41,1043.42,1046.16,1048.57,1050.87,1053.13,1055.36,1057.56,1059.74,1061.9,1064.04,1066.16,1068.25,1070.33,1072.39,1074.43,1076.46,1078.46,1080.45,1082.43,1084.38,1086.33,1088.25,1090.16,1092.06,1093.94,1095.81,1097.66],"lo95":[537.78,537.71,536.26,533.3,529.91,526.44,522.97,519.53,516.13,512.76,509.43,506.12,502.85,499.61,496.41,493.23,490.08,486.95,483.86,480.79,477.75,474.73,471.74,468.77,465.82,462.9,460,457.12,454.26,451.43],"hi95":[1094.59,1133.41,1144.72,1150.18,1154.21,1157.85,1161.35,1164.8,1168.21,1171.58,1174.92,1178.22,1181.49,1184.73,1187.94,1191.11,1194.26,1197.39,1200.48,1203.55,1206.59,1209.61,1212.6,1215.57,1218.52,1221.44,1224.34,1227.22,1230.08,1232.92],"aicc":1267.51,"sigma":142.045,"coeficientes":[{"nombre":"ar1","valor":0.2544,"ee":0.1194},{"nombre":"ma1","valor":-0.8741,"ee":0.0605}]},"d1_deriva":{"etiqueta":"ARIMA(1,1,1) con deriva","orden":[1,1,1],"deriva":true,"media":[799.19,813.11,814.77,813.12,810.57,807.78,804.92,802.04,799.16,796.28,793.4,790.52,787.63,784.75,781.87,778.99,776.1,773.22,770.34,767.45,764.57,761.69,758.81,755.92,753.04,750.16,747.28,744.39,741.51,738.63],"lo80":[617.89,620.1,618.6,615.15,611.11,606.91,602.67,598.43,594.2,589.97,585.76,581.55,577.35,573.15,568.97,564.79,560.62,556.46,552.31,548.16,544.02,539.89,535.77,531.65,527.54,523.43,519.33,515.24,511.16,507.08],"hi80":[980.48,1006.12,1010.94,1011.09,1010.03,1008.65,1007.17,1005.66,1004.13,1002.59,1001.04,999.49,997.92,996.35,994.77,993.18,991.58,989.98,988.37,986.75,985.12,983.49,981.85,980.2,978.55,976.88,975.22,973.54,971.86,970.18],"lo95":[521.92,517.93,514.76,510.35,505.52,500.58,495.61,490.65,485.7,480.76,475.84,470.93,466.03,461.14,456.27,451.41,446.56,441.72,436.89,432.08,427.27,422.48,417.7,412.92,408.16,403.41,398.67,393.94,389.22,384.5],"hi95":[1076.45,1108.29,1114.79,1115.89,1115.62,1114.98,1114.23,1113.44,1112.63,1111.8,1110.96,1110.11,1109.24,1108.36,1107.47,1106.57,1105.65,1104.72,1103.78,1102.83,1101.87,1100.9,1099.92,1098.92,1097.92,1096.91,1095.88,1094.85,1093.81,1092.75],"aicc":1268.06,"sigma":141.465,"coeficientes":[{"nombre":"ar1","valor":0.2707,"ee":0.1176},{"nombre":"ma1","valor":-0.9054,"ee":0.0577},{"nombre":"drift","valor":-2.8827,"ee":2.0167}]},"d2":{"etiqueta":"ARIMA(1,2,1)","orden":[1,2,1],"deriva":false,"media":[724.16,724.74,718.87,715.54,711.21,707.27,703.17,699.14,695.09,691.04,686.99,682.94,678.89,674.84,670.79,666.74,662.69,658.64,654.6,650.55,646.5,642.45,638.4,634.35,630.3,626.25,622.2,618.15,614.1,610.05],"lo80":[523.82,489.28,436.55,398.08,359.55,324.63,291.12,259.26,228.55,198.88,170.07,142.02,114.61,87.78,61.45,35.59,10.13,-14.95,-39.7,-64.14,-88.3,-112.2,-135.85,-159.29,-182.52,-205.56,-228.41,-251.1,-273.64,-296.02],"hi80":[924.5,960.2,1001.2,1033,1062.87,1089.9,1115.23,1139.02,1161.62,1183.2,1203.91,1223.87,1243.17,1261.91,1280.13,1297.9,1315.26,1332.24,1348.89,1365.23,1381.29,1397.09,1412.65,1427.99,1443.12,1458.06,1472.82,1487.41,1501.84,1516.13],"lo95":[417.77,364.63,287.09,230.02,173.39,122.08,72.99,26.4,-18.42,-61.65,-103.56,-144.33,-184.11,-223,-261.11,-298.53,-335.32,-371.54,-407.24,-442.47,-477.28,-511.68,-545.72,-579.42,-612.8,-645.89,-678.7,-711.26,-743.58,-775.67],"hi95":[1030.55,1084.84,1150.65,1201.05,1249.03,1292.45,1333.36,1371.88,1408.59,1443.73,1477.54,1510.21,1541.89,1572.68,1602.7,1632.01,1660.7,1688.83,1716.43,1743.57,1770.27,1796.58,1822.51,1848.11,1873.4,1898.39,1923.1,1947.56,1971.78,1995.78],"aicc":1276.95,"sigma":155.534,"coeficientes":[{"nombre":"ar1","valor":-0.3924,"ee":0.0921},{"nombre":"ma1","valor":-1,"ee":0.0261}]}},"intervalos":{"modelo":"ARIMA(1,1,1)","sigma":142.045,"psi":[1,0.3802,0.2226,0.1825,0.1723,0.1697,0.169,0.1689,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688],"sigma_h":[142.045,151.967,155.221,157.371,159.262,161.076,162.855,164.612,166.35,168.069,169.771,171.456,173.124,174.777,176.414,178.036,179.643,181.236,182.815,184.381,185.934,187.473,189.001,190.515,192.018,193.51,194.989,196.458,197.916,199.363],"z80":1.2816,"z95":1.96,"semiancho_95":[278.405,297.85,304.23,308.44,312.15,315.705,319.19,322.635,326.04,329.41,332.745,336.05,339.32,342.56,345.765,348.94,352.09,355.22,358.31,361.38,364.42,367.44,370.43,373.4,376.35,379.27,382.17,385.05,387.91,390.745],"error_maximo_verificacion":9.078e-11,"error_maximo_tras_redondear":0.004229,"psi_limite":0.1688,"razon_h1_h30":1.404,"forma_medida":{"d0":{"etiqueta":"ARIMA(1,0,1) con media","primera_dif_h2":16.7045,"primera_dif_h30":0.2535,"segunda_dif_h30":-0.040903,"distancia_a_la_media_h30":0.36,"ancho95_h1":561.34,"ancho95_h30":677.33},"d1":{"etiqueta":"ARIMA(1,1,1) sin constante","primera_dif_h2":19.3783,"primera_dif_h30":0,"segunda_dif_h30":0,"distancia_a_la_media_h30":77.18,"ancho95_h1":556.81,"ancho95_h30":781.49},"d1_deriva":{"etiqueta":"ARIMA(1,1,1) con deriva","primera_dif_h2":13.919,"primera_dif_h30":-2.8827,"segunda_dif_h30":-0,"distancia_a_la_media_h30":180.72,"ancho95_h1":554.53,"ancho95_h30":708.25},"d2":{"etiqueta":"ARIMA(1,2,1)","primera_dif_h2":0.5772,"primera_dif_h30":-4.0493,"segunda_dif_h30":0,"distancia_a_la_media_h30":309.3,"ancho95_h1":612.78,"ancho95_h30":2771.45}},"deriva_con_d2":{"se_ajusta":false,"aviso":"No drift term fitted as the order of difference is 2 or more.","nota":"forecast::Arima descarta la deriva cuando d >= 2. Por eso el pronóstico con d = 2 es una RECTA y no una parábola: el caso cuadrático existe en el álgebra, pero el software se niega a ajustarlo porque extrapola sin control."}}},"trm":{"nombre":"TRM mensual","fuente":"Superintendencia Financiera de Colombia vía datos.gov.co (consulta: 2026-07-26)","unidad":"COP por USD","n":138,"identificacion":{"cruda":{"n":138,"banda":0.1668,"acf":[0.9637,0.9242,0.8905,0.8563,0.8201,0.7798,0.7398,0.7092,0.688,0.6694,0.6505,0.6365,0.6236,0.6184,0.6124,0.5966,0.5812,0.5675,0.5537,0.5442],"pacf":[0.9637,-0.0619,0.0613,-0.0306,-0.0409,-0.0772,-0.0164,0.1016,0.1085,0.0363,-0.002,0.0529,-0.0193,0.0951,-0.0151,-0.1043,0.0172,0.0012,0.0015,0.0841]},"d1":{"n":137,"banda":0.1675,"acf":[0.0876,-0.0433,-0.0478,0.0105,0.1573,0.0922,-0.0522,-0.1903,-0.1416,0.0453,0.0252,-0.0025,-0.1376,-0.1071,0.1267,-0.0124,-0.0414,-0.0116,-0.1134,-0.0023],"pacf":[0.0876,-0.0513,-0.0397,0.0165,0.1527,0.0662,-0.0539,-0.1707,-0.1226,0.0271,-0.0178,0.0076,-0.0808,-0.0364,0.1355,-0.0886,-0.08,0.0235,-0.0857,-0.0229]}},"pruebas":{"adf_nivel":{"estadistico":-1.9783,"p":0.5855,"rezagos":5},"kpss_nivel":{"estadistico":2.2427,"p":0.01},"adf_d1":{"estadistico":-3.8801,"p":0.0172},"kpss_d1":{"estadistico":0.2415,"p":0.1},"ndiffs":1,"nsdiffs":0},"varianzas":[{"d":0,"varianza":338834.24},{"d":1,"varianza":14800.4},{"d":2,"varianza":26812.57}],"rejilla":{"010":{"p":0,"d":1,"q":0,"etiqueta":"ARIMA(0,1,0)","convergio":true,"k":1,"n_efectivo":137,"loglik":-851.9556,"sigma2":14756.38,"aic":1705.91,"aicc":1705.94,"bic":1708.83,"ljung_box_p":0.189,"ljung_box_12_p":0.2059,"acf_residuales":[0.0875,-0.0437,-0.0475,0.0107,0.157,0.0917,-0.0529,-0.1905,-0.1412,0.0451,0.0246,-0.0026,-0.1378,-0.1065,0.1272,-0.0124,-0.0413,-0.0115,-0.1133,-0.0021],"coeficientes":[],"raices":{"ar":[],"ma":[],"min_ar":null,"min_ma":null,"degenerado":false}},"011":{"p":0,"d":1,"q":1,"etiqueta":"ARIMA(0,1,1)","convergio":true,"k":2,"n_efectivo":137,"loglik":-851.3048,"sigma2":14615.73,"aic":1706.61,"aicc":1706.7,"bic":1712.45,"ljung_box_p":0.2827,"ljung_box_12_p":0.334,"acf_residuales":[-0.0068,-0.0398,-0.042,-0.0004,0.1488,0.0824,-0.0439,-0.1713,-0.129,0.0581,0.0179,0.0093,-0.1265,-0.1066,0.1383,-0.0224,-0.0374,0.005,-0.1128,-0.0035],"coeficientes":[{"nombre":"ma1","valor":0.1021,"ee":0.0886,"t":1.1524}],"raices":{"ar":[],"ma":9.7937,"min_ar":null,"min_ma":9.7937,"degenerado":false}},"012":{"p":0,"d":1,"q":2,"etiqueta":"ARIMA(0,1,2)","convergio":true,"k":3,"n_efectivo":137,"loglik":-851.2265,"sigma2":14598.79,"aic":1708.45,"aicc":1708.63,"bic":1717.21,"ljung_box_p":0.2847,"ljung_box_12_p":0.2999,"acf_residuales":[-0.0028,-0.0069,-0.0401,0.0024,0.147,0.0779,-0.0446,-0.168,-0.1316,0.0525,0.0097,0.0069,-0.1225,-0.1072,0.1315,-0.0241,-0.0362,0.0018,-0.1105,-0.0039],"coeficientes":[{"nombre":"ma1","valor":0.0969,"ee":0.0867,"t":1.1178},{"nombre":"ma2","valor":-0.0354,"ee":0.0889,"t":-0.3981}],"raices":{"ar":[],"ma":[6.8601,4.1209],"min_ar":null,"min_ma":4.1209,"degenerado":false}},"110":{"p":1,"d":1,"q":0,"etiqueta":"ARIMA(1,1,0)","convergio":true,"k":2,"n_efectivo":137,"loglik":-851.3587,"sigma2":14627.42,"aic":1706.72,"aicc":1706.81,"bic":1712.56,"ljung_box_p":0.255,"ljung_box_12_p":0.3029,"acf_residuales":[0.001,-0.0493,-0.044,0.0002,0.1501,0.0847,-0.0446,-0.1741,-0.1295,0.0585,0.021,0.0088,-0.1288,-0.1063,0.1391,-0.0207,-0.038,0.004,-0.1134,-0.0033],"coeficientes":[{"nombre":"ar1","valor":0.094,"ee":0.0858,"t":1.0952}],"raices":{"ar":10.6429,"ma":[],"min_ar":10.6429,"min_ma":null,"degenerado":false}},"111":{"p":1,"d":1,"q":1,"etiqueta":"ARIMA(1,1,1)","convergio":true,"k":3,"n_efectivo":137,"loglik":-851.2565,"sigma2":14605.3,"aic":1708.51,"aicc":1708.69,"bic":1717.27,"ljung_box_p":0.2612,"ljung_box_12_p":0.2773,"acf_residuales":[-0.0055,-0.0196,-0.046,0.0025,0.1479,0.0804,-0.0446,-0.1695,-0.1308,0.0556,0.0141,0.0079,-0.1241,-0.1066,0.1339,-0.0224,-0.0361,0.0019,-0.1108,-0.0039],"coeficientes":[{"nombre":"ar1","valor":-0.222,"ee":0.8449,"t":-0.2628},{"nombre":"ma1","valor":0.3223,"ee":0.8243,"t":0.391}],"raices":{"ar":4.5043,"ma":3.1024,"min_ar":4.5043,"min_ma":3.1024,"degenerado":false}},"112":{"p":1,"d":1,"q":2,"etiqueta":"ARIMA(1,1,2)","convergio":true,"k":4,"n_efectivo":137,"loglik":-851.2057,"sigma2":14594.34,"aic":1710.41,"aicc":1710.71,"bic":1722.09,"ljung_box_p":0.2422,"ljung_box_12_p":0.2426,"acf_residuales":[-0.0032,-0.004,-0.0324,0.0029,0.1459,0.0764,-0.0442,-0.1668,-0.1311,0.051,0.0073,0.0065,-0.1223,-0.1076,0.1313,-0.0261,-0.037,0.0034,-0.1107,-0.004],"coeficientes":[{"nombre":"ar1","valor":0.2024,"ee":0.9454,"t":0.2141},{"nombre":"ma1","valor":-0.1052,"ee":0.9441,"t":-0.1114},{"nombre":"ma2","valor":-0.0568,"ee":0.1161,"t":-0.4887}],"raices":{"ar":4.9408,"ma":[3.3722,5.2253],"min_ar":4.9408,"min_ma":3.3722,"degenerado":false}},"210":{"p":2,"d":1,"q":0,"etiqueta":"ARIMA(2,1,0)","convergio":true,"k":3,"n_efectivo":137,"loglik":-851.1886,"sigma2":14590.57,"aic":1708.38,"aicc":1708.56,"bic":1717.14,"ljung_box_p":0.3075,"ljung_box_12_p":0.3307,"acf_residuales":[-0.0056,-0.0001,-0.0304,0.0008,0.145,0.0753,-0.0439,-0.1658,-0.1309,0.0505,0.0056,0.0071,-0.1209,-0.1078,0.1312,-0.027,-0.0368,0.0042,-0.1109,-0.0039],"coeficientes":[{"nombre":"ar1","valor":0.0993,"ee":0.0862,"t":1.1517},{"nombre":"ar2","valor":-0.0506,"ee":0.0867,"t":-0.5837}],"raices":{"ar":[4.4452,4.4452],"ma":[],"min_ar":4.4452,"min_ma":null,"degenerado":false}},"211":{"p":2,"d":1,"q":1,"etiqueta":"ARIMA(2,1,1)","convergio":true,"k":4,"n_efectivo":137,"loglik":-851.1649,"sigma2":14585.46,"aic":1710.33,"aicc":1710.63,"bic":1722.01,"ljung_box_p":0.2647,"ljung_box_12_p":0.2728,"acf_residuales":[-0.0051,0.003,-0.0209,0.0026,0.1431,0.0736,-0.0435,-0.1645,-0.1303,0.0484,0.0029,0.0063,-0.1211,-0.1081,0.1308,-0.0294,-0.0378,0.006,-0.1109,-0.0042],"coeficientes":[{"nombre":"ar1","valor":0.2707,"ee":0.7086,"t":0.3821},{"nombre":"ar2","valor":-0.0691,"ee":0.105,"t":-0.6584},{"nombre":"ma1","valor":-0.1718,"ee":0.7066,"t":-0.2432}],"raices":{"ar":[3.8037,3.8037],"ma":5.8195,"min_ar":3.8037,"min_ma":5.8195,"degenerado":false}},"212":{"p":2,"d":1,"q":2,"etiqueta":"ARIMA(2,1,2)","convergio":true,"k":5,"n_efectivo":137,"loglik":-846.4617,"sigma2":13187.43,"aic":1702.92,"aicc":1703.38,"bic":1717.52,"ljung_box_p":0.7218,"ljung_box_12_p":0.6922,"acf_residuales":[0.0176,0.0034,0.0602,0.0281,0.0717,0.0109,-0.0215,-0.0974,-0.1121,-0.025,-0.0665,0.0137,-0.0544,-0.0676,0.0843,-0.1054,-0.0444,0.078,-0.0761,-0.0518],"coeficientes":[{"nombre":"ar1","valor":0.6612,"ee":0.0165,"t":40.1372},{"nombre":"ar2","valor":-0.9917,"ee":0.0105,"t":-94.7748},{"nombre":"ma1","valor":-0.6226,"ee":0.024,"t":-25.9219},{"nombre":"ma2","valor":1,"ee":0.0355,"t":28.1573}],"raices":{"ar":[1.0042,1.0042],"ma":[1,1],"min_ar":1.0042,"min_ma":1,"degenerado":true}}},"mejor_aicc":"212","mejor_bic":"010","auto_arima":{"resultado":"ARIMA(0,1,0)","orden":[0,1,0],"estacional":false,"aicc":1705.941,"n_modelos":192},"caminata":{"sigma2":14756.38,"aicc":1705.94,"bic":1708.83,"ljung_box_20_p":0.189,"ljung_box_12_p":0.2059,"acf_residuales":[0.0875,-0.0437,-0.0475,0.0107,0.157,0.0917,-0.0529,-0.1905,-0.1412,0.0451,0.0246,-0.0026,-0.1378,-0.1065,0.1272,-0.0124,-0.0413,-0.0115,-0.1133,-0.0021],"shapiro_p":0.0006},"deriva":{"valor":8.0009,"ee":10.3559,"t":0.7726,"aicc":1707.41},"volatilidad":{"lb12_cuadrados_p":0.857},"minimo_degenerado":{"etiqueta":"ARIMA(2,1,2)","aicc":1703.38,"ventaja_aicc":-2.56,"raices_ar":[1.0042,1.0042],"raices_ma":[1,1],"degenerado":true,"motivo":"Las raíces del polinomio MA tienen módulo 1.000: el modelo no es invertible. Las del AR quedan en 1.004, prácticamente encima del círculo. auto.arima lo descarta por eso, aunque sea el mínimo de AICc de la rejilla."}},"puente_estacional":{"serie":"log(AirPassengers)","n":144,"no_estacional":{"resultado":"ARIMA(0,1,5)","orden":[0,1,5],"aicc":-261.451,"acf_residuales":[-0.0186,-0.1989,0.0874,-0.0355,-0.2877,-0.0334,-0.1703,-0.1317,0.0498,-0.1313,0.044,0.7245,0.0802,-0.1905,0.0794,-0.1128,-0.1576,-0.0685,-0.179,-0.1599,0.0931,-0.1301,0.0097,0.6727,0.0931,-0.1948],"banda":0.1633,"acf_12":0.7245,"acf_24":0.6727,"ljung_box_24":{"Q":222.398,"p":0}},"estacional":{"etiqueta":"ARIMA(0,1,1)(0,1,1)[12]","aicc":-483.21,"acf_residuales":[0.0144,0.0235,-0.1254,-0.1109,0.0611,0.0614,-0.0605,-0.0283,0.1166,-0.06,0.0033,-0.0515,0.0112,0.0281,0.0568,-0.1573,0.0472,0.0099,-0.1008,-0.0978,-0.0309,-0.0329,0.2196,0.0124,-0.0353,0.0588],"ljung_box_24_p":0.233},"advertencia_aicc":"Los dos modelos tienen la MISMA diferenciación total (d + D*m distinta): el no estacional usa d = 1 y el airline d = 1, D = 1. Sus AICc se calculan sobre n distinto (143 vs. 131) y NO son comparables. La comparación válida es el diagnóstico."},"verificacion_fase0":{"modelos_comparados":27,"diferencia_maxima_aicc":0,"mejor_por_d_fase0":{"d0":"101","d1":"111","d2":"122"},"mejor_por_d_ahora":["101","111","122"]}};
+    const DATOS_CAP4 = {"descripcion":"Precálculos del Capítulo 4 (modelos ARIMA y metodología Box-Jenkins). Ajustes con stats::arima y forecast::Arima por máxima verosimilitud. AICc = AIC + 2k(k+1)/(n-k-1) con k = nº de coeficientes + 1 y n EFECTIVO = n - d. El AICc solo se compara dentro de un mismo d. Ljung-Box con fitdf = p + q. Trazas de auto.arima capturadas con trace = TRUE (criterio AICc).","generado":"2026-11-22 10:29:44 -05","max_rezago":20,"horizonte":30,"nilo":{"nombre":"Nile","fuente":"Cobb (1978) (datasets de R)","unidad":"10^8 m^3","n":100,"inicio":[1871,1],"identificacion":{"cruda":{"n":100,"banda":0.196,"acf":[0.4984,0.3846,0.3279,0.2392,0.2284,0.2273,0.222,0.3,0.1417,0.0898,0.2155,0.2129,0.237,0.1946,0.1544,0.1948,0.1364,0.1897,0.1542,0.114],"pacf":[0.4984,0.1812,0.1109,0.0062,0.065,0.0706,0.0603,0.1629,-0.148,-0.0646,0.1904,0.0871,0.0649,-0.0526,-0.0298,0.0729,0.0171,0.115,-0.1237,-0.0593]},"d1":{"n":99,"banda":0.197,"acf":[-0.402,-0.0443,0.0274,-0.0879,0.0005,0.0465,-0.1332,0.2312,-0.0849,-0.1849,0.1459,-0.0436,0.0679,0.008,-0.0827,0.0934,-0.1004,0.0731,-0.0092,-0.0032],"pacf":[-0.402,-0.2456,-0.1187,-0.1733,-0.1554,-0.0737,-0.2205,0.0736,0.0168,-0.2343,-0.1024,-0.0981,0.0142,-0.0151,-0.0738,-0.001,-0.1318,0.0863,-0.0054,-0.0242]},"d2":{"n":98,"banda":0.198,"acf":[-0.6264,0.1003,0.0669,-0.0717,0.0174,0.0742,-0.1915,0.2453,-0.0788,-0.1527,0.1835,-0.106,0.0615,0.0105,-0.096,0.134,-0.1336,0.0915,-0.0297,0.0031],"pacf":[-0.6264,-0.4806,-0.3018,-0.2651,-0.2734,-0.1124,-0.3526,-0.2127,0.0378,-0.1199,-0.1173,-0.1972,-0.1318,-0.055,-0.1094,0.0223,-0.1835,-0.0666,-0.0375,-0.0242]}},"pruebas":{"adf_nivel":{"estadistico":-3.3657,"p":0.0642,"rezagos":4},"adf_d1":{"estadistico":-6.5924,"p":0.01,"rezagos":4},"kpss_nivel":{"estadistico":0.9654,"p":0.01},"kpss_d1":{"estadistico":0.0233,"p":0.1},"pp_nivel":{"estadistico":-6.6901,"p":0.01},"ndiffs_kpss":1,"ndiffs_adf":0,"ndiffs_pp":0},"varianzas":[{"d":0,"varianza":28637.95,"n_efectivo":100},{"d":1,"varianza":28268.34,"n_efectivo":99},{"d":2,"varianza":80055.01,"n_efectivo":98},{"d":3,"varianza":262507.29,"n_efectivo":97}],"rejilla":{"000":{"p":0,"d":0,"q":0,"etiqueta":"ARIMA(0,0,0)","convergio":true,"k":2,"n_efectivo":100,"loglik":-654.5157,"sigma2":28351.57,"aic":1313.03,"aicc":1313.16,"bic":1318.24,"ljung_box_p":0,"ljung_box_12_p":0,"acf_residuales":[0.4984,0.3846,0.3279,0.2392,0.2284,0.2273,0.222,0.3,0.1417,0.0898,0.2155,0.2129,0.237,0.1946,0.1544,0.1948,0.1364,0.1897,0.1542,0.114],"coeficientes":[{"nombre":"intercept","valor":919.35,"ee":16.8379,"t":54.5999}],"raices":{"ar":[],"ma":[],"min_ar":null,"min_ma":null,"degenerado":false}},"001":{"p":0,"d":0,"q":1,"etiqueta":"ARIMA(0,0,1)","convergio":true,"k":3,"n_efectivo":100,"loglik":-644.7209,"sigma2":23271.76,"aic":1295.44,"aicc":1295.69,"bic":1303.26,"ljung_box_p":0.0001,"ljung_box_12_p":0.0001,"acf_residuales":[0.0988,0.3144,0.2019,0.1395,0.1439,0.1672,0.086,0.2705,0.0572,0.0099,0.1942,0.1026,0.1746,0.1307,0.0617,0.1752,0.0305,0.1649,0.0856,0.079],"coeficientes":[{"nombre":"ma1","valor":0.3783,"ee":0.0791,"t":4.7816},{"nombre":"intercept","valor":919.2359,"ee":20.9684,"t":43.8392}],"raices":{"ar":[],"ma":2.6437,"min_ar":null,"min_ma":2.6437,"degenerado":false}},"002":{"p":0,"d":0,"q":2,"etiqueta":"ARIMA(0,0,2)","convergio":true,"k":4,"n_efectivo":100,"loglik":-641.7373,"sigma2":21910.28,"aic":1291.47,"aicc":1291.9,"bic":1301.9,"ljung_box_p":0.008,"ljung_box_12_p":0.0032,"acf_residuales":[0.0523,0.0846,0.2637,0.0677,0.1174,0.1123,0.0479,0.2822,0.0173,-0.0625,0.191,0.0927,0.133,0.0968,0.0406,0.1425,0.0114,0.1275,0.0937,0.0346],"coeficientes":[{"nombre":"ma1","valor":0.3805,"ee":0.0983,"t":3.8706},{"nombre":"ma2","valor":0.2378,"ee":0.0988,"t":2.4062},{"nombre":"intercept","valor":919.8444,"ee":23.8309,"t":38.5988}],"raices":{"ar":[],"ma":[2.0505,2.0505],"min_ar":null,"min_ma":2.0505,"degenerado":false}},"100":{"p":1,"d":0,"q":0,"etiqueta":"ARIMA(1,0,0)","convergio":true,"k":3,"n_efectivo":100,"loglik":-639.9522,"sigma2":21124.83,"aic":1285.9,"aicc":1286.15,"bic":1293.72,"ljung_box_p":0.2117,"ljung_box_12_p":0.1117,"acf_residuales":[-0.0991,0.0923,0.1341,0.0201,0.0738,0.0858,0,0.2549,-0.0235,-0.098,0.1632,0.0464,0.1195,0.0675,-0.0076,0.13,-0.0361,0.1202,0.0539,0.0325],"coeficientes":[{"nombre":"ar1","valor":0.5063,"ee":0.0867,"t":5.8427},{"nombre":"intercept","valor":919.5499,"ee":29.1419,"t":31.5542}],"raices":{"ar":1.9751,"ma":[],"min_ar":1.9751,"min_ma":null,"degenerado":false}},"101":{"p":1,"d":0,"q":1,"etiqueta":"ARIMA(1,0,1)","convergio":true,"k":4,"n_efectivo":100,"loglik":-637.0388,"sigma2":19891.68,"aic":1282.08,"aicc":1282.5,"bic":1292.5,"ljung_box_p":0.6954,"ljung_box_12_p":0.3551,"acf_residuales":[0.026,-0.0395,-0.011,-0.0962,-0.0342,-0.0006,-0.0174,0.1913,-0.0879,-0.1806,0.0813,0.0481,0.0992,0.036,-0.0362,0.0695,-0.0505,0.0813,0.0456,0.0155],"coeficientes":[{"nombre":"ar1","valor":0.861,"ee":0.1067,"t":8.0719},{"nombre":"ma1","valor":-0.5177,"ee":0.1908,"t":-2.713},{"nombre":"intercept","valor":920.7037,"ee":46.6692,"t":19.7283}],"raices":{"ar":1.1614,"ma":1.9318,"min_ar":1.1614,"min_ma":1.9318,"degenerado":false}},"102":{"p":1,"d":0,"q":2,"etiqueta":"ARIMA(1,0,2)","convergio":true,"k":5,"n_efectivo":100,"loglik":-636.5299,"sigma2":19653.96,"aic":1283.06,"aicc":1283.7,"bic":1296.09,"ljung_box_p":0.7003,"ljung_box_12_p":0.3125,"acf_residuales":[0.0043,0.0464,0.0114,-0.0981,-0.0553,-0.0285,-0.0753,0.1423,-0.1159,-0.1877,0.0623,0.0039,0.0768,0.0253,-0.0442,0.0747,-0.0594,0.0807,0.0289,0.0082],"coeficientes":[{"nombre":"ar1","valor":0.9535,"ee":0.0647,"t":14.7458},{"nombre":"ma1","valor":-0.6043,"ee":0.1269,"t":-4.7634},{"nombre":"ma2","valor":-0.146,"ee":0.1175,"t":-1.2431},{"nombre":"intercept","valor":929.8796,"ee":67.4538,"t":13.7854}],"raices":{"ar":1.0487,"ma":[1.267,5.4057],"min_ar":1.0487,"min_ma":1.267,"degenerado":false}},"200":{"p":2,"d":0,"q":0,"etiqueta":"ARIMA(2,0,0)","convergio":true,"k":4,"n_efectivo":100,"loglik":-637.9813,"sigma2":20290.61,"aic":1283.96,"aicc":1284.38,"bic":1294.38,"ljung_box_p":0.4731,"ljung_box_12_p":0.1972,"acf_residuales":[-0.0263,-0.0678,0.0719,-0.0258,0.0311,0.0372,0.0081,0.2428,-0.0579,-0.1603,0.1227,0.0672,0.1053,0.0421,-0.0247,0.0883,-0.0404,0.092,0.0577,0.0168],"coeficientes":[{"nombre":"ar1","valor":0.4097,"ee":0.0974,"t":4.2053},{"nombre":"ar2","valor":0.1986,"ee":0.099,"t":2.0074},{"nombre":"intercept","valor":919.7614,"ee":35.6431,"t":25.8047}],"raices":{"ar":[1.4381,3.5005],"ma":[],"min_ar":1.4381,"min_ma":null,"degenerado":false}},"201":{"p":2,"d":0,"q":1,"etiqueta":"ARIMA(2,0,1)","convergio":true,"k":5,"n_efectivo":100,"loglik":-636.2691,"sigma2":19543.65,"aic":1282.54,"aicc":1283.18,"bic":1295.56,"ljung_box_p":0.7038,"ljung_box_12_p":0.3098,"acf_residuales":[-0.0193,0.0296,0.0318,-0.085,-0.0398,-0.0209,-0.0735,0.154,-0.1136,-0.1901,0.0685,0.0019,0.0719,0.02,-0.0486,0.0738,-0.0631,0.0783,0.028,0.0041],"coeficientes":[{"nombre":"ar1","valor":1.2096,"ee":0.1502,"t":8.0533},{"nombre":"ar2","valor":-0.2356,"ee":0.1307,"t":-1.8028},{"nombre":"ma1","valor":-0.8427,"ee":0.106,"t":-7.9491},{"nombre":"intercept","valor":933.811,"ee":72.1545,"t":12.9418}],"raices":{"ar":[1.0356,4.0992],"ma":1.1867,"min_ar":1.0356,"min_ma":1.1867,"degenerado":false}},"202":{"p":2,"d":0,"q":2,"etiqueta":"ARIMA(2,0,2)","convergio":true,"k":6,"n_efectivo":100,"loglik":-636.1184,"sigma2":19487.89,"aic":1284.24,"aicc":1285.14,"bic":1299.87,"ljung_box_p":0.6419,"ljung_box_12_p":0.228,"acf_residuales":[-0.0105,-0.0053,0.0238,-0.0819,-0.0336,-0.0153,-0.0572,0.1664,-0.1094,-0.1943,0.0695,0.014,0.0748,0.0185,-0.0499,0.0679,-0.0623,0.0752,0.031,0.0036],"coeficientes":[{"nombre":"ar1","valor":1.4378,"ee":0.3691,"t":3.8954},{"nombre":"ar2","valor":-0.4548,"ee":0.354,"t":-1.2848},{"nombre":"ma1","valor":-1.08,"ee":0.3873,"t":-2.7883},{"nombre":"ma2","valor":0.1842,"ee":0.305,"t":0.6038},{"nombre":"intercept","valor":934.6491,"ee":72.2192,"t":12.9418}],"raices":{"ar":[1.0332,2.1279],"ma":[1.1524,4.7119],"min_ar":1.0332,"min_ma":1.1524,"degenerado":false}},"010":{"p":0,"d":1,"q":0,"etiqueta":"ARIMA(0,1,0)","convergio":true,"k":1,"n_efectivo":99,"loglik":-647.3486,"sigma2":27997.54,"aic":1296.7,"aicc":1296.74,"bic":1299.29,"ljung_box_p":0.01,"ljung_box_12_p":0.0009,"acf_residuales":[-0.402,-0.0446,0.0278,-0.088,0.0005,0.0459,-0.1325,0.2314,-0.0853,-0.1851,0.1458,-0.0433,0.0677,0.0081,-0.0828,0.0938,-0.1011,0.0734,-0.0089,-0.0032],"coeficientes":[],"raices":{"ar":[],"ma":[],"min_ar":null,"min_ma":null,"degenerado":false}},"011":{"p":0,"d":1,"q":1,"etiqueta":"ARIMA(0,1,1)","convergio":true,"k":2,"n_efectivo":99,"loglik":-632.5456,"sigma2":20599.87,"aic":1269.09,"aicc":1269.22,"bic":1274.28,"ljung_box_p":0.6737,"ljung_box_12_p":0.2504,"acf_residuales":[0.1154,-0.0111,-0.054,-0.1469,-0.0938,-0.0512,-0.0872,0.1069,-0.1209,-0.1978,0.0444,0.0264,0.0885,0.0278,-0.0391,0.0465,-0.0391,0.055,0.0142,-0.0102],"coeficientes":[{"nombre":"ma1","valor":-0.7329,"ee":0.1143,"t":-6.4113}],"raices":{"ar":[],"ma":1.3644,"min_ar":null,"min_ma":1.3644,"degenerado":false}},"012":{"p":0,"d":1,"q":2,"etiqueta":"ARIMA(0,1,2)","convergio":true,"k":3,"n_efectivo":99,"loglik":-630.9786,"sigma2":19912.62,"aic":1267.96,"aicc":1268.21,"bic":1275.74,"ljung_box_p":0.7959,"ljung_box_12_p":0.4011,"acf_residuales":[-0.0015,0.0647,0.0024,-0.0988,-0.0557,-0.0202,-0.1071,0.1239,-0.1126,-0.1815,0.0653,-0.0071,0.0784,0.022,-0.0478,0.0658,-0.0526,0.066,0.0056,-0.0063],"coeficientes":[{"nombre":"ma1","valor":-0.6437,"ee":0.095,"t":-6.778},{"nombre":"ma2","valor":-0.1739,"ee":0.0947,"t":-1.8355}],"raices":{"ar":[],"ma":[1.1784,4.8802],"min_ar":null,"min_ma":1.1784,"degenerado":false}},"110":{"p":1,"d":1,"q":0,"etiqueta":"ARIMA(1,1,0)","convergio":true,"k":2,"n_efectivo":99,"loglik":-638.7401,"sigma2":23487.58,"aic":1281.48,"aicc":1281.61,"bic":1286.67,"ljung_box_p":0.1853,"ljung_box_12_p":0.0244,"acf_residuales":[-0.1021,-0.239,-0.0237,-0.1086,-0.0174,0.0009,-0.0532,0.2171,-0.0955,-0.2278,0.0935,0.0411,0.0765,0.0049,-0.0665,0.0432,-0.0618,0.0484,0.0213,-0.0129],"coeficientes":[{"nombre":"ar1","valor":-0.3975,"ee":0.0915,"t":-4.3447}],"raices":{"ar":2.5155,"ma":[],"min_ar":2.5155,"min_ma":null,"degenerado":false}},"111":{"p":1,"d":1,"q":1,"etiqueta":"ARIMA(1,1,1)","convergio":true,"k":3,"n_efectivo":99,"loglik":-630.6274,"sigma2":19769.29,"aic":1267.25,"aicc":1267.51,"bic":1275.04,"ljung_box_p":0.7997,"ljung_box_12_p":0.4091,"acf_residuales":[-0.0323,0.0325,0.0188,-0.0892,-0.0383,-0.0093,-0.0996,0.1443,-0.1054,-0.1831,0.0757,-0.0043,0.0768,0.0189,-0.0514,0.0659,-0.0553,0.0652,0.0078,-0.0076],"coeficientes":[{"nombre":"ar1","valor":0.2544,"ee":0.1194,"t":2.1305},{"nombre":"ma1","valor":-0.8741,"ee":0.0605,"t":-14.4526}],"raices":{"ar":3.9313,"ma":1.144,"min_ar":3.9313,"min_ma":1.144,"degenerado":false}},"112":{"p":1,"d":1,"q":2,"etiqueta":"ARIMA(1,1,2)","convergio":true,"k":4,"n_efectivo":99,"loglik":-630.4613,"sigma2":19706.14,"aic":1268.92,"aicc":1269.35,"bic":1279.3,"ljung_box_p":0.7556,"ljung_box_12_p":0.3276,"acf_residuales":[-0.0223,-0.0065,0.0072,-0.0895,-0.0334,-0.0045,-0.0831,0.1556,-0.1013,-0.1878,0.0757,0.0079,0.0794,0.0176,-0.0531,0.0596,-0.0541,0.0628,0.0113,-0.0073],"coeficientes":[{"nombre":"ar1","valor":0.4734,"ee":0.3393,"t":1.3953},{"nombre":"ma1","valor":-1.1035,"ee":0.359,"t":-3.0738},{"nombre":"ma2","valor":0.1892,"ee":0.299,"t":0.6326}],"raices":{"ar":2.1125,"ma":[1.122,4.7117],"min_ar":2.1125,"min_ma":1.122,"degenerado":false}},"210":{"p":2,"d":1,"q":0,"etiqueta":"ARIMA(2,1,0)","convergio":true,"k":3,"n_efectivo":99,"loglik":-635.7421,"sigma2":22080.15,"aic":1277.48,"aicc":1277.74,"bic":1285.27,"ljung_box_p":0.3898,"ljung_box_12_p":0.1009,"acf_residuales":[-0.0341,-0.0859,-0.1792,-0.1231,-0.0619,0.0178,-0.0303,0.1699,-0.1005,-0.2022,0.0575,0.0407,0.1032,0.0184,-0.0682,0.0374,-0.0671,0.062,0.0062,0.0144],"coeficientes":[{"nombre":"ar1","valor":-0.4948,"ee":0.0971,"t":-5.096},{"nombre":"ar2","valor":-0.2417,"ee":0.0971,"t":-2.4895}],"raices":{"ar":[2.034,2.034],"ma":[],"min_ar":2.034,"min_ma":null,"degenerado":false}},"211":{"p":2,"d":1,"q":1,"etiqueta":"ARIMA(2,1,1)","convergio":true,"k":4,"n_efectivo":99,"loglik":-630.4481,"sigma2":19700.24,"aic":1268.9,"aicc":1269.32,"bic":1279.28,"ljung_box_p":0.7503,"ljung_box_12_p":0.3161,"acf_residuales":[-0.0202,-0.0172,0.0154,-0.0868,-0.0311,-0.0068,-0.0834,0.1572,-0.1015,-0.1901,0.0762,0.0095,0.0778,0.0165,-0.0527,0.0591,-0.053,0.0617,0.0124,-0.0089],"coeficientes":[{"nombre":"ar1","valor":0.2566,"ee":0.1164,"t":2.2048},{"nombre":"ar2","valor":0.0664,"ee":0.111,"t":0.5979},{"nombre":"ma1","valor":-0.8897,"ee":0.059,"t":-15.0918}],"raices":{"ar":[2.4035,6.2703],"ma":1.124,"min_ar":2.4035,"min_ma":1.124,"degenerado":false}},"212":{"p":2,"d":1,"q":2,"etiqueta":"ARIMA(2,1,2)","convergio":true,"k":5,"n_efectivo":99,"loglik":-630.4453,"sigma2":19699.53,"aic":1270.89,"aicc":1271.54,"bic":1283.87,"ljung_box_p":0.6916,"ljung_box_12_p":0.2398,"acf_residuales":[-0.0196,-0.016,0.0104,-0.0876,-0.0317,-0.0056,-0.0817,0.1573,-0.1012,-0.1897,0.0757,0.01,0.0787,0.0168,-0.053,0.0587,-0.0533,0.062,0.0122,-0.0081],"coeficientes":[{"nombre":"ar1","valor":0.3514,"ee":0.8682,"t":0.4047},{"nombre":"ar2","valor":0.0424,"ee":0.257,"t":0.1648},{"nombre":"ma1","valor":-0.9847,"ee":0.8633,"t":-1.1407},{"nombre":"ma2","valor":0.0831,"ee":0.7572,"t":0.1098}],"raices":{"ar":[2.2407,10.5373],"ma":[1.1218,10.7214],"min_ar":2.2407,"min_ma":1.1218,"degenerado":false}},"020":{"p":0,"d":2,"q":0,"etiqueta":"ARIMA(0,2,0)","convergio":true,"k":1,"n_efectivo":98,"loglik":-691.7864,"sigma2":79238.14,"aic":1385.57,"aicc":1385.61,"bic":1388.16,"ljung_box_p":0,"ljung_box_12_p":0,"acf_residuales":[-0.6263,0.1002,0.067,-0.0717,0.0175,0.0741,-0.1914,0.2453,-0.0789,-0.1528,0.1835,-0.106,0.0615,0.0105,-0.096,0.1342,-0.1338,0.0915,-0.0297,0.003],"coeficientes":[],"raices":{"ar":[],"ma":[],"min_ar":null,"min_ma":null,"degenerado":false}},"021":{"p":0,"d":2,"q":1,"etiqueta":"ARIMA(0,2,1)","convergio":true,"k":2,"n_efectivo":98,"loglik":-643.5789,"sigma2":28268.35,"aic":1291.16,"aicc":1291.28,"bic":1296.33,"ljung_box_p":0.0069,"ljung_box_12_p":0.0006,"acf_residuales":[-0.398,-0.0475,0.0246,-0.0886,0.0109,0.0408,-0.1381,0.2335,-0.0796,-0.1856,0.1393,-0.041,0.0696,0.0073,-0.0899,0.1015,-0.1008,0.0712,-0.0083,-0.0036],"coeficientes":[{"nombre":"ma1","valor":-1,"ee":0.0254,"t":-39.3514}],"raices":{"ar":[],"ma":1,"min_ar":null,"min_ma":1,"degenerado":true}},"022":{"p":0,"d":2,"q":2,"etiqueta":"ARIMA(0,2,2)","convergio":true,"k":3,"n_efectivo":98,"loglik":-629.8728,"sigma2":20702.58,"aic":1265.75,"aicc":1266,"bic":1273.5,"ljung_box_p":0.6167,"ljung_box_12_p":0.2046,"acf_residuales":[0.1028,-0.0223,-0.0679,-0.1529,-0.0738,-0.0403,-0.0928,0.1115,-0.1123,-0.2005,0.0343,0.0217,0.0889,0.0202,-0.0578,0.0495,-0.0333,0.0597,0.0188,-0.0049],"coeficientes":[{"nombre":"ma1","valor":-1.7087,"ee":0.1277,"t":-13.3785},{"nombre":"ma2","valor":0.7087,"ee":0.1256,"t":5.6414}],"raices":{"ar":[],"ma":[1,1.4109],"min_ar":null,"min_ma":1,"degenerado":true}},"120":{"p":1,"d":2,"q":0,"etiqueta":"ARIMA(1,2,0)","convergio":true,"k":2,"n_efectivo":98,"loglik":-667.3942,"sigma2":47923.72,"aic":1338.79,"aicc":1338.91,"bic":1343.96,"ljung_box_p":0.0002,"ljung_box_12_p":0,"acf_residuales":[-0.3006,-0.3474,0.1827,-0.0826,0.0498,-0.0058,-0.1176,0.2835,-0.0837,-0.2408,0.1539,0.0085,0.0422,-0.0084,-0.0761,0.074,-0.071,0.0385,0.0294,-0.0422],"coeficientes":[{"nombre":"ar1","valor":-0.6246,"ee":0.078,"t":-8.0079}],"raices":{"ar":1.6009,"ma":[],"min_ar":1.6009,"min_ma":null,"degenerado":false}},"121":{"p":1,"d":2,"q":1,"etiqueta":"ARIMA(1,2,1)","convergio":true,"k":3,"n_efectivo":98,"loglik":-635.3479,"sigma2":23697.25,"aic":1276.7,"aicc":1276.95,"bic":1284.45,"ljung_box_p":0.1505,"ljung_box_12_p":0.0173,"acf_residuales":[-0.0997,-0.238,-0.0317,-0.1104,0,0.001,-0.0677,0.2152,-0.0871,-0.2256,0.0852,0.0401,0.0808,0.0032,-0.0776,0.0523,-0.055,0.0474,0.0212,-0.0126],"coeficientes":[{"nombre":"ar1","valor":-0.3924,"ee":0.0921,"t":-4.2581},{"nombre":"ma1","valor":-1,"ee":0.0261,"t":-38.258}],"raices":{"ar":2.5485,"ma":1,"min_ar":2.5485,"min_ma":1,"degenerado":true}},"122":{"p":1,"d":2,"q":2,"etiqueta":"ARIMA(1,2,2)","convergio":true,"k":4,"n_efectivo":98,"loglik":-628.0837,"sigma2":19977.08,"aic":1264.17,"aicc":1264.6,"bic":1274.51,"ljung_box_p":0.756,"ljung_box_12_p":0.3405,"acf_residuales":[-0.0296,0.0365,0.0157,-0.0865,-0.0205,-0.0062,-0.1083,0.1441,-0.0978,-0.1866,0.0585,-0.0146,0.0701,0.0062,-0.0719,0.0649,-0.0515,0.065,0.0091,-0.0046],"coeficientes":[{"nombre":"ar1","valor":0.2671,"ee":0.1352,"t":1.9752},{"nombre":"ma1","valor":-1.8743,"ee":0.0735,"t":-25.4833},{"nombre":"ma2","valor":0.8772,"ee":0.0766,"t":11.452}],"raices":{"ar":3.7443,"ma":[1.0316,1.1051],"min_ar":3.7443,"min_ma":1.0316,"degenerado":false}},"220":{"p":2,"d":2,"q":0,"etiqueta":"ARIMA(2,2,0)","convergio":true,"k":3,"n_efectivo":98,"loglik":-654.6406,"sigma2":36742.8,"aic":1315.28,"aicc":1315.54,"bic":1323.04,"ljung_box_p":0.021,"ljung_box_12_p":0.0012,"acf_residuales":[-0.1468,-0.2389,-0.2504,0.0976,-0.0227,0.0112,0.0027,0.215,-0.0837,-0.231,0.0462,0.0955,0.0799,-0.0162,-0.0838,0.0423,-0.0688,0.0666,-0.0145,0.0246],"coeficientes":[{"nombre":"ar1","valor":-0.9256,"ee":0.0881,"t":-10.5069},{"nombre":"ar2","valor":-0.4819,"ee":0.0887,"t":-5.4356}],"raices":{"ar":[1.4406,1.4406],"ma":[],"min_ar":1.4406,"min_ma":null,"degenerado":false}},"221":{"p":2,"d":2,"q":1,"etiqueta":"ARIMA(2,2,1)","convergio":true,"k":4,"n_efectivo":98,"loglik":-632.5604,"sigma2":22264.1,"aic":1273.12,"aicc":1273.55,"bic":1283.46,"ljung_box_p":0.3293,"ljung_box_12_p":0.0751,"acf_residuales":[-0.0338,-0.0873,-0.1826,-0.1265,-0.0428,0.0212,-0.0411,0.1661,-0.0944,-0.2005,0.0508,0.0383,0.1053,0.0161,-0.0803,0.0451,-0.0605,0.0649,0.0078,0.0148],"coeficientes":[{"nombre":"ar1","valor":-0.4887,"ee":0.0979,"t":-4.9928},{"nombre":"ar2","valor":-0.2353,"ee":0.0979,"t":-2.4043},{"nombre":"ma1","valor":-1,"ee":0.0268,"t":-37.3329}],"raices":{"ar":[2.0616,2.0616],"ma":1,"min_ar":2.0616,"min_ma":1,"degenerado":true}},"222":{"p":2,"d":2,"q":2,"etiqueta":"ARIMA(2,2,2)","convergio":true,"k":5,"n_efectivo":98,"loglik":-627.8233,"sigma2":19932.19,"aic":1265.65,"aicc":1266.3,"bic":1278.57,"ljung_box_p":0.7136,"ljung_box_12_p":0.2628,"acf_residuales":[-0.0141,-0.0195,0.0154,-0.0789,-0.0081,-0.0021,-0.0893,0.1602,-0.0915,-0.1931,0.0585,0.0008,0.0708,0.0017,-0.0751,0.0556,-0.0482,0.0599,0.0126,-0.009],"coeficientes":[{"nombre":"ar1","valor":0.2849,"ee":0.1244,"t":2.2915},{"nombre":"ar2","valor":0.084,"ee":0.1136,"t":0.7394},{"nombre":"ma1","valor":-1.9057,"ee":0.073,"t":-26.1021},{"nombre":"ma2","valor":0.91,"ee":0.0755,"t":12.0533}],"raices":{"ar":[2.1488,5.5426],"ma":[1.0483,1.0483],"min_ar":2.1488,"min_ma":1.0483,"degenerado":false}}},"mejor_por_d":{"d0":{"d":0,"n_efectivo":100,"mejor_aicc":"101","valor_aicc":1282.5,"mejor_bic":"101","valor_bic":1292.5},"d1":{"d":1,"n_efectivo":99,"mejor_aicc":"111","valor_aicc":1267.51,"mejor_bic":"011","valor_bic":1274.28},"d2":{"d":2,"n_efectivo":98,"mejor_aicc":"122","valor_aicc":1264.6,"mejor_bic":"022","valor_bic":1273.5}},"diagnostico":{"orden":[1,1,1],"coeficientes":[{"nombre":"ar1","valor":0.2544,"ee":0.1194,"t":2.1305},{"nombre":"ma1","valor":-0.8741,"ee":0.0605,"t":-14.4526}],"sigma2":19769.29,"loglik":-630.6274,"aicc":1267.51,"bic":1275.04,"residuales":[1.12,33.678,-164.961,156.186,14.436,24.016,-319.279,228.61,227.585,-68.493,-144.795,-148.02,61.309,-106.811,-37.491,-99.136,148.557,-306.963,-12.129,130.883,28.034,144.619,38.382,148.774,114.568,57.582,-129.485,5.153,-339.284,-147.634,-111.832,-286.395,41.443,-133.347,-221.341,55.096,-230.527,183.467,106.941,4.849,-113.157,-168.811,-390.854,95.021,-132.547,333.169,164.908,-118.761,-103.642,-16.3,-81.747,19.023,16.043,7.19,-157.206,51.297,-93.551,-4.085,227.202,-144.461,-32.801,49.732,2.105,105.928,107.412,-3.282,-55.739,158.355,-148.398,-163.926,-146.128,76.132,-17.561,-76.702,9.758,232.522,-37.539,26.973,-5.983,43.383,-118.761,-61.675,33.816,218.921,5.44,106.332,-113.349,74.994,85.504,-98.485,159.61,-26.625,0.724,270.905,-89.618,-178.711,59.008,-193.425,-121.951,-79.584],"acf_residuales":[-0.0323,0.0325,0.0188,-0.0892,-0.0383,-0.0093,-0.0996,0.1443,-0.1054,-0.1831,0.0757,-0.0043,0.0768,0.0189,-0.0514,0.0659,-0.0553,0.0652,0.0078,-0.0076],"banda_residuales":0.196,"ljung_box_acumulado":[{"rezago":3,"Q":0.2543,"p":0.6141},{"rezago":4,"Q":1.1002,"p":0.5769},{"rezago":5,"Q":1.2577,"p":0.7392},{"rezago":6,"Q":1.267,"p":0.8669},{"rezago":7,"Q":2.3541,"p":0.7983},{"rezago":8,"Q":4.6618,"p":0.5879},{"rezago":9,"Q":5.9066,"p":0.5507},{"rezago":10,"Q":9.7056,"p":0.2863},{"rezago":11,"Q":10.3624,"p":0.322},{"rezago":12,"Q":10.3645,"p":0.4091},{"rezago":13,"Q":11.0566,"p":0.4385},{"rezago":14,"Q":11.0992,"p":0.5204},{"rezago":15,"Q":11.4158,"p":0.576},{"rezago":16,"Q":11.9424,"p":0.6109},{"rezago":17,"Q":12.3182,"p":0.6548},{"rezago":18,"Q":12.8465,"p":0.6839},{"rezago":19,"Q":12.8541,"p":0.7459},{"rezago":20,"Q":12.8615,"p":0.7997}],"ljung_box_20":{"Q":12.8615,"p":0.7997},"ljung_box_10":{"Q":9.7056,"p":0.2863},"shapiro_p":0.7312,"media_residual":-16.0659,"ee_media_residual":13.9673,"raices":{"ar_modulo":3.9313,"ma_modulo":1.144},"metodos_estimacion":{"ml":{"ar1":0.25437,"ma1":-0.874135,"sigma2":19769.29},"css_ml":{"ar1":0.254371,"ma1":-0.874136,"sigma2":20176.91},"dif_relativa_sigma2":0.02062,"nota":"stats::arima(method='ML') y forecast::Arima() dan coeficientes iguales a 5 decimales pero sigma^2 distinta: Arima divide la suma de cuadrados de los residuales entre n* - k = 99 - 2 y arima entre n* = 99 (razon 99/97). El ancho de los intervalos hereda esa diferencia."}},"cambio_nivel":{"anio":1899,"fuente":"Cobb (1978); el descenso coincide con la construcción de la presa baja de Asuán","media_antes":1097.75,"media_despues":849.97,"escalon":{"coef":-247.78,"ee":28.15,"t":-8.8,"aicc":1257.91,"bic":1265.48,"ljung_box_20_p":0.8124},"escalon_ar1":{"aicc":1257.5,"bic":1267.5,"ar1":0.1596,"ar1_t":1.62},"mejor_d0_rejilla":1282.5,"advertencia":"El ARIMA(1,1,1) tiene d = 1: su AICc se calcula sobre 99 observaciones y NO es comparable con estos.","fuera_muestra":{"corte":1950,"n_entrenamiento":80,"h":20,"modelos":[{"etiqueta":"ARIMA(1,1,1)","rmse":125.05,"mae":106.16},{"etiqueta":"Escalón 1899 (d = 0)","rmse":127.99,"mae":106.99},{"etiqueta":"Escalón 1899 + AR(1)","rmse":128.31,"mae":107.4},{"etiqueta":"Naïve (último valor)","rmse":123.06,"mae":101.95},{"etiqueta":"Media de la muestra","rmse":133.31,"mae":108.01}],"nota":"Única comparación válida entre modelos con distinto d. La media de toda la muestra es un mal referente aquí porque mezcla los dos regímenes; el naïve y el escalón coinciden casi en todo porque ambos pronostican una constante cercana al nivel posterior a 1899."},"monte_carlo":{"n_replicas":1000,"n":100,"delta":-247.78,"sigma":127.03,"posicion_escalon":29,"sin_escalon":{"kpss_rechaza":0.048,"adf_test_no_rechaza":0.054,"ndiffs_kpss_1_o_mas":0.052,"ndiffs_adf_1_o_mas":0},"con_escalon":{"kpss_rechaza":1,"adf_test_no_rechaza":0.864,"ndiffs_kpss_1_o_mas":1,"ndiffs_adf_1_o_mas":0.005}},"malla_delta":{"n_replicas":400,"n":100,"sigma":127.03,"posicion":29,"valor_critico_kpss_5":0.463,"delta_del_nilo":247.78,"puntos":[{"delta":0,"kpss_medio":0.1728,"kpss_rechaza":0.045,"kpss_rechaza_l12":0.035,"ndiffs_medio":0.0475,"salto_en_sigmas":0},{"delta":25,"kpss_medio":0.215,"kpss_rechaza":0.095,"kpss_rechaza_l12":0.0625,"ndiffs_medio":0.1,"salto_en_sigmas":0.197},{"delta":50,"kpss_medio":0.3232,"kpss_rechaza":0.2275,"kpss_rechaza_l12":0.1475,"ndiffs_medio":0.25,"salto_en_sigmas":0.394},{"delta":75,"kpss_medio":0.4686,"kpss_rechaza":0.4825,"kpss_rechaza_l12":0.27,"ndiffs_medio":0.535,"salto_en_sigmas":0.59},{"delta":100,"kpss_medio":0.636,"kpss_rechaza":0.7075,"kpss_rechaza_l12":0.445,"ndiffs_medio":0.7775,"salto_en_sigmas":0.787},{"delta":150,"kpss_medio":0.8962,"kpss_rechaza":0.96,"kpss_rechaza_l12":0.7275,"ndiffs_medio":0.9725,"salto_en_sigmas":1.181},{"delta":200,"kpss_medio":1.0677,"kpss_rechaza":1,"kpss_rechaza_l12":0.87,"ndiffs_medio":1,"salto_en_sigmas":1.574},{"delta":250,"kpss_medio":1.1709,"kpss_rechaza":1,"kpss_rechaza_l12":0.9425,"ndiffs_medio":1,"salto_en_sigmas":1.968},{"delta":300,"kpss_medio":1.2288,"kpss_rechaza":1,"kpss_rechaza_l12":0.98,"ndiffs_medio":1,"salto_en_sigmas":2.362}]}},"sobrediferenciacion":[{"d":0,"n":100,"varianza":28637.95,"acf1":0.4984,"theta_ma1":0.3783,"theta_ee":0.0791,"sigma2_ma1":23271.76},{"d":1,"n":99,"varianza":28268.34,"acf1":-0.402,"theta_ma1":-0.7329,"theta_ee":0.1143,"sigma2_ma1":20599.87},{"d":2,"n":98,"varianza":80055.01,"acf1":-0.6264,"theta_ma1":-1,"theta_ee":0.0254,"sigma2_ma1":28268.34},{"d":3,"n":97,"varianza":262507.29,"acf1":-0.7188,"theta_ma1":-1,"theta_ee":0.0253,"sigma2_ma1":80055.05}],"hyndman_khandakar":{"serie":"nilo","criterio":"AICc","escalonada":{"pasos":[{"orden":[2,1,2],"etiqueta":"ARIMA(2,1,2) with drift","constante":"with drift","aicc":null,"infinito":true,"mejora":false,"mejor_hasta_aqui":null},{"orden":[0,1,0],"etiqueta":"ARIMA(0,1,0) with drift","constante":"with drift","aicc":1298.77,"infinito":false,"mejora":true,"mejor_hasta_aqui":1298.77},{"orden":[1,1,0],"etiqueta":"ARIMA(1,1,0) with drift","constante":"with drift","aicc":1283.598,"infinito":false,"mejora":true,"mejor_hasta_aqui":1283.598},{"orden":[0,1,1],"etiqueta":"ARIMA(0,1,1) with drift","constante":"with drift","aicc":1270.562,"infinito":false,"mejora":true,"mejor_hasta_aqui":1270.562},{"orden":[0,1,0],"etiqueta":"ARIMA(0,1,0)","constante":"","aicc":1296.738,"infinito":false,"mejora":false,"mejor_hasta_aqui":1270.562},{"orden":[1,1,1],"etiqueta":"ARIMA(1,1,1) with drift","constante":"with drift","aicc":1268.063,"infinito":false,"mejora":true,"mejor_hasta_aqui":1268.063},{"orden":[2,1,1],"etiqueta":"ARIMA(2,1,1) with drift","constante":"with drift","aicc":1269.777,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.063},{"orden":[1,1,2],"etiqueta":"ARIMA(1,1,2) with drift","constante":"with drift","aicc":1269.779,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.063},{"orden":[0,1,2],"etiqueta":"ARIMA(0,1,2) with drift","constante":"with drift","aicc":1268.969,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.063},{"orden":[2,1,0],"etiqueta":"ARIMA(2,1,0) with drift","constante":"with drift","aicc":1279.708,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.063},{"orden":[1,1,1],"etiqueta":"ARIMA(1,1,1)","constante":"","aicc":1267.507,"infinito":false,"mejora":true,"mejor_hasta_aqui":1267.507},{"orden":[0,1,1],"etiqueta":"ARIMA(0,1,1)","constante":"","aicc":1269.216,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[1,1,0],"etiqueta":"ARIMA(1,1,0)","constante":"","aicc":1281.605,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[2,1,1],"etiqueta":"ARIMA(2,1,1)","constante":"","aicc":1269.322,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[1,1,2],"etiqueta":"ARIMA(1,1,2)","constante":"","aicc":1269.348,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[0,1,2],"etiqueta":"ARIMA(0,1,2)","constante":"","aicc":1268.21,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[2,1,0],"etiqueta":"ARIMA(2,1,0)","constante":"","aicc":1277.737,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[2,1,2],"etiqueta":"ARIMA(2,1,2)","constante":"","aicc":null,"infinito":true,"mejora":false,"mejor_hasta_aqui":1267.507}],"n_modelos":18,"resultado":"ARIMA(1,1,1)","orden":[1,1,1],"aicc":1267.507,"incluye_deriva":false,"incluye_media":false},"exhaustiva":{"pasos":[{"orden":[0,1,0],"etiqueta":"ARIMA(0,1,0)","constante":"","aicc":1296.738,"infinito":false,"mejora":true,"mejor_hasta_aqui":1296.738},{"orden":[0,1,0],"etiqueta":"ARIMA(0,1,0) with drift","constante":"with drift","aicc":1298.77,"infinito":false,"mejora":false,"mejor_hasta_aqui":1296.738},{"orden":[0,1,1],"etiqueta":"ARIMA(0,1,1)","constante":"","aicc":1269.216,"infinito":false,"mejora":true,"mejor_hasta_aqui":1269.216},{"orden":[0,1,1],"etiqueta":"ARIMA(0,1,1) with drift","constante":"with drift","aicc":1270.562,"infinito":false,"mejora":false,"mejor_hasta_aqui":1269.216},{"orden":[0,1,2],"etiqueta":"ARIMA(0,1,2)","constante":"","aicc":1268.21,"infinito":false,"mejora":true,"mejor_hasta_aqui":1268.21},{"orden":[0,1,2],"etiqueta":"ARIMA(0,1,2) with drift","constante":"with drift","aicc":1268.969,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.21},{"orden":[0,1,3],"etiqueta":"ARIMA(0,1,3)","constante":"","aicc":1269.633,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.21},{"orden":[0,1,3],"etiqueta":"ARIMA(0,1,3) with drift","constante":"with drift","aicc":1270.249,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.21},{"orden":[0,1,4],"etiqueta":"ARIMA(0,1,4)","constante":"","aicc":1271.117,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.21},{"orden":[0,1,4],"etiqueta":"ARIMA(0,1,4) with drift","constante":"with drift","aicc":1271.603,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.21},{"orden":[0,1,5],"etiqueta":"ARIMA(0,1,5)","constante":"","aicc":1273.375,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.21},{"orden":[0,1,5],"etiqueta":"ARIMA(0,1,5) with drift","constante":"with drift","aicc":1273.92,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.21},{"orden":[1,1,0],"etiqueta":"ARIMA(1,1,0)","constante":"","aicc":1281.605,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.21},{"orden":[1,1,0],"etiqueta":"ARIMA(1,1,0) with drift","constante":"with drift","aicc":1283.598,"infinito":false,"mejora":false,"mejor_hasta_aqui":1268.21},{"orden":[1,1,1],"etiqueta":"ARIMA(1,1,1)","constante":"","aicc":1267.507,"infinito":false,"mejora":true,"mejor_hasta_aqui":1267.507},{"orden":[1,1,1],"etiqueta":"ARIMA(1,1,1) with drift","constante":"with drift","aicc":1268.063,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[1,1,2],"etiqueta":"ARIMA(1,1,2)","constante":"","aicc":1269.348,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[1,1,2],"etiqueta":"ARIMA(1,1,2) with drift","constante":"with drift","aicc":1269.779,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[1,1,3],"etiqueta":"ARIMA(1,1,3)","constante":"","aicc":1271.504,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[1,1,3],"etiqueta":"ARIMA(1,1,3) with drift","constante":"with drift","aicc":1271.998,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[1,1,4],"etiqueta":"ARIMA(1,1,4)","constante":"","aicc":null,"infinito":true,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[1,1,4],"etiqueta":"ARIMA(1,1,4) with drift","constante":"with drift","aicc":1273.92,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[2,1,0],"etiqueta":"ARIMA(2,1,0)","constante":"","aicc":1277.737,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[2,1,0],"etiqueta":"ARIMA(2,1,0) with drift","constante":"with drift","aicc":1279.708,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[2,1,1],"etiqueta":"ARIMA(2,1,1)","constante":"","aicc":1269.322,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[2,1,1],"etiqueta":"ARIMA(2,1,1) with drift","constante":"with drift","aicc":1269.777,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[2,1,2],"etiqueta":"ARIMA(2,1,2)","constante":"","aicc":null,"infinito":true,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[2,1,2],"etiqueta":"ARIMA(2,1,2) with drift","constante":"with drift","aicc":null,"infinito":true,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[2,1,3],"etiqueta":"ARIMA(2,1,3)","constante":"","aicc":null,"infinito":true,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[2,1,3],"etiqueta":"ARIMA(2,1,3) with drift","constante":"with drift","aicc":null,"infinito":true,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[3,1,0],"etiqueta":"ARIMA(3,1,0)","constante":"","aicc":1278.622,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[3,1,0],"etiqueta":"ARIMA(3,1,0) with drift","constante":"with drift","aicc":1280.597,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[3,1,1],"etiqueta":"ARIMA(3,1,1)","constante":"","aicc":1271.518,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[3,1,1],"etiqueta":"ARIMA(3,1,1) with drift","constante":"with drift","aicc":1271.971,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[3,1,2],"etiqueta":"ARIMA(3,1,2)","constante":"","aicc":1273.659,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[3,1,2],"etiqueta":"ARIMA(3,1,2) with drift","constante":"with drift","aicc":1274.144,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[4,1,0],"etiqueta":"ARIMA(4,1,0)","constante":"","aicc":1277.978,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[4,1,0],"etiqueta":"ARIMA(4,1,0) with drift","constante":"with drift","aicc":1279.902,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[4,1,1],"etiqueta":"ARIMA(4,1,1)","constante":"","aicc":1273.149,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[4,1,1],"etiqueta":"ARIMA(4,1,1) with drift","constante":"with drift","aicc":1273.81,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[5,1,0],"etiqueta":"ARIMA(5,1,0)","constante":"","aicc":1278.038,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507},{"orden":[5,1,0],"etiqueta":"ARIMA(5,1,0) with drift","constante":"with drift","aicc":1279.905,"infinito":false,"mejora":false,"mejor_hasta_aqui":1267.507}],"n_modelos":42,"resultado":"ARIMA(1,1,1)","orden":[1,1,1],"aicc":1267.507,"ranking":[{"etiqueta":"ARIMA(1,1,1)","aicc":1267.507},{"etiqueta":"ARIMA(1,1,1) with drift","aicc":1268.063},{"etiqueta":"ARIMA(0,1,2)","aicc":1268.21},{"etiqueta":"ARIMA(0,1,2) with drift","aicc":1268.969},{"etiqueta":"ARIMA(0,1,1)","aicc":1269.216}]},"coinciden":true,"diferencia_aicc":0},"formas_pronostico":{"d0":{"etiqueta":"ARIMA(1,0,1) con media","orden":[1,0,1],"deriva":false,"media":[800.31,817.02,831.4,843.79,854.45,863.64,871.54,878.35,884.22,889.26,893.61,897.35,900.58,903.35,905.74,907.8,909.57,911.1,912.41,913.54,914.52,915.36,916.08,916.7,917.24,917.7,918.1,918.44,918.73,918.99],"lo80":[616.79,622.98,629.92,636.96,643.74,650.1,655.93,661.22,665.96,670.18,673.91,677.2,680.09,682.61,684.82,686.74,688.41,689.86,691.12,692.21,693.16,693.97,694.68,695.29,695.81,696.27,696.66,697,697.29,697.54],"hi80":[983.83,1011.06,1032.88,1050.62,1065.16,1077.17,1087.15,1095.49,1102.47,1108.35,1113.31,1117.51,1121.07,1124.09,1126.67,1128.86,1130.73,1132.33,1133.7,1134.88,1135.88,1136.74,1137.48,1138.12,1138.66,1139.13,1139.53,1139.88,1140.17,1140.43],"lo95":[519.64,520.26,523.26,527.47,532.2,537.06,541.79,546.27,550.42,554.2,557.61,560.66,563.37,565.76,567.87,569.72,571.34,572.75,573.98,575.05,575.97,576.78,577.47,578.08,578.6,579.05,579.44,579.78,580.07,580.32],"hi95":[1080.98,1113.77,1139.54,1160.11,1176.7,1190.21,1201.29,1210.43,1218.01,1224.33,1229.62,1234.05,1237.79,1240.94,1243.62,1245.88,1247.81,1249.45,1250.85,1252.04,1253.06,1253.94,1254.68,1255.33,1255.88,1256.35,1256.75,1257.1,1257.4,1257.65],"aicc":1282.5,"sigma":143.202,"coeficientes":[{"nombre":"ar1","valor":0.8611,"ee":0.1067},{"nombre":"ma1","valor":-0.5177,"ee":0.1908},{"nombre":"intercept","valor":920.5567,"ee":46.6736}]},"d1":{"etiqueta":"ARIMA(1,1,1) sin constante","orden":[1,1,1],"deriva":false,"media":[816.18,835.56,840.49,841.74,842.06,842.14,842.16,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17,842.17],"lo80":[634.14,640.81,641.56,640.06,637.96,635.72,633.46,631.21,628.98,626.78,624.6,622.44,620.3,618.19,616.09,614.01,611.95,609.91,607.88,605.88,603.89,601.91,599.96,598.02,596.09,594.18,592.28,590.4,588.53,586.68],"hi80":[998.22,1030.31,1039.41,1043.42,1046.16,1048.57,1050.87,1053.13,1055.36,1057.56,1059.74,1061.9,1064.04,1066.16,1068.25,1070.33,1072.39,1074.43,1076.46,1078.46,1080.45,1082.43,1084.38,1086.33,1088.25,1090.16,1092.06,1093.94,1095.81,1097.66],"lo95":[537.78,537.71,536.26,533.3,529.91,526.44,522.97,519.53,516.13,512.76,509.43,506.12,502.85,499.61,496.41,493.23,490.08,486.95,483.86,480.79,477.75,474.73,471.74,468.77,465.82,462.9,460,457.12,454.26,451.43],"hi95":[1094.59,1133.41,1144.72,1150.18,1154.21,1157.85,1161.35,1164.8,1168.21,1171.58,1174.92,1178.22,1181.49,1184.73,1187.94,1191.11,1194.26,1197.39,1200.48,1203.55,1206.59,1209.61,1212.6,1215.57,1218.52,1221.44,1224.34,1227.22,1230.08,1232.92],"aicc":1267.51,"sigma":142.045,"coeficientes":[{"nombre":"ar1","valor":0.2544,"ee":0.1194},{"nombre":"ma1","valor":-0.8741,"ee":0.0605}]},"d1_deriva":{"etiqueta":"ARIMA(1,1,1) con deriva","orden":[1,1,1],"deriva":true,"media":[799.19,813.11,814.77,813.12,810.57,807.78,804.92,802.04,799.16,796.28,793.4,790.52,787.63,784.75,781.87,778.99,776.1,773.22,770.34,767.45,764.57,761.69,758.81,755.92,753.04,750.16,747.28,744.39,741.51,738.63],"lo80":[617.89,620.1,618.6,615.15,611.11,606.91,602.67,598.43,594.2,589.97,585.76,581.55,577.35,573.15,568.97,564.79,560.62,556.46,552.31,548.16,544.02,539.89,535.77,531.65,527.54,523.43,519.33,515.24,511.16,507.08],"hi80":[980.48,1006.12,1010.94,1011.09,1010.03,1008.65,1007.17,1005.66,1004.13,1002.59,1001.04,999.49,997.92,996.35,994.77,993.18,991.58,989.98,988.37,986.75,985.12,983.49,981.85,980.2,978.55,976.88,975.22,973.54,971.86,970.18],"lo95":[521.92,517.93,514.76,510.35,505.52,500.58,495.61,490.65,485.7,480.76,475.84,470.93,466.03,461.14,456.27,451.41,446.56,441.72,436.89,432.08,427.27,422.48,417.7,412.92,408.16,403.41,398.67,393.94,389.22,384.5],"hi95":[1076.45,1108.29,1114.79,1115.89,1115.62,1114.98,1114.23,1113.44,1112.63,1111.8,1110.96,1110.11,1109.24,1108.36,1107.47,1106.57,1105.65,1104.72,1103.78,1102.83,1101.87,1100.9,1099.92,1098.92,1097.92,1096.91,1095.88,1094.85,1093.81,1092.75],"aicc":1268.06,"sigma":141.465,"coeficientes":[{"nombre":"ar1","valor":0.2707,"ee":0.1176},{"nombre":"ma1","valor":-0.9054,"ee":0.0577},{"nombre":"drift","valor":-2.8827,"ee":2.0167}]},"d2":{"etiqueta":"ARIMA(1,2,1)","orden":[1,2,1],"deriva":false,"media":[724.16,724.74,718.87,715.54,711.21,707.27,703.17,699.14,695.09,691.04,686.99,682.94,678.89,674.84,670.79,666.74,662.69,658.64,654.6,650.55,646.5,642.45,638.4,634.35,630.3,626.25,622.2,618.15,614.1,610.05],"lo80":[523.82,489.28,436.55,398.08,359.55,324.63,291.12,259.26,228.55,198.88,170.07,142.02,114.61,87.78,61.45,35.59,10.13,-14.95,-39.7,-64.14,-88.3,-112.2,-135.85,-159.29,-182.52,-205.56,-228.41,-251.1,-273.64,-296.02],"hi80":[924.5,960.2,1001.2,1033,1062.87,1089.9,1115.23,1139.02,1161.62,1183.2,1203.91,1223.87,1243.17,1261.91,1280.13,1297.9,1315.26,1332.24,1348.89,1365.23,1381.29,1397.09,1412.65,1427.99,1443.12,1458.06,1472.82,1487.41,1501.84,1516.13],"lo95":[417.77,364.63,287.09,230.02,173.39,122.08,72.99,26.4,-18.42,-61.65,-103.56,-144.33,-184.11,-223,-261.11,-298.53,-335.32,-371.54,-407.24,-442.47,-477.28,-511.68,-545.72,-579.42,-612.8,-645.89,-678.7,-711.26,-743.58,-775.67],"hi95":[1030.55,1084.84,1150.65,1201.05,1249.03,1292.45,1333.36,1371.88,1408.59,1443.73,1477.54,1510.21,1541.89,1572.68,1602.7,1632.01,1660.7,1688.83,1716.43,1743.57,1770.27,1796.58,1822.51,1848.11,1873.4,1898.39,1923.1,1947.56,1971.78,1995.78],"aicc":1276.95,"sigma":155.534,"coeficientes":[{"nombre":"ar1","valor":-0.3924,"ee":0.0921},{"nombre":"ma1","valor":-1,"ee":0.0261}]}},"intervalos":{"modelo":"ARIMA(1,1,1)","sigma":142.045,"psi":[1,0.3802,0.2226,0.1825,0.1723,0.1697,0.169,0.1689,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688,0.1688],"sigma_h":[142.045,151.967,155.221,157.371,159.262,161.076,162.855,164.612,166.35,168.069,169.771,171.456,173.124,174.777,176.414,178.036,179.643,181.236,182.815,184.381,185.934,187.473,189.001,190.515,192.018,193.51,194.989,196.458,197.916,199.363],"z80":1.2816,"z95":1.96,"semiancho_95":[278.405,297.85,304.23,308.44,312.15,315.705,319.19,322.635,326.04,329.41,332.745,336.05,339.32,342.56,345.765,348.94,352.09,355.22,358.31,361.38,364.42,367.44,370.43,373.4,376.35,379.27,382.17,385.05,387.91,390.745],"error_maximo_verificacion":9.078e-11,"error_maximo_tras_redondear":0.004229,"psi_limite":0.1688,"razon_h1_h30":1.404,"forma_medida":{"d0":{"etiqueta":"ARIMA(1,0,1) con media","primera_dif_h2":16.7045,"primera_dif_h30":0.2535,"segunda_dif_h30":-0.040903,"distancia_a_la_media_h30":0.36,"ancho95_h1":561.34,"ancho95_h30":677.33},"d1":{"etiqueta":"ARIMA(1,1,1) sin constante","primera_dif_h2":19.3783,"primera_dif_h30":0,"segunda_dif_h30":0,"distancia_a_la_media_h30":77.18,"ancho95_h1":556.81,"ancho95_h30":781.49},"d1_deriva":{"etiqueta":"ARIMA(1,1,1) con deriva","primera_dif_h2":13.919,"primera_dif_h30":-2.8827,"segunda_dif_h30":-0,"distancia_a_la_media_h30":180.72,"ancho95_h1":554.53,"ancho95_h30":708.25},"d2":{"etiqueta":"ARIMA(1,2,1)","primera_dif_h2":0.5772,"primera_dif_h30":-4.0493,"segunda_dif_h30":0,"distancia_a_la_media_h30":309.3,"ancho95_h1":612.78,"ancho95_h30":2771.45}},"deriva_con_d2":{"se_ajusta":false,"aviso":"No drift term fitted as the order of difference is 2 or more.","nota":"forecast::Arima descarta la deriva cuando d >= 2. Por eso el pronóstico con d = 2 es una RECTA y no una parábola: el caso cuadrático existe en el álgebra, pero el software se niega a ajustarlo porque extrapola sin control."}},"sim_raiz_unitaria":{"modelo":"ARIMA(1,1,1) con los coeficientes del Nilo, raiz unitaria verdadera","phi":0.2544,"theta":-0.8741,"n":100,"n_replicas":1000,"nivel":0.05,"pp_rechaza":1,"adf_k4_rechaza":0.513}},"trm":{"nombre":"TRM mensual","fuente":"Superintendencia Financiera de Colombia vía datos.gov.co (consulta: 2026-07-26)","unidad":"COP por USD","n":138,"identificacion":{"cruda":{"n":138,"banda":0.1668,"acf":[0.9637,0.9242,0.8905,0.8563,0.8201,0.7798,0.7398,0.7092,0.688,0.6694,0.6505,0.6365,0.6236,0.6184,0.6124,0.5966,0.5812,0.5675,0.5537,0.5442],"pacf":[0.9637,-0.0619,0.0613,-0.0306,-0.0409,-0.0772,-0.0164,0.1016,0.1085,0.0363,-0.002,0.0529,-0.0193,0.0951,-0.0151,-0.1043,0.0172,0.0012,0.0015,0.0841]},"d1":{"n":137,"banda":0.1675,"acf":[0.0876,-0.0433,-0.0478,0.0105,0.1573,0.0922,-0.0522,-0.1903,-0.1416,0.0453,0.0252,-0.0025,-0.1376,-0.1071,0.1267,-0.0124,-0.0414,-0.0116,-0.1134,-0.0023],"pacf":[0.0876,-0.0513,-0.0397,0.0165,0.1527,0.0662,-0.0539,-0.1707,-0.1226,0.0271,-0.0178,0.0076,-0.0808,-0.0364,0.1355,-0.0886,-0.08,0.0235,-0.0857,-0.0229]}},"pruebas":{"adf_nivel":{"estadistico":-1.9783,"p":0.5855,"rezagos":5},"kpss_nivel":{"estadistico":2.2427,"p":0.01},"adf_d1":{"estadistico":-3.8801,"p":0.0172},"kpss_d1":{"estadistico":0.2415,"p":0.1},"ndiffs":1,"nsdiffs":0},"varianzas":[{"d":0,"varianza":338834.24},{"d":1,"varianza":14800.4},{"d":2,"varianza":26812.57}],"rejilla":{"010":{"p":0,"d":1,"q":0,"etiqueta":"ARIMA(0,1,0)","convergio":true,"k":1,"n_efectivo":137,"loglik":-851.9556,"sigma2":14756.38,"aic":1705.91,"aicc":1705.94,"bic":1708.83,"ljung_box_p":0.189,"ljung_box_12_p":0.2059,"acf_residuales":[0.0875,-0.0437,-0.0475,0.0107,0.157,0.0917,-0.0529,-0.1905,-0.1412,0.0451,0.0246,-0.0026,-0.1378,-0.1065,0.1272,-0.0124,-0.0413,-0.0115,-0.1133,-0.0021],"coeficientes":[],"raices":{"ar":[],"ma":[],"min_ar":null,"min_ma":null,"degenerado":false}},"011":{"p":0,"d":1,"q":1,"etiqueta":"ARIMA(0,1,1)","convergio":true,"k":2,"n_efectivo":137,"loglik":-851.3048,"sigma2":14615.73,"aic":1706.61,"aicc":1706.7,"bic":1712.45,"ljung_box_p":0.2827,"ljung_box_12_p":0.334,"acf_residuales":[-0.0068,-0.0398,-0.042,-0.0004,0.1488,0.0824,-0.0439,-0.1713,-0.129,0.0581,0.0179,0.0093,-0.1265,-0.1066,0.1383,-0.0224,-0.0374,0.005,-0.1128,-0.0035],"coeficientes":[{"nombre":"ma1","valor":0.1021,"ee":0.0886,"t":1.1524}],"raices":{"ar":[],"ma":9.7937,"min_ar":null,"min_ma":9.7937,"degenerado":false}},"012":{"p":0,"d":1,"q":2,"etiqueta":"ARIMA(0,1,2)","convergio":true,"k":3,"n_efectivo":137,"loglik":-851.2265,"sigma2":14598.79,"aic":1708.45,"aicc":1708.63,"bic":1717.21,"ljung_box_p":0.2847,"ljung_box_12_p":0.2999,"acf_residuales":[-0.0028,-0.0069,-0.0401,0.0024,0.147,0.0779,-0.0446,-0.168,-0.1316,0.0525,0.0097,0.0069,-0.1225,-0.1072,0.1315,-0.0241,-0.0362,0.0018,-0.1105,-0.0039],"coeficientes":[{"nombre":"ma1","valor":0.0969,"ee":0.0867,"t":1.1178},{"nombre":"ma2","valor":-0.0354,"ee":0.0889,"t":-0.3981}],"raices":{"ar":[],"ma":[6.8601,4.1209],"min_ar":null,"min_ma":4.1209,"degenerado":false}},"110":{"p":1,"d":1,"q":0,"etiqueta":"ARIMA(1,1,0)","convergio":true,"k":2,"n_efectivo":137,"loglik":-851.3587,"sigma2":14627.42,"aic":1706.72,"aicc":1706.81,"bic":1712.56,"ljung_box_p":0.255,"ljung_box_12_p":0.3029,"acf_residuales":[0.001,-0.0493,-0.044,0.0002,0.1501,0.0847,-0.0446,-0.1741,-0.1295,0.0585,0.021,0.0088,-0.1288,-0.1063,0.1391,-0.0207,-0.038,0.004,-0.1134,-0.0033],"coeficientes":[{"nombre":"ar1","valor":0.094,"ee":0.0858,"t":1.0952}],"raices":{"ar":10.6429,"ma":[],"min_ar":10.6429,"min_ma":null,"degenerado":false}},"111":{"p":1,"d":1,"q":1,"etiqueta":"ARIMA(1,1,1)","convergio":true,"k":3,"n_efectivo":137,"loglik":-851.2565,"sigma2":14605.3,"aic":1708.51,"aicc":1708.69,"bic":1717.27,"ljung_box_p":0.2612,"ljung_box_12_p":0.2773,"acf_residuales":[-0.0055,-0.0196,-0.046,0.0025,0.1479,0.0804,-0.0446,-0.1695,-0.1308,0.0556,0.0141,0.0079,-0.1241,-0.1066,0.1339,-0.0224,-0.0361,0.0019,-0.1108,-0.0039],"coeficientes":[{"nombre":"ar1","valor":-0.222,"ee":0.8449,"t":-0.2628},{"nombre":"ma1","valor":0.3223,"ee":0.8243,"t":0.391}],"raices":{"ar":4.5043,"ma":3.1024,"min_ar":4.5043,"min_ma":3.1024,"degenerado":false}},"112":{"p":1,"d":1,"q":2,"etiqueta":"ARIMA(1,1,2)","convergio":true,"k":4,"n_efectivo":137,"loglik":-851.2057,"sigma2":14594.34,"aic":1710.41,"aicc":1710.71,"bic":1722.09,"ljung_box_p":0.2422,"ljung_box_12_p":0.2426,"acf_residuales":[-0.0032,-0.004,-0.0324,0.0029,0.1459,0.0764,-0.0442,-0.1668,-0.1311,0.051,0.0073,0.0065,-0.1223,-0.1076,0.1313,-0.0261,-0.037,0.0034,-0.1107,-0.004],"coeficientes":[{"nombre":"ar1","valor":0.2024,"ee":0.9454,"t":0.2141},{"nombre":"ma1","valor":-0.1052,"ee":0.9441,"t":-0.1114},{"nombre":"ma2","valor":-0.0568,"ee":0.1161,"t":-0.4887}],"raices":{"ar":4.9408,"ma":[3.3722,5.2253],"min_ar":4.9408,"min_ma":3.3722,"degenerado":false}},"210":{"p":2,"d":1,"q":0,"etiqueta":"ARIMA(2,1,0)","convergio":true,"k":3,"n_efectivo":137,"loglik":-851.1886,"sigma2":14590.57,"aic":1708.38,"aicc":1708.56,"bic":1717.14,"ljung_box_p":0.3075,"ljung_box_12_p":0.3307,"acf_residuales":[-0.0056,-0.0001,-0.0304,0.0008,0.145,0.0753,-0.0439,-0.1658,-0.1309,0.0505,0.0056,0.0071,-0.1209,-0.1078,0.1312,-0.027,-0.0368,0.0042,-0.1109,-0.0039],"coeficientes":[{"nombre":"ar1","valor":0.0993,"ee":0.0862,"t":1.1517},{"nombre":"ar2","valor":-0.0506,"ee":0.0867,"t":-0.5837}],"raices":{"ar":[4.4452,4.4452],"ma":[],"min_ar":4.4452,"min_ma":null,"degenerado":false}},"211":{"p":2,"d":1,"q":1,"etiqueta":"ARIMA(2,1,1)","convergio":true,"k":4,"n_efectivo":137,"loglik":-851.1649,"sigma2":14585.46,"aic":1710.33,"aicc":1710.63,"bic":1722.01,"ljung_box_p":0.2647,"ljung_box_12_p":0.2728,"acf_residuales":[-0.0051,0.003,-0.0209,0.0026,0.1431,0.0736,-0.0435,-0.1645,-0.1303,0.0484,0.0029,0.0063,-0.1211,-0.1081,0.1308,-0.0294,-0.0378,0.006,-0.1109,-0.0042],"coeficientes":[{"nombre":"ar1","valor":0.2707,"ee":0.7086,"t":0.3821},{"nombre":"ar2","valor":-0.0691,"ee":0.105,"t":-0.6584},{"nombre":"ma1","valor":-0.1718,"ee":0.7066,"t":-0.2432}],"raices":{"ar":[3.8037,3.8037],"ma":5.8195,"min_ar":3.8037,"min_ma":5.8195,"degenerado":false}},"212":{"p":2,"d":1,"q":2,"etiqueta":"ARIMA(2,1,2)","convergio":true,"k":5,"n_efectivo":137,"loglik":-846.4617,"sigma2":13187.43,"aic":1702.92,"aicc":1703.38,"bic":1717.52,"ljung_box_p":0.7218,"ljung_box_12_p":0.6922,"acf_residuales":[0.0176,0.0034,0.0602,0.0281,0.0717,0.0109,-0.0215,-0.0974,-0.1121,-0.025,-0.0665,0.0137,-0.0544,-0.0676,0.0843,-0.1054,-0.0444,0.078,-0.0761,-0.0518],"coeficientes":[{"nombre":"ar1","valor":0.6612,"ee":0.0165,"t":40.1372},{"nombre":"ar2","valor":-0.9917,"ee":0.0105,"t":-94.7748},{"nombre":"ma1","valor":-0.6226,"ee":0.024,"t":-25.9219},{"nombre":"ma2","valor":1,"ee":0.0355,"t":28.1573}],"raices":{"ar":[1.0042,1.0042],"ma":[1,1],"min_ar":1.0042,"min_ma":1,"degenerado":true}}},"mejor_aicc":"212","mejor_bic":"010","auto_arima":{"resultado":"ARIMA(0,1,0)","orden":[0,1,0],"estacional":false,"aicc":1705.941,"n_modelos":192},"caminata":{"sigma2":14756.38,"aicc":1705.94,"bic":1708.83,"ljung_box_20_p":0.189,"ljung_box_12_p":0.2059,"acf_residuales":[0.0875,-0.0437,-0.0475,0.0107,0.157,0.0917,-0.0529,-0.1905,-0.1412,0.0451,0.0246,-0.0026,-0.1378,-0.1065,0.1272,-0.0124,-0.0413,-0.0115,-0.1133,-0.0021],"shapiro_p":0.0006},"deriva":{"valor":8.0009,"ee":10.3559,"t":0.7726,"aicc":1707.41},"volatilidad":{"lb12_cuadrados_p":0.857},"minimo_degenerado":{"etiqueta":"ARIMA(2,1,2)","aicc":1703.38,"ventaja_aicc":-2.56,"raices_ar":[1.0042,1.0042],"raices_ma":[1,1],"degenerado":true,"motivo":"Las raíces del polinomio MA tienen módulo 1.000: el modelo no es invertible. Las del AR quedan en 1.004, prácticamente encima del círculo. auto.arima lo descarta por eso, aunque sea el mínimo de AICc de la rejilla."}},"puente_estacional":{"serie":"log(AirPassengers)","n":144,"no_estacional":{"resultado":"ARIMA(0,1,5)","orden":[0,1,5],"aicc":-261.451,"acf_residuales":[-0.0186,-0.1989,0.0874,-0.0355,-0.2877,-0.0334,-0.1703,-0.1317,0.0498,-0.1313,0.044,0.7245,0.0802,-0.1905,0.0794,-0.1128,-0.1576,-0.0685,-0.179,-0.1599,0.0931,-0.1301,0.0097,0.6727,0.0931,-0.1948],"banda":0.1633,"acf_12":0.7245,"acf_24":0.6727,"ljung_box_24":{"Q":222.398,"p":0}},"estacional":{"etiqueta":"ARIMA(0,1,1)(0,1,1)[12]","aicc":-483.21,"acf_residuales":[0.0144,0.0235,-0.1254,-0.1109,0.0611,0.0614,-0.0605,-0.0283,0.1166,-0.06,0.0033,-0.0515,0.0112,0.0281,0.0568,-0.1573,0.0472,0.0099,-0.1008,-0.0978,-0.0309,-0.0329,0.2196,0.0124,-0.0353,0.0588],"ljung_box_24_p":0.233},"advertencia_aicc":"Los dos modelos tienen la MISMA diferenciación total (d + D*m distinta): el no estacional usa d = 1 y el airline d = 1, D = 1. Sus AICc se calculan sobre n distinto (143 vs. 131) y NO son comparables. La comparación válida es el diagnóstico."},"verificacion_fase0":{"modelos_comparados":27,"diferencia_maxima_aicc":0,"mejor_por_d_fase0":{"d0":"101","d1":"111","d2":"122"},"mejor_por_d_ahora":["101","111","122"]}};
     const SERIES_CAP4 = {"nilo":{"nombre":"Nile","descripcion":"Caudal anual del río Nilo en Asuán, 1871-1970","unidad":"10^8 m^3","fuente":"Cobb (1978) (datasets de R)","inicio":[1871,1],"frecuencia":1,"valores":[1120,1160,963,1210,1160,1160,813,1230,1370,1140,995,935,1110,994,1020,960,1180,799,958,1140,1100,1210,1150,1250,1260,1220,1030,1100,774,840,874,694,940,833,701,916,692,1020,1050,969,831,726,456,824,702,1120,1100,832,764,821,768,845,864,862,698,845,744,796,1040,759,781,865,845,944,984,897,822,1010,771,676,649,846,812,742,801,1040,860,874,848,890,744,749,838,1050,918,986,797,923,975,815,1020,906,901,1170,912,746,919,718,714,740]},"trm":{"nombre":"TRM mensual","descripcion":"Tasa Representativa del Mercado (COP/USD), promedio mensual, 2015-01 a 2026-06","unidad":"COP por USD","fuente":"Superintendencia Financiera de Colombia vía datos.gov.co (consulta: 2026-07-26)","inicio":[2015,1],"frecuencia":12,"valores":[2400.97,2425.65,2591.06,2495.36,2440.85,2556.12,2731.9,3023.29,3071.19,2936.03,3000.21,3244.51,3291.14,3358.44,3145.26,2992,2995.6,2991.68,2969.88,2958.2,2919.41,2933.59,3102.21,3010.17,2938.9,2880.57,2943.49,2877.46,2922.8,2958.36,3038.11,2972.62,2918.52,2956.7,3014.78,2991.42,2862.18,2860.36,2848.86,2765.23,2861.74,2895.1,2881.69,2959.57,3033.76,3088.35,3198.23,3212.48,3159.46,3113.77,3127.69,3154.19,3308.19,3253.37,3208.29,3413.34,3396.71,3437.73,3412.45,3376.03,3319.31,3416.32,3886.51,3986.56,3856.12,3691.57,3660.6,3788.1,3752.11,3834.22,3675.21,3468.5,3503.13,3557.79,3616.65,3651.85,3741.96,3691.83,3833.94,3888.67,3821.72,3772.61,3904.76,3967.77,4002.19,3938.95,3805.52,3804.88,4030.66,3922.5,4389.33,4328.03,4435.91,4720.74,4931.33,4790.04,4702.3,4796.64,4760.96,4533.56,4536.83,4213.53,4061.53,4066.87,4007.96,4219.05,4037.51,3954.14,3926.36,3932.55,3905.18,3867.25,3864.44,4057.13,4028.28,4067.62,4195.18,4257.76,4411.83,4384.53,4292.27,4133.6,4133.48,4273.88,4201.5,4113.55,4049.69,4049.93,3914.83,3881.44,3779.76,3797.46,3693.16,3678.7,3714.86,3613.54,3718.86,3497.09]},"airpassengers":{"nombre":"AirPassengers","descripcion":"Pasajeros mensuales de aerolíneas internacionales, 1949-1960","unidad":"miles de pasajeros","fuente":"Box, Jenkins & Reinsel (datasets de R)","inicio":[1949,1],"frecuencia":12,"valores":[112,118,132,129,121,135,148,148,136,119,104,118,115,126,141,135,125,149,170,170,158,133,114,140,145,150,178,163,172,178,199,199,184,162,146,166,171,180,193,181,183,218,230,242,209,191,172,194,196,196,236,235,229,243,264,272,237,211,180,201,204,188,235,227,234,264,302,293,259,229,203,229,242,233,267,269,270,315,364,347,312,274,237,278,284,277,317,313,318,374,413,405,355,306,271,306,315,301,356,348,355,422,465,467,404,347,305,336,340,318,362,348,363,435,491,505,404,359,310,337,360,342,406,396,420,472,548,559,463,407,362,405,417,391,419,461,472,535,622,606,508,461,390,432]}};
 
     // ================================================================
@@ -8436,7 +8572,7 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
         ];
         campos.push(degenerado
           ? { etiqueta: '⚠ diagnóstico', valor: 'raíz unitaria en el MA: sobrediferenciado' }
-          : { etiqueta: 'diagnóstico', valor: d === 1 ? 'mínimo de varianza' : 'sin diferenciar' });
+          : { etiqueta: 'diagnóstico', valor: d === 1 ? 'raíz MA fuera del círculo' : 'sin diferenciar' });
         actualizarLectura(lectura, campos);
       }
 
@@ -8539,7 +8675,7 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
         clave: 'modelo', etiqueta: 'Modelo',
         opciones: [
           { valor: 'd0', texto: 'ARIMA(1,0,1) con media — vuelve a la media' },
-          { valor: 'd1', texto: 'ARIMA(1,1,1) sin constante — se queda plano' },
+          { valor: 'd1', texto: 'ARIMA(1,1,1) sin constante — se aplana' },
           { valor: 'd1_deriva', texto: 'ARIMA(1,1,1) con deriva — recta' },
           { valor: 'd2', texto: 'ARIMA(1,2,1) — recta, e intervalo enorme' }
         ]
@@ -8965,14 +9101,14 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
         pregunta: 'Marca <strong>todas</strong> las afirmaciones correctas sobre la constante en un modelo ARIMA.',
         pista: 'Son tres. Piensa en: qué significa la constante cuando $d = 1$, qué hace <code>stats::arima</code> con <code>include.mean</code> si $d \\ge 1$, y qué grado de tendencia genera cada $d$.',
         opciones: [
-          { texto: 'Con $d = 1$ la constante es la media de las <em>diferencias</em>, es decir una tendencia lineal en la serie original.', correcta: true },
+          { texto: 'Con $d = 1$ la deriva, $\\mu_w = c/\\phi(1)$, es la media de las <em>diferencias</em>: una tendencia lineal en la serie.', correcta: true },
           { texto: 'Con $d \\ge 1$, <code>stats::arima</code> ignora <code>include.mean</code> sin avisar.', correcta: true },
           { texto: 'Sin constante, un modelo con $d = 2$ pronostica una parábola.', correcta: false },
           { texto: 'Con $d \\ge 2$, <code>forecast::Arima</code> avisa y no ajusta la deriva.', correcta: true },
           { texto: 'La constante de un ARIMA($p,0,q$) es la ordenada al origen de una regresión, no la media del proceso.', correcta: false }
         ],
         retroAcierto: 'Las tres. Y las dos falsas son justo las que el capítulo desmiente midiendo: con $d = 2$ y sin constante la segunda diferencia del pronóstico tiende a cero ($\\nabla^2\\hat y \\to 0$), es decir a largo plazo sale una <strong>recta</strong>; y el <code>intercept</code> que devuelve R para un ARIMA($p,0,q$) <strong>es</strong> la media del proceso, $920.70$ en el Nilo, pese al nombre.',
-        retroFallo: 'Las tres correctas son las que hablan de la constante con $d = 1$, de <code>include.mean</code> con $d \\ge 1$ y de la deriva con $d \\ge 2$. Sobre las falsas: la parábola necesitaría constante <em>con</em> $d = 2$, y <code>forecast</code> se niega precisamente a eso; sin constante, el pronóstico con $d = 2$ es una recta (lo verifica el Módulo 9 midiendo $\\nabla^2\\hat y$). Y el <code>intercept</code> de R en un modelo con $d = 0$ es la media, no una ordenada al origen: el nombre despista.'
+        retroFallo: 'Las tres correctas son las que hablan de la deriva con $d = 1$ (que es $\\mu_w = c/\\phi(1)$, no la $c$ de la ecuación salvo con $p = 0$), de <code>include.mean</code> con $d \\ge 1$ y de la deriva con $d \\ge 2$. Sobre las falsas: la parábola necesitaría constante <em>con</em> $d = 2$, y <code>forecast</code> se niega precisamente a eso; sin constante, el pronóstico con $d = 2$ es una recta (lo verifica el Módulo 9 midiendo $\\nabla^2\\hat y$). Y el <code>intercept</code> de R en un modelo con $d = 0$ es la media, no una ordenada al origen: el nombre despista.'
       },
       {
         tipo: 'opcion',
@@ -9017,7 +9153,7 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
           {
             texto: 'Es un AR de orden alto, porque hay muchas barras fuera de la banda.',
             correcta: false,
-            retro: 'Es el error de principiante más caro del capítulo. Un AR estacionario tiene una ACF que decae <strong>geométricamente</strong> y acaba entrando en la banda; esta lleva veinte rezagos sin acercarse a cero. Lo que ves no es memoria larga del proceso: es que el nivel de la serie está vagando.'
+            retro: 'Es el error de principiante más caro del capítulo. Un AR estacionario tiene una ACF que decae <strong>geométricamente</strong> y pronto entra en la banda; esta baja despacio y, pasado el rezago 3, sigue fuera de la banda en $8$ de los $17$ rezagos que quedan hasta el 20 (aún $0.237$ en el 13). Lo que ves no es memoria del proceso: es que el nivel de la serie se mueve.'
           },
           {
             texto: 'Es un MA($q$) con $q$ igual al número de barras significativas.',
@@ -9027,12 +9163,12 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
           {
             texto: 'Que $d = 1$, porque el primer valor es $0.498$, cercano a $0.5$.',
             correcta: false,
-            retro: 'La conclusión sobre $d$ es correcta pero el argumento no: el valor de $\\hat\\rho_1$ no determina $d$. Lo que indica no estacionariedad es la <strong>forma</strong> del decaimiento —lento y sin cortar—, no la altura de la primera barra. Un AR(1) con $\\phi = 0.5$ tendría también $\\rho_1 = 0.5$ y sería perfectamente estacionario.'
+            retro: 'Que la serie no sea estacionaria es razonable, pero de ahí no sale $d = 1$, y el argumento tampoco sirve: el valor de $\\hat\\rho_1$ no determina $d$. Lo que indica no estacionariedad es la <strong>forma</strong> del decaimiento —lento y sin cortar—, no la altura de la primera barra. Un AR(1) con $\\phi = 0.5$ tendría también $\\rho_1 = 0.5$ y sería perfectamente estacionario.'
           },
           {
-            texto: 'Nada todavía: esa forma indica no estacionariedad, y hay que diferenciar antes de leer $p$ y $q$.',
+            texto: 'Nada todavía: esa forma indica no estacionariedad, y hay que resolver $d$ antes de leer $p$ y $q$.',
             correcta: true,
-            retro: 'Una ACF que decae despacio y no corta —aquí $0.498,\\ 0.385,\\ 0.328,\\ 0.239,\\dots$— es el retrato de una serie no estacionaria. La tabla de identificación presupone estacionariedad; aplicarla aquí no informa de nada. Tras diferenciar, la ACF corta: solo destacan el rezago 1 ($-0.402$) y, aislado, el 8 ($0.231$).'
+            retro: 'Una ACF que decae despacio y no corta —aquí $0.498,\\ 0.385,\\ 0.328,\\ 0.239,\\dots$— es el retrato de una serie que no es estacionaria alrededor de una media fija: por una raíz unitaria o por un cambio de nivel como el de 1899 (Módulos 3 y 8). La tabla de identificación presupone estacionariedad; aplicarla aquí no informa de nada. Con $d = 1$, la ACF corta: solo destacan el rezago 1 ($-0.402$) y, aislado, el 8 ($0.231$).'
           }
         ]
       },

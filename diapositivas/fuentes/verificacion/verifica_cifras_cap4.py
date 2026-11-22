@@ -353,6 +353,9 @@ K = "Cada etapa tiene un hallazgo"
 permite(K, "12", "número de capítulo/parámetro estructural")
 
 K = "El ciclo completo cabe"
+# R1 (2026-11-22): el Ljung–Box de statsmodels sin el primer «residual», y₁ = 1120
+C(K, "1120", CALC_(lambda: NILE[0], "primer dato del Nilo (datos_series.json)"))
+C(K, "0.8225", CH_("0.8225"), nota="bloque de Python del Módulo 2, con ajuste.resid[1:] (verificado por verifica_bloques_cap6.py)")
 C(K, "0.800", RD_("m2.lb20_p"), J_("nilo.diagnostico.ljung_box_20.p"), RJ_("nilo.diagnostico.ljung_box_20.p"))
 C(K, "0.05", BOOL_("DEF", lambda: True, "nivel nominal convencional"), kind="definición")
 C(K, "816.18", RD_("m2.pron_1a3.0"))
@@ -363,6 +366,14 @@ permite(K, "10", "horizonte h = 10 del código / 10⁸ m³")
 
 # ---- M3 -----------------------------------------------------------------------------
 K = "Tres evidencias miran"
+# R1 (2026-11-22): las evidencias son el gráfico con la ACF, las pruebas y los síntomas de sobrediferenciar
+C(K, "0.498", J_("nilo.identificacion.cruda.acf.0"))
+C(K, "-0.402", J_("nilo.identificacion.d1.acf.0"))
+C(K, "-0.626", J_("nilo.identificacion.d2.acf.0"))
+C(K, "0.987", CALC_(lambda: VAR(1) / VAR(0), "Var(∇y)/Var(y) del Nilo"), kind="aritmética")
+C(K, "1.003", CALC_(lambda: 2 * (1 - J["nilo"]["identificacion"]["cruda"]["acf"][0]), "2(1 − r₁) con r₁ = 0.4984"), kind="aritmética")
+C(K, "0.5", BOOL_("DEF", lambda: True, "−0.5: ρ₁ de la diferencia de un ruido blanco; 0.5: r₁ con el que 2(1 − r₁) = 1"), kind="definición")
+C(K, "-0.5", BOOL_("DEF", lambda: True, "ρ₁ de la diferencia de un ruido blanco"), kind="definición")
 C(K, "1899", CALC_(lambda: 1871 + RD["m8.posicion_1899"] - 1, "año de la observación 29 (1871 + 29 − 1)"), tol=0)
 for i, v in enumerate(["28638", "28268", "80055", "262507"]):
     C(K, v, RD_(f"m3.var_d0a3.{i}"), JJ(f"nilo.varianzas.{i}.varianza"))
@@ -579,6 +590,8 @@ C(K, "0.800", J_("nilo.diagnostico.ljung_box_20.p"), RD_("m2.lb20_p"))
 C(K, "0.731", JJ("nilo.diagnostico.shapiro_p"))
 
 K = "Diferenciar de más deja"
+C(K, "0.733", CALC_(lambda: -J["nilo"]["sobrediferenciacion"][1]["theta_ma1"], "−θ̂ del MA(1) con d = 1"))
+C(K, "1.364", CALC_(lambda: 1 / abs(J["nilo"]["sobrediferenciacion"][1]["theta_ma1"]), "|raíz MA| = 1/|θ̂| con d = 1"), kind="aritmética")
 SO = "nilo.sobrediferenciacion"
 for d, (var, r1, th) in enumerate([("28638", "0.498", "0.378"), ("28268", "-0.402", "-0.733"), ("80055", "-0.626", "-1.000"), ("262507", "-0.719", "-1.000")]):
     C(K, var, JJ(f"{SO}.{d}.varianza"))
@@ -594,7 +607,11 @@ C(K, "solo esos cuatro de los nueve modelos con d = 2 son degenerados",
   BOOL_("RJ", lambda: sorted(k for k, v in RJ["nilo"]["rejilla"].items() if v["d"] == 2 and v["raices"]["degenerado"]) == ["021", "022", "121", "221"], "regenerado › nilo.rejilla (d = 2, degenerado)"),
   BOOL_("J", lambda: sum(1 for v in J["nilo"]["rejilla"].values() if v["d"] == 2) == 9, "cap4_arima.json › nueve modelos con d = 2"))
 
-K = "La regla de la varianza"
+K = "La varianza no decide d"
+# R1 (2026-11-22): el cociente de varianzas de log(lynx) frente a 2(1 − r₁) (ejercicio 2 del capítulo, bloque verificado)
+C(K, "0.785", CH_("0.785"), nota="r₁ de log(lynx), ejercicio 2")
+C(K, "0.430", CH_("0.430"), nota="2(1 − r₁), ejercicio 2")
+C(K, "0.416", CALC_(lambda: RD["m8.lynx_var_d0a3"][1] / RD["m8.lynx_var_d0a3"][0], "directo_cap4.json › m8.lynx_var_d0a3: Var(∇ log y)/Var(log y)"))
 for i, v in enumerate(["1.653", "0.687", "0.603", "1.153"]):
     C(K, v, RD_(f"m8.lynx_var_d0a3.{i}"))
 C(K, "58", RD_("m8.lynx_reduccion_pct"))
@@ -669,11 +686,17 @@ C(K, "100", RD_("datos.nilo_n"))
 
 # ---- M9 -----------------------------------------------------------------------------
 K = "La forma del pronóstico"
+# R1 (2026-11-22): sin constante y con d = 1 se aplana en 842.17, no en el último dato
+C(K, "740", CALC_(lambda: NILE[-1], "último dato del Nilo (datos_series.json)"))
+C(K, "816.18", JJ("nilo.formas_pronostico.d1.media.0"))
+C(K, "842.17", JJ("nilo.formas_pronostico.d1.media.29"))
 C(K, "95", BOOL_("DEF", lambda: True, "nivel nominal convencional"), kind="definición")
 C(K, "30", J_("horizonte"))
 permite(K, "400", "atributo de formato {alto=400}")
 
 K = "el intervalo a 30 años es 3.5 veces"
+C(K, "740", CALC_(lambda: NILE[-1], "último dato del Nilo (datos_series.json)"))
+C(K, "842.17", JJ("nilo.formas_pronostico.d1.media.29"))
 FMD = "nilo.intervalos.forma_medida"
 C(K, "95", BOOL_("DEF", lambda: True, "nivel nominal convencional"), kind="definición")
 C(K, "0.25", JJ(f"{FMD}.d0.primera_dif_h30"))
@@ -896,11 +919,11 @@ OBSERVACIONES = [
     ("La raíz AR del ARIMA(2,1,2) del Nilo (Módulo 7, «1.001») depende del estimador: 1.0008 sin deriva y 1.0005 con deriva (`Arima`, CSS-ML), pero 2.24 con `arima(method = \"ML\")`, que es lo que trae la rejilla del JSON.",
      "Es coherente con lo que el capítulo dice de `auto.arima` (usa `Arima`), pero conviene no mezclar las dos cifras."),
     ("Módulo 10: «la varianza real de los cambios a 3–12 meses es entre 1.07 y 1.14 veces esa cifra» no se reproduce.",
-     "El cálculo directo var(Δ_h)/(h·var(Δ₁)) da entre 1.02 y 1.20 para h = 3…12. No se usa en las diapositivas."),
-    ("Las coberturas 83.9 % (Módulo 9) y 89.6 % (Módulo 10) vienen del Capítulo 6 (`cap6_evaluacion.json`), no del 4.",
-     "No se proyectan; si se citan, la fuente es el Capítulo 6."),
+     "El cálculo directo var(Δ_h)/(h·var(Δ₁)) da entre 1.02 y 1.20 para h = 3…12. Desde la R1 del capítulo (2026-11-22) el bloque del Módulo 10 imprime las razones que cita. No se usa en las diapositivas."),
+    ("Las coberturas 83.9 % (Módulo 9) y 89.6 % (Módulo 10) no venían de ningún generador del Capítulo 4.",
+     "Desde la R1 del capítulo (2026-11-22), el 83.9 % es la cobertura dentro de muestra del 80 % a un mes en la TRM y la calcula el bloque del Módulo 10; el 89.6 % es la del naïve en el Capítulo 6, sumando los horizontes 1 a 12. No se proyectan."),
     ("La tabla del Módulo 8 rotula d = 1 «Mínimo de varianza. Correcto.» aunque el mismo módulo dice que ese mínimo es por poco margen.",
-     "Ya figuraba como pendiente en `PLAN_Auditoria_Cap4.md`; en las diapositivas se dejó «Mínimo de varianza»."),
+     "Corregido en la R1 del capítulo (2026-11-22): la varianza deja de decidir d, y la diapositiva del Módulo 8 dice ahora «Raíz MA en 1.364»."),
     ("`puente_estacional.advertencia_aicc` (JSON) dice «la MISMA diferenciación total (d + D*m distinta)», que se contradice a sí misma.",
      "Es texto interno del JSON; no se muestra en el capítulo."),
 ]

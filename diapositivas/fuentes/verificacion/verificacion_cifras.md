@@ -20,13 +20,13 @@ Generado por `verifica_cifras_cap4.py`. Cada fila es una cifra (o afirmación) d
 
 ## Resumen
 
-- Cifras y afirmaciones registradas: **450**
-- Verificadas contra al menos una fuente: **435** (de ellas, **3** son comprobaciones manuales contra un libro y **8** son solo consultas web, ambas sin guion)
-- Definiciones o convenciones (nivel del 5 %, z = 1.96, etc.): **13**; no se miden, se enuncian
+- Cifras y afirmaciones registradas: **469**
+- Verificadas contra al menos una fuente: **452** (de ellas, **3** son comprobaciones manuales contra un libro y **8** son solo consultas web, ambas sin guion)
+- Definiciones o convenciones (nivel del 5 %, z = 1.96, etc.): **15**; no se miden, se enuncian
 - Marcadas `[SIN VERIFICAR]` (no se presentan como dato confirmado): **2**
 - No coinciden: **0**
 
-Contrastes por tipo de fuente: A 3, C 3, CALC 83, DOC 31, J 229, MAN 3, PY 5, R46 20, RD 179, REPO 2, RJ 182, RS 1, WEB 8.
+Contrastes por tipo de fuente: A 3, C 6, CALC 91, DOC 31, J 235, MAN 3, PY 5, R46 20, RD 179, REPO 2, RJ 185, RS 1, WEB 8.
 
 ## Código proyectado, ejecutado
 
@@ -69,11 +69,11 @@ Cada una se quitó por una razón distinta; quitar la marca no significa que tod
 7. La ayuda de `AirPassengers` cita «Box, Jenkins y Reinsel (1976)» en R 4.3.3 y (1994) en R 4.6. Reinsel entró como coautor en la tercera edición (1994): 1976 era un anacronismo. La diapositiva usa 1994.
 8. Módulo 1: el capítulo dice que el IMA(2,2) «equivale» al método de Holt. Con más precisión, Holt es un caso particular del IMA(2,2), con restricciones sobre los coeficientes. La diapositiva dice «incluye».
 9. La raíz AR del ARIMA(2,1,2) del Nilo (Módulo 7, «1.001») depende del estimador: 1.0008 sin deriva y 1.0005 con deriva (`Arima`, CSS-ML), pero 2.24 con `arima(method = "ML")`, que es lo que trae la rejilla del JSON. Es coherente con lo que el capítulo dice de `auto.arima` (usa `Arima`), pero conviene no mezclar las dos cifras.
-10. Módulo 10: «la varianza real de los cambios a 3–12 meses es entre 1.07 y 1.14 veces esa cifra» no se reproduce. El cálculo directo var(Δ_h)/(h·var(Δ₁)) da entre 1.02 y 1.20 para h = 3…12. No se usa en las diapositivas.
-11. Las coberturas 83.9 % (Módulo 9) y 89.6 % (Módulo 10) vienen del Capítulo 6 (`cap6_evaluacion.json`), no del 4. No se proyectan; si se citan, la fuente es el Capítulo 6.
-12. La tabla del Módulo 8 rotula d = 1 «Mínimo de varianza. Correcto.» aunque el mismo módulo dice que ese mínimo es por poco margen. Ya figuraba como pendiente en `PLAN_Auditoria_Cap4.md`; en las diapositivas se dejó «Mínimo de varianza».
+10. Módulo 10: «la varianza real de los cambios a 3–12 meses es entre 1.07 y 1.14 veces esa cifra» no se reproduce. El cálculo directo var(Δ_h)/(h·var(Δ₁)) da entre 1.02 y 1.20 para h = 3…12. Desde la R1 del capítulo (2026-11-22) el bloque del Módulo 10 imprime las razones que cita. No se usa en las diapositivas.
+11. Las coberturas 83.9 % (Módulo 9) y 89.6 % (Módulo 10) no venían de ningún generador del Capítulo 4. Desde la R1 del capítulo (2026-11-22), el 83.9 % es la cobertura dentro de muestra del 80 % a un mes en la TRM y la calcula el bloque del Módulo 10; el 89.6 % es la del naïve en el Capítulo 6, sumando los horizontes 1 a 12. No se proyectan.
+12. La tabla del Módulo 8 rotula d = 1 «Mínimo de varianza. Correcto.» aunque el mismo módulo dice que ese mínimo es por poco margen. Corregido en la R1 del capítulo (2026-11-22): la varianza deja de decidir d, y la diapositiva del Módulo 8 dice ahora «Raíz MA en 1.364».
 13. `puente_estacional.advertencia_aicc` (JSON) dice «la MISMA diferenciación total (d + D*m distinta)», que se contradice a sí misma. Es texto interno del JSON; no se muestra en el capítulo.
-14. Entre el JSON publicado (R 4.6, forecast 9.0.2) y el regenerado aquí (R 4.3.3, forecast 8.21.1) se compararon **3836** valores: **13** difieren más de 1.5 unidades del último decimal publicado, todos en modelos mal condicionados de la rejilla: ARIMA (2,1,2) de la TRM; ARIMA (2,1,2) del Nilo; ARIMA (2,2,2) del Nilo (σ², errores estándar, estadísticos t, coeficientes y raíces cercanas al círculo unitario). Ninguno se usa en las diapositivas: las cifras que sí se muestran se reproducen.
+14. Entre el JSON publicado (R 4.6, forecast 9.0.2) y el regenerado aquí (R 4.3.3, forecast 8.21.1) se compararon **3836** valores: **14** difieren más de 1.5 unidades del último decimal publicado, y no todos están en modelos mal condicionados (ver la lista). Ninguno se usa en las diapositivas: las cifras que sí se muestran se reproducen.
 
 <details><summary>Los valores que difieren</summary>
 
@@ -86,6 +86,7 @@ Cada una se quitó por una razón distinta; quitar la marca no significa que tod
 | `nilo.rejilla.222.coeficientes.2.t` | -26.1021 | -26.1059 |
 | `nilo.rejilla.222.coeficientes.3.t` | 12.0533 | 12.0552 |
 | `nilo.rejilla.222.raices.ar.1` | 5.5426 | 5.5424 |
+| `nilo.diagnostico.metodos_estimacion.nota` | stats::arima(method='ML') y forecast::Arima() dan coeficientes iguales a 5 decimales pero sigma^2 distinta: Arima divide la suma de cuadrados de los residuales entre n* - k = 99 - 2 y arima entre n* = 99 (razon 99/97). El ancho de los intervalos hereda esa diferencia. | stats::arima(method='ML') y forecast::Arima() (CSS-ML por defecto) dan coeficientes iguales a 5 decimales pero sigma^2 distinta: el ancho de los intervalos hereda esa diferencia. |
 | `trm.rejilla.212.sigma2` | 13187.43 | 13188.21 |
 | `trm.rejilla.212.coeficientes.0.t` | 40.1372 | 40.1507 |
 | `trm.rejilla.212.coeficientes.1.t` | -94.7748 | -94.9263 |
@@ -182,6 +183,8 @@ Cada una se quitó por una razón distinta; quitar la marca no significa que tod
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
+| `1120` | dato | CALC: primer dato del Nilo (datos_series.json) = 1120 | verificado |
+| `0.8225` (bloque de Python del Módulo 2, con ajuste.resid[1:] (verificado por verifica_bloques_cap6.py)) | dato | C: capítulo 4 contiene «0.8225» | verificado |
 | `0.800` | dato | RD: directo_cap4.json › m2.lb20_p = 0.799737<br>J: cap4_arima.json › nilo.diagnostico.ljung_box_20.p = 0.7997<br>RJ: regenerado (R 4.3.3) › nilo.diagnostico.ljung_box_20.p = 0.7997 | verificado |
 | `0.05` | definición | DEF: nivel nominal convencional | definición (no se mide) |
 | `816.18` | dato | RD: directo_cap4.json › m2.pron_1a3.0 = 816.18 | verificado |
@@ -193,6 +196,13 @@ Cada una se quitó por una razón distinta; quitar la marca no significa que tod
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
+| `0.498` | dato | J: cap4_arima.json › nilo.identificacion.cruda.acf.0 = 0.4984 | verificado |
+| `-0.402` | dato | J: cap4_arima.json › nilo.identificacion.d1.acf.0 = -0.402 | verificado |
+| `-0.626` | dato | J: cap4_arima.json › nilo.identificacion.d2.acf.0 = -0.6264 | verificado |
+| `0.987` | aritmética | CALC: Var(∇y)/Var(y) del Nilo = 0.987094 | verificado |
+| `1.003` | aritmética | CALC: 2(1 − r₁) con r₁ = 0.4984 = 1.0032 | verificado |
+| `0.5` | definición | DEF: −0.5: ρ₁ de la diferencia de un ruido blanco; 0.5: r₁ con el que 2(1 − r₁) = 1 | definición (no se mide) |
+| `-0.5` | definición | DEF: ρ₁ de la diferencia de un ruido blanco | definición (no se mide) |
 | `1899` | dato | CALC: año de la observación 29 (1871 + 29 − 1) = 1899 | verificado |
 | `28638` | dato | RD: directo_cap4.json › m3.var_d0a3.0 = 28637.95<br>J: cap4_arima.json › nilo.varianzas.0.varianza = 28637.95<br>RJ: regenerado (R 4.3.3) › nilo.varianzas.0.varianza = 28637.95 | verificado |
 | `28268` | dato | RD: directo_cap4.json › m3.var_d0a3.1 = 28268.34<br>J: cap4_arima.json › nilo.varianzas.1.varianza = 28268.34<br>RJ: regenerado (R 4.3.3) › nilo.varianzas.1.varianza = 28268.34 | verificado |
@@ -441,6 +451,8 @@ Cada una se quitó por una razón distinta; quitar la marca no significa que tod
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
+| `0.733` | dato | CALC: −θ̂ del MA(1) con d = 1 = 0.7329 | verificado |
+| `1.364` | aritmética | CALC: |raíz MA| = 1/|θ̂| con d = 1 = 1.364443 | verificado |
 | `28638` | dato | J: cap4_arima.json › nilo.sobrediferenciacion.0.varianza = 28637.95<br>RJ: regenerado (R 4.3.3) › nilo.sobrediferenciacion.0.varianza = 28637.95 | verificado |
 | `0.498` | dato | J: cap4_arima.json › nilo.sobrediferenciacion.0.acf1 = 0.4984<br>RJ: regenerado (R 4.3.3) › nilo.sobrediferenciacion.0.acf1 = 0.4984 | verificado |
 | `0.378` | dato | J: cap4_arima.json › nilo.sobrediferenciacion.0.theta_ma1 = 0.3783<br>RJ: regenerado (R 4.3.3) › nilo.sobrediferenciacion.0.theta_ma1 = 0.3783 | verificado |
@@ -517,10 +529,13 @@ Cada una se quitó por una razón distinta; quitar la marca no significa que tod
 | `25` | aritmética | CALC: 1282.50 − 1257.91 = 24.59 = 24.59 | verificado |
 | `100` | dato | RD: directo_cap4.json › datos.nilo_n = 100 | verificado |
 
-### La regla de la varianza es un aviso, no un teorema: en log(lynx) falla
+### La varianza no decide d: en log(lynx) baja al diferenciar y aun así sobra
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
+| `0.785` (r₁ de log(lynx), ejercicio 2) | dato | C: capítulo 4 contiene «0.785» | verificado |
+| `0.430` (2(1 − r₁), ejercicio 2) | dato | C: capítulo 4 contiene «0.430» | verificado |
+| `0.416` | dato | CALC: directo_cap4.json › m8.lynx_var_d0a3: Var(∇ log y)/Var(log y) = 0.415618 | verificado |
 | `1.653` | dato | RD: directo_cap4.json › m8.lynx_var_d0a3.0 = 1.6532 | verificado |
 | `0.687` | dato | RD: directo_cap4.json › m8.lynx_var_d0a3.1 = 0.6871 | verificado |
 | `0.603` | dato | RD: directo_cap4.json › m8.lynx_var_d0a3.2 = 0.6026 | verificado |
@@ -546,6 +561,9 @@ Cada una se quitó por una razón distinta; quitar la marca no significa que tod
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
+| `740` | dato | CALC: último dato del Nilo (datos_series.json) = 740 | verificado |
+| `816.18` | dato | J: cap4_arima.json › nilo.formas_pronostico.d1.media.0 = 816.18<br>RJ: regenerado (R 4.3.3) › nilo.formas_pronostico.d1.media.0 = 816.18 | verificado |
+| `842.17` | dato | J: cap4_arima.json › nilo.formas_pronostico.d1.media.29 = 842.17<br>RJ: regenerado (R 4.3.3) › nilo.formas_pronostico.d1.media.29 = 842.17 | verificado |
 | `95` | definición | DEF: nivel nominal convencional | definición (no se mide) |
 | `30` | dato | J: cap4_arima.json › horizonte = 30 | verificado |
 
@@ -553,6 +571,8 @@ Cada una se quitó por una razón distinta; quitar la marca no significa que tod
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
+| `740` | dato | CALC: último dato del Nilo (datos_series.json) = 740 | verificado |
+| `842.17` | dato | J: cap4_arima.json › nilo.formas_pronostico.d1.media.29 = 842.17<br>RJ: regenerado (R 4.3.3) › nilo.formas_pronostico.d1.media.29 = 842.17 | verificado |
 | `95` | definición | DEF: nivel nominal convencional | definición (no se mide) |
 | `0.25` | dato | J: cap4_arima.json › nilo.intervalos.forma_medida.d0.primera_dif_h30 = 0.2535<br>RJ: regenerado (R 4.3.3) › nilo.intervalos.forma_medida.d0.primera_dif_h30 = 0.2535 | verificado |
 | `561` | dato | J: cap4_arima.json › nilo.intervalos.forma_medida.d0.ancho95_h1 = 561.34<br>RJ: regenerado (R 4.3.3) › nilo.intervalos.forma_medida.d0.ancho95_h1 = 561.34 | verificado |
