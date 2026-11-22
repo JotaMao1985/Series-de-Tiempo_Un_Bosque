@@ -1,0 +1,47 @@
+statsmodels 0.14.6 · numpy 2.2.6
+
+== statsmodels no trae el algoritmo de Hyndman–Khandakar (c4-m7)
+módulos de statsmodels.tsa cuyo nombre contiene 'auto_arima' o 'autoarima': []
+pmdarima importable aquí: False (no se puede comprobar su documentación ni su ndiffs)
+statsmodels.tsa.stattools tiene 'ndiffs': False
+
+== ARIMA: trend por defecto y deriva con d >= 1 (c4-m5)
+ARIMA(1,0,1) trend=None: parámetros ['const', 'ar.L1', 'ma.L1', 'sigma2']
+ARIMA(1,1,1) trend=None: parámetros ['ar.L1', 'ma.L1', 'sigma2']
+ARIMA(1,1,1) trend='t': parámetros ['x1', 'ar.L1', 'ma.L1', 'sigma2']
+ARIMA(1,2,1) trend='t': ValueError
+ARIMA(1,2,1) trend=[0,0,1]: ['x1', 'ar.L1', 'ma.L1', 'sigma2']
+
+== nobs, nobs_effective, aicc (c4-m6, m7)
+nobs = 100 · nobs_effective = 99 · loglikelihood_burn = 1
+aicc con nobs = 1267.469 · con nobs_effective = 1267.471 · f.aicc = 1267.471
+
+== kpss: truncamiento (c4-m3)
+firma de kpss: (x, regression: "Literal['c', 'ct']" = 'c', nlags: "Literal['auto', 'legacy'] | int" = 'auto', store: 'bool' = False) -> 'tuple[float, float, int, dict[str, float]]'
+kpss(nilo, 'c', nlags='auto') = 0.8691
+kpss(nilo, 'c', nlags='legacy') = 0.5497
+kpss(nilo, 'c', nlags=4) = 0.9654
+docstring de kpss habla de 'legacy' y de 'auto': True
+valor crítico 5 % del kpss de nivel (statsmodels): 0.463
+
+== pacf: método por defecto y 'ldb' (c4-m4)
+firma de pacf: (x: 'ArrayLike1D', nlags: 'int | None' = None, method: "Literal['yw', 'ywadjusted', 'ols', 'ols-inefficient', 'ols-adjusted', 'ywm', 'ywmle', 'ld', 'ldadjusted', 'ldb', 'ldbiased', 'burg']" = 'ywadjusted', alpha: 'float | None' = None) -> 'np.ndarray | tuple[np.ndarray, np.ndarray]'
+docstring de pacf habla de 'ldb' y 'ywadjusted': True
+pacf(w, 6, 'ldb')   = [-0.402  -0.2456 -0.1187 -0.1733 -0.1554 -0.0737]
+pacf(w, 6, defecto) = [-0.4061 -0.2517 -0.1239 -0.1829 -0.1677 -0.0833]
+
+== acorr_ljungbox: model_df (c4-m2, m4)
+firma: (x, lags=None, boxpierce=False, model_df=0, period=None, return_df=True, auto_lag=False)
+docstring habla de model_df 'degrees of freedom ... model': True
+
+== arma2ma y ArmaProcess: polinomios completos con el signo ya aplicado (c4-m1, m9)
+arma2ma(ar=[1,-0.5], ma=[1], lags=4): [1.    0.5   0.25  0.125]  (ψ_j = 0.5^j si el AR va con signo ya cambiado)
+docstring de arma2ma habla de 'lag polynomial' con el cero: True
+ArmaProcess(ar=[1,-.2544], ma=[1,-.8741]).arroots módulo: [3.9308] · maroots módulo: [1.144]
+
+== adfuller: p-valor por MacKinnon (c4-m3, m10)
+adfuller(nilo, 'ct', maxlag=4) = -3.3657  p = 0.0561
+docstring de adfuller cita a MacKinnon: True
+
+== ARIMA con d = 2 y trend='t': el mensaje del ValueError (c4-m5)
+el mensaje habla de términos de orden menor que d + D eliminados por la diferenciación: True

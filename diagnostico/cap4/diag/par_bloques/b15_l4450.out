@@ -1,0 +1,44 @@
+> library(forecast)
+> for (d in 1:3) {
++     x <- diff(Nile, differences = d)
++     f <- arima(x, order = c(0, 0, 1), include.mean = FALSE, method = "ML")
++     cat(sprintf("d = %d  var = %9.0f  theta = %7.4f  |raiz MA| = %.4f\n", 
++         d, var(x), coef(f)[["ma1"]], Mod(polyroot(c(1, coef(f)[["ma1"]])))))
++ }
+d = 1  var =     28268  theta = -0.7329  |raiz MA| = 1.3644
+d = 2  var =     80055  theta = -1.0000  |raiz MA| = 1.0000
+d = 3  var =    262507  theta = -1.0000  |raiz MA| = 1.0000
+> for (q in 1:2) for (p in 0:2) {
++     f <- arima(Nile, order = c(p, 2, q), method = "ML")
++     ma <- f$coef[grepl("^ma", names(f$coef))]
++     cat(sprintf("ARIMA(%d,2,%d)  min|raiz MA| = %.4f\n", p, q, 
++         min(Mod(polyroot(c(1, ma))))))
++ }
+ARIMA(0,2,1)  min|raiz MA| = 1.0000
+ARIMA(1,2,1)  min|raiz MA| = 1.0000
+ARIMA(2,2,1)  min|raiz MA| = 1.0000
+ARIMA(0,2,2)  min|raiz MA| = 1.0000
+ARIMA(1,2,2)  min|raiz MA| = 1.0316
+ARIMA(2,2,2)  min|raiz MA| = 1.0483
+> escalon <- as.numeric(time(Nile) >= 1899)
+> fe <- arima(Nile, order = c(0, 0, 0), xreg = escalon, 
++     method = "ML")
+> round(c(coef(fe)[["escalon"]], sqrt(diag(fe$var.coef))[["escalon"]]), 
++     2)
+[1] -247.78   28.15
+> Box.test(residuals(fe), lag = 20, type = "Ljung-Box")$p.value
+[1] 0.8124319
+> ent <- window(Nile, end = 1950)
+> pru <- window(Nile, start = 1951)
+> esc_e <- as.numeric(time(ent) >= 1899)
+> rmse <- function(p) round(sqrt(mean((as.numeric(pru) - 
++     as.numeric(p))^2)), 2)
+> c(arima = rmse(forecast(Arima(ent, order = c(1, 1, 
++     1)), h = 20)$mean), escalon = rmse(forecast(Arima(ent, order = c(0, 
++     0, 0), xreg = esc_e), xreg = rep(1, 20))$mean), escalon_ar1 = rmse(forecast(Arima(ent, 
++     order = c(1, 0, 0), xreg = esc_e), xreg = rep(1, 20))$mean), 
++     naive = rmse(rep(tail(ent, 1), 20)), media = rmse(rep(mean(ent), 
++         20)))
+      arima     escalon escalon_ar1       naive       media 
+     125.05      127.99      128.31      123.06      133.31 
+> 

@@ -1,0 +1,39 @@
+> library(forecast)
+> library(tseries)
+Registered S3 method overwritten by 'quantmod':
+  method            from
+  as.zoo.data.frame zoo 
+> for (d in 0:3) {
++     x <- if (d == 0) 
++         Nile
++     else diff(Nile, differences = d)
++     cat(sprintf("d = %d  n = %3d  var = %10.2f\n", d, length(x), 
++         var(x)))
++ }
+d = 0  n = 100  var =   28637.95
+d = 1  n =  99  var =   28268.34
+d = 2  n =  98  var =   80055.01
+d = 3  n =  97  var =  262507.29
+> adf.test(Nile)$p.value
+[1] 0.06419542
+> kpss.test(Nile)$statistic
+KPSS Level 
+ 0.9654349 
+> sapply(c("kpss", "adf", "pp"), function(t) ndiffs(Nile, 
++     test = t))
+kpss  adf   pp 
+   1    0    0 
+> set.seed(2026)
+> escalon <- as.numeric(1:100 >= 29)
+> simula <- function(beta, reps = 400) {
++     mean(replicate(reps, {
++         x <- 1000 + beta * escalon + rnorm(100, 0, 127.03)
++         suppressWarnings(kpss.test(x)$p.value) <= 0.05
++     }))
++ }
+> c(sin_escalon = simula(0), con_el_del_Nilo = simula(-247.78))
+    sin_escalon con_el_del_Nilo 
+          0.045           1.000 
+Warning message:
+In kpss.test(Nile) : p-value smaller than printed p-value
+> 

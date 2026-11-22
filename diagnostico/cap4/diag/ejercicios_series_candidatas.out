@@ -1,0 +1,91 @@
+===== Panorama: n, ndiffs (kpss/adf/pp), var por d, auto.arima escalonado y exhaustivo =====
+beaver2_temp   n= 100 nd=1/1/1 var=0.1996/0.01797/0.03476  esc=ARIMA(0,1,0)                 exh=ARIMA(0,1,0)                
+austres        n=  89 nd=2/1/1 var=1841000/161.2/131.5  esc=ARIMA(0,2,1)                 exh=ARIMA(3,2,0)                
+log_airmiles   n=  24 nd=1/1/2 var=1.895/0.02255/0.02879  esc=ARIMA(0,1,1) with drift      exh=ARIMA(0,1,1) with drift     
+uspop          n=  19 nd=2/2/2 var=3995/59.08/17.76  esc=ARIMA(0,2,0)                 exh=ARIMA(0,2,0)                
+BJsales.lead   n= 150 nd=1/1/1 var=1.478/0.1/0.2903  esc=ARIMA(0,1,1) with drift      exh=ARIMA(0,1,1) with drift     
+gnp_real       n=  80 nd=1/1/1 var=0.5483/0.003349/0.00452  esc=ARIMA(1,1,0) with drift      exh=ARIMA(1,1,0) with drift     
+ip             n= 129 nd=1/1/1 var=2.427/0.009205/0.01782  esc=ARIMA(0,1,0) with drift      exh=ARIMA(0,1,5) with drift     
+tcm1y          n= 558 nd=1/1/1 var=8.854/0.2186/0.2837  esc=ARIMA(4,1,3)                 exh=ARIMA(0,1,5)                
+stock_prices   n= 118 nd=1/1/1 var=1.482/0.02477/0.04026  esc=ARIMA(0,1,1) with drift      exh=ARIMA(0,1,1) with drift     
+goog_close     n=1258 nd=1/1/1 var=46440/143.9/280.1  esc=ARIMA(2,1,4) with drift      exh=ARIMA(4,1,1) with drift     
+aus_air        n=  47 nd=2/1/1 var=400.8/4.271/8.85  esc=ARIMA(0,2,1)                 exh=ARIMA(0,2,1)                
+log_us_gdp     n=  58 nd=2/0/0 var=1.276/0.0007473/0.0005223  esc=ARIMA(0,2,1)                 exh=ARIMA(0,2,1)                
+
+===== M1 · raíz unitaria estimada frente a impuesta: AR(2) en niveles y ARIMA(1,1,0) =====
+austres        phi* = (0.0014, 0.9986) suma = 1.0000 |raíces| = 1.0000, 1.0014 ; ARIMA(1,1,0) phi = 0.9766 (−phi2* = -0.9986)
+gnp_real       phi* = (1.4659, -0.4685) suma = 0.9974 |raíces| = 1.0050, 2.1239 ; ARIMA(1,1,0) phi = 0.4663 (−phi2* = 0.4685)
+ip             phi* = (1.1909, -0.1919) suma = 0.9990 |raíces| = 1.0012, 5.2054 ; ARIMA(1,1,0) phi = 0.1910 (−phi2* = 0.1919)
+tcm1y          phi* = (1.3429, -0.3599) suma = 0.9830 |raíces| = 1.0278, 2.7033 ; ARIMA(1,1,0) phi = 0.3518 (−phi2* = 0.3599)
+BJsales.lead   phi* = (0.5543, 0.4324) suma = 0.9867 |raíces| = 1.0093, 2.2913 ; ARIMA(1,1,0) phi = -0.4402 (−phi2* = -0.4324)
+log_us_gdp     phi* = (1.9999, -1.0000) suma = 0.9999 |raíces| = 1.0000, 1.0000 ; ARIMA(1,1,0) phi = 0.9367 (−phi2* = 1.0000)
+
+M1 · IMA(1,1) frente a SES: alfa = 1 + theta
+BJsales.lead   theta = -0.4475  1 + theta = 0.5525  alfa(ses) = 0.5502  pron ARIMA = 13.514  pron SES = 13.514
+tcm1y          theta = 0.5024  1 + theta = 1.5024  alfa(ses) = 0.9999  pron ARIMA = 5.214  pron SES = 5.250
+goog_close     theta = 0.0318  1 + theta = 1.0318  alfa(ses) = 0.9999  pron ARIMA = 1035.570  pron SES = 1035.610
+
+===== M8 / M3 · escalón frente a raíz unitaria: beaver2 (la actividad empieza en la obs. 39) =====
+primer índice con activ = 1: 39  n = 100 
+kpss_p  adf_p   pp_p ndiffs var_d0 var_d1 var_d2 
+0.0100 0.5696 0.4556 1.0000 0.1996 0.0180 0.0348 
+auto.arima: ARIMA(0,1,0)  |raíz MA| mín: NA 
+  beta     ee    phi   lb10 
+0.6139 0.1381 0.8733 0.5351 
+KPSS sobre AR(1) phi estimado + escalón del tamaño estimado, 400 réplicas: tasa de rechazo = 0.965 
+
+===== M7 · auto.arima: modelos a menos de 2 de AICc en la búsqueda exhaustiva =====
+austres        escalonada evalúa  7, exhaustiva 21; a < 2 del mejor: 4 (ARIMA(3,2,0) | ARIMA(0,2,1) | ARIMA(0,2,2) | ARIMA(2,2,1))
+BJsales.lead   escalonada evalúa  9, exhaustiva 42; a < 2 del mejor: 8 (ARIMA(0,1,1) with drift | ARIMA(0,1,2) with drift | ARIMA(1,1,1) with drift | ARIMA(0,1,1))
+log_us_gdp     escalonada evalúa  7, exhaustiva 21; a < 2 del mejor: 3 (ARIMA(0,2,1) | ARIMA(0,2,2) | ARIMA(1,2,1))
+aus_air        escalonada evalúa  7, exhaustiva 21; a < 2 del mejor: 3 (ARIMA(0,2,1) | ARIMA(0,2,2) | ARIMA(1,2,1))
+tcm1y          escalonada evalúa 31, exhaustiva 42; a < 2 del mejor: 2 (ARIMA(0,1,5) | ARIMA(0,1,5)            with drift)
+
+===== M5 · ¿lleva deriva? t de la deriva y AICc con y sin =====
+austres        ARIMA(0,1,1)  deriva = 52.11  t = 30.65  AICc con = 676.93  sin = 862.34  (y_n - y_1)/(n-1) = 52.21
+log_airmiles   ARIMA(0,1,1)  deriva = 0.1818  t = 4.47  AICc con = -20.89  sin = -11.13  (y_n - y_1)/(n-1) = 0.1872
+log_us_gdp     ARIMA(0,1,1)  deriva = 0.06234  t = 13.85  AICc con = -262.49  sin = -191.53  (y_n - y_1)/(n-1) = 0.06272
+aus_air        ARIMA(0,1,1)  deriva = 1.419  t = 4.81  AICc con = 202.86  sin = 215.89  (y_n - y_1)/(n-1) = 1.419
+BJsales.lead   ARIMA(0,1,1)  deriva = 0.02348  t = 1.94  AICc con = 49.04  sin = 50.49  (y_n - y_1)/(n-1) = 0.02275
+goog_close     ARIMA(2,1,4)  deriva = 0.3768  t = 1.45  AICc con = 9807.46  sin = 9807.51  (y_n - y_1)/(n-1) = 0.384
+
+===== M10 · ¿queda algo que modelar? caminatas candidatas =====
+goog_close     n=1258 auto=ARIMA(4,1,1) with drift    r1=0.027 fuera=3 de 20 (banda 0.055) LB20 p=0.0001 Shapiro p=2.6e-26 curtosis=9.8
+stock_prices   n= 118 auto=ARIMA(0,1,1) with drift    r1=0.192 fuera=2 de 20 (banda 0.181) LB20 p=0.0900 Shapiro p=0.00045 curtosis=5.7
+tcm1y          n= 558 auto=ARIMA(0,1,5)               r1=0.352 fuera=8 de 20 (banda 0.083) LB20 p=0.0000 Shapiro p=3.1e-23 curtosis=17.5
+
+===== M10 bis · más candidatas a caminata aleatoria =====
+amzn_close  n=1258 nd=1 auto=ARIMA(1,1,4) with drift    r1=-0.029 fuera=6 de 20 LB20 p=0.0000 Shapiro p=9.6e-38 curtosis=16.4
+fb_close    n=1258 nd=1 auto=ARIMA(1,1,1)               r1=-0.020 fuera=1 de 20 LB20 p=0.4080 Shapiro p=2.6e-38 curtosis=73.9
+aapl_close  n=1258 nd=1 auto=ARIMA(2,1,3)               r1=0.033 fuera=3 de 20 LB20 p=0.0056 Shapiro p=5.3e-25 curtosis=8.6
+goog_2018   n= 251 nd=1 auto=ARIMA(0,1,0)               r1=0.011 fuera=1 de 20 LB20 p=0.0382 Shapiro p=7.1e-05 curtosis=4.0
+tcm10y      n= 558 nd=1 auto=ARIMA(0,1,2)               r1=0.329 fuera=7 de 20 LB20 p=0.0000 Shapiro p=2.6e-17 curtosis=9.8
+int_rate    n=  89 nd=1 auto=ARIMA(5,1,0)               r1=0.172 fuera=1 de 20 LB20 p=0.2267 Shapiro p=4.8e-08 curtosis=8.7
+real_wages  n=  89 nd=1 auto=ARIMA(0,1,1) with drift    r1=0.223 fuera=1 de 20 LB20 p=0.8502 Shapiro p=0.68 curtosis=3.2
+
+===== M10 ter · fb_close: el ARIMA(1,1,1) que elige auto.arima, ¿cancela raíces? =====
+      ar1       ma1   raiz_AR   raiz_MA  aicc_111  aicc_010 
+   0.8151   -0.8637    1.2269    1.1578 5780.3719 5785.1398 
+goog_2018: Ljung-Box de las diferencias a 10 y 20, y la barra fuera
+        lb10         lb20 rezago_fuera        valor 
+      0.0424       0.0382       8.0000      -0.1434 
+
+===== Sustituto del E2 (lynx): estacionarias con r1 > 0.5 donde diferenciar BAJA la varianza =====
+nino3.4      n= 598 frec=12 r1=0.900 var d0/d1/d2 = 0.9782/0.186/0.2612 (d1/d0 = 0.190; 2(1-r1) = 0.199) nd kpss/adf/pp = 0/0/0  ARIMA(2,1,1) |raíz MA| = 1.1532
+nino3        n= 598 frec=12 r1=0.881 var d0/d1/d2 = 1.713/0.3964/0.3571 (d1/d0 = 0.231; 2(1-r1) = 0.238) nd kpss/adf/pp = 0/0/0  ARIMA(2,1,1) |raíz MA| = 1.0026
+beaver1_temp n= 114 frec= 1 r1=0.826 var d0/d1/d2 = 0.03741/0.009831/0.02128 (d1/d0 = 0.263; 2(1-r1) = 0.348) nd kpss/adf/pp = 1/0/0  ARIMA(2,1,1) |raíz MA| = 3.2404
+flow_vat     n=1096 frec=365 r1=0.916 var d0/d1/d2 = 32.37/5.388/8.363 (d1/d0 = 0.166; 2(1-r1) = 0.168) nd kpss/adf/pp = 1/0/0  ARIMA(2,1,1) |raíz MA| = 3.1161
+nino3: ¿estacionalidad residual? nsdiffs, ACF en 12 y 24; ¿escalón en beaver1?
+       nsdiffs            r12            r24 activ1_beaver1 
+         1.000          0.406          0.352          6.000 
+nino3 y nino3.4 desestacionalizados restando la media de cada mes (sin pasar por SARIMA):
+nino3    anomalía: r1=0.918 r12=-0.165 var d0/d1/d2 = 0.8572/0.1348/0.2455 nd kpss/adf/pp = 0/0/0 nsdiffs = 0 ARIMA(2,1,1) |raíz MA| = 23.1463
+nino3.4  anomalía: r1=0.926 r12=-0.137 var d0/d1/d2 = 0.7742/0.11/0.2112 nd kpss/adf/pp = 0/0/0 nsdiffs = 0 ARIMA(2,1,1) |raíz MA| = 2.4848
+nino3.4 anomalía: |raíz MA| mínima de cada ARIMA(p,1,q), y auto.arima con d = 1 forzado
+  ARIMA(1,1,1) |raíz MA| = 1.6413  AICc = 373.39
+  ARIMA(1,1,2) |raíz MA| = 2.9400  AICc = 368.29
+  ARIMA(2,1,1) |raíz MA| = 2.4848  AICc = 368.58
+  ARIMA(2,1,2) |raíz MA| = 1.2042  AICc = 367.23
+  ARIMA(3,1,1) |raíz MA| = 2.5904  AICc = 370.60
+  ARIMA(3,1,2) |raíz MA| = 1.1434  AICc = 368.25
+  auto.arima(d = 1): ARIMA(2,1,0) 

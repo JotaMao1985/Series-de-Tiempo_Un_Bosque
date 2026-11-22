@@ -1,0 +1,147 @@
+
+====  M4 · ARIMA(0,1,1)  ====
+theta -0.7329  ee 0.1143  t -6.41  sigma2 20599.87 
+ACF d1 rezago 8: 0.2312  fuera de ±0.197: 1 8 
+ACF d0 dentro de la banda ± 0.196 : 9 10 14 15 16 17 18 19 20  mínimo: 0.0898 
+AR(1) phi=0.5: rho_k = 0.5 0.25 0.125 0.0625 
+
+====  M6 · rejilla 27 modelos  ====
+   d p q    aicc     bic     lb raiz_ar raiz_ma code
+1  0 0 0 1313.16 1318.24 0.0000      NA      NA    0
+2  0 0 1 1295.69 1303.26 0.0001      NA  2.6437    0
+3  0 0 2 1291.90 1301.90 0.0080      NA  2.0505    0
+4  0 1 0 1286.15 1293.72 0.2117  1.9751      NA    0
+5  0 1 1 1282.50 1292.50 0.6954  1.1614  1.9318    0
+6  0 1 2 1283.70 1296.09 0.7003  1.0487  1.2670    0
+7  0 2 0 1284.38 1294.38 0.4731  1.4381      NA    0
+8  0 2 1 1283.18 1295.56 0.7038  1.0356  1.1867    0
+9  0 2 2 1285.14 1299.87 0.6419  1.0332  1.1524    0
+10 1 0 0 1296.74 1299.29 0.0100      NA      NA    0
+11 1 0 1 1269.22 1274.28 0.6737      NA  1.3644    0
+12 1 0 2 1268.21 1275.74 0.7959      NA  1.1784    0
+13 1 1 0 1281.61 1286.67 0.1853  2.5155      NA    0
+14 1 1 1 1267.51 1275.04 0.7997  3.9313  1.1440    0
+15 1 1 2 1269.35 1279.30 0.7556  2.1125  1.1220    0
+16 1 2 0 1277.74 1285.27 0.3898  2.0340      NA    0
+17 1 2 1 1269.32 1279.28 0.7503  2.4035  1.1240    0
+18 1 2 2 1271.54 1283.87 0.6916  2.2407  1.1218    0
+19 2 0 0 1385.61 1388.16 0.0000      NA      NA    0
+20 2 0 1 1291.28 1296.33 0.0069      NA  1.0000    0
+21 2 0 2 1266.00 1273.50 0.6167      NA  1.0000    0
+22 2 1 0 1338.91 1343.96 0.0002  1.6009      NA    0
+23 2 1 1 1276.95 1284.45 0.1505  2.5485  1.0000    0
+24 2 1 2 1264.60 1274.51 0.7560  3.7443  1.0316    0
+25 2 2 0 1315.54 1323.04 0.0210  1.4406      NA    0
+26 2 2 1 1273.55 1283.46 0.3293  2.0616  1.0000    0
+27 2 2 2 1266.30 1278.57 0.7136  2.1488  1.0483    0
+LB(20) rechaza (p<0.05) en 8 modelos:
+   d p q
+1  0 0 0
+2  0 0 1
+3  0 0 2
+10 1 0 0
+19 2 0 0
+20 2 0 1
+22 2 1 0
+25 2 2 0
+d = 0  mejor AICc 1282.5  modelos a < 2 del mejor (sin contar el mejor): 3  LB de esos: 0.6954 0.7003 0.4731 0.7038 
+d = 1  mejor AICc 1267.51  modelos a < 2 del mejor (sin contar el mejor): 4  LB de esos: 0.6737 0.7959 0.7997 0.7556 0.7503 
+d = 2  mejor AICc 1264.6  modelos a < 2 del mejor (sin contar el mejor): 2  LB de esos: 0.6167 0.756 0.7136 
+d=2 con |raiz MA| <= 1.001: 4 
+AICc (0,1,1)-(1,1,1): 1.71  BIC (1,1,1)-(0,1,1): 0.76 
+
+====  M7 · ARIMA(2,1,2) y búsqueda exhaustiva  ====
+    ar1     ar2     ma1     ma2 
+ 0.3514  0.0424 -0.9847  0.0831 
+    ar     ma 
+2.2407 1.1218 
+Arima CSS-ML (2,1,2) raíces: 1.0009 1.0064 
+Arima (2,1,2)+deriva raíces: 1.0009 1.0061 
+                    modelo     aicc   dif
+1             ARIMA(1,1,1) 1267.507 0.000
+2  ARIMA(1,1,1) with drift 1268.063 0.556
+3             ARIMA(0,1,2) 1268.210 0.703
+4  ARIMA(0,1,2) with drift 1268.969 1.462
+5             ARIMA(0,1,1) 1269.216 1.709
+6             ARIMA(2,1,1) 1269.322 1.815
+7             ARIMA(1,1,2) 1269.348 1.841
+8             ARIMA(0,1,3) 1269.633 2.126
+9  ARIMA(2,1,1) with drift 1269.777 2.270
+10 ARIMA(1,1,2) with drift 1269.779 2.272
+modelos con dif < 2 (incluido el primero): 7  total evaluados: 42 
+approximation por defecto con n=100: FALSE 
+
+====  M8 · modelo final, sobrediferenciación, escalón  ====
+       coef     ee
+ar1  0.2544 0.1194
+ma1 -0.8741 0.0605
+sigma2 ML 19769.29  raices 3.9313 1.144 
+LB(20) p 0.7997  Shapiro p 0.7312  sd residuales 139.67 
+d=0 var=28637.95 rho1=0.4984 theta=0.3783 sigma2=23271.76
+d=1 var=28268.34 rho1=-0.4020 theta=-0.7329 sigma2=20599.87
+d=2 var=80055.01 rho1=-0.6264 theta=-1.0000 sigma2=28268.34
+d=3 var=262507.29 rho1=-0.7188 theta=-1.0000 sigma2=80055.05
+medias: 1097.75 849.97  beta -247.78  ee 28.15  t -8.8  AICc 1257.91  LB20 0.8124 
+      naive  arima escalon escalon_ar1  media
+rmse 123.06 125.05  127.99      128.31 133.31
+mae  101.95 106.16  106.99      107.40 108.01
+
+====  M8/ejercicio 2 · log(lynx)  ====
+var d0,d1: 1.653 0.687  reducción % 58.4 
+adf.test p 0.01  kpss.test p 0.1  PP.test p 0.01  pp.test p 0.01 
+Warning messages:
+1: In adf.test(ly) : p-value smaller than printed p-value
+2: In kpss.test(ly) : p-value greater than printed p-value
+ndiffs kpss/adf/pp: 0 0 0 
+ARIMA(2,1,1) raices: 1.1644 1 
+
+====  M5 · deriva y constante  ====
+    ar1     ma1   drift 
+ 0.2707 -0.9054 -2.8827 
+c = delta(1-phi) = -2.102 
+intercept 920.7037  ee 46.67  media muestral 919.35 
+(y_100 - y_1)/99 = -3.838  y1 y100: 1120 740  247.78/99 = 2.503 
+
+====  M9 · formas del pronóstico  ====
+d0   ancho95 h1=561.3 h30=677.3  dif1(h30)=0.254  ultimo=918.99  coefs: ar1 0.8611 ma1 -0.5177 intercept 920.5567
+d1   ancho95 h1=556.8 h30=781.5  dif1(h30)=0.000  ultimo=842.17  coefs: ar1 0.2544 ma1 -0.8741
+d1d  ancho95 h1=554.5 h30=708.2  dif1(h30)=-2.883  ultimo=738.63  coefs: ar1 0.2707 ma1 -0.9054 drift -2.8827
+d2   ancho95 h1=612.8 h30=2771.5  dif1(h30)=-4.049  ultimo=610.05  coefs: ar1 -0.3924 ma1 -1
+2a dif del pronóstico d=2, h=3..8: -6.442 2.528 -0.9918 0.3892 -0.1527 0.05992  cociente sucesivo: -0.3924 -0.3924 -0.3924 -0.3924 -0.3924 
+forma cerrada vs ARMAtoMA, error máx: 5e-16  psi_inf 0.1688  psi1 0.3802  sigma 142.045 
+sigma_2 151.967  sigma_30 199.363  sigma*sqrt(30) 778.02  sigma30/sigma1 1.4035  cociente sigma30/(sigma*sqrt30) 0.2562 
+pronóstico d1: h1 816.18  límite h=30 842.17  h5 842.06 
+semiancho95 h1, h30: 278.4 390.74 
+1/(1-phi_d2) = 0.7182 
+
+====  Ejercicio 3 · BJsales  ====
+psi_inf 2.9883  sigma12/(sigma*sqrt12) 1.9619 
+
+====  M10 · TRM (CSV del repo)  ====
+n 138  sigma2 14756.38  primer residual 2.401  último dato 3497.09 
+asimetría d1 0.761  residuales 0.764  curtosis d1 5.09 
+cobertura 80% a 1 mes: 83.9 %  95%: 95.6 %
+mayores cambios: 2020-03, 2022-07, 2015-08 
+LB sin el primer residual: 20 -> 0.194  12 -> 0.2096  shapiro 7e-04  LB12 cuadrados 0.8395 
+h= 3  razón con solo rho1: 1.117 | con la ACF hasta h-1: 1.088 | empírica (sin centrar) 1.097 | empírica (var) 1.087
+h= 6  razón con solo rho1: 1.146 | con la ACF hasta h-1: 1.100 | empírica (sin centrar) 1.144 | empírica (var) 1.118
+h=12  razón con solo rho1: 1.161 | con la ACF hasta h-1: 1.085 | empírica (sin centrar) 1.069 | empírica (var) 1.018
+cobertura 95% a 12 meses dentro de muestra: 91.3 %
+auto.arima exhaustiva estacional: modelos 192  -> ARIMA(0,1,0) 
+auto.arima exhaustiva no estacional: modelos 42  -> ARIMA(0,1,0) 
+
+====  M10 · puente AirPassengers  ====
+ARIMA(0,1,5)  rho12 0.7245  rho24 0.6727  banda 0.1633  Q24 222.4  p 0 
+airline rho12 -0.0515  LB24 p (fitdf 2) 0.233  nobs 143 131 
+p,q<=8: ARIMA(8,1,3) with drift  rho12 0.437 
+
+====  Quiz y simulacro  ====
+Q2 sigma_2 = 151.965 
+S1 rho2 = 0.3963  ( 0.3963 )
+S2 c = 9.6257  raíces correctas: 1.441 1.8816 
+S4 YW: 1.1309 -0.5301 
+    MA2     MA1  ARMA11     AR1 
+114.785 115.587 115.999 125.047 
+S6 límite superior y = 107.18 
+S7 Holt: alpha = 0.55  beta = 0.3636  raiz MA fila 2 = 1.0417 
+S8 chi2 0.95 gl 13 = 22.36  p con gl 13 = 0.0379  p gl16 = 0.1052 

@@ -1,0 +1,82 @@
+== forecast::ndiffs: prueba por defecto, ADF vía urca, tope de d
+ndiffs: primer valor de test = kpss  · max.d = 2  · alpha = 0.05 
+ndiffs usa urca::ur.df con type='drift' (ADF solo con constante): TRUE 
+ndiffs llama ur.df(x, type = 'drift') sin fijar lags; el valor por defecto de urca::ur.df(lags) es 1  · ndiffs usa kpss_wrap/ur.kpss: TRUE  · PP vía ur.pp(type = 'Z-tau'): TRUE 
+ndiffs(Nile) por prueba: 1 0 0 
+?ndiffs dice que la prueba por defecto es KPSS: TRUE 
+
+== forecast::auto.arima: approximation por defecto, tope de órdenes, deriva, umbral de raíces
+approximation por defecto: (length(x) > 150 || frequency(x) > 12) 
+max.order = 5  · max.p = 5  · max.q = 5  · stepwise = TRUE  · allowdrift = TRUE  · allowmean = TRUE  · ic = aicc  · test = kpss 
+myarima: descarta el modelo si minroot < 1 + 0.01 (umbral 1.01): TRUE 
+myarima: aparece un umbral 1.001 o 1 + 0.001: FALSE 
+myarima: el modelo descartado recibe ic = Inf: TRUE 
+?auto.arima: approximation 'CSS', 'ML final' y 'long time series': TRUE 
+?auto.arima: max.order 'p+q+P+Q if model selection is not stepwise': TRUE 
+?auto.arima: la deriva se prueba 'allowdrift' (d = 1): TRUE 
+?auto.arima: cita a Hyndman y Khandakar (2008): TRUE 
+?auto.arima: describe cuatro modelos iniciales: FALSE 
+
+== forecast::Arima: include.drift por defecto, aviso con d >= 2, forma de la deriva
+Arima include.drift por defecto = FALSE 
+Arima contiene el aviso 'No drift term fitted': TRUE 
+Arima(Nile,(1,2,1), drift) ajusta 'drift': FALSE 
+nombres de coef con deriva y d = 1: ar1 ma1 drift 
+?Arima: include.drift 'Should the ARIMA model include a linear drift term': TRUE 
+
+== stats::arima: include.mean con d >= 1
+arima(Nile,(1,1,1), include.mean=TRUE) coef: ar1 ma1 
+d = 0, coef: ar1 ma1 intercept  intercept = 920.7037  media muestral = 919.35 
+?arima: include.mean 'only used for d = 0' (en la ayuda): TRUE 
+?arima: el término 'intercept' es la media de X (la fórmula se aplica a X - m): TRUE 
+?arima: aviso de que los MA difieren de S-PLUS: TRUE 
+?arima: nombra a Brockwell y Davis: TRUE 
+?arima: ecuación 'X[t] = a[1]X[t-1] + ... + e[t] + b[1]e[t-1]': TRUE 
+
+== stats::diff y arima.sim
+diff(Nile, differences = 0) lanza error: TRUE 
+?diff exige differences >= 1 (el 0 no está permitido): TRUE 
+arima.sim con order=c(1,1,1) y n = 200 devuelve 201 valores
+?arima.sim: admite order = c(p,d,q): TRUE 
+?arima.sim: 'n' es la longitud de la serie de salida (más d si hay integración): TRUE 
+
+== tseries: adf.test, kpss.test, pp.test
+adf.test: k por defecto = trunc((length(x) - 1)^(1/3)) (= trunc((n-1)^(1/3)): TRUE ) · k para n=100: 4 · k para n=138: 5 
+adf.test: la regresión lleva constante y tendencia (la ayuda lo dice): TRUE 
+kpss.test: truncamiento 'short' = trunc(4*(n/100)^0.25): TRUE · para n=100: 4 · n=138: 4 
+kpss.test: 'long' = trunc(12*(n/100)^0.25): TRUE 
+?kpss.test: cita a Kwiatkowski et al.: TRUE  · p-valor interpolado de la tabla 1: TRUE  · avisa de p-valor fuera de tabla: FALSE 
+?kpss.test: valores críticos 0.463 (nivel, 5 %) en el código: TRUE 
+?adf.test: cita a Banerjee et al. / Dickey y Fuller: TRUE TRUE  · p-valor interpolado de tabla: TRUE 
+pp.test existe: TRUE  · p-valor interpolado: TRUE 
+KPSS(Nile) con 4 rezagos (short): 0.9654  · con 12 (long): 0.5497 
+Warning message:
+In kpss.test(Nile, null = "Level", lshort = TRUE) :
+  p-value smaller than printed p-value
+
+== Valor crítico del ADF con constante (tau_mu), n = 100
+urca: valor crítico tau2 al 5 % (n=100) vía ur.df: -2.89 
+ur.df(Nile, drift, lags=1): estadístico tau2 = -4.05 
+
+== forecast: sigma2 de Arima y de arima; residuals(arima)
+sigma2 Arima (CSS-ML) = 20176.91 · arima ML = 19769.29 · razon = 1.02062 · 99/97 = 1.02062
+sigma2 Arima(method='ML') = 20176.92 · arima ML = 19769.29
+
+== Ayuda de R: Box.test, shapiro.test, polyroot, datasets
+?Box.test: fitdf 'number of degrees of freedom to be subtracted if x is a series of residuals': TRUE 
+?Box.test: cita a Box y Pierce y a Ljung y Box: TRUE TRUE 
+?shapiro.test: cita a Royston: TRUE 
+?Nile: 'Aswan': TRUE · 1871-1970: TRUE · cita a Cobb: TRUE · Durbin y Koopman: TRUE · menciona 'dam' (presa): FALSE · menciona 1898: TRUE · 'change' o 'changepoint': TRUE · 10^8 m^3: TRUE 
+?lynx: 1821-1934: TRUE · 'trappings': TRUE · dice 'cycle' o 'period' (ciclo de unos 10 años): FALSE · cita a Campbell y Walker: TRUE · Tong: FALSE · Brockwell: TRUE 
+?BJsales: 150 observaciones: TRUE · cita a Box y Jenkins: TRUE · 'Series M': FALSE · 'Series': TRUE · año 1970: FALSE · año 1976: TRUE 
+?AirPassengers: 1949-1960: TRUE · 'Box & Jenkins': TRUE · 'Reinsel': TRUE · 'Series G': FALSE · 'airline': TRUE · 1976: FALSE 
+
+== BJsales: n, e IMA(1,1) como «modelo de libro» (cálculo propio, no cita)
+length(BJsales) = 150 · length(lynx) = 114  · inicio de lynx: 1821  fin: 1934 
+Nile: inicio 1871 fin 1970 n 100  · media antes de 1899: 1097.75  desde 1899: 849.97 
+
+== forecast: la deriva entra como regresor xreg = seq_along(x); auto.arima solo la prueba con d + D = 1 (c4-m5)
+Arima construye xreg con una columna 'drift' = seq_along(x): TRUE 
+Arima avisa y desactiva la deriva si d + D > 1: TRUE 
+auto.arima: allowdrift <- allowdrift && (d + D) == 1: TRUE 
+auto.arima: allowmean <- allowmean && (d + D) == 0: TRUE 

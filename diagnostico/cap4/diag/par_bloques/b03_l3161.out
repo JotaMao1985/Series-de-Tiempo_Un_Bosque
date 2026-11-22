@@ -1,0 +1,20 @@
+> library(forecast)
+> library(tseries)
+Registered S3 method overwritten by 'quantmod':
+  method            from
+  as.zoo.data.frame zoo 
+> plot(Nile)
+> d <- ndiffs(Nile)
+> w <- if (d == 0) Nile else diff(Nile, differences = d)
+> par(mfrow = c(1, 2))
+> acf(w)
+> pacf(w)
+> par(mfrow = c(1, 1))
+> ajuste <- arima(Nile, order = c(1, d, 1), method = "ML")
+> res <- residuals(ajuste)
+> Box.test(res, lag = 20, type = "Ljung-Box", fitdf = 2)$p.value
+[1] 0.7997371
+> pron <- forecast(ajuste, h = 10)
+> round(as.numeric(pron$mean[1:3]), 2)
+[1] 816.18 835.56 840.49
+> 

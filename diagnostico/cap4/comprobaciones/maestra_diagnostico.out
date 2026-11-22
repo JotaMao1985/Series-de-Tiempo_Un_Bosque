@@ -1,0 +1,28 @@
+R 4 6.0 · forecast 9.0.2 
+
+== [G-M9] ARIMA(1,1,1) sin constante: ¿el pronóstico queda en el último nivel?
+    ar1     ma1 
+ 0.2544 -0.8741 
+ultimo observado: 740 
+h=1, 2, 30: 816.18 835.56 842.17 
+limite analitico y_T + (phi*dy_T + theta*e_T)/(1-phi): 842.17 
+
+== [P-quiz4] ARIMA(1,1,1) con deriva: deriva frente a c = mu_w*phi(1)
+    ar1     ma1   drift 
+ 0.2707 -0.9054 -2.8827 
+c = drift*(1-phi): -2.1 · media muestral de las diferencias: -3.84 
+
+== [P-M2] Ljung-Box del ARIMA(0,1,1) con y sin el primer residual
+primer residual: 1.12 
+lag 10 con r1: p = 0.1458 · sin r1: p = 0.154 
+lag 20 con r1: p = 0.6737 · sin r1: p = 0.6883 
+
+== [F-M7] Umbral de las raíces en forecast (código de la versión instalada)
+        minroot <- 2
+                  minroot <- min(minroot, abs(proots))
+                  minroot <- min(minroot, abs(proots))
+        if (minroot < 1 + 0.01 || checkarima(fit)) {
+
+== [F-M7] ARIMA(2,1,2) del Nilo: menor módulo de raíz AR según el método
+CSS-ML : AR 1.0009 · MA 1.0064 
+ML : AR 2.2407 · MA 1.1218 

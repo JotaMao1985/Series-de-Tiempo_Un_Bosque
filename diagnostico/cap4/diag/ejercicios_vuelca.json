@@ -1,0 +1,1907 @@
+{
+ "cap4": [
+  {
+   "instrumento": "cap4",
+   "n": 1,
+   "linea_bloque": 8887,
+   "tipo": "opcion",
+   "modulo": 6,
+   "objetivo": null,
+   "pregunta": "Sobre la misma serie de n = 100 obtienes AICc = 1267.51 para un ARIMA(1,1,1) y AICc = 1264.60 para un ARIMA(1,2,2). ¿Cuál eliges?",
+   "pista": "Antes de comparar dos números, pregúntate si están calculados sobre los mismos datos. ¿Cuántas observaciones entran en la verosimilitud de cada uno?",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "El ARIMA(1,2,2), porque 1264.60 < 1267.51.",
+     "largo": 42,
+     "correcta": false,
+     "retro": "Es la trampa central del capítulo. Un AICc menor con más diferencias no significa un modelo mejor: es la verosimilitud de otros datos, con una observación menos. Y en el Nilo ese modelo concreto tiene además una raíz MA en 1.03, casi sobre el círculo unitario."
+    },
+    {
+     "texto": "Ninguno de los dos por esta comparación: no son comparables, porque tienen distinto d.",
+     "largo": 86,
+     "correcta": true,
+     "retro": "El primero se calcula sobre n* = 99 diferencias y el segundo sobre 98 segundas diferencias: datos distintos. La comparación por AICc solo vale dentro de un mismo d. Para decidir entre distintos d hay que usar las pruebas de raíz unitaria, el gráfico, o una evaluación fuera de muestra."
+    },
+    {
+     "texto": "El ARIMA(1,1,1), porque menos diferencias es siempre mejor por parsimonia.",
+     "largo": 74,
+     "correcta": false,
+     "retro": "La conclusión acierta por casualidad pero el razonamiento no sirve. La parsimonia es un criterio para p y q una vez fijado d; el orden de diferenciación no se elige por parsimonia sino por si la serie tiene o no raíz unitaria."
+    },
+    {
+     "texto": "El que tenga mejor BIC, que sí es comparable entre distintos d.",
+     "largo": 63,
+     "correcta": false,
+     "retro": "El BIC tiene exactamente el mismo problema: también parte de -2 L, y esa verosimilitud está calculada sobre n* = n - d observaciones. Cambiar de criterio no arregla el que los datos sean distintos."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "cap4",
+   "n": 2,
+   "linea_bloque": 8887,
+   "tipo": "numerica",
+   "modulo": 9,
+   "objetivo": null,
+   "pregunta": "Para el ARIMA(1,1,1) del Nilo, = 142.045 y el primer peso es x1 = 0.3802 (con x0 = 1). ¿Cuánto vale x2, la desviación del error de pronóstico a dos pasos? Da dos decimales.",
+   "pista": "La fórmula es xh = xj=0h-1xj2. Con h = 2 entran solo dos términos: x0 = 1 y x1.",
+   "respuesta": 151.97,
+   "tolerancia": 0.4,
+   "retroAcierto": "142.045 1 + 0.38022 = 142.045 1.0699 = 151.97. Fíjate en que crece poco: el intervalo a dos pasos es apenas un 7,% más ancho que a uno.",
+   "retroFallo": "Es x2 = xx02 + x12 = 142.0451 + 0.1445 = 151.97. Los dos errores frecuentes: olvidar el término x0 = 1 (daría 54.0), o sumar los x sin elevarlos al cuadrado. El x0 está siempre, y por eso x1 = x exactamente.",
+   "opciones": [],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "cap4",
+   "n": 3,
+   "linea_bloque": 8887,
+   "tipo": "grafico",
+   "modulo": 10,
+   "objetivo": null,
+   "pregunta": "Esta es la ACF de los residuales de un ARIMA ajustado a una serie mensual. ¿Qué hay que hacer?",
+   "pista": "No mires solo si hay barras fuera de la banda: mira en qué rezagos están. ¿Tienen algo en común los números 12 y 24 en una serie mensual?",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "Aumentar q hasta que las barras entren en la banda.",
+     "largo": 51,
+     "correcta": false,
+     "retro": "Funcionaría en el sentido técnico, pero necesitarías q = 24 para alcanzar el rezago 24, es decir veinticuatro parámetros para describir un patrón que se repite cada doce meses. Un modelo estacional captura lo mismo con dos."
+    },
+    {
+     "texto": "Diferenciar una vez más: la autocorrelación alta indica no estacionariedad.",
+     "largo": 75,
+     "correcta": false,
+     "retro": "Diferenciar de nuevo en el rezago 1 no toca el patrón de los rezagos 12 y 24, y además introduciría la raíz unitaria en el MA que estudió el Módulo 8. Lo que hace falta aquí es una diferencia estacional x12, que es otra cosa."
+    },
+    {
+     "texto": "Pasar a un modelo estacional: el patrón está en los múltiplos del período m = 12.",
+     "largo": 81,
+     "correcta": true,
+     "retro": "12 = 0.72 y 24 = 0.67 frente a una banda de 0.163: la estructura sobrante es exactamente estacional. Subir q hasta 24 lo cubriría con dos docenas de parámetros; un SARIMA lo hace con dos. Es el Capítulo 5."
+    },
+    {
+     "texto": "Nada: la mayoría de las barras están dentro de la banda, así que el modelo es adecuado.",
+     "largo": 87,
+     "correcta": false,
+     "retro": "Contar cuántas barras se salen no basta, y aquí las que se salen lo hacen por un factor de cuatro. Ljung–Box(24) da Q = 222.4 con p < 10-6: el rechazo es rotundo. Un patrón sistemático en pocos rezagos es peor señal que ruido repartido en muchos."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "cap4",
+   "n": 4,
+   "linea_bloque": 8887,
+   "tipo": "multiple",
+   "modulo": 5,
+   "objetivo": null,
+   "pregunta": "Marca todas las afirmaciones correctas sobre la constante en un modelo ARIMA.",
+   "pista": "Son tres. Piensa en: qué significa la constante cuando d = 1, qué hace stats::arima con include.mean si d x 1, y qué grado de tendencia genera cada d.",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": "Las tres. Y las dos falsas son justo las que el capítulo desmiente midiendo: con d = 2 y sin constante la segunda diferencia del pronóstico tiende a cero (x2 y 0), es decir a largo plazo sale una recta; y el intercept que devuelve R para un ARIMA(p,0,q) es la media del proceso, 920.70 en el Nilo, pese al nombre.",
+   "retroFallo": "Las tres correctas son las que hablan de la constante con d = 1, de include.mean con d x 1 y de la deriva con d x 2. Sobre las falsas: la parábola necesitaría constante con d = 2, y forecast se niega precisamente a eso; sin constante, el pronóstico con d = 2 es una recta (lo verifica el Módulo 9 midiendo x2 y). Y el intercept de R en un modelo con d = 0 es la media, no una ordenada al origen: el nombre despista.",
+   "opciones": [
+    {
+     "texto": "Con d = 1 la constante es la media de las diferencias, es decir una tendencia lineal en la serie original.",
+     "largo": 106,
+     "correcta": true,
+     "retro": null
+    },
+    {
+     "texto": "Con d x 1, stats::arima ignora include.mean sin avisar.",
+     "largo": 55,
+     "correcta": true,
+     "retro": null
+    },
+    {
+     "texto": "Sin constante, un modelo con d = 2 pronostica una parábola.",
+     "largo": 59,
+     "correcta": false,
+     "retro": null
+    },
+    {
+     "texto": "Con d x 2, forecast::Arima avisa y no ajusta la deriva.",
+     "largo": 55,
+     "correcta": true,
+     "retro": null
+    },
+    {
+     "texto": "La constante de un ARIMA(p,0,q) es la ordenada al origen de una regresión, no la media del proceso.",
+     "largo": 99,
+     "correcta": false,
+     "retro": null
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "cap4",
+   "n": 5,
+   "linea_bloque": 8887,
+   "tipo": "opcion",
+   "modulo": 3,
+   "objetivo": null,
+   "pregunta": "Simulas 1000 series de ruido blanco puro de longitud 100 y les añades a todas un escalón en la posición 29 (la de 1899 en el Nilo). ¿Con qué frecuencia rechaza KPSS la hipótesis de estacionariedad?",
+   "pista": "Recuerda cómo se construye el estadístico: sobre las sumas parciales de los residuales respecto de la media global. ¿Qué le pasa a esas sumas cuando todos los residuales de un tramo tienen el mismo signo?",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "Prácticamente siempre, si el escalón es apreciable: con el del Nilo, el 100,% de las veces.",
+     "largo": 91,
+     "correcta": true,
+     "retro": "Es el experimento del Módulo 3. Sin escalón rechaza el 4.8,% —su tamaño nominal—, y con el escalón real del Nilo (1.95 desviaciones típicas) el 100,%. Basta un escalón de 0.79 desviaciones para llegar al 70.8,%. KPSS no distingue una raíz unitaria de un cambio de nivel."
+    },
+    {
+     "texto": "Alrededor del 5,%, porque las series son estacionarias por construcción.",
+     "largo": 72,
+     "correcta": false,
+     "retro": "Eso es lo que ocurre sin el escalón, y confirma que la prueba está bien calibrada: 4.8,% frente al 5,% nominal. Con el escalón la cosa cambia por completo, porque las sumas parciales dejan de compensarse y el estadístico se dispara."
+    },
+    {
+     "texto": "Nunca, porque KPSS solo detecta raíces unitarias y aquí no hay ninguna.",
+     "largo": 71,
+     "correcta": false,
+     "retro": "KPSS no prueba \"hay raíz unitaria\": su hipótesis nula es la serie es estacionaria alrededor de una media constante. Una serie con un escalón no lo es, así que la prueba rechaza con toda la razón. El error está en traducir su rechazo por \"hay que diferenciar\"."
+    },
+    {
+     "texto": "Depende del tamaño de la muestra, pero no del tamaño del escalón.",
+     "largo": 65,
+     "correcta": false,
+     "retro": "Depende de los dos, y la simulación lo muestra: con n fijo en 100, la tasa de rechazo pasa de alrededor del 5,% al 100,% solo moviendo el tamaño del escalón x. Mientras el escalón es pequeño, el estadístico crece aproximadamente como nx2/2LP."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "cap4",
+   "n": 6,
+   "linea_bloque": 8887,
+   "tipo": "grafico",
+   "modulo": 4,
+   "objetivo": null,
+   "pregunta": "Esta es la ACF de una serie sin diferenciar. ¿Qué se puede concluir sobre p y q?",
+   "pista": "Antes de leer p y q en un correlograma hay que estar seguro de una cosa. ¿Qué condición exige la tabla de identificación del Capítulo 3?",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "Es un AR de orden alto, porque hay muchas barras fuera de la banda.",
+     "largo": 67,
+     "correcta": false,
+     "retro": "Es el error de principiante más caro del capítulo. Un AR estacionario tiene una ACF que decae geométricamente y acaba entrando en la banda; esta lleva veinte rezagos sin acercarse a cero. Lo que ves no es memoria larga del proceso: es que el nivel de la serie está vagando."
+    },
+    {
+     "texto": "Es un MA(q) con q igual al número de barras significativas.",
+     "largo": 59,
+     "correcta": false,
+     "retro": "Un MA(q) tiene la ACF exactamente cero a partir del rezago q — un corte limpio, no un descenso gradual. Aquí no hay corte por ninguna parte."
+    },
+    {
+     "texto": "Que d = 1, porque el primer valor es 0.498, cercano a 0.5.",
+     "largo": 58,
+     "correcta": false,
+     "retro": "La conclusión sobre d es correcta pero el argumento no: el valor de 1 no determina d. Lo que indica no estacionariedad es la forma del decaimiento —lento y sin cortar—, no la altura de la primera barra. Un AR(1) con x = 0.5 tendría también x1 = 0.5 y sería perfectamente estacionario."
+    },
+    {
+     "texto": "Nada todavía: esa forma indica no estacionariedad, y hay que diferenciar antes de leer p y q.",
+     "largo": 93,
+     "correcta": true,
+     "retro": "Una ACF que decae despacio y no corta —aquí 0.498, 0.385, 0.328, 0.239,— es el retrato de una serie no estacionaria. La tabla de identificación presupone estacionariedad; aplicarla aquí no informa de nada. Tras diferenciar, la ACF corta: solo destacan el rezago 1 (-0.402) y, aislado, el 8 (0.231)."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "cap4",
+   "n": 7,
+   "linea_bloque": 8887,
+   "tipo": "opcion",
+   "modulo": 7,
+   "objetivo": null,
+   "pregunta": "auto.arima devuelve un ARIMA(1,1,1) con AICc 1267.507. La búsqueda exhaustiva confirma que es el mínimo, y el séptimo clasificado tiene 1269.348. ¿Qué se concluye?",
+   "pista": "¿Cuánta diferencia de AICc hace falta para distinguir dos modelos? Compara ese umbral con la distancia entre el primero y el séptimo.",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "Que el ARIMA(1,1,1) es el modelo verdadero, ya que lo confirman las dos búsquedas.",
+     "largo": 82,
+     "correcta": false,
+     "retro": "Que dos búsquedas coincidan dice que el algoritmo es consistente, no que el modelo sea verdadero. Ambas optimizan el mismo criterio sobre los mismos datos, así que coincidir es lo esperable. Y con siete candidatos a menos de 2 puntos, el criterio apenas los separa."
+    },
+    {
+     "texto": "Que la búsqueda escalonada es innecesaria, porque la exhaustiva llega al mismo sitio.",
+     "largo": 85,
+     "correcta": false,
+     "retro": "Aquí llegaron al mismo sitio, pero eso no está garantizado: la escalonada explora un vecindario y puede quedarse en un óptimo local. Es la escalonada la que existe por eficiencia (18 modelos frente a 42); precisamente por eso conviene contrastar con la completa en casos difíciles."
+    },
+    {
+     "texto": "Que hay siete modelos prácticamente indistinguibles, y conviene decirlo en vez de presentar un único ganador.",
+     "largo": 109,
+     "correcta": true,
+     "retro": "La diferencia entre el primero y el séptimo es de 1.84 puntos, por debajo del umbral habitual de 2. Entre esos siete está el ARIMA(0,1,1) que proponía el correlograma. auto.arima no miente, pero su salida de una línea no comunica esa incertidumbre; trace = TRUE sí."
+    },
+    {
+     "texto": "Que como la diferencia es menor que 2, hay que elegir el modelo con menos parámetros de los siete.",
+     "largo": 98,
+     "correcta": false,
+     "retro": "La parsimonia es un criterio razonable para desempatar y llevaría al ARIMA(0,1,1), que es defendible. Pero la conclusión que pide la pregunta es previa: lo primero es reconocer que hay un empate. Elegir por parsimonia sin decir que había siete candidatos oculta la misma incertidumbre."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "cap4",
+   "n": 8,
+   "linea_bloque": 8887,
+   "tipo": "numerica",
+   "modulo": 8,
+   "objetivo": null,
+   "pregunta": "Ajustas un MA(1) a x2Nilo y obtienes = -1.0000. ¿Cuál es el módulo de la raíz del polinomio x(B) = 1 + B? Da cuatro decimales.",
+   "pista": "La raíz de 1 + x B = 0 es B = -1/x. Sustituye x = -1 y toma el valor absoluto.",
+   "respuesta": 1,
+   "tolerancia": 0.002,
+   "retroAcierto": "La raíz es B = -1/(-1) = 1, de módulo 1.0000: cae exactamente sobre el círculo unitario. Eso significa que x(B) = 1 - B, el mismo operador de diferencia, así que el término MA está deshaciendo la segunda diferencia. Es la firma algebraica de la sobrediferenciación.",
+   "retroFallo": "La raíz de 1 + x B es B = -1/x, y con x = -1 da B = 1, módulo 1.0000. Si respondiste -1, te faltó el módulo; si respondiste 0, quizá resolviste x B = 0. Lo importante es la lectura: módulo exactamente 1 significa no invertible, y aquí es porque (1+x B) = (1-B) cancela la diferencia que acabas de imponer.",
+   "opciones": [],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  }
+ ],
+ "simulacro": [
+  {
+   "instrumento": "simulacro",
+   "n": 1,
+   "linea_bloque": 9403,
+   "tipo": "numero",
+   "modulo": null,
+   "objetivo": null,
+   "pregunta": "Un proceso ARMA(1,1) estacionario e invertible sigue yₜ = 0.57 yₜ₋₁ + εₜ + 0.25 εₜ₋₁, con εₜ ruido blanco de varianza σ² (convenio de R: el θ suma). ¿Cuánto vale su autocorrelación en el rezago 2, ρ₂? Responde con cuatro decimales, escritos con punto decimal (no con coma).",
+   "pista": null,
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "simulacro",
+   "n": 2,
+   "linea_bloque": 9403,
+   "tipo": "multiple",
+   "modulo": null,
+   "objetivo": null,
+   "pregunta": "Un asistente de IA recibió una serie de n = 120 observaciones y entregó el informe de abajo. Revísalo paso por paso.Identificación. «La ACF se corta después del rezago 2 y la PACF decae: propongo un AR(2).»Ajuste.> fit <- arima(y, order = c(2, 0, 0)) > fit Coefficients: ar1 ar2 intercept 1.2254 -0.3688 67.1246 s.e. 0.0853 0.0902 0.9829Constante. «La media del proceso es el intercept que imprime arima(), = 67.1246, y la constante es c = (1 - 1 - 2) = 9.63.»Comparación. «Comparé con arima(y, order = c(1, 1, 1)): su AICc es 461.51, frente a 459.67 del AR(2). Me quedo con el AR(2).»Diagnóstico.> Box.test(residuals(fit), lag = 10, type = \"Ljung-Box\", fitdf = 2)p.value [1] 0.8784271«p > 0.05: no hay evidencia de estructura sobrante en los residuales.»Estacionariedad.> round(Mod(polyroot(c(67.1246, -1.2254, 0.3688))), 4) [1] 13.4910 13.4910«Las dos raíces quedan fuera del círculo unitario: el AR(2) estimado es estacionario.»¿Cuáles de estas afirmaciones son correctas?Marca todas las que correspondan. Cada casilla bien resuelta suma y cada una mal resuelta resta, con piso en cero.",
+   "pista": null,
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "Error en el paso 1: si la ACF se corta en 2 y la PACF decae, lo que se sugiere es un MA(2), no un AR(2).",
+     "largo": 104,
+     "correcta": null,
+     "retro": null
+    },
+    {
+     "texto": "Error en el paso 3: la media no es el intercept; faltó dividirlo por (1 − φ̂₁ − φ̂₂), porque arima() llama intercept a la constante.",
+     "largo": 132,
+     "correcta": null,
+     "retro": null
+    },
+    {
+     "texto": "Error en el paso 4: el AICc de un ARIMA(1,1,1) no se compara con el de un AR(2), porque uno se ajusta a ∇y y el otro a y.",
+     "largo": 121,
+     "correcta": null,
+     "retro": null
+    },
+    {
+     "texto": "Error en el paso 5: sobró fitdf = 2; en un AR puro no se descuenta nada de los grados de libertad.",
+     "largo": 98,
+     "correcta": null,
+     "retro": null
+    },
+    {
+     "texto": "Error en el paso 6: sobró la media; el polinomio AR que recibe polyroot() empieza en 1, no en μ̂.",
+     "largo": 97,
+     "correcta": null,
+     "retro": null
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "simulacro",
+   "n": 3,
+   "linea_bloque": 9403,
+   "tipo": "coincidencia",
+   "modulo": null,
+   "objetivo": null,
+   "pregunta": "Cuatro series estacionarias de n = 300 observaciones. La tabla da sus autocorrelaciones muestrales simples (ACF) y parciales (PACF) en los rezagos 1 a 6; la banda al 95 % es ±0.113.SerieFunciónk = 1k = 2k = 3k = 4k = 5k = 6AACF (rk)0.2860.4120.1840.2070.0690.097PACF (φ̂kk)0.2860.3600.0080.029−0.0530.009BACF (rk)0.8190.5510.3840.2760.2030.169PACF (φ̂kk)0.819−0.3630.234−0.1230.0890.015CACF (rk)−0.6050.246−0.0110.022−0.024−0.017PACF (φ̂kk)−0.605−0.1900.0840.1600.066−0.070DACF (rk)0.6530.4680.3550.2300.1590.134PACF (φ̂kk)0.6530.0730.041−0.0580.0070.041Asocia cada serie con el modelo que sugiere su correlograma (módulos 3.5 y 3.6). Sobran dos modelos.",
+   "pista": null,
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [],
+   "filas": [
+    "Serie A",
+    "Serie B",
+    "Serie C",
+    "Serie D"
+   ],
+   "respuestas": [
+    "AR(1)",
+    "AR(2)",
+    "ARMA(1,1)",
+    "MA(1)",
+    "MA(2)",
+    "Ruido blanco"
+   ],
+   "elementos": null
+  },
+  {
+   "instrumento": "simulacro",
+   "n": 4,
+   "linea_bloque": 9403,
+   "tipo": "opcion",
+   "modulo": null,
+   "objetivo": null,
+   "pregunta": "De una serie de n = 90 observaciones se obtuvieron las autocovarianzas muestrales (con divisor n, como las calcula acf() de R) 0 = 16.0539, 1 = 11.8658 y 2 = 4.9091. Se quiere un AR(2).¿Qué estimaciones da el método de Yule–Walker?",
+   "pista": null,
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "1 = 1.2692, 2 = −0.5301",
+     "largo": 23,
+     "correcta": null,
+     "retro": null
+    },
+    {
+     "texto": "1 = 0.9169, 2 = −0.2405",
+     "largo": 23,
+     "correcta": null,
+     "retro": null
+    },
+    {
+     "texto": "1 = 1.1309, 2 = −0.5301",
+     "largo": 23,
+     "correcta": null,
+     "retro": null
+    },
+    {
+     "texto": "1 = 0.9796, 2 = −0.2405",
+     "largo": 23,
+     "correcta": null,
+     "retro": null
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "simulacro",
+   "n": 5,
+   "linea_bloque": 9403,
+   "tipo": "orden",
+   "modulo": null,
+   "objetivo": null,
+   "pregunta": "Se ajustaron por máxima verosimilitud, todos con media, cuatro modelos a la misma serie de n = 40 observaciones. Sus log-verosimilitudes:Modelolog LMA(1)−54.460AR(1)−59.190MA(2)−52.821ARMA(1,1)−53.428Ordénalos por el AICc, del mejor (arriba) al peor (módulo 3.8). Solo puntúa el orden completo.",
+   "pista": null,
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [],
+   "filas": null,
+   "respuestas": null,
+   "elementos": [
+    "MA(1)",
+    "AR(1)",
+    "MA(2)",
+    "ARMA(1,1)"
+   ]
+  },
+  {
+   "instrumento": "simulacro",
+   "n": 6,
+   "linea_bloque": 9403,
+   "tipo": "numero",
+   "modulo": null,
+   "objetivo": null,
+   "pregunta": "Una serie anual de conteos tiene una amplitud que crece con su nivel. Como en el caso de las manchas solares (módulo 3.9), se ajustó un AR(2) a xₜ = √yₜ y se obtuvo φ̂₁ = 1.22, φ̂₂ = −0.58 y σ̂² = 2.14 (la varianza de las innovaciones, en la escala de la raíz). El pronóstico puntual a dos pasos en esa escala es x̂ = 5.83. ¿Cuál es el límite superior del intervalo de predicción al 95 % para y a dos pasos, en la escala original de la serie? Usa 1.96. Responde con dos decimales, escritos con punto decimal (no con coma).",
+   "pista": null,
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "simulacro",
+   "n": 7,
+   "linea_bloque": 9403,
+   "tipo": "coincidencia",
+   "modulo": null,
+   "objetivo": null,
+   "pregunta": "Cada fila es un modelo escrito con el operador de rezago B, con el convenio de R (los θ suman: (1 + θB)εₜ). φ₁* y φ₂* son los coeficientes del modelo escrito en niveles, yₜ = φ₁* yₜ₋₁ + φ₂* yₜ₋₂ + εₜ. Asocia cada modelo con lo que es (módulo 4.1). Sobran cinco respuestas.",
+   "pista": null,
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [],
+   "filas": [
+    "(1 − B) yₜ = (1 − 0.32B) εₜ",
+    "(1 + 0.25B)(1 − B) yₜ = (1 − 0.96B) εₜ",
+    "(1 − 0.65B)(1 − B) yₜ = εₜ",
+    "(1 − B) yₜ = 1.4 + εₜ",
+    "(1 − B)² yₜ = (1 − 1.25B + 0.45B²) εₜ"
+   ],
+   "respuestas": [
+    "Un MA con raíz en B = 1.042, fuera del círculo unitario: no sobra nada",
+    "Un ruido blanco con media fija de 1.4",
+    "Un AR(2) en niveles con φ₁* = 1.65 y φ₂* = −0.65",
+    "Equivale al método de Holt con tendencia",
+    "Una caminata aleatoria con deriva 1.4",
+    "Equivale al suavizamiento exponencial simple",
+    "Equivale a una caminata aleatoria sin deriva",
+    "Un MA con raíz en B = 1.042, casi igual a (1 − B): sobra la diferencia",
+    "Un AR(2) en niveles con φ₁* = 0.35 y φ₂* = −0.65",
+    "Equivale a una recta más un ruido blanco"
+   ],
+   "elementos": null
+  },
+  {
+   "instrumento": "simulacro",
+   "n": 8,
+   "linea_bloque": 9403,
+   "tipo": "opcion",
+   "modulo": null,
+   "objetivo": null,
+   "pregunta": "Se ajustó un ARIMA(2,1,1) por máxima verosimilitud a una serie de n = 150 observaciones y se corrió Ljung–Box sobre sus residuales, sin más argumentos (R llama X-squared al estadístico Q):> fit <- arima(y, order = c(2, 1, 1), method = \"ML\") > Box.test(residuals(fit), lag = 16, type = \"Ljung-Box\") Box-Ljung test data: residuals(fit) X-squared = 23.329, df = 16, p-value = 0.1052Algunos cuantiles 0.95 de la distribución χ²:gl678910111213χ²0.9512.5914.0715.5116.9218.3119.6821.0322.36gl1415161718192021χ²0.9523.6825.0026.3027.5928.8730.1431.4132.67¿Qué afirmación es correcta, al 5 %?",
+   "pista": null,
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "Con 13 grados de libertad, Q = 23.329 supera el valor crítico: se rechaza que los residuales sean ruido blanco.",
+     "largo": 111,
+     "correcta": null,
+     "retro": null
+    },
+    {
+     "texto": "Con 12 grados de libertad, Q = 23.329 supera el valor crítico: se rechaza que los residuales sean ruido blanco.",
+     "largo": 111,
+     "correcta": null,
+     "retro": null
+    },
+    {
+     "texto": "Con 15 grados de libertad, Q = 23.329 no llega al valor crítico: no se rechaza que los residuales sean ruido blanco.",
+     "largo": 116,
+     "correcta": null,
+     "retro": null
+    },
+    {
+     "texto": "Con 16 grados de libertad, Q = 23.329 no llega al valor crítico: no se rechaza que los residuales sean ruido blanco.",
+     "largo": 116,
+     "correcta": null,
+     "retro": null
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "simulacro",
+   "n": 9,
+   "linea_bloque": 9403,
+   "tipo": "multiple",
+   "modulo": null,
+   "objetivo": null,
+   "pregunta": "Para decidir el orden de diferenciación d de una serie de n = 120 observaciones se corrieron en R las tres pruebas del módulo 4.3 (paquete tseries):> adf.test(y) Augmented Dickey-Fuller Test data: y Dickey-Fuller = -2.7522, Lag order = 4, p-value = 0.2642 alternative hypothesis: stationary > pp.test(y) Phillips-Perron Unit Root Test data: y Dickey-Fuller Z(alpha) = -50.66, Truncation lag parameter = 4, p-value = 0.01 alternative hypothesis: stationary Warning message: In pp.test(y) : p-value smaller than printed p-value > kpss.test(y) KPSS Test for Level Stationarity data: y KPSS Level = 1.5885, Truncation lag parameter = 4, p-value = 0.01 Warning message: In kpss.test(y) : p-value smaller than printed p-valueAl 5 %, ¿qué afirmaciones son correctas?Marca todas las que correspondan. Cada casilla bien resuelta suma y cada una mal resuelta resta, con piso en cero.",
+   "pista": null,
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "ADF apunta a diferenciar la serie.",
+     "largo": 34,
+     "correcta": null,
+     "retro": null
+    },
+    {
+     "texto": "KPSS apunta a no diferenciar la serie.",
+     "largo": 38,
+     "correcta": null,
+     "retro": null
+    },
+    {
+     "texto": "PP apunta a diferenciar la serie.",
+     "largo": 33,
+     "correcta": null,
+     "retro": null
+    },
+    {
+     "texto": "ADF y KPSS apuntan a la misma decisión sobre d.",
+     "largo": 47,
+     "correcta": null,
+     "retro": null
+    },
+    {
+     "texto": "PP y KPSS apuntan a decisiones opuestas sobre d.",
+     "largo": 48,
+     "correcta": null,
+     "retro": null
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "simulacro",
+   "n": 10,
+   "linea_bloque": 9403,
+   "tipo": "opcion",
+   "modulo": null,
+   "objetivo": null,
+   "pregunta": "Para una serie de n = 151 observaciones se calcularon, para d = 0, 1 y 2, la varianza de xd yt, sus autocorrelaciones simples rk (ACF) y parciales kk (PACF) en los rezagos 1 a 4, y la banda 1.96/n:dnvarianzabandar1r2r3r4φ̂11φ̂22φ̂33φ̂44015167.21±0.1600.9620.9120.8620.8110.962−0.169−0.012−0.04311501.70±0.1600.4110.0250.0110.0130.411−0.1720.086−0.02821492.01±0.161−0.172−0.315−0.015−0.019−0.172−0.355−0.177−0.217Siguiendo los módulos 4.3 y 4.4, ¿qué modelo se propone como punto de partida?",
+   "pista": null,
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "ARIMA(1,0,0)",
+     "largo": 12,
+     "correcta": null,
+     "retro": null
+    },
+    {
+     "texto": "ARIMA(0,0,1)",
+     "largo": 12,
+     "correcta": null,
+     "retro": null
+    },
+    {
+     "texto": "ARIMA(1,1,0)",
+     "largo": 12,
+     "correcta": null,
+     "retro": null
+    },
+    {
+     "texto": "ARIMA(0,1,1)",
+     "largo": 12,
+     "correcta": null,
+     "retro": null
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  }
+ ],
+ "bloque-a": [
+  {
+   "instrumento": "bloque-a",
+   "n": 1,
+   "linea_bloque": 5341,
+   "tipo": "opcion",
+   "modulo": "3.1",
+   "objetivo": "O1",
+   "pregunta": "Un libro que sigue el convenio de Box y Jenkins escribe un MA(1) como yt = xt - x,xt-1 y reporta = 0.45 para una serie. Ajustas el mismo modelo a la misma serie con arima() de R. ¿Qué debería imprimir R en ma1, y qué cifra de la serie lo confirma sin estimar nada?",
+   "pista": "En el convenio de R el x suma. Y en un MA(1) con ese convenio, x1 = x/(1+x2): el signo de x1 es el de x.",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "0.45, porque los dos programas estiman el mismo modelo y el parámetro no depende de cómo se escriba.",
+     "largo": 100,
+     "correcta": false,
+     "retro": "El modelo es el mismo; el parámetro escrito, no. Con resta, yt = xt - 0.45,xt-1; para escribir eso con la suma de R hace falta x = -0.45. Un mismo proceso, dos números con signo opuesto: por eso hay que saber qué convenio usa cada fuente antes de comparar cifras (3.1)."
+    },
+    {
+     "texto": "-0.45, y lo confirma que r1 salga positivo, cerca de 0.37.",
+     "largo": 58,
+     "correcta": false,
+     "retro": "La cifra de R es esa, pero la comprobación va al revés. Con el convenio de R, x1 = x/(1+x2) tiene el signo de x: un x = -0.45 produce x1 = -0.37, no +0.37. Si r1 saliera positivo, lo que estaría mal leído sería el signo."
+    },
+    {
+     "texto": "-0.45, y lo confirma que r1 salga negativo, cerca de -0.37.",
+     "largo": 59,
+     "correcta": true,
+     "retro": "Con resta, xt - 0.45,xt-1 es, con la suma de R, xt + (-0.45),xt-1. Y el árbitro no necesita estimar nada: x1 = -0.45/(1 + 0.452) = -0.3742, así que la ACF muestral en el rezago 1 tiene que salir negativa. Es la comprobación del 3.1: en el convenio de R, r1 y tienen el mismo signo."
+    },
+    {
+     "texto": "1/0.45 = 2.22, porque R devuelve siempre la raíz invertible.",
+     "largo": 60,
+     "correcta": false,
+     "retro": "R devuelve la versión invertible, sí, pero 0.45 ya lo es: |x| < 1. El recíproco aparece cuando el x estimado tiene módulo mayor que 1 y hay que pasar a la pareja (1/x, x2x2), que tiene la misma ACF (3.3). Aquí lo único que cambia es el signo."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-a",
+   "n": 2,
+   "linea_bloque": 5341,
+   "tipo": "opcion",
+   "modulo": "3.5",
+   "objetivo": "O2",
+   "pregunta": "Un compañero propone para una serie el ARMA(2,1) yt = 0.8,yt-1 - 0.15,yt-2 + xt - 0.5,xt-1, es decir, (1 - 0.8B + 0.15B2),yt = (1 - 0.5B),xt. ¿Qué modelo es en realidad?",
+   "pista": "Factoriza el polinomio AR: busca dos números que sumen 0.8 y cuyo producto sea 0.15. Después compara los factores con el polinomio MA.",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "Un AR(1) con x = 0.3: el factor (1 - 0.5B) está a los dos lados y se cancela.",
+     "largo": 77,
+     "correcta": true,
+     "retro": "1 - 0.8B + 0.15B2 = (1 - 0.5B)(1 - 0.3B): el polinomio AR tiene raíces B = 2 y B = 3.33; la del MA es B = 2. Un factor común a los dos lados se cancela, igual que en el 3.5 con (1-0.5B),yt = (1-0.5B),xt, y lo que queda es (1-0.3B),yt = xt. Ajustar el ARMA(2,1) sería estimar dos parámetros que no existen, y en la salida suele verse en errores estándar inflados y, a veces, en un aviso de convergencia."
+    },
+    {
+     "texto": "Un AR(1) con x = 0.5, porque al factorizar queda (1 - 0.5B) en el lado AR.",
+     "largo": 74,
+     "correcta": false,
+     "retro": "El factor que se cancela es justamente (1 - 0.5B), porque está a los dos lados. El que queda es el otro, (1 - 0.3B): un AR(1) con x = 0.3. Para que quedara 0.5, el MA tendría que haber sido (1 - 0.3B)."
+    },
+    {
+     "texto": "Un ARMA(2,1) genuino: sus tres coeficientes son distintos de cero y ninguno sobra.",
+     "largo": 82,
+     "correcta": false,
+     "retro": "Que los coeficientes sean distintos de cero no impide que el modelo sea redundante: la redundancia está en los polinomios, no en los números sueltos. Al factorizar aparece un factor común, y el ARMA(2,1) resulta otra forma de escribir un AR(1)."
+    },
+    {
+     "texto": "Ruido blanco, porque el polinomio AR se cancela entero con el polinomio MA.",
+     "largo": 75,
+     "correcta": false,
+     "retro": "Eso pasaría si los dos polinomios fueran iguales, como en el ejemplo del 3.5. Aquí el AR es de grado 2 y el MA de grado 1: solo puede cancelarse un factor. Sobrevive (1 - 0.3B), y con él la dependencia de un AR(1)."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-a",
+   "n": 3,
+   "linea_bloque": 5341,
+   "tipo": "opcion",
+   "modulo": "3.10",
+   "objetivo": "O3",
+   "pregunta": "Tienes 90 observaciones mensuales y un AR(2) que pasa el diagnóstico. Alguien propone sustituirlo por una red recurrente (una LSTM) «porque es más flexible». Según el 3.10, ¿cuál es el argumento correcto?",
+   "pista": "Cuenta parámetros y datos, y piensa en lo que el AR(2) te da además del pronóstico puntual.",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "La red, porque un AR(2) es una red lineal de una sola neurona: la LSTM solo puede igualarlo o mejorarlo.",
+     "largo": 104,
+     "correcta": false,
+     "retro": "Que el AR(2) sea un caso particular no significa que la red lo vaya a igualar con 90 datos. La flexibilidad se paga en varianza: miles de parámetros estimados con 90 observaciones se ajustan al ruido. «Puede representarlo» no es «lo va a estimar mejor»."
+    },
+    {
+     "texto": "Da igual: si los dos modelos pasan Ljung–Box, los dos sirven para pronosticar y para dar intervalos.",
+     "largo": 100,
+     "correcta": false,
+     "retro": "Pasar Ljung–Box dice que no se detecta autocorrelación en los residuales; no dice que los dos modelos pronostiquen igual ni que den intervalos comparables. Y una red no trae, por construcción, ni errores estándar de sus pesos ni intervalos de pronóstico con su incertidumbre."
+    },
+    {
+     "texto": "El AR(2), porque al ser estacionario su pronóstico es siempre más exacto que el de una red.",
+     "largo": 91,
+     "correcta": false,
+     "retro": "No hay un «siempre»: con muchos datos y dependencias no lineales, una red puede pronosticar mejor. El argumento del 3.10 es de tamaño de muestra y de lo que cada modelo entrega, no una superioridad garantizada."
+    },
+    {
+     "texto": "El AR(2): con 90 datos estima tres parámetros y x2, y da coeficientes legibles e intervalos; la red no.",
+     "largo": 103,
+     "correcta": true,
+     "retro": "Ese es el argumento. El AR(2) estima x1, x2 y la media, más x2; una LSTM, miles de parámetros con los mismos 90 datos, y no trae de serie ni errores estándar ni intervalos con su incertidumbre. Con pocas observaciones, el modelo pequeño es más que una referencia. Sus coeficientes se leen —raíces, periodo, persistencia—, sus intervalos salen de los pesos x y de x2, y es el punto de comparación que cualquier red tendría que batir fuera de muestra antes de reemplazarlo."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-a",
+   "n": 4,
+   "linea_bloque": 5341,
+   "tipo": "opcion",
+   "modulo": "4.2",
+   "objetivo": "O5",
+   "pregunta": "Tres ajustes, tres síntomas. (i) Un ARIMA(1,1,1) cuyo polinomio MA tiene una raíz real en B = 1.002. (ii) Un ARIMA(2,0,0) cuyo polinomio AR tiene una raíz real en B = 1.006. (iii) Un ARIMA(2,1,2) con coeficientes de 0.4, errores estándar de 0.9 y un aviso de convergencia. Según el ciclo de Box–Jenkins, ¿a qué te devuelve cada uno?",
+   "pista": "Una raíz AR real en B x 1 es una raíz unitaria que el modelo está estimando en vez de imponerla. Una raíz MA real en B x 1 es un (1-B) que el modelo intenta deshacer.",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "(i) subir d; (ii) bajar d; (iii) subir p y q.",
+     "largo": 45,
+     "correcta": false,
+     "retro": "Las dos primeras van al revés. Un MA con raíz en B = 1 es casi (1 - B): está deshaciendo una diferencia que sobra, y la salida es bajar d. Un AR con raíz en B = 1 es una raíz unitaria sin imponer: hay que subir d. Y errores estándar que doblan el coeficiente piden menos parámetros, no más."
+    },
+    {
+     "texto": "(i) bajar d; (ii) subir d; (iii) bajar p o q.",
+     "largo": 45,
+     "correcta": true,
+     "retro": "Es la lista del 4.2 de lo que manda de vuelta a la etapa 1. La raíz MA en el círculo es la firma de la sobrediferenciación; la raíz AR en el círculo, la de una diferencia que falta; y un error estándar que dobla el coeficiente, con aviso de convergencia, es sobreparametrización, a menudo un factor común entre los polinomios AR y MA."
+    },
+    {
+     "texto": "(i) subir q; (ii) subir d; (iii) nada: el aviso de convergencia es un problema numérico de optim, no del modelo.",
+     "largo": 112,
+     "correcta": false,
+     "retro": "La (ii) está bien, pero no las otras. Una raíz MA en B x 1 no pide más términos MA: pide quitar la diferencia que el MA intenta deshacer. Y la tercera no se puede dejar pasar. El aviso junto con errores estándar de más del doble del coeficiente es el síntoma de un modelo con parámetros redundantes (3.5): el optimizador no encuentra un único óptimo porque hay muchos casi iguales."
+    },
+    {
+     "texto": "Ninguno devuelve atrás: los tres modelos se pueden usar si pasan Ljung–Box.",
+     "largo": 75,
+     "correcta": false,
+     "retro": "Ljung–Box mira los residuales y puede pasar en los tres casos. Pero una raíz a milésimas del círculo deja al modelo en el borde de la no estacionariedad o de la no invertibilidad, con estimaciones inestables, y uno sobreparametrizado tiene coeficientes que no significan nada: las tres señales aparecen antes del diagnóstico."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-a",
+   "n": 5,
+   "linea_bloque": 5341,
+   "tipo": "multiple",
+   "modulo": "4.7",
+   "objetivo": "O5",
+   "pregunta": "Marca todas las afirmaciones ciertas sobre lo que hace auto.arima() con sus opciones por defecto, es decir, con la búsqueda escalonada.",
+   "pista": "Recorre el algoritmo del 4.7 en orden: un paso que fija algo antes de buscar, una búsqueda que se mueve de vecino en vecino y un filtro de raíces. Lo que el algoritmo no hace también está en el módulo.",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "Compara por AICc modelos con distinto d para decidir cuántas veces diferenciar.",
+     "largo": 79,
+     "correcta": false,
+     "retro": "No: d se fija antes de buscar y ya no se toca. Comparar AICc entre distintos d sería comparar verosimilitudes de series distintas —y o x y, con distinto n*—: justo lo que el 4.6 prohíbe."
+    },
+    {
+     "texto": "Elige d con pruebas KPSS sucesivas: diferencia mientras KPSS rechace la estacionariedad.",
+     "largo": 88,
+     "correcta": true,
+     "retro": "Es el primer paso del algoritmo de Hyndman y Khandakar, y su punto débil: hereda los fallos del KPSS, como el de una serie con un escalón."
+    },
+    {
+     "texto": "Antes de devolver el modelo, comprueba que sus residuales pasen Ljung–Box.",
+     "largo": 74,
+     "correcta": false,
+     "retro": "auto.arima elige por AICc y no mira los residuales. El diagnóstico es tuyo: checkresiduals() o Box.test(..., fitdf = p + q) sobre el modelo que devuelve."
+    },
+    {
+     "texto": "Garantiza el modelo de menor AICc entre todos los que tienen el d elegido.",
+     "largo": 74,
+     "correcta": false,
+     "retro": "La búsqueda escalonada se mueve entre vecinos y se detiene cuando ninguno mejora: puede quedarse en un mínimo local. Solo stepwise = FALSE recorre la rejilla completa (con p + q x 5), y aun así con el d del KPSS."
+    },
+    {
+     "texto": "Descarta los modelos que tienen alguna raíz de módulo menor que 1.01.",
+     "largo": 69,
+     "correcta": true,
+     "retro": "Les asigna un AICc infinito para que nunca ganen: un modelo con raíces casi sobre el círculo está al borde de la no estacionariedad o de la no invertibilidad, y sus estimaciones son inestables, gane o no por AICc."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-a",
+   "n": 6,
+   "linea_bloque": 5341,
+   "tipo": "opcion",
+   "modulo": "4.10",
+   "objetivo": "O6",
+   "pregunta": "Dos series mensuales tienen innovaciones con la misma x = 50: una es una caminata aleatoria y la otra un AR(1) estacionario con x = 0.8. Se pronostica cada una a cinco años, h = 60. ¿Qué diferencia de fondo hay entre sus intervalos del 95 %?",
+   "pista": "Compara x2j=0h-1xj2 en los dos casos: en la caminata todos los xj valen 1; en el AR(1), xj = xj.",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "El de la caminata crece como h sin techo; el del AR(1) tiene techo, 1.96x0, y a un año ya casi lo alcanza.",
+     "largo": 106,
+     "correcta": true,
+     "retro": "En la caminata xj = 1 para todo j, así que xh2 = hx2 y el semiancho es 1.96 5060 = 759.1. En el AR(1) la suma converge a 1/(1-x2): el semiancho tiende a 1.96 50/0.36 = 163.3, y a 60 meses ya está en el techo. Es la diferencia del 4.10 entre la TRM y un ARMA estacionario: la caminata no tiene a dónde volver, así que su incertidumbre no se detiene."
+    },
+    {
+     "texto": "Ninguna: con la misma x, los dos miden 1.96 50 = 98 a cualquier horizonte, porque el choque de cada mes es igual de grande.",
+     "largo": 123,
+     "correcta": false,
+     "retro": "1.96,x es el semiancho a un paso, cuando x1 = x en los dos. A partir de ahí se acumulan los choques futuros con sus pesos x, y ahí los dos modelos se separan."
+    },
+    {
+     "texto": "Los dos crecen sin límite, aunque el del AR(1) lo hace más despacio, porque x < 1 frena la acumulación de choques.",
+     "largo": 114,
+     "correcta": false,
+     "retro": "El del AR(1) no crece sin límite: tiene techo. La suma x2j converge, y la varianza del error tiende a la varianza de la propia serie, x0 = x2/(1-x2)."
+    },
+    {
+     "texto": "El del AR(1) es más ancho: su pronóstico vuelve a la media, y eso suma la incertidumbre de la media.",
+     "largo": 100,
+     "correcta": false,
+     "retro": "Volver a la media es lo que le pone techo, no lo que lo ensancha. Con los parámetros conocidos, que es lo que supone la fórmula, el semiancho del AR(1) se queda en 163.3, muy por debajo de los 759.1 de la caminata."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  }
+ ],
+ "bloque-b": [
+  {
+   "instrumento": "bloque-b",
+   "n": 1,
+   "linea_bloque": 5439,
+   "tipo": "numerica",
+   "modulo": "3.1",
+   "objetivo": "O1",
+   "pregunta": "Un proceso cumple (1 - 0.8B)(1 + 0.5B),yt = xt. Escríbelo como yt = x1 yt-1 + x2 yt-2 + xt. ¿Cuánto vale x2, el coeficiente de yt-2? Da un decimal, con su signo.",
+   "pista": "Multiplica los dos factores y escribe el resultado como 1 - x1 B - x2 B2: lo que en x(B) va con signo menos, en la ecuación de yt va con signo más.",
+   "respuesta": 0.4,
+   "tolerancia": 0.001,
+   "retroAcierto": "(1 - 0.8B)(1 + 0.5B) = 1 + 0.5B - 0.8B - 0.4B2 = 1 - 0.3B - 0.4B2, así que x1 = 0.3 y x2 = 0.4: yt = 0.3,yt-1 + 0.4,yt-2 + xt. La forma factorizada da además las raíces sin resolver ninguna cuadrática: B = 1/0.8 = 1.25 y B = -1/0.5 = -2, las dos fuera del círculo. Es estacionario, y el triángulo lo confirma: x1 + x2 = 0.7 < 1, x2 - x1 = 0.1 < 1 y -1 < x2 < 1.",
+   "retroFallo": "Al expandir, el término en B2 es (-0.8)(+0.5)B2 = -0.4B2, así que x(B) = 1 - 0.3B - 0.4B2. El convenio es x(B) = 1 - x1 B - x2 B2: el -0.4 del polinomio es x2 = +0.4 en la ecuación. Dar -0.4 es olvidar ese cambio de signo, el mismo que confunde los coeficientes de polyroot().",
+   "opciones": [],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-b",
+   "n": 2,
+   "linea_bloque": 5439,
+   "tipo": "numerica",
+   "modulo": "3.3",
+   "objetivo": "O1",
+   "pregunta": "Un MA(2) con el convenio de R, yt = xt - 0.5,xt-1 + 0.3,xt-2. Calcula su autocorrelación teórica en el rezago 1, x1. Da cuatro decimales.",
+   "pista": "Con x0 = 1, x1 = (x0x1 + x1x2)/(1 + x12 + x22). El numerador tiene dos productos, no uno.",
+   "respuesta": -0.4851,
+   "tolerancia": 0.0006,
+   "retroAcierto": "Numerador x1 + x1x2 = -0.5 + (-0.5)(0.3) = -0.65; denominador 1 + 0.25 + 0.09 = 1.34; x1 = -0.65/1.34 = -0.4851. Y x2 = x2/1.34 = 0.2239; desde el rezago 3, cero exacto. Aquí |x1| < 0.5, pero la cota de 0.5 es solo del MA(1): un MA(2) puede pasarla, hasta (x/4) = 0.707.",
+   "retroFallo": "Si te salió -0.3731, faltó el producto x1x2 en el numerador: la fórmula suma j=0q-kxjxj+k, que con q = 2 y k = 1 son dos términos. Si te salió -0.5200, faltó x22 en el denominador, que es x0/x2 y lleva todos los x al cuadrado.",
+   "opciones": [],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-b",
+   "n": 3,
+   "linea_bloque": 5439,
+   "tipo": "numerica",
+   "modulo": "3.4",
+   "objetivo": "O2",
+   "pregunta": "Un ARMA(1,1) con x = 0.6, x = -0.3 y x2 = 4, con el convenio de R. A medida que el horizonte crece, el intervalo de pronóstico al 95 % se ensancha hasta un techo. ¿Cuánto mide ese semiancho límite, 1.96x0? Da dos decimales.",
+   "pista": "El techo es la varianza de la propia serie: x2jx 0xj2 = x0. Para un ARMA(1,1), x0 = x2(1 + 2xx + x2)/(1 - x2).",
+   "respuesta": 4.19,
+   "tolerancia": 0.01,
+   "retroAcierto": "1 + 2(0.6)(-0.3) + 0.09 = 0.73, y x0 = 4 0.73/0.64 = 4.5625. El techo es 1.964.5625 = 4.19. Compáralo con el semiancho a un paso, 1.964 = 3.92: el intervalo apenas puede crecer un 7 %. Con x1 = x + x = 0.3 y xj = 0.3 0.6j-1, casi toda la incertidumbre ya está en el primer paso: es un proceso con poca memoria.",
+   "retroFallo": "El orden es x0, luego la raíz, luego 1.96: x0 = 4(1 - 0.36 + 0.09)/(1 - 0.36) = 4.5625 y 1.96x0 = 4.19. Si te salió 5.90, usaste x = +0.3, y el término 2xx cambia de signo; si te salió 8.94, multiplicaste 1.96 por la varianza y no por la desviación típica.",
+   "opciones": [],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-b",
+   "n": 4,
+   "linea_bloque": 5439,
+   "tipo": "numerica",
+   "modulo": "3.4",
+   "objetivo": "O2",
+   "pregunta": "Los primeros pesos de la forma MA(x) de un ARMA(1,1), con el convenio de R, son x1 = 0.20, x2 = 0.18 y x3 = 0.162. ¿Cuánto vale x? Da un decimal, con su signo.",
+   "pista": "En un ARMA(1,1), xj = (x + x),x,j-1. El cociente de dos pesos consecutivos te da uno de los parámetros; x1, el otro.",
+   "respuesta": -0.7,
+   "tolerancia": 0.001,
+   "retroAcierto": "x2/x1 = 0.18/0.2 = 0.9 = x, y x1 = x + x da x = 0.2 - 0.9 = -0.7. Un x negativo y grande frena casi todo el efecto inmediato del AR: con x = 0.9 solo, x1 valdría 0.9; el MA lo baja a 0.2, pero a partir de ahí los pesos decaen al ritmo lento de x. Eso es lo que hace a un ARMA(1,1) distinto de cualquier AR(1).",
+   "retroFallo": "El cociente de pesos consecutivos es x: 0.18/0.2 = 0.9. Luego x = x1 - x = 0.2 - 0.9. Si diste 0.9, ese es x; si diste 0.2, tomaste x1 por x, que solo valdría en un MA(1) puro; si diste +0.7, restaste al revés: x = x1 - x.",
+   "opciones": [],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-b",
+   "n": 5,
+   "linea_bloque": 5439,
+   "tipo": "numerica",
+   "modulo": "3.7",
+   "objetivo": "O3",
+   "pregunta": "Sobre la serie vibracion (n = 90) se calculan la autocovarianza muestral 0 = 15.04 y la autocorrelación r1 = 0.632. Con Yule–Walker para un AR(1), = r1. ¿Cuánto vale 2 según la ecuación de Yule–Walker para la varianza, x0 = x,x1 + x2, sin ninguna corrección por grados de libertad? Da dos decimales.",
+   "pista": "Despeja x2 y escribe x1 = r1x0: todo queda en función de 0 y de r1.",
+   "respuesta": 9.03,
+   "tolerancia": 0.02,
+   "retroAcierto": "2 = 0 - ,1 = 0(1 - r12) = 15.04 (1 - 0.6322) = 9.03. La serie varía 15.04, el AR(1) explica la fracción r12 = 0.399 de esa varianza y lo que queda es el ruido. Un detalle: ar(method = \"yule-walker\") imprime algo más, 9.235, porque multiplica por n/(n-2) = 1.0227 para corregir los grados de libertad.",
+   "retroFallo": "2 = 0(1 - r12), con r1 al cuadrado: 15.04 0.6006 = 9.03. Si te salió 5.53, usaste 1 - r1; si te salió 6.01, calculaste la varianza explicada, 0 r12, en vez de la que queda.",
+   "opciones": [],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-b",
+   "n": 6,
+   "linea_bloque": 5439,
+   "tipo": "numerica",
+   "modulo": "3.8",
+   "objetivo": "O3",
+   "pregunta": "Se ajusta un ARMA(1,1) a una serie de T = 100 observaciones. Las cuatro primeras autocorrelaciones de sus residuales son r1 = -0.020, r2 = -0.191, r3 = 0.176 y r4 = 0.061. Calcula a mano el estadístico de Ljung–Box Q(4). Da dos decimales.",
+   "pista": "Q(h) = T(T+2)k=1h rk2/(T-k). Son cuatro términos, cada uno con su propio denominador: 99, 98, 97 y 96.",
+   "respuesta": 7.49,
+   "tolerancia": 0.02,
+   "retroAcierto": "100 102 (0.000004 + 0.000372 + 0.000319 + 0.000039) = 7.49. Ahora la decisión: los grados de libertad son h - p - q = 4 - 2 = 2, y el crítico al 5 % es 22;,0.95 = 5.99. Como 7.49 > 5.99, se rechaza (p = 0.0237 en R): quedan autocorrelaciones en los residuales, aunque ninguna de las cuatro barras sale de la banda 0.196. Sin descontar p + q, el crítico sería 9.49 y la prueba habría pasado.",
+   "retroFallo": "Cada rk2 se divide por su propio T - k y la suma se multiplica por T(T+2) = 10,200: 7.49. Si te salió 7.16, calculaste el de Box–Pierce, T rk2, sin la corrección de muestra pequeña que es justamente lo que añade Ljung–Box.",
+   "opciones": [],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-b",
+   "n": 7,
+   "linea_bloque": 5439,
+   "tipo": "numerica",
+   "modulo": "4.1",
+   "objetivo": "O4",
+   "pregunta": "Un ARIMA(0,1,1) ajustado a ventassemanales da = -0.5899. La última venta fue yT = 276.63, y el pronóstico que el modelo había hecho para esa semana era yT T-1 = 285.10. Usa la equivalencia con el suavizamiento exponencial simple para obtener el pronóstico de la semana siguiente, yT+1 T. Da dos decimales.",
+   "pista": "El ARIMA(0,1,1) equivale al SES yt+1 t = x,yt + (1-x), yt t-1 con x = 1 + x.",
+   "respuesta": 281.63,
+   "tolerancia": 0.02,
+   "retroAcierto": "x = 1 + (-0.5899) = 0.4101, y yT+1 T = 0.4101 276.63 + 0.5899 285.10 = 281.63; forecast() da 281.62, y la diferencia es el redondeo de y de yT T-1. El pronóstico corrige el anterior en una fracción x del error: la semana salió 8.47 por debajo de lo previsto, y el pronóstico baja 3.47. De ahí en adelante es plano: sin constante, un ARIMA(0,1,1) pronostica el mismo valor a cualquier horizonte.",
+   "retroFallo": "x = 1 + = 0.4101 pondera el último dato, y 1 - x el pronóstico anterior. Si te salió 280.10, cruzaste los pesos, o tomaste x = -x: es la confusión de signo que avisa el 4.1, porque con el convenio de resta el mismo modelo se escribe con x = 0.5899.",
+   "opciones": [],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-b",
+   "n": 8,
+   "linea_bloque": 5439,
+   "tipo": "numerica",
+   "modulo": "4.5",
+   "objetivo": "O4",
+   "pregunta": "La serie suscriptores tiene n = 60 meses: empieza en y1 = 350.0 y termina en y60 = 565.7 (miles). Se ajusta una caminata aleatoria con deriva, yt = c + yt-1 + xt. ¿Cuánto vale la deriva estimada c? Da cuatro decimales.",
+   "pista": "Con d = 1 y sin parte ARMA, la deriva estimada es la media de las diferencias x yt = yt - yt-1. Suma las diferencias: casi todos los términos se cancelan.",
+   "respuesta": 3.6559,
+   "tolerancia": 0.0006,
+   "retroAcierto": "La suma de las 59 diferencias es telescópica: t=260(yt - yt-1) = y60 - y1 = 215.7, y c = 215.7/59 = 3.6559 miles por mes, exactamente lo que da Arima(..., include.drift = TRUE). La consecuencia es incómoda: la deriva depende solo del primer y del último dato, así que basta un extremo atípico para desplazarla. Y su error estándar, 0.8613, recuerda que una tendencia estimada no es una tendencia conocida.",
+   "retroFallo": "Son n - 1 = 59 diferencias, no 60: c = (y60 - y1)/59 = 3.6559. Dividir por 60 da 3.5950: es contar observaciones donde hay que contar diferencias.",
+   "opciones": [],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-b",
+   "n": 9,
+   "linea_bloque": 5439,
+   "tipo": "numerica",
+   "modulo": "4.6",
+   "objetivo": "O5",
+   "pregunta": "Sobre turistas (n = 120) se ajusta un ARIMA(1,1,1) con deriva, y su log-verosimilitud es L = -622.58. Calcula su AICc con la fórmula del 4.6. Da dos decimales.",
+   "pista": "AICc = -2 L + 2k + 2k(k+1)/(n* - k - 1). Cuenta en k los coeficientes (x, x y la deriva) y x2; y n* = n - d.",
+   "respuesta": 1253.51,
+   "tolerancia": 0.02,
+   "retroAcierto": "k = 4 y n* = 119: 1245.16 + 8 + 40/114 = 1253.16 + 0.35 = 1253.51, que es lo que imprime Arima(). La corrección es pequeña con n* = 119, y usar n = 120 en lugar de 119 la cambia en milésimas: lo que no se puede olvidar es contra qué se compara. Este AICc solo vale frente a otros modelos con d = 1, ajustados a las mismas 119 diferencias.",
+   "retroFallo": "Con k = 4 (x, x, deriva y x2): 1245.16 + 8 + 2(4)(5)/(119 - 5) = 1253.51. Si te salió 1251.37, contaste un parámetro de menos: x2 también se estima y entra en k, y la deriva también.",
+   "opciones": [],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-b",
+   "n": 10,
+   "linea_bloque": 5439,
+   "tipo": "numerica",
+   "modulo": "4.9",
+   "objetivo": "O6",
+   "pregunta": "Un ARIMA(1,1,0) sin constante ajustado a nivelembalse da = 0.4863. Los dos últimos datos son yT-1 = 96.64 y yT = 98.20. Pronostica a mano dos pasos adelante, yT+2 T. Da dos decimales.",
+   "pista": "El modelo dice que las diferencias son un AR(1): x yT+1 = ,x yT y x yT+2 = ,x yT+1. Pronostica las diferencias y acumúlalas sobre el último nivel.",
+   "respuesta": 99.33,
+   "tolerancia": 0.01,
+   "retroAcierto": "La última diferencia es 98.20 - 96.64 = 1.56. Paso 1: yT+1 = 98.20 + 0.4863 1.56 = 98.9586. Paso 2: yT+2 = 98.9586 + 0.4863 0.7586 = 99.33, lo mismo que predict(). Es la expansión del 4.1, yt = (1+x),yt-1 - x,yt-2 + xt, aplicada dos veces. Las diferencias pronosticadas decaen como h, así que el nivel se estabiliza en yT + x yT,/(1 - ) = 99.68: plano a largo plazo, como todo d = 1 sin constante.",
+   "retroFallo": "La recursión va sobre las diferencias, no sobre los niveles: yT+1 = yT + ,(yT - yT-1) = 98.96 y yT+2 = yT+1 + ,( yT+1 - yT). Si te salió 98.96, te quedaste en el primer paso. Si te salió 98.57, aplicaste 2 a la última diferencia y te faltó sumar la del primer paso; si te salió 23.22, trataste el modelo como un AR(1) en niveles, sin la diferencia.",
+   "opciones": [],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-b",
+   "n": 11,
+   "linea_bloque": 5439,
+   "tipo": "numerica",
+   "modulo": "4.9",
+   "objetivo": "O6",
+   "pregunta": "Un ARIMA(0,1,1) ajustado a visitas da = -0.4866 y = 2.584. ¿Cuánto mide el semiancho del intervalo al 95 % a tres pasos, 1.96,x3? Da dos decimales.",
+   "pista": "Escribe el modelo en niveles, como un ARMA(1,1) con x = 1: x0 = 1 y xj = 1 + x para j x 1. Luego x32 = x2(x02 + x12 + x22).",
+   "respuesta": 6.26,
+   "tolerancia": 0.02,
+   "retroAcierto": "x1 = x2 = 1 + (-0.4866) = 0.5134, así que x3 = 2.5841 + 2(0.5134)2 = 2.584 1.2358 y el semiancho es 6.26, lo que da forecast(). Con d = 1 los xj no se apagan: se quedan en 1 + x para siempre, y por eso el intervalo crece como h sin techo. El MA solo lo hace crecer más despacio que una caminata, que a tres pasos daría 8.77.",
+   "retroFallo": "Los pesos de un ARIMA(0,1,1) no se apagan: xj = 1 + x = 0.5134 para todo j x 1, y x32 = x2(1 + 2x12). Si te salió 8.77, usaste xj = 1, que es la caminata; si te salió 3.68, olvidaste x0 = 1, el choque del propio periodo.",
+   "opciones": [],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-b",
+   "n": 12,
+   "linea_bloque": 5439,
+   "tipo": "numerica",
+   "modulo": "4.10",
+   "objetivo": "O6",
+   "pregunta": "Recorrido el ciclo completo, indicebursatil resulta ser una caminata aleatoria: un ARIMA(0,1,0) con = 32.41 puntos. ¿Cuánto mide el semiancho del intervalo al 80 % para el pronóstico a cuatro días? Usa z0.90 = 1.282. Da dos decimales.",
+   "pista": "En una caminata xj = 1 para todo j, así que xh = x h.",
+   "respuesta": 83.1,
+   "tolerancia": 0.05,
+   "retroAcierto": "1.282 32.41 4 = 83.10 puntos; R da 83.08 con z = 1.2816. El pronóstico es el último cierre, 3193.85, a cualquier horizonte, y lo único que cambia con h es el ancho: a cuatro días, el doble que a uno; a dieciséis, el cuádruple. El 80 % es el otro nivel que reporta forecast() por defecto, y su abanico es más estrecho porque promete menos.",
+   "retroFallo": "x4 = x 4 = 2x, y el semiancho al 80 % es 1.282 2 32.41 = 83.10. Si te salió 127.05, usaste 1.96, que es el 95 %; si te salió 166.20, multiplicaste por h en lugar de por h: en la caminata se suman varianzas, no desviaciones.",
+   "opciones": [],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  }
+ ],
+ "bloque-c": [
+  {
+   "instrumento": "bloque-c",
+   "n": 1,
+   "linea_bloque": 5558,
+   "tipo": "opcion",
+   "modulo": "3.3",
+   "objetivo": "O1",
+   "pregunta": "Dos programas ajustan un MA(1) sin media a la misma serie. R devuelve = 0.6045 y 2 = 0.9166. Otro programa, con la restricción de invertibilidad apagada, devuelve = 1.6542 y 2 = 0.3350. ¿Qué concluyes?",
+   "pista": "Calcula x1 = x/(1+x2) con los dos x, y x0 = x2(1+x2) con cada pareja.",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "Que se contradicen: un MA(1) tiene un solo x, así que uno de los dos programas está mal.",
+     "largo": 88,
+     "correcta": false,
+     "retro": "Pueden valer las dos cosas, y esa es la lección del 3.3: un MA(1) no es identificable sin una regla más. x y 1/x dan la misma x1; si además x2 se reescala por x2, dan la misma x0, y por tanto el mismo proceso."
+    },
+    {
+     "texto": "Que el segundo ajusta mejor: su 2 es casi tres veces menor y deja mucho menos ruido sin explicar.",
+     "largo": 97,
+     "correcta": false,
+     "retro": "Un 2 menor no es un ajuste mejor cuando los dos describen el mismo proceso: con x = 1.6542 el choque se reparte de otra forma, y x2(1+x2) x 1.25 en los dos casos. Comparar x2 entre parametrizaciones es comparar cosas distintas."
+    },
+    {
+     "texto": "Que el segundo describe un proceso no estacionario: con || > 1, su raíz queda dentro del círculo unitario.",
+     "largo": 106,
+     "correcta": false,
+     "retro": "Un MA finito es estacionario para cualquier x: la estacionariedad no depende de las raíces de x(B). Lo que falla con |x| > 1 es la invertibilidad: los pesos xj crecen y el presente dependería cada vez más del pasado remoto."
+    },
+    {
+     "texto": "Que son el mismo proceso: x y 1/x dan la misma x1, y las dos parejas, la misma x0 x 1.25.",
+     "largo": 89,
+     "correcta": true,
+     "retro": "x1 = 0.4427 con los dos, porque 1.6542 x 1/0.6045, y 0.3350 x 0.9166 0.60452: es la pareja (1/x, x2x2) del 3.3, que reproduce exactamente las mismas autocovarianzas. Ningún dato puede distinguirlas. La invertibilidad, |x| < 1, con la raíz en B = -1/x, de módulo 1.6542, fuera del círculo, es la regla que elige una, y es la que impone arima()."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-c",
+   "n": 2,
+   "linea_bloque": 5558,
+   "tipo": "opcion",
+   "modulo": "3.7",
+   "objetivo": "O3",
+   "pregunta": "La serie niveltanque tiene solo n = 35 observaciones. Se le ajusta un AR(1) con media por tres métodos:· Yule–Walker: = 0.8603.· CSS: = 1.0286 (e.e. 0.0621), media 64.03 (e.e. 32.19).· ML: = 0.9594 (e.e. 0.0394), media 45.42 (e.e. 6.09).¿Cuál reportas, y por qué?",
+   "pista": "Mira dos cosas: si alguna estimación sale de la región estacionaria, y qué le pasa a Yule–Walker cerca de la frontera x = 1.",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "Yule–Walker, porque es el único con un valor claramente estacionario y no depende de un optimizador.",
+     "largo": 100,
+     "correcta": false,
+     "retro": "Que sea estacionario no lo hace bueno: cerca de la frontera, Yule–Walker se encoge hacia cero. Aquí queda 2.52 errores estándar por debajo del ML, una distancia que no es redondeo. El 3.7 lo dice: con raíces cerca del círculo, Yule–Walker es el que más se aleja."
+    },
+    {
+     "texto": "ML: es el eficiente y queda dentro de la región estacionaria; CSS se sale y Yule–Walker se encoge hacia cero.",
+     "largo": 109,
+     "correcta": true,
+     "retro": "La verosimilitud exacta incluye el término 12(1 - x2) de la primera observación, que penaliza acercarse a x = 1; CSS lo ignora y, con 35 datos, se sale: 1.0286 es un proceso explosivo, y su media, con un error estándar de 32.19, no significa nada, porque con x x 1 no hay media a la que volver. Yule–Walker queda 2.52 errores estándar por debajo. Y un = 0.9594 con n = 35 avisa de otra cosa: conviene preguntarse si la serie pide d = 1 (4.3)."
+    },
+    {
+     "texto": "CSS: su error estándar es razonable y es el método con el que arranca arima() por defecto.",
+     "largo": 90,
+     "correcta": false,
+     "retro": "Que arima() arranque con CSS no lo hace el estimador final: con \"CSS-ML\", el que manda es ML. Y en esta serie el arranque falla: arima() por defecto se detiene con «non-stationary AR part from CSS». Un = 1.0286 no es estacionario por pequeño que parezca su error estándar (0.0621); el de la media, 32.19, delata que el modelo no tiene media a la que volver."
+    },
+    {
+     "texto": "Cualquiera de los tres: estiman el mismo x sobre los mismos datos, así que lo que los separa es redondeo.",
+     "largo": 105,
+     "correcta": false,
+     "retro": "Sobre los mismos datos, lo que los separa es el método, y no es poco: de 0.8603 a 1.0286 hay 0.17, más de cuatro errores estándar del ML. Que «coincidan salvo redondeo» es justo lo que el 3.7 desmiente cerca de la frontera y con muestras cortas."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-c",
+   "n": 3,
+   "linea_bloque": 5558,
+   "tipo": "opcion",
+   "modulo": "3.9",
+   "objetivo": "O3",
+   "pregunta": "Para rendimientos (n = 120, rendimientos mensuales en %), una sola de las 20 autocorrelaciones sale de la banda 0.179: la del rezago 14, que vale -0.225. Ljung–Box(12) da p = 0.6303. Se comparan el ruido blanco con media (AICc 564.76) y un MA(1) con media (AICc 564.70, con = 0.1383 y e.e. 0.0928). ¿Qué se reporta?",
+   "pista": "Tres preguntas: cuánto gana el MA(1) por AICc, si su coeficiente es significativo, y cuántas barras fuera de la banda se esperaban por azar en 20 rezagos.",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "El MA(1): tiene el AICc más bajo, y el criterio es elegir el menor.",
+     "largo": 67,
+     "correcta": false,
+     "retro": "El MA(1) gana por 0.06 puntos de AICc: muy por debajo de 2, un empate. Su tiene t = 1.49, y el BIC prefiere el ruido blanco (570.23 frente a 572.86). Elegir «el menor» sin mirar la distancia convierte una diferencia de ruido en un modelo."
+    },
+    {
+     "texto": "Un modelo con un término en el rezago 14, porque es la única barra que sale de la banda.",
+     "largo": 88,
+     "correcta": false,
+     "retro": "Con 20 rezagos se espera que salga una barra por puro azar (20 0.05 = 1), y Ljung–Box no ve nada (p = 0.6303). Un coeficiente en el rezago 14, sin ninguna razón del fenómeno, es perseguir esa barra."
+    },
+    {
+     "texto": "Ruido blanco con media: el MA(1) no se distingue del ruido y la barra suelta es la que se esperaba.",
+     "largo": 99,
+     "correcta": true,
+     "retro": "Las tres evidencias apuntan al mismo sitio: la ventaja del MA(1) es de 0.06 puntos, un empate; su coeficiente no es significativo (t = 1.49); y la única barra fuera de la banda es la que se esperaba por azar. Es el caso de los log-retornos de la TRM del 3.9: no hay nada que modelar, el mejor pronóstico de un rendimiento es su media, y decirlo con evidencia es una conclusión, no un fracaso."
+    },
+    {
+     "texto": "Ninguno todavía: hay que diferenciar, porque una serie de rendimientos tiene raíz unitaria.",
+     "largo": 91,
+     "correcta": false,
+     "retro": "Los rendimientos ya son una diferencia, la del logaritmo de un precio: el precio puede tener raíz unitaria, sus rendimientos no tienen por qué. Aquí nada lo sugiere: la ACF arranca en 0.130 y no decae despacio. Diferenciar otra vez sería sobrediferenciar."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-c",
+   "n": 4,
+   "linea_bloque": 5558,
+   "tipo": "opcion",
+   "modulo": "4.1",
+   "objetivo": "O4",
+   "pregunta": "A la serie cotizacion (n = 120) se le ajusta, sin diferenciar, un AR(2) con media: 1 = 1.2894 (e.e. 0.0870) y 2 = -0.3012 (e.e. 0.0876). Las raíces de (B) tienen módulos 1.0173 y 3.2638. ¿Qué haces?",
+   "pista": "Suma 1 + 2 y recuerda la firma de la raíz unitaria del 4.1: (1-x B)(1-B) = 1 - (1+x)B + x B2.",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "Lo reporto tal cual: las dos raíces están fuera del círculo unitario, así que el AR(2) es estacionario y el ajuste vale.",
+     "largo": 120,
+     "correcta": false,
+     "retro": "Fuera, pero por 0.0173: una raíz de módulo 1.0173 con 120 datos no se distingue de 1. La suma 1 + 2 = 0.9882 está a un paso de la firma de la raíz unitaria, y la media estimada, 763.93 con e.e. 20.79, no es un nivel al que la serie vuelva."
+    },
+    {
+     "texto": "Impongo la raíz unitaria y ajusto un ARIMA(1,1,0): 1 + 2 x 1 es la firma de (1-x B)(1-B).",
+     "largo": 89,
+     "correcta": true,
+     "retro": "1 + 2 = 0.9882. Con x1* = 1 + x y x2* = -x, el AR(2) estimado dice x x 0.30, y el ARIMA(1,1,0) lo confirma: = 0.2953 (e.e. 0.0876). Es la regla del 4.2: una raíz AR cerca del círculo manda a subir d. Imponerla en vez de estimarla cambia la forma del pronóstico, que ya no vuelve a una media, y evita estimar un parámetro en la frontera. Las pruebas lo respaldan: ADF p = 0.9873, KPSS p < 0.01. Y el 1.01 de auto.arima no habría bastado: es un filtro numérico, no una prueba, y una raíz de 1.0173 lo pasa."
+    },
+    {
+     "texto": "Ajusto un ARIMA(2,1,0), para conservar los dos coeficientes autorregresivos, que salieron significativos.",
+     "largo": 105,
+     "correcta": false,
+     "retro": "Diferenciar consume uno de los dos rezagos: un AR(2) en niveles con una raíz unitaria es un AR(1) en diferencias. Un ARIMA(2,1,0) sería un AR(3) en niveles, un parámetro más de los que pide la evidencia."
+    },
+    {
+     "texto": "Ajusto un ARIMA(1,1,0) con x = 1.29, el primer coeficiente del AR(2) en niveles.",
+     "largo": 80,
+     "correcta": false,
+     "retro": "Diferenciar es acertado, pero el x del ARIMA no es 1: al expandir, x1* = 1 + x, así que x = x1* - 1 x 0.29, o bien x = -x2* x 0.30. Con x = 1.29, las propias diferencias serían explosivas."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-c",
+   "n": 5,
+   "linea_bloque": 5558,
+   "tipo": "opcion",
+   "modulo": "4.3",
+   "objetivo": "O4",
+   "pregunta": "Para pedidos (n = 150), la varianza es 273.82 en niveles, 148.18 tras una diferencia y 218.94 tras dos. ADF: p < 0.01. KPSS: p > 0.10. r1 = 0.729. Un AR(2) en niveles tiene raíces complejas de módulo 1.4777. ¿Qué d eliges?",
+   "pista": "La regla de la varianza mínima es una heurística. Para una serie estacionaria, Var(x y)/Var(y) = 2(1 - x1): ¿qué pasa si x1 > 0.5?",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "d = 0: las pruebas y las raíces dicen estacionaria; la varianza baja porque x1 > 0.5.",
+     "largo": 85,
+     "correcta": true,
+     "retro": "La varianza baja al diferenciar, pero no por una raíz unitaria: 2(1 - 0.729) = 0.542, y la razón observada es 148.18/273.82 = 0.541: la caída está explicada por la autocorrelación de una serie estacionaria con un ciclo, de unas 9 semanas. Es el aviso del 4.8 con log(lynx): la varianza es un aviso, no un teorema, y hay que mirar siempre las raíces. ADF rechaza la raíz unitaria, KPSS no rechaza la estacionariedad y ndiffs() devuelve 0."
+    },
+    {
+     "texto": "d = 1: es el orden de varianza mínima, y la regla de la varianza dice elegir el mínimo.",
+     "largo": 87,
+     "correcta": false,
+     "retro": "La regla no tiene en cuenta que una serie estacionaria con x1 > 0.5 también baja al diferenciar, porque Var(x y) = 2x0(1 - x1). Aquí las dos pruebas apuntan a d = 0, y la raíz del AR(2) está bien fuera del círculo (1.4777)."
+    },
+    {
+     "texto": "d = 1: ADF y KPSS se contradicen, y en caso de duda conviene diferenciar una vez.",
+     "largo": 81,
+     "correcta": false,
+     "retro": "No se contradicen: ADF rechaza la raíz unitaria y KPSS no rechaza la estacionariedad, que es la combinación en la que las dos coinciden en d = 0. Y «en la duda, diferenciar» tiene un costo: sobrediferenciar mete una raíz MA en el círculo."
+    },
+    {
+     "texto": "d = 2: la varianza vuelve a subir con la segunda diferencia, señal de una tendencia cuadrática.",
+     "largo": 95,
+     "correcta": false,
+     "retro": "Que la varianza suba de d = 1 a d = 2 es, al revés, la señal de que la segunda diferencia sobra. Una tendencia cuadrática se vería en el gráfico y en las pruebas, y aquí las pruebas dicen estacionaria."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-c",
+   "n": 6,
+   "linea_bloque": 5558,
+   "tipo": "opcion",
+   "modulo": "4.5",
+   "objetivo": "O4",
+   "pregunta": "Salida de R para matriculas, una serie anual de 100 años:Series: matriculas ARIMA(1,1,0) with drift Coefficients: ar1 drift 0.3929 1.6263 s.e. 0.0921 0.2120 sigma2 = 1.71: log likelihood = -165.67 AIC=337.35 AICc=337.6 BIC=345.13¿Cuántos estudiantes por año sube el pronóstico a largo plazo?",
+   "pista": "En Arima(), la deriva es la media de las diferencias, E[x yt] = xw, y la constante c del modelo cumple xw = c/(1-x1).",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "0.99: la constante c = drift (1 - x) es la que fija la pendiente de la recta.",
+     "largo": 77,
+     "correcta": false,
+     "retro": "Esa es la c de la ecuación (1 - x B),x yt = c + xt, y no es una pendiente: a largo plazo, x y converge a c/(1-x) = 1.6263. La forma en que Arima() estima la deriva, yt = x t + t, ya la reporta como pendiente."
+    },
+    {
+     "texto": "2.68: la deriva dividida entre 1 - x, que es la media de largo plazo de un AR.",
+     "largo": 78,
+     "correcta": false,
+     "retro": "Dividir entre 1 - x convierte una constante c en una media. La deriva que imprime Arima() ya es la media de las diferencias: dividirla otra vez cuenta el AR dos veces."
+    },
+    {
+     "texto": "Nada: con d = 1, el pronóstico a largo plazo se queda plano en el último valor observado.",
+     "largo": 89,
+     "correcta": false,
+     "retro": "Plano es el ARIMA(1,1,0) sin constante. Con deriva, el pronóstico es una recta (4.5 y 4.9): la deriva es 1.6263 con t = 7.67, claramente distinta de cero."
+    },
+    {
+     "texto": "1.63: el valor de drift es la pendiente a la que converge el pronóstico.",
+     "largo": 72,
+     "correcta": true,
+     "retro": "La deriva estima E[x yt], la pendiente de largo plazo. Los primeros pasos todavía llevan la huella del AR —el pronóstico sube 1.58, 1.61, 1.62…— y convergen a 1.6263 por año. La c de la ecuación es otra cosa: c = 1.6263 (1 - 0.3929) = 0.9874. Confundirlas es el error del intercept del capítulo 3, ahora con d = 1."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-c",
+   "n": 7,
+   "linea_bloque": 5558,
+   "tipo": "opcion",
+   "modulo": "4.6",
+   "objetivo": "O5",
+   "pregunta": "Para exportaciones (n = 140) se decide d = 1 y se ajusta la rejilla con p, q x 2 por máxima verosimilitud, sin constante. Estas son las nueve filas, ordenadas por AICc, con el módulo de la raíz más cercana al círculo en cada polinomio:modelo n* AICc |raíz AR| mín |raíz MA| mín ARIMA(2,1,2) 139 706.39 1.0120 c 1.0001 c ARIMA(0,1,0) 139 709.78 — — ARIMA(0,1,1) 139 711.38 — 16.1733 ARIMA(1,1,0) 139 711.44 18.3335 — ARIMA(2,1,0) 139 712.84 3.7337 c — ARIMA(0,1,2) 139 713.06 — 3.8692 ARIMA(1,1,1) 139 713.38 5.5535 4.0975 ARIMA(2,1,1) 139 714.56 3.0989 c 2.6715 ARIMA(1,1,2) 139 714.78 2.3346 1.8376 c: la raíz más cercana al círculo es de un par complejo¿Qué modelo reportas?",
+   "pista": "Antes de mirar el AICc, mira las dos últimas columnas. Después, cuenta cuántos modelos quedan a menos de 2 puntos del mejor que sobreviva.",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "ARIMA(2,1,2): gana por 3.39 puntos, más de los 2 que separan un empate de una diferencia.",
+     "largo": 89,
+     "correcta": false,
+     "retro": "Gana por AICc, pero sus raíces están sobre el círculo o casi: AR 1.0120 y MA 1.0001, las dos de pares complejos. Sus polinomios son (B) = 1 + 0.082B + 0.976B2 y (B) = 1 + 0.015B + 1.000B2: casi el mismo a los dos lados. Es un par que se cancela, como el ARIMA(2,1,2) de la TRM en el 4.10. El AICc premia un artefacto, y auto.arima lo descartaría con su regla de 1.01 por la raíz MA, que no llega."
+    },
+    {
+     "texto": "ARIMA(1,1,1): de los modelos con parte AR y parte MA, es el de menor AICc y tiene las raíces sanas.",
+     "largo": 99,
+     "correcta": false,
+     "retro": "Tiene las raíces sanas, pero queda 3.60 puntos por encima del ARIMA(0,1,0), con 2 parámetros más. Tener parte AR y parte MA no es un mérito: entre modelos sanos, el AICc y la parsimonia apuntan al más simple."
+    },
+    {
+     "texto": "ARIMA(0,1,0): descartado el (2,1,2) por sus raíces, es el mejor de los sanos y el más simple.",
+     "largo": 93,
+     "correcta": true,
+     "retro": "El (2,1,2) no es un modelo utilizable: sus raíces AR son complejas —un ciclo de unos 4 meses sin amortiguar— y las del MA, casi iguales, lo cancelan. Persigue un ciclo que el diagnóstico no ve: Ljung–Box sobre las diferencias da p = 0.534 a 10 rezagos y p = 0.176 a 20. Entre los sanos manda el ARIMA(0,1,0), con 709.78; el (0,1,1) y el (1,1,0) quedan a 1.60 y 1.66, empatados y con un parámetro más. Es la TRM otra vez: «no hay señal» es el resultado. Antes de cerrarlo falta mirar la deriva, que aquí tiene t = 0.43 y no se incluye."
+    },
+    {
+     "texto": "Ninguno: si el mínimo tiene una raíz AR en el círculo, falta una diferencia y hay que pasar a d = 2.",
+     "largo": 100,
+     "correcta": false,
+     "retro": "La regla «raíz AR en el círculo: subir d» habla de una raíz real en B x 1, sin pareja, la de un (1 - B) que falta. Aquí la del (2,1,2) es de un par complejo —un ciclo— y viene con una MA casi igual que la cancela: el par no dice nada sobre d, dice que ese modelo sobra. Lo que sí habla de d está en la tabla: los AR sanos tienen sus raíces lejos del círculo (18.33 el (1,1,0), 3.73 el (2,1,0)), así que no falta ninguna diferencia, y una segunda sobre una caminata sobrediferenciaría."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-c",
+   "n": 8,
+   "linea_bloque": 5558,
+   "tipo": "opcion",
+   "modulo": "4.8",
+   "objetivo": "O6",
+   "pregunta": "Un AR(1) con media ajustado a llamadas (n = 200) pasa Ljung–Box (rezago 10, fitdf = 1: p = 0.434), pero Shapiro–Wilk da p < 10-6 y la curtosis de los residuales es 6.4, cuando la de la normal es 3. ¿Qué sigue sirviendo del modelo y qué no?",
+   "pista": "Separa lo que necesita normalidad de lo que no. Según el 4.9, la normalidad no hace falta para estimar ni para el pronóstico puntual, pero los intervalos con z,xh la suponen.",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "Los coeficientes y el pronóstico puntual siguen valiendo; los intervalos no, porque su nivel supone normalidad.",
+     "largo": 111,
+     "correcta": true,
+     "retro": "Con colas pesadas, el intervalo del 95 % puede acertar por casualidad mientras el del 80 % sale demasiado ancho y el del 99 %, demasiado estrecho. Es lo que muestran los propios residuales: fuera de 1.282, cae el 13.5 % (el 80 % prometía un 20 %), fuera de 1.96, el 5.0 % (justo lo prometido) y fuera de 2.576, el 2.5 % (prometía un 1 %). Más concentrados en el centro y más extremos en las colas, como la TRM del 4.10. Ljung–Box no mira nada de esto: comprueba autocorrelación, no forma."
+    },
+    {
+     "texto": "Nada: si los residuales no son normales, el modelo está mal especificado y hay que cambiar su orden.",
+     "largo": 100,
+     "correcta": false,
+     "retro": "Cambiar de orden ataca la autocorrelación, y aquí no la hay: Ljung–Box pasa. La no normalidad es un problema de la forma de los choques, no de la dependencia: los coeficientes estimados siguen siendo válidos, y el pronóstico puntual no la necesita."
+    },
+    {
+     "texto": "Todo: pasar Ljung–Box garantiza que los residuales son ruido blanco y que los intervalos son correctos.",
+     "largo": 103,
+     "correcta": false,
+     "retro": "Pasar Ljung–Box dice que no se detecta autocorrelación en los residuales; no dice nada de su distribución, y los intervalos con z,xh suponen normalidad. Con curtosis 6.4, el nivel nominal y la cobertura real se separan."
+    },
+    {
+     "texto": "Los intervalos sí, porque se calculan con ; los coeficientes no, porque la máxima verosimilitud supone normalidad.",
+     "largo": 114,
+     "correcta": false,
+     "retro": "Es al revés. Las estimaciones siguen siendo válidas con choques no normales; lo que se rompe es la traducción de xh a un intervalo con z, que es justo la parte que usa la forma de la normal."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  }
+ ],
+ "bloque-d": [
+  {
+   "instrumento": "bloque-d",
+   "n": 1,
+   "linea_bloque": 5730,
+   "tipo": "grafico",
+   "modulo": "3.2",
+   "objetivo": "O1",
+   "pregunta": "Esta es la ACF teórica de un AR(2) estacionario. ¿Cuál de estos cuatro procesos la generó?",
+   "pista": "Una ACF que oscila amortiguada pide raíces complejas: x12 + 4x2 < 0. Y el signo de la primera barra es el de x1 = x1/(1 - x2).",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "x1 = 1.0, x2 = -0.2.",
+     "largo": 20,
+     "correcta": false,
+     "retro": "Un x2 negativo no basta para oscilar: x12 + 4x2 = 1 - 0.8 = 0.2 > 0, las raíces son reales y la ACF decae sin cambiar de signo (0.833, 0.633, 0.467…). La regla «x2 < 0 implica raíces complejas» es falsa; lo que decide es el discriminante."
+    },
+    {
+     "texto": "x1 = 1.0, x2 = -0.6.",
+     "largo": 20,
+     "correcta": true,
+     "retro": "x12 + 4x2 = 1 - 2.4 = -1.4 < 0: raíces complejas de módulo 1/0.6 = 1.291, fuera del círculo. La ACF arranca en x1 = 1/1.6 = 0.625, oscila y se amortigua al ritmo del módulo, con un pseudo-periodo de 2x/!(1/(20.6)) = 7.23 rezagos: el ciclo de unos siete que se ve."
+    },
+    {
+     "texto": "x1 = -1.0, x2 = -0.6.",
+     "largo": 21,
+     "correcta": false,
+     "retro": "También tiene raíces complejas, pero con x1 < 0 la primera barra sale negativa (x1 = -0.625) y la oscilación es rápida: un periodo de 2.76 rezagos, casi alternando de signo. Aquí la ACF arranca en positivo y tarda unos siete rezagos en completar el ciclo."
+    },
+    {
+     "texto": "x1 = 1.0, x2 = -1.1.",
+     "largo": 20,
+     "correcta": false,
+     "retro": "Con x2 = -1.1 se viola -1 < x2 < 1: el proceso no es estacionario y no tiene ACF teórica que dibujar. El enunciado dice estacionario, así que esta queda descartada sin calcular nada más."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-d",
+   "n": 2,
+   "linea_bloque": 5730,
+   "tipo": "grafico",
+   "modulo": "3.5",
+   "objetivo": "O2",
+   "pregunta": "ACF (verde) y PACF (naranja) muestrales de humedad, n = 200, con la banda 0.139. Alguien concluye: «la PACF se corta en el rezago 3: es un AR(3)». ¿Qué dice la tabla de identificación?",
+   "pista": "Tres barras fuera y ninguna después es compatible con un AR(3). La pregunta es si es lo único compatible con esta PACF y esta ACF, sabiendo que la tercera barra apenas pasa la banda.",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "Que tiene razón y el orden queda fijado: tres barras de la PACF fuera y ninguna después son la firma de un AR(3).",
+     "largo": 113,
+     "correcta": false,
+     "retro": "Tres barras fuera y ninguna después es compatible con un AR(3), y es una lectura razonable. Lo que falla es «el orden queda fijado»: la tercera barra (0.147) apenas pasa la banda (0.139), y un ARMA(1,1) produce casi el mismo dibujo. Ajustados, empatan: AICc 850.26 el AR(3) y 850.52 el ARMA(1,1), y el BIC prefiere el ARMA(1,1). La tabla propone; no descarta."
+    },
+    {
+     "texto": "Que es un MA(6): la ACF se sale de la banda hasta el rezago 6 y después se queda dentro, que es un corte.",
+     "largo": 105,
+     "correcta": false,
+     "retro": "Un MA(6) tendría la PACF decayendo sin corte, y aquí se apaga en el rezago 3. Y la ACF no se corta: baja despacio (0.429, 0.386, 0.343…): lo contrario de un corte."
+    },
+    {
+     "texto": "Que no puede ser un AR: una ACF que decae despacio, como esta, descarta cualquier proceso autorregresivo.",
+     "largo": 105,
+     "correcta": false,
+     "retro": "Es al revés: en un AR la ACF decae, y lo que se corta es la PACF. Una ACF lenta no descarta un AR; lo que no hace es decidir entre un AR y un ARMA, porque en los dos decae."
+    },
+    {
+     "texto": "Que el AR(3) es un candidato, no el único: un ARMA(1,1) encaja casi igual y hay que compararlos.",
+     "largo": 96,
+     "correcta": true,
+     "retro": "Es lo que dice el 3.5: con datos reales, la tabla propone y no decide. Ajustados, los dos empatan por AICc —850.26 el AR(3) y 850.52 el ARMA(1,1), a 0.26 puntos—, y el BIC, que castiga más el parámetro de sobra, prefiere el ARMA(1,1): 863.51 frente a 866.44. Ninguno se descarta con estos datos: se diagnostican los dos y, si pronostican igual, se elige el más simple. El AR(1), con 862.84, sí queda fuera."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-d",
+   "n": 3,
+   "linea_bloque": 5730,
+   "tipo": "grafico",
+   "modulo": "3.6",
+   "objetivo": "O2",
+   "pregunta": "ACF muestral de erroressensor (n = 100, banda 0.196). ¿Qué proceso propones?",
+   "pista": "Cuenta cuántas barras se esperan fuera de la banda por puro azar en 20 rezagos. Y pregúntate si un rezago 19 tiene algún sentido en el fenómeno.",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "Un MA(1): la ACF se corta tras el rezago 1, y la barra del 19 es la que se esperaba por azar.",
+     "largo": 93,
+     "correcta": true,
+     "retro": "En 20 rezagos se espera una barra fuera por azar, 20 0.05 = 1. Aquí r1 = 0.456 y después nada hasta el rezago 19, que asoma con 0.225: es esa barra esperada. Es la lección del 3.6: la ACF muestral se separa de la teórica incluso donde la teórica es exactamente cero. Un MA(19) para perseguirla sería ajustar el ruido; la confirmación vendrá de Ljung–Box sobre los residuales del MA(1)."
+    },
+    {
+     "texto": "Un MA(19): la última barra significativa marca el orden de un MA, y está en el rezago 19.",
+     "largo": 89,
+     "correcta": false,
+     "retro": "«La última barra fuera» marca el orden solo si el corte es limpio. Aquí, del rezago 2 al 18 no sale ninguna, y una barra aislada y lejana es lo que el azar produce una vez cada 20 rezagos. Un MA(19) son 19 parámetros para explicar una barra."
+    },
+    {
+     "texto": "Un AR(1): la primera barra es la única grande, y un AR(1) concentra su peso en el rezago 1.",
+     "largo": 91,
+     "correcta": false,
+     "retro": "Un AR(1) con x = 0.46 tendría una ACF que decae: 0.46, 0.21, 0.10… Aquí la segunda barra es prácticamente cero (-0.027): eso es un corte, la firma de un MA. En un AR(1) la que se corta es la PACF."
+    },
+    {
+     "texto": "Ruido blanco: dos barras fuera de 20 es casi lo que el azar produce, así que no hay estructura.",
+     "largo": 95,
+     "correcta": false,
+     "retro": "Dos de veinte es más de lo esperado, que es una, pero lo decisivo no es la cuenta sino cuál sale: r1 = 0.456 es más del doble de la banda, demasiado para ser azar. La del rezago 19 sí es la esperable."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-d",
+   "n": 4,
+   "linea_bloque": 5730,
+   "tipo": "grafico",
+   "modulo": "3.8",
+   "objetivo": "O3",
+   "pregunta": "Se ajusta un AR(1) a trafico (n = 150). Ninguna de las 20 autocorrelaciones de sus residuales sale de la banda 0.160: la mayor es 0.153, en el rezago 8. El gráfico muestra el p-valor de Ljung–Box, con fitdf = 1, para cada rezago h. ¿Qué concluyes?",
+   "pista": "Ljung–Box suma los cuadrados de todas las autocorrelaciones hasta h: puede ver lo que ninguna barra muestra sola. Y fíjate en qué pasa con el p-valor cuando h crece.",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "El modelo vale: ninguna de las 20 barras sale de la banda, así que los residuales son ruido blanco.",
+     "largo": 99,
+     "correcta": false,
+     "retro": "Mirar barra a barra es justo lo que Ljung–Box corrige. Muchas autocorrelaciones pequeñas —aquí, 0.130, 0.130 y 0.146 en los rezagos 3 a 5— no superan la banda una a una, pero juntas son más de lo que el ruido produce."
+    },
+    {
+     "texto": "El modelo vale: Ljung–Box a 20 rezagos, que es el que se suele reportar, da p = 0.24 y no rechaza.",
+     "largo": 98,
+     "correcta": false,
+     "retro": "Elegir el h que deja pasar el modelo es buscar la respuesta que se quiere. A partir del rezago 11 el p-valor sube porque se añaden autocorrelaciones casi nulas que diluyen el estadístico: los grados de libertad crecen y la señal acumulada en los primeros rezagos pesa menos."
+    },
+    {
+     "texto": "No basta: Ljung–Box rechaza del rezago 2 al 10 aunque ninguna barra salga sola; hay que subir el orden.",
+     "largo": 103,
+     "correcta": true,
+     "retro": "La suma de muchas autocorrelaciones pequeñas es más de lo que el ruido explica. Es la ventaja de una prueba conjunta (3.8): detecta estructura repartida entre varios rezagos que la banda, rezago a rezago, deja pasar. Un AR(3) lo resuelve: con fitdf = 3, su p-valor mínimo es 0.149, y el AICc baja de 544.73 a 531.46."
+    },
+    {
+     "texto": "No se puede concluir nada: el gráfico y el correlograma se contradicen, y en ese caso manda el correlograma.",
+     "largo": 108,
+     "correcta": false,
+     "retro": "No se contradicen: miden cosas distintas. El correlograma pregunta por cada rezago aislado; Ljung–Box, por todos juntos hasta h. Que la segunda rechace y el primero no es información, no un empate."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-d",
+   "n": 5,
+   "linea_bloque": 5730,
+   "tipo": "grafico",
+   "modulo": "4.4",
+   "objetivo": "O5",
+   "pregunta": "La serie consumo (n = 160) vaga sin volver a un nivel; su ACF en niveles arranca en 0.939 y baja muy despacio, así que se decide d = 1. Estas son la ACF (verde) y la PACF (naranja) de x yt, con la banda 0.155. ¿Qué modelo propones?",
+   "pista": "Aplica la tabla del capítulo 3 sobre la serie diferenciada: ¿cuál de las dos funciones se corta, y dónde?",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "ARIMA(0,1,2): la ACF de las diferencias tiene dos barras grandes al principio.",
+     "largo": 78,
+     "correcta": false,
+     "retro": "La ACF tiene tres barras fuera (0.370, -0.256 y -0.286) y después se apaga oscilando: decae, no se corta. La que se corta es la PACF, en el rezago 2, y esa es la firma de un AR(2) sobre x y."
+    },
+    {
+     "texto": "ARIMA(2,1,0): la PACF de x yt se corta en el rezago 2 y la ACF se apaga oscilando.",
+     "largo": 82,
+     "correcta": true,
+     "retro": "11 = 0.370 y 22 = -0.456 salen de la banda, y desde el rezago 3 no sale ninguna: un AR(2) en las diferencias. Ajustado, da 1 = 0.5428 y 2 = -0.4546, con 12 + 42 < 0: raíces complejas, que son la oscilación de la ACF. Es la regla del 4.4: la tabla se lee sobre x y, nunca sobre la serie sin diferenciar, y se proponen también vecinos, como el ARIMA(2,1,1) o el ARIMA(1,1,1), para compararlos."
+    },
+    {
+     "texto": "ARIMA(1,1,0): la PACF de la serie en niveles se corta en el rezago 1.",
+     "largo": 69,
+     "correcta": false,
+     "retro": "Leer la serie sin diferenciar es el error más caro del 4.4: una serie que vaga tiene la ACF lenta y la PACF con una sola barra enorme, y eso no es un AR(1), es la raíz unitaria. Sobre x y, la PACF se corta en el 2, no en el 1."
+    },
+    {
+     "texto": "ARIMA(2,2,0): como la ACF de las diferencias todavía tiene barras fuera, hay que diferenciar otra vez.",
+     "largo": 102,
+     "correcta": false,
+     "retro": "Que x y tenga autocorrelación no pide otra diferencia: pide un modelo ARMA para ella. Su ACF se apaga en pocos rezagos, que es lo que hace una serie estacionaria; diferenciar otra vez metería una raíz MA en el círculo."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "bloque-d",
+   "n": 6,
+   "linea_bloque": 5730,
+   "tipo": "grafico",
+   "modulo": "4.9",
+   "objetivo": "O6",
+   "pregunta": "Este es el pronóstico a 24 meses de un ARIMA ajustado a usuarios, con su intervalo del 95 %. El semiancho pasa de 5.0 el primer mes a 128.0 el mes 24: 25.6 veces más. ¿Qué modelo lo produjo?",
+   "pista": "La forma del pronóstico la deciden d y la constante; el ritmo al que se abre la banda, d: con d = 1, xh crece como h; con d = 2, como h3/2.",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "Un ARIMA(1,0,1) con media: estacionario, con su nivel medio estimado sobre los 60 meses.",
+     "largo": 88,
+     "correcta": false,
+     "retro": "Un ARMA estacionario vuelve a su media y su banda tiene techo. Aquí el pronóstico no vuelve a ningún sitio: sigue subiendo, y la banda no deja de abrirse."
+    },
+    {
+     "texto": "Un ARIMA(0,1,1) sin constante: una diferencia y un MA(1), como el suavizamiento exponencial simple.",
+     "largo": 99,
+     "correcta": false,
+     "retro": "Sin constante y con d = 1, el pronóstico es plano: se queda en el último nivel. Aquí es una recta que sigue subiendo."
+    },
+    {
+     "texto": "Un ARIMA(0,1,1) con deriva: una diferencia, un MA(1) y una constante que actúa como pendiente.",
+     "largo": 94,
+     "correcta": false,
+     "retro": "La recta encaja, pero la banda no. Con d = 1, los xj se estabilizan en 1 + x y xh crece como h: ajustado a esta serie, de h = 1 a h = 24 el semiancho se multiplicaría por 6.5, no por 25.6."
+    },
+    {
+     "texto": "Un ARIMA(0,2,1) sin constante: dos diferencias y un MA(1), sin ningún término constante.",
+     "largo": 88,
+     "correcta": true,
+     "retro": "Con d = 2 y sin constante el pronóstico es una recta, no una parábola: x2 y se apaga y la pendiente queda fija, aquí en 13.38 al mes. Los pesos crecen linealmente, xj = 1 + j(1 + x), que con = -0.6772 dan 1, 1.3228, 1.6456…, así que xh termina creciendo como h3/2; aquí el MA lo frena, y aun así se multiplica por 25.6 de 1 a 24 meses, cuando una caminata lo haría por 24 = 4.9. Es el precio de d = 2 que el 4.9 muestra con el Nilo: una recta muy segura de sí misma con una banda que se dispara."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  }
+ ],
+ "prep-simulacro": [
+  {
+   "instrumento": "prep-simulacro",
+   "n": 1,
+   "linea_bloque": 5861,
+   "tipo": "numerica",
+   "modulo": "3.2",
+   "objetivo": "O1",
+   "pregunta": "Un AR(2) estacionario tiene x1 = 0.6, x2 = -0.35 y x2 = 2. ¿Cuánto vale su varianza, x0? Da cuatro decimales.",
+   "pista": null,
+   "respuesta": 2.8402,
+   "tolerancia": 0.0006,
+   "retroAcierto": "x0 = (1 - x2),x2/[(1 + x2)((1 - x2)2 - x12)] = 1.35 2/(0.65 1.4625) = 2.8402. El denominador es el triángulo: se anula en su frontera, y por eso la varianza se dispara al acercarse a ella.",
+   "retroFallo": "Con la fórmula del 3.2: 1.35 2/[0.65 (1.352 - 0.62)] = 2.7/0.9506. Si te salió 3.1250, usaste la de un AR(1), x2/(1 - x12), que ignora x2.",
+   "opciones": [],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "prep-simulacro",
+   "n": 2,
+   "linea_bloque": 5861,
+   "tipo": "opcion",
+   "modulo": "3.4",
+   "objetivo": "O2",
+   "pregunta": "Un ARMA(1,1) invertible con x = 0.5 y x = 0.4 se pronostica a un paso con su forma AR(x), yt t-1 = -j x 1xj,yt-j. ¿Con qué peso entra yt-2 en ese pronóstico?",
+   "pista": null,
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "+0.90",
+     "largo": 5,
+     "correcta": false,
+     "retro": "Ese es el peso de yt-1: -x1 = x + x = 0.9. El de yt-2 es el siguiente, -x2."
+    },
+    {
+     "texto": "-0.90",
+     "largo": 5,
+     "correcta": false,
+     "retro": "-0.9 es x1, y está mal dos veces: en el pronóstico entra con el signo cambiado, +0.9, y es el peso de yt-1, no el de yt-2."
+    },
+    {
+     "texto": "-0.36",
+     "largo": 5,
+     "correcta": true,
+     "retro": "xj = -(x+x)(-x)j-1, así que x2 = -0.9 (-0.4) = 0.36, y en el pronóstico entra con el signo cambiado: -0.36. Con x > 0 los pesos de las observaciones alternan de signo y decaen como 0.4j: con un MA invertible, el pasado lejano pesa cada vez menos."
+    },
+    {
+     "texto": "+0.36",
+     "largo": 5,
+     "correcta": false,
+     "retro": "x2 = 0.36, pero el pronóstico es - xj yt-j: en él yt-2 entra con -0.36. Olvidar ese signo invierte todos los pesos."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "prep-simulacro",
+   "n": 3,
+   "linea_bloque": 5861,
+   "tipo": "opcion",
+   "modulo": "3.10",
+   "objetivo": "O3",
+   "pregunta": "Se ajusta un AR(3) a una serie de 120 observaciones: Call: arima(x = y, order = c(3, 0, 0), method = \"ML\") Coefficients: ar1 ar2 ar3 intercept 0.6741 -0.2716 0.0892 25.2275 s.e. 0.0911 0.1071 0.0912 0.2205 sigma2 estimated as 1.522: log likelihood = -195.71, aic = 401.43¿Qué haces con el modelo?",
+   "pista": null,
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "opciones": [
+    {
+     "texto": "Pruebo un AR(2): el coeficiente de mayor orden, 3, no es significativo.",
+     "largo": 71,
+     "correcta": true,
+     "retro": "3/e.e. = 0.98, muy por debajo de 2. Es la primera confirmación de la tabla del 3.10: el último coeficiente tiene que ser significativo, porque es el que justifica el orden. Ajustado, el AR(2) tiene un AICc de 400.73, frente a 401.95 del AR(3)."
+    },
+    {
+     "texto": "Me quedo con el AR(3): tres coeficientes autorregresivos explican más que dos.",
+     "largo": 78,
+     "correcta": false,
+     "retro": "Explican más dentro de muestra, como cualquier modelo con un parámetro más. La pregunta es si lo que añade el tercero se distingue del ruido, y con t = 0.98 no."
+    },
+    {
+     "texto": "Quito 2, que es negativo, y me quedo con los rezagos 1 y 3.",
+     "largo": 59,
+     "correcta": false,
+     "retro": "2 tiene t = -2.54: es significativo. Además, los órdenes se recortan desde el final; quitar un rezago intermedio deja un modelo con huecos que solo se justifica con una razón del fenómeno."
+    },
+    {
+     "texto": "Paso a un ARMA(3,1), porque un AR con coeficientes pequeños suele esconder un término MA.",
+     "largo": 89,
+     "correcta": false,
+     "retro": "Añadir parámetros cuando el último no es significativo va en la dirección contraria. Primero se recorta; si el AR(2) no pasa el diagnóstico, entonces se prueban otros candidatos."
+    }
+   ],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "prep-simulacro",
+   "n": 4,
+   "linea_bloque": 5861,
+   "tipo": "numerica",
+   "modulo": "4.5",
+   "objetivo": "O4",
+   "pregunta": "Se ajusta un ARIMA(1,0,1) a una serie de 150 observaciones: Call: arima(x = y, order = c(1, 0, 1), method = \"ML\") Coefficients: ar1 ma1 intercept 0.6363 0.4158 73.1159 s.e. 0.0781 0.1007 0.6636 sigma2 estimated as 4.475: log likelihood = -325.82, aic = 659.63¿A qué valor tiende el pronóstico cuando el horizonte crece? Da dos decimales.",
+   "pista": null,
+   "respuesta": 73.12,
+   "tolerancia": 0.01,
+   "retroAcierto": "Con d = 0, lo que R llama intercept es la media x, y un ARMA estacionario vuelve a su media: el pronóstico tiende a 73.12. La constante de la ecuación sería c = x(1 - x) = 26.59, que no es ningún nivel de la serie.",
+   "retroFallo": "El intercept de arima() con d = 0 es la media, no la c de la ecuación: el pronóstico vuelve a 73.12. Si diste 26.59, calculaste c = x(1 - x), la constante de yt = c + x,yt-1 + , que no es un nivel.",
+   "opciones": [],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "prep-simulacro",
+   "n": 5,
+   "linea_bloque": 5861,
+   "tipo": "numerica",
+   "modulo": "4.6",
+   "objetivo": "O5",
+   "pregunta": "Un ARIMA(0,1,1) sin constante, ajustado a una serie de n = 101 observaciones, tiene L = -193.23. Calcula su BIC con la fórmula del 4.6. Da dos decimales.",
+   "pista": null,
+   "respuesta": 395.67,
+   "tolerancia": 0.015,
+   "retroAcierto": "k = 2 (x y x2) y n* = 100: BIC = 386.46 + 2 100 = 395.67. Con n* = 100, cada parámetro cuesta 100 = 4.61 puntos, más del doble que en el AIC: por eso el BIC elige modelos más pequeños.",
+   "retroFallo": "-2 L + k n*, con k = 2 (el x y x2) y n* = n - d = 100: 395.67. Si te salió 391.07, no contaste x2; si te salió 395.69, usaste 101: el n que cuenta es el de las diferencias.",
+   "opciones": [],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  },
+  {
+   "instrumento": "prep-simulacro",
+   "n": 6,
+   "linea_bloque": 5861,
+   "tipo": "numerica",
+   "modulo": "4.9",
+   "objetivo": "O6",
+   "pregunta": "Un ARIMA(1,1,0) sin constante tiene x = 0.4 y x = 2. ¿Cuánto mide el semiancho del intervalo al 95 % a tres pasos? Da dos decimales.",
+   "pista": null,
+   "respuesta": 9.1,
+   "tolerancia": 0.02,
+   "retroAcierto": "En niveles es un AR(2) con x1* = 1.4 y x2* = -0.4: x1 = 1.40 y x2 = 1.4 1.4 - 0.4 = 1.56. Entonces x3 = 21 + 1.96 + 2.4336 = 4.6448 y el semiancho es 9.10. Los xj suben hacia 1/(1-x) = 1.67: no se apagan, porque con d = 1 cada choque deja una huella permanente.",
+   "retroFallo": "Los xj salen de la forma en niveles, (1 - 0.4B)(1 - B) = 1 - 1.4B + 0.4B2: x1 = 1.4 y x2 = 1.56. Si te salió 4.27, usaste los pesos del AR(1) estacionario, 0.4j, y olvidaste la diferencia; si te salió 6.79, usaste los de una caminata, xj = 1.",
+   "opciones": [],
+   "filas": null,
+   "respuestas": null,
+   "elementos": null
+  }
+ ]
+}

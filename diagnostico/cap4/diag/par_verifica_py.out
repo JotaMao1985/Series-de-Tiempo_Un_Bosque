@@ -1,0 +1,30 @@
+/Users/javiermauriciosierra/Documents/Trabajo 2026/Bosque 2026/Series de tiempo/.claude/worktrees/course-content-improvement-227f2c/diagnostico/cap4/diag/par_verifica.py:11: InterpolationWarning: The test statistic is outside of the range of p-values available in the
+look-up table. The actual p-value is smaller than the p-value returned.
+
+  r = kpss(nilo, regression="c", nlags="auto"); print("estadístico", round(r[0],4), "rezagos usados", r[2])
+statsmodels 0.14.6
+
+== KPSS nlags='auto' (M3)
+estadístico 0.8691 rezagos usados 5
+
+== Bloque M2: Ljung-Box con y sin el primer residual
+resid[0] = 1120.0  y_1 = 1120.0
+con resid[0] 0.761
+sin resid[0] 0.8225
+params [ 2.54900000e-01 -8.74900000e-01  1.97680561e+04]  llf -630.609
+
+== M5: const de ARIMA(1,0,1) frente a la media muestral y a R
+const np.float64(919.350541)  media muestral 919.35  llf -637.0397
+llf de statsmodels en los coeficientes de R (sigma2 optimizada en rejilla): -637.0388
+arrancando en los valores de R: const 920.7037  llf -637.0393
+
+== M7, bloque Python: de dónde sale la diferencia de AICc con R (1267.507)
+nobs 100  nobs_effective 99  llf -630.6093
+aicc a mano con nobs=100: 1267.4687  con nobs_effective=99: 1267.4713  f.aicc: 1267.4713
+AIC statsmodels 1267.2187  (R: AIC = AICc - 24/95 = 1267.2544 )
+
+== M10 TRM: error estándar de la deriva, OPG frente a OIM
+OPG [ 8.   11.17]  OIM [ 8.   10.35]
+media de las diferencias 8.0009  sd/sqrt(n-1) (MLE) 10.3558
+
+== M4: método por defecto de pacf: ywadjusted

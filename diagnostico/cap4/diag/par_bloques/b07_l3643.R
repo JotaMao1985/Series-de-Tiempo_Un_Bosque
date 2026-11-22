@@ -1,0 +1,25 @@
+w <- diff(Nile)                 # la serie YA diferenciada
+n <- length(w)                  # 99
+round(1.96 / sqrt(n), 4)        # la banda
+#> [1] 0.197
+
+round(as.numeric(acf(w, lag.max = 6, plot = FALSE)$acf)[-1], 4)
+#> [1] -0.4020 -0.0443  0.0274 -0.0879  0.0005  0.0465
+#   solo el rezago 1 se sale: la ACF CORTA en 1
+
+# pacf()$acf devuelve un array de 3 dimensiones: as.numeric() lo aplana
+round(as.numeric(pacf(w, lag.max = 6, plot = FALSE)$acf), 4)
+#> [1] -0.4020 -0.2456 -0.1187 -0.1733 -0.1554 -0.0737
+#   decae en vez de cortar: firma de MA
+
+# Contraste: la ACF de la serie SIN diferenciar no dice nada sobre p ni q
+round(as.numeric(acf(Nile, lag.max = 6, plot = FALSE)$acf)[-1], 4)
+#> [1] 0.4984 0.3846 0.3279 0.2392 0.2284 0.2273    decae despacio y no corta
+
+# El candidato de la tabla
+ma1 <- arima(Nile, order = c(0, 1, 1), method = "ML")
+round(c(theta = coef(ma1)[["ma1"]], ee = sqrt(ma1$var.coef[1, 1])), 4)
+#>   theta      ee
+#> -0.7329  0.1143
+Box.test(residuals(ma1), lag = 20, type = "Ljung-Box", fitdf = 1)$p.value
+#> [1] 0.6736635

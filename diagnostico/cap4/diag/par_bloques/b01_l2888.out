@@ -1,0 +1,28 @@
+> data(Nile)
+> length(Nile)
+[1] 100
+> phi <- 0.2544
+> ar_expandido <- c(1 + phi, -phi)
+> round(ar_expandido, 4)
+[1]  1.2544 -0.2544
+> sum(ar_expandido)
+[1] 1
+> round(Mod(polyroot(c(1, -ar_expandido))), 4)
+[1] 1.0000 3.9308
+> set.seed(2026)
+> w <- arima.sim(list(ar = 0.2544, ma = -0.8741), n = 200)
+> y <- cumsum(w)
+> round(c(var_w = var(w), var_y = var(y), razon = var(y)/var(w)), 
++     3)
+var_w var_y razon 
+1.426 1.434 1.006 
+> set.seed(2026)
+> w0 <- arima.sim(list(ar = 0.2544), n = 200)
+> round(var(cumsum(w0))/var(w0), 1)
+[1] 32.8
+> set.seed(2026)
+> y2 <- arima.sim(list(order = c(1, 1, 1), ar = 0.2544, 
++     ma = -0.8741), n = 200)
+> length(y2)
+[1] 201
+> 

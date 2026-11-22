@@ -1,0 +1,27 @@
+> library(forecast)
+> f0 <- arima(Nile, order = c(1, 0, 1), method = "ML")
+> round(coef(f0), 4)
+      ar1       ma1 intercept 
+   0.8610   -0.5177  920.7037 
+> f1a <- arima(Nile, order = c(1, 1, 1), include.mean = TRUE, 
++     method = "ML")
+> names(coef(f1a))
+[1] "ar1" "ma1"
+> f1b <- Arima(Nile, order = c(1, 1, 1), include.drift = TRUE)
+> round(c(coef(f1b)[["drift"]], sqrt(diag(f1b$var.coef))[["drift"]]), 
++     4)
+[1] -2.8827  2.0167
+> round(coef(f1b)[["drift"]]/sqrt(diag(f1b$var.coef))[["drift"]], 
++     3)
+[1] -1.429
+> round(c(con_deriva = f1b$aicc, sin_deriva = Arima(Nile, 
++     order = c(1, 1, 1))$aicc), 3)
+con_deriva sin_deriva 
+  1268.063   1267.507 
+> f2 <- Arima(Nile, order = c(1, 2, 1), include.drift = TRUE)
+> "drift" %in% names(coef(f2))
+[1] FALSE
+Warning message:
+In Arima(Nile, order = c(1, 2, 1), include.drift = TRUE) :
+  No drift term fitted as the order of difference is 2 or more.
+> 

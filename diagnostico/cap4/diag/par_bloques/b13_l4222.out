@@ -1,0 +1,41 @@
+> library(forecast)
+> ajuste <- auto.arima(Nile, trace = TRUE, seasonal = FALSE)
+
+ ARIMA(2,1,2) with drift         : Inf
+ ARIMA(0,1,0) with drift         : 1298.77
+ ARIMA(1,1,0) with drift         : 1283.598
+ ARIMA(0,1,1) with drift         : 1270.562
+ ARIMA(0,1,0)                    : 1296.738
+ ARIMA(1,1,1) with drift         : 1268.063
+ ARIMA(2,1,1) with drift         : 1269.777
+ ARIMA(1,1,2) with drift         : 1269.779
+ ARIMA(0,1,2) with drift         : 1268.969
+ ARIMA(2,1,0) with drift         : 1279.708
+ ARIMA(1,1,1)                    : 1267.507
+ ARIMA(0,1,1)                    : 1269.216
+ ARIMA(1,1,0)                    : 1281.605
+ ARIMA(2,1,1)                    : 1269.322
+ ARIMA(1,1,2)                    : 1269.348
+ ARIMA(0,1,2)                    : 1268.21
+ ARIMA(2,1,0)                    : 1277.737
+ ARIMA(2,1,2)                    : Inf
+
+ Best model: ARIMA(1,1,1)                    
+
+> as.character(ajuste)
+[1] "ARIMA(1,1,1)"
+> round(ajuste$aicc, 3)
+[1] 1267.507
+> completo <- auto.arima(Nile, stepwise = FALSE, approximation = FALSE, 
++     seasonal = FALSE)
+> c(escalonada = as.character(ajuste), exhaustiva = as.character(completo))
+    escalonada     exhaustiva 
+"ARIMA(1,1,1)" "ARIMA(1,1,1)" 
+> n_modelos <- function(...) sum(grepl("^ ARIMA.*:", 
++     capture.output(invisible(auto.arima(...)))))
+> c(escalonada = n_modelos(Nile, trace = TRUE, seasonal = FALSE), 
++     exhaustiva = n_modelos(Nile, trace = TRUE, seasonal = FALSE, 
++         stepwise = FALSE, approximation = FALSE))
+escalonada exhaustiva 
+        18         42 
+> 

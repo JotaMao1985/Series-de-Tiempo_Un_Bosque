@@ -1,0 +1,33 @@
+> aicc <- function(f, n_ef) {
++     k <- length(f$coef) + 1
++     f$aic + 2 * k * (k + 1)/(n_ef - k - 1)
++ }
+> bic2 <- function(f, n_ef) {
++     k <- length(f$coef) + 1
++     f$aic - 2 * k + log(n_ef) * k
++ }
+> n <- length(Nile)
+> rejilla <- do.call(rbind, lapply(0:2, function(d) do.call(rbind, 
++     lapply(0:2, function(p) do.call(rbind, lapply(0:2, function(q) {
++         f <- tryCatch(arima(Nile, order = c(p, d, q), method = "ML"), 
++             error = function(e) NULL)
++         if (is.null(f)) 
++             return(NULL)
++         data.frame(d = d, modelo = sprintf("ARIMA(%d,%d,%d)", 
++             p, d, q), n_ef = n - d, aicc = round(aicc(f, n - 
++             d), 2), bic = round(bic2(f, n - d), 2))
++     }))))))
+> do.call(rbind, lapply(split(rejilla, rejilla$d), function(g) data.frame(d = g$d[1], 
++     n_ef = g$n_ef[1], mejor_aicc = g$modelo[which.min(g$aicc)], 
++     aicc = min(g$aicc), mejor_bic = g$modelo[which.min(g$bic)], 
++     bic = min(g$bic))))
+  d n_ef   mejor_aicc    aicc    mejor_bic     bic
+0 0  100 ARIMA(1,0,1) 1282.50 ARIMA(1,0,1) 1292.50
+1 1   99 ARIMA(1,1,1) 1267.51 ARIMA(0,1,1) 1274.28
+2 2   98 ARIMA(1,2,2) 1264.60 ARIMA(0,2,2) 1273.50
+> subset(rejilla, modelo %in% c("ARIMA(0,1,1)", "ARIMA(1,1,1)"))[, 
++     c("modelo", "aicc", "bic")]
+         modelo    aicc     bic
+11 ARIMA(0,1,1) 1269.22 1274.28
+14 ARIMA(1,1,1) 1267.51 1275.04
+> 

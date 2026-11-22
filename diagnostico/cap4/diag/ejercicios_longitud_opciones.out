@@ -1,0 +1,335 @@
+
+######## cap4 (8 preguntas)
+
+1 · opcion · 6
+  a)    42 · retro sí · El ARIMA(1,2,2), porque 1264.60 < 1267.51.
+  b) *  86 · retro sí · Ninguno de los dos por esta comparación: no son comparables, porque tienen disti
+  c)    74 · retro sí · El ARIMA(1,1,1), porque menos diferencias es siempre mejor por parsimonia.
+  d)    63 · retro sí · El que tenga mejor BIC, que sí es comparable entre distintos d.
+  -> correcta b (86); otras 42–74; ES LA MÁS LARGA; posición 2
+
+2 · numerica · 9 · respuesta 151.97 · tolerancia 0.4
+
+3 · grafico · 10
+  a)    51 · retro sí · Aumentar q hasta que las barras entren en la banda.
+  b)    75 · retro sí · Diferenciar una vez más: la autocorrelación alta indica no estacionariedad.
+  c) *  81 · retro sí · Pasar a un modelo estacional: el patrón está en los múltiplos del período m = 12
+  d)    87 · retro sí · Nada: la mayoría de las barras están dentro de la banda, así que el modelo es ad
+  -> correcta c (81); otras 51–87; ni la más larga ni la más corta; posición 3
+
+4 · multiple · 5
+  a) * 106 · retro NO · Con d = 1 la constante es la media de las diferencias, es decir una tendencia li
+  b) *  55 · retro NO · Con d x 1, stats::arima ignora include.mean sin avisar.
+  c)    59 · retro NO · Sin constante, un modelo con d = 2 pronostica una parábola.
+  d) *  55 · retro NO · Con d x 2, forecast::Arima avisa y no ajusta la deriva.
+  e)    99 · retro NO · La constante de un ARIMA(p,0,q) es la ordenada al origen de una regresión, no la
+  -> 3 correctas en abd; marcar las 3 más largas: falla; las 3 más cortas: falla
+  !! la pista anuncia cuántas son correctas
+
+5 · opcion · 3
+  a) *  91 · retro sí · Prácticamente siempre, si el escalón es apreciable: con el del Nilo, el 100,% de
+  b)    72 · retro sí · Alrededor del 5,%, porque las series son estacionarias por construcción.
+  c)    71 · retro sí · Nunca, porque KPSS solo detecta raíces unitarias y aquí no hay ninguna.
+  d)    65 · retro sí · Depende del tamaño de la muestra, pero no del tamaño del escalón.
+  -> correcta a (91); otras 65–72; ES LA MÁS LARGA; posición 1
+
+6 · grafico · 4
+  a)    67 · retro sí · Es un AR de orden alto, porque hay muchas barras fuera de la banda.
+  b)    59 · retro sí · Es un MA(q) con q igual al número de barras significativas.
+  c)    58 · retro sí · Que d = 1, porque el primer valor es 0.498, cercano a 0.5.
+  d) *  93 · retro sí · Nada todavía: esa forma indica no estacionariedad, y hay que diferenciar antes d
+  -> correcta d (93); otras 58–67; ES LA MÁS LARGA; posición 4
+
+7 · opcion · 7
+  a)    82 · retro sí · Que el ARIMA(1,1,1) es el modelo verdadero, ya que lo confirman las dos búsqueda
+  b)    85 · retro sí · Que la búsqueda escalonada es innecesaria, porque la exhaustiva llega al mismo s
+  c) * 109 · retro sí · Que hay siete modelos prácticamente indistinguibles, y conviene decirlo en vez d
+  d)    98 · retro sí · Que como la diferencia es menor que 2, hay que elegir el modelo con menos paráme
+  -> correcta c (109); otras 82–98; ES LA MÁS LARGA; posición 3
+
+8 · numerica · 8 · respuesta 1 · tolerancia 0.002
+
+cap4: «la más larga» acierta 4 de 5; «la más corta», 0 de 5; posiciones de la correcta: 2 3 1 4 3; opciones sin retro: 5 de 25
+
+######## simulacro (10 preguntas)
+
+1 · numero ·  · respuesta null · tolerancia null · SIN PISTA
+
+2 · multiple ·  · SIN PISTA
+  a) * 104 · retro NO · Error en el paso 1: si la ACF se corta en 2 y la PACF decae, lo que se sugiere e
+  b)   132 · retro NO · Error en el paso 3: la media no es el intercept; faltó dividirlo por (1 − φ̂₁ − 
+  c) * 121 · retro NO · Error en el paso 4: el AICc de un ARIMA(1,1,1) no se compara con el de un AR(2),
+  d)    98 · retro NO · Error en el paso 5: sobró fitdf = 2; en un AR puro no se descuenta nada de los g
+  e) *  97 · retro NO · Error en el paso 6: sobró la media; el polinomio AR que recibe polyroot() empiez
+  -> 3 correctas en ace; marcar las 3 más largas: falla; las 3 más cortas: falla
+
+3 · coincidencia ·  · respuesta null · tolerancia null · SIN PISTA
+
+4 · opcion ·  · SIN PISTA
+  a)    23 · retro NO · 1 = 1.2692, 2 = −0.5301
+  b)    23 · retro NO · 1 = 0.9169, 2 = −0.2405
+  c) *  23 · retro NO · 1 = 1.1309, 2 = −0.5301
+  d)    23 · retro NO · 1 = 0.9796, 2 = −0.2405
+  -> correcta c (23); otras 23–23; ni la más larga ni la más corta; posición 3
+
+5 · orden ·  · respuesta null · tolerancia null · SIN PISTA
+
+6 · numero ·  · respuesta null · tolerancia null · SIN PISTA
+
+7 · coincidencia ·  · respuesta null · tolerancia null · SIN PISTA
+
+8 · opcion ·  · SIN PISTA
+  a) * 111 · retro NO · Con 13 grados de libertad, Q = 23.329 supera el valor crítico: se rechaza que lo
+  b)   111 · retro NO · Con 12 grados de libertad, Q = 23.329 supera el valor crítico: se rechaza que lo
+  c)   116 · retro NO · Con 15 grados de libertad, Q = 23.329 no llega al valor crítico: no se rechaza q
+  d)   116 · retro NO · Con 16 grados de libertad, Q = 23.329 no llega al valor crítico: no se rechaza q
+  -> correcta a (111); otras 111–116; ni la más larga ni la más corta; posición 1
+
+9 · multiple ·  · SIN PISTA
+  a) *  34 · retro NO · ADF apunta a diferenciar la serie.
+  b)    38 · retro NO · KPSS apunta a no diferenciar la serie.
+  c)    33 · retro NO · PP apunta a diferenciar la serie.
+  d) *  47 · retro NO · ADF y KPSS apuntan a la misma decisión sobre d.
+  e) *  48 · retro NO · PP y KPSS apuntan a decisiones opuestas sobre d.
+  -> 3 correctas en ade; marcar las 3 más largas: falla; las 3 más cortas: falla
+
+10 · opcion ·  · SIN PISTA
+  a)    12 · retro NO · ARIMA(1,0,0)
+  b)    12 · retro NO · ARIMA(0,0,1)
+  c)    12 · retro NO · ARIMA(1,1,0)
+  d) *  12 · retro NO · ARIMA(0,1,1)
+  -> correcta d (12); otras 12–12; ni la más larga ni la más corta; posición 4
+
+simulacro: «la más larga» acierta 0 de 3; «la más corta», 0 de 3; posiciones de la correcta: 3 1 4; opciones sin retro: 22 de 22
+
+######## bloque-a (6 preguntas)
+
+1 · opcion · 3.1
+  a)   100 · retro sí · 0.45, porque los dos programas estiman el mismo modelo y el parámetro no depende
+  b)    58 · retro sí · -0.45, y lo confirma que r1 salga positivo, cerca de 0.37.
+  c) *  59 · retro sí · -0.45, y lo confirma que r1 salga negativo, cerca de -0.37.
+  d)    60 · retro sí · 1/0.45 = 2.22, porque R devuelve siempre la raíz invertible.
+  -> correcta c (59); otras 58–100; ni la más larga ni la más corta; posición 3
+
+2 · opcion · 3.5
+  a) *  77 · retro sí · Un AR(1) con x = 0.3: el factor (1 - 0.5B) está a los dos lados y se cancela.
+  b)    74 · retro sí · Un AR(1) con x = 0.5, porque al factorizar queda (1 - 0.5B) en el lado AR.
+  c)    82 · retro sí · Un ARMA(2,1) genuino: sus tres coeficientes son distintos de cero y ninguno sobr
+  d)    75 · retro sí · Ruido blanco, porque el polinomio AR se cancela entero con el polinomio MA.
+  -> correcta a (77); otras 74–82; ni la más larga ni la más corta; posición 1
+
+3 · opcion · 3.10
+  a)   104 · retro sí · La red, porque un AR(2) es una red lineal de una sola neurona: la LSTM solo pued
+  b)   100 · retro sí · Da igual: si los dos modelos pasan Ljung–Box, los dos sirven para pronosticar y 
+  c)    91 · retro sí · El AR(2), porque al ser estacionario su pronóstico es siempre más exacto que el 
+  d) * 103 · retro sí · El AR(2): con 90 datos estima tres parámetros y x2, y da coeficientes legibles e
+  -> correcta d (103); otras 91–104; ni la más larga ni la más corta; posición 4
+
+4 · opcion · 4.2
+  a)    45 · retro sí · (i) subir d; (ii) bajar d; (iii) subir p y q.
+  b) *  45 · retro sí · (i) bajar d; (ii) subir d; (iii) bajar p o q.
+  c)   112 · retro sí · (i) subir q; (ii) subir d; (iii) nada: el aviso de convergencia es un problema n
+  d)    75 · retro sí · Ninguno devuelve atrás: los tres modelos se pueden usar si pasan Ljung–Box.
+  -> correcta b (45); otras 45–112; ni la más larga ni la más corta; posición 2
+
+5 · multiple · 4.7
+  a)    79 · retro sí · Compara por AICc modelos con distinto d para decidir cuántas veces diferenciar.
+  b) *  88 · retro sí · Elige d con pruebas KPSS sucesivas: diferencia mientras KPSS rechace la estacion
+  c)    74 · retro sí · Antes de devolver el modelo, comprueba que sus residuales pasen Ljung–Box.
+  d)    74 · retro sí · Garantiza el modelo de menor AICc entre todos los que tienen el d elegido.
+  e) *  69 · retro sí · Descarta los modelos que tienen alguna raíz de módulo menor que 1.01.
+  -> 2 correctas en be; marcar las 2 más largas: falla; las 2 más cortas: falla
+
+6 · opcion · 4.10
+  a) * 106 · retro sí · El de la caminata crece como h sin techo; el del AR(1) tiene techo, 1.96x0, y a 
+  b)   123 · retro sí · Ninguna: con la misma x, los dos miden 1.96 50 = 98 a cualquier horizonte, porqu
+  c)   114 · retro sí · Los dos crecen sin límite, aunque el del AR(1) lo hace más despacio, porque x < 
+  d)   100 · retro sí · El del AR(1) es más ancho: su pronóstico vuelve a la media, y eso suma la incert
+  -> correcta a (106); otras 100–123; ni la más larga ni la más corta; posición 1
+
+bloque-a: «la más larga» acierta 0 de 5; «la más corta», 0 de 5; posiciones de la correcta: 3 1 4 2 1; opciones sin retro: 0 de 25
+
+######## bloque-c (8 preguntas)
+
+1 · opcion · 3.3
+  a)    88 · retro sí · Que se contradicen: un MA(1) tiene un solo x, así que uno de los dos programas e
+  b)    97 · retro sí · Que el segundo ajusta mejor: su 2 es casi tres veces menor y deja mucho menos ru
+  c)   106 · retro sí · Que el segundo describe un proceso no estacionario: con || > 1, su raíz queda de
+  d) *  89 · retro sí · Que son el mismo proceso: x y 1/x dan la misma x1, y las dos parejas, la misma x
+  -> correcta d (89); otras 88–106; ni la más larga ni la más corta; posición 4
+
+2 · opcion · 3.7
+  a)   100 · retro sí · Yule–Walker, porque es el único con un valor claramente estacionario y no depend
+  b) * 109 · retro sí · ML: es el eficiente y queda dentro de la región estacionaria; CSS se sale y Yule
+  c)    90 · retro sí · CSS: su error estándar es razonable y es el método con el que arranca arima() po
+  d)   105 · retro sí · Cualquiera de los tres: estiman el mismo x sobre los mismos datos, así que lo qu
+  -> correcta b (109); otras 90–105; ES LA MÁS LARGA; posición 2
+
+3 · opcion · 3.9
+  a)    67 · retro sí · El MA(1): tiene el AICc más bajo, y el criterio es elegir el menor.
+  b)    88 · retro sí · Un modelo con un término en el rezago 14, porque es la única barra que sale de l
+  c) *  99 · retro sí · Ruido blanco con media: el MA(1) no se distingue del ruido y la barra suelta es 
+  d)    91 · retro sí · Ninguno todavía: hay que diferenciar, porque una serie de rendimientos tiene raí
+  -> correcta c (99); otras 67–91; ES LA MÁS LARGA; posición 3
+
+4 · opcion · 4.1
+  a)   120 · retro sí · Lo reporto tal cual: las dos raíces están fuera del círculo unitario, así que el
+  b) *  89 · retro sí · Impongo la raíz unitaria y ajusto un ARIMA(1,1,0): 1 + 2 x 1 es la firma de (1-x
+  c)   105 · retro sí · Ajusto un ARIMA(2,1,0), para conservar los dos coeficientes autorregresivos, que
+  d)    80 · retro sí · Ajusto un ARIMA(1,1,0) con x = 1.29, el primer coeficiente del AR(2) en niveles.
+  -> correcta b (89); otras 80–120; ni la más larga ni la más corta; posición 2
+
+5 · opcion · 4.3
+  a) *  85 · retro sí · d = 0: las pruebas y las raíces dicen estacionaria; la varianza baja porque x1 >
+  b)    87 · retro sí · d = 1: es el orden de varianza mínima, y la regla de la varianza dice elegir el 
+  c)    81 · retro sí · d = 1: ADF y KPSS se contradicen, y en caso de duda conviene diferenciar una vez
+  d)    95 · retro sí · d = 2: la varianza vuelve a subir con la segunda diferencia, señal de una tenden
+  -> correcta a (85); otras 81–95; ni la más larga ni la más corta; posición 1
+
+6 · opcion · 4.5
+  a)    77 · retro sí · 0.99: la constante c = drift (1 - x) es la que fija la pendiente de la recta.
+  b)    78 · retro sí · 2.68: la deriva dividida entre 1 - x, que es la media de largo plazo de un AR.
+  c)    89 · retro sí · Nada: con d = 1, el pronóstico a largo plazo se queda plano en el último valor o
+  d) *  72 · retro sí · 1.63: el valor de drift es la pendiente a la que converge el pronóstico.
+  -> correcta d (72); otras 77–89; ES LA MÁS CORTA; posición 4
+
+7 · opcion · 4.6
+  a)    89 · retro sí · ARIMA(2,1,2): gana por 3.39 puntos, más de los 2 que separan un empate de una di
+  b)    99 · retro sí · ARIMA(1,1,1): de los modelos con parte AR y parte MA, es el de menor AICc y tien
+  c) *  93 · retro sí · ARIMA(0,1,0): descartado el (2,1,2) por sus raíces, es el mejor de los sanos y e
+  d)   100 · retro sí · Ninguno: si el mínimo tiene una raíz AR en el círculo, falta una diferencia y ha
+  -> correcta c (93); otras 89–100; ni la más larga ni la más corta; posición 3
+
+8 · opcion · 4.8
+  a) * 111 · retro sí · Los coeficientes y el pronóstico puntual siguen valiendo; los intervalos no, por
+  b)   100 · retro sí · Nada: si los residuales no son normales, el modelo está mal especificado y hay q
+  c)   103 · retro sí · Todo: pasar Ljung–Box garantiza que los residuales son ruido blanco y que los in
+  d)   114 · retro sí · Los intervalos sí, porque se calculan con ; los coeficientes no, porque la máxim
+  -> correcta a (111); otras 100–114; ni la más larga ni la más corta; posición 1
+
+bloque-c: «la más larga» acierta 2 de 8; «la más corta», 1 de 8; posiciones de la correcta: 4 2 3 2 1 4 3 1; opciones sin retro: 0 de 32
+
+######## bloque-d (6 preguntas)
+
+1 · grafico · 3.2
+  a)    20 · retro sí · x1 = 1.0, x2 = -0.2.
+  b) *  20 · retro sí · x1 = 1.0, x2 = -0.6.
+  c)    21 · retro sí · x1 = -1.0, x2 = -0.6.
+  d)    20 · retro sí · x1 = 1.0, x2 = -1.1.
+  -> correcta b (20); otras 20–21; ni la más larga ni la más corta; posición 2
+
+2 · grafico · 3.5
+  a)   113 · retro sí · Que tiene razón y el orden queda fijado: tres barras de la PACF fuera y ninguna 
+  b)   105 · retro sí · Que es un MA(6): la ACF se sale de la banda hasta el rezago 6 y después se queda
+  c)   105 · retro sí · Que no puede ser un AR: una ACF que decae despacio, como esta, descarta cualquie
+  d) *  96 · retro sí · Que el AR(3) es un candidato, no el único: un ARMA(1,1) encaja casi igual y hay 
+  -> correcta d (96); otras 105–113; ES LA MÁS CORTA; posición 4
+
+3 · grafico · 3.6
+  a) *  93 · retro sí · Un MA(1): la ACF se corta tras el rezago 1, y la barra del 19 es la que se esper
+  b)    89 · retro sí · Un MA(19): la última barra significativa marca el orden de un MA, y está en el r
+  c)    91 · retro sí · Un AR(1): la primera barra es la única grande, y un AR(1) concentra su peso en e
+  d)    95 · retro sí · Ruido blanco: dos barras fuera de 20 es casi lo que el azar produce, así que no 
+  -> correcta a (93); otras 89–95; ni la más larga ni la más corta; posición 1
+
+4 · grafico · 3.8
+  a)    99 · retro sí · El modelo vale: ninguna de las 20 barras sale de la banda, así que los residuale
+  b)    98 · retro sí · El modelo vale: Ljung–Box a 20 rezagos, que es el que se suele reportar, da p = 
+  c) * 103 · retro sí · No basta: Ljung–Box rechaza del rezago 2 al 10 aunque ninguna barra salga sola; 
+  d)   108 · retro sí · No se puede concluir nada: el gráfico y el correlograma se contradicen, y en ese
+  -> correcta c (103); otras 98–108; ni la más larga ni la más corta; posición 3
+
+5 · grafico · 4.4
+  a)    78 · retro sí · ARIMA(0,1,2): la ACF de las diferencias tiene dos barras grandes al principio.
+  b) *  82 · retro sí · ARIMA(2,1,0): la PACF de x yt se corta en el rezago 2 y la ACF se apaga osciland
+  c)    69 · retro sí · ARIMA(1,1,0): la PACF de la serie en niveles se corta en el rezago 1.
+  d)   102 · retro sí · ARIMA(2,2,0): como la ACF de las diferencias todavía tiene barras fuera, hay que
+  -> correcta b (82); otras 69–102; ni la más larga ni la más corta; posición 2
+
+6 · grafico · 4.9
+  a)    88 · retro sí · Un ARIMA(1,0,1) con media: estacionario, con su nivel medio estimado sobre los 6
+  b)    99 · retro sí · Un ARIMA(0,1,1) sin constante: una diferencia y un MA(1), como el suavizamiento 
+  c)    94 · retro sí · Un ARIMA(0,1,1) con deriva: una diferencia, un MA(1) y una constante que actúa c
+  d) *  88 · retro sí · Un ARIMA(0,2,1) sin constante: dos diferencias y un MA(1), sin ningún término co
+  -> correcta d (88); otras 88–99; ni la más larga ni la más corta; posición 4
+
+bloque-d: «la más larga» acierta 0 de 6; «la más corta», 1 de 6; posiciones de la correcta: 2 4 1 3 2 4; opciones sin retro: 0 de 24
+
+######## prep-simulacro (6 preguntas)
+
+1 · numerica · 3.2 · respuesta 2.8402 · tolerancia 0.0006 · SIN PISTA
+
+2 · opcion · 3.4 · SIN PISTA
+  a)     5 · retro sí · +0.90
+  b)     5 · retro sí · -0.90
+  c) *   5 · retro sí · -0.36
+  d)     5 · retro sí · +0.36
+  -> correcta c (5); otras 5–5; ni la más larga ni la más corta; posición 3
+
+3 · opcion · 3.10 · SIN PISTA
+  a) *  71 · retro sí · Pruebo un AR(2): el coeficiente de mayor orden, 3, no es significativo.
+  b)    78 · retro sí · Me quedo con el AR(3): tres coeficientes autorregresivos explican más que dos.
+  c)    59 · retro sí · Quito 2, que es negativo, y me quedo con los rezagos 1 y 3.
+  d)    89 · retro sí · Paso a un ARMA(3,1), porque un AR con coeficientes pequeños suele esconder un té
+  -> correcta a (71); otras 59–89; ni la más larga ni la más corta; posición 1
+
+4 · numerica · 4.5 · respuesta 73.12 · tolerancia 0.01 · SIN PISTA
+
+5 · numerica · 4.6 · respuesta 395.67 · tolerancia 0.015 · SIN PISTA
+
+6 · numerica · 4.9 · respuesta 9.1 · tolerancia 0.02 · SIN PISTA
+
+prep-simulacro: «la más larga» acierta 0 de 2; «la más corta», 0 de 2; posiciones de la correcta: 3 1; opciones sin retro: 0 de 8
+
+######## bloque-b (12 preguntas)
+
+1 · numerica · 3.1 · respuesta 0.4 · tolerancia 0.001
+
+2 · numerica · 3.3 · respuesta -0.4851 · tolerancia 0.0006
+
+3 · numerica · 3.4 · respuesta 4.19 · tolerancia 0.01
+
+4 · numerica · 3.4 · respuesta -0.7 · tolerancia 0.001
+
+5 · numerica · 3.7 · respuesta 9.03 · tolerancia 0.02
+
+6 · numerica · 3.8 · respuesta 7.49 · tolerancia 0.02
+
+7 · numerica · 4.1 · respuesta 281.63 · tolerancia 0.02
+
+8 · numerica · 4.5 · respuesta 3.6559 · tolerancia 0.0006
+
+9 · numerica · 4.6 · respuesta 1253.51 · tolerancia 0.02
+
+10 · numerica · 4.9 · respuesta 99.33 · tolerancia 0.01
+
+11 · numerica · 4.9 · respuesta 6.26 · tolerancia 0.02
+
+12 · numerica · 4.10 · respuesta 83.1 · tolerancia 0.05
+
+bloque-b: «la más larga» acierta 0 de 0; «la más corta», 0 de 0; posiciones de la correcta: ; opciones sin retro: 0 de 0
+
+Reparto cap4: 1→1, 2→1, 3→2, 4→1
+Reparto simulacro M11: 1→1, 2→0, 3→1, 4→1
+Reparto preparcial (A, C, D y simulacro): 1→6, 2→5, 3→5, 4→5 (n = 21)
+Racha máxima de la misma posición, preparcial por bloque: bloque-a 1, bloque-c 1, bloque-d 1
+
+######## Tolerancias (motor: Math.abs(dada - respuesta) <= tolerancia)
+cap4 2 (respuesta 151.97, tol 0.4): 151.97→acepta  152→acepta  151.99→acepta  151.66→acepta  151.6→acepta  152.4→rechaza  151.5→rechaza  54→rechaza  166.88→rechaza  200.88→rechaza
+cap4 8 (respuesta 1, tol 0.002): 1→acepta  1→acepta  0.999→acepta  1.002→rechaza  1.003→rechaza  -1→rechaza  0→rechaza
+bloque-b 1 (respuesta 0.4, tol 0.001): 0.4→acepta  -0.4→rechaza  0.3→rechaza
+bloque-b 2 (respuesta -0.4851, tol 0.0006): -0.4851→acepta  -0.485→acepta  -0.49→rechaza  -0.3731→rechaza  -0.52→rechaza
+bloque-b 3 (respuesta 4.19, tol 0.01): 4.19→acepta  4.18→rechaza  4.2→acepta  4.12→rechaza  5.9→rechaza  8.94→rechaza
+bloque-b 4 (respuesta -0.7, tol 0.001): -0.7→acepta  0.9→rechaza  0.2→rechaza  0.7→rechaza
+bloque-b 5 (respuesta 9.03, tol 0.02): 9.03→acepta  9.02→acepta  9.04→acepta  9.05→rechaza  9.24→rechaza  5.53→rechaza  6.01→rechaza
+bloque-b 6 (respuesta 7.49, tol 0.02): 7.49→acepta  7.48→acepta  7.5→acepta  7.16→rechaza
+bloque-b 7 (respuesta 281.63, tol 0.02): 281.63→acepta  281.62→acepta  281.6→rechaza  280.1→rechaza
+bloque-b 8 (respuesta 3.6559, tol 0.0006): 3.6559→acepta  3.656→acepta  3.66→rechaza  3.595→rechaza
+bloque-b 9 (respuesta 1253.51, tol 0.02): 1253.51→acepta  1253.5→acepta  1253.16→rechaza  1251.37→rechaza
+bloque-b 10 (respuesta 99.33, tol 0.01): 99.33→acepta  99.32→rechaza  99.34→rechaza  98.96→rechaza  98.57→rechaza
+bloque-b 11 (respuesta 6.26, tol 0.02): 6.26→acepta  6.25→acepta  6.24→acepta  6.27→acepta  6.28→rechaza  8.77→rechaza  3.68→rechaza
+bloque-b 12 (respuesta 83.1, tol 0.05): 83.1→acepta  83.08→acepta  83.05→acepta  127.05→rechaza  166.2→rechaza
+prep-simulacro 1 (respuesta 2.8402, tol 0.0006): 2.8402→acepta  2.84→acepta  3.125→rechaza
+prep-simulacro 4 (respuesta 73.12, tol 0.01): 73.12→acepta  73.11→rechaza  73.13→acepta  73.1159→acepta  26.59→rechaza
+prep-simulacro 5 (respuesta 395.67, tol 0.015): 395.67→acepta  395.68→acepta  395.66→acepta  395.69→rechaza  395.7→rechaza  391.07→rechaza
+prep-simulacro 6 (respuesta 9.1, tol 0.02): 9.1→acepta  9.1→acepta  9.12→acepta  4.27→rechaza  6.79→rechaza

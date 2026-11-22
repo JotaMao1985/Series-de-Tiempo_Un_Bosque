@@ -1,0 +1,153 @@
+R: R version 4.6.0 (2026-04-24) · forecast 9.0.2 · tseries 0.10.62 
+
+===== E1 · BJsales: varianzas, pruebas, rejilla d = 1 =====
+[1] 150
+[1] 461.3769   2.0851   2.8823   8.5626
+       adf     ndiffs ndiffs_adf  ndiffs_pp 
+    0.5302     1.0000     1.0000     1.0000 
+   kpss_p kpss_d1_p  adf_d1_p 
+ 0.010000  0.100000  0.065846 
+  p q    aicc     bic   lb20    rAR    rMA
+1 0 0 545.544 548.521 0.0000     NA     NA
+2 1 0 526.209 532.134 0.1830 2.7419     NA
+3 2 0 520.088 528.935 0.2627 1.5634     NA
+4 0 1 533.348 539.274 0.0340     NA 3.9028
+5 1 1 514.902 523.748 0.6216 1.1365 1.5589
+6 2 1 516.922 528.660 0.5576 1.1471 1.6474
+7 0 2 527.856 536.702 0.1346     NA 2.2741
+8 1 2 516.914 528.652 0.5592 1.1485 1.6633
+9 2 2 518.575 533.175 0.4613 1.1453 1.2236
+rango AICc del (0,1,1) entre los 9 (1 = mejor): 8 
+ACF residuos (0,1,1), rezagos 1-10:
+ [1]  0.0142  0.2483  0.1185  0.2087  0.0711  0.1188 -0.0006  0.1454 -0.0490 -0.0217
+[1] 0.16
+Ljung-Box del (0,1,1) a 10 y 20 rezagos:
+[1] 0.0026 0.0340
+     phi   ee_phi    theta ee_theta 
+  0.8799   0.0644  -0.6415   0.1035 
+[1] 0.6294597
+[1] "ARIMA(1,1,1)"
+[1] "ARIMA(1,1,1)"
+
+===== E1 · la rejilla con d = 2 (p, q en 0:2) =====
+  p q    aicc    rMA
+8 1 2 515.859 1.0000
+4 0 1 517.220 1.3370
+5 1 1 519.140 1.2819
+7 0 2 519.164 1.2924
+6 2 1 520.548 1.1135
+9 2 2 522.408 1.2247
+3 2 0 532.465     NA
+2 1 0 542.047     NA
+1 0 0 577.705     NA
+     d1      d2 
+514.902 515.859 
+¿el menor AICc de d=2 es menor que el de d=1?  FALSE 
+Lectura literal del enunciado («su AICc» = el del IMA(1,1)) frente al mejor de d = 2:
+          aicc_IMA           mejor_d2       IMA_menos_d2 IMA_menos_mejor_d1 
+           533.348            515.859             17.489             18.446 
+
+===== E2 · log(lynx) =====
+[1] 114
+ndiffs_kpss  ndiffs_adf   ndiffs_pp 
+          0           0           0 
+kpss_p  adf_p   pp_p 
+  0.10   0.01   0.01 
+[1] 1.6532 0.6871 0.6026 1.1532
+caída d0->d1: 58.4 %
+ARIMA(2,1,0)  |raiz MA| = NA  |raiz AR| = 1.7167
+ARIMA(2,1,1)  |raiz MA| = 1  |raiz AR| = 1.1644
+ARIMA(0,1,1)  |raiz MA| = 1.5076  |raiz AR| = NA
+ARIMA(1,1,1)  |raiz MA| = 2.098  |raiz AR| = 3.7198
+ARIMA(3,1,1)  |raiz MA| = 1  |raiz AR| = 1.1278
+   phi1    phi2  modulo periodo 
+ 1.3776 -0.7399  1.1626  9.7839 
+[1] 0.009434283
+[1] "ARIMA(2,0,3) with non-zero mean"
+[1] "ARIMA(2,0,4) with non-zero mean"
+
+===== E3 · BJsales, intervalo desde los psi =====
+[1] 1.0000 1.2385 1.4485 1.6332 1.7958
+[1] 1.3416 2.1356 2.8874 3.6246 4.3523
+[1] 2.6295 4.1857 5.6592 7.1042 8.5303
+[1] 2.398082e-14
+         s12_s1          raiz12 frente_caminata 
+         6.7963          3.4641          1.9619 
+psi_12 limite 
+2.5593 2.9883 
+Arima (CSS-ML) frente a arima(ML): phi, theta, aicc
+           ar1     ma1         
+Arima   0.8800 -0.6415 514.9016
+arimaML 0.8799 -0.6415 514.9016
+deriva     ee      t 
+0.4001 0.2557 1.5644 
+aicc_con aicc_sin 
+ 515.062  514.902 
+h12_con h12_sin 
+ 266.99  263.76 
+
+===== Quiz cap4 · claves =====
+Q2 · sigma, psi1, sigma_2:
+              sigma           psi1_nilo              sigma2 con_psi1_redondeado            sin_psi0 
+           142.0455              0.3802            151.9673            151.9651             54.0055 
+       sin_cuadrado            caminata 
+           166.8772            200.8820 
+Q1 · AICc d=1 y d=2 de la rejilla del Nilo:
+    a111     a122   rMA122 
+1267.507 1264.598    1.032 
+Q3 · log(AirPassengers), mejor no estacional exhaustivo; ACF residual 12 y 24, LB(24):
+[1] "ARIMA(0,1,5)"
+     r12      r24    banda      Q24 
+  0.7245   0.6727   0.1633 222.3979 
+Q4 · intercept con d=0, coef con d=1 e include.mean, deriva con d=2:
+[1] 920.7037
+[1] "ar1" "ma1"
+[1] "No drift term fitted as the order of difference is 2 or more."
+d2_h30 
+     0 
+Q5 · KPSS sobre RB + escalón en 29, 1000 réplicas (semilla 2026):
+   b0  b100  nilo 
+0.048 0.720 1.000 
+Q6 · ACF del Nilo sin diferenciar, rezagos 1-4 y 20:
+[1] 0.498 0.385 0.328 0.239 0.114
+Q7 · podio de la exhaustiva:
+                   modelo     aicc
+1            ARIMA(1,1,1) 1267.507
+2 ARIMA(1,1,1) with drift 1268.063
+3            ARIMA(0,1,2) 1268.210
+4 ARIMA(0,1,2) with drift 1268.969
+5            ARIMA(0,1,1) 1269.216
+6            ARIMA(2,1,1) 1269.322
+7            ARIMA(1,1,2) 1269.348
+8            ARIMA(0,1,3) 1269.633
+distancia 1.º-7.º: 1.841 
+Q8 · MA(1) sobre diff(Nile, 2):
+theta  raiz 
+   -1     1 
+
+===== Simulacro M11 (variante 9) · claves calculadas =====
+P1 · rho2 del ARMA(1,1) phi = 0.57, theta = 0.25:
+     0      1      2 
+1.0000 0.6953 0.3963 
+P2 · polyroot del informe y el correcto; c = mu(1 - phi1 - phi2):
+[1] 13.491 13.491
+[1] 1.4410 1.8816
+[1] 9.6257
+P4 · Yule-Walker desde gamma0, gamma1, gamma2:
+[1]  1.1309 -0.5301
+   distractores: phi1 = r1 sin corregir, PACF(2): 0.7391 -0.5301 
+P5 · AICc con n = 40, k = parámetros + media + sigma2:
+    MA2     MA1  ARMA11     AR1 
+114.785 115.587 115.999 125.047 
+P6 · límite superior en la escala original, raíz cuadrada:
+      sigma_2      sup_raiz  sup_original error_sin_psi 
+         2.31         10.35        107.18         75.64 
+P7 · raíces y coeficientes en niveles:
+  raiz_fila2   phi1_fila3   phi2_fila3 modulo_fila5 
+      1.0417       1.6500      -0.6500       1.4907 
+P8 · Ljung-Box, fitdf = 3:
+     gl critico     p13     p16 
+13.0000 22.3620  0.0379  0.1052 
+P10 · razón de varianzas d1/d0 y d2/d1; PACF teórica de un MA(1) con rho1 = 0.411:
+ theta                      
+ 0.524  0.411 -0.203  0.105 
