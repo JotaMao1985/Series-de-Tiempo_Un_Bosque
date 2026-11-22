@@ -14,7 +14,7 @@ con sus fuentes contrastadas y con práctica en cada módulo. Es la tercera apli
 [[PLAN_Mejora_Cap1]] y [[PLAN_Mejora_Cap2]]: cinco rondas, un redactor por ronda, un verificador
 independiente sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: aprobado por Javier el 2026-11-19 (D1–D9, y las recomendaciones de §7.1 y §7.2). R1, R2, R3 y R4 publicadas el 21; R5 hecha el 21, sin publicar.** Lo que
+**Estado: aprobado por Javier el 2026-11-19 (D1–D9, y las recomendaciones de §7.1 y §7.2). Las cinco rondas, publicadas el 21.** Lo que
 sigue es el diagnóstico y el plan; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-19
@@ -213,7 +213,7 @@ Cada una lleva mi recomendación; las decide Javier.
   M7–M10) firmaron 203 en la primera lectura y las 20 restantes tras la corrección (`diagnostico/cap3/R4_cambios.md`,
   `R4_verificacion_A.md`, `R4_verificacion_B.md`). Bloques: 732/732 → 733/733.
 
-- **R5 · práctica — hecha el 2026-11-21, sin publicar.** Ocho «Para practicar» al final de M1–M7 y M9 (D9), sobre
+- **R5 · práctica — hecha y PUBLICADA el 2026-11-21 (`main` `c8683b5` · gh-pages `31136b3`).** Ocho «Para practicar» al final de M1–M7 y M9 (D9), sobre
   procesos teóricos o simulados con semilla y tres series nuevas en el sitio para la práctica (`diff(WWWusage)`, `treering`
   1880–1979 y `lynx`), cada uno con solución en R bajo `#>`. Ejercicio 1 con pista sin resultado; el 2 con otro MA(2),
   θ = (0.9, 0.2), y un apartado de raíz invertida; el 3 al día con la R1. Quiz: P2, P4, P5 y P7 rehechas, retro por opción
