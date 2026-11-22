@@ -14,7 +14,7 @@ con sus fuentes contrastadas y con práctica antes del final. Es la cuarta aplic
 [[PLAN_Mejora_Cap1]], [[PLAN_Mejora_Cap2]] y [[PLAN_Mejora_Cap3]]: cinco rondas, un redactor por ronda,
 un verificador independiente sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: APROBADO por Javier el 2026-11-22; R1 publicada el mismo día**, con D1–D10 y las recomendaciones de las preguntas 1 y 2 de §7.
+**Estado: APROBADO por Javier el 2026-11-22; R1 publicada el mismo día; R2 hecha (`29106f5`, sin publicar)**, con D1–D10 y las recomendaciones de las preguntas 1 y 2 de §7.
 El diagnóstico es del mismo día; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-22
@@ -175,6 +175,24 @@ Cada una lleva mi recomendación; las decide Javier.
     del cap. 2. También corrigió una frase de §1 de este plan (el 1.0009 queda bajo los dos umbrales).
   - Verificador de bloques: 762/762 (antes 713/735). `verifica_todo.py`, 11 en verde. Revisión por HTTP
     sin errores. Caps. 5 y 6 idénticos.
+- **R2 (gráficas) — hecha el 2026-11-22 (`main` local `29106f5`, sin publicar).** Redactor:
+  `diagnostico/cap4/R2_cambios.md`; verificador independiente: `R2_verificacion.md`, con lo que hizo la
+  sesión maestra al final. De los 44 problemas de `graficas.md`: 41 arreglados, 2 en parte (la barra de 3 px
+  del mejor en el ΔAICc; la leyenda de dos renglones del gráfico de residuales del quiz) y 1 que cerró la R1.
+  - Armazón (cap. 2 → 3, 5, 6): la leyenda de `crearGraficoLinea` dibuja raya con su trazo, caja para las
+    bandas y punto o cruz. Es lo único que cambia en los caps. 2, 3, 5 y 6 (el mismo diff, +68/−6).
+  - Cap. 4: `escalasLinea` con los ayudantes del armazón; el ΔAICc rotula los nueve modelos a cualquier
+    ancho (se tumba bajo 460 px de lienzo); cruces de AICc = ∞ enteras y sin cifra en el tooltip;
+    `aria-label` que cambian con el estado y salen de los datos; marcos más altos (área mínima de 52 a
+    125 px); en el M4 y el M10 las barras fuera de la banda van en el color de la serie y las de dentro en
+    gris; dos iconos de Font Awesome 6.0.0; las dos `descripcionGrafico` del quiz dicen lo dibujado.
+  - El verificador no halló Altos ni regresiones; sus 7 hallazgos (V1–V7) los corrigió la sesión maestra.
+  - Quedan fuera, para el registro de pendientes: las copias del armazón en el cap. 1, la plantilla, los
+    preparciales, los talleres y la guía del proyecto siguen dibujando líneas como cajas; dos entradas de
+    leyenda discontinuas en los gráficos de dispersión del cap. 3; el eje ±1 de los correlogramas es
+    convención del curso.
+  - `verifica_todo.py`, 11 en verde; bloques del cap. 4, 762/762; recorrido por HTTP a 1200, 800 y 375 px
+    sin errores de consola.
 
 ## 5. Criterios de aceptación
 
