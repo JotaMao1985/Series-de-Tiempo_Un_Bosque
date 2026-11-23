@@ -1,0 +1,2423 @@
+[
+ {
+  "id": "c4-m1-60",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m1-60]]si la diferenciación se escribe dentro del modelo, se\n obtiene la familia <strong>ARIMA</strong> (<em>autoregressive integrated moving average</em>){{F|§9.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m1-01",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m1-01]]$y_t$ sigue un ARIMA($p,d,q$) si su $d$-ésima\n diferencia $w_t = \\nabla^d y_t = (1-B)^d y_t$ sigue un ARMA($p,q$) estacionario e invertible{{C|p. 92}}{{F|§9.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m1-02",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m1-02]]En una sola\n línea con el operador de rezago{{F|§9.7}}[[/]]:"
+  ]
+ },
+ {
+  "id": "c4-m1-03",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m1-03]]donde $\\phi(B) = 1 - \\phi_1 B - \\cdots - \\phi_p B^p$ y\n          $\\theta(B) = 1 + \\theta_1 B + \\cdots + \\theta_q B^q${{F|§9.7}}[[/]], exactamente los del capítulo anterior."
+  ]
+ },
+ {
+  "id": "c4-m1-04",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m1-04]]La letra\n          <strong>I</strong> es de <em>integrated</em>: para volver de $w_t$ a $y_t$ hay que sumar\n          (<em>integrar</em>) $d$ veces{{F|§9.5}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m1-05",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m1-05]]El polinomio autorregresivo completo no es\n        $\\phi(B)$ sino $\\phi(B)(1-B)^d$, un polinomio de grado $p+d$ con $d$ raíces colocadas <strong>exactamente\n        sobre el círculo unitario</strong>{{C|p. 93}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m1-65",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m1-65]]Un ARIMA no es un ARMA cualquiera: es un ARMA al que se le\n        <em>imponen</em> $d$ raíces unitarias en vez de estimarlas.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m1-06",
+  "prosa": [],
+  "marcas": [
+   "<p[[@c4-m1-06]]>Es decir, el mismo modelo escrito sobre la serie <strong>sin diferenciar</strong> es un ARMA($2,1$){{C|p. 202}}:</p>"
+  ]
+ },
+ {
+  "id": "c4-m1-67",
+  "prosa": [],
+  "marcas": [
+   "<p[[@c4-m1-67]]>con coeficientes autorregresivos $\\phi_1^{*} = 1+\\phi$ y $\\phi_2^{*} = -\\phi${{C|p. 202}}.</p>"
+  ]
+ },
+ {
+  "id": "c4-m1-07",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m1-07]]Nótese que\n                $\\phi_1^{*} + \\phi_2^{*} = 1$ exactamente, que es la firma de la raíz unitaria.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m1-08",
+  "prosa": [],
+  "marcas": [
+   "<p class=\"derivacion-resultado\">[[c4-m1-08]]Un ARIMA($p,d,q$) <strong>es</strong> un ARMA($p+d, q$) no estacionario con\n            $d$ raíces fijadas en $B=1${{C|p. 202}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m1-61",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m1-61]]El\n        <strong>suavizamiento exponencial simple</strong> pronostica con un promedio ponderado de todo el pasado, con\n        pesos que decaen geométricamente{{F|§8.1}}: cada pronóstico corrige el anterior con una fracción $\\alpha$ de su error{{F|§8.5}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m1-62",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m1-62]]El método de <strong>Holt</strong> hace lo mismo con el nivel y con la pendiente de la serie{{F|§8.2}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m1-09",
+  "prosa": [],
+  "marcas": [
+   "<tr[[@c4-m1-09]]><td>ARIMA($p,0,q$)</td><td>ARMA($p,q$)</td><td>Todo el Capítulo 3.</td></tr>"
+  ]
+ },
+ {
+  "id": "c4-m1-10",
+  "prosa": [],
+  "marcas": [
+   "<tr[[@c4-m1-10]]><td>ARIMA($0,1,0$)</td><td>Caminata aleatoria{{F|§9.5}}</td><td>$y_t = y_{t-1} + \\varepsilon_t$. El\n              pronóstico es el último valor observado{{F|§9.1}}.</td></tr>"
+  ]
+ },
+ {
+  "id": "c4-m1-11",
+  "prosa": [],
+  "marcas": [
+   "<tr[[@c4-m1-11]]><td>ARIMA($0,1,0$) con $c$</td><td>Caminata con deriva</td><td>$y_t = c + y_{t-1} +\n              \\varepsilon_t$. Añade una tendencia lineal{{F|§9.5}}.</td></tr>"
+  ]
+ },
+ {
+  "id": "c4-m1-12",
+  "prosa": [],
+  "marcas": [
+   "<tr[[@c4-m1-12]]><td>ARIMA($0,1,1$)</td><td>IMA(1,1)</td><td>Equivale al <strong>suavizamiento exponencial\n              simple</strong>: $\\hat y_{t+1\\mid t} = \\alpha\\, y_t + (1-\\alpha)\\,\\hat y_{t\\mid t-1}$ con\n              $\\alpha = 1 + \\theta${{F|§9.10}}, un promedio ponderado que decae hacia el pasado{{F|§8.1}}.</td></tr>"
+  ]
+ },
+ {
+  "id": "c4-m1-13",
+  "prosa": [],
+  "marcas": [
+   "<tr[[@c4-m1-13]]><td>ARIMA($0,2,2$)</td><td>IMA(2,2)</td><td>Incluye al método de <strong>Holt</strong>\n              (nivel y tendencia suavizados), con restricciones sobre los coeficientes{{F|§9.10}}.</td></tr>"
+  ]
+ },
+ {
+  "id": "c4-m1-14",
+  "prosa": [
+   [
+    "Los métodos lineales de suavizamiento\n          exponencial que se enseñan como recetas independientes son casos particulares de ARIMA. Eso significa que\n          las herramientas de este capítulo —criterios de información, diagnóstico de residuales, intervalos de\n          pronóstico— se aplican también a ellos. Para esos métodos no hay dos teorías, hay una.",
+    "Los modelos lineales de suavizamiento\n          exponencial, que se enseñan como recetas independientes, son casos particulares de ARIMA. Eso significa que,\n          escritos como ARIMA, admiten las herramientas de este capítulo: criterios de información, diagnóstico de\n          residuales e intervalos de pronóstico. Pero las dos clases de modelos solo se solapan: hay modelos ARIMA sin\n          equivalente de suavizamiento exponencial, los modelos de suavizamiento exponencial no lineales no tienen\n          equivalente ARIMA, y el AICc no sirve para comparar un modelo de una clase con uno de la otra, porque la\n          verosimilitud se calcula de otro modo.",
+    "FPP3 §9.10 dice que los modelos lineales de suavizamiento exponencial son casos particulares de ARIMA («métodos» → «modelos»), pero no que no haya dos teorías: afirma que es un mito que ARIMA sea más general (hay ARIMA sin equivalente de suavizamiento y suavizamientos no lineales sin equivalente ARIMA) y que el AICc no sirve para comparar entre las dos clases porque la verosimilitud se calcula de modo distinto; Hyndman y Khandakar (2008, pp. 11–12) dicen que las dos clases se solapan y son complementarias. «Las herramientas se aplican también a ellos» se acota al ARIMA equivalente."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m1-14]]Los modelos lineales de suavizamiento exponencial, que se enseñan como recetas independientes, son casos particulares de ARIMA{{F|§9.10}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m1-64",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m1-64]]Eso significa que,\n          escritos como ARIMA, admiten las herramientas de este capítulo: criterios de información, diagnóstico de\n          residuales e intervalos de pronóstico.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m1-63",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m1-63]]Pero las dos clases de modelos solo se solapan: hay modelos ARIMA sin\n          equivalente de suavizamiento exponencial, los modelos de suavizamiento exponencial no lineales no tienen\n          equivalente ARIMA, y el AICc no sirve para comparar un modelo de una clase con uno de la otra, porque la\n          verosimilitud se calcula de otro modo{{F|§9.10}}{{K|p. 12}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m1-15",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m1-15]]el caudal anual del río Nilo medido en Asuán entre 1871 y 1970 ($n = 100$, en $10^8\\,\\text{m}^3$){{R|§Description}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m1-16",
+  "prosa": [],
+  "marcas": [
+   "más que vagar sin rumbo, [[c4-m1-16]]su nivel parece caer de golpe hacia 1899[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m1-17",
+  "prosa": [],
+  "marcas": [
+   "Fíjate sobre todo en $\\hat\\rho_1$: ¿cambia de signo? ¿Con qué $d$ baja de [[c4-m1-17]]$-0.5$, el\n          valor que tendría la diferencia de un ruido blanco{{C|p. 126}}{{H|p. 49}}[[/]]?"
+  ]
+ },
+ {
+  "id": "c4-m1-23",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m1-23]]Integrar una serie estacionaria debería disparar su\n          varianza —es lo que ocurre sin el término MA, donde se multiplica por $32.8$— y con los coeficientes\n          estimados del Nilo, en esta realización, la deja prácticamente igual: una razón de $1.006$[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m1-66",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m1-66]]La causa está en el valor de\n          $\\theta$.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m1-24",
+  "prosa": [
+   [
+    "Esto se llama <strong>cancelación casi exacta de raíces</strong>",
+    "Esto es una <strong>cancelación casi exacta de raíces</strong>",
+    "«Esto se llama» atribuye un nombre que ninguna fuente leída da. Hamilton (p. 60) y Cryer y Chan (p. 187) tratan la redundancia de parámetros (factores comunes que se cancelan; si θ1 es cercano a −φ1 el ARMA(1,1) es casi un ruido blanco), sin ese nombre."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m1-24]]Esto es una <strong>cancelación casi exacta de raíces</strong> (factores AR y MA casi comunes){{H|p. 60}}[[/]],"
+  ]
+ },
+ {
+  "id": "c4-m1-25",
+  "prosa": [
+   [
+    "y no es un tecnicismo: es un síntoma clásico de sobrediferenciación, la pista de que a esta serie quizá no\n        había que diferenciarla.",
+    "y no es un tecnicismo: la sobrediferenciación deja justamente una raíz del MA en $B=1$, de modo que es una pista de que a esta serie quizá no\n        había que diferenciarla.",
+    "Ninguna fuente leída llama «síntoma clásico» a la cancelación casi exacta. Cryer y Chan (pp. 126–127) dicen que sobrediferenciar crea un modelo no invertible, con la raíz «prohibida» del MA en B = 1; la lectura inversa (una raíz del MA casi en 1 como pista de sobrediferenciación) es una inferencia, que la frase ya hedgea («pista», «quizá»)."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m1-25]]y no es un tecnicismo: la sobrediferenciación deja justamente una raíz del MA en $B=1${{C|p. 127}}, de modo que es una pista de que a esta serie quizá no\n        había que diferenciarla[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m1-26",
+  "prosa": [
+   [
+    "Buena parte de la literatura\n        —empezando por el Box &amp; Jenkins original— lo escribe con signo menos.",
+    "Algunos textos y la documentación de S-PLUS lo escriben con signo menos.",
+    "La atribución al «Box & Jenkins original» no tiene texto en la caché (la biblioteca tiene las ediciones sin PDF) y «buena parte de la literatura» generaliza. Lo que sí dicen las fuentes leídas: Cryer y Chan escriben el MA con signo menos (p. 57) y la ayuda de arima() dice que sus coeficientes MA difieren en signo de los de la documentación de S-PLUS. Mismo ajuste que c3-m1-08/-09."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m1-26]]Algunos textos y la documentación de S-PLUS lo escriben con signo menos{{C|p. 57}}{{R|§Details}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m1-27",
+  "prosa": [],
+  "marcas": [
+   "<p><strong>El signo de $\\theta$ no es el mismo en todas partes.</strong> [[c4-m1-27]]R (<code>arima</code>,\n        <code>arima.sim</code>) y <code>statsmodels</code> escriben el polinomio MA como\n        $\\theta(B) = 1 + \\theta_1 B + \\cdots$, con signo <strong>más</strong>{{R|§Details}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m1-28",
+  "prosa": [],
+  "marcas": [
+   "Ante la duda, conviene comprobar el signo de la ACF del\n        rezago 1: [[c4-m1-28]]para un MA(1), $\\rho_1$ tiene el mismo signo que $\\theta$ en el convenio de R{{H|p. 49}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m1-29",
+  "prosa": [
+   [
+    "los modelos ARMA solo describen series",
+    "los modelos ARMA se plantean para series",
+    "Verificador A (Medio): Cryer y Chan (p. 55) no dicen «solo», y el mismo módulo (c4-m1-08, Cryer y Chan p. 202) habla de un ARMA(p+d, q) no estacionario. La frase ya empieza por «El Capítulo 3 terminó…»: no se repite. [sesión maestra (verificación R4)]"
+   ]
+  ],
+  "marcas": [
+   "El Capítulo 3 terminó con un límite explícito: [[c4-m1-29]]los modelos ARMA se plantean para series\n        <strong>estacionarias</strong>{{C|p. 55}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m2-01",
+  "prosa": [
+   [
+    "En 1970 George Box y Gwilym Jenkins publicaron <em>Time Series Analysis: Forecasting and Control</em> y con\n        él un procedimiento que sigue siendo el esqueleto de todo lo que se hace con modelos ARIMA. Su aportación\n        fue <strong>el método</strong> —la familia ya existía, aunque ellos también la sistematizaron y fijaron cómo\n        identificarla con la ACF y la PACF—: una secuencia de etapas con criterios\n        explícitos para pasar de una a la siguiente, y con vueltas atrás previstas.",
+    "En 1970 Box y Jenkins publicaron <em>Time Series Analysis: Forecasting and Control</em>, el texto que popularizó el modelado ARIMA. Su\n        procedimiento, que muchos autores llaman <strong>método de Box–Jenkins</strong>, es una secuencia de etapas con criterios\n        explícitos para pasar de una a la siguiente, y con vueltas atrás previstas.",
+    "No hay texto de ninguna edición de Box y Jenkins en la caché. FPP3 §9.12 dice que el texto de 1970 popularizó el modelado ARIMA y da su título y año; Cryer y Chan (p. 109) dicen que muchos autores llaman «método de Box–Jenkins» al procedimiento. Se retiran: (a) los nombres de pila (George, Gwilym), que figuran en el prefacio de Cryer y Chan (p. vii), cuya página romana no cabe en el vocabulario de localizadores; (b) «sigue siendo el esqueleto de todo lo que se hace con modelos ARIMA», valoración sin fuente; (c) «la familia ya existía, aunque ellos también la sistematizaron y fijaron cómo identificarla con la ACF y la PACF», historia de la disciplina sin pasaje (FPP3 y Cryer y Chan solo dicen «popularizó»)."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m2-01]]En 1970 Box y Jenkins publicaron <em>Time Series Analysis: Forecasting and Control</em>, el texto que popularizó el modelado ARIMA{{F|§9.12}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m2-02",
+  "prosa": [],
+  "marcas": [
+   "Su\n        procedimiento, que [[c4-m2-02]]muchos autores llaman <strong>método de Box–Jenkins</strong>{{C|p. 109}}[[/]], es una secuencia de etapas con criterios\n        explícitos para pasar de una a la siguiente, y con vueltas atrás previstas."
+  ]
+ },
+ {
+  "id": "c4-m2-04",
+  "prosa": [],
+  "marcas": [
+   "La palabra clave es <em>iterativo</em>. [[c4-m2-04]]No es una receta que se ejecuta una vez de arriba abajo: es un ciclo\n        en el que el diagnóstico puede obligar a volver a la identificación tantas veces como haga falta{{C|p. 8}}{{F|§9.7}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m2-05",
+  "prosa": [],
+  "marcas": [
+   "<p class=\"ciclo-retorno\">[[c4-m2-05]]Las etapas 2, 3 y 4 pueden mandar de vuelta a la identificación. Solo se llega a\n          pronosticar cuando el diagnóstico no encuentra nada que objetar{{F|§9.7}}[[/]], y aun entonces la forma del pronóstico\n          puede delatar un $d$ mal elegido."
+  ]
+ },
+ {
+  "id": "c4-m2-06",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m2-06]]<strong>Primero $d$</strong>, mirando el gráfico y la ACF, las pruebas de raíz\n              unitaria y, si ya se diferenció, los síntomas de haberlo hecho de más; y solo después $p$ y $q$,\n              leyendo la ACF y la PACF de la serie <em>ya diferenciada</em>{{F|§9.7}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m2-07",
+  "prosa": [
+   [
+    "El orden importa: la ACF de una serie no estacionaria no dice nada\n              sobre $p$ y $q$ porque no decae.",
+    "El orden importa: la ACF de una serie no estacionaria no suele mostrar un patrón con el que leer $p$ y $q$, porque no decae con rapidez.",
+    "«No dice nada» es más fuerte que las fuentes: Cryer y Chan (p. 125) dicen que la ACF muestral de una serie no estacionaria suele no decaer con rapidez, que el único patrón es quizá un descenso lineal y que, tras diferenciar, el patrón emerge con mucha más claridad; FPP3 §9.1, que la ACF de los datos no estacionarios decrece despacio."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m2-07]]El orden importa: la ACF de una serie no estacionaria no suele mostrar un patrón con el que leer $p$ y $q$, porque no decae con rapidez{{C|p. 125}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m2-08",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m2-08]]Estimar $\\phi$, $\\theta$ y la constante por máxima verosimilitud, y comparar los candidatos con AICc\n              y BIC — <strong>siempre dentro del mismo $d$</strong>{{F|§9.6}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m2-09",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m2-09]]Comprobar además que los coeficientes tienen\n              sentido: errores estándar razonables y raíces fuera del círculo unitario{{F|§9.7}}{{C|p. 186}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m2-10",
+  "prosa": [
+   [
+    "tenga un error estándar enorme (señal\n              de sobreparametrización)",
+    "tenga un error estándar claramente mayor que el del modelo más sencillo (señal\n              de sobreparametrización)",
+    "«Enorme» exagera lo que dicen las fuentes: Cryer y Chan (p. 186) muestran que un sobreajuste ARMA(1,1) trae errores estándar más grandes («rather larger») que los del AR(1) y el AR(2); la redundancia de parámetros (p. 187) y Hamilton (p. 60) hablan de problemas de estimación y de modelos más simples, no de errores estándar enormes."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m2-10]]Que el ajuste <strong>no converja</strong>{{K|p. 11}} o que un coeficiente tenga un error estándar claramente mayor que el del modelo más sencillo (señal\n              de sobreparametrización){{C|p. 186}}: de vuelta a la etapa 1 con $p$ o $q$ más pequeños[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m2-11",
+  "prosa": [
+   [
+    "si es del MA, la serie se diferenció de más y hay que <strong>bajar</strong> $d$",
+    "si es del MA, lo más probable es que la serie se haya diferenciado de más y convenga <strong>bajar</strong> $d$",
+    "Verificador A (Bajo): los Módulos 1 y 3 lo tratan como indicio; las fuentes (Cryer y Chan pp. 126–127) van de la sobrediferenciación a la raíz, no al revés. [sesión maestra (verificación R4)]"
+   ]
+  ],
+  "marcas": [
+   "[[c4-m2-11]]Una raíz sobre el círculo\n              unitario, o muy cerca, también devuelve, pero el arreglo depende de cuál sea: si es del MA, lo más probable es que la serie se haya diferenciado de más y convenga <strong>bajar</strong> $d${{F|§9.7}}{{C|p. 127}}[[/]];"
+  ]
+ },
+ {
+  "id": "c4-m2-60",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m2-60]]si es del AR, le falta una diferencia y hay\n              que <strong>subirlo</strong>[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m2-61",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m2-61]]Con una salvedad: si el AR tiene una raíz casi igual a la del MA, los dos\n              factores se cancelan entre sí, y lo que sobra no es la diferencia sino $p$ y $q${{H|p. 60}}{{C|p. 187}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m2-12",
+  "prosa": [
+   [
+    "Y mirar la normalidad, que no hace falta para que\n              las estimaciones sean válidas pero sí para que lo sean los intervalos de pronóstico.",
+    "Y mirar la normalidad, que no es una propiedad esencial de los residuales, pero sí la suponen los intervalos de pronóstico habituales.",
+    "Ninguna fuente leída dice que la normalidad no haga falta «para que las estimaciones sean válidas» (en c4-m9-24 el inventario ya la daba por PARCIAL). FPP3 §5.4 dice que la normalidad es útil pero no necesaria y que facilita los intervalos; §9.8, que los intervalos de un ARIMA suponen residuales incorrelacionados y normales, y que con residuales no normales se pueden usar intervalos bootstrap."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m2-12]]Y mirar la normalidad, que no es una propiedad esencial de los residuales, pero sí la suponen los intervalos de pronóstico habituales{{F|§5.4}}{{F|§9.8}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m2-21",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m2-21]]Comprobar que los residuales son <strong>ruido blanco</strong>: correlograma dentro de la banda,\n              Ljung–Box conjunto, media cero, varianza estable{{F|§9.7}}{{C|p. 183}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m2-13",
+  "prosa": [],
+  "marcas": [
+   "<p>[[c4-m2-13]]<code>checkresiduals()</code>{{P|§Description}}, <code>Box.test(..., type = \"Ljung-Box\", fitdf = p + q)</code>{{R|§Details}}[[/]],"
+  ]
+ },
+ {
+  "id": "c4-m2-14",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m2-14]]Si el patrón está en los\n              rezagos múltiplos del período estacional, no basta con subir $p$ o $q$: hace falta un modelo\n              <strong>estacional</strong>{{F|§9.9}}{{C|p. 183}}[[/]],"
+  ]
+ },
+ {
+  "id": "c4-m2-15",
+  "prosa": [
+   [
+    "la deciden $d$ y la constante, no los coeficientes\n              ARMA: eso se ve en el Módulo 9.",
+    "la deciden $d$ y la constante, no los coeficientes\n              ARMA (salvo que los datos muestren ciclos, donde importa $p$): eso se ve en el Módulo 9.",
+    "FPP3 §9.5 da la tabla de c y d para los pronósticos de largo plazo, pero añade que p importa si los datos muestran ciclos (hace falta p ≥ 2 con raíces complejas). «No los coeficientes ARMA» a secas es más fuerte que la fuente."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m2-15]]La forma del pronóstico a largo plazo la deciden $d$ y la constante, no los coeficientes\n              ARMA (salvo que los datos muestren ciclos, donde importa $p$){{F|§9.5}}[[/]]: eso se ve en el Módulo 9."
+  ]
+ },
+ {
+  "id": "c4-m2-16",
+  "prosa": [
+   [
+    "casi siempre delata un $d$ mal elegido.",
+    "puede delatar un $d$ mal elegido.",
+    "«Casi siempre» es una generalización sin fuente. FPP3 §9.5 dice que c y d determinan la forma del pronóstico de largo plazo y que cuanto mayor es d, más rápido crecen los intervalos; de ahí que la forma pueda delatar un d inadecuado, no que casi siempre lo haga."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m2-16]]Un pronóstico cuya <em>forma</em> es absurda para el fenómeno —una recta que crece sin fin, un\n              intervalo que abarca valores imposibles— puede delatar un $d$ mal elegido{{F|§9.5}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m2-17",
+  "prosa": [
+   [
+    "<strong>Lo que Box–Jenkins no resuelve.</strong> El método supone que la estructura del proceso es\n          estable en toda la muestra. No detecta cambios de régimen, ni intervenciones, ni atípicos: los\n          <em>absorbe</em>, normalmente subiendo $d$ o inflando $\\hat\\sigma^2$.",
+    "<strong>Lo que el ciclo no resuelve por sí solo.</strong> Un ARIMA supone que la estructura del proceso es\n          estable en toda la muestra. Las intervenciones (como un cambio permanente de nivel) y los atípicos no forman parte de ese proceso: se modelan\n          aparte, y mientras no se haga el ajuste puede <em>absorberlos</em>, por ejemplo subiendo $d$ o inflando\n          $\\hat\\sigma^2$.",
+    "«Box–Jenkins no detecta cambios de régimen, ni intervenciones, ni atípicos» es una afirmación sobre el método de Box y Jenkins, cuyo texto no se leyó (FPP3 §9.7 incluso pide, en el paso 1, identificar las observaciones inusuales). Lo que sí dice Cryer y Chan (cap. 11): una intervención se modela como un cambio en la media sumado a un proceso ARIMA (p. 250) y un atípico como una perturbación del proceso no perturbado (p. 257). El título del recuadro deja de nombrar a Box y Jenkins; «cambios de régimen» sale por no figurar en las fuentes; «normalmente» pasa a «por ejemplo»."
+   ],
+   [
+    "y mientras no se haga el ajuste puede <em>absorberlos</em>",
+    "y si se dejan fuera del modelo, el ajuste puede <em>absorberlos</em>",
+    "Verificador A (Bajo): «mientras no se haga el ajuste puede absorberlos» se leía mal. [sesión maestra (verificación R4)]"
+   ]
+  ],
+  "marcas": [
+   "<p><strong>Lo que el ciclo no resuelve por sí solo.</strong> Un ARIMA supone que la estructura del proceso es\n          estable en toda la muestra. [[c4-m2-17]]Las intervenciones (como un cambio permanente de nivel) y los atípicos no forman parte de ese proceso: se modelan\n          aparte{{C|p. 250}}{{C|p. 257}}[[/]],"
+  ]
+ },
+ {
+  "id": "c4-m2-63",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m2-63]]Un ARIMA supone que la estructura del proceso es\n          estable en toda la muestra[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m2-62",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m2-62]]si se dejan fuera del modelo, el ajuste puede <em>absorberlos</em>, por ejemplo subiendo $d$ o inflando\n          $\\hat\\sigma^2$[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m2-23",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m2-23]]Y si la varianza cambia con el nivel,\n              antes de nada hay que volver al Capítulo 2 y transformar{{F|§3.1}}{{F|§9.7}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m3-01",
+  "prosa": [],
+  "marcas": [
+   "produce un modelo [[c4-m3-01]]cuyos criterios de información no se pueden comparar con los del $d$ correcto{{F|§9.6}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m3-02",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m3-02]]cuyos\n        residuales pueden pasar el diagnóstico igualmente, y cuyo pronóstico a largo plazo tiene la forma\n        equivocada{{F|§9.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m3-03",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m3-03]]Conviene apoyarla en <strong>tres evidencias complementarias</strong>, que miran la serie desde\n        ángulos distintos{{F|§9.1}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m3-60",
+  "prosa": [],
+  "marcas": [
+   "¿Y la varianza de $\\nabla^d y$? [[c4-m3-60]]De $d=0$ a $d=1$ apenas baja —de $28\\,638$ a $28\\,268$, un\n        $1.3\\,\\%$— y con $d=2$ casi se triplica. Es una descripción útil, pero <strong>no decide $d$</strong>: el\n        Capítulo 2 (Módulo 2.7) mostró que, en una serie estacionaria, el cociente\n        $\\operatorname{Var}(\\nabla y)/\\operatorname{Var}(y)$ se acerca a $2(1-r_1)$, así que repite lo que ya dice\n        $r_1$, y $r_1$ solo no dice si hay una raíz unitaria. En el Nilo, $r_1 = 0.498$ da $2(1-r_1) = 1.003$, y el\n        cociente medido es $0.987$ (el bloque de código lo calcula): que la varianza casi no cambie es otra forma de\n        decir que $r_1$ está cerca de $0.5$[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m3-65",
+  "prosa": [],
+  "marcas": [
+   "<td[[@c4-m3-65]]>¿El nivel vaga sin volver a ningún sitio?\n              ¿Hay saltos? ¿La ACF decae despacio, sin cortar?{{F|§9.1}}</td>"
+  ]
+ },
+ {
+  "id": "c4-m3-05",
+  "prosa": [],
+  "marcas": [
+   "<td[[@c4-m3-05]]>ADF y PP (Phillips–Perron; $H_0$: hay raíz unitaria) y\n              KPSS ($H_0$: es estacionaria){{T|§Description}}</td>"
+  ]
+ },
+ {
+  "id": "c4-m3-07",
+  "prosa": [],
+  "marcas": [
+   "Las pruebas no contrastan lo mismo. ADF [[c4-m3-07]](y PP, que corrige la autocorrelación de forma no paramétrica en\n        vez de con rezagos){{H|p. 475}}[[/]] parte de la raíz unitaria"
+  ]
+ },
+ {
+  "id": "c4-m3-08",
+  "prosa": [],
+  "marcas": [
+   "<p>[[c4-m3-08]]y contrasta $H_0:\\ \\gamma = 0$, la raíz unitaria{{C|p. 129}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m3-62",
+  "prosa": [],
+  "marcas": [
+   ". [[c4-m3-62]]KPSS descompone la serie en un nivel que puede pasear y\n        un ruido estacionario[[/]],</p>"
+  ]
+ },
+ {
+  "id": "c4-m3-69",
+  "prosa": [],
+  "marcas": [
+   "<p>[[c4-m3-69]]y contrasta $H_0:\\ \\sigma_v^2 = 0$: sin paseo, la serie es estacionaria alrededor de $\\mu$[[/]].</p>"
+  ]
+ },
+ {
+  "id": "c4-m3-09",
+  "prosa": [],
+  "marcas": [
+   "<p>[[c4-m3-09]]<code>adf.test()</code> incluye la constante $\\alpha_0$ y la tendencia $\\alpha_1 t$ con $k = 4${{T|§Details}}[[/]]; como se verá"
+  ]
+ },
+ {
+  "id": "c4-m3-10",
+  "prosa": [],
+  "marcas": [
+   "<p>[[c4-m3-10]]La función <code>ndiffs()</code> devuelve el $d$ recomendado{{P|§Value}}, pero <strong>depende de la prueba que se\n          le pida</strong>{{P|§Arguments}}[[/]], y sobre el Nilo las tres no coinciden:</p>"
+  ]
+ },
+ {
+  "id": "c4-m3-11",
+  "prosa": [],
+  "marcas": [
+   "Y [[c4-m3-11]]el valor por\n          defecto de <code>ndiffs()</code> es KPSS{{P|§Usage}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m3-70",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m3-70]]Es también el que usa\n          <code>auto.arima()</code>{{K|p. 10}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m3-63",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m3-63]]la función de <code>forecast</code> que ajusta sola varios ARIMA y se queda\n          con el de menor AICc{{P|§Description}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m3-12",
+  "prosa": [],
+  "marcas": [
+   "Hay además un matiz: [[c4-m3-12]]el ADF de <code>ndiffs()</code> no es el de <code>adf.test()</code> de la tabla.\n          Usa solo constante y un rezago ($\\alpha_1 = 0$, $k = 1$)[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m3-13",
+  "prosa": [],
+  "marcas": [
+   "($\\tau_\\mu = -4.05$, [[c4-m3-13]]frente al valor crítico de $-2.89$ al $5\\,\\%${{H|p. 763}}[[/]])"
+  ]
+ },
+ {
+  "id": "c4-m3-14",
+  "prosa": [],
+  "marcas": [
+   "No es un fallo de ninguna función: KPSS invierte la hipótesis nula, y [[c4-m3-14]]ADF y PP, que comparten la\n          de raíz unitaria, corrigen la autocorrelación de forma distinta y no reaccionan igual a un MA fuerte y negativo, como el\n          $\\hat\\theta \\approx -0.87$ del Nilo{{H|p. 516}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m3-15",
+  "prosa": [],
+  "marcas": [
+   ": [[c4-m3-15]]simulando ese mismo ARIMA($1,1,1$) con raíz unitaria\n          <em>verdadera</em> ($1\\,000$ réplicas, semilla $2026$, nivel $5\\,\\%$), <code>PP.test</code> la rechaza en el\n          $100\\,\\%$ de las réplicas y <code>adf.test</code> con $k = 4$, en el $51.3\\,\\%$; por eso el $-6.690$ del PP de\n          la tabla apenas informa[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m3-16",
+  "prosa": [
+   [
+    "Cuando\n          discrepan, la respuesta no está en la prueba sino en el gráfico",
+    "Cuando discrepan, la respuesta no está solo en la prueba, también en el gráfico",
+    "«No está en la prueba sino en el gráfico» da el último juicio al gráfico, y ni FPP3 §9.1 ni Hamilton (p. 516) lo dicen: FPP3 dice que las pruebas pueden dar respuestas conflictivas y que el gráfico de la serie y la ACF también sirven para detectar la no estacionariedad; Hamilton, que el fin de las pruebas es hallar una representación parsimoniosa."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m3-16]]Cuando discrepan, la respuesta no está solo en la prueba, también en el gráfico{{F|§9.1}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m3-17",
+  "prosa": [
+   [
+    "y eso es exactamente lo que\n        KPSS está diseñado para detectar como \"no estacionariedad\"",
+    "y KPSS contrasta, justamente, la estacionariedad alrededor de un nivel único",
+    "«Está diseñado para detectar como no estacionariedad» un cambio de nivel depende de Kwiatkowski et al. (1992), sin texto en caché; ?kpss.test dice que la nula es la estacionariedad alrededor de un nivel (o de una tendencia) y FPP3 §9.1 que se busca evidencia de que la nula es falsa. La frase nueva dice solo eso y el argumento del párrafo («debería rechazar») se sostiene igual."
+   ]
+  ],
+  "marcas": [
+   "Sospecha razonable: el descenso de 1899 no es una raíz unitaria, es un <strong>escalón</strong> (en lo\n        que sigue, de tamaño $\\beta$). [[c4-m3-17]]Una serie\n        estacionaria alrededor de dos niveles distintos no vuelve a una media única, y KPSS contrasta, justamente, la estacionariedad alrededor de un nivel único{{T|§Description}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m3-18",
+  "prosa": [],
+  "marcas": [
+   "<p><strong>El resultado.</strong> [[c4-m3-18]]Con 1000 réplicas, sin escalón KPSS rechaza el $4.8\\,\\%$ de las veces:\n          prácticamente su tamaño nominal del $5\\,\\%$, la prueba funciona (la malla de 400 réplicas del simulador y\n          del bloque de código da $4.5\\,\\%$). Con el escalón que de verdad tiene el Nilo ($\\beta = -247.8$, que son\n          $1.95$ desviaciones típicas), rechaza el <strong>$100\\,\\%$</strong> de las veces, y <code>ndiffs()</code>\n          pide diferenciar en el $100\\,\\%$ de las réplicas.[[/]]</p>"
+  ]
+ },
+ {
+  "id": "c4-m3-66",
+  "prosa": [],
+  "marcas": [
+   "<p>[[c4-m3-66]]El ADF depende de cómo se especifique. El de <code>ndiffs()</code> (solo constante, un rezago) se deja\n          engañar en el $0.5\\,\\%$ de los casos, y por eso <code>ndiffs(Nile, test = \"adf\")</code> devuelve 0. Pero\n          el de <code>adf.test()</code> (constante y tendencia, $k = 4$) <strong>no rechaza</strong> la raíz unitaria\n          en el $86.4\\,\\%$ de las réplicas con escalón, frente al $5.4\\,\\%$ sin él: el escalón también engaña al ADF\n          de la tabla, y su $p = 0.064$ sobre el Nilo es probablemente otra víctima.[[/]]</p>"
+  ]
+ },
+ {
+  "id": "c4-m3-67",
+  "prosa": [],
+  "marcas": [
+   "<p style=\"margin-bottom:0;\">[[c4-m3-67]]Basta un escalón de $0.79$ desviaciones típicas ($|\\beta| = 100$) para que la tasa\n          de rechazo de KPSS suba al $70.8\\,\\%$[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m3-19",
+  "prosa": [],
+  "marcas": [
+   "<p>[[c4-m3-19]]El estadístico KPSS se construye sobre las <strong>sumas parciales</strong> de los residuales de\n                regresar la serie contra una constante, $e_t = y_t - \\bar{y}$[[/]]:</p>"
+  ]
+ },
+ {
+  "id": "c4-m3-20",
+  "prosa": [],
+  "marcas": [
+   "<p>[[c4-m3-20]]Si $y_t$ tiene una raíz unitaria, los $e_t$ se comportan como una caminata (crecen como\n                $\\sqrt t$) y $S_t$ crece como $t^{3/2}$: las sumas parciales se disparan y el estadístico diverge.\n                Esto es lo que la prueba quiere detectar.[[/]]</p>"
+  ]
+ },
+ {
+  "id": "c4-m3-71",
+  "prosa": [],
+  "marcas": [
+   "<p>[[c4-m3-71]]Si $y_t$ es estacionaria alrededor de una media única, los $e_t$ se compensan y $S_t$ se queda\n                pequeño: fluctúa alrededor de cero como un puente browniano. El estadístico es pequeño.[[/]]</p>"
+  ]
+ },
+ {
+  "id": "c4-m3-21",
+  "prosa": [],
+  "marcas": [
+   "muy por encima del [[c4-m3-21]]valor crítico de\n                $0.463$[[/]].</p>"
+  ]
+ },
+ {
+  "id": "c4-m3-22",
+  "prosa": [],
+  "marcas": [
+   "<p class=\"derivacion-resultado\"[[@c4-m3-22]]>KPSS no distingue \"hay raíz unitaria\" de \"hay un cambio de nivel\": las dos"
+  ]
+ },
+ {
+  "id": "c4-m3-61",
+  "prosa": [],
+  "marcas": [
+   "<td[[@c4-m3-61]]>En el modelo\n              ajustado, una raíz MA cerca de $1${{C|p. 127}}. En la serie diferenciada, un $\\hat\\rho_1$ cerca de $-0.5${{H|p. 49}} o por debajo es\n              solo un indicio: falla en los dos sentidos (Módulo 2.7)</td>"
+  ]
+ },
+ {
+  "id": "c4-m3-29",
+  "prosa": [],
+  "marcas": [
+   "<p>[[c4-m3-29]]Sobre la misma serie del Nilo, <code>tseries::kpss.test</code> devuelve $0.9654$ y\n          <code>statsmodels.kpss</code>, con su opción por defecto (<code>nlags=\"auto\"</code>, 5 rezagos), devuelve\n          $0.8691$; con <code>nlags=\"legacy\"</code> (12 rezagos) baja a $0.5497$, casi la mitad[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m3-30",
+  "prosa": [
+   [
+    "entran en el estimador de Bartlett",
+    "entran en el estimador de Newey–West",
+    "La ayuda de kpss.test (§Details) dice que σ² se estima con el estimador de Newey–West y que el parámetro de truncamiento es trunc(4(n/100)^0.25) o trunc(12(n/100)^0.25); ninguna ayuda leída lo llama «de Bartlett» (solo el código de statsmodels, en un comentario). Hamilton (p. 513) usa también «Newey–West» y «lag truncation parameter» para el mismo estimador."
+   ]
+  ],
+  "marcas": [
+   ": es el <strong>truncamiento de la varianza de largo plazo</strong>, [[c4-m3-30]]el parámetro $\\ell$\n          que decide cuántas autocovarianzas entran en el estimador de Newey–West{{T|§Details}}[[/]]</p>"
+  ]
+ },
+ {
+  "id": "c4-m3-64",
+  "prosa": [],
+  "marcas": [
+   "<p style=\"margin-bottom:0;\">[[c4-m3-64]]Aquí, con autocorrelaciones positivas, más rezagos inflan $\\hat\\sigma_{LP}^2$,\n          que está en el denominador, y por eso el estadístico baja. Con <code>nlags=4</code> los dos coinciden hasta\n          el último decimal[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m3-31",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m3-31]]Es la misma clase de trampa que el Capítulo 2 documentó entre <code>ndiffs()</code> y\n          <code>kpss.test()</code>[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m3-34",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m3-34]]Y con $\\ell = 12$ la prueba pierde potencia: en el experimento del\n          escalón, con $|\\beta| = 100$, la tasa de rechazo baja del $70.8\\,\\%$ ($\\ell = 4$) al $44.5\\,\\%$\n          ($\\ell = 12$)[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m3-32",
+  "prosa": [
+   [
+    "$d$ casi nunca pasa de 2, y en series económicas casi nunca de 1.",
+    "$d$ casi nunca pasa de 2.",
+    "Ninguna fuente leída respalda «en series económicas casi nunca de 1» (FPP3 §9.1 y Cryer y Chan, pp. 92 y 126, solo acotan d a 2 para la práctica): se retira esa mitad."
+   ]
+  ],
+  "marcas": [
+   "<strong>La regla práctica.</strong> [[c4-m3-32]]$d$ casi nunca pasa de 2{{F|§9.1}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m3-33",
+  "prosa": [
+   [
+    "casi seguro el problema es otro",
+    "es prudente sospechar que el problema es otro",
+    "«Casi seguro» da una probabilidad que ninguna fuente leída respalda: Cryer y Chan (p. 126) solo dicen que una o dos diferencias, quizá con un logaritmo u otra transformación, bastan para llegar a la estacionariedad, y FPP3 §9.1 que casi nunca hace falta pasar de la segunda diferencia."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m3-33]]Si\n          parece necesario $d = 3$, es prudente sospechar que el problema es otro: una transformación pendiente, un atípico, o\n          justamente un cambio de nivel. Antes de subir $d$, conviene volver al gráfico.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m4-60",
+  "prosa": [],
+  "marcas": [
+   "es el orden que pide KPSS, [[c4-m4-60]]la prueba que\n        usa <code>auto.arima</code>{{P|§Usage}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m4-02",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m4-02]]La ACF de la serie sin diferenciar del Nilo decae\n        despacio y sin cortar ($0.498,\\ 0.385,\\ 0.328,\\ 0.239,\\dots$): es compatible con una serie no estacionaria{{F|§9.1}}\n        —o con el escalón de 1899—[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m4-03",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m4-03]]y no informa sobre $p$ ni sobre $q${{F|§9.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m4-04",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m4-04]]Leerla, junto con una PACF que corta en 1,\n        como la firma de un AR(1) con $\\phi \\approx 0.5$ es confundir la no estacionariedad con dinámica: el error\n        de principiante más caro del capítulo[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m4-05",
+  "prosa": [],
+  "marcas": [
+   "Con $d = 0$, la trampa del párrafo\n          de arriba: [[c4-m4-05]]un AR(1) con $\\phi \\approx 0.5$ tendría la ACF dentro de la banda desde el rezago 3[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m4-06",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m4-06]]y la PACF decae con signo negativo, como la de un\n        MA(1) con $\\theta &lt; 0${{C|p. 114}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m4-07",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m4-07]]el único otro que sale de la banda de\n        $\\pm 0.197$ es el 8 ($0.231$), aislado y sin patrón; con 20 rezagos al $5\\,\\%$, uno fuera por azar es lo\n        esperable{{F|§2.9}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m4-08",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m4-08]]Con $d = 2$, $\\hat\\rho_1 = -0.626$ cae por debajo de $-0.5$, el valor que tendría la diferencia de un ruido\n          blanco{{H|p. 49}}: la huella de haber diferenciado de más{{C|p. 126}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m4-09",
+  "prosa": [],
+  "marcas": [
+   "Y [[c4-m4-09]]el $-0.402$ de $d = 1$, un pico negativo en el\n          rezago 1 no muy lejos de $-0.5$, es también lo que deja diferenciar una serie que no lo necesitaba{{F|§9.1}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m4-10",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m4-10]]La\n          tabla elige $p$ y $q$; no confirma $d${{F|§9.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m4-11",
+  "prosa": [],
+  "marcas": [
+   "<div class=\"diagram\"[[@c4-m4-11]]>\n        <table style=\"position:relative;\">\n          <thead>\n            <tr><th></th><th>ACF</th><th>PACF</th><th>Sugiere</th></tr>",
+   "<td style=\"white-space:nowrap;\">ARMA($p,q$)</td><td>decae{{F|§9.5}}</td>"
+  ]
+ },
+ {
+  "id": "c4-m4-12",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m4-12]]La tabla propone, por tanto, un <strong>ARIMA($0,1,1$)</strong>[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m4-13",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m4-13]]Es el IMA(1,1){{C|p. 93}} del Módulo 1, el equivalente del suavizamiento exponencial\n        simple con $\\alpha = 1 + \\hat\\theta = 0.267${{F|§9.10}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m4-14",
+  "prosa": [],
+  "marcas": [
+   "<p>[[c4-m4-14]]<strong>Pero no se propone uno: se proponen varios.</strong> La tabla acota la búsqueda, no la resuelve{{F|§9.7}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m4-15",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m4-15]]Con $n = 99$ la banda es ancha ($\\pm 0.197$){{F|§9.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m4-16",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m4-16]]La práctica sensata es llevar a la etapa de estimación el candidato de la tabla y\n          sus vecinos inmediatos: $(0,1,1)$, $(1,1,1)$, $(0,1,2)$, $(1,1,0)${{F|§9.7}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m4-17",
+  "prosa": [
+   [
+    "Los dos son defendibles; que no coincidan es frecuente, no un fallo.",
+    "Los dos son defendibles; que no coincidan no es un fallo.",
+    "«Es frecuente» es una afirmación empírica que ninguna fuente leída mide (Cryer y Chan, p. 131, y FPP3 §9.6 solo dan las propiedades de cada criterio): se retira."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m4-17]]Los dos son defendibles; que no coincidan no es un fallo{{C|p. 131}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m5-01",
+  "prosa": [
+   [
+    "es el parámetro que más confusión causa de toda la familia ARIMA, porque",
+    "es un parámetro que se presta a confusión en la familia ARIMA, porque",
+    "«El parámetro que más confusión causa de toda la familia» es un superlativo sobre la práctica que ninguna fuente leída dice (FPP3 §9.7 dedica una subsección a las constantes, sin calificarlas así). Se acota a lo que sí sostiene la fuente: la constante significa cosas distintas según d (FPP3 §9.5 y §9.7)."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m5-01]]<strong>significa cosas distintas según $d$</strong>{{F|§9.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m5-02",
+  "prosa": [],
+  "marcas": [
+   "<p[[@c4-m5-02]]>Se parte de $\\phi(B)(1-B)^d y_t = c + \\theta(B)\\varepsilon_t$ y se toman esperanzas. Llamando $w_t = (1-B)^d y_t$ y $\\mu_w = \\operatorname{E}[w_t]${{F|§9.7}}:</p>"
+  ]
+ },
+ {
+  "id": "c4-m5-03",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m5-03]]$w_t = y_t$, así que $\\mu_w$ es <strong>la media de la serie</strong>{{F|§9.7}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m5-04",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m5-04]]R la llama <code>intercept</code> aunque sea una media{{R|§Arguments}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m5-05",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m5-05]]$\\mu_w$ es la media de las <em>diferencias</em>, es decir, el <strong>incremento medio por período</strong>. Eso es una tendencia lineal en $y_t${{F|§9.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m5-06",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m5-06]]y es lo que <code>forecast</code> llama <strong>deriva</strong> (<em>drift</em>){{P|§Arguments}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m5-07",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m5-07]]$\\mu_w$ sería la aceleración media, y produce una tendencia <strong>cuadrática</strong>. Prácticamente nunca se quiere{{F|§9.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m5-08",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m5-08]]Regla mnemotécnica: <strong>cada diferencia sube en un grado el polinomio de la tendencia</strong> que la constante genera: a largo plazo, $\\hat y_{T+h}$ (con $T$ el último dato) crece como $\\mu_w\\, h^d / d!${{F|§9.7}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m5-09",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m5-09]]Sin constante: $d=0$ tiende a cero, $d=1$ se aplana (no necesariamente en el último dato: el Módulo 9 lo mide), $d=2$ sigue una recta. Con constante: $d=0$ vuelve a la media, $d=1$ recta, $d=2$ parábola{{F|§9.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m5-10",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m5-10]]<code>TRUE</code>, pero solo se usa si $d = 0$. <strong>Con $d \\ge 1$ se ignora en silencio</strong>{{R|§Arguments}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m5-11",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m5-11]]la deriva solo entra como regresor, <code>xreg = seq_along(y)</code>, que es lo que hace <code>forecast::Arima</code> por dentro[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m5-12",
+  "prosa": [],
+  "marcas": [
+   "<td[[@c4-m5-12]]><code>FALSE</code>. Y con $d \\ge 2$ <strong>avisa y no la ajusta</strong>: <em>\"No drift term fitted as the order of difference is 2 or more.\"</em>{{P|§Arguments}}</td>"
+  ]
+ },
+ {
+  "id": "c4-m5-13",
+  "prosa": [],
+  "marcas": [
+   "<td[[@c4-m5-13]]>Con $d = 1$ prueba con y sin deriva (con $d = 0$, con y sin media) como un movimiento más de la búsqueda{{K|p. 11}}, y elige por AICc{{P|§Usage}}; con $d \\ge 2$ nunca la incluye. Por eso en su traza el mismo orden aparece con y sin constante.</td>"
+  ]
+ },
+ {
+  "id": "c4-m5-14",
+  "prosa": [],
+  "marcas": [
+   "<td[[@c4-m5-14]]><code>\"c\"</code> si $d=0$, <code>\"n\"</code> si $d&gt;0$. Para pedir deriva con $d=1$ hay que poner <code>trend=\"t\"</code>; con $d \\ge 2$ <strong>lanza un <code>ValueError</code></strong>, porque un término de orden menor que $d$ lo elimina la propia diferenciación.</td>"
+  ]
+ },
+ {
+  "id": "c4-m5-15",
+  "prosa": [],
+  "marcas": [
+   "<p style=\"margin-bottom:0;\"[[@c4-m5-15]]>Consecuencia práctica: si un ajuste de <code>arima()</code> y uno de <code>auto.arima()</code> no coinciden, lo primero que hay que mirar no son los órdenes sino <strong>si uno lleva deriva y el otro no</strong>.</p>"
+  ]
+ },
+ {
+  "id": "c4-m5-16",
+  "prosa": [],
+  "marcas": [
+   "<p[[@c4-m5-16]]>Con $d = 1$ la deriva se escribe como una pendiente explícita, que es la forma en que la estima <code>forecast::Arima</code>{{P|§Details}}. Para el ARIMA($1,1,1$):</p>"
+  ]
+ },
+ {
+  "id": "c4-m5-17",
+  "prosa": [],
+  "marcas": [
+   "<p>[[c4-m5-17]]No es significativa (en la ecuación del Módulo 1 equivaldría a $c = \\hat\\delta\\,(1-\\hat\\phi_1) = -2.883 \\times (1 - 0.271) = -2.10$, con el $\\hat\\phi_1 = 0.271$ del propio modelo con deriva, que no es el $0.254$ del modelo sin ella). Y el AICc lo confirma: $1268.06$ con deriva frente a $1267.51$ sin ella — añadirla empeora.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m5-18",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m5-18]]Tiene sentido físico: no hay ninguna razón para creer que el caudal del Nilo disminuya <em>indefinidamente</em> a razón de $2.9 \\times 10^8\\ \\text{m}^3$ por año.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m5-19",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m5-19]]Y buena parte de esa caída no fue gradual. La media de las diferencias es $(y_{1970} - y_{1871})/99 = (740 - 1120)/99 = -3.84$ —la suma de las diferencias es telescópica y solo sobreviven el primer año y el último—, y el descenso de $247.8$ de 1899 aporta por sí solo $-2.50$ de ella.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m5-20",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m5-20]]Una deriva estimada es una tendencia que se extrapola sin límite{{F|§9.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m6-01",
+  "prosa": [
+   [
+    "y cambia de una forma que se pasa por alto constantemente.",
+    "y cambia de una forma que es fácil pasar por alto.",
+    "Ninguna fuente leída dice que la diferencia se pase por alto «constantemente» (con qué frecuencia). FPP3 §9.6 y Hyndman y Khandakar (p. 9) advierten de que los criterios de información no son comparables entre órdenes de diferenciación, sin medir cuánto se pasa por alto."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m6-01]]La estimación es la del Capítulo 3: máxima verosimilitud sobre la serie diferenciada{{R|§Value}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m6-02",
+  "prosa": [],
+  "marcas": [
+   "<div class=\"formula\"[[@c4-m6-02]]> $$\\mathrm{AIC} = -2\\log L + 2k$$",
+   "más uno si hay constante o deriva){{F|§9.6}} y $n^{*} = n - d$ el <strong>número efectivo</strong> de observaciones{{C|p. 131}}.</p>"
+  ]
+ },
+ {
+  "id": "c4-m6-05",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m6-05]]La verosimilitud de un ARIMA con $d = 1$ se calcula sobre las $99$ diferencias del Nilo; la de uno con $d = 2$, sobre $98$ segundas diferencias{{R|§Value}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m6-06",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m6-06]]<strong>Son datos distintos</strong>, y una verosimilitud solo es comparable con otra calculada sobre los mismos datos{{F|§9.6}}. Un AICc menor con más diferencias no significa un modelo mejor: es la verosimilitud de otros datos, con una observación menos.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m6-07",
+  "prosa": [
+   [
+    "la comparación válida es fuera de muestra (Módulo 8), apoyada en",
+    "una comparación válida es la hecha fuera de muestra (Módulo 8), apoyada en",
+    "FPP3 §9.9 dice que las comparaciones con un conjunto de prueba son siempre válidas, no que sean «la» comparación válida; Hyndman y Khandakar (p. 10) prefieren las pruebas de raíz unitaria para elegir d."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m6-07]]Cuando de verdad haya que decidir entre distintos $d$, una comparación válida es la hecha fuera de muestra (Módulo 8){{F|§9.9}}, apoyada en las pruebas de raíz unitaria{{K|p. 10}}[[/]] y en el criterio sustantivo de qué proceso genera los datos."
+  ]
+ },
+ {
+  "id": "c4-m6-08",
+  "prosa": [
+   [
+    "a menos de 2 puntos del mejor (el Módulo 7 contará siete,",
+    "a menos de 2 puntos del mejor (umbral que este capítulo toma por convención; el Módulo 7 contará siete,",
+    "Ninguna fuente leída (Cryer y Chan §6.5, FPP3 §9.6–9.7, Hyndman y Khandakar 2008, Hamilton, Shumway y Stoffer 3.ª ed.) da un umbral de 2 puntos de AICc: se declara convención del capítulo. Misma decisión que c4-m7-14."
+   ],
+   [
+    "porque cuenta también las variantes con deriva)",
+    "porque incluye al propio ganador y dos variantes con deriva)",
+    "Verificador A (Bajo): la cuenta del Módulo 7 es 1 ganador + 4 + 2 con deriva = 7; «cuenta también las variantes con deriva» no explica el siete. [sesión maestra (verificación R4)]"
+   ]
+  ],
+  "marcas": [
+   "[[c4-m6-08]]Con $d = 1$ cuatro modelos más quedan a menos de 2 puntos del mejor (umbral que este capítulo toma por convención; el Módulo 7 contará siete, porque incluye al propio ganador y dos variantes con deriva), y con diferencias así el AICc apenas los distingue[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m6-09",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m6-09]]el mejor de $d = 0$ tiene una raíz AR en $1.161$, cerca del círculo unitario, como si pidiera una diferencia; el mejor de $d = 1$, una raíz MA en $1.144$, como si quisiera deshacerla; y los buenos de $d = 2$ la tienen entre $1.000$ y $1.048$[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m6-10",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m6-10]]Sería un error por partida doble: ese valor se calcula sobre $98$ observaciones y no sobre $99${{F|§9.6}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m6-11",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m6-11]]y además el propio ARIMA($1,2,2$) tiene una raíz MA en $1.03$, casi sobre el círculo unitario, síntoma de haber diferenciado de más{{C|pp. 126–127}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m6-60",
+  "prosa": [
+   [
+    "tienen una raíz MA exactamente sobre el círculo\n        unitario</strong>",
+    "tienen una raíz MA sobre el círculo\n        unitario</strong>",
+    "redactor, c4-m6-60: ejecutado, las cuatro raíces MA valen de 1.000000 a 1.000014: están sobre el círculo a cuatro decimales, no «exactamente»"
+   ]
+  ],
+  "marcas": [
+   "[[c4-m6-60]]No es un caso aislado: como se verá en el Módulo 8, <strong>cuatro de los nueve modelos con $d = 2$ tienen una raíz MA sobre el círculo unitario</strong>.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m6-12",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m6-12]]El BIC penaliza cada parámetro con $\\log n^{*}$ en vez de con $2$, así que con $n^{*} = 99$ ($\\log 99 = 4.6$) es más de dos veces más severo y tiende a elegir modelos más pequeños{{F|§7.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m6-13",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m6-13]]Ninguno es \"el correcto\": el AICc apunta a minimizar el error de pronóstico y el BIC a identificar el modelo verdadero si está entre los candidatos{{F|§7.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m6-14",
+  "prosa": [
+   [
+    "Para pronosticar —que es a lo que va este curso— la recomendación habitual es <strong>AICc</strong>.",
+    "Para pronosticar —que es a lo que va este curso—, prefieren el <strong>AICc</strong>.",
+    "«La recomendación habitual» es la de FPP3 (§9.6: su preferencia es el AICc; §7.5: recomiendan AICc, AIC o validación cruzada), no una convención general que ninguna fuente leída atribuya a «lo habitual». El generador de citas escribe el nombre de los autores (modo narrativo) delante de «prefieren»."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m6-14]]Para pronosticar —que es a lo que va este curso—,{{F|§9.6|narrativa}} prefieren el <strong>AICc</strong>[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m7-01",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m7-01]]En 2008 Rob Hyndman y Yeasmin Khandakar publicaron un algoritmo que automatiza esa búsqueda{{K|p. 1}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m7-02",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m7-02]]y es el que ejecuta <code>auto.arima()</code>{{P|§Details}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m7-03",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m7-03]]<strong>Elegir $d$</strong> con pruebas sucesivas de KPSS: se diferencia mientras KPSS rechace la estacionariedad{{K|p. 10}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m7-04",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m7-04]]<strong>Ajustar cuatro modelos iniciales</strong> sobre la serie diferenciada: ARIMA($2,d,2$), ARIMA($0,d,0$), ARIMA($1,d,0$) y ARIMA($0,d,1$), con constante si $d \\le 1${{K|p. 11}}, y un quinto, ARIMA($0,d,0$) sin constante{{F|§9.7}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m7-05",
+  "prosa": [
+   [
+    "El de menor AICc es el <em>modelo actual</em>.",
+    "El de menor AICc es el <em>modelo actual</em>; el artículo original elegía por AIC.",
+    "Verificador B (Medio): la cita a Hyndman y Khandakar (2008, p. 11) iba pegada a «AICc», y el artículo elige por AIC (como c3-m9-20 en el cap. 3). La cita del AICc pasa a FPP3 §9.7. [sesión maestra (verificación R4)]"
+   ]
+  ],
+  "marcas": [
+   "[[c4-m7-05]]El de menor AICc es el <em>modelo actual</em>{{F|§9.7}}; el artículo original elegía por AIC{{K|p. 11}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m7-06",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m7-06]]<strong>Buscar en el vecindario:</strong> se prueban las variantes del modelo actual con $p$, $q$ o ambos modificados en $\\pm 1$, y con o sin constante. En cuanto una mejora el AICc, pasa a ser el modelo actual y la búsqueda se reinicia desde él{{F|§9.7}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m7-07",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m7-07]]<strong>Parar</strong> cuando ninguna variante del vecindario mejore{{F|§9.7}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m7-09",
+  "prosa": [
+   [
+    "Se descartan por el camino los ajustes que no convergen y los que tienen raíces demasiado cerca del círculo unitario ($|\\text{raíz}| &lt; 1.01$ en el código de <code>forecast</code>): a esos el algoritmo les asigna AICc $=\\infty$.",
+    "Se descartan por el camino los ajustes que no convergen y los que tienen raíces demasiado cerca del círculo unitario: el artículo rechaza el modelo con alguna raíz de módulo menor que $1.001$, y el código de <code>forecast</code> (versión 9.0.2) usa $|\\text{raíz}| &lt; 1.01$ y asigna a esos modelos AICc $=\\infty$.",
+    "El capítulo atribuía el 1.01 al algoritmo de Hyndman y Khandakar (lecturas, M10), pero el artículo (p. 11) dice que se rechaza el modelo con una raíz menor que 1.001. El 1.01 es el umbral del código de forecast 9.0.2 (comprobado ejecutando: myarima descarta con minroot < 1 + 0.01 y asigna ic = Inf; no aparece 1.001 en el código), y la ayuda de auto.arima dice que hay variaciones menores respecto del artículo. Se dice cada cifra con su fuente."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m7-09]]Se descartan por el camino los ajustes que no convergen y los que tienen raíces demasiado cerca del círculo unitario{{K|p. 11}}: el artículo rechaza el modelo con alguna raíz de módulo menor que $1.001$, y el código de <code>forecast</code> (versión 9.0.2) usa $|\\text{raíz}| &lt; 1.01$ y asigna a esos modelos AICc $=\\infty$[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m7-10",
+  "prosa": [
+   [
+    "su menor raíz AR tiene módulo $1.001$",
+    "su menor raíz AR tiene módulo $1.0009$, por debajo de los dos umbrales",
+    "Verificador B (Medio): redondeada a 1.001 coincidía con el umbral del artículo y se leía como que el artículo no lo rechazaría. El bloque de código imprime 1.0009 (min|raiz AR| = 1.0009). [sesión maestra (verificación R4)]"
+   ]
+  ],
+  "marcas": [
+   "[[c4-m7-10]]Es lo que le pasa al ARIMA($2,1,2$) del Nilo con el ajuste que usa <code>auto.arima</code>, el CSS-ML de <code>Arima()</code>: su menor raíz AR tiene módulo $1.0009$, por debajo de los dos umbrales[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m7-11",
+  "prosa": [
+   [
+    "la búsqueda usa además una verosimilitud aproximada (CSS)",
+    "la búsqueda usa una verosimilitud aproximada (CSS) en lugar de la exacta",
+    "Verificador B (Bajo): según la ayuda de auto.arima (§Arguments), con approximation = TRUE la estimación es por suma de cuadrados condicional, no además de la exacta. [sesión maestra (verificación R4)]"
+   ]
+  ],
+  "marcas": [
+   "[[c4-m7-11]]Si $n &gt; 150$ o la frecuencia es mayor que $12${{P|§Usage}}, la búsqueda usa una verosimilitud aproximada (CSS) en lugar de la exacta y al final reajusta el ganador con la exacta{{P|§Arguments}}: es la opción <code>approximation</code>[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m7-12",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m7-12]]Sobre el Nilo, la búsqueda evalúa <strong>18 modelos</strong>[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m7-61",
+  "prosa": [],
+  "marcas": [
+   "<p[[@c4-m7-61]]>La búsqueda escalonada evaluó $18$ modelos; la exhaustiva, $42$. Las dos llegan al mismo sitio:</p>"
+  ]
+ },
+ {
+  "id": "c4-m7-13",
+  "prosa": [
+   [
+    "Que coincidan es lo habitual, pero no está garantizado.",
+    "Aquí coinciden, pero no está garantizado que lo hagan.",
+    "«Lo habitual» es una afirmación empírica sin fuente leída; FPP3 §9.7 solo dice que es posible que no se encuentre el modelo de AICc mínimo por las aproximaciones o por el procedimiento escalonado. La frase nueva afirma lo que se ve en el Nilo y la advertencia de la fuente."
+   ]
+  ],
+  "marcas": [
+   "Aquí coinciden, pero [[c4-m7-13]]no está garantizado que lo hagan{{F|§9.7}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m7-14",
+  "prosa": [
+   [
+    "La regla de referencia habitual es que diferencias menores que $2$ no distinguen modelos.",
+    "Este capítulo toma por convención que diferencias menores que $2$ no distinguen modelos.",
+    "Ninguna fuente leída (Cryer y Chan §6.5, FPP3 §9.6–9.7, Hyndman y Khandakar 2008, Hamilton, Shumway y Stoffer 3.ª ed.) da un umbral de 2 puntos de AICc, y no hay obra en la biblioteca que traiga esa «regla de referencia habitual». Se declara convención del capítulo (misma decisión que c4-m6-08)."
+   ],
+   [
+    "<strong>seis candidatos indistinguibles según el propio criterio</strong>",
+    "<strong>seis candidatos indistinguibles según esa convención</strong>",
+    "Coherencia con la frase anterior: la indistinguibilidad depende del umbral de 2 puntos, que es convención del capítulo y no del criterio mismo."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m7-14]]<strong>Siete modelos a menos de $2$ puntos de AICc.</strong> Son el ganador, otros cuatro sin constante —los del explorador del Módulo 6— y dos variantes con deriva. Este capítulo toma por convención que diferencias menores que $2$ no distinguen modelos.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m7-15",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m7-15]]Es decir: <code>auto.arima</code> devuelve un ganador con toda la seguridad de una sola línea de salida, y detrás de él hay <strong>seis candidatos indistinguibles según esa convención</strong>, incluido el ARIMA($0,1,1$) que proponía el correlograma del Módulo 4.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m7-16",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m7-16]]La función no miente; simplemente no está diseñada para comunicar esa incertidumbre. Pedir <code>trace = TRUE</code> no cuesta nada y la enseña.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m7-17",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m7-17]]<strong>No garantiza el óptimo.</strong> La búsqueda escalonada explora un vecindario, no la rejilla entera{{F|§9.7}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m7-18",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m7-18]]Con series difíciles conviene contrastar con <code>stepwise = FALSE, approximation = FALSE</code>{{P|§Details}}, que es más lento y recorre todos los modelos con $p + q \\le 5${{P|§Arguments}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m7-19",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m7-19]]aunque siempre con el mismo $d$ que eligió KPSS{{K|p. 10}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m7-60",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m7-60]]Con las $100$ observaciones del Nilo no se activa, así que los AICc de la traza son exactos.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m8-01",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m8-01]]correlograma dentro de la banda, Ljung–Box con <code>fitdf = p + q</code>{{R|§Details}}, media cero, varianza estable{{F|§5.4}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m8-02",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m8-02]]Shapiro $p = 0.731${{R|§Description}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m8-03",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m8-03]]Si se diferencia de más, el modelo lo compensa introduciendo una <strong>raíz unitaria en la parte MA</strong>{{C|p. 127}}: el factor $(1+\\theta B)$ se convierte en $(1-B)$ y cancela la diferencia sobrante.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m8-04",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m8-04]]que es un MA(1) con $\\theta = -1$ exactamente{{C|p. 126}}[[/]]. No es una metáfora, es álgebra, y se ve en el número:"
+  ]
+ },
+ {
+  "id": "c4-m8-05",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m8-05]]Con $\\hat\\theta = -1$, el MA(1) ajustado sobre $\\nabla^2 y$ da $\\hat\\sigma^2 = 28\\,268.34$, que es exactamente $\\operatorname{Var}(\\nabla y)$: el modelo ha recuperado la serie con una sola diferencia. Con $d = 3$ ocurre lo mismo, y su $\\hat\\sigma^2 = 80\\,055.05$ reproduce la varianza de $\\nabla^2 y$, que es $80\\,055.01$.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m8-06",
+  "prosa": [
+   [
+    "<strong>cuatro tienen $|\\text{raíz MA}| = 1.000$ exactamente</strong>",
+    "<strong>cuatro tienen $|\\text{raíz MA}| = 1.000$ a tres decimales</strong>",
+    "redactor, c4-m8-06: lo mismo que c4-m6-60 (observación del lector D): 1.000 lo es a tres decimales"
+   ]
+  ],
+  "marcas": [
+   "[[c4-m8-06]]De los nueve modelos con $d = 2$, <strong>cuatro tienen $|\\text{raíz MA}| = 1.000$ a tres decimales</strong>: los ARIMA($0,2,1$), ($0,2,2$), ($1,2,1$) y ($2,2,1$). Entre ellos está el mejor por BIC de ese grupo. La rejilla no solo premia modelos con un $d$ equivocado: premia los que son <em>numéricamente degenerados</em>.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m8-10",
+  "prosa": [
+   [
+    "y aun así $d = 1$ sobra, como coinciden en señalar ADF, KPSS y Phillips–Perron",
+    "y aun así $d = 1$ sobra: una serie con ciclos de longitud no fija, como la del lince, es estacionaria, y ADF, KPSS y Phillips–Perron coinciden en no diferenciar",
+    "Verificador B (Medio): la cita de FPP3 §9.1 iba pegada a lo que dicen las pruebas, y FPP3 no corre ninguna; §9.1 dice que el lince es estacionario porque sus ciclos son aperiódicos. [sesión maestra (verificación R4)]"
+   ]
+  ],
+  "marcas": [
+   "[[c4-m8-10]]aun así $d = 1$ sobra: una serie con ciclos de longitud no fija, como la del lince, es estacionaria{{F|§9.1}}, y ADF, KPSS y Phillips–Perron coinciden en no diferenciar[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m8-11",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m8-11]]Lo que sí lo detecta ahí es la raíz: el ARIMA($2,1,1$) sobre esa serie da $|\\text{raíz MA}| = 1.000${{C|p. 127}}[[/]]. <strong>Hay que mirar siempre las raíces.</strong>"
+  ]
+ },
+ {
+  "id": "c4-m8-12",
+  "prosa": [
+   [
+    "La serie cae de una media de $1097.75$ antes de 1899 a $849.97$ desde ese año, que coincide con la\n        construcción de la presa baja de Asuán. La alternativa a la raíz unitaria",
+    "La serie cae de una media de $1097.75$ antes de 1899 a $849.97$ desde ese año, y la ayuda de R de la serie señala un cambio aparente cerca de 1898. La alternativa a la raíz unitaria",
+    "c4-m8-12 y c4-m8-13: ninguna fuente leída dice que el descenso coincida con la construcción de la presa baja de Asuán (la ayuda de Nile no menciona ninguna presa y Cobb (1978) no tiene texto en la caché). Se retira la presa y lo que queda del cambio de nivel se cita a la ayuda de R, que habla de un «cambio aparente cerca de 1898» con remisión a Cobb. 1899 es cifra del capítulo (sale de R) y no se atribuye a la ayuda."
+   ]
+  ],
+  "marcas": [
+   "desde ese año, y [[c4-m8-12]]la ayuda de R de la serie señala un cambio aparente cerca de 1898{{R|§Description}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m8-14",
+  "prosa": [],
+  "marcas": [
+   "La alternativa a la raíz unitaria es [[c4-m8-14]]un escalón: el modelo de dos medias del Módulo 3, con $d = 0$ y un solo regresor, que vale $1$ desde 1899{{C|p. 251}}[[/]],"
+  ]
+ },
+ {
+  "id": "c4-m8-15",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m8-15]]<strong>dentro de su propio $d$</strong>: AICc $1257.91$ frente a $1282.50$ del mejor ARMA sin escalón{{F|§9.9}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m8-16",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m8-16]]El ARIMA($1,1,1$) probablemente está diferenciando una serie que no tiene raíz unitaria, sino un cambio de nivel[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m8-62",
+  "prosa": [],
+  "marcas": [
+   "y [[c4-m8-62]]su $\\theta$ cercano a $-1$ es el modelo intentando deshacer esa diferencia de más{{C|p. 127}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m8-17",
+  "prosa": [
+   [
+    "Box–Jenkins no tiene una etapa para \"detectar intervenciones\", así que la absorbe\n          subiendo $d$.",
+    "Un ARIMA sin término de intervención no tiene dónde poner el cambio de nivel, así que lo absorbe subiendo $d$.",
+    "c4-m8-17 (= c4-m2-17): ninguna edición de Box y Jenkins tiene texto en la caché, y Cryer y Chan (cap. 11) tratan el análisis de intervención y los atípicos como una extensión del ARIMA sin decir que Box–Jenkins carezca de esa etapa ni que «absorba subiendo d». Se retira la atribución al método y se dice lo que sí muestra Cryer y Chan (pp. 250–251): la intervención entra como un término aparte sumado a un proceso ARIMA."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m8-17]]Un ARIMA sin término de intervención no tiene dónde poner el cambio de nivel{{C|p. 250}}, así que lo absorbe subiendo $d$.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m8-18",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m8-18]]Comparar el escalón contra el ARIMA($1,1,1$) por AICc <strong>no se puede</strong>: uno tiene $d=0$ y el otro $d=1${{F|§9.6}}. La comparación válida es fuera de muestra{{F|§9.9}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m8-63",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m8-63]]El <em>naïve</em> repite siempre el último valor observado: es la caminata aleatoria{{F|§5.2}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m8-20",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m8-20]]<strong>una ventaja de ajuste dentro de muestra no se traduce automáticamente en capacidad de pronóstico</strong>{{F|§5.8}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m8-60",
+  "prosa": [],
+  "marcas": [
+   "<strong>no es una evidencia aparte</strong>: [[c4-m8-60]]como mostró el Capítulo 2 (Módulo 2.7), en una serie estacionaria el cociente de varianzas al diferenciar se acerca a $2(1-r_1)$, así que la varianza repite lo que dice $r_1$, y $r_1$ solo no dice si hay una raíz unitaria.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m8-61",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m8-61]]El $\\hat\\rho_1$ de la serie diferenciada no avisa aquí: vale $0.565$, positivo y lejos de $-0.5${{H|p. 49}}, que es la manera en que ese indicio falla (Módulo 2.7).[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m8-65",
+  "prosa": [],
+  "marcas": [
+   "que\n        KPSS —[[c4-m8-65]]la que usa <code>auto.arima</code>{{K|p. 10}}[[/]]— rechaza"
+  ]
+ },
+ {
+  "id": "c4-m8-64",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m8-64]]el escalón pronostica un nivel fijo con una banda que no se ensancha, y el ARIMA($1,1,1$), una banda que no deja de abrirse{{F|§9.8}}. Esa diferencia no la deciden los coeficientes sino $d${{F|§9.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-01",
+  "prosa": [
+   [
+    "se agotan y lo único que queda en pie es\n        <strong>$d$ y la constante</strong>.",
+    "se agotan y la forma que queda la deciden\n        <strong>$d$ y la constante</strong>.",
+    "c4-m9-01 y c4-m9-02: FPP3 §9.5 dice que c y d determinan el pronóstico de largo plazo pero que p importa si los datos muestran ciclos; y el propio módulo muestra que el nivel final del ARIMA(1,1,1) sin constante (842.17) depende de φ̂, θ̂ y del último residual. «Lo único que queda en pie» era más fuerte que ambas: lo que deciden d y la constante es la forma."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m9-01]]Los coeficientes ARMA gobiernan los primeros pasos del pronóstico; a partir de cierto horizonte se agotan{{C|p. 200}} y la forma que queda la deciden <strong>$d$ y la constante</strong>{{F|§9.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-03",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-03]]Vuelve a la media $920.56${{C|p. 200}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-62",
+  "prosa": [],
+  "marcas": [
+   "(con [[c4-m9-62]]el ajuste CSS-ML de <code>Arima()</code>{{P|§Arguments}}[[/]]; por máxima verosimilitud"
+  ]
+ },
+ {
+  "id": "c4-m9-04",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-04]]<strong>Se aplana</strong> en $842.17${{F|§9.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-60",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-60]]<strong>Recta</strong> de pendiente $\\hat\\delta${{F|§9.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-05",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-05]]<strong>Recta también</strong>, no una parábola{{F|§9.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-68",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-68]]<strong>Con $d = 2$ el pronóstico es una recta, no una parábola</strong>{{F|§9.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-67",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-67]]Parte de $740$ (1970), pasa a $816.18$ en $h = 1$ y se aplana en $842.17$. Con $d = 1$, la parte ARMA sigue moviendo la diferencia pronosticada durante unos pasos, $\\nabla\\hat y_{T+h} = \\hat\\phi^{\\,h-1}(\\hat\\phi\\,\\nabla y_T + \\hat\\theta\\,\\hat\\varepsilon_T)$, y al sumarlos el nivel converge a[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-06",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-06]]La segunda diferencia del pronóstico decae como $\\hat\\phi^{\\,h}$, con $\\hat\\phi = -0.39$, y en $h = 30$ ya es nula a efectos prácticos: la curva termina en una recta.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-07",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-07]]Para obtener la parábola haría falta una constante con $d = 2$, y <code>forecast::Arima</code> <strong>se niega</strong>: avisa <em>\"No drift term fitted as the order of difference is 2 or more\"</em> y la descarta{{P|§Arguments}}. No es un bug, es una decisión deliberada: extrapolar una parábola a 30 pasos produce disparates{{F|§9.7}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-66",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-66]]Lo que sí delata a $d = 2$ es el intervalo{{F|§9.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-09",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-09]]Y ese ARIMA($1,2,1$) tiene $\\hat\\theta = -1$: es el modelo sobrediferenciado del Módulo 8. Su MA cancela una de las dos diferencias, así que los $\\psi_j$ tienden a $1/(1-\\hat\\phi) = 0.72$ en vez de a $0.169$. Eso explica buena parte del abanico (la banda del pronóstico, que se abre con el horizonte), pero no todo: con esos pesos, la fórmula de abajo da un ancho de $2428$ en $h = 30$, y <code>forecast()</code> devuelve $2771$.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-10",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-10]]La diferencia es el precio de la no invertibilidad —con $\\hat\\theta = -1$ los choques pasados no se recuperan de los datos{{C|p. 197}}—, y el desarrollo del final del módulo lo explica.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-11",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-11]]El intervalo no es un adorno que añade el software: se deduce de los pesos $\\psi$ de la representación MA($\\infty$) que se construyó en el Capítulo 3. Si $y_{T+h} = \\hat{y}_{T+h|T} + \\sum_{j=0}^{h-1}\\psi_j \\varepsilon_{T+h-j}$, entonces el error de pronóstico a $h$ pasos tiene varianza{{C|p. 202}}[[/]]:"
+  ]
+ },
+ {
+  "id": "c4-m9-63",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-63]]Todo ARIMA puede escribirse, desde un origen dado, en función de sus choques, con pesos $\\psi_j$ definidos por $\\psi(B)\\,\\phi(B)(1-B)^d = \\theta(B)${{C|p. 200}}. Con $d \\ge 1$ la suma no converge si se lleva al infinito, pero basta separar lo que ya se conoce en $T$ de lo que aún no ha ocurrido:[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-17",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-17]]El pronóstico óptimo en error cuadrático medio{{C|p. 191}} sustituye esos $h$ errores futuros por su esperanza, cero{{F|§9.8}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-18",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-18]]Ese paso supone que el modelo es <strong>invertible</strong>: solo así los choques pasados se recuperan de los datos observados{{C|p. 197}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m9-19",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-19]]Si no lo es —un $\\theta$ en $-1$—, $\\varepsilon_T, \\varepsilon_{T-1},\\dots$ no se conocen del todo{{C|p. 197}}, y el intervalo que calcula el software, que incorpora esa incertidumbre, sale más ancho que el de la fórmula del paso 4{{R|§Details}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-12",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-12]]Los pesos se obtienen igualando coeficientes en $\\psi(B)\\,\\phi(B)(1-B)^d = \\theta(B)${{C|p. 202}}. Para el ARIMA($1,1,1$) del Nilo eso equivale a expandirlo como ARMA($2,1$){{C|p. 201}}[[/]] —la derivación del Módulo 1— y da una forma cerrada:"
+  ]
+ },
+ {
+  "id": "c4-m9-13",
+  "prosa": [],
+  "marcas": [
+   "<div class=\"formula\"[[@c4-m9-13]]>\n        $$\\psi_j = \\frac{(1+\\theta) - (\\phi+\\theta)\\,\\phi^{\\,j}}{1-\\phi}$$"
+  ]
+ },
+ {
+  "id": "c4-m9-14",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-14]]Con esos pesos se reconstruyen exactamente los intervalos que devuelve <code>forecast()</code>: el error máximo de la comprobación es <strong>$9.1\\times 10^{-11}$</strong>.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-64",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-64]]en un ARIMA($0,1,0$) todos los pesos valen $\\psi_j = 1$ y la fórmula se reduce a $\\sigma\\sqrt{h}${{C|p. 202}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-15",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-15]]Como $\\psi_j \\to \\psi_\\infty$, para horizontes grandes $\\sigma_h \\approx \\sigma\\,\\psi_\\infty\\sqrt{h}$: el cociente contra la caminata aleatoria tiende al propio $\\psi_\\infty$. En el Nilo $\\psi_\\infty = (1+\\theta)/(1-\\phi) = 0.169$, así que a treinta años $\\sigma_{30} = 199.4$ frente a los $778.0$ de una caminata con la misma $\\sigma$: <strong>cuatro veces menos incertidumbre</strong>.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-16",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-16]]Y la razón vuelve a ser la misma de todo el capítulo: con $\\theta = -0.874$ el término MA cancela casi toda la integración, así que los choques no se acumulan.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-20",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-20]]Con $h = 1$ solo sobrevive $\\psi_0 = 1$, luego $\\sigma_1 = \\sigma$. Y como los $\\psi_j^2$ no son negativos, $\\sigma_h$ <strong>nunca decrece</strong> con el horizonte. Puede quedarse plano —en un MA($1$), desde $h = 2$—, pero un intervalo de pronóstico no puede estrecharse al alejarse{{F|§9.8}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-61",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-61]]Como $\\psi_0 = 1$ siempre, $\\sigma_1 = \\sigma$: <strong>a un paso, el intervalo lo determina solo la desviación de los residuales</strong>{{F|§9.8}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-21",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-21]]El ritmo al que crece lo decide $d$. Si el proceso es estacionario, $\\psi_j \\to 0$ y la suma converge: el intervalo se estabiliza{{F|§9.8}}. Con una raíz unitaria, $\\psi_j$ tiende a una <strong>constante</strong> —en el Nilo, $\\psi_j \\to 0.169$—, la suma crece sin límite, como $h$, y $\\sigma_h$ lo hace como $\\sqrt{h}${{C|p. 202}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-22",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-22]]Con dos, $\\psi_j$ crece linealmente{{C|p. 202}} y $\\sigma_h$ lo hace como $h^{3/2}$, <strong>salvo que la parte MA cancele una de las raíces</strong>: es lo que ocurre en el ARIMA($1,2,1$) del Nilo, cuyo $\\hat\\theta = -1$ deja los $\\psi_j$ en $0.718$ y el crecimiento en $\\sqrt{h}$, como con $d = 1$.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-23",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-23]]La fórmula $\\hat{y} \\pm z_{1-\\alpha/2}\\,\\sigma_h$ usa $z_{0.975} = 1.96$ y $z_{0.90} = 1.282$, que son cuantiles de la normal{{F|§5.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-24",
+  "prosa": [
+   [
+    "Las <em>estimaciones</em> de un ARIMA no necesitan que los errores sean normales;\n          los <em>intervalos</em>, sí.",
+    "Las <em>estimaciones</em> de un ARIMA suelen seguir siendo razonables aunque los errores no sean normales;\n          los <em>intervalos</em>, en cambio, se apoyan en esa normalidad.",
+    "c4-m9-24 (= c4-m2-12): ninguna fuente leída dice que las estimaciones de un ARIMA «no necesiten» normalidad; Hamilton (pp. 117 y 126) dice que las estimaciones de máxima verosimilitud gaussiana suelen ser razonables con procesos no gaussianos (y consistentes en el AR) y que los errores estándar calculados con esa suposición pueden no ser correctos. FPP3 §9.8 sí dice que los intervalos se basan en residuales incorrelados y normales."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m9-24]]Las <em>estimaciones</em> de un ARIMA suelen seguir siendo razonables aunque los errores no sean normales{{H|p. 117}}; los <em>intervalos</em>, en cambio, se apoyan en esa normalidad{{F|§9.8}}.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-65",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-65]]el test de Shapiro–Wilk sobre los residuales da $p = 0.0006${{R|§Description}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-25",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m9-25]]Con colas más pesadas que la normal, la cobertura real se separa de la nominal{{F|§9.8}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m9-26",
+  "prosa": [],
+  "marcas": [
+   "—[[c4-m9-26]]en la TRM, a un mes, el intervalo del $80\\,\\%$ cubre el $83.9\\,\\%$[[/]]—"
+  ]
+ },
+ {
+  "id": "c4-m9-27",
+  "prosa": [
+   [
+    "Son, por tanto, sistemáticamente\n          optimistas.",
+    "Por eso tienden a quedar demasiado estrechos.",
+    "c4-m9-27 (= c3-m10-10): FPP3 §9.8 dice que los intervalos de un ARIMA «tienden a ser demasiado estrechos» porque solo cuentan la variación de los errores; no dice «sistemáticamente». La ayuda de predict.Arima añade que, según Harvey (1993), el efecto de no contar la incertidumbre de la estimación es pequeño."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m9-27]]los intervalos <strong>no incluyen la incertidumbre de haber estimado los parámetros</strong> (los tratan como si fueran conocidos), ni la de <strong>haber elegido el modelo</strong>. Por eso tienden a quedar demasiado estrechos{{F|§9.8}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-01",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-01]]Se sigue a KPSS, la de <code>auto.arima</code>{{K|p. 10}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-02",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-02]]el modelo va <strong>sin constante</strong>{{C|p. 198}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-04",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-04]]con $\\hat\\theta = -0.874$ el MA casi deshace la diferencia, la anomalía del Módulo 1[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-05",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-05]]Sin constante y con $d = 1$, el pronóstico se aplana{{F|§9.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-117",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-117]]La ACF de $\\nabla$Nilo corta en el rezago 1 ($\\hat\\rho_1 = -0.402$) y la PACF decae con signo negativo: ARIMA($0,1,1$){{F|§9.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-119",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-119]]no cuenta: ese AICc se calcula sobre $98$ observaciones y no sobre $99${{F|§9.6}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-118",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-118]]contra el ARIMA($1,1,1$) el AICc no compara: el $d$ es otro{{F|§9.6}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-08",
+  "prosa": [
+   [
+    "ningún criterio dentro de\n          muestra, porque",
+    "ningún criterio de información dentro de muestra, porque",
+    "FPP3 §9.6 habla de los criterios de información (AIC, AICc, BIC) y §9.9 de la comparación con AICc: «ningún criterio dentro de muestra» generaliza lo que la fuente dice."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m10-08]]La segunda: la duda final, diferenciar o modelar el escalón, no la resuelve ningún criterio de información dentro de muestra, porque los dos modelos tienen distinto $d${{F|§9.6}}. Hay que medirla fuera de muestra{{F|§9.9}}, y eso es el Capítulo 6[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-110",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-110]]La primera: el ciclo funciona y aun así no basta. El ARIMA($1,1,1$) supera cada etapa con las herramientas previstas, y la pista de que $d = 1$ podía sobrar asomó en casi todas —las pruebas que discrepan, el $\\hat\\rho_1 = -0.402$ de la serie diferenciada, el $\\hat\\theta$ cerca de $-1$—, pero solo el gráfico la explica.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-111",
+  "prosa": [],
+  "marcas": [
+   "La TRM mensual ([[c4-m10-111]]promedio del mes de la TRM diaria[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-09",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-09]]que publica la Superintendencia Financiera en datos.gov.co[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-10",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-10]]El Capítulo 3 mostró que sus log-retornos son, a efectos prácticos, ruido blanco.[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-11",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-11]]La ACF en niveles arranca en $0.964$ y decae lentísimo: el retrato de un proceso no estacionario{{F|§9.1}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-14",
+  "prosa": [
+   [
+    "$= 0$: sin\n                estacionalidad.",
+    "$= 0$: no hace falta diferencia estacional.",
+    "FPP3 §9.1 dice qué mide unitroot_nsdiffs(): no sugiere diferencias estacionales si la fuerza estacional F_S < 0.64. nsdiffs = 0 es eso, no la ausencia de estacionalidad."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m10-14]]Y <code>nsdiffs</code> $= 0$: no hace falta diferencia estacional{{F|§9.1}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-15",
+  "prosa": [
+   [
+    "Es ruido blanco.",
+    "Es compatible con ruido blanco.",
+    "Verificador B (Bajo): una ACF muestral no demuestra ruido blanco; FPP3 §9.1 lee el caso análogo como idéntico al de un ruido blanco. [sesión maestra (verificación R4)]"
+   ]
+  ],
+  "marcas": [
+   "[[c4-m10-15]]una sola barra fuera de la banda $\\pm 0.167$, aislada y sin patrón ($\\hat\\rho_8 = -0.190$). Es compatible con ruido blanco. La tabla de identificación del Capítulo 3 propone $p = q = 0${{F|§9.1}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-18",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-18]]Y sin embargo <code>auto.arima</code> lo descarta{{K|p. 11}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-19",
+  "prosa": [
+   [
+    "<strong>exactamente sobre el círculo unitario</strong>: el modelo no es invertible, en el sentido preciso\n          del Capítulo 3.",
+    "<strong>sobre el círculo unitario</strong> (a cuatro decimales): el modelo queda en el borde de la invertibilidad, cuya condición, la del Capítulo 3, pide raíces de módulo mayor que $1$.",
+    "Comprobado ejecutando: el módulo de las raíces MA del (2,1,2) es 1.000018, no exactamente 1; con raíz de módulo mayor que 1 el modelo es, estrictamente, invertible (Cryer y Chan, p. 80). Lo cierto es que está en el borde."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m10-19]]el modelo queda en el borde de la invertibilidad, cuya condición, la del Capítulo 3, pide raíces de módulo mayor que $1${{C|p. 80}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-20",
+  "prosa": [
+   [
+    "los factores AR y MA se cancelan entre sí, los coeficientes no son identificables y el AICc\n          premia un espejismo.",
+    "los factores AR y MA casi se cancelan entre sí —con un factor común exacto, los coeficientes no serían identificables— y el AICc premia un espejismo.",
+    "Comprobado ejecutando: las raíces AR y MA del (2,1,2) están a 0.022 unas de otras, no coinciden; Cryer y Chan §8.2 y Hamilton p. 60 hablan del factor común exacto."
+   ],
+   [
+    "# El (2,1,2) degenerado que gana en R no aparece: statsmodels impone\n# estacionariedad e invertibilidad mientras estima, asi que no puede llegar a\n# una raiz sobre el circulo, y su (2,1,2) es otro optimo, 7 puntos peor que el\n# (0,1,0). auto.arima descarta esas raices despues de estimar; aqui ni se\n# alcanzan. statsmodels no trae auto.arima: la rejilla hace su papel.",
+    "# El (2,1,2) degenerado que gana en R no aparece desde el arranque por\n# defecto: statsmodels cae en otro optimo local, con las raices MA fuera del\n# circulo (1.088) y 7 puntos peor que el (0,1,0). Con los coeficientes de R\n# como arranque llega al mismo modelo degenerado. auto.arima descarta esas\n# raices despues de estimar; statsmodels no trae auto.arima: la rejilla hace\n# su papel.",
+    "redactor, c4-m10-42 (comentario de código, hallazgo del lector E): era falso que statsmodels «no puede llegar a una raíz sobre el círculo»: con los coeficientes de R como arranque llega a ella (r4_software/lectorE/comprobaciones_E_212_py.out); el 1.088 ya está en la salida impresa del bloque"
+   ],
+   [
+    "# Con la covarianza por defecto (OPG) el error estandar sale 11.17. OPG y la\n# informacion observada solo coinciden si los residuales son normales, y\n# estos no lo son. Con la observada, 10.35 frente al 10.36 de R.",
+    "# Con la covarianza por defecto (OPG) el error estandar sale 11.17. OPG y la\n# informacion observada deberian estar cerca cuando la verosimilitud esta bien\n# especificada, y estos residuales no son normales. Con la observada, 10.35\n# frente al 10.36 de R.",
+    "redactor, c4-m10-44 (comentario de código, lector E): «solo coinciden si los residuales son normales» era más categórico que lo leído en Hamilton (1994, pp. 144–145): las dos estimaciones de la matriz de información deberían parecerse si el modelo está bien especificado"
+   ]
+  ],
+  "marcas": [
+   "[[c4-m10-20]]con un factor común exacto, los coeficientes no serían identificables{{C|p. 187}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-112",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-112]]los factores AR y MA casi se cancelan entre sí{{H|p. 60}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-21",
+  "prosa": [
+   [
+    "descarta por diseño los modelos con alguna raíz de módulo\n          menor que $1.01$ (el umbral del código de <code>forecast</code>), y aquí acierta.",
+    "descarta por diseño los modelos con alguna raíz cerca del círculo: el umbral es $1.001$ según, y el código de <code>forecast</code> instalado usa $1.01$; este modelo queda por debajo de los dos, y aquí acierta.",
+    "El capítulo atribuía el 1.01 al algoritmo; el artículo (Hyndman y Khandakar, 2008, p. 11) dice 1.001 y el código de forecast 9.0.2 usa 1.01 (comprobado ejecutando: forecast:::myarima compara minroot con 1 + 0.01 y no contiene ningún 1.001). El (2,1,2) de la TRM queda por debajo de los dos umbrales (raíz MA de 1.000018)."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m10-21]]el umbral es $1.001$ según{{K|p. 11|narrativa}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-113",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-113]]el código de <code>forecast</code> instalado usa $1.01$[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-123",
+  "prosa": [
+   [
+    "<strong>Comprobar las raíces no es opcional.</strong>",
+    "<strong>Comprobar las raíces no es opcional</strong>.",
+    "Verificador B (Bajo): la cita quedaba detrás del punto. [sesión maestra (verificación R4)]"
+   ]
+  ],
+  "marcas": [
+   "[[c4-m10-123]]<strong>Comprobar las raíces no es opcional</strong>{{F|§9.7}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-115",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-115]]Y es el caso de la salvedad del Módulo 2: la raíz MA unitaria tiene pareja en el AR, así que lo que sobra son $p$ y $q$, no la diferencia[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-114",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-114]]<strong>El resultado, aceptado tal cual: la TRM es compatible con una caminata aleatoria.</strong>[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-22",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-22]]ARIMA($0,1,0$) significa $y_t = y_{t-1} + \\varepsilon_t${{F|§9.1}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-23",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-23]]El mejor pronóstico para el próximo mes es el valor de este mes, y para dentro de un año, también{{F|§5.2}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-120",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-120]]no significativa, así que ni siquiera hay una tendencia que extrapolar{{C|p. 198}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-121",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-121]]En un ARIMA($0,1,0$) esa deriva es exactamente la media de las diferencias{{F|§9.1}}, $(y_n - y_1)/(n-1)$: depende solo del primer mes y del último{{F|§5.2}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-24",
+  "prosa": [
+   [
+    "Coincide con lo que\n          predice la teoría financiera para el precio con que se negocia —si el tipo de cambio fuera predecible,\n          alguien ya habría arbitrado la diferencia—, aunque",
+    "Coincide con la «hipótesis de mercados eficientes» tal como la presentan para el precio con que se negocia —un pronóstico muy difundido se incorpora de inmediato al precio, y el tipo de cambio se vuelve su propio pronóstico—, aunque",
+    "«La teoría financiera» no tenía obra y el argumento del arbitraje no está en ninguna fuente leída. FPP3 §1.1 sí trata el tipo de cambio: los pronósticos publicados se incorporan al precio y la serie se vuelve su propio pronóstico, y lo llama un ejemplo de la «hipótesis de mercados eficientes»."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m10-24]]la «hipótesis de mercados eficientes» tal como la presentan{{F|§1.1|narrativa}} para el precio con que se negocia —un pronóstico muy difundido se incorpora de inmediato al precio, y el tipo de cambio se vuelve su propio pronóstico—[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-25",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-25]]En el Capítulo 6 la caminata aleatoria reaparece como el método <em>naïve</em>, el mismo que el Módulo 8 usó de referencia, y como <strong>referencia que hay que batir</strong>{{F|§5.2}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-26",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-26]]El Módulo 9 dedujo que el ancho del intervalo sale de los pesos $\\psi$, $\\sigma_h^2 = \\sigma^2\\sum_{j=0}^{h-1}\\psi_j^2$, y que la caminata aleatoria es el caso de referencia: <strong>todos sus $\\psi$ valen $1$</strong>, la integración no amortigua nada y ningún choque se olvida{{C|p. 202}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-27",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-27]]Aquí la fórmula no se aplica, se lee: a $h$ pasos, el cambio desde el último dato es la suma de los $h$ choques que aún no han ocurrido, de esperanza cero, así que el pronóstico es el último valor y el error es esa misma suma{{F|§9.1}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-28",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-28]]ahí $\\sum_{j=0}^{\\infty}\\psi_j^2$ <em>converge</em> y $\\sigma_h^2$ se estabiliza en la varianza del propio proceso, $\\sigma^2\\sum_{j=0}^{\\infty}\\psi_j^2 = \\gamma_0$: el abanico tiene techo{{C|p. 201}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-29",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-29]]Esa es la frontera que marca la raíz unitaria: con ella, la suma diverge y no hay techo{{C|p. 202}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-116",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-116]]salvo que la parte MA la cancele —con $d = 1$, un $\\theta = -1$ da $\\psi_\\infty = (1+\\theta)/(1-\\phi) = 0$—, el caso límite del Módulo 9[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-122",
+  "prosa": [
+   [
+    "así que $\\sigma_h \\approx \\sigma\\,\\psi_\\infty\\sqrt{h}$",
+    "así que, a horizontes largos, $\\sigma_h \\approx \\sigma\\,\\psi_\\infty\\sqrt{h}$",
+    "Comprobado ejecutando: la aproximación solo vale a horizontes largos. A h = 30 el cociente σ_h/σ es 1.404 (el de la frase siguiente) y ψ_∞√30 = 0.925; a h = 200 son 2.61 y 2.39. Sin el calificativo, el estudiante que calcule σ_30/σ_1 ≈ ψ_∞√30 obtiene 0.925, menor que 1."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m10-122]]los $\\psi$ caen hasta $\\psi_\\infty = (1+\\theta)/(1-\\phi) = 0.1688$, así que, a horizontes largos, $\\sigma_h \\approx \\sigma\\,\\psi_\\infty\\sqrt{h}$ crece mucho más despacio[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-30",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-30]]A dos años vista el intervalo del $95\\,\\%$ se extiende <strong>un tercio del nivel hacia cada lado</strong>: de $2330.70$ a $4663.48$ pesos[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-32",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-32]]aplicando Ljung–Box a los residuales <strong>al cuadrado</strong> se obtiene $p = 0.857$, así que tampoco hay agrupamiento de volatilidad detectable a este nivel de agregación{{C|p. 282}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-33",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-33]]curtosis de $5.1$ y asimetría de $0.76$, es decir, saltos grandes más frecuentes de lo que la normal admite{{C|p. 287}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-34",
+  "prosa": [
+   [
+    "y los mayores, de devaluación (marzo de 2020, julio de 2022).",
+    "y los dos mayores, alzas del dólar (marzo de 2020, julio de 2022).",
+    "Las fechas salen de la serie (los dos mayores cambios en valor absoluto son subidas); «de devaluación» daba un nombre y una causa que ninguna fuente leída respalda y que el capítulo no desarrolla."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m10-34]]y los dos mayores, alzas del dólar (marzo de 2020, julio de 2022)[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-35",
+  "prosa": [
+   [
+    "así que subestima la\n        devaluación y sobrestima la revaluación.",
+    "así que subestima las alzas y sobrestima las bajas.",
+    "Coherencia con c4-m10-34: «devaluación» y «revaluación» dan un nombre y una causa que ninguna fuente leída respalda; lo que sale de los datos son las alzas y las bajas del tipo de cambio."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m10-35]]Pero $5$ de esos $6$ caen <strong>por arriba</strong>: el intervalo es simétrico y el riesgo no lo es, así que subestima las alzas y sobrestima las bajas[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-37",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-37]]Una parte se explica porque $\\sigma_h^2 = h\\,\\sigma^2$ supone choques incorrelados y los cambios mensuales tienen $\\hat\\rho_1 = 0.088$: medido en la muestra, el cuadrado medio de los cambios a $3$, $6$ y $12$ meses es entre $1.07$ y $1.14$ veces $h\\,\\hat\\sigma^2$. El abanico sale un poco estrecho, aunque no tanto como para explicar todo el déficit[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-38",
+  "prosa": [
+   [
+    "ningún ARIMA la captura.",
+    "el intervalo normal de un ARIMA no la recoge, y con residuales no normales cabe el bootstrap.",
+    "«Ningún ARIMA la captura» no es lo que dice FPP3: §9.8 recuerda que los intervalos de un ARIMA suponen residuales normales y propone intervalos por bootstrap si no lo son, y §5.5 que, al no suponer normalidad, esos intervalos no son simétricos."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m10-38]]el intervalo normal de un ARIMA no la recoge{{F|§9.8}}, y con residuales no normales cabe el bootstrap{{F|§5.5}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-105",
+  "prosa": [
+   [
+    "la mayoría de las series mensuales sí.",
+    "otras series mensuales sí.",
+    "Ninguna fuente leída (FPP3 §1.5 solo da ejemplos, como las ventas farmacéuticas mensuales) dice que la mayoría de las series mensuales sea estacional: se deja lo que el puente muestra, que hay series mensuales que sí lo son."
+   ]
+  ],
+  "marcas": [
+   "<p>[[c4-m10-105]]La TRM no tenía estacionalidad[[/]]; otras series mensuales sí."
+  ]
+ },
+ {
+  "id": "c4-m10-45",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-45]]Con $p + q \\le 5$, el tope por defecto de <code>auto.arima</code>{{P|§Arguments}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-46",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-46]]el patrón sobrante está en los múltiplos de 12{{F|§9.9}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-124",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-124]]Cubrir los rezagos 12 y 24 subiendo $q$ exigiría un orden altísimo, con dos docenas de parámetros[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-48",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-48]]el modelo <em>airline</em>{{C|p. 241}} ARIMA($0,1,1$)($0,1,1$)$_{12}$ diferencia también en el rezago 12 y multiplica dos factores MA de un parámetro cada uno{{F|§9.9}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-49",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-49]]Con solo esos dos parámetros alcanza los rezagos 1, 12 y 13[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-50",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-50]]No se puede{{F|§9.9}}: el no estacional usa $d = 1$ y el <em>airline</em> usa $d = 1$ <em>más</em> una diferencia estacional $D = 1$, así que sus verosimilitudes se calculan sobre $143$ y $131$ observaciones respectivamente{{R|§Value}}[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-58",
+  "prosa": [
+   [
+    "<li>El <strong>diagnóstico</strong> manda sobre el criterio: Ljung–Box con <code>fitdf = p + q</code>, la ACF",
+    "<li>El <strong>diagnóstico</strong> va después del criterio y puede descartar a su ganador: Ljung–Box con <code>fitdf = p + q</code>, la ACF",
+    "«Manda sobre el criterio» era más categórico que la fuente. FPP3 §9.7 pone la comprobación de residuales como el paso 6, posterior a la búsqueda por AICc (paso 5), y manda probar otro modelo si no parecen ruido blanco; el mismo apartado admite que a veces ningún modelo pasa todas las pruebas y entonces se usa el mejor hallado."
+   ]
+  ],
+  "marcas": [
+   "<li>El [[c4-m10-58]]<strong>diagnóstico</strong> va después del criterio y puede descartar a su ganador{{F|§9.7}}[[/]]: Ljung–Box con <code>fitdf = p + q</code>, la ACF"
+  ]
+ },
+ {
+  "id": "c4-m10-59",
+  "prosa": [
+   [
+    "<li>$d$ y la constante deciden la <strong>forma</strong> del pronóstico a largo plazo; el intervalo sale de",
+    "<li>$d$ y la constante deciden la <strong>forma</strong> del pronóstico a largo plazo, y $p$ cuenta si hay ciclos; el intervalo sale de",
+    "FPP3 §9.5 da la forma a largo plazo según c y d, pero advierte aparte que p importa si hay ciclos (hacen falta p ≥ 2 y condiciones sobre los coeficientes); el resumen lo presentaba sin esa salvedad."
+   ]
+  ],
+  "marcas": [
+   "<li>[[c4-m10-59]]$d$ y la constante deciden la <strong>forma</strong> del pronóstico a largo plazo, y $p$ cuenta si hay ciclos{{F|§9.5}}[[/]]; el intervalo sale de"
+  ]
+ },
+ {
+  "id": "c4-m10-61",
+  "prosa": [
+   [
+    "Toma <code>BJsales</code>, la Serie M del libro original de Box y Jenkins ($n = 150$).",
+    "Toma <code>BJsales</code> ($n = 150$), la serie de ventas cuyos datos figuran en Box y Jenkins (1976, p. 537).",
+    "Ninguna fuente leída llama a BJsales «la Serie M» ni dice que sea del «libro original»: la ayuda de R (§Source) dice que los datos figuran en Box y Jenkins (1976, p. 537), y §Description que son una serie de ventas de 150 observaciones. Las ediciones de Box y Jenkins no tienen texto en la caché."
+   ],
+   [
+    "El \"modelo de libro\" para esta serie es un IMA($1,1$), es decir ARIMA($0,1,1$):",
+    "Parte del IMA($1,1$), es decir ARIMA($0,1,1$):",
+    "Atribuir el IMA(1,1) a «el modelo de libro» de esta serie exigiría leer Box y Jenkins (sin texto); el ejercicio no lo necesita: el IMA(1,1) es el punto de partida que se somete al diagnóstico."
+   ],
+   [
+    "pero el IMA($1,1$) de libro NO pasa el diagnóstico.",
+    "pero el IMA($1,1$) de partida NO pasa el diagnóstico.",
+    "Arrastre de la frase anterior: «de libro» atribuía el modelo a una obra no leída."
+   ],
+   [
+    "# --- Etapa 3: por que falla el de libro ---------------------------------",
+    "# --- Etapa 3: por que falla el IMA(1,1) ---------------------------------",
+    "redactor, arrastre de c4-m10-61/-63 (comentario de código): «el de libro» atribuía el IMA(1,1) a un libro que no se ha leído"
+   ],
+   [
+    "Nota honesta: el AR(2) de libro tampoco pasa Ljung–Box",
+    "Nota honesta: el AR(2) tampoco pasa Ljung–Box",
+    "redactor (observación del lector F): «de libro» atribuía a los libros un AR(2) para el lince que ninguna fuente leída propone"
+   ]
+  ],
+  "marcas": [
+   "Toma [[c4-m10-61]]<code>BJsales</code> ($n = 150$), la serie de ventas cuyos datos figuran en Box y Jenkins (1976, p. 537){{R|§Source}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m10-65",
+  "prosa": [],
+  "marcas": [
+   "Dos lecciones. [[c4-m10-65]]La primera: <strong>un criterio de información no sustituye al diagnóstico</strong>{{F|§9.7}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m10-151",
+  "prosa": [
+   [
+    "La serie <code>lynx</code> (capturas anuales de lince canadiense, 1821–1934) tiene un ciclo marcadísimo de unos 10 años. Trabaja con",
+    "La serie <code>lynx</code> (capturas anuales de lince canadiense, 1821–1934) tiene ciclos marcadísimos y sin longitud fija, de unos 10 años en promedio. Trabaja con",
+    "«Un ciclo de unos 10 años» presenta como periódico un ciclo que FPP3 §9.1 llama aperiódico (su momento no es predecible); ni ?lynx ni FPP3 dan el periodo. «De unos 10 años en promedio» es lo que implica el AR(2) que el propio ejercicio ajusta (periodo 9.78 por las raíces, 10.02 por la fórmula del periodo medio de FPP3 §9.5): ver c4-m10-150."
+   ]
+  ],
+  "marcas": [
+   "La serie <code>lynx</code> ([[c4-m10-151]]capturas anuales de lince canadiense, 1821–1934){{R|§Description}}[[/]] tiene"
+  ]
+ },
+ {
+  "id": "c4-m10-66",
+  "prosa": [],
+  "marcas": [
+   "tiene [[c4-m10-66]]ciclos marcadísimos y sin longitud fija{{F|§9.1}}[[/]], de unos 10 años en promedio. Trabaja con"
+  ]
+ },
+ {
+  "id": "c4-m10-150",
+  "prosa": [],
+  "marcas": [
+   ", [[c4-m10-150]]de unos 10 años en promedio[[/]]. Trabaja con"
+  ]
+ },
+ {
+  "id": "c4-m10-67",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-67]]No es una señal de raíz unitaria: en una serie estacionaria esa caída solo repite que $r_1$ es alto (Módulo 2.7)[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m10-68",
+  "prosa": [
+   [
+    "una serie que sube y baja regularmente <em>sí</em> vuelve a su media.</p>",
+    "una serie que sube y baja en ciclos de longitud no fija <em>sí</em> vuelve a su media.</p>",
+    "«Regularmente» sugiere un ciclo de longitud fija, y FPP3 §9.1 dice lo contrario: la serie con comportamiento cíclico es estacionaria porque sus ciclos no tienen longitud fija."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m10-68]]Un ciclo no es una tendencia: una serie que sube y baja en ciclos de longitud no fija <em>sí</em> vuelve a su media{{F|§9.1}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m10-69",
+  "prosa": [
+   [
+    "porque un ciclo regular <em>sí</em> vuelve a su media.",
+    "porque un ciclo de longitud no fija <em>sí</em> vuelve a su media.",
+    "Mismo motivo que en la pista: FPP3 §9.1 explica la estacionariedad de la serie cíclica por la ausencia de una longitud de ciclo fija."
+   ]
+  ],
+  "marcas": [
+   "[[c4-m10-69]]la serie es estacionaria, y tiene sentido, porque un ciclo de longitud no fija <em>sí</em> vuelve a su media{{F|§9.1}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m10-70",
+  "prosa": [],
+  "marcas": [
+   "Pero esa caída no dice nada de raíces unitarias: [[c4-m10-70]]con $r_1 = 0.785$, lo que cabe esperar en una serie estacionaria es un cociente cercano a $2(1-r_1) = 0.430$, y el medido es $0.416$. Es lo que advirtió el Capítulo 2 (Módulo 2.7): la varianza repite lo que dice $r_1$[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m10-71",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-71]]mezclar <code>arima(method = \"ML\")</code> con <code>Arima()</code> produce $\\hat\\sigma^2$ distintos, sobre todo porque <code>Arima()</code> divide la suma de cuadrados de los residuales entre $n^* - p - q$ ($97$ en el Nilo){{P|§Value}} y <code>arima()</code> da la de máxima verosimilitud{{R|§Value}}, que divide entre $n^*$[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-72",
+  "prosa": [],
+  "marcas": [
+   "sino [[c4-m10-72]]<strong>el de una caminata aleatoria</strong>, donde $\\psi_j = 1$ para todo $j$ y la fórmula se reduce exactamente a eso{{C|p. 202}}[[/]]."
+  ]
+ },
+ {
+  "id": "c4-m10-74",
+  "prosa": [
+   [
+    "<strong>Hyndman &amp; Athanasopoulos, <em>FPP3</em></strong> — secciones <strong>9.5</strong> (modelos ARIMA no estacionales), <strong>9.6</strong> (estimación y selección de orden), <strong>9.7</strong> (ARIMA en la práctica, con el algoritmo de Hyndman–Khandakar) y <strong>9.8</strong> (pronóstico). Acceso abierto en <a href=\"https://otexts.com/fpp3/\" class=\"text-primary underline\" target=\"_blank\" rel=\"noopener\">otexts.com/fpp3</a>. FPP3 usa el paquete <code>fable</code>; la edición anterior, FPP2 (capítulo 8), usa el mismo <code>auto.arima</code> de <code>forecast</code> que este curso.",
+    ", <em>Forecasting: Principles and Practice</em> (3.ª ed.): esa sección (modelos ARIMA no estacionales), la <strong>9.6</strong> (estimación y selección de orden), la <strong>9.7</strong> (modelado ARIMA con <code>fable</code>, con el algoritmo de Hyndman–Khandakar) y la <strong>9.8</strong> (pronóstico). Acceso abierto en <a href=\"https://otexts.com/fpp3/\" class=\"text-primary underline\" target=\"_blank\" rel=\"noopener\">otexts.com/fpp3</a>. FPP3 usa el paquete <code>fable</code>; este curso usa <code>forecast</code>.",
+    "La obra y la primera sección las escribe el generador de citas (modo narrativo), como en las lecturas del capítulo 3. Las cuatro secciones existen en la caché con esos títulos (9.7 se titula «ARIMA modelling in fable», no «en la práctica») y tratan lo que la lectura dice. Se retira «FPP2 (capítulo 8) usa el mismo auto.arima de forecast»: la 2.ª edición no tiene texto en la caché y no se puede afirmar ni el número del capítulo ni lo que usa. Mismo patrón que las lecturas del capítulo 3."
+   ]
+  ],
+  "marcas": [
+   "<li>[[c4-m10-74]]{{^F|§9.5|narrativa}}, <em>Forecasting: Principles and Practice</em> (3.ª ed.): esa sección (modelos ARIMA no estacionales), la <strong>9.6</strong> (estimación y selección de orden), la <strong>9.7</strong> (modelado ARIMA con <code>fable</code>, con el algoritmo de Hyndman–Khandakar) y la <strong>9.8</strong> (pronóstico).[[/]]"
+  ]
+ },
+ {
+  "id": "c4-m10-75",
+  "prosa": [],
+  "marcas": [
+   "otexts.com/fpp3</a>. [[c4-m10-75]]FPP3 usa el paquete <code>fable</code>{{F|§9.7}}[[/]]; este curso usa <code>forecast</code>."
+  ]
+ },
+ {
+  "id": "c4-m10-77",
+  "prosa": [
+   [
+    "<strong>Shumway &amp; Stoffer, <em>Time Series Analysis and Its Applications</em></strong> (4.ª ed., 2017) — capítulo <strong>3</strong>: sección 3.4 (pronóstico y su error cuadrático medio) y secciones 3.6 y 3.7 (modelos integrados y construcción de modelos ARIMA).",
+    "<strong>Shumway &amp; Stoffer, <em>Time Series Analysis and Its Applications</em></strong> (4.ª ed., 2017): el pronóstico, los modelos integrados para series no estacionarias y la construcción de modelos ARIMA. En la 3.ª edición (2011), capítulo 3, son las secc. 3.5 (pronóstico), 3.7 (modelos integrados para datos no estacionarios) y 3.8 (construcción de modelos ARIMA); la numeración de la 4.ª puede ser otra.",
+    "La 4.ª edición (la que cita el curso) no está en la caché; la 3.ª (parcial) numera 3.5 Forecasting, 3.7 Integrated Models for Nonstationary Data y 3.8 Building ARIMA Models, una unidad más que «3.4, 3.6 y 3.7». Se dicen los temas y la numeración de la 3.ª como tal, como en las lecturas del capítulo 3 (c3-m10-39)."
+   ]
+  ],
+  "marcas": [
+   "<li[[@c4-m10-77]]><strong>Shumway &amp; Stoffer, <em>Time Series Analysis and Its Applications</em></strong> (4.ª ed., 2017): el pronóstico"
+  ]
+ },
+ {
+  "id": "c4-m10-78",
+  "prosa": [
+   [
+    "<strong>Box, Jenkins, Reinsel &amp; Ljung</strong> (5.ª ed., Wiley, 2015) — capítulos 4 a 8: modelos no estacionarios, pronóstico, identificación, estimación y diagnóstico. La fuente original de la metodología, con la Serie M (<code>BJsales</code>) del ejercicio 1.",
+    "<strong>Box, Jenkins, Reinsel &amp; Ljung</strong>, <em>Time Series Analysis: Forecasting and Control</em> (5.ª ed., Wiley, 2015): una edición del texto clásico de Box y Jenkins que popularizó el modelado ARIMA, a quienes se asocia la estrategia de identificación, ajuste y diagnóstico.",
+    "El libro no se ha leído (ninguna edición de Box y Jenkins tiene texto en la caché): ni «capítulos 4 a 8» ni su contenido ni «la Serie M» se pueden afirmar. FPP3 §9.12 llama al texto de Box y Jenkins el clásico que popularizó el modelado ARIMA y da la 5.ª edición como la más reciente (la 5.ª no es «la fuente original»); Cryer y Chan p. 8 atribuyen a Box y Jenkins la estrategia en tres pasos. Mismo texto y mismas fuentes que c3-m10-41."
+   ]
+  ],
+  "marcas": [
+   "<li[[@c4-m10-78]]><strong>Box, Jenkins, Reinsel &amp; Ljung</strong>, <em>Time Series Analysis: Forecasting and Control</em> (5.ª ed., Wiley, 2015): una edición del texto clásico de Box y Jenkins que popularizó el modelado ARIMA{{F|§9.12}}, a quienes se asocia la estrategia de identificación, ajuste y diagnóstico{{C|p. 8}}."
+  ]
+ },
+ {
+  "id": "c4-m10-81",
+  "prosa": [
+   [
+    "<strong>Hyndman &amp; Khandakar (2008)</strong>, <em>Automatic time series forecasting: the forecast package for R</em>, <em>Journal of Statistical Software</em> <strong>27</strong>(3). Las cuatro páginas que describen el algoritmo del Módulo 7. Acceso abierto.",
+    ", <em>Automatic time series forecasting: the forecast package for R</em>, <em>Journal of Statistical Software</em> <strong>27</strong>(3): el algoritmo del Módulo 7 se describe en ese apartado y en el 3.2 (pp. 9 a 11). Acceso abierto.",
+    "La obra y el primer apartado los escribe el generador de citas (modo narrativo). «Las cuatro páginas» no coincide con el artículo: el algoritmo está en los apartados 3.1 (pp. 9–10) y 3.2 (pp. 10–11), tres páginas impresas (el apartado 3 empieza al pie de la p. 8 y el 3.3, sobre ETS, ocupa el final de la p. 11 y la 12). Se dicen apartados y páginas leídos. Los datos de la ficha (título, revista, volumen) coinciden con la primera página y con referencias.json."
+   ]
+  ],
+  "marcas": [
+   "<li>[[c4-m10-81]]{{^K|§3.1|narrativa}}, <em>Automatic time series forecasting: the forecast package for R</em>, <em>Journal of Statistical Software</em> <strong>27</strong>(3): el algoritmo del Módulo 7 se describe en ese apartado y en el 3.2 (pp. 9 a 11).[[/]] Acceso abierto."
+  ]
+ },
+ {
+  "id": "c4-m10-83",
+  "prosa": [
+   [
+    "<em>Sobre el caso del Nilo:</em> Cobb, G. W. (1978), <em>The problem of the Nile: conditional solution to a changepoint problem</em>, <em>Biometrika</em> <strong>65</strong>(2), el trabajo que estableció el cambio de nivel de 1899.",
+    "<em>Sobre el caso del Nilo:</em> Cobb, G. W. (1978), <em>The problem of the Nile: conditional solution to a changepoint problem</em>, <em>Biometrika</em> <strong>65</strong>(2), la referencia que la ayuda de R, <code>?Nile</code>, da para el punto de cambio aparente de la serie, situado cerca de 1898; el capítulo lo modela como un escalón de nivel desde 1899.",
+    "Cobb (1978) no tiene texto en la caché y «el trabajo que estableció el cambio de 1899» es una atribución fuerte: ?Nile solo dice que la serie lleva un «cambio aparente cerca de 1898» y remite a la tabla 1, p. 249, de Cobb. La frase dice eso y deja claro que 1899 es el año que el capítulo usa para el escalón (media hasta 1898 y otra desde 1899)."
+   ]
+  ],
+  "marcas": [
+   "<li[[@c4-m10-83]]><em>Sobre el caso del Nilo:</em> Cobb, G. W. (1978), <em>The problem of the Nile: conditional solution to a changepoint problem</em>, <em>Biometrika</em> <strong>65</strong>(2), la referencia que la ayuda de R, <code>?Nile</code>, da para el punto de cambio aparente de la serie, situado cerca de 1898{{R|§Description}}; el capítulo lo modela como un escalón de nivel desde 1899."
+  ]
+ },
+ {
+  "id": "c4-m10-85",
+  "prosa": [],
+  "marcas": [
+   "[[c4-m10-85]]El <strong>SARIMA</strong> $(p,d,q)(P,D,Q)_m$ añade un segundo juego de polinomios que opera sobre el rezago estacional{{F|§9.9}}[[/]]"
+  ]
+ }
+]

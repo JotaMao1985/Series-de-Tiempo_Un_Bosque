@@ -1,0 +1,24 @@
+statsmodels 0.14.6 | numpy 2.2.6
+n = 100 | primeros: [1120. 1160.  963.] | igual a R (1120 1160 963): True
+
+== c4-m1-27: convenio de signo del MA en statsmodels ==
+ArmaProcess(ma=[1, .5]).acf(2)[1] = 0.4
+ARIMA(0,0,1) sobre MA(1) con theta = +0.6: ma.L1 = 0.6232
+
+== c4-m3-29 / c4-m3-64: KPSS de statsmodels sobre el Nilo ==
+nlags='auto': estadístico 0.86912055937839 | rezagos usados 5 | crit 5% 0.463
+nlags='legacy': estadístico 0.54971970243964 | rezagos usados 12 | crit 5% 0.463
+nlags=4: estadístico 0.96543490775266 | rezagos usados 4 | crit 5% 0.463
+código de nlags='legacy': ['nlags = int(np.ceil(12.0 * np.power(nobs / 100.0, 1 / 4.0)))']
+ACF 1-12 positivas: True
+
+== c4-m5-14: argumento trend de statsmodels ARIMA ==
+ARIMA(1,0,1) por defecto: ['const', 'ar.L1', 'ma.L1', 'sigma2']
+ARIMA(1,1,1) por defecto: ['ar.L1', 'ma.L1', 'sigma2']
+ARIMA(1,1,1, trend='t'): ['x1', 'ar.L1', 'ma.L1', 'sigma2']
+ARIMA(1,2,1, trend='t'): ValueError: In models with integration (`d > 0`) or seasonal integration (`D > 0`), trend terms of lower order than `d + D` cannot be (as they would be eliminated due to the differencing operation). For example, 
+
+== c4-m6-02: el BIC de statsmodels usa el n efectivo ==
+nobs_effective = 99 | df_model = 3
+bic = 1275.0041 | -2llf + k log(99) = 1275.0041 | con log(100) = 1275.0342
+aicc = 1267.4713 | a mano n*=99: 1267.4713

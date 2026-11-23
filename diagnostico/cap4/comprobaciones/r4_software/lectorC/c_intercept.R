@@ -1,0 +1,7 @@
+# lector C · comentario del bloque Python del M5 (intercept 920.7037 frente a 919.35)
+suppressMessages(library(forecast))
+f <- arima(Nile, order = c(1,0,1), method = "ML")
+cat(sprintf("R: intercept = %.4f  e.e. = %.2f  logL = %.4f\n", coef(f)[["intercept"]], sqrt(diag(f$var.coef))[["intercept"]], f$loglik))
+g <- arima(Nile, order = c(1,0,1), method = "ML", fixed = c(NA, NA, mean(Nile)), transform.pars = FALSE)
+cat(sprintf("R con intercept fijo en la media muestral (%.2f): logL = %.4f · diferencia de logL = %.4f\n", mean(Nile), g$loglik, f$loglik - g$loglik))
+cat(sprintf("diferencia relativa 920.7037 vs 919.35: %.3f %%\n", 100*(920.7037-919.35)/919.35))

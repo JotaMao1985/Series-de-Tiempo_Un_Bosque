@@ -1,0 +1,406 @@
+######## MÓDULO 1: 27 líneas quitadas, 35 añadidas
+@@ -9 +9 @@
+-estacionarias. El Capítulo 2 dio la herramienta para llegar a la estacionariedad
++estacionarias . El Capítulo 2 dio la herramienta para llegar a la estacionariedad
+@@ -12 +12 @@
+-obtiene la familia ARIMA (autoregressive integrated moving average), y entonces el
++obtiene la familia ARIMA (autoregressive integrated moving average) , y entonces el
+@@ -16,2 +16,2 @@
+-diferencia $w_t = \nabla^d y_t = (1-B)^d y_t$ sigue un ARMA($p,q$) estacionario e invertible. En una sola
+-línea con el operador de rezago:
++diferencia $w_t = \nabla^d y_t = (1-B)^d y_t$ sigue un ARMA($p,q$) estacionario e invertible . En una sola
++línea con el operador de rezago :
+@@ -24 +24 @@
+-$\theta(B) = 1 + \theta_1 B + \cdots + \theta_q B^q$, exactamente los del capítulo anterior. La letra
++$\theta(B) = 1 + \theta_1 B + \cdots + \theta_q B^q$ , exactamente los del capítulo anterior. La letra
+@@ -26 +26 @@
+-(integrar) $d$ veces. La constante $c$ cambia de significado según $d$: la trata el Módulo 5, y
++(integrar) $d$ veces . La constante $c$ cambia de significado según $d$: la trata el Módulo 5, y
+@@ -30 +30 @@
+-sobre el círculo unitario. Un ARIMA no es un ARMA cualquiera: es un ARMA al que se le
++sobre el círculo unitario . Un ARIMA no es un ARMA cualquiera: es un ARMA al que se le
+@@ -42 +42 @@
+-Es decir, el mismo modelo escrito sobre la serie sin diferenciar es un ARMA($2,1$):
++Es decir, el mismo modelo escrito sobre la serie sin diferenciar es un ARMA($2,1$) :
+@@ -47 +47 @@
+-con coeficientes autorregresivos $\phi_1^{*} = 1+\phi$ y $\phi_2^{*} = -\phi$.
++con coeficientes autorregresivos $\phi_1^{*} = 1+\phi$ y $\phi_2^{*} = -\phi$ .
+@@ -53 +53 @@
+-$d$ raíces fijadas en $B=1$. Esta expansión no es un adorno algebraico: es la que usará el Módulo 9 para
++$d$ raíces fijadas en $B=1$ . Esta expansión no es un adorno algebraico: es la que usará el Módulo 9 para
+@@ -58,2 +58,2 @@
+-pesos que decaen geométricamente: cada pronóstico corrige el anterior con una fracción $\alpha$ de su error.
+-El método de Holt hace lo mismo con el nivel y con la pendiente de la serie. Aquí solo
++pesos que decaen geométricamente : cada pronóstico corrige el anterior con una fracción $\alpha$ de su error .
++El método de Holt hace lo mismo con el nivel y con la pendiente de la serie . Aquí solo
+@@ -71 +71 @@
+-pronóstico es el último valor observado.
++pronóstico es el último valor observado .
+@@ -75 +75 @@
+-\varepsilon_t$. Añade una tendencia lineal.
++\varepsilon_t$. Añade una tendencia lineal .
+@@ -80 +80 @@
+-$\alpha = 1 + \theta$, un promedio ponderado que decae hacia el pasado.
++$\alpha = 1 + \theta$ , un promedio ponderado que decae hacia el pasado .
+@@ -84,5 +84,8 @@
+-(nivel y tendencia suavizados), con restricciones sobre los coeficientes.
+-Por qué esto importa más de lo que parece. Los métodos lineales de suavizamiento
+-exponencial que se enseñan como recetas independientes son casos particulares de ARIMA. Eso significa que
+-las herramientas de este capítulo —criterios de información, diagnóstico de residuales, intervalos de
+-pronóstico— se aplican también a ellos. Para esos métodos no hay dos teorías, hay una.
++(nivel y tendencia suavizados), con restricciones sobre los coeficientes .
++Por qué esto importa más de lo que parece. Los modelos lineales de suavizamiento
++exponencial, que se enseñan como recetas independientes, son casos particulares de ARIMA . Eso significa que,
++escritos como ARIMA, admiten las herramientas de este capítulo: criterios de información, diagnóstico de
++residuales e intervalos de pronóstico. Pero las dos clases de modelos solo se solapan: hay modelos ARIMA sin
++equivalente de suavizamiento exponencial, los modelos de suavizamiento exponencial no lineales no tienen
++equivalente ARIMA, y el AICc no sirve para comparar un modelo de una clase con uno de la otra, porque la
++verosimilitud se calcula de otro modo .
+@@ -91 +94 @@
+-Asuán entre 1871 y 1970 ($n = 100$, en $10^8\,\text{m}^3$). Antes de mover nada, mira la serie original:
++Asuán entre 1871 y 1970 ($n = 100$, en $10^8\,\text{m}^3$) . Antes de mover nada, mira la serie original:
+@@ -95 +98 @@
+-valor que tendría la diferencia de un ruido blanco? La varianza también cambia, pero no es una pista
++valor que tendría la diferencia de un ruido blanco ? La varianza también cambia, pero no es una pista
+@@ -192,2 +195,2 @@
+-la otra. Esto se llama cancelación casi exacta de raíces (factores AR y MA casi comunes),
+-y no es un tecnicismo: es un síntoma clásico de sobrediferenciación, la pista de que a esta serie quizá no
++la otra. Esto es una cancelación casi exacta de raíces (factores AR y MA casi comunes) ,
++y no es un tecnicismo: la sobrediferenciación deja justamente una raíz del MA en $B=1$ , de modo que es una pista de que a esta serie quizá no
+@@ -198,2 +201 @@
+-$\theta(B) = 1 + \theta_1 B + \cdots$, con signo más. Buena parte de la literatura
+-—empezando por el Box & Jenkins original— lo escribe con signo menos. Copiar un $\theta$ de un libro a
++$\theta(B) = 1 + \theta_1 B + \cdots$, con signo más . Algunos textos y la documentación de S-PLUS lo escriben con signo menos . Copiar un $\theta$ de un libro a
+@@ -201 +203 @@
+-rezago 1: para un MA(1), $\rho_1$ tiene el mismo signo que $\theta$ en el convenio de R.
++rezago 1: para un MA(1), $\rho_1$ tiene el mismo signo que $\theta$ en el convenio de R .
+@@ -204,0 +207,6 @@
++Fuentes citadas en este módulo
++Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3
++Hamilton, J. D. (1994). Time series analysis. Princeton University Press.
++Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
++Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The forecast Package for R. Journal of Statistical Software, 27(3), 1-22. https://doi.org/10.18637/jss.v027.i03
++R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/
+######## MÓDULO 2: 24 líneas quitadas, 28 añadidas
+@@ -9,4 +9,2 @@
+-concreta. En 1970 George Box y Gwilym Jenkins publicaron Time Series Analysis: Forecasting and Control y con
+-él un procedimiento que sigue siendo el esqueleto de todo lo que se hace con modelos ARIMA. Su aportación
+-fue el método —la familia ya existía, aunque ellos también la sistematizaron y fijaron cómo
+-identificarla con la ACF y la PACF—: una secuencia de etapas con criterios
++concreta. En 1970 Box y Jenkins publicaron Time Series Analysis: Forecasting and Control, el texto que popularizó el modelado ARIMA . Su
++procedimiento, que muchos autores llaman método de Box–Jenkins , es una secuencia de etapas con criterios
+@@ -15 +13 @@
+-en el que el diagnóstico puede obligar a volver a la identificación tantas veces como haga falta. Al pulsar
++en el que el diagnóstico puede obligar a volver a la identificación tantas veces como haga falta . Al pulsar
+@@ -30 +28 @@
+-pronosticar cuando el diagnóstico no encuentra nada que objetar, y aun entonces la forma del pronóstico
++pronosticar cuando el diagnóstico no encuentra nada que objetar , y aun entonces la forma del pronóstico
+@@ -35,2 +33 @@
+-leyendo la ACF y la PACF de la serie ya diferenciada. El orden importa: la ACF de una serie no estacionaria no dice nada
+-sobre $p$ y $q$ porque no decae.
++leyendo la ACF y la PACF de la serie ya diferenciada . El orden importa: la ACF de una serie no estacionaria no suele mostrar un patrón con el que leer $p$ y $q$, porque no decae con rapidez .
+@@ -44 +41 @@
+-antes de nada hay que volver al Capítulo 2 y transformar.
++antes de nada hay que volver al Capítulo 2 y transformar .
+@@ -47,2 +44,2 @@
+-y BIC — siempre dentro del mismo $d$. Comprobar además que los coeficientes tienen
+-sentido: errores estándar razonables y raíces fuera del círculo unitario.
++y BIC — siempre dentro del mismo $d$ . Comprobar además que los coeficientes tienen
++sentido: errores estándar razonables y raíces fuera del círculo unitario .
+@@ -53,2 +50,2 @@
+-Que el ajuste no converja o que un coeficiente tenga un error estándar enorme (señal
+-de sobreparametrización): de vuelta a la etapa 1 con $p$ o $q$ más pequeños. Una raíz sobre el círculo
++Que el ajuste no converja o que un coeficiente tenga un error estándar claramente mayor que el del modelo más sencillo (señal
++de sobreparametrización) : de vuelta a la etapa 1 con $p$ o $q$ más pequeños. Una raíz sobre el círculo
+@@ -56 +53 @@
+-se diferenció de más y hay que bajar $d$; si es del AR, le falta una diferencia y hay
++se diferenció de más y hay que bajar $d$ ; si es del AR, le falta una diferencia y hay
+@@ -58 +55 @@
+-factores se cancelan entre sí, y lo que sobra no es la diferencia sino $p$ y $q$. Es el caso del
++factores se cancelan entre sí, y lo que sobra no es la diferencia sino $p$ y $q$ . Es el caso del
+@@ -62,2 +59 @@
+-Ljung–Box conjunto, media cero, varianza estable. Y mirar la normalidad, que no hace falta para que
+-las estimaciones sean válidas pero sí para que lo sean los intervalos de pronóstico.
++Ljung–Box conjunto, media cero, varianza estable . Y mirar la normalidad, que no es una propiedad esencial de los residuales, pero sí la suponen los intervalos de pronóstico habituales .
+@@ -65 +61 @@
+-checkresiduals(), Box.test(..., type = "Ljung-Box", fitdf = p + q),
++checkresiduals() , Box.test(..., type = "Ljung-Box", fitdf = p + q) ,
+@@ -71 +67 @@
+-estacional, y eso es el Capítulo 5.
++estacional , y eso es el Capítulo 5.
+@@ -75 +71 @@
+-ARMA: eso se ve en el Módulo 9.
++ARMA (salvo que los datos muestren ciclos, donde importa $p$) : eso se ve en el Módulo 9.
+@@ -81 +77 @@
+-intervalo que abarca valores imposibles— casi siempre delata un $d$ mal elegido. Y la evaluación
++intervalo que abarca valores imposibles— puede delatar un $d$ mal elegido . Y la evaluación
+@@ -83,3 +79,4 @@
+-Lo que Box–Jenkins no resuelve. El método supone que la estructura del proceso es
+-estable en toda la muestra. No detecta cambios de régimen, ni intervenciones, ni atípicos: los
+-absorbe, normalmente subiendo $d$ o inflando $\hat\sigma^2$. El Módulo 8 muestra un caso real de
++Lo que el ciclo no resuelve por sí solo. Un ARIMA supone que la estructura del proceso es
++estable en toda la muestra. Las intervenciones (como un cambio permanente de nivel) y los atípicos no forman parte de ese proceso: se modelan
++aparte , y mientras no se haga el ajuste puede absorberlos, por ejemplo subiendo $d$ o inflando
++$\hat\sigma^2$. El Módulo 8 muestra un caso real de
+@@ -132,0 +130,7 @@
++Fuentes citadas en este módulo
++Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3
++Hamilton, J. D. (1994). Time series analysis. Princeton University Press.
++Hyndman, R. J., Athanasopoulos, G., Bergmeir, C., Caceres, G., Chhay, L., Kuroptev, K., Mücke, M., O’Hara-Wild, M., Petropoulos, F., Razbash, S., Wang, E., y Yasmeen, F. (2026). forecast: Forecasting Functions for Time Series and Linear Models (Versión 9.0.2) [Software]. Comprehensive R Archive Network (CRAN). https://doi.org/10.32614/CRAN.package.forecast
++Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
++Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The forecast Package for R. Journal of Statistical Software, 27(3), 1-22. https://doi.org/10.18637/jss.v027.i03
++R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/
+######## MÓDULO 3: 20 líneas quitadas, 25 añadidas
+@@ -10 +10 @@
+-produce un modelo cuyos criterios de información no se pueden comparar con los del $d$ correcto, cuyos
++produce un modelo cuyos criterios de información no se pueden comparar con los del $d$ correcto , cuyos
+@@ -12,2 +12,2 @@
+-equivocada. Conviene apoyarla en tres evidencias complementarias, que miran la serie desde
+-ángulos distintos.
++equivocada . Conviene apoyarla en tres evidencias complementarias, que miran la serie desde
++ángulos distintos .
+@@ -31 +31 @@
+-ajustado, una raíz MA cerca de $1$. En la serie diferenciada, un $\hat\rho_1$ cerca de $-0.5$ o por debajo es
++ajustado, una raíz MA cerca de $1$ . En la serie diferenciada, un $\hat\rho_1$ cerca de $-0.5$ o por debajo es
+@@ -43 +43 @@
+-y contrasta $H_0:\ \gamma = 0$, la raíz unitaria. KPSS descompone la serie en un nivel que puede pasear y
++y contrasta $H_0:\ \gamma = 0$, la raíz unitaria . KPSS descompone la serie en un nivel que puede pasear y
+@@ -50 +50 @@
+-adf.test() incluye la constante $\alpha_0$ y la tendencia $\alpha_1 t$ con $k = 4$; como se verá
++adf.test() incluye la constante $\alpha_0$ y la tendencia $\alpha_1 t$ con $k = 4$ ; como se verá
+@@ -62,2 +62,2 @@
+-La función ndiffs() devuelve el $d$ recomendado, pero depende de la prueba que se
+-le pida, y sobre el Nilo las tres no coinciden:
++La función ndiffs() devuelve el $d$ recomendado , pero depende de la prueba que se
++le pida , y sobre el Nilo las tres no coinciden:
+@@ -70,3 +70,3 @@
+-defecto de ndiffs() es KPSS, la única que dice que sí. Es también el que usa
+-auto.arima(), la función de forecast que ajusta sola varios ARIMA y se queda
+-con el de menor AICc; el Módulo 7 la abre. Hay además un matiz: el ADF de ndiffs() no es el de adf.test() de la tabla.
++defecto de ndiffs() es KPSS , la única que dice que sí. Es también el que usa
++auto.arima() , la función de forecast que ajusta sola varios ARIMA y se queda
++con el de menor AICc ; el Módulo 7 la abre. Hay además un matiz: el ADF de ndiffs() no es el de adf.test() de la tabla.
+@@ -74 +74 @@
+-unitaria ($\tau_\mu = -4.05$, frente al valor crítico de $-2.89$ al $5\,\%$); con la de la tabla no la
++unitaria ($\tau_\mu = -4.05$, frente al valor crítico de $-2.89$ al $5\,\%$ ); con la de la tabla no la
+@@ -77 +77 @@
+-$\hat\theta \approx -0.87$ del Nilo: simulando ese mismo ARIMA($1,1,1$) con raíz unitaria
++$\hat\theta \approx -0.87$ del Nilo : simulando ese mismo ARIMA($1,1,1$) con raíz unitaria
+@@ -80,2 +80 @@
+-la tabla apenas informa. Cuando
+-discrepan, la respuesta no está en la prueba sino en el gráfico, y en esta serie hay una razón
++la tabla apenas informa. Cuando discrepan, la respuesta no está solo en la prueba, también en el gráfico , y en esta serie hay una razón
+@@ -86,2 +85 @@
+-estacionaria alrededor de dos niveles distintos no vuelve a una media única, y eso es exactamente lo que
+-KPSS está diseñado para detectar como "no estacionariedad". Si la sospecha es cierta, KPSS debería rechazar
++estacionaria alrededor de dos niveles distintos no vuelve a una media única, y KPSS contrasta, justamente, la estacionariedad alrededor de un nivel único . Si la sospecha es cierta, KPSS debería rechazar
+@@ -265 +263 @@
+-que decide cuántas autocovarianzas entran en el estimador de Bartlett
++que decide cuántas autocovarianzas entran en el estimador de Newey–West
+@@ -278,2 +276,2 @@
+-La regla práctica. $d$ casi nunca pasa de 2, y en series económicas casi nunca de 1. Si
+-parece necesario $d = 3$, casi seguro el problema es otro: una transformación pendiente, un atípico, o
++La regla práctica. $d$ casi nunca pasa de 2 . Si
++parece necesario $d = 3$, es prudente sospechar que el problema es otro: una transformación pendiente, un atípico, o
+@@ -285,0 +284,7 @@
++Fuentes citadas en este módulo
++Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3
++Hamilton, J. D. (1994). Time series analysis. Princeton University Press.
++Hyndman, R. J., Athanasopoulos, G., Bergmeir, C., Caceres, G., Chhay, L., Kuroptev, K., Mücke, M., O’Hara-Wild, M., Petropoulos, F., Razbash, S., Wang, E., y Yasmeen, F. (2026). forecast: Forecasting Functions for Time Series and Linear Models (Versión 9.0.2) [Software]. Comprehensive R Archive Network (CRAN). https://doi.org/10.32614/CRAN.package.forecast
++Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
++Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The forecast Package for R. Journal of Statistical Software, 27(3), 1-22. https://doi.org/10.18637/jss.v027.i03
++Trapletti, A., y Hornik, K. (2026). tseries: Time Series Analysis and Computational Finance (Versión 0.10-62) [Software]. Comprehensive R Archive Network (CRAN). https://doi.org/10.32614/CRAN.package.tseries
+######## MÓDULO 4: 11 líneas quitadas, 16 añadidas
+@@ -9 +9 @@
+-usa auto.arima, aunque la sospecha del escalón de 1899 sigue abierta y el Módulo 8 la retoma. Con ese $d$
++usa auto.arima , aunque la sospecha del escalón de 1899 sigue abierta y el Módulo 8 la retoma. Con ese $d$
+@@ -14 +14 @@
+-—o con el escalón de 1899— y no informa sobre $p$ ni sobre $q$. Leerla, junto con una PACF que corta en 1,
++—o con el escalón de 1899— y no informa sobre $p$ ni sobre $q$ . Leerla, junto con una PACF que corta en 1,
+@@ -28,3 +28,3 @@
+-blanco: la huella de haber diferenciado de más. Y el $-0.402$ de $d = 1$, un pico negativo en el
+-rezago 1 no muy lejos de $-0.5$, es también lo que deja diferenciar una serie que no lo necesitaba. La
+-tabla elige $p$ y $q$; no confirma $d$.
++blanco : la huella de haber diferenciado de más . Y el $-0.402$ de $d = 1$, un pico negativo en el
++rezago 1 no muy lejos de $-0.5$, es también lo que deja diferenciar una serie que no lo necesitaba . La
++tabla elige $p$ y $q$; no confirma $d$ .
+@@ -53,2 +53,2 @@
+-esperable— y la PACF decae con signo negativo, como la de un
+-MA(1) con $\theta < 0$. La tabla propone, por tanto, un ARIMA($0,1,1$). Ajustado por
++esperable — y la PACF decae con signo negativo, como la de un
++MA(1) con $\theta < 0$ . La tabla propone, por tanto, un ARIMA($0,1,1$). Ajustado por
+@@ -60 +60 @@
+-simple con $\alpha = 1 + \hat\theta = 0.267$: es el $\alpha$ implícito en el modelo; ses()
++simple con $\alpha = 1 + \hat\theta = 0.267$ : es el $\alpha$ implícito en el modelo; ses()
+@@ -62 +62 @@
+-Pero no se propone uno: se proponen varios. La tabla acota la búsqueda, no la resuelve.
++Pero no se propone uno: se proponen varios. La tabla acota la búsqueda, no la resuelve .
+@@ -65 +65 @@
+-sus vecinos inmediatos: $(0,1,1)$, $(1,1,1)$, $(0,1,2)$, $(1,1,0)$. En el Módulo 6 se verá que el AICc
++sus vecinos inmediatos: $(0,1,1)$, $(1,1,1)$, $(0,1,2)$, $(1,1,0)$ . En el Módulo 6 se verá que el AICc
+@@ -67 +67 @@
+-de la tabla. Los dos son defendibles; que no coincidan es frecuente, no un fallo.
++de la tabla. Los dos son defendibles; que no coincidan no es un fallo .
+@@ -121,0 +122,5 @@
++Fuentes citadas en este módulo
++Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3
++Hamilton, J. D. (1994). Time series analysis. Princeton University Press.
++Hyndman, R. J., Athanasopoulos, G., Bergmeir, C., Caceres, G., Chhay, L., Kuroptev, K., Mücke, M., O’Hara-Wild, M., Petropoulos, F., Razbash, S., Wang, E., y Yasmeen, F. (2026). forecast: Forecasting Functions for Time Series and Linear Models (Versión 9.0.2) [Software]. Comprehensive R Archive Network (CRAN). https://doi.org/10.32614/CRAN.package.forecast
++Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
+######## MÓDULO 5: 14 líneas quitadas, 18 añadidas
+@@ -8,2 +8 @@
+-La constante $c$ de la ecuación del Módulo 1, la decisión que el Módulo 4 dejó pendiente, es el
+-parámetro que más confusión causa de toda la familia ARIMA, porque significa cosas distintas según
++La constante $c$ de la ecuación del Módulo 1, la decisión que el Módulo 4 dejó pendiente, es un parámetro que se presta a confusión en la familia ARIMA, porque significa cosas distintas según
+@@ -13 +12 @@
+-$w_t = (1-B)^d y_t$ y $\mu_w = \operatorname{E}[w_t]$:
++$w_t = (1-B)^d y_t$ y $\mu_w = \operatorname{E}[w_t]$ :
+@@ -15,2 +14,2 @@
+-$d = 0$: $w_t = y_t$, así que $\mu_w$ es la media de la serie. R la
+-llama intercept aunque sea una media, lo que despista.
++$d = 0$: $w_t = y_t$, así que $\mu_w$ es la media de la serie . R la
++llama intercept aunque sea una media , lo que despista.
+@@ -18,2 +17,2 @@
+-incremento medio por período. Eso es una tendencia lineal en $y_t$, y es lo que
+-forecast llama deriva (drift).
++incremento medio por período. Eso es una tendencia lineal en $y_t$ , y es lo que
++forecast llama deriva (drift) .
+@@ -21 +20 @@
+-cuadrática. Prácticamente nunca se quiere.
++cuadrática. Prácticamente nunca se quiere .
+@@ -24 +23 @@
+-$\mu_w\, h^d / d!$. Sin constante: $d=0$ tiende a cero, $d=1$ se aplana (no necesariamente en el último
++$\mu_w\, h^d / d!$ . Sin constante: $d=0$ tiende a cero, $d=1$ se aplana (no necesariamente en el último
+@@ -26 +25 @@
+-constante: $d=0$ vuelve a la media, $d=1$ recta, $d=2$ parábola. El simulador «La forma del pronóstico
++constante: $d=0$ vuelve a la media, $d=1$ recta, $d=2$ parábola . El simulador «La forma del pronóstico
+@@ -36 +35 @@
+-silencio: la deriva solo entra como regresor, xreg = seq_along(y), que es lo que
++silencio : la deriva solo entra como regresor, xreg = seq_along(y), que es lo que
+@@ -45 +44 @@
+-búsqueda, y elige por AICc; con $d \ge 2$ nunca la incluye. Por eso en su traza el mismo orden
++búsqueda , y elige por AICc ; con $d \ge 2$ nunca la incluye. Por eso en su traza el mismo orden
+@@ -57 +56 @@
+-forecast::Arima. Para el ARIMA($1,1,1$):
++forecast::Arima . Para el ARIMA($1,1,1$):
+@@ -73 +72 @@
+-extrapola sin límite, y eso es una afirmación fuerte sobre el futuro que conviene no hacer a la ligera.
++extrapola sin límite , y eso es una afirmación fuerte sobre el futuro que conviene no hacer a la ligera.
+@@ -138,0 +138,5 @@
++Fuentes citadas en este módulo
++Hyndman, R. J., Athanasopoulos, G., Bergmeir, C., Caceres, G., Chhay, L., Kuroptev, K., Mücke, M., O’Hara-Wild, M., Petropoulos, F., Razbash, S., Wang, E., y Yasmeen, F. (2026). forecast: Forecasting Functions for Time Series and Linear Models (Versión 9.0.2) [Software]. Comprehensive R Archive Network (CRAN). https://doi.org/10.32614/CRAN.package.forecast
++Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
++Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The forecast Package for R. Journal of Statistical Software, 27(3), 1-22. https://doi.org/10.18637/jss.v027.i03
++R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/
+######## MÓDULO 6: 13 líneas quitadas, 17 añadidas
+@@ -8,2 +8,2 @@
+-La estimación es la del Capítulo 3: máxima verosimilitud sobre la serie diferenciada. Lo que cambia es la
+-comparación, y cambia de una forma que se pasa por alto constantemente.
++La estimación es la del Capítulo 3: máxima verosimilitud sobre la serie diferenciada . Lo que cambia es la
++comparación, y cambia de una forma que es fácil pasar por alto.
+@@ -16 +16 @@
+-$n^{*} = n - d$ el número efectivo de observaciones.
++$n^{*} = n - d$ el número efectivo de observaciones .
+@@ -19,2 +19,2 @@
+-diferencias del Nilo; la de uno con $d = 2$, sobre $98$ segundas diferencias. Son datos
+-distintos, y una verosimilitud solo es comparable con otra calculada sobre los mismos datos. Un
++diferencias del Nilo; la de uno con $d = 2$, sobre $98$ segundas diferencias . Son datos
++distintos, y una verosimilitud solo es comparable con otra calculada sobre los mismos datos . Un
+@@ -25 +25 @@
+-haya que decidir entre distintos $d$, la comparación válida es fuera de muestra (Módulo 8), apoyada en
++haya que decidir entre distintos $d$, una comparación válida es la hecha fuera de muestra (Módulo 8) , apoyada en
+@@ -38 +38 @@
+-quedan a menos de 2 puntos del mejor (el Módulo 7 contará siete, porque cuenta también las variantes con
++quedan a menos de 2 puntos del mejor (umbral que este capítulo toma por convención; el Módulo 7 contará siete, porque cuenta también las variantes con
+@@ -68,3 +68,3 @@
+-observaciones y no sobre $99$, y además el propio ARIMA($1,2,2$) tiene una raíz MA en $1.03$, casi sobre
+-el círculo unitario, síntoma de haber diferenciado de más. No es un caso aislado: como se verá en el
+-Módulo 8, cuatro de los nueve modelos con $d = 2$ tienen una raíz MA exactamente sobre el círculo
++observaciones y no sobre $99$ , y además el propio ARIMA($1,2,2$) tiene una raíz MA en $1.03$, casi sobre
++el círculo unitario, síntoma de haber diferenciado de más . No es un caso aislado: como se verá en el
++Módulo 8, cuatro de los nueve modelos con $d = 2$ tienen una raíz MA sobre el círculo
+@@ -73 +73 @@
+-con $n^{*} = 99$ ($\log 99 = 4.6$) es más de dos veces más severo y tiende a elegir modelos más pequeños.
++con $n^{*} = 99$ ($\log 99 = 4.6$) es más de dos veces más severo y tiende a elegir modelos más pequeños .
+@@ -75,2 +75 @@
+-modelo verdadero si está entre los candidatos. Para pronosticar —que es a lo que va este curso— la
+-recomendación habitual es AICc. Cuando los dos coinciden, como en $d = 0$, la elección es
++modelo verdadero si está entre los candidatos . Para pronosticar —que es a lo que va este curso—, prefieren el AICc. Cuando los dos coinciden, como en $d = 0$, la elección es
+@@ -143,0 +143,5 @@
++Fuentes citadas en este módulo
++Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3
++Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
++Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The forecast Package for R. Journal of Statistical Software, 27(3), 1-22. https://doi.org/10.18637/jss.v027.i03
++R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/
+
+
+================ DIFERENCIA POR PALABRAS ================
+######## MÓDULO 1
+  [replace] …los coeficientes. Por qué esto importa más de lo que parece. Los ⟦−métodos⟧ ⟦+modelos⟧ lineales de suavizamiento exponencial que se enseñan como…
+  [replace] …esto importa más de lo que parece. Los métodos lineales de suavizamiento ⟦−exponencial⟧ ⟦+exponencial,⟧ que se enseñan como recetas independientes son casos…
+  [replace] …parece. Los métodos lineales de suavizamiento exponencial que se enseñan como recetas ⟦−independientes⟧ ⟦+independientes,⟧ son casos particulares de ARIMA. Eso significa que…
+  [replace] …se enseñan como recetas independientes son casos particulares de ARIMA. Eso significa ⟦−que⟧ ⟦+que, escritos como ARIMA, admiten⟧ las herramientas de este capítulo —criterios de información,…
+  [replace] …son casos particulares de ARIMA. Eso significa que las herramientas de este ⟦−capítulo —criterios⟧ ⟦+capítulo: criterios⟧ de información, diagnóstico de residuales, intervalos de pronóstico—…
+  [replace] …significa que las herramientas de este capítulo —criterios de información, diagnóstico de ⟦−residuales,⟧ ⟦+residuales e⟧ intervalos de pronóstico— se aplican también a ellos.…
+  [replace] …herramientas de este capítulo —criterios de información, diagnóstico de residuales, intervalos de ⟦−pronóstico—⟧ ⟦+pronóstico. Pero las dos clases de modelos solo⟧ se aplican también a ellos. Para esos métodos…
+  [replace] …este capítulo —criterios de información, diagnóstico de residuales, intervalos de pronóstico— se ⟦−aplican también a ellos. Para esos métodos⟧ ⟦+solapan: hay modelos ARIMA sin equivalente de suavizamiento exponencial, los modelos de suavizamiento exponencial⟧ no hay dos teorías, hay una. El caudal…
+  [replace] …intervalos de pronóstico— se aplican también a ellos. Para esos métodos no ⟦−hay dos teorías, hay una.⟧ ⟦+lineales no tienen equivalente ARIMA, y el AICc no sirve para comparar un modelo de una clase con uno de la otra, porque la verosimilitud se calcula de otro modo.⟧ El caudal anual del Nilo, antes y después…
+  [replace] …baja de $-0.5$, el valor que tendría la diferencia de un ruido ⟦−blanco?⟧ ⟦+blanco ?⟧ La varianza también cambia, pero no es una…
+  [replace] …diferencia con una mano y deshace la diferencia con la otra. Esto ⟦−se llama⟧ ⟦+es una⟧ cancelación casi exacta de raíces (factores AR y…
+  [insert] …raíces (factores AR y MA casi comunes), y no es un tecnicismo: ⟦−⟧ ⟦+la sobrediferenciación deja justamente una raíz del MA en $B=1$, de modo que⟧ es un síntoma clásico de sobrediferenciación, la pista…
+  [replace] …(factores AR y MA casi comunes), y no es un tecnicismo: es ⟦−un síntoma clásico de sobrediferenciación, la⟧ ⟦+una⟧ pista de que a esta serie quizá no…
+  [replace] …como $\theta(B) = 1 + \theta_1 B + \cdots$, con signo más. ⟦−Buena parte⟧ ⟦+Algunos textos y la documentación⟧ de la literatura —empezando por el Box &…
+  [replace] …1 + \theta_1 B + \cdots$, con signo más. Buena parte de ⟦−la literatura —empezando por el Box & Jenkins original—⟧ ⟦+S-PLUS⟧ lo escribe con signo menos. Copiar un $\theta$…
+  [replace] …parte de la literatura —empezando por el Box & Jenkins original— lo ⟦−escribe⟧ ⟦+escriben⟧ con signo menos. Copiar un $\theta$ de un…
+  [insert] …buena? El módulo siguiente presenta el procedimiento que responde a ambas cosas. ⟦−⟧ ⟦+Fuentes citadas en este módulo Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3 Hamilton, J. D. (1994). Time series analysis. Princeton University Press. Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/ Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The forecast Package for R. Journal of Statistical Software, 27(3), 1-22. https://doi.org/10.18637/jss.v027.i03 R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/⟧ …
+######## MÓDULO 2
+  [delete] …método para elegirlo y validarlo frente a una serie concreta. En 1970 ⟦−George⟧ ⟦+⟧ Box y Gwilym Jenkins publicaron Time Series Analysis:…
+  [delete] …y validarlo frente a una serie concreta. En 1970 George Box y ⟦−Gwilym⟧ ⟦+⟧ Jenkins publicaron Time Series Analysis: Forecasting and Control…
+  [replace] …1970 George Box y Gwilym Jenkins publicaron Time Series Analysis: Forecasting and ⟦−Control y con él un procedimiento⟧ ⟦+Control, el texto⟧ que sigue siendo el esqueleto de todo lo…
+  [replace] …Time Series Analysis: Forecasting and Control y con él un procedimiento que ⟦−sigue siendo⟧ ⟦+popularizó⟧ el esqueleto de todo lo que se hace…
+  [replace] …Forecasting and Control y con él un procedimiento que sigue siendo el ⟦−esqueleto de todo lo que se hace con modelos⟧ ⟦+modelado⟧ ARIMA. Su aportación fue el método —la familia…
+  [replace] …el esqueleto de todo lo que se hace con modelos ARIMA. Su ⟦−aportación fue el⟧ ⟦+procedimiento, que muchos autores llaman⟧ método —la familia ya existía, aunque ellos también…
+  [replace] …lo que se hace con modelos ARIMA. Su aportación fue el método ⟦−—la familia ya existía, aunque ellos también la sistematizaron y fijaron cómo identificarla con la ACF y la PACF—:⟧ ⟦+de Box–Jenkins, es⟧ una secuencia de etapas con criterios explícitos para…
+  [replace] …diferenciada. El orden importa: la ACF de una serie no estacionaria no ⟦−dice nada sobre⟧ ⟦+suele mostrar un patrón con el que leer⟧ $p$ y $q$ porque no decae. Con qué…
+  [replace] …ACF de una serie no estacionaria no dice nada sobre $p$ y ⟦−$q$⟧ ⟦+$q$,⟧ porque no decae. Con qué ndiffs(), adf.test(), kpss.test(),…
+  [replace] …serie no estacionaria no dice nada sobre $p$ y $q$ porque no ⟦−decae.⟧ ⟦+decae con rapidez.⟧ Con qué ndiffs(), adf.test(), kpss.test(), acf(), pacf(). En…
+  [replace] …el ajuste no converja o que un coeficiente tenga un error estándar ⟦−enorme⟧ ⟦+claramente mayor que el del modelo más sencillo⟧ (señal de sobreparametrización): de vuelta a la etapa…
+  [replace] …Ljung–Box conjunto, media cero, varianza estable. Y mirar la normalidad, que no ⟦−hace falta para que las estimaciones sean válidas⟧ ⟦+es una propiedad esencial de los residuales,⟧ pero sí para que lo sean los intervalos…
+  [replace] …que no hace falta para que las estimaciones sean válidas pero sí ⟦−para que lo sean⟧ ⟦+la suponen⟧ los intervalos de pronóstico. Con qué checkresiduals(), Box.test(...,…
+  [replace] …estimaciones sean válidas pero sí para que lo sean los intervalos de ⟦−pronóstico.⟧ ⟦+pronóstico habituales.⟧ Con qué checkresiduals(), Box.test(..., type = "Ljung-Box", fitdf…
+  [replace] …a largo plazo la deciden $d$ y la constante, no los coeficientes ⟦−ARMA:⟧ ⟦+ARMA (salvo que los datos muestren ciclos, donde importa $p$):⟧ eso se ve en el Módulo 9. Con…
+  [replace] …—una recta que crece sin fin, un intervalo que abarca valores imposibles— ⟦−casi siempre delata⟧ ⟦+puede delatar⟧ un $d$ mal elegido. Y la evaluación honesta…
+  [replace] …el Capítulo 6, que puede mandarte de vuelta al principio. Lo que ⟦−Box–Jenkins⟧ ⟦+el ciclo⟧ no resuelve. El método supone que la estructura…
+  [replace] …6, que puede mandarte de vuelta al principio. Lo que Box–Jenkins no ⟦−resuelve. El método⟧ ⟦+resuelve por sí solo. Un ARIMA⟧ supone que la estructura del proceso es estable…
+  [replace] …supone que la estructura del proceso es estable en toda la muestra. ⟦−No detecta cambios⟧ ⟦+Las intervenciones (como un cambio permanente⟧ de régimen, ni intervenciones, ni atípicos: los absorbe,…
+  [replace] …del proceso es estable en toda la muestra. No detecta cambios de ⟦−régimen, ni intervenciones, ni atípicos:⟧ ⟦+nivel) y⟧ los absorbe, normalmente subiendo $d$ o inflando $\hat\sigma^2$.…
+  [replace] …la muestra. No detecta cambios de régimen, ni intervenciones, ni atípicos: los ⟦−absorbe, normalmente⟧ ⟦+atípicos no forman parte de ese proceso: se modelan aparte, y mientras no se haga el ajuste puede absorberlos, por ejemplo⟧ subiendo $d$ o inflando $\hat\sigma^2$. El Módulo 8…
+  [insert] …el número de diferencias. El módulo siguiente se dedica entero a ella. ⟦−⟧ ⟦+Fuentes citadas en este módulo Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3 Hamilton, J. D. (1994). Time series analysis. Princeton University Press. Hyndman, R. J., Athanasopoulos, G., Bergmeir, C., Caceres, G., Chhay, L., Kuroptev, K., Mücke, M., O’Hara-Wild, M., Petropoulos, F., Razbash, S., Wang, E., y Yasmeen, F. (2026). forecast: Forecasting Functions for Time Series and Linear Models (Versión 9.0.2) [Software]. Comprehensive R Archive Network (CRAN). https://doi.org/10.32614/CRAN.package.forecast Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/ Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The forecast Package for R. Journal of Statistical Software, 27(3), 1-22. https://doi.org/10.18637/jss.v027.i03 R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/⟧ …
+######## MÓDULO 3
+  [insert] …PP de la tabla apenas informa. Cuando discrepan, la respuesta no está ⟦−⟧ ⟦+solo⟧ en la prueba sino en el gráfico, y…
+  [replace] …la tabla apenas informa. Cuando discrepan, la respuesta no está en la ⟦−prueba sino⟧ ⟦+prueba, también⟧ en el gráfico, y en esta serie hay…
+  [delete] …alrededor de dos niveles distintos no vuelve a una media única, y ⟦−eso es exactamente lo que⟧ ⟦+⟧ KPSS está diseñado para detectar como "no estacionariedad".…
+  [replace] …vuelve a una media única, y eso es exactamente lo que KPSS ⟦−está diseñado para detectar como "no estacionariedad".⟧ ⟦+contrasta, justamente, la estacionariedad alrededor de un nivel único.⟧ Si la sospecha es cierta, KPSS debería rechazar…
+  [replace] …el parámetro $\ell$ que decide cuántas autocovarianzas entran en el estimador de ⟦−Bartlett⟧ ⟦+Newey–West⟧ $$\begin{aligned} \hat\sigma^2_{LP} &= \hat\gamma_0 + 2\sum_{j=1}^{\ell}\Bigl(1 - \tfrac{j}{\ell+1}\Bigr)\hat\gamma_j…
+  [replace] …$44.5\,\%$ ($\ell = 12$). La regla práctica. $d$ casi nunca pasa de ⟦−2, y en series económicas casi nunca de 1.⟧ ⟦+2.⟧ Si parece necesario $d = 3$, casi seguro…
+  [replace] …series económicas casi nunca de 1. Si parece necesario $d = 3$, ⟦−casi seguro⟧ ⟦+es prudente sospechar que⟧ el problema es otro: una transformación pendiente, un…
+  [insert] …que este módulo dejó planteada, un modelo de dos medias sin diferenciar. ⟦−⟧ ⟦+Fuentes citadas en este módulo Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3 Hamilton, J. D. (1994). Time series analysis. Princeton University Press. Hyndman, R. J., Athanasopoulos, G., Bergmeir, C., Caceres, G., Chhay, L., Kuroptev, K., Mücke, M., O’Hara-Wild, M., Petropoulos, F., Razbash, S., Wang, E., y Yasmeen, F. (2026). forecast: Forecasting Functions for Time Series and Linear Models (Versión 9.0.2) [Software]. Comprehensive R Archive Network (CRAN). https://doi.org/10.32614/CRAN.package.forecast Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/ Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The forecast Package for R. Journal of Statistical Software, 27(3), 1-22. https://doi.org/10.18637/jss.v027.i03 Trapletti, A., y Hornik, K. (2026). tseries: Time Series Analysis and Computational Finance (Versión 0.10-62) [Software]. Comprehensive R Archive Network (CRAN). https://doi.org/10.32614/CRAN.package.tseries⟧ …
+######## MÓDULO 4
+  [replace] …patrón; con 20 rezagos al $5\,\%$, uno fuera por azar es lo ⟦−esperable—⟧ ⟦+esperable —⟧ y la PACF decae con signo negativo, como…
+  [insert] …el $(0,1,1)$ de la tabla. Los dos son defendibles; que no coincidan ⟦−⟧ ⟦+no⟧ es frecuente, no un fallo. R Python w…
+  [delete] …$(0,1,1)$ de la tabla. Los dos son defendibles; que no coincidan es ⟦−frecuente, no⟧ ⟦+⟧ un fallo. R Python w <- diff(Nile) #…
+  [insert] …propósito y no dejarlo en manos del valor por defecto del programa. ⟦−⟧ ⟦+Fuentes citadas en este módulo Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3 Hamilton, J. D. (1994). Time series analysis. Princeton University Press. Hyndman, R. J., Athanasopoulos, G., Bergmeir, C., Caceres, G., Chhay, L., Kuroptev, K., Mücke, M., O’Hara-Wild, M., Petropoulos, F., Razbash, S., Wang, E., y Yasmeen, F. (2026). forecast: Forecasting Functions for Time Series and Linear Models (Versión 9.0.2) [Software]. Comprehensive R Archive Network (CRAN). https://doi.org/10.32614/CRAN.package.forecast Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/⟧ …
+######## MÓDULO 5
+  [replace] …del Módulo 1, la decisión que el Módulo 4 dejó pendiente, es ⟦−el⟧ ⟦+un⟧ parámetro que más confusión causa de toda la…
+  [replace] …la decisión que el Módulo 4 dejó pendiente, es el parámetro que ⟦−más⟧ ⟦+se presta a⟧ confusión causa de toda la familia ARIMA, porque…
+  [replace] …que el Módulo 4 dejó pendiente, es el parámetro que más confusión ⟦−causa de toda⟧ ⟦+en⟧ la familia ARIMA, porque significa cosas distintas según…
+  [insert] …el ARIMA esconde su trampa principal. Es el tema del Módulo 6. ⟦−⟧ ⟦+Fuentes citadas en este módulo Hyndman, R. J., Athanasopoulos, G., Bergmeir, C., Caceres, G., Chhay, L., Kuroptev, K., Mücke, M., O’Hara-Wild, M., Petropoulos, F., Razbash, S., Wang, E., y Yasmeen, F. (2026). forecast: Forecasting Functions for Time Series and Linear Models (Versión 9.0.2) [Software]. Comprehensive R Archive Network (CRAN). https://doi.org/10.32614/CRAN.package.forecast Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/ Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The forecast Package for R. Journal of Statistical Software, 27(3), 1-22. https://doi.org/10.18637/jss.v027.i03 R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/⟧ …
+######## MÓDULO 6
+  [replace] …Lo que cambia es la comparación, y cambia de una forma que ⟦−se pasa⟧ ⟦+es fácil pasar⟧ por alto constantemente. $$\mathrm{AIC} = -2\log L +…
+  [replace] …es la comparación, y cambia de una forma que se pasa por ⟦−alto constantemente.⟧ ⟦+alto.⟧ $$\mathrm{AIC} = -2\log L + 2k$$ $$\mathrm{AICc} =…
+  [replace] …a la vista. Cuando de verdad haya que decidir entre distintos $d$, ⟦−la⟧ ⟦+una⟧ comparación válida es fuera de muestra (Módulo 8),…
+  [insert] …de verdad haya que decidir entre distintos $d$, la comparación válida es ⟦−⟧ ⟦+la hecha⟧ fuera de muestra (Módulo 8), apoyada en las…
+  [replace] …1$ cuatro modelos más quedan a menos de 2 puntos del mejor ⟦−(el⟧ ⟦+(umbral que este capítulo toma por convención; el⟧ Módulo 7 contará siete, porque cuenta también las…
+  [delete] …de los nueve modelos con $d = 2$ tienen una raíz MA ⟦−exactamente⟧ ⟦+⟧ sobre el círculo unitario. La rejilla premia justo…
+  [replace] …entre los candidatos. Para pronosticar —que es a lo que va este ⟦−curso— la recomendación habitual es⟧ ⟦+curso—, prefieren el⟧ AICc. Cuando los dos coinciden, como en $d…
+  [insert] …reglas explícitas; el Módulo 7 muestra cuáles son y dónde se equivoca. ⟦−⟧ ⟦+Fuentes citadas en este módulo Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3 Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/ Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The forecast Package for R. Journal of Statistical Software, 27(3), 1-22. https://doi.org/10.18637/jss.v027.i03 R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/⟧ …

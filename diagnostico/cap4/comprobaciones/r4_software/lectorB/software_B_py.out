@@ -1,0 +1,72 @@
+statsmodels 0.14.6 numpy 2.2.6
+
+== adfuller
+adfuller ct, maxlag=4: -3.3657 0.0561 usedlag 4 nobs 95
+docstring cita MacKinnon: True
+   ... egresults : bool, optional If True, the full regression results are returned. Default is False. Returns ------- adf : float The test statistic. pvalue : float MacKinnon's approximate p-value based on MacKinnon (1994, 2010). usedlag : int The number of lags used.
+(la prueba PP no esta en statsmodels.tsa.stattools: True )
+
+== kpss
+nlags='auto': stat 0.8691 p 0.0100 lags usados 5  crit {'10%': 0.347, '5%': 0.463, '2.5%': 0.574, '1%': 0.739}
+nlags='legacy': stat 0.5497 p 0.0305 lags usados 12  crit {'10%': 0.347, '5%': 0.463, '2.5%': 0.574, '1%': 0.739}
+nlags=4: stat 0.9654 p 0.0100 lags usados 4  crit {'10%': 0.347, '5%': 0.463, '2.5%': 0.574, '1%': 0.739}
+[legacy] using the data-dependent method of Hobijn et al. (1998). See also Andrews (1991), Newey & West (1994), and Schwert (1989). If set to "legacy", uses int(12 * (n / 100)**(1 / 4)) , as outlined in Schwert (1989). store : bool If True, then a result instance is returned additionally to the KPSS statistic (default is False). Returns ------- kpss
+[auto] fault). * "ct" : The data is stationary around a trend. nlags : {str, int}, optional Indicates the number of lags to be used. If "auto" (default), lags is calculated using the data-dependent method of Hobijn et al. (1998). See also Andrews (1991), Newey & West (1994), and Schwert (1989). If set to "legacy", uses int(12 * (n / 100)**(1 / 4)) , as outline
+[Hobijn] r, int}, optional Indicates the number of lags to be used. If "auto" (default), lags is calculated using the data-dependent method of Hobijn et al. (1998). See also Andrews (1991), Newey & West (1994), and Schwert (1989). If set to "legacy", uses int(12 * (n / 100)**(1 / 4)) , as outlined in Schwert (1989). store : bool If True, then a result in
+[Newey] to be used. If "auto" (default), lags is calculated using the data-dependent method of Hobijn et al. (1998). See also Andrews (1991), Newey & West (1994), and Schwert (1989). If set to "legacy", uses int(12 * (n / 100)**(1 / 4)) , as outlined in Schwert (1989). store : bool If True, then a result instance is returned additionally to the KPSS sta
+[Bartlett] no aparece
+[ceil] no aparece
+fórmulas en el código de kpss:
+    nlags: Literal["auto", "legacy"] | int = "auto",
+    To estimate sigma^2 the Newey-West estimator is used. If lags is "legacy",
+    if nlags == "legacy":
+    nlags = int(np.ceil(12.0 * np.power(nobs / 100.0, 1 / 4.0)))
+
+== kpss: función de truncamiento 'auto'
+def _kpss_autolag(resids, nobs):
+    """
+    Computes the number of lags for covariance matrix estimation in KPSS test
+    using method of Hobijn et al (1998). See also Andrews (1991), Newey & West
+    (1994), and Schwert (1989). Assumes Bartlett / Newey-West kernel.
+    """
+    covlags = int(np.power(nobs, 2.0 / 9.0))
+    s0 = np.sum(resids ** 2) / nobs
+    s1 = 0
+    for i in range(1, covlags + 1):
+        resids_prod = np.dot(resids[i:], resids[: nobs - i])
+        resids_prod /= nobs / 2.0
+        s0 += resids_prod
+        s1 += i * resids_prod
+    s_hat = s1 / s0
+    pwr = 1.0 / 3.0
+    gamma_hat = 1.1447 * np.power(s_hat * s_hat, pwr)
+    autolags = int(gamma_hat * np.power(nobs, pwr))
+    return autolags
+
+
+== acf / pacf de la serie diferenciada
+acf(adjusted=False) 1..6: [-0.402  -0.0443  0.0274 -0.0879  0.0005  0.0465]
+acf(adjusted=True) 1..6: [-0.4061 -0.0452  0.0283 -0.0916  0.0005  0.0495]
+acf rezago 0 primero: 1.0
+firma de acf: (x, adjusted=False, nlags=None, qstat=False, fft=True, alpha=None, bartlett_confint=True, missing='none')
+pacf defecto  : [-0.4061 -0.2517 -0.1239 -0.1829 -0.1677 -0.0833]  firma method = ywadjusted
+pacf ldb      : [-0.402  -0.2456 -0.1187 -0.1733 -0.1554 -0.0737]
+pacf ld       : [-0.4061 -0.2517 -0.1239 -0.1829 -0.1677 -0.0833]
+pacf ywm      : [-0.402  -0.2456 -0.1187 -0.1733 -0.1554 -0.0737]
+[ywadjusted] ich method for the calculations to use. - "yw" or "ywadjusted" : Yule-Walker with sample-size adjustment in denominator for acovf. Default. - "ywm" or "ywmle" : Yule-Walker without adjustment. - "ols" : regression of time ser
+[ldb] Durbin recursion with bias correction. - "ldb" or "ldbiased" : Levinson-Durbin recursion without bias correction. - "burg" : Burg"s partial autocorrelation estimator. alpha : float, optional If a number is give
+[Durbin] adjustment. - "ld" or "ldadjusted" : Levinson-Durbin recursion with bias correction. - "ldb" or "ldbiased" : Levinson-Durbin recursion without bias correction. - "burg" : Burg"s partial autocorrelation estimat
+[Levinson] bias adjustment. - "ld" or "ldadjusted" : Levinson-Durbin recursion with bias correction. - "ldb" or "ldbiased" : Levinson-Durbin recursion without bias correction. - "burg" : Burg"s partial autocorrelatio
+
+== ARIMA(0,1,1): primer residual
+theta -0.7334  primer residual 1120.0  y_1 1120.0
+LB(20), model_df=1, sin el primero: 0.6984
+
+== numpy.diff(n=0) es la identidad
+True
+
+== varianza (ddof=1) por d
+0 100 28637.95
+1 99 28268.34
+2 98 80055.01
+3 97 262507.29

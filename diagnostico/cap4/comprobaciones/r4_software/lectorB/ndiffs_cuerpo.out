@@ -1,0 +1,57 @@
+{
+    test <- match.arg(test)
+    type <- match(match.arg(type), c("level", "trend"))
+    x <- c(na.omit(c(x)))
+    d <- 0
+    if (alpha < 0.01) {
+        warning("Specified alpha value is less than the minimum, setting alpha=0.01")
+        alpha <- 0.01
+    }
+    else if (alpha > 0.1) {
+        warning("Specified alpha value is larger than the maximum, setting alpha=0.1")
+        alpha <- 0.1
+    }
+    if (is.constant(x)) {
+        return(d)
+    }
+    urca_pval <- function(urca_test) {
+        approx(urca_test@cval[1, ], as.numeric(sub("pct", "", 
+            colnames(urca_test@cval), fixed = TRUE))/100, xout = urca_test@teststat[1], 
+            rule = 2)$y
+    }
+    kpss_wrap <- function(..., use.lag = trunc(3 * sqrt(length(x))/13)) {
+        ur.kpss(..., use.lag = use.lag)
+    }
+    runTests <- function(x, test, alpha) {
+        tryCatch({
+            suppressWarnings(diff <- switch(test, kpss = urca_pval(kpss_wrap(x, 
+                type = c("mu", "tau")[type], ...)) < alpha, adf = urca_pval(ur.df(x, 
+                type = c("drift", "trend")[type], ...)) > alpha, 
+                pp = urca_pval(ur.pp(x, type = "Z-tau", model = c("constant", 
+                  "trend")[type], ...)) > alpha, stop("This shouldn't happen")))
+            diff
+        }, error = function(e) {
+            warning(call. = FALSE, sprintf("The chosen unit root test encountered an error when testing for the %s difference.\nFrom %s(): %s\n%i differences will be used. Consider using a different unit root test.", 
+                switch(as.character(d), `0` = "first", `1` = "second", 
+                  `2` = "third", paste0(d + 1, "th")), deparse(e$call[[1]]), 
+                e$message, d))
+            FALSE
+        })
+    }
+    dodiff <- runTests(x, test, alpha)
+    if (is.na(dodiff)) {
+        return(d)
+    }
+    while (dodiff && d < max.d) {
+        d <- d + 1
+        x <- diff(x)
+        if (is.constant(x)) {
+            return(d)
+        }
+        dodiff <- runTests(x, test, alpha)
+        if (is.na(dodiff)) {
+            return(d - 1)
+        }
+    }
+    d
+}

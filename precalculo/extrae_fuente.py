@@ -212,8 +212,12 @@ def extrae_doc_r(clave: str, tema: str) -> int:
         sys.exit(f"FALLA  «{clave}» no está en la biblioteca del curso")
     # El paquete se deduce del archivo de ayuda: `environment(get(...))` sirve para
     # una función pero falla con un conjunto de datos, que no lo es.
+    # `paquete::tema` (desde el 2026-11-22) busca la ayuda en ese paquete aunque no
+    # esté cargado; el archivo se llama como el tema y el origen nombra el paquete.
+    paq_pedido, _, tema = tema.rpartition("::")
+    llamada = f'help("{tema}", package = "{paq_pedido}")' if paq_pedido else f'help("{tema}")'
     guion = r"""
-      h <- utils:::.getHelpFile(help("%s"))
+      h <- utils:::.getHelpFile(%s)
       ruta <- attr(h, "Rdfile")
       paq <- if (is.null(ruta)) "" else basename(dirname(dirname(ruta)))
       ver <- if (nzchar(paq)) tryCatch(paste(paq, utils::packageVersion(paq)),
@@ -221,7 +225,7 @@ def extrae_doc_r(clave: str, tema: str) -> int:
       cat("@@VERSION@@", R.version.string, if (nzchar(ver)) paste("·", ver) else "", "
 ")
       tools::Rd2txt(h, options = list(underline_titles = FALSE))
-    """ % tema
+    """ % llamada
     r = subprocess.run(["Rscript", "-e", guion], capture_output=True)
     if r.returncode != 0:
         sys.exit(f"FALLA  R no pudo imprimir la ayuda de «{tema}»: {r.stderr.decode()[:300]}")
@@ -237,7 +241,7 @@ def extrae_doc_r(clave: str, tema: str) -> int:
     ruta = BIB / "instantaneas.yml"
     registro = lee_yaml(ruta)
     registro.setdefault(clave, {})[tema] = {
-        "origen": f"ayuda de R: help({tema})",
+        "origen": f"ayuda de R: help({tema}, package = {paq_pedido})" if paq_pedido else f"ayuda de R: help({tema})",
         "version": " ".join(version.replace("@@VERSION@@", "").split()),
         "consulta": dt.date.today().isoformat(),
         "sha256": sha256_bytes(plano),

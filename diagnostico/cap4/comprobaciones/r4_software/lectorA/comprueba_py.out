@@ -1,0 +1,17 @@
+statsmodels 0.14.6 numpy 2.2.6
+np.roots([1,-3,2]) = [2. 1.]   (descendente: x^2-3x+2 -> raices 2 y 1)
+np.roots([2,-3,1]) = [1.  0.5]   (si se leyera ascendente seria 2-3x+x^2 -> raices 1 y 2; descendente: 2x^2-3x+1 -> 1 y 0.5)
+ArmaProcess(ar=[1,-.6], ma=[1,.5]): acf(2) = [1.    0.773]  arroots = [1.6667]  maroots = [-2.]
+  raiz AR con ar=[1,-.6]: [1.6667]  (1/0.6 = 1.6667: phi = +0.6)
+  rho1 del MA con ma=[1,+0.5] y sin AR: 0.4 (theta/(1+theta^2) = 0.4: signo MAS)
+MA(1) simulado con theta = +0.6 (signo mas); ARIMA(0,0,1).fit() da ma.L1 = 0.617
+statsmodels.tsa.stattools tiene ndiffs: False
+objetos llamados ndiffs en tsa.api / arima_process / arima.model: [False, False, False]
+firma acorr_ljungbox: (x, lags=None, boxpierce=False, model_df=0, period=None, return_df=True, auto_lag=False)
+docstring (model_df): model_df : int, default 0 Number of degrees of freedom consumed by the model. In an ARMA model, this value is usually p+q where p is the AR order and q is the MA order. This value is subtracted from the degrees-of-freedom used in the test so that the adjusted dof for the statistics are lags - model_df. If lags - model_df <= 0, then NaN is returned. period : int, default None The period of a Se
+adfuller existe: True
+kpss existe: True
+plot_acf existe: True
+plot_pacf existe: True
+acorr_ljungbox existe: True
+ARIMAResults.plot_diagnostics existe: True | get_forecast existe: True | conf_int existe: True

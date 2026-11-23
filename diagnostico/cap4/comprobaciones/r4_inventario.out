@@ -1,0 +1,60 @@
+bibliografia/contraste/cap4_inventario.tsv: 400 filas (357 en el diagnóstico; 14 salen; 57 nuevas)
+  prioridad alta: 145 registradas, 35 sin marcar
+  prioridad media: 85 registradas, 42 sin marcar
+  prioridad baja: 11 registradas, 25 sin marcar
+  filas sin marcar cuyo texto ya no está literal: 21
+  literales de cita sustituidos por «[literal en _local]»: 0
+  afirmaciones en el registro: 286; todas con fila: True
+
+Filas del diagnóstico que salen del inventario:
+  c4-m2-03: retirada por la propuesta de prosa de c4-m2-01/-02: la frase «la familia ya existía, aunque ellos también la sistematizaron y fijaron cómo identificarla con la ACF y la PACF» no tiene pasaje en ninguna fuente leída (FPP3 §9.12 y Cryer y Chan solo dicen que el texto de Box y Jenkins popularizó el modelado y el método); la frase nueva dice solo lo que esas fuentes dicen.
+  c4-m3-04: La R1 retiró la regla de la varianza como criterio para elegir d: la frase «Var(∇^d y) debe…» ya no está en el Módulo 3. El párrafo que la sustituye (¿Y la varianza de ∇^d y?…) dice que la varianza describe pero «no decide d», y está registrado como c4-m3-60 (propia). Ninguna otra frase del Módulo 3 ni del Módulo 4 la usa ya como evidencia de d.
+  c4-m5-21: La R3 (21ab628, «la nota de la TRM sale del M5») quitó del Módulo 5 el párrafo «El mismo cálculo en la TRM». La frase sobre la deriva de la TRM (δ̂ = 8.00, e.e. 10.36, t = 0.77) vive ahora en el Módulo 10 (templates_10.html, párrafo «El resultado, aceptado tal cual…»): la cubre el lector de ese módulo (c4-m0-07, c4-m10-09/-39).
+  c4-m7-22: El comentario del bloque de Python («no descuenta d en nobs (ver el modulo 6)») ya no existe: lo reescribió una ronda anterior y ahora dice «No es el n: corregir con 100 o con 99 observaciones mueve el AICc 0.003». Se comprobó ejecutando que ese texto es cierto (AICc a mano 1267.4713 con n efectivo y 1267.4687 con n = 100, diferencia 0.0026; AIC 1267.219 en statsmodels y 1267.255 en R). Sobre la explicación que sigue («cada programa inicializa el filtro a su manera»), ver observaciones.
+  c4-m8-07: La R1 retiró la «regla habitual» de la varianza: la frase «La regla habitual —si al diferenciar la varianza sube, te has pasado— funcionó en el Nilo» ya no existe; la sustituye «Es tentador leer la tabla con la regla…», que no atribuye la regla a nadie y la desmonta con el argumento del Capítulo 2 (nueva afirmación c4-m8-60, propia, = c2-m7-08).
+  c4-m8-08: La R1 retiró «es una heurística, no un teorema» junto con el título del recuadro; el contraejemplo del lince sigue (c4-m8-10) pero ya no como fallo de una regla de la varianza, sino como «la columna de la varianza no decide d» (c4-m8-60).
+  c4-m10-03: La R1–R3 reescribieron la celda del diagnóstico del Nilo: ya no dice «Shapiro p = 0.731» ni «las raíces quedan fuera». Hoy dice que la raíz MA (1.144; la AR, 3.93) está cerca del círculo y que θ̂ = −0.874 casi deshace la diferencia: eso es c4-m10-04.
+  c4-m10-17: La frase «auto.arima con búsqueda exhaustiva sobre 192 modelos» ya no existe: la celda de estimación solo dice que auto.arima con búsqueda exhaustiva devuelve el ARIMA(0,1,0). (La cuenta sigue siendo cierta: auto.arima exhaustivo lista 192 modelos con la parte estacional permitida.)
+  c4-m10-40: El comentario del bloque («una cota baila en el último decimal, 4080.29 aquí, 4080.28 en la tabla») ya no existe: el bloque imprime 4080.28.
+  c4-m10-63: la propuesta de prosa de c4-m10-61 retira «el modelo de libro» (una atribución a Box y Jenkins sin texto): ahora dice «Parte del IMA(1,1)»
+  c4-m10-64: la R1 retiró la frase: la Pista del ejercicio 1 ya no manda mirar la varianza («Para d, mira el gráfico y las pruebas»; el ρ̂1 de la serie diferenciada es un indicio) y el bloque ya no calcula varianzas para BJsales
+  c4-m10-76: se retira la frase «la edición anterior, FPP2 (capítulo 8), usa el mismo auto.arima de forecast que este curso» (prosa de c4-m10-74): FPP2 no tiene texto en la caché y no se puede afirmar ni el capítulo ni lo que usa
+  c4-m10-79: la frase «La fuente original de la metodología» desaparece con la reescritura de la lectura de Box et al. (c4-m10-78): la 5.ª edición no es la original (FPP3 §9.12 llama clásico a Box y Jenkins 1970)
+  c4-m10-80: desaparece con la reescritura de c4-m10-78: ninguna fuente leída llama a BJsales «Serie M»
+
+Filas de prioridad alta sin marcar:
+  c4-m0-06: vive en el JSON de datos (DATOS_CAP4.nilo.cambio_nivel.fuente), que no se ve en pantalla. La atribución a la presa de Asuán no tenía fuente leída: se corrigió en precalculo/genera_cap4.R (ahora remite a la ayuda de R d
+  c4-m0-07: sin marcar: vive en el JSON de datos (SERIES_CAP4.trm.fuente, escrito por precalculo/genera_datos.R); datos.gov.co no es una obra de la biblioteca (mismo hueco que c3-m0-06); la procedencia de la TRM en la prosa la reg
+  c4-m1-22: Comentario de un bloque de código de Python, repetición de c3-m1-11 (registrada como propia). Cierto: ArmaProcess pide los polinomios con el signo ya aplicado (ar=[1,−φ], ma=[1,+θ]); comprobado ejecutando en statsmodel
+  c4-m3-06: La celda de la tabla repite la especificación de adf.test (constante y tendencia, k = 4), que se marca en el párrafo que sigue a las fórmulas (c4-m3-09); el resto de la celda son cifras de R (−3.366, p = 0.064, 0.965, 
+  c4-m3-25: Comentario de un bloque de código R. Verdadero: el cuerpo de forecast::ndiffs llama ur.df(x, type = c("drift", "trend")[type], ...) (type = "level" → "drift") sin fijar lags, y el valor por defecto de lags en urca::ur.
+  c4-m3-28: Comentario de un bloque de código Python (y su salida). Verdadero: kpss(nilo, 'c') con nlags='auto' usa 5 rezagos y da 0.8691; con 'legacy' usa 12 y da 0.5497; con nlags=4 da 0.9654, igual que tseries (software_B_py.ou
+  c4-m4-20: Comentario de un bloque de código Python. Verdadero: la firma de pacf() de statsmodels 0.14.6 tiene method='ywadjusted' por defecto (−0.4061 en el primer rezago) y method='ldb' reproduce a R (−0.402, −0.2456, −0.1187, 
+  c4-m6-16: Comentario de un bloque de código (Python). Comprobado ejecutando (c_comprueba.py -> c_comprueba_py.out y c_bic.py): en los 27 modelos nobs = 100, nobs_effective = 100 − d y loglikelihood_burn = d, y aicc y bic de stat
+  c4-m9-31: Comentario de un bloque de código Python (no se marca) y CORRECTO tal como está (la R1 ya lo dejó así). Comprobado en R 4.6.0: Arima(Nile, c(1,1,1)) da σ² = 20176.91, igual con method = 'ML' (20176.92); arima(method = 
+  c4-m10-36: Cifras: 11 de 126 cambios a doce meses fuera del 95 % (R, reproducido en el bloque de la página) y 89.6 % de cobertura del naïve fuera de la muestra, que viene del Capítulo 6 (tabla del Caso 2, Htmls_Series/capitulo-6-
+  c4-m10-42: comentario de un bloque de código (no se marca). Afirmaba algo falso (que statsmodels no puede llegar a una raíz sobre el círculo) y se corrigió: con los coeficientes de R como arranque llega al mismo modelo degenerado
+  c4-m10-51: repetición del resumen: la registra c4-m1-05 y c4-m1-08 (el ARIMA como ARMA con raíces unitarias; «la diferenciación es parte del modelo» es la tesis del capítulo, propia). La viñeta no cambió
+  c4-m10-52: repetición del resumen: la registra c4-m2-04 (el ciclo identificar–estimar–diagnosticar: Cryer y Chan §1.2, p. 8, y p. 109). La viñeta no cambió
+  c4-m10-53: repetición del resumen: la registra c4-m3-04 (las tres evidencias para d), c4-m3-18 y c4-m3-22 (KPSS ante un cambio de nivel) y c2-m7-08 (la varianza repite r1). La frase del inventario, con la varianza como una de las
+  c4-m10-54: repetición del resumen: la registra c4-m5-03, c4-m5-05 y c4-m5-07 (qué significa la constante según d; con d ≥ 2 forecast::Arima no ajusta deriva: FPP3 §9.5 y ?Arima §Arguments). «Y hace bien» sigue a FPP3 («particular
+  c4-m10-55: repetición del resumen: la registra c4-m6-05 y c4-m6-06 (el AICc no es comparable entre distintos d: FPP3 §9.6, y §9.9, «es importante que todos los modelos tengan el mismo orden de diferenciación»). La viñeta no cambi
+  c4-m10-56: repetición del resumen: la registra c4-m7-03 y c4-m7-17 (auto.arima elige d con KPSS, busca por vecindario y trace = TRUE lo abre: H&K 2008 pp. 10–11, FPP3 §9.7, ?auto.arima §Arguments). La viñeta no cambió y coincide 
+  c4-m10-57: repetición del resumen: la registra c4-m8-03 y c4-m8-04 (la sobrediferenciación deja una raíz MA sobre el círculo unitario: Cryer y Chan pp. 126–127; la regla de ρ1 ≈ −0.5 como primer aviso, c4-m8-07 y M2.7). «Firma ex
+  c4-m10-86: cadena JS de la tabla ordenable (TABLAS_RANKING['rejilla-nilo'] en chapter.js): no se toca. Repite c4-m6-06 (comparar dentro de un mismo d: FPP3 §9.6 y §9.9); los mejores por AICc son cifras de R
+  c4-m10-87: cadena JS del quiz (AUTOEVALUACIONES['cap4'] en chapter.js): se rehace en la R5
+  c4-m10-89: cadena JS del quiz (AUTOEVALUACIONES['cap4'] en chapter.js): se rehace en la R5
+  c4-m10-93: cadena JS del quiz (AUTOEVALUACIONES['cap4'] en chapter.js): se rehace en la R5
+  c4-m10-94: cadena JS del quiz (AUTOEVALUACIONES['cap4'] en chapter.js): se rehace en la R5
+  c4-m10-95: cadena JS del quiz (AUTOEVALUACIONES['cap4'] en chapter.js): se rehace en la R5
+  c4-m10-97: cadena JS del quiz (AUTOEVALUACIONES['cap4'] en chapter.js): se rehace en la R5 [el texto es el del diagnóstico: ya no está literal en el capítulo]
+  c4-m10-98: cadena JS del quiz (AUTOEVALUACIONES['cap4'] en chapter.js): se rehace en la R5
+  c4-m10-99: cadena JS del quiz (AUTOEVALUACIONES['cap4'] en chapter.js): se rehace en la R5
+  c4-m10-102: cadena JS del quiz (AUTOEVALUACIONES['cap4'] en chapter.js): se rehace en la R5
+  c4-m11-06: cadena JS del simulacro (SIMULACROS['cap4-simulacro'] en chapter.js): no se toca
+  c4-m11-07: cadena JS del simulacro (SIMULACROS['cap4-simulacro'] en chapter.js): no se toca
+  c4-m11-09: cadena JS del simulacro (SIMULACROS['cap4-simulacro'] en chapter.js): no se toca
+  c4-m11-10: cadena JS del simulacro (SIMULACROS['cap4-simulacro'] en chapter.js): no se toca
+  c4-m11-11: cadena JS del simulacro (SIMULACROS['cap4-simulacro'] en chapter.js): no se toca
+  c4-m11-12: cadena JS del simulacro (SIMULACROS['cap4-simulacro'] en chapter.js): no se toca
+  c4-m11-13: cadena JS del simulacro (SIMULACROS['cap4-simulacro'] en chapter.js): no se toca

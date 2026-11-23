@@ -169,8 +169,18 @@ def claves_citadas(texto: str) -> list[str]:
     return vistas
 
 
+def clave_de_orden(entrada: str) -> str:
+    """APA 7 ordena por los apellidos de los autores, uno tras otro, y luego por año. El texto de
+    la ficha sirve de clave salvo por la «y» ante el último autor: «Hyndman, R. J., y
+    Athanasopoulos, G. (2021)» debe ir antes que «Hyndman, R. J., Athanasopoulos, G., Bergmeir…
+    (2026)» (desde el 2026-11-23; antes la «y» la mandaba detrás)."""
+    plano = re.sub(r"<[^>]+>", "", entrada)
+    autores, parentesis, resto = plano.partition(" (")
+    return (re.sub(r",? y (?=\S)", ", ", autores) + parentesis + resto).lower()
+
+
 def lista(entradas: dict[str, str], claves: list[str], prefijo: str, sangria: str) -> str:
-    orden = sorted(claves, key=lambda c: re.sub(r"<[^>]+>", "", entradas[c]).lower())
+    orden = sorted(claves, key=lambda c: clave_de_orden(entradas[c]))
     filas = "".join(
         f'\n{sangria}  <li id="{prefijo}{c}">{enlaces_nuevos(entradas[c])}</li>' for c in orden
     )

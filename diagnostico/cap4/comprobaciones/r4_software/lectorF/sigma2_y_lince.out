@@ -1,0 +1,33 @@
+R 4.6.0  forecast 9.0.2 
+
+== 1. sigma2 de arima() frente a Arima(): ¿es CSS-ML frente a ML, o el divisor?
+Nile ARIMA(1,1,1): n=100, n*=99, p+q=2
+  sigma2 arima(ML)           = 19769.2889   (SC/n*       = 19769.3015)
+  sigma2 Arima(CSS-ML)       = 20176.9149
+  sigma2 Arima(method='ML')  = 20176.9160
+  razon Arima/arima          = 1.02062   n*/(n*-p-q) = 1.02062
+  SC residuales de Arima/(n*-p-q) = 20176.9149
+BJsales ARIMA(1,1,1): n=150, n*=149, p+q=2
+  sigma2 arima(ML)           = 1.7755   (SC/n*       = 1.7757)
+  sigma2 Arima(CSS-ML)       = 1.7999
+  sigma2 Arima(method='ML')  = 1.7999
+  razon Arima/arima          = 1.01376   n*/(n*-p-q) = 1.01361
+  SC residuales de Arima/(n*-p-q) = 1.7999
+
+Codigo de Arima(): lineas que mencionan sigma2
+[1] "        tmp$sigma2 <- sum(tmp$residuals^2, na.rm = TRUE)/(nstar - "
+
+?Arima Value (sigma2) y ?arima Value (sigma2) se leyeron en la cache: 'bias adjusted MLE' frente a 'the MLE'.
+
+== 2. lynx: varianza al diferenciar, r1, 2(1-r1) y periodo del AR(2)
+var(d=0..3) = 1.6532 0.6871 0.6026 1.1532   caida d=0->1 = 58.4 %  minimo en d = 2 
+r1 = 0.785  cociente = 0.416  2(1-r1) = 0.430
+AR(2): phi1 = 1.3776 phi2 = -0.7399  periodo por raiz = 9.7839
+  condicion de ciclo phi1^2 + 4 phi2 = -1.0617 (<0: ciclico)
+  periodo medio segun la formula de FPP3 9.5: 2pi/acos(-phi1(1-phi2)/(4 phi2)) = 10.0236
+n = 114, tiempo 1821-1934
+
+== 3. BJsales: n, rango, aicc d=1 frente a d=2 (n efectivo)
+length(BJsales) = 150  class: ts  start/end: 1 1 150 1 
+IMA(1,1) = ARIMA(0,1,1): arima(BJsales, c(0,1,1)) coef ma1 = 0.2562 
+p Ljung-Box(20, fitdf=1) del (0,1,1): 0.034 

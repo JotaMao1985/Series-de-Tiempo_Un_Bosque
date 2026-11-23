@@ -69,68 +69,24 @@ def entre(texto, inicio, fin, etiqueta):
 html = lee(CAP3)
 
 # ---------------------------------------------------------------------------
-# 0. Lo que la ronda de fuentes (R4) del capítulo 3 dejó en el armazón
+# 0. El armazón de las citas: se hereda del capítulo 3 y solo se comprueba
 # ---------------------------------------------------------------------------
-# Desde el 2026-11-21 el capítulo 3 lleva sus fuentes contrastadas, como el 2
-# desde el 17: hereda del armazón el CSS de las citas (`.cita`,
-# `.fuentes-modulo`, `.lista-fuentes`) y un pie que escribe
-# `precalculo/genera_referencias.py` entre los marcadores PIE-REFERENCIAS. El
-# capítulo 4 —y con él el 5 y el 6, que parten de este— todavía no ha pasado su
-# ronda de fuentes: no tiene ninguna cita ni registro de contraste, y no debe
-# heredar ni la hoja de estilo ni el pie generado. Aquí se retira el CSS y se
-# devuelve al pie la lista tecleada que el capítulo 4 tenía, de modo que los
-# capítulos 4, 5 y 6 ensamblados no cambian ni un byte. (Las marcas, las citas
-# y las listas de fuentes del capítulo 3 viven en sus plantillas de módulo, que
-# la sección 2 sustituye enteras: no llegan aquí.)
+# Hasta la ronda de fuentes (R4) del capítulo 4 (2026-11-22) esta sección
+# retiraba el CSS de las citas (`.cita`, `.fuentes-modulo`, `.lista-fuentes`)
+# y devolvía al pie una lista tecleada. Ya no: el capítulo 4 tiene sus
+# afirmaciones marcadas y sus citas, que viven en `cap4/templates_*.html` (las
+# escribe `diagnostico/cap4/comprobaciones/r4_marca.py`), y necesita esa hoja
+# de estilo y el pie generado (la bibliografía básica del curso, la misma en
+# todos los capítulos). Aquí solo se COMPRUEBA que lleguen; al final (sección
+# 9b) `genera_referencias.genera()` escribe citas, listas y pie.
 #
-# Esta sección estuvo hasta ese día en `ensambla_cap3.py` (su «1b»), con el
-# mismo texto del pie. CUANDO EL CAPÍTULO 4 HAGA SU RONDA DE FUENTES, esta
-# sección se borra —entonces sí debe llevar el CSS, y su pie lo escribirá el
-# generador sobre los marcadores— y la protección baja a `ensambla_cap5.py`.
-PIE_TECLEADO_CAP4 = """\
-      <ul class="space-y-3 text-white/90 text-sm">
-        <li class="flex items-start gap-2">
-          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
-          <span>Hyndman, R.J., &amp; Athanasopoulos, G. (2021). <em class="text-gold">Forecasting: Principles and
-              Practice</em> (3rd ed.). OTexts. Acceso abierto: <a href="https://otexts.com/fpp3/"
-              class="underline text-gold" target="_blank" rel="noopener">otexts.com/fpp3</a>.</span>
-        </li>
-        <li class="flex items-start gap-2">
-          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
-          <span>Shumway, R.H., &amp; Stoffer, D.S. (2017). <em class="text-gold">Time Series Analysis and Its
-              Applications: With R Examples</em> (4th ed.). Springer.</span>
-        </li>
-        <li class="flex items-start gap-2">
-          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
-          <span>Box, G.E.P., Jenkins, G.M., Reinsel, G.C., &amp; Ljung, G.M. (2015). <em class="text-gold">Time Series
-              Analysis: Forecasting and Control</em> (5th ed.). John Wiley &amp; Sons.</span>
-        </li>
-        <li class="flex items-start gap-2">
-          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
-          <span>Brockwell, P.J., &amp; Davis, R.A. (2016). <em class="text-gold">Introduction to Time Series and
-              Forecasting</em> (3rd ed.). Springer.</span>
-        </li>
-      </ul>
-"""
-
-_css_ini = ("    /* ------------------------------------------------------------------\n"
-            "       Cita con fuente")
-_css_fin = "    /* SVG Styles */"
-_pie_ini = "      <!--PIE-REFERENCIAS:inicio-->\n"
-_pie_fin = "      <!--PIE-REFERENCIAS:fin-->\n"
-for _m in (_css_ini, _css_fin, _pie_ini, _pie_fin):
+# La protección que había aquí pasó a `ensambla_cap5.py` (sección 0): el
+# capítulo 5 —y con él el 6— aún no ha hecho su ronda de fuentes.
+for _m in ("       Cita con fuente", "    .cita {", "    .fuentes-modulo {", "ul.lista-fuentes li {",
+           "      <!--PIE-REFERENCIAS:inicio-->\n", "      <!--PIE-REFERENCIAS:fin-->\n"):
     if html.count(_m) != 1:
-        raise SystemExit(f"ABORTA [armazón de citas del capítulo 3]: el marcador {_m.strip()[:60]!r} "
-                         f"aparece {html.count(_m)} veces, se esperaba 1. Si el capítulo 3 ya no "
-                         "lleva el CSS de las citas o no genera su pie, la sección 0 de este script sobra.")
-_i, _j = html.index(_css_ini), html.index(_css_fin)
-if _j <= _i:
-    raise SystemExit("ABORTA [CSS de las citas]: los marcadores están en orden inverso")
-html = html[:_i] + html[_j:]
-_i, _j = html.index(_pie_ini), html.index(_pie_fin) + len(_pie_fin)
-if _j <= _i:
-    raise SystemExit("ABORTA [pie de referencias]: los marcadores están en orden inverso")
-html = html[:_i] + PIE_TECLEADO_CAP4 + html[_j:]
+        raise SystemExit(f"ABORTA [armazón de citas]: {_m.strip()!r} aparece {html.count(_m)} veces en el "
+                         "capítulo 3, se esperaba 1. El capítulo 4 hereda de él el CSS de las citas y el pie.")
 
 # ---------------------------------------------------------------------------
 # 1. Metadatos de la cabecera
@@ -248,17 +204,18 @@ course_nuevo = """    const courseData = {
         // tiempo de resolverlos, los desarrollos plegados (unos 4 min entre tres
         // módulos), la autoevaluación del Módulo 10 (unos 18 min de lectura) ni,
         // en el Módulo 11, nada de lo escrito: sus 40 min son el reloj del ensayo.
-        // Medida: diagnostico/cap4/comprobaciones/r3_minutos.py (2026-11-22).
-        { id: 1, title: "De ARMA a ARIMA", shortTitle: "ARIMA", duration: "11 min" },
-        { id: 2, title: "La metodología Box–Jenkins", shortTitle: "Box–Jenkins", duration: "7 min" },
+        // Medida: diagnostico/cap4/comprobaciones/r3_minutos.py (2026-11-22; de nuevo
+        // el 2026-11-23, tras la R4: el texto de las citas suma minutos a M1, M2, M8–M10).
+        { id: 1, title: "De ARMA a ARIMA", shortTitle: "ARIMA", duration: "12 min" },
+        { id: 2, title: "La metodología Box–Jenkins", shortTitle: "Box–Jenkins", duration: "8 min" },
         { id: 3, title: "Elegir el orden d", shortTitle: "Elegir d", duration: "14 min" },
         { id: 4, title: "Identificar p y q", shortTitle: "Identificar p,q", duration: "9 min" },
         { id: 5, title: "La constante: media y deriva", shortTitle: "Media y deriva", duration: "6 min" },
         { id: 6, title: "Estimar y comparar modelos", shortTitle: "Explorador", duration: "10 min" },
         { id: 7, title: "Dentro de auto.arima", shortTitle: "auto.arima", duration: "10 min" },
-        { id: 8, title: "Diagnóstico y errores comunes", shortTitle: "Diagnóstico", duration: "11 min" },
-        { id: 9, title: "Pronóstico: forma e intervalos", shortTitle: "Pronóstico", duration: "14 min" },
-        { id: 10, title: "Caso TRM, puente y cierre", shortTitle: "Cierre", duration: "43 min" },
+        { id: 8, title: "Diagnóstico y errores comunes", shortTitle: "Diagnóstico", duration: "12 min" },
+        { id: 9, title: "Pronóstico: forma e intervalos", shortTitle: "Pronóstico", duration: "15 min" },
+        { id: 10, title: "Caso TRM, puente y cierre", shortTitle: "Cierre", duration: "46 min" },
         { id: 11, title: "Simulacro del quiz", shortTitle: "Simulacro", duration: "40 min" },
         { id: 12, title: "Preparcial del Corte II", shortTitle: "Preparcial", duration: "3 min" }
       ]
@@ -461,6 +418,34 @@ for k in (1, 2, 3):
     for suf in ("pista", "sol"):
         if html.count(f'id="c4e{k}-{suf}"') != 1:
             fallos.append(f"falta el panel c4e{k}-{suf}")
+
+# ---------------------------------------------------------------------------
+# 9b. Citas, listas de fuentes y pie: los escribe el generador
+# ---------------------------------------------------------------------------
+# Las marcas `data-afirma` y los `<cite class="cita">` llegan en las plantillas
+# de `cap4/`; el texto visible de cada cita, la lista de cada módulo, la del
+# capítulo y el pie los escribe `precalculo/genera_referencias.py` desde
+# `bibliografia/referencias.json`. Se pasa aquí, al final, para que lo
+# ensamblado y lo regenerado no puedan divergir (como la sección 9b de
+# `ensambla_cap3.py`). Es idempotente.
+sys.path.insert(0, str(RAIZ / "precalculo"))
+import genera_referencias                                               # noqa: E402
+
+try:
+    html = genera_referencias.genera(html, *genera_referencias.carga_biblioteca())
+except genera_referencias.ErrorDeCita as e:
+    raise SystemExit(f"ABORTA [citas]: {e}")
+for pieza in ('data-afirma="c4-', '<cite class="cita"', '<aside class="fuentes-modulo"',
+              "<!--REFERENCIAS-CAPITULO:inicio-->", '<li id="pie-', 'id="ref-m'):
+    if html.count(pieza) < 1:
+        fallos.append(f"fuentes: falta {pieza!r}")
+if 'data-afirma="c3-' in html or 'data-afirma="c2-' in html:
+    fallos.append("fuentes: quedan marcas del capítulo 2 o del 3")
+if html.count("<!--REFERENCIAS-CAPITULO:inicio-->") != 1:
+    fallos.append("fuentes: la lista del capítulo aparece "
+                  f"{html.count('<!--REFERENCIAS-CAPITULO:inicio-->')} veces, se esperaba 1")
+if re.search(r'<cite class="cita"[^>]*></cite>', html):
+    fallos.append("fuentes: queda alguna cita vacía tras pasar el generador")
 
 if fallos:
     raise SystemExit("ABORTA:\n  - " + "\n  - ".join(fallos))

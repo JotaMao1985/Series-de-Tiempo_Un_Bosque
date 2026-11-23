@@ -1,0 +1,46 @@
+2916: [[c4-m1-62]]El método de Holt hace lo mismo con el nivel y con la pendiente de la serie {hyndman2021forecasting §8.2}. Aquí solo
+2934: [[c4-m1-13]]ARIMA($0,2,2$)IMA(2,2)Incluye al método de Holt
+2953: Asuán entre 1871 y 1970 ($n = 100$, en $10^8\,\text{m}^3$) {rcoreteam2026r §Description}. Antes de mover nada, mira la serie original:
+3103: Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3
+3104: Hamilton, J. D. (1994). Time series analysis. Princeton University Press.
+3105: Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
+3106: Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The forecast Package for R. Journal of Statistical Software, 27(3), 1-22. https://doi.org/10.18637/jss.v027.i03
+3121: Box–Jenkins / The Box–Jenkins method
+3133: concreta. [[c4-m2-01]]En 1970 Box y Jenkins publicaron Time Series Analysis: Forecasting and Control, el texto que popularizó el modelado ARIMA {hyndman2021forecasting §9.12}. Su
+3134: procedimiento, que [[c4-m2-02]]muchos autores llaman método de Box–Jenkins {cryer2008time p. 109}, es una secuencia de etapas con criterios
+3203: y BIC — siempre dentro del mismo $d$ {hyndman2021forecasting §9.6}. [[c4-m2-09]]Comprobar además que los coeficientes tienen
+3226: Ljung–Box conjunto, media cero, varianza estable {hyndman2021forecasting §9.7} {cryer2008time p. 183}. [[c4-m2-12]]Y mirar la normalidad, que no es una propiedad esencial de los residuales, pero sí la suponen los intervalos de pronóstico habituales 
+3230: [[c4-m2-13]]checkresiduals() {hyndman2026forecast §Description}, Box.test(..., type = "Ljung-Box", fitdf = p + q) {rcoreteam2026r §Details},
+3236: Ljung–Box que rechaza, o barras fuera de la banda con un patrón reconocible. [[c4-m2-14]]Si el patrón está en los
+3291: Box.test(res, lag = 20, type = "Ljung-Box", fitdf = 2)$p.value
+3338: Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3
+3339: Hamilton, J. D. (1994). Time series analysis. Princeton University Press.
+3340: Hyndman, R. J., Athanasopoulos, G., Bergmeir, C., Caceres, G., Chhay, L., Kuroptev, K., Mücke, M., O’Hara-Wild, M., Petropoulos, F., Razbash, S., Wang, E., y Yasmeen, F. (2026). forecast: Forecasting Functions for Time Series and Linear Models (Versi�
+3341: Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
+3342: Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The forecast Package for R. Journal of Statistical Software, 27(3), 1-22. https://doi.org/10.18637/jss.v027.i03
+3368: El ciclo de Box–Jenkins empieza por $d$, y esta es la decisión de la que cuelga todo lo demás. Un $d$ mal
+3385: 2. Las pruebas[[c4-m3-05]]ADF y PP (Phillips–Perron; $H_0$: hay raíz unitaria) y
+3589: PP.test(Nile)$statistic         # Phillips-Perron: H0, hay raiz unitaria
+3691: que decide cuántas autocovarianzas entran en el estimador de Newey–West {trapletti2026tseries §Details}
+3707: La regla práctica. [[c4-m3-32]]$d$ casi nunca pasa de 2 {hyndman2021forecasting §9.1}. [[c4-m3-33]]Si
+3721: Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3
+3722: Hamilton, J. D. (1994). Time series analysis. Princeton University Press.
+3723: Hyndman, R. J., Athanasopoulos, G., Bergmeir, C., Caceres, G., Chhay, L., Kuroptev, K., Mücke, M., O’Hara-Wild, M., Petropoulos, F., Razbash, S., Wang, E., y Yasmeen, F. (2026). forecast: Forecasting Functions for Time Series and Linear Models (Versi�
+3724: Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
+3725: Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The forecast Package for R. Journal of Statistical Software, 27(3), 1-22. https://doi.org/10.18637/jss.v027.i03
+3825: con $\hat\theta = -0.7329$ (e.e. $0.1143$, $t = -6.41$) y Ljung–Box(20) $p = 0.674$: pasa el
+3871: Box.test(residuals(ma1), lag = 20, type = "Ljung-Box", fitdf = 1)$p.value
+3914: Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3
+3915: Hamilton, J. D. (1994). Time series analysis. Princeton University Press.
+3916: Hyndman, R. J., Athanasopoulos, G., Bergmeir, C., Caceres, G., Chhay, L., Kuroptev, K., Mücke, M., O’Hara-Wild, M., Petropoulos, F., Razbash, S., Wang, E., y Yasmeen, F. (2026). forecast: Forecasting Functions for Time Series and Linear Models (Versi�
+3917: Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
+3957: cuadrática. Prácticamente nunca se quiere {hyndman2021forecasting §9.5}.
+3984: búsqueda {hyndman2008automatic p. 11}, y elige por AICc {hyndman2026forecast §Usage}; con $d \ge 2$ nunca la incluye. Por eso en su traza el mismo orden
+4113: Hyndman, R. J., Athanasopoulos, G., Bergmeir, C., Caceres, G., Chhay, L., Kuroptev, K., Mücke, M., O’Hara-Wild, M., Petropoulos, F., Razbash, S., Wang, E., y Yasmeen, F. (2026). forecast: Forecasting Functions for Time Series and Linear Models (Versi�
+4114: Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
+4115: Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The forecast Package for R. Journal of Statistical Software, 27(3), 1-22. https://doi.org/10.18637/jss.v027.i03
+4180: residuales, cuyas barras se vuelven rojas cuando Ljung–Box(20) rechaza, y busca qué modelos rechazan y si
+4198: deriva), y con diferencias así el AICc apenas los distingue. Ljung–Box(20) rechaza en 8 de los 27 modelos,
+4323: Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3
+4324: Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/
+4325: Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The forecast Package for R. Journal of Statistical Software, 27(3), 1-22. https://doi.org/10.18637/jss.v027.i03

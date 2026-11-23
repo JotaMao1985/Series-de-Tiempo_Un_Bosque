@@ -81,6 +81,71 @@ def entre(texto, inicio, fin, etiqueta):
 html = lee(CAP4)
 
 # ---------------------------------------------------------------------------
+# 0. Lo que la ronda de fuentes (R4) del capítulo 4 dejó en el armazón
+# ---------------------------------------------------------------------------
+# Desde el 2026-11-22 el capítulo 4 lleva sus fuentes contrastadas, como el 2
+# (desde el 17) y el 3 (desde el 21): hereda del armazón el CSS de las citas
+# (`.cita`, `.fuentes-modulo`, `.lista-fuentes`) y un pie que escribe
+# `precalculo/genera_referencias.py` entre los marcadores PIE-REFERENCIAS. El
+# capítulo 5 —y con él el 6, que parte de este— todavía no ha pasado su ronda
+# de fuentes: no tiene ninguna cita ni registro de contraste, y no debe heredar
+# ni la hoja de estilo ni el pie generado. Aquí se retira el CSS y se devuelve
+# al pie la lista tecleada que tenía, de modo que los capítulos 5 y 6
+# ensamblados no cambian ni un byte. (Las marcas, las citas y las listas de
+# fuentes del capítulo 4 viven en sus plantillas de módulo, que la sección 2
+# sustituye enteras: no llegan aquí; al final se comprueba.)
+#
+# Esta sección estuvo hasta el 2026-11-21 en `ensambla_cap3.py` (su «1b») y
+# hasta el 2026-11-22 en `ensambla_cap4.py` (su sección 0), con el mismo texto
+# del pie. CUANDO EL CAPÍTULO 5 HAGA SU RONDA DE FUENTES, esta sección se
+# borra —entonces sí debe llevar el CSS, y su pie lo escribirá el generador
+# sobre los marcadores— y la protección baja a `ensambla_cap6.py`.
+PIE_TECLEADO_CAP5 = """\
+      <ul class="space-y-3 text-white/90 text-sm">
+        <li class="flex items-start gap-2">
+          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
+          <span>Hyndman, R.J., &amp; Athanasopoulos, G. (2021). <em class="text-gold">Forecasting: Principles and
+              Practice</em> (3rd ed.). OTexts. Acceso abierto: <a href="https://otexts.com/fpp3/"
+              class="underline text-gold" target="_blank" rel="noopener">otexts.com/fpp3</a>.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
+          <span>Shumway, R.H., &amp; Stoffer, D.S. (2017). <em class="text-gold">Time Series Analysis and Its
+              Applications: With R Examples</em> (4th ed.). Springer.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
+          <span>Box, G.E.P., Jenkins, G.M., Reinsel, G.C., &amp; Ljung, G.M. (2015). <em class="text-gold">Time Series
+              Analysis: Forecasting and Control</em> (5th ed.). John Wiley &amp; Sons.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i class="fas fa-bookmark text-secondary mt-1" aria-hidden="true"></i>
+          <span>Brockwell, P.J., &amp; Davis, R.A. (2016). <em class="text-gold">Introduction to Time Series and
+              Forecasting</em> (3rd ed.). Springer.</span>
+        </li>
+      </ul>
+"""
+
+_css_ini = ("    /* ------------------------------------------------------------------\n"
+            "       Cita con fuente")
+_css_fin = "    /* SVG Styles */"
+_pie_ini = "      <!--PIE-REFERENCIAS:inicio-->\n"
+_pie_fin = "      <!--PIE-REFERENCIAS:fin-->\n"
+for _m in (_css_ini, _css_fin, _pie_ini, _pie_fin):
+    if html.count(_m) != 1:
+        raise SystemExit(f"ABORTA [armazón de citas del capítulo 4]: el marcador {_m.strip()[:60]!r} "
+                         f"aparece {html.count(_m)} veces, se esperaba 1. Si el capítulo 4 ya no "
+                         "lleva el CSS de las citas o no genera su pie, la sección 0 de este script sobra.")
+_i, _j = html.index(_css_ini), html.index(_css_fin)
+if _j <= _i:
+    raise SystemExit("ABORTA [CSS de las citas]: los marcadores están en orden inverso")
+html = html[:_i] + html[_j:]
+_i, _j = html.index(_pie_ini), html.index(_pie_fin) + len(_pie_fin)
+if _j <= _i:
+    raise SystemExit("ABORTA [pie de referencias]: los marcadores están en orden inverso")
+html = html[:_i] + PIE_TECLEADO_CAP5 + html[_j:]
+
+# ---------------------------------------------------------------------------
 # 1. Metadatos de la cabecera
 # ---------------------------------------------------------------------------
 html = una_vez(
@@ -410,6 +475,11 @@ html = (html[:i] + lee(FUENTES / "chapter.js").rstrip("\n") + "\n\n"
 # 7. Comprobaciones finales
 # ---------------------------------------------------------------------------
 fallos = []
+# Nada de la ronda de fuentes del capítulo 4 puede llegar aquí (sección 0).
+for _resto in ('data-afirma=', '<cite class="cita"', 'class="fuentes-modulo"', "REFERENCIAS-CAPITULO",
+               "PIE-REFERENCIAS", "    .cita {"):
+    if _resto in html:
+        fallos.append(f"fuentes: el capítulo 5 hereda {_resto!r} del capítulo 4 (sección 0)")
 
 SIMULADORES = [
     "mapa-firma", "receta-mes", "constructor-polinomio", "tienda-cuadricula",

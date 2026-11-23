@@ -1,0 +1,21 @@
+== El estadístico KPSS escrito en el capítulo, calculado a mano
+l =  4: a mano 0.9654349078 | tseries::kpss.test 0.9654349078 | diferencia 2.22e-16 | sigma2_LP = 74193.51
+l = 12: a mano 0.5497197024 | tseries::kpss.test 0.5497197024 | diferencia 0.00e+00 | sigma2_LP = 130300.95
+sigma2_LP(l=12) > sigma2_LP(l=4): TRUE 
+autocovarianzas muestrales 1..12 de Nile - media (divisor n):
+ [1] 0.498 0.385 0.328 0.239 0.228 0.227 0.222 0.300 0.142 0.090 0.215 0.213
+
+== Truncamientos: kpss.test (tseries) frente a ndiffs (urca::ur.kpss, use.lag = trunc(3*sqrt(n)/13))
+trunc(4*(n/100)^0.25) = 4  trunc(12*(n/100)^0.25) = 12  ceiling(12*(n/100)^0.25) = 12  trunc(3*sqrt(n)/13) = 2 
+ur.kpss(Nile, 'mu', use.lag = 2): 1.3152  lag 2 
+kpss manual con l = 2: 1.3152 
+
+== Bajo raíz unitaria el estadístico KPSS crece con n (caminata aleatoria, regla l = trunc(4*(n/100)^0.25))
+n =  100: KPSS medio 1.14  (mínimo 0.12)  rechaza al 5% (0.463): 89%
+n =  400: KPSS medio 3.63  (mínimo 0.32)  rechaza al 5% (0.463): 99%
+n = 1600: KPSS medio 9.38  (mínimo 0.45)  rechaza al 5% (0.463): 100%
+
+== Crecimiento de S_t = sumas parciales de los residuales para una caminata (media del max|S_t| / n^1.5)
+n =  100: max|S_t| / n^(3/2) = 0.141
+n =  400: max|S_t| / n^(3/2) = 0.145
+n = 1600: max|S_t| / n^(3/2) = 0.139

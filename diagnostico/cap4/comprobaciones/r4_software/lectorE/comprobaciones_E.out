@@ -1,0 +1,103 @@
+forecast 9.0.2 | R version 4.6.0 (2026-04-24) 
+
+== 1. Umbral de raíces en el código de forecast (myarima) ==
+minroot < 1 + 0.01 : TRUE 
+aparece 1.001 / 1 + 0.001 : FALSE 
+        minroot <- 2
+                  minroot <- min(minroot, abs(proots))
+                  minroot <- min(minroot, abs(proots))
+        if (minroot < 1 + 0.01 || checkarima(fit)) {
+
+== 1b. auto.arima exhaustivo sobre la TRM con trace: ¿evalúa el (2,1,2) y lo descarta? ==
+ ARIMA(2,1,2)                               : Inf
+ ARIMA(2,1,2)            with drift         : Inf
+ ARIMA(2,1,2)(0,0,1)[12]                    : Inf
+ ARIMA(2,1,2)(0,0,1)[12] with drift         : Inf
+ ARIMA(2,1,2)(1,0,0)[12]                    : Inf
+ ARIMA(2,1,2)(1,0,0)[12] with drift         : Inf
+elegido: ARIMA(0,1,0) 
+n de modelos listados: 192 
+
+== 2. Pruebas por defecto de auto.arima / ndiffs ==
+auto.arima test por defecto: kpss 
+ndiffs  test por defecto  : kpss 
+auto.arima max.order      : 5 
+
+== 3. ARIMA(2,1,2) de la TRM: ¿cancelación? errores estándar, raíces ==
+    ar1     ar2     ma1     ma2 
+ 0.6612 -0.9917 -0.6226  1.0000 
+   ar1    ar2    ma1    ma2 
+0.0165 0.0105 0.0240 0.0355 
+|raíces AR| = 1.004184562 1.004184562 
+|raíces MA| = 1.000018406 1.000018406 
+coef ma2 = 0.9999631885 
+cond. número Hessiano-aprox (var.coef): 35.46 
+polinomio AR: 1 -0.661 0.992  MA: 1 -0.623 1 
+raíces AR complejas: 0.3334+0.9472i 0.3334-0.9472i 
+raíces MA complejas: 0.3113+0.9503i 0.3113-0.9503i 
+distancia entre raíces AR y MA (par más cercano): 0.0223 
+AICc (2,1,2): 1703.38 
+
+== 4. Deriva del ARIMA(0,1,0) frente a la media de las diferencias ==
+deriva ML = 8.0008759 
+media de las diferencias = 8.0008759  (y_n - y_1)/(n-1) = 8.0008759 
+
+== 5. Log-retornos de la TRM (el 'ruido blanco' del Capítulo 3) ==
+n = 137  r1 = 0.105  banda = 0.167 
+Ljung-Box(10,20) p = 0.032 0.06 
+auto.arima(ret): ARIMA(0,0,0) with zero mean 
+
+== 6. Cambios mensuales de la TRM: los mayores y los que salen del 95 % ==
+mayores subidas:
+  2020-03 470.2
+  2022-07 466.8
+  2015-08 291.4
+  2022-10 284.8
+  2015-12 244.3
+
+mayores bajadas:
+  2023-06 -323.3
+  2023-04 -227.4
+  2026-06 -221.8
+
+fuera del 95 %:
+  2015-08 291.4
+  2015-12 244.3
+  2020-03 470.2
+  2022-07 466.8
+  2022-10 284.8
+  2023-06 -323.3
+
+sigma = 121.48  sigma^2 = 14756.38 
+por debajo: 1  por arriba: 5 
+binomial (5 de 6, p = .5): una cola 0.109   dos colas 0.219 
+asimetría de d1: 0.761  curtosis (no exceso): 5.09 
+
+== 7. «Un tercio del nivel»: semiancho a h = 24 / último dato ==
+semiancho24 = 1166.39  yT = 3497.09  cociente = 0.3335 
+
+== 8. hσ² frente a la varianza real de los cambios a h meses, con ρ1 ==
+rho1 = 0.088 
+ razón medida: 1.097 1.144 1.069 
+ razón con solo rho1: 1.117 1.146 1.161 
+ cobertura nominal 95 % con varianza 1.07 veces mayor (normal): 0.9419 
+ cobertura nominal 95 % con varianza 1.14 veces mayor (normal): 0.9336 
+
+== 9. Estacionalidad de la TRM: nsdiffs y fuerza estacional ==
+código de nsdiffs (líneas con 0.64):
+                  ...) > 0.64, ocsb = with(ocsb.test(x, maxlag = 3, 
+nsdiffs(trm) por defecto (seas): 0  | ocsb: 0 
+F_S (1 - Var(R)/Var(S+R)) = 0.13 
+
+== 10. Nilo: ARIMA(1,1,1), ψ∞ y cocientes de σ_h ==
+phi = 0.2544  theta = -0.8741  sigma2 = 19769.3 
+psi_inf = (1+theta)/(1-phi) = 0.1688 
+psi_j para j = 200..400 (último): 0.1688 
+sigma_30/sigma_1 = 1.404   sqrt(30) = 5.477 
+sigma_h aprox sigma*psi_inf*sqrt(h) para h = 30, 200: 1.404 vs 0.925 ; 2.61 vs 2.387 
+ARIMA(0,1,1) con theta = -1: psi_1..psi_5 = 0 0 0 0 0  Var h=1..4: 1 1 1 1 
+pronóstico ARIMA(1,1,1) del Nilo a 1 y 30 pasos: 816.18 842.17  ultimo dato: 740 
+ACF Nilo nivel rho1 = 0.498  rho1 de diff = -0.402 
+adf.test p = 0.064  kpss p = 0.01  pp.test p = 0.01 
+|raíz MA| y |raíz AR| del (1,1,1): 1.144 3.93 
+ndiffs(Nile) = 1 

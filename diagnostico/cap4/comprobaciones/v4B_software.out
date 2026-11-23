@@ -1,0 +1,171 @@
+R version 4.6.0 (2026-04-24) · forecast 9.0.2 · tseries 0.10.62 
+
+==== A. código de forecast 9.0.2: umbral de raíces y valores por defecto ====
+        minroot <- 2
+                  minroot <- min(minroot, abs(proots))
+                  minroot <- min(minroot, abs(proots))
+        if (minroot < 1 + 0.01 || checkarima(fit)) {
+aparece 1.001 o 1 + 0.001 en myarima: FALSE 
+ic: aicc · test: kpss · max.order: 5 · approximation: (length(x) > 150 || frequency(x) > 12) 
+Nile: length > 150 || frequency > 12 = FALSE 
+método en auto.arima (líneas con CSS-ML/CSS):
+    if (bestfit$ic == Inf && !isTRUE(method == "CSS")) {
+
+==== B. M7: trazas de auto.arima sobre el Nilo ====
+escalonada: 18 modelos · exhaustiva: 42 
+primeras cinco de la escalonada:
+ ARIMA(2,1,2) with drift         : Inf
+ ARIMA(0,1,0) with drift         : 1298.77
+ ARIMA(1,1,0) with drift         : 1283.598
+ ARIMA(0,1,1) with drift         : 1270.562
+ ARIMA(0,1,0)                    : 1296.738
+escalonada con Inf:
+ ARIMA(2,1,2) with drift         : Inf
+ ARIMA(2,1,2)                    : Inf
+ganadores: ARIMA(1,1,1) 1267.507 | ARIMA(1,1,1) 1267.507 
+                  modelo     aicc  dif
+            ARIMA(1,1,1) 1267.507 0.00
+ ARIMA(1,1,1) with drift 1268.063 0.56
+            ARIMA(0,1,2) 1268.210 0.70
+ ARIMA(0,1,2) with drift 1268.969 1.46
+            ARIMA(0,1,1) 1269.216 1.71
+            ARIMA(2,1,1) 1269.322 1.81
+            ARIMA(1,1,2) 1269.348 1.84
+            ARIMA(0,1,3) 1269.633 2.13
+ ARIMA(2,1,1) with drift 1269.777 2.27
+a menos de 2 puntos (incluido el ganador): 7 
+d en la exhaustiva: 1 · máx p+q: 5 
+
+==== C. M7: el ARIMA(2,1,2) del Nilo según el estimador ====
+CSS-ML deriva=FALSE logL = -630.169  min|raíz AR| = 1.000937  min|raíz MA| = 1.006377
+CSS-ML deriva=TRUE  logL = -629.335  min|raíz AR| = 1.000875  min|raíz MA| = 1.006130
+ML     deriva=FALSE logL = -630.445  min|raíz AR| = 2.240705  min|raíz MA| = 1.121803
+ML     deriva=TRUE  logL = -629.553  min|raíz AR| = 2.006354  min|raíz MA| = 1.076443
+stats::arima ML: logL -630.445, min|raíz AR| 2.2407
+
+==== D. M8 ====
+ARIMA(1,1,1) ML: phi 0.2544 theta -0.8741 · LB(20,fitdf=2) p 0.800 · Shapiro p 0.731
+raíz MA 1.144 · raíz AR 3.93
+d=2: theta -1.000000 sigma2 28268.34 · var(diff(Nile,1)) = 28268.34
+d=3: theta -0.999999 sigma2 80055.05 · var(diff(Nile,2)) = 80055.01
+rejilla d = 2 (ML): min|raíz MA| y BIC
+  (0,2,0) MA    -     BIC 1388.16
+  (1,2,0) MA    -     BIC 1343.96
+  (2,2,0) MA    -     BIC 1323.04
+  (0,2,1) MA 1.000000 BIC 1296.33
+  (1,2,1) MA 1.000001 BIC 1284.45
+  (2,2,1) MA 1.000001 BIC 1283.46
+  (0,2,2) MA 1.000014 BIC 1273.50
+  (1,2,2) MA 1.031564 BIC 1274.51
+  (2,2,2) MA 1.048272 BIC 1278.57
+Nilo: r1 0.498 · var(diff)/var 0.987 · 2(1-r1) 1.003
+log(lynx): var 1.653 -> 0.687 (reducción 58.4 %) · r1(diff) 0.565
+ndiffs kpss/adf/pp: 0 0 0 
+adf.test p 0.010 · kpss.test p 0.100 · PP.test p 0.0100 · pp.test p 0.010
+ARIMA(2,1,1) log(lynx): |raíz MA| 1.00000
+medias: antes de 1899 1097.75 · desde 1899 849.97
+escalón: beta -247.78 e.e. 28.15 t -8.80 AICc 1257.91 · LB(20) p 0.812 · sd resid 127.03
+mejor ARMA d = 0 (rejilla 0..2):
+ p q     aicc
+ 1 1 1282.499
+ 2 1 1283.177
+ 1 2 1283.698
+              rmse    mae
+arima       125.05 106.16
+escalon     127.99 106.99
+escalon_ar1 128.31 107.40
+naive       123.06 101.95
+media       133.31 108.01
+sd de los residuales: ARIMA(1,1,1) Arima 139.67 · arima ML 139.67
+
+==== E. M9 ====
+ARMA(1,1) media CSS-ML 920.56 · ML 920.70 · media muestral 919.35
+d0       h1 800.31 h30 918.99 dif1 0.254 dif2 -0.040903 ancho95 h1 561 h30 677
+d1       h1 816.18 h30 842.17 dif1 0.000 dif2 0.000000 ancho95 h1 557 h30 781
+d1drift  h1 799.19 h30 738.63 dif1 -2.883 dif2 -0.000000 ancho95 h1 555 h30 708
+d2       h1 724.16 h30 610.05 dif1 -4.049 dif2 0.000000 ancho95 h1 613 h30 2771
+aviso con d = 2 y deriva: No drift term fitted as the order of difference is 2 or more. 
+ARIMA(1,2,1): phi -0.3924 theta -0.999999 · 1/(1-phi) 0.7182
+cociente de segundas diferencias consecutivas h=3..8: -0.3924 -0.3924 -0.3924 -0.3924 -0.3924 -0.3924 
+psi_29 0.7182 · ancho con psi 2427.96 · ancho forecast 2771.45
+phi 0.2544 theta -0.8741 · psi_inf 0.1688 · psi_400 0.1688 · max|psi - cerrada| 5.0e-16
+sigma 142.045 · sigma_30 199.36 · sigma*sqrt(30) 778.02 · cociente 3.90 · sigma30/sigma1 1.404
+max|semiancho - 1.96 sigma_h| 9.08e-11
+recursión: max|∇ŷ - phi^(h-1)(phi∇y_T + theta e_T)| 1.9e-11 · límite 842.17
+qnorm(.975), qnorm(.90): 1.96 1.2816 
+
+==== F. M10 · Nilo ====
+adf p 0.064 · kpss p 0.010 · pp.test p 0.010 · PP.test p 0.0100 · r1 0.498
+ACF y PACF de diff(Nile), rezagos 1..6:
+       [,1]   [,2]   [,3]   [,4]   [,5]   [,6]
+acf  -0.402 -0.044  0.027 -0.088  0.001  0.047
+pacf -0.402 -0.246 -0.119 -0.173 -0.155 -0.074
+deriva -2.883 t -1.43 AICc 1268.06 frente a 1267.51 · media dif -3.84 · beta/99 -2.50
+(1,1,1) AICc 1267.51 BIC 1275.04 nobs 99
+(0,1,1) AICc 1269.22 BIC 1274.28 nobs 99
+(1,2,2) AICc 1264.60 BIC 1274.51 nobs 98
+rejilla d=1: min AICc 1 1 · min BIC 0 1 
+
+==== F. M10 · TRM ====
+n = 138 · acf1 niveles 0.964 
+       Dickey-Fuller      
+adf           -1.978 0.585
+kpss           2.243 0.010
+adf_d         -3.880 0.017
+kpss_d         0.241 0.100
+ndiffs 1 · nsdiffs 0 · nsdiffs ocsb 0 
+umbral de nsdiffs en el código:                 ...) > 0.64, ocsb = with(ocsb.test(x, maxlag = 3,  
+rho1 0.088 rho8 -0.190 banda 0.167 fuera: 8
+ p q     aicc      bic
+ 2 2 1703.381 1717.523
+ 0 0 1705.941 1708.831
+ 0 1 1706.699 1712.450
+ventaja del (2,1,2): 2.56
+(2,1,2): ar 0.6612 -0.9917 ma -0.622614 0.999963 · |AR| 1.004185 |MA| 1.000018406
+raíces AR 0.3334+0.9472i 0.3334-0.9472i · MA 0.3113+0.9503i 0.3113-0.9503i 
+dist. mín. entre raíces AR y MA: 0.0223 
+auto.arima exhaustivo: ARIMA(0,1,0) · líneas (2,1,2):
+ ARIMA(2,1,2)                               : Inf
+ ARIMA(2,1,2)            with drift         : Inf
+ ARIMA(2,1,2)(0,0,1)[12]                    : Inf
+ ARIMA(2,1,2)(0,0,1)[12] with drift         : Inf
+ ARIMA(2,1,2)(1,0,0)[12]                    : Inf
+ ARIMA(2,1,2)(1,0,0)[12] with drift         : Inf
+LB20 0.1890 LB12 0.2059 Shapiro 0.00063 LB12 cuadrados 0.8570 sigma 121.48
+deriva 8.0009 ee 10.36 t 0.77 · media dif 8.0009 · (yn-y1)/(n-1) 8.0009
+yT 3497.09 · semiancho24 1166.39 · [2330.70, 4663.48] · cociente 0.3335
+fuera 95 % a 1 mes 6 (arriba 5) de 137 · a 12: 11 de 126 (8.7 %) · kurt 5.09 / 2.83 · asim 0.761
+cubre 80 % a un mes 0.8394 · razones h=3,6,12: 1.097 1.144 1.069
+mayores alzas: 2020.167 470.2 2022.500 466.8 2015.583 291.4 
+binomial 5 de 6: 0.109 
+
+==== F. M10 · puente AirPassengers ====
+ARIMA(0,1,5) rho12 0.7245 rho24 0.6727 banda 0.1633 nobs 143
+ARIMA(8,1,3) with drift 0.437 
+airline rho12 -0.0515 LB24 p 0.2330 nobs 131
+
+==== F. M10 · ejercicios ====
+acf resid (0,1,1) 1..4: 0.0142 0.2483 0.1185 0.2087 banda 0.16 
+phi (1,1,1) 0.8799 · LB20 0.0340 -> 0.6216
+mejor d=2:
+ p q     aicc       ma
+ 1 2 515.8587 1.000001
+ 0 1 517.2199 1.336971
+AICc (1,1,1) 514.902 · nobs 149 y 148
+BJ psi_12 2.5593 límite 2.9883 · sigma12/(sigma sqrt12) 1.9619
+deriva 0.4001 t 1.5644 AICc 515.062 vs 514.902 · h12 266.99 vs 263.76
+lynx AR(2) phi 1.3776 -0.7399 periodo raíz 9.7839 · fórmula FPP3 10.0236 · LB20 0.0094
+var de log(lynx) por d=0..3: 1.6532 0.6871 0.6026 1.1532 
+r1 0.785 cociente 0.416 2(1-r1) 0.430 · auto.arima ARIMA(2,0,3) with non-zero mean
+sigma2 arima ML 19769.29 · Arima 20176.91 · razón 1.02062 · 99/97 1.02062 · SSR(Arima)/97 20176.91
+
+==== G. M9 c4-m9-10/-19: con theta fijo, ¿coinciden fórmula y forecast()? ====
+theta -0.90: razón ancho forecast()/fórmula en h=30 = 1.0000
+theta -0.99: razón ancho forecast()/fórmula en h=30 = 1.0355
+theta -1.00: razón ancho forecast()/fórmula en h=30 = 1.1415
+
+==== G. M10 c4-m10-71: divisores de sigma2 ====
+arima ML: sigma2 19769.29 · SSR(residuos)/99 19769.30 · SSR/100 19571.61
+
+==== G. M10 c4-m10-10: log-retornos de la TRM (remisión al cap. 3) ====
+n 137 · r1 0.105 · banda 0.167 · LB p (6, 10, 12, 20): 0.0931 0.0322 0.0601 0.0599 · auto.arima ARIMA(0,0,0) with zero mean

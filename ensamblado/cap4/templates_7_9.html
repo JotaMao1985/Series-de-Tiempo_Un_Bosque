@@ -18,23 +18,23 @@
       </div>
 
       <p>Hasta aquí la identificación ha sido artesanal: el explorador del Módulo 6 recorrió a mano los 27 modelos
-        de la rejilla. En 2008 Rob Hyndman y Yeasmin Khandakar publicaron un algoritmo que automatiza esa búsqueda,
-        y es el que ejecuta <code>auto.arima()</code>. Conviene entenderlo por dos razones opuestas: porque funciona
+        de la rejilla. <span data-afirma="c4-m7-01">En 2008 Rob Hyndman y Yeasmin Khandakar publicaron un algoritmo que automatiza esa búsqueda <cite class="cita" data-ref="hyndman2008automatic" data-loc="p. 1"><a href="#ref-m7-hyndman2008automatic" title="Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The forecast Package for R. Journal of Statistical Software, 27(3), 1-22. https://doi.org/10.18637/jss.v027.i03">(Hyndman y Khandakar, 2008, p. 1)</a></cite></span>,
+        <span data-afirma="c4-m7-02">y es el que ejecuta <code>auto.arima()</code> <cite class="cita" data-ref="hyndman2026forecast" data-loc="§Details"><a href="#ref-m7-hyndman2026forecast" title="Hyndman, R. J., Athanasopoulos, G., Bergmeir, C., Caceres, G., Chhay, L., Kuroptev, K., Mücke, M., O’Hara-Wild, M., Petropoulos, F., Razbash, S., Wang, E., y Yasmeen, F. (2026). forecast: Forecasting Functions for Time Series and Linear Models (Versión 9.0.2) [Software]. Comprehensive R Archive Network (CRAN). https://doi.org/10.32614/CRAN.package.forecast">(Hyndman et al., 2026, §Details)</a></cite></span>. Conviene entenderlo por dos razones opuestas: porque funciona
         sorprendentemente bien y hay que saber cuándo confiar en él, y porque <strong>no es una búsqueda
         exhaustiva</strong> y hay que saber cuándo desconfiar de él.</p>
 
       <div class="definition">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>El algoritmo, en cuatro pasos</h4>
         <ol>
-          <li><strong>Elegir $d$</strong> con pruebas sucesivas de KPSS: se diferencia mientras KPSS rechace la
-            estacionariedad. (Aquí está el punto débil que destapó el Módulo 3.)</li>
-          <li><strong>Ajustar cuatro modelos iniciales</strong> sobre la serie diferenciada: ARIMA($2,d,2$),
-            ARIMA($0,d,0$), ARIMA($1,d,0$) y ARIMA($0,d,1$), con constante si $d \le 1$, y un quinto, ARIMA($0,d,0$)
-            sin constante. El de menor AICc es el <em>modelo actual</em>.</li>
-          <li><strong>Buscar en el vecindario:</strong> se prueban las variantes del modelo actual con $p$, $q$ o
+          <li><span data-afirma="c4-m7-03"><strong>Elegir $d$</strong> con pruebas sucesivas de KPSS: se diferencia mientras KPSS rechace la
+            estacionariedad <cite class="cita" data-ref="hyndman2008automatic" data-loc="p. 10"><a href="#ref-m7-hyndman2008automatic" title="Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The forecast Package for R. Journal of Statistical Software, 27(3), 1-22. https://doi.org/10.18637/jss.v027.i03">(Hyndman y Khandakar, 2008, p. 10)</a></cite></span>. (Aquí está el punto débil que destapó el Módulo 3.)</li>
+          <li><span data-afirma="c4-m7-04"><strong>Ajustar cuatro modelos iniciales</strong> sobre la serie diferenciada: ARIMA($2,d,2$),
+            ARIMA($0,d,0$), ARIMA($1,d,0$) y ARIMA($0,d,1$), con constante si $d \le 1$ <cite class="cita" data-ref="hyndman2008automatic" data-loc="p. 11"><a href="#ref-m7-hyndman2008automatic" title="Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The forecast Package for R. Journal of Statistical Software, 27(3), 1-22. https://doi.org/10.18637/jss.v027.i03">(Hyndman y Khandakar, 2008, p. 11)</a></cite>, y un quinto, ARIMA($0,d,0$)
+            sin constante <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.7"><a href="#ref-m7-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.7)</a></cite></span>. <span data-afirma="c4-m7-05">El de menor AICc es el <em>modelo actual</em> <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.7"><a href="#ref-m7-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.7)</a></cite>; el artículo original elegía por AIC <cite class="cita" data-ref="hyndman2008automatic" data-loc="p. 11"><a href="#ref-m7-hyndman2008automatic" title="Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The forecast Package for R. Journal of Statistical Software, 27(3), 1-22. https://doi.org/10.18637/jss.v027.i03">(Hyndman y Khandakar, 2008, p. 11)</a></cite></span>.</li>
+          <li><span data-afirma="c4-m7-06"><strong>Buscar en el vecindario:</strong> se prueban las variantes del modelo actual con $p$, $q$ o
             ambos modificados en $\pm 1$, y con o sin constante. En cuanto una mejora el AICc, pasa a ser el modelo
-            actual y la búsqueda se reinicia desde él.</li>
-          <li><strong>Parar</strong> cuando ninguna variante del vecindario mejore.</li>
+            actual y la búsqueda se reinicia desde él <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.7"><a href="#ref-m7-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.7)</a></cite></span>.</li>
+          <li><span data-afirma="c4-m7-07"><strong>Parar</strong> cuando ninguna variante del vecindario mejore <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.7"><a href="#ref-m7-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.7)</a></cite></span>.</li>
         </ol>
         <div class="formula">
           $$\begin{aligned}
@@ -43,20 +43,17 @@
               &\text{con o sin } c
           \end{aligned}$$
         </div>
-        <p>Se descartan por el camino los ajustes que no convergen y los que tienen raíces demasiado cerca del
-          círculo unitario ($|\text{raíz}| &lt; 1.01$ en el código de <code>forecast</code>): a esos el algoritmo
-          les asigna AICc $=\infty$. Es lo que le pasa al ARIMA($2,1,2$) del Nilo con el ajuste que usa
-          <code>auto.arima</code>, el CSS-ML de <code>Arima()</code>: su menor raíz AR tiene módulo $1.001$. El
+        <p><span data-afirma="c4-m7-09">Se descartan por el camino los ajustes que no convergen y los que tienen raíces demasiado cerca del círculo unitario <cite class="cita" data-ref="hyndman2008automatic" data-loc="p. 11"><a href="#ref-m7-hyndman2008automatic" title="Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The forecast Package for R. Journal of Statistical Software, 27(3), 1-22. https://doi.org/10.18637/jss.v027.i03">(Hyndman y Khandakar, 2008, p. 11)</a></cite>: el artículo rechaza el modelo con alguna raíz de módulo menor que $1.001$, y el código de <code>forecast</code> (versión 9.0.2) usa $|\text{raíz}| &lt; 1.01$ y asigna a esos modelos AICc $=\infty$</span>. <span data-afirma="c4-m7-10">Es lo que le pasa al ARIMA($2,1,2$) del Nilo con el ajuste que usa
+          <code>auto.arima</code>, el CSS-ML de <code>Arima()</code>: su menor raíz AR tiene módulo $1.0009$, por debajo de los dos umbrales</span>. El
           explorador del Módulo 6, que ajusta por máxima verosimilitud exacta, muestra ese mismo modelo con la raíz
           AR en $2.241$ y sin aviso: es otro óptimo de la verosimilitud, algo peor ($\log L = -630.445$ frente a
           $-630.169$). La raíz depende del estimador; el bloque de código de más abajo da las dos.</p>
-        <p style="margin-bottom:0;">Si $n &gt; 150$ o la frecuencia es mayor que $12$, la búsqueda usa además una
-          verosimilitud aproximada (CSS) y al final reajusta el ganador con la exacta: es la opción
-          <code>approximation</code>. Con las $100$ observaciones del Nilo no se activa, así que los AICc de la traza
-          son exactos.</p>
+        <p style="margin-bottom:0;"><span data-afirma="c4-m7-11">Si $n &gt; 150$ o la frecuencia es mayor que $12$ <cite class="cita" data-ref="hyndman2026forecast" data-loc="§Usage"><a href="#ref-m7-hyndman2026forecast" title="Hyndman, R. J., Athanasopoulos, G., Bergmeir, C., Caceres, G., Chhay, L., Kuroptev, K., Mücke, M., O’Hara-Wild, M., Petropoulos, F., Razbash, S., Wang, E., y Yasmeen, F. (2026). forecast: Forecasting Functions for Time Series and Linear Models (Versión 9.0.2) [Software]. Comprehensive R Archive Network (CRAN). https://doi.org/10.32614/CRAN.package.forecast">(Hyndman et al., 2026, §Usage)</a></cite>, la búsqueda usa una verosimilitud aproximada (CSS) en lugar de la exacta y al final reajusta el ganador con la exacta <cite class="cita" data-ref="hyndman2026forecast" data-loc="§Arguments"><a href="#ref-m7-hyndman2026forecast" title="Hyndman, R. J., Athanasopoulos, G., Bergmeir, C., Caceres, G., Chhay, L., Kuroptev, K., Mücke, M., O’Hara-Wild, M., Petropoulos, F., Razbash, S., Wang, E., y Yasmeen, F. (2026). forecast: Forecasting Functions for Time Series and Linear Models (Versión 9.0.2) [Software]. Comprehensive R Archive Network (CRAN). https://doi.org/10.32614/CRAN.package.forecast">(Hyndman et al., 2026, §Arguments)</a></cite>: es la opción
+          <code>approximation</code></span>. <span data-afirma="c4-m7-60">Con las $100$ observaciones del Nilo no se activa, así que los AICc de la traza
+          son exactos.</span></p>
       </div>
 
-      <p>Sobre el Nilo, la búsqueda evalúa <strong>18 modelos</strong>. El simulador la recorre paso a paso:</p>
+      <p><span data-afirma="c4-m7-12">Sobre el Nilo, la búsqueda evalúa <strong>18 modelos</strong></span>. El simulador la recorre paso a paso:</p>
 
       <div class="simulador" data-simulador="traza-auto-arima">
         <h4><i class="fas fa-shoe-prints" aria-hidden="true"></i> La búsqueda, paso a paso</h4>
@@ -76,7 +73,7 @@
 
       <h3>Escalonada frente a exhaustiva</h3>
 
-      <p>La búsqueda escalonada evaluó $18$ modelos; la exhaustiva, $42$. Las dos llegan al mismo sitio:</p>
+      <p data-afirma="c4-m7-61">La búsqueda escalonada evaluó $18$ modelos; la exhaustiva, $42$. Las dos llegan al mismo sitio:</p>
 
       <div class="formula">
         $$\begin{aligned}
@@ -87,7 +84,7 @@
         \end{aligned}$$
       </div>
 
-      <p>Que coincidan es lo habitual, pero no está garantizado. Lo que sí revela la búsqueda completa es
+      <p>Aquí coinciden, pero <span data-afirma="c4-m7-13">no está garantizado que lo hagan <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.7"><a href="#ref-m7-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.7)</a></cite></span>. Lo que sí revela la búsqueda completa es
         <strong>cuán apretado está el podio</strong>:</p>
 
       <div class="diagram">
@@ -108,14 +105,11 @@
       </div>
 
       <div class="note">
-        <p><strong>Siete modelos a menos de $2$ puntos de AICc.</strong> Son el ganador, otros cuatro sin
-          constante —los del explorador del Módulo 6— y dos variantes con deriva. La regla de referencia habitual es
-          que
-          diferencias menores que $2$ no distinguen modelos. Es decir: <code>auto.arima</code> devuelve un ganador
-          con toda la seguridad de una sola línea de salida, y detrás de él hay <strong>seis candidatos
-          indistinguibles según el propio criterio</strong>, incluido el ARIMA($0,1,1$) que proponía el correlograma
-          del Módulo 4. La función no miente; simplemente no está diseñada para comunicar esa incertidumbre. Pedir
-          <code>trace = TRUE</code> no cuesta nada y la enseña.</p>
+        <p><span data-afirma="c4-m7-14"><strong>Siete modelos a menos de $2$ puntos de AICc.</strong> Son el ganador, otros cuatro sin
+          constante —los del explorador del Módulo 6— y dos variantes con deriva. Este capítulo toma por convención que diferencias menores que $2$ no distinguen modelos.</span> <span data-afirma="c4-m7-15">Es decir: <code>auto.arima</code> devuelve un ganador
+          con toda la seguridad de una sola línea de salida, y detrás de él hay <strong>seis candidatos indistinguibles según esa convención</strong>, incluido el ARIMA($0,1,1$) que proponía el correlograma
+          del Módulo 4.</span> <span data-afirma="c4-m7-16">La función no miente; simplemente no está diseñada para comunicar esa incertidumbre. Pedir
+          <code>trace = TRUE</code> no cuesta nada y la enseña.</span></p>
       </div>
 
       <div class="warning">
@@ -124,10 +118,10 @@
         <ul style="margin-bottom:0;">
           <li><strong>No mira el gráfico.</strong> Elige $d$ con KPSS, y en el Módulo 3 ya se vio lo que le pasa a
             KPSS con un cambio de nivel. Si la serie tiene un escalón, el algoritmo lo diferenciará.</li>
-          <li><strong>No garantiza el óptimo.</strong> La búsqueda escalonada explora un vecindario, no la rejilla
-            entera. Con series difíciles conviene contrastar con
-            <code>stepwise = FALSE, approximation = FALSE</code>, que es más lento y recorre todos los modelos con
-            $p + q \le 5$, aunque siempre con el mismo $d$ que eligió KPSS.</li>
+          <li><span data-afirma="c4-m7-17"><strong>No garantiza el óptimo.</strong> La búsqueda escalonada explora un vecindario, no la rejilla
+            entera <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.7"><a href="#ref-m7-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.7)</a></cite></span>. <span data-afirma="c4-m7-18">Con series difíciles conviene contrastar con
+            <code>stepwise = FALSE, approximation = FALSE</code> <cite class="cita" data-ref="hyndman2026forecast" data-loc="§Details"><a href="#ref-m7-hyndman2026forecast" title="Hyndman, R. J., Athanasopoulos, G., Bergmeir, C., Caceres, G., Chhay, L., Kuroptev, K., Mücke, M., O’Hara-Wild, M., Petropoulos, F., Razbash, S., Wang, E., y Yasmeen, F. (2026). forecast: Forecasting Functions for Time Series and Linear Models (Versión 9.0.2) [Software]. Comprehensive R Archive Network (CRAN). https://doi.org/10.32614/CRAN.package.forecast">(Hyndman et al., 2026, §Details)</a></cite>, que es más lento y recorre todos los modelos con
+            $p + q \le 5$ <cite class="cita" data-ref="hyndman2026forecast" data-loc="§Arguments"><a href="#ref-m7-hyndman2026forecast" title="Hyndman, R. J., Athanasopoulos, G., Bergmeir, C., Caceres, G., Chhay, L., Kuroptev, K., Mücke, M., O’Hara-Wild, M., Petropoulos, F., Razbash, S., Wang, E., y Yasmeen, F. (2026). forecast: Forecasting Functions for Time Series and Linear Models (Versión 9.0.2) [Software]. Comprehensive R Archive Network (CRAN). https://doi.org/10.32614/CRAN.package.forecast">(Hyndman et al., 2026, §Arguments)</a></cite></span>, <span data-afirma="c4-m7-19">aunque siempre con el mismo $d$ que eligió KPSS <cite class="cita" data-ref="hyndman2008automatic" data-loc="p. 10"><a href="#ref-m7-hyndman2008automatic" title="Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The forecast Package for R. Journal of Statistical Software, 27(3), 1-22. https://doi.org/10.18637/jss.v027.i03">(Hyndman y Khandakar, 2008, p. 10)</a></cite></span>.</li>
           <li><strong>No sabe si el modelo tiene sentido.</strong> Optimiza un criterio numérico. Que la forma del
             pronóstico resultante sea razonable para el fenómeno le corresponde a quien modela (Módulo 9).</li>
         </ul>
@@ -227,6 +221,16 @@ print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
 
       <p>Por un camino o por otro, artesanal o automático, el modelo elegido todavía hay que diagnosticarlo. De eso
         se ocupa el Módulo 8, y ahí el Nilo guarda una sorpresa.</p>
+      <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
+        <h4>Fuentes citadas en este módulo</h4>
+        <!--FUENTES-MODULO:inicio-->
+        <ul class="lista-fuentes">
+          <li id="ref-m7-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+          <li id="ref-m7-hyndman2026forecast">Hyndman, R. J., Athanasopoulos, G., Bergmeir, C., Caceres, G., Chhay, L., Kuroptev, K., Mücke, M., O’Hara-Wild, M., Petropoulos, F., Razbash, S., Wang, E., y Yasmeen, F. (2026). <em>forecast: Forecasting Functions for Time Series and Linear Models</em> (Versión 9.0.2) [Software]. Comprehensive R Archive Network (CRAN). <a target="_blank" rel="noopener" href="https://doi.org/10.32614/CRAN.package.forecast">https://doi.org/10.32614/CRAN.package.forecast</a></li>
+          <li id="ref-m7-hyndman2008automatic">Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The <strong>forecast</strong> Package for <em>R</em>. <em>Journal of Statistical Software</em>, <em>27</em>(3), 1-22. <a target="_blank" rel="noopener" href="https://doi.org/10.18637/jss.v027.i03">https://doi.org/10.18637/jss.v027.i03</a></li>
+        </ul>
+        <!--FUENTES-MODULO:fin-->
+      </aside>
     </div>
   </template>
 
@@ -248,22 +252,22 @@ print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
         </div>
       </div>
 
-      <p>El diagnóstico de residuales es el del Capítulo 3 y no cambia: correlograma dentro de la banda, Ljung–Box
-        con <code>fitdf = p + q</code>, media cero, varianza estable. El ARIMA($1,1,1$) del Nilo lo pasa con holgura
-        —Ljung–Box(20) $p = 0.800$, Shapiro $p = 0.731$— y ahí terminaría el capítulo si el diagnóstico se agotara
+      <p>El diagnóstico de residuales es el del Capítulo 3 y no cambia: <span data-afirma="c4-m8-01">correlograma dentro de la banda, Ljung–Box
+        con <code>fitdf = p + q</code> <cite class="cita" data-ref="rcoreteam2026r" data-loc="§Details"><a href="#ref-m8-rcoreteam2026r" title="R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/">(R Core Team, 2026, §Details)</a></cite>, media cero, varianza estable <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§5.4"><a href="#ref-m8-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §5.4)</a></cite></span>. El ARIMA($1,1,1$) del Nilo lo pasa con holgura
+        —Ljung–Box(20) $p = 0.800$, <span data-afirma="c4-m8-02">Shapiro $p = 0.731$ <cite class="cita" data-ref="rcoreteam2026r" data-loc="§Description"><a href="#ref-m8-rcoreteam2026r" title="R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/">(R Core Team, 2026, §Description)</a></cite></span>— y ahí terminaría el capítulo si el diagnóstico se agotara
         en los residuales. No se agota.</p>
 
       <h3>La sobrediferenciación tiene una firma exacta</h3>
 
-      <p>Si se diferencia de más, el modelo lo compensa introduciendo una <strong>raíz unitaria en la parte
-        MA</strong>: el factor $(1+\theta B)$ se convierte en $(1-B)$ y cancela la diferencia sobrante. En el caso
+      <p><span data-afirma="c4-m8-03">Si se diferencia de más, el modelo lo compensa introduciendo una <strong>raíz unitaria en la parte
+        MA</strong> <cite class="cita" data-ref="cryer2008time" data-loc="p. 127"><a href="#ref-m8-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 127)</a></cite>: el factor $(1+\theta B)$ se convierte en $(1-B)$ y cancela la diferencia sobrante.</span> En el caso
         más simple, si $w_t = \nabla y_t$ ya es ruido blanco, una diferencia más produce</p>
 
       <div class="formula">
         $$\nabla^2 y_t = (1-B)\,w_t = \varepsilon_t - \varepsilon_{t-1},$$
       </div>
 
-      <p>que es un MA(1) con $\theta = -1$ exactamente. No es una metáfora, es álgebra, y se ve en el número:</p>
+      <p><span data-afirma="c4-m8-04">que es un MA(1) con $\theta = -1$ exactamente <cite class="cita" data-ref="cryer2008time" data-loc="p. 126"><a href="#ref-m8-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 126)</a></cite></span>. No es una metáfora, es álgebra, y se ve en el número:</p>
 
       <div class="simulador" data-simulador="sobrediferenciacion">
         <h4><i class="fas fa-scissors" aria-hidden="true"></i> Diferenciar de más, y verlo</h4>
@@ -301,28 +305,27 @@ print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
       <p>En $d = 2$ y $d = 3$ el $\hat\theta$ se clava en $-1$ y la raíz MA queda sobre el círculo unidad: el
         término MA está deshaciendo la diferencia que se acaba de imponer.</p>
 
-      <p>Hay una prueba más de que el MA está deshaciendo la diferencia. Con $\hat\theta = -1$, el MA(1) ajustado
+      <p>Hay una prueba más de que el MA está deshaciendo la diferencia. <span data-afirma="c4-m8-05">Con $\hat\theta = -1$, el MA(1) ajustado
         sobre $\nabla^2 y$ da $\hat\sigma^2 = 28\,268.34$, que es exactamente $\operatorname{Var}(\nabla y)$: el
         modelo ha recuperado la serie con una sola diferencia. Con $d = 3$ ocurre lo mismo, y su $\hat\sigma^2 =
-        80\,055.05$ reproduce la varianza de $\nabla^2 y$, que es $80\,055.01$.</p>
+        80\,055.05$ reproduce la varianza de $\nabla^2 y$, que es $80\,055.01$.</span></p>
 
-      <p>Y esto explica de golpe lo que se veía en la rejilla del Módulo 6. De los nueve modelos con $d = 2$,
-        <strong>cuatro tienen $|\text{raíz MA}| = 1.000$ exactamente</strong>: los ARIMA($0,2,1$), ($0,2,2$),
+      <p>Y esto explica de golpe lo que se veía en la rejilla del Módulo 6. <span data-afirma="c4-m8-06">De los nueve modelos con $d = 2$,
+        <strong>cuatro tienen $|\text{raíz MA}| = 1.000$ a tres decimales</strong>: los ARIMA($0,2,1$), ($0,2,2$),
         ($1,2,1$) y ($2,2,1$). Entre ellos está el mejor por BIC de ese grupo. La rejilla no solo premia modelos con
-        un $d$ equivocado: premia los que son <em>numéricamente degenerados</em>.</p>
+        un $d$ equivocado: premia los que son <em>numéricamente degenerados</em>.</span></p>
 
       <div class="warning">
         <h4><i class="fas fa-triangle-exclamation mr-2" aria-hidden="true"></i>La columna de la varianza no
           decide $d$</h4>
         <p>Es tentador leer la tabla con la regla «si al diferenciar la varianza sube, te has pasado». En el Nilo
-          coincide con lo demás, pero <strong>no es una evidencia aparte</strong>: como mostró el Capítulo 2
+          coincide con lo demás, pero <strong>no es una evidencia aparte</strong>: <span data-afirma="c4-m8-60">como mostró el Capítulo 2
           (Módulo 2.7), en una serie estacionaria el cociente de varianzas al diferenciar se acerca a $2(1-r_1)$,
-          así que la varianza repite lo que dice $r_1$, y $r_1$ solo no dice si hay una raíz unitaria. Sobre
-          <code>log(lynx)</code>, diferenciar <em>reduce</em> la varianza un $58\,\%$ ($1.653 \to 0.687$) y aun así
-          $d = 1$ sobra, como coinciden en señalar ADF, KPSS y Phillips–Perron. Lo que sí lo detecta ahí es la
-          raíz: el ARIMA($2,1,1$) sobre esa serie da $|\text{raíz MA}| = 1.000$. <strong>Hay que mirar siempre las
-          raíces.</strong> El $\hat\rho_1$ de la serie diferenciada no avisa aquí: vale $0.565$, positivo y lejos de
-          $-0.5$, que es la manera en que ese indicio falla (Módulo 2.7). (Es el ejercicio 2 de este
+          así que la varianza repite lo que dice $r_1$, y $r_1$ solo no dice si hay una raíz unitaria.</span> Sobre
+          <code>log(lynx)</code>, diferenciar <em>reduce</em> la varianza un $58\,\%$ ($1.653 \to 0.687$) y <span data-afirma="c4-m8-10">aun así $d = 1$ sobra: una serie con ciclos de longitud no fija, como la del lince, es estacionaria <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.1"><a href="#ref-m8-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.1)</a></cite>, y ADF, KPSS y Phillips–Perron coinciden en no diferenciar</span>. <span data-afirma="c4-m8-11">Lo que sí lo detecta ahí es la
+          raíz: el ARIMA($2,1,1$) sobre esa serie da $|\text{raíz MA}| = 1.000$ <cite class="cita" data-ref="cryer2008time" data-loc="p. 127"><a href="#ref-m8-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 127)</a></cite></span>. <strong>Hay que mirar siempre las
+          raíces.</strong> <span data-afirma="c4-m8-61">El $\hat\rho_1$ de la serie diferenciada no avisa aquí: vale $0.565$, positivo y lejos de
+          $-0.5$ <cite class="cita" data-ref="hamilton1994time" data-loc="p. 49"><a href="#ref-m8-hamilton1994time" title="Hamilton, J. D. (1994). Time series analysis. Princeton University Press.">(Hamilton, 1994, p. 49)</a></cite>, que es la manera en que ese indicio falla (Módulo 2.7).</span> (Es el ejercicio 2 de este
           capítulo.)</p>
       </div>
 
@@ -331,35 +334,33 @@ print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
       <p>Queda por cerrar lo que quedó pendiente. En el Módulo 1 apareció que integrar la serie del Nilo con sus
         coeficientes estimados <em>casi no cambia la varianza</em> (razón $1.006$), porque $\theta = -0.874$ está cerca
         de $-1$. En el Módulo 3, que dos de las tres pruebas de raíz unitaria dicen que no hay que diferenciar, y que
-        KPSS —la que usa <code>auto.arima</code>— rechaza el $100\,\%$ de las veces cuando hay un escalón. Las dos
+        KPSS —<span data-afirma="c4-m8-65">la que usa <code>auto.arima</code> <cite class="cita" data-ref="hyndman2008automatic" data-loc="p. 10"><a href="#ref-m8-hyndman2008automatic" title="Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The forecast Package for R. Journal of Statistical Software, 27(3), 1-22. https://doi.org/10.18637/jss.v027.i03">(Hyndman y Khandakar, 2008, p. 10)</a></cite></span>— rechaza el $100\,\%$ de las veces cuando hay un escalón. Las dos
         piezas encajan en una sola explicación.</p>
 
-      <p>La serie cae de una media de $1097.75$ antes de 1899 a $849.97$ desde ese año, que coincide con la
-        construcción de la presa baja de Asuán. La alternativa a la raíz unitaria es un escalón: el modelo de dos
-        medias del Módulo 3, con $d = 0$ y un solo regresor, que vale $1$ desde 1899,</p>
+      <p>La serie cae de una media de $1097.75$ antes de 1899 a $849.97$ desde ese año, y <span data-afirma="c4-m8-12">la ayuda de R de la serie señala un cambio aparente cerca de 1898 <cite class="cita" data-ref="rcoreteam2026r" data-loc="§Description"><a href="#ref-m8-rcoreteam2026r" title="R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/">(R Core Team, 2026, §Description)</a></cite></span>. La alternativa a la raíz unitaria es <span data-afirma="c4-m8-14">un escalón: el modelo de dos
+        medias del Módulo 3, con $d = 0$ y un solo regresor, que vale $1$ desde 1899 <cite class="cita" data-ref="cryer2008time" data-loc="p. 251"><a href="#ref-m8-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 251)</a></cite></span>,</p>
 
       <div class="formula">
         $$y_t = \mu + \beta\,\mathbf{1}\{t \ge 1899\} + \varepsilon_t$$
         $$\begin{gathered} \hat{\beta}_{1899} = -247.78 \\ \text{e.e.} = 28.15, \qquad t = -8.80 \end{gathered}$$
       </div>
 
-      <p>Con ese modelo el resultado es contundente <strong>dentro de su propio $d$</strong>: AICc $1257.91$ frente a
-        $1282.50$ del mejor ARMA sin escalón, casi $25$ puntos, y sus residuales pasan Ljung–Box(20) con
+      <p>Con ese modelo el resultado es contundente <span data-afirma="c4-m8-15"><strong>dentro de su propio $d$</strong>: AICc $1257.91$ frente a
+        $1282.50$ del mejor ARMA sin escalón <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.9"><a href="#ref-m8-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.9)</a></cite></span>, casi $25$ puntos, y sus residuales pasan Ljung–Box(20) con
         $p = 0.812$.</p>
 
       <div class="note">
-        <p><strong>La lectura honesta.</strong> El ARIMA($1,1,1$) probablemente está diferenciando una serie que no
-          tiene raíz unitaria, sino un cambio de nivel; y su $\theta$ cercano a $-1$ es el modelo intentando deshacer
-          esa diferencia de más. Box–Jenkins no tiene una etapa para "detectar intervenciones", así que la absorbe
-          subiendo $d$. Por eso la etapa 1 del ciclo empieza mirando el gráfico y no lanzando pruebas.</p>
+        <p><strong>La lectura honesta.</strong> <span data-afirma="c4-m8-16">El ARIMA($1,1,1$) probablemente está diferenciando una serie que no
+          tiene raíz unitaria, sino un cambio de nivel</span>; y <span data-afirma="c4-m8-62">su $\theta$ cercano a $-1$ es el modelo intentando deshacer
+          esa diferencia de más <cite class="cita" data-ref="cryer2008time" data-loc="p. 127"><a href="#ref-m8-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 127)</a></cite></span>. <span data-afirma="c4-m8-17">Un ARIMA sin término de intervención no tiene dónde poner el cambio de nivel <cite class="cita" data-ref="cryer2008time" data-loc="p. 250"><a href="#ref-m8-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 250)</a></cite>, así que lo absorbe subiendo $d$.</span> Por eso la etapa 1 del ciclo empieza mirando el gráfico y no lanzando pruebas.</p>
       </div>
 
       <div class="warning">
-        <p><strong>Y ahora la parte incómoda.</strong> Todo lo anterior es evidencia dentro de muestra. Comparar el
-          escalón contra el ARIMA($1,1,1$) por AICc <strong>no se puede</strong>: uno tiene $d=0$ y el otro $d=1$.
-          La comparación válida es fuera de muestra. Se entrena hasta 1950, se pronostican los 20 años siguientes y se
-          miden la raíz del error cuadrático medio (RMSE) y el error absoluto medio (MAE) de esos 20 pronósticos. El
-          <em>naïve</em> repite siempre el último valor observado: es la caminata aleatoria.</p>
+        <p><strong>Y ahora la parte incómoda.</strong> Todo lo anterior es evidencia dentro de muestra. <span data-afirma="c4-m8-18">Comparar el
+          escalón contra el ARIMA($1,1,1$) por AICc <strong>no se puede</strong>: uno tiene $d=0$ y el otro $d=1$ <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.6"><a href="#ref-m8-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.6)</a></cite>.
+          La comparación válida es fuera de muestra <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.9"><a href="#ref-m8-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.9)</a></cite>.</span> Se entrena hasta 1950, se pronostican los 20 años siguientes y se
+          miden la raíz del error cuadrático medio (RMSE) y el error absoluto medio (MAE) de esos 20 pronósticos. <span data-afirma="c4-m8-63">El
+          <em>naïve</em> repite siempre el último valor observado: es la caminata aleatoria <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§5.2"><a href="#ref-m8-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §5.2)</a></cite></span>.</p>
         <table style="position:relative;">
           <thead><tr><th>Modelo</th><th>RMSE</th><th>MAE</th></tr></thead>
           <tbody>
@@ -375,8 +376,8 @@ print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
           sobreinterpretarlo:
           el rango completo va de $123$ a $133$ mientras la desviación típica de los residuales es $139.67$, así
           que <em>ninguna</em> de estas diferencias es grande. La conclusión no es "el naïve es mejor", sino que
-          <strong>una ventaja de ajuste dentro de muestra no se traduce automáticamente en capacidad de
-          pronóstico</strong>. Medir eso con seriedad —con más de un origen, y preguntándose si la diferencia es
+          <span data-afirma="c4-m8-20"><strong>una ventaja de ajuste dentro de muestra no se traduce automáticamente en capacidad de
+          pronóstico</strong> <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§5.8"><a href="#ref-m8-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §5.8)</a></cite></span>. Medir eso con seriedad —con más de un origen, y preguntándose si la diferencia es
           significativa— es el Capítulo 6.</p>
       </div>
 
@@ -469,9 +470,21 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
         </div>
       </div>
 
-      <p>Lo que sí separa de raíz a estos modelos es lo que dicen del futuro lejano: el escalón pronostica un nivel
-        fijo con una banda que no se ensancha, y el ARIMA($1,1,1$), una banda que no deja de abrirse. Esa diferencia
-        no la deciden los coeficientes sino $d$, y es el tema del Módulo 9.</p>
+      <p>Lo que sí separa de raíz a estos modelos es lo que dicen del futuro lejano: <span data-afirma="c4-m8-64">el escalón pronostica un nivel
+        fijo con una banda que no se ensancha, y el ARIMA($1,1,1$), una banda que no deja de abrirse <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.8"><a href="#ref-m8-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.8)</a></cite>. Esa diferencia
+        no la deciden los coeficientes sino $d$ <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.5"><a href="#ref-m8-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.5)</a></cite></span>, y es el tema del Módulo 9.</p>
+      <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
+        <h4>Fuentes citadas en este módulo</h4>
+        <!--FUENTES-MODULO:inicio-->
+        <ul class="lista-fuentes">
+          <li id="ref-m8-cryer2008time">Cryer, J. D., y Chan, K.-S. (2008). <em>Time Series Analysis</em> (2.ª ed.). Springer New York. <a target="_blank" rel="noopener" href="https://doi.org/10.1007/978-0-387-75959-3">https://doi.org/10.1007/978-0-387-75959-3</a></li>
+          <li id="ref-m8-hamilton1994time">Hamilton, J. D. (1994). <em>Time series analysis</em>. Princeton University Press.</li>
+          <li id="ref-m8-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+          <li id="ref-m8-hyndman2008automatic">Hyndman, R. J., y Khandakar, Y. (2008). Automatic Time Series Forecasting: The <strong>forecast</strong> Package for <em>R</em>. <em>Journal of Statistical Software</em>, <em>27</em>(3), 1-22. <a target="_blank" rel="noopener" href="https://doi.org/10.18637/jss.v027.i03">https://doi.org/10.18637/jss.v027.i03</a></li>
+          <li id="ref-m8-rcoreteam2026r">R Core Team. (2026). <em>R: A Language and Environment for Statistical Computing</em> (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. <a target="_blank" rel="noopener" href="https://www.R-project.org/">https://www.R-project.org/</a></li>
+        </ul>
+        <!--FUENTES-MODULO:fin-->
+      </aside>
     </div>
   </template>
 
@@ -493,9 +506,9 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
         </div>
       </div>
 
-      <p>Aquí es donde la elección de $d$ deja de ser un tecnicismo. Los coeficientes ARMA gobiernan los primeros
-        pasos del pronóstico; a partir de cierto horizonte se agotan y lo único que queda en pie es
-        <strong>$d$ y la constante</strong>. Dos modelos con un ajuste casi idéntico y distinto $d$ pronostican cosas
+      <p>Aquí es donde la elección de $d$ deja de ser un tecnicismo. <span data-afirma="c4-m9-01">Los coeficientes ARMA gobiernan los primeros
+        pasos del pronóstico; a partir de cierto horizonte se agotan <cite class="cita" data-ref="cryer2008time" data-loc="p. 200"><a href="#ref-m9-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 200)</a></cite> y la forma que queda la deciden
+        <strong>$d$ y la constante</strong> <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.5"><a href="#ref-m9-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.5)</a></cite></span>. Dos modelos con un ajuste casi idéntico y distinto $d$ pronostican cosas
         cualitativamente diferentes a largo plazo.</p>
 
       <div class="simulador" data-simulador="forma-pronostico">
@@ -516,25 +529,25 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
             <tr><th>Modelo</th><th>Forma a largo plazo</th><th>Medido: $\nabla\hat y$ y $\nabla^2\hat y$ en $h=30$</th><th>Ancho 95 %: $h=1 \to h=30$</th></tr>
           </thead>
           <tbody>
-            <tr><td>ARIMA($1,0,1$) con media</td><td>Vuelve a la media $920.56$ (con el ajuste CSS-ML de
-              <code>Arima()</code>; por máxima verosimilitud, la del Módulo 5, es $920.70$)</td>
+            <tr><td>ARIMA($1,0,1$) con media</td><td><span data-afirma="c4-m9-03">Vuelve a la media $920.56$ <cite class="cita" data-ref="cryer2008time" data-loc="p. 200"><a href="#ref-m9-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 200)</a></cite></span> (con <span data-afirma="c4-m9-62">el ajuste CSS-ML de
+              <code>Arima()</code> <cite class="cita" data-ref="hyndman2026forecast" data-loc="§Arguments"><a href="#ref-m9-hyndman2026forecast" title="Hyndman, R. J., Athanasopoulos, G., Bergmeir, C., Caceres, G., Chhay, L., Kuroptev, K., Mücke, M., O’Hara-Wild, M., Petropoulos, F., Razbash, S., Wang, E., y Yasmeen, F. (2026). forecast: Forecasting Functions for Time Series and Linear Models (Versión 9.0.2) [Software]. Comprehensive R Archive Network (CRAN). https://doi.org/10.32614/CRAN.package.forecast">(Hyndman et al., 2026, §Arguments)</a></cite></span>; por máxima verosimilitud, la del Módulo 5, es $920.70$)</td>
               <td>$\nabla\hat y = 0.25$, tiende a $0$</td><td>$561 \to 677$</td></tr>
-            <tr><td>ARIMA($1,1,1$) sin constante</td><td><strong>Se aplana</strong> en $842.17$: no en el
+            <tr><td>ARIMA($1,1,1$) sin constante</td><td><span data-afirma="c4-m9-04"><strong>Se aplana</strong> en $842.17$ <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.5"><a href="#ref-m9-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.5)</a></cite></span>: no en el
               último dato ($740$), sino en el nivel al que lo lleva la parte ARMA</td>
               <td>$\nabla\hat y = 0.00$</td><td>$557 \to 781$</td></tr>
-            <tr><td>ARIMA($1,1,1$) con deriva</td><td><strong>Recta</strong> de pendiente $\hat\delta$</td>
+            <tr><td>ARIMA($1,1,1$) con deriva</td><td><span data-afirma="c4-m9-60"><strong>Recta</strong> de pendiente $\hat\delta$ <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.5"><a href="#ref-m9-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.5)</a></cite></span></td>
               <td>$\nabla\hat y = -2.88$, $\nabla^2\hat y = 0$</td><td>$555 \to 708$</td></tr>
-            <tr><td>ARIMA($1,2,1$)</td><td><strong>Recta también</strong>, no una parábola</td>
+            <tr><td>ARIMA($1,2,1$)</td><td><span data-afirma="c4-m9-05"><strong>Recta también</strong>, no una parábola <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.5"><a href="#ref-m9-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.5)</a></cite></span></td>
               <td>$\nabla\hat y = -4.05$, $\nabla^2\hat y = 0$</td><td>$613 \to \mathbf{2771}$</td></tr>
           </tbody>
         </table>
       </div>
 
       <p>La fila del ARIMA($1,1,1$) sin constante merece una línea, porque es fácil leerla mal: el pronóstico
-        <strong>no se queda en el último dato</strong>. Parte de $740$ (1970), pasa a $816.18$ en $h = 1$ y se
+        <strong>no se queda en el último dato</strong>. <span data-afirma="c4-m9-67">Parte de $740$ (1970), pasa a $816.18$ en $h = 1$ y se
         aplana en $842.17$. Con $d = 1$, la parte ARMA sigue moviendo la diferencia pronosticada durante unos
         pasos, $\nabla\hat y_{T+h} = \hat\phi^{\,h-1}(\hat\phi\,\nabla y_T + \hat\theta\,\hat\varepsilon_T)$, y al
-        sumarlos el nivel converge a</p>
+        sumarlos el nivel converge a</span></p>
 
       <div class="formula">
         $$\hat y_{T+\infty} = y_T + \frac{\hat\phi\,\nabla y_T + \hat\theta\,\hat\varepsilon_T}{1-\hat\phi}$$
@@ -544,28 +557,28 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
         comprueba.</p>
 
       <div class="note">
-        <p><strong>Con $d = 2$ el pronóstico es una recta, no una parábola</strong>, y vale la pena entender por
-          qué, porque es un caso donde el software toma una decisión metodológica por quien modela. La segunda
+        <p><span data-afirma="c4-m9-68"><strong>Con $d = 2$ el pronóstico es una recta, no una parábola</strong> <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.5"><a href="#ref-m9-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.5)</a></cite></span>, y vale la pena entender por
+          qué, porque es un caso donde el software toma una decisión metodológica por quien modela. <span data-afirma="c4-m9-06">La segunda
           diferencia del pronóstico decae como $\hat\phi^{\,h}$, con $\hat\phi = -0.39$, y en $h = 30$ ya es nula a
-          efectos prácticos: la curva termina en una recta. Para obtener la parábola haría falta una constante con
+          efectos prácticos: la curva termina en una recta.</span> <span data-afirma="c4-m9-07">Para obtener la parábola haría falta una constante con
           $d = 2$, y <code>forecast::Arima</code> <strong>se niega</strong>: avisa <em>"No drift term fitted as the
-          order of difference is 2 or more"</em> y la descarta. No es un bug, es una decisión deliberada: extrapolar
-          una parábola a 30 pasos produce disparates. Lo que sí delata a $d = 2$ es el intervalo: pasa de $613$ a
+          order of difference is 2 or more"</em> y la descarta <cite class="cita" data-ref="hyndman2026forecast" data-loc="§Arguments"><a href="#ref-m9-hyndman2026forecast" title="Hyndman, R. J., Athanasopoulos, G., Bergmeir, C., Caceres, G., Chhay, L., Kuroptev, K., Mücke, M., O’Hara-Wild, M., Petropoulos, F., Razbash, S., Wang, E., y Yasmeen, F. (2026). forecast: Forecasting Functions for Time Series and Linear Models (Versión 9.0.2) [Software]. Comprehensive R Archive Network (CRAN). https://doi.org/10.32614/CRAN.package.forecast">(Hyndman et al., 2026, §Arguments)</a></cite>. No es un bug, es una decisión deliberada: extrapolar
+          una parábola a 30 pasos produce disparates <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.7"><a href="#ref-m9-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.7)</a></cite>.</span> <span data-afirma="c4-m9-66">Lo que sí delata a $d = 2$ es el intervalo <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.5"><a href="#ref-m9-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.5)</a></cite></span>: pasa de $613$ a
           $2771$, tres veces y media más ancho que el de $d = 1$.</p>
-        <p style="margin-bottom:0;">Y ese ARIMA($1,2,1$) tiene $\hat\theta = -1$: es el modelo sobrediferenciado del
+        <p style="margin-bottom:0;"><span data-afirma="c4-m9-09">Y ese ARIMA($1,2,1$) tiene $\hat\theta = -1$: es el modelo sobrediferenciado del
           Módulo 8. Su MA cancela una de las dos diferencias, así que los $\psi_j$ tienden a
           $1/(1-\hat\phi) = 0.72$ en vez de a $0.169$. Eso explica buena parte del abanico (la banda del pronóstico, que se abre con el horizonte),
           pero no todo: con
           esos pesos, la fórmula de abajo da un ancho de $2428$ en $h = 30$, y <code>forecast()</code> devuelve
-          $2771$. La diferencia es el precio de la no invertibilidad —con $\hat\theta = -1$ los choques pasados
-          no se recuperan de los datos—, y el desarrollo del final del módulo lo explica.</p>
+          $2771$.</span> <span data-afirma="c4-m9-10">La diferencia es el precio de la no invertibilidad —con $\hat\theta = -1$ los choques pasados
+          no se recuperan de los datos <cite class="cita" data-ref="cryer2008time" data-loc="p. 197"><a href="#ref-m9-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 197)</a></cite>—, y el desarrollo del final del módulo lo explica.</span></p>
       </div>
 
       <h3>De dónde sale el ancho del intervalo</h3>
 
-      <p>El intervalo no es un adorno que añade el software: se deduce de los pesos $\psi$ de la representación
+      <p><span data-afirma="c4-m9-11">El intervalo no es un adorno que añade el software: se deduce de los pesos $\psi$ de la representación
         MA($\infty$) que se construyó en el Capítulo 3. Si $y_{T+h} = \hat{y}_{T+h|T} + \sum_{j=0}^{h-1}\psi_j
-        \varepsilon_{T+h-j}$, entonces el error de pronóstico a $h$ pasos tiene varianza:</p>
+        \varepsilon_{T+h-j}$, entonces el error de pronóstico a $h$ pasos tiene varianza <cite class="cita" data-ref="cryer2008time" data-loc="p. 202"><a href="#ref-m9-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 202)</a></cite></span>:</p>
 
       <div class="formula">
         $$\begin{gathered}
@@ -574,26 +587,26 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
         \end{gathered}$$
       </div>
 
-      <p>Como $\psi_0 = 1$ siempre, $\sigma_1 = \sigma$: <strong>a un paso, el intervalo lo determina solo la
-        desviación de los residuales</strong>. Los pesos se obtienen igualando coeficientes en
-        $\psi(B)\,\phi(B)(1-B)^d = \theta(B)$. Para el ARIMA($1,1,1$) del Nilo eso equivale a expandirlo como
-        ARMA($2,1$) —la derivación del Módulo 1— y da una forma cerrada:</p>
+      <p><span data-afirma="c4-m9-61">Como $\psi_0 = 1$ siempre, $\sigma_1 = \sigma$: <strong>a un paso, el intervalo lo determina solo la
+        desviación de los residuales</strong> <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.8"><a href="#ref-m9-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.8)</a></cite></span>. <span data-afirma="c4-m9-12">Los pesos se obtienen igualando coeficientes en
+        $\psi(B)\,\phi(B)(1-B)^d = \theta(B)$ <cite class="cita" data-ref="cryer2008time" data-loc="p. 202"><a href="#ref-m9-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 202)</a></cite>. Para el ARIMA($1,1,1$) del Nilo eso equivale a expandirlo como
+        ARMA($2,1$) <cite class="cita" data-ref="cryer2008time" data-loc="p. 201"><a href="#ref-m9-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 201)</a></cite></span> —la derivación del Módulo 1— y da una forma cerrada:</p>
 
-      <div class="formula">
+      <div class="formula" data-afirma="c4-m9-13">
         $$\psi_j = \frac{(1+\theta) - (\phi+\theta)\,\phi^{\,j}}{1-\phi}$$
         $$\xrightarrow[\;j\to\infty\;]{}\quad \psi_\infty = \frac{1+\theta}{1-\phi}$$
       </div>
 
-      <p>Con esos pesos se reconstruyen exactamente los intervalos que devuelve <code>forecast()</code>: el error
-        máximo de la comprobación es <strong>$9.1\times 10^{-11}$</strong>.</p>
+      <p><span data-afirma="c4-m9-14">Con esos pesos se reconstruyen exactamente los intervalos que devuelve <code>forecast()</code>: el error
+        máximo de la comprobación es <strong>$9.1\times 10^{-11}$</strong>.</span></p>
 
       <div class="simulador" data-simulador="pesos-psi-sigma">
         <h4><i class="fas fa-arrows-left-right" aria-hidden="true"></i> Los pesos $\psi$ y el ancho del
           intervalo</h4>
         <p class="simulador-intro">Arriba, los pesos $\psi_j$ del ARIMA($1,1,1$) del Nilo; en naranja, los
           $\psi_0,\dots,\psi_{h-1}$ que entran en $\sigma_h$. Abajo, $\sigma_h$ frente a $\sigma\sqrt{h}$, que es
-          exactamente lo que daría una <strong>caminata aleatoria con la misma $\sigma$</strong>: en un ARIMA($0,1,0$)
-          todos los pesos valen $\psi_j = 1$ y la fórmula se reduce a $\sigma\sqrt{h}$. Mueve el horizonte: el
+          exactamente lo que daría una <strong>caminata aleatoria con la misma $\sigma$</strong>: <span data-afirma="c4-m9-64">en un ARIMA($0,1,0$)
+          todos los pesos valen $\psi_j = 1$ y la fórmula se reduce a $\sigma\sqrt{h}$ <cite class="cita" data-ref="cryer2008time" data-loc="p. 202"><a href="#ref-m9-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 202)</a></cite></span>. Mueve el horizonte: el
           marcador recorre las dos curvas y la lectura da cuánto se separan.</p>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">Pesos $\psi_j$</p>
@@ -608,13 +621,13 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
       </div>
 
       <div class="note">
-        <p><strong>El peso límite dice cómo crece la incertidumbre.</strong> Como $\psi_j \to \psi_\infty$, para
+        <p><strong>El peso límite dice cómo crece la incertidumbre.</strong> <span data-afirma="c4-m9-15">Como $\psi_j \to \psi_\infty$, para
           horizontes grandes $\sigma_h \approx \sigma\,\psi_\infty\sqrt{h}$: el cociente contra la caminata
           aleatoria tiende al propio $\psi_\infty$. En el Nilo $\psi_\infty = (1+\theta)/(1-\phi) = 0.169$, así
           que a treinta años $\sigma_{30} = 199.4$ frente a los $778.0$ de una caminata con la misma $\sigma$:
-          <strong>cuatro veces menos incertidumbre</strong>. Y la razón vuelve a ser la misma de todo el capítulo:
+          <strong>cuatro veces menos incertidumbre</strong>.</span> <span data-afirma="c4-m9-16">Y la razón vuelve a ser la misma de todo el capítulo:
           con $\theta = -0.874$ el término MA cancela casi toda la integración, así que los choques no se
-          acumulan.</p>
+          acumulan.</span></p>
         <p style="margin-bottom:0;">No siempre es así. Sobre <code>BJsales</code> (ejercicio 3) el mismo tipo de
           modelo da $\psi_\infty = 2.99$: a doce pasos $\sigma_h$ ya es $1.96$ veces el de una caminata, y el
           cociente sigue subiendo hacia $2.99$. Mirar $\psi_\infty$ cuesta una línea y dice más sobre el pronóstico
@@ -630,22 +643,22 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
         <div class="derivacion-panel" id="der-sigma-h" hidden>
           <ol class="derivacion-pasos">
             <li>
-              <p>Todo ARIMA puede escribirse, desde un origen dado, en función de sus choques, con pesos $\psi_j$
-                definidos por $\psi(B)\,\phi(B)(1-B)^d = \theta(B)$. Con $d \ge 1$ la suma no converge si se lleva
-                al infinito, pero basta separar lo que ya se conoce en $T$ de lo que aún no ha ocurrido:</p>
+              <p><span data-afirma="c4-m9-63">Todo ARIMA puede escribirse, desde un origen dado, en función de sus choques, con pesos $\psi_j$
+                definidos por $\psi(B)\,\phi(B)(1-B)^d = \theta(B)$ <cite class="cita" data-ref="cryer2008time" data-loc="p. 200"><a href="#ref-m9-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 200)</a></cite>. Con $d \ge 1$ la suma no converge si se lleva
+                al infinito, pero basta separar lo que ya se conoce en $T$ de lo que aún no ha ocurrido:</span></p>
               $$y_{T+h} = \underbrace{m_{T+h}}_{\text{conocido en } T} + \sum_{j=0}^{h-1}\psi_j\,\varepsilon_{T+h-j}$$
               <p>donde $m_{T+h}$ reúne la constante, los valores observados y los choques
                 $\varepsilon_T, \varepsilon_{T-1},\dots$</p>
             </li>
             <li>
               <p>En el instante $T$ se conocen $\varepsilon_T, \varepsilon_{T-1},\dots$ pero no
-                $\varepsilon_{T+1},\dots,\varepsilon_{T+h}$. El pronóstico óptimo en error cuadrático medio sustituye
-                esos $h$ errores futuros por su esperanza, cero:</p>
+                $\varepsilon_{T+1},\dots,\varepsilon_{T+h}$. <span data-afirma="c4-m9-17">El pronóstico óptimo en error cuadrático medio <cite class="cita" data-ref="cryer2008time" data-loc="p. 191"><a href="#ref-m9-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 191)</a></cite> sustituye
+                esos $h$ errores futuros por su esperanza, cero <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.8"><a href="#ref-m9-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.8)</a></cite></span>:</p>
               $$\hat{y}_{T+h|T} = m_{T+h}$$
-              <p>Ese paso supone que el modelo es <strong>invertible</strong>: solo así los choques pasados se
-                recuperan de los datos observados. Si no lo es —un $\theta$ en $-1$—, $\varepsilon_T,
-                \varepsilon_{T-1},\dots$ no se conocen del todo, y el intervalo que calcula el software, que
-                incorpora esa incertidumbre, sale más ancho que el de la fórmula del paso 4.</p>
+              <p><span data-afirma="c4-m9-18">Ese paso supone que el modelo es <strong>invertible</strong>: solo así los choques pasados se
+                recuperan de los datos observados <cite class="cita" data-ref="cryer2008time" data-loc="p. 197"><a href="#ref-m9-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 197)</a></cite></span>. <span data-afirma="c4-m9-19">Si no lo es —un $\theta$ en $-1$—, $\varepsilon_T,
+                \varepsilon_{T-1},\dots$ no se conocen del todo <cite class="cita" data-ref="cryer2008time" data-loc="p. 197"><a href="#ref-m9-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 197)</a></cite>, y el intervalo que calcula el software, que
+                incorpora esa incertidumbre, sale más ancho que el de la fórmula del paso 4 <cite class="cita" data-ref="rcoreteam2026r" data-loc="§Details"><a href="#ref-m9-rcoreteam2026r" title="R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/">(R Core Team, 2026, §Details)</a></cite>.</span></p>
             </li>
             <li>
               <p>El error de pronóstico es exactamente lo que se descartó — los $h$ primeros términos:</p>
@@ -660,19 +673,19 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
               $$\operatorname{Var}(e_{T+h}) = \sigma^2\sum_{j=0}^{h-1}\psi_j^2$$
             </li>
             <li>
-              <p>Dos consecuencias inmediatas. Con $h = 1$ solo sobrevive $\psi_0 = 1$, luego
+              <p>Dos consecuencias inmediatas. <span data-afirma="c4-m9-20">Con $h = 1$ solo sobrevive $\psi_0 = 1$, luego
                 $\sigma_1 = \sigma$. Y como los $\psi_j^2$ no son negativos, $\sigma_h$ <strong>nunca decrece</strong>
                 con el horizonte. Puede quedarse plano —en un MA($1$), desde $h = 2$—, pero un intervalo de
-                pronóstico no puede estrecharse al alejarse.</p>
+                pronóstico no puede estrecharse al alejarse <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.8"><a href="#ref-m9-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.8)</a></cite>.</span></p>
             </li>
             <li>
-              <p>El ritmo al que crece lo decide $d$. Si el proceso es estacionario, $\psi_j \to 0$ y la suma
-                converge: el intervalo se estabiliza. Con una raíz unitaria, $\psi_j$ tiende a una
+              <p><span data-afirma="c4-m9-21">El ritmo al que crece lo decide $d$. Si el proceso es estacionario, $\psi_j \to 0$ y la suma
+                converge: el intervalo se estabiliza <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.8"><a href="#ref-m9-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.8)</a></cite>. Con una raíz unitaria, $\psi_j$ tiende a una
                 <strong>constante</strong> —en el Nilo, $\psi_j \to 0.169$—, la suma crece sin límite, como $h$, y
-                $\sigma_h$ lo hace como $\sqrt{h}$. Con dos, $\psi_j$ crece linealmente y $\sigma_h$ lo hace como
+                $\sigma_h$ lo hace como $\sqrt{h}$ <cite class="cita" data-ref="cryer2008time" data-loc="p. 202"><a href="#ref-m9-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 202)</a></cite>.</span> <span data-afirma="c4-m9-22">Con dos, $\psi_j$ crece linealmente <cite class="cita" data-ref="cryer2008time" data-loc="p. 202"><a href="#ref-m9-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 202)</a></cite> y $\sigma_h$ lo hace como
                 $h^{3/2}$, <strong>salvo que la parte MA cancele una de las raíces</strong>: es lo que ocurre en el
                 ARIMA($1,2,1$) del Nilo, cuyo $\hat\theta = -1$ deja los $\psi_j$ en $0.718$ y el crecimiento en
-                $\sqrt{h}$, como con $d = 1$.</p>
+                $\sqrt{h}$, como con $d = 1$.</span></p>
             </li>
           </ol>
           <p class="derivacion-resultado">El ancho del intervalo es una consecuencia algebraica de $(p,d,q)$, no un
@@ -683,16 +696,15 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
 
       <div class="warning">
         <h4><i class="fas fa-triangle-exclamation mr-2" aria-hidden="true"></i>Todo esto supone normalidad</h4>
-        <p>La fórmula $\hat{y} \pm z_{1-\alpha/2}\,\sigma_h$ usa $z_{0.975} = 1.96$ y $z_{0.90} = 1.282$, que son
-          cuantiles de la normal. Las <em>estimaciones</em> de un ARIMA no necesitan que los errores sean normales;
-          los <em>intervalos</em>, sí. Y no siempre lo son: en la TRM del Módulo 10 el test de Shapiro–Wilk sobre los
-          residuales da $p = 0.0006$, un rechazo rotundo. Con colas más pesadas que la normal, la cobertura real se
-          separa de la nominal —en la TRM, a un mes, el intervalo del $80\,\%$ cubre el $83.9\,\%$— y, si los
+        <p><span data-afirma="c4-m9-23">La fórmula $\hat{y} \pm z_{1-\alpha/2}\,\sigma_h$ usa $z_{0.975} = 1.96$ y $z_{0.90} = 1.282$, que son
+          cuantiles de la normal <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§5.5"><a href="#ref-m9-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §5.5)</a></cite></span>. <span data-afirma="c4-m9-24">Las <em>estimaciones</em> de un ARIMA suelen seguir siendo razonables aunque los errores no sean normales <cite class="cita" data-ref="hamilton1994time" data-loc="p. 117"><a href="#ref-m9-hamilton1994time" title="Hamilton, J. D. (1994). Time series analysis. Princeton University Press.">(Hamilton, 1994, p. 117)</a></cite>;
+          los <em>intervalos</em>, en cambio, se apoyan en esa normalidad <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.8"><a href="#ref-m9-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.8)</a></cite>.</span> Y no siempre lo son: en la TRM del Módulo 10 <span data-afirma="c4-m9-65">el test de Shapiro–Wilk sobre los
+          residuales da $p = 0.0006$ <cite class="cita" data-ref="rcoreteam2026r" data-loc="§Description"><a href="#ref-m9-rcoreteam2026r" title="R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/">(R Core Team, 2026, §Description)</a></cite></span>, un rechazo rotundo. <span data-afirma="c4-m9-25">Con colas más pesadas que la normal, la cobertura real se
+          separa de la nominal <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.8"><a href="#ref-m9-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.8)</a></cite></span> —<span data-afirma="c4-m9-26">en la TRM, a un mes, el intervalo del $80\,\%$ cubre el $83.9\,\%$</span>— y, si los
           errores son asimétricos, los fallos se concentran en un lado. El Módulo 10 lo mide.</p>
-        <p style="margin-bottom:0;">Hay dos advertencias más que conviene decir en voz alta: los intervalos
+        <p style="margin-bottom:0;">Hay dos advertencias más que conviene decir en voz alta: <span data-afirma="c4-m9-27">los intervalos
           <strong>no incluyen la incertidumbre de haber estimado los parámetros</strong> (los tratan como si fueran
-          conocidos), ni la de <strong>haber elegido el modelo</strong>. Son, por tanto, sistemáticamente
-          optimistas. Medir cuánto lo son —la cobertura real frente a la nominal— es trabajo del Capítulo 6.</p>
+          conocidos), ni la de <strong>haber elegido el modelo</strong>. Por eso tienden a quedar demasiado estrechos <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.8"><a href="#ref-m9-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.8)</a></cite></span>. Medir cuánto lo son —la cobertura real frente a la nominal— es trabajo del Capítulo 6.</p>
       </div>
 
       <div class="code-tabs">
@@ -800,5 +812,17 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3).tolist())
         principio a fin sobre una serie colombiana, la TRM, cuyos residuales ponen a prueba el supuesto de
         normalidad de este último paso: ahí se mide cuánto cubren de verdad los intervalos del $80\,\%$ y del
         $95\,\%$. Cierra con el puente al Capítulo 5 y el resumen del capítulo.</p>
+      <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
+        <h4>Fuentes citadas en este módulo</h4>
+        <!--FUENTES-MODULO:inicio-->
+        <ul class="lista-fuentes">
+          <li id="ref-m9-cryer2008time">Cryer, J. D., y Chan, K.-S. (2008). <em>Time Series Analysis</em> (2.ª ed.). Springer New York. <a target="_blank" rel="noopener" href="https://doi.org/10.1007/978-0-387-75959-3">https://doi.org/10.1007/978-0-387-75959-3</a></li>
+          <li id="ref-m9-hamilton1994time">Hamilton, J. D. (1994). <em>Time series analysis</em>. Princeton University Press.</li>
+          <li id="ref-m9-hyndman2021forecasting">Hyndman, R. J., y Athanasopoulos, G. (2021). <em>Forecasting: principles and practice</em> (3.ª ed.). OTexts. <a target="_blank" rel="noopener" href="https://otexts.com/fpp3/">https://otexts.com/fpp3/</a></li>
+          <li id="ref-m9-hyndman2026forecast">Hyndman, R. J., Athanasopoulos, G., Bergmeir, C., Caceres, G., Chhay, L., Kuroptev, K., Mücke, M., O’Hara-Wild, M., Petropoulos, F., Razbash, S., Wang, E., y Yasmeen, F. (2026). <em>forecast: Forecasting Functions for Time Series and Linear Models</em> (Versión 9.0.2) [Software]. Comprehensive R Archive Network (CRAN). <a target="_blank" rel="noopener" href="https://doi.org/10.32614/CRAN.package.forecast">https://doi.org/10.32614/CRAN.package.forecast</a></li>
+          <li id="ref-m9-rcoreteam2026r">R Core Team. (2026). <em>R: A Language and Environment for Statistical Computing</em> (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. <a target="_blank" rel="noopener" href="https://www.R-project.org/">https://www.R-project.org/</a></li>
+        </ul>
+        <!--FUENTES-MODULO:fin-->
+      </aside>
     </div>
   </template>

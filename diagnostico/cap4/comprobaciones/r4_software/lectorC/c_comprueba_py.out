@@ -1,0 +1,28 @@
+/opt/homebrew/Caskroom/mambaforge/base/lib/python3.10/site-packages/statsmodels/base/model.py:607: ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check mle_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+statsmodels 0.14.6 · numpy 2.2.6
+
+== [m7-20] ¿hay un módulo auto_arima en statsmodels.tsa?
+['statsmodels.tsa.regime_switching.markov_autoregression', 'statsmodels.tsa.regime_switching.tests.test_markov_autoregression']
+pmdarima importable: False
+
+== [m6-16] nobs, nobs_effective y loglikelihood_burn por d (rejilla completa)
+burn == d en todos: True  · nobs == 100 en todos: True  · nobs_effective == 100 - d: True
+d=0 mejor AICc (1,0,1) aicc=1282.500 nobs=100 nobs_eff=100 burn=0
+d=1 mejor AICc (1,1,1) aicc=1267.471 nobs=100 nobs_eff=99 burn=1
+d=2 mejor AICc (1,2,2) aicc=1264.673 nobs=100 nobs_eff=98 burn=2
+ARIMA(1,1,1): k=3  f.aicc=1267.4713  a mano n_ef=99: 1267.4713  a mano n=100: 1267.4687  · dif = 0.0026
+aic = 1267.219 (R: 1267.255)  · aicc - aic = 0.2526
+aicc statsmodels - aicc R(1267.507) = -0.036
+
+== [m7-22] la búsqueda a mano del bloque del módulo 7: p, q en 0..3 con d=1, sin constante
+(1, 1, 1) 1267.471 (16 modelos)
+
+== [m5-14] trend por defecto y deriva con d >= 1
+(1, 0, 1) trend = None -> ['const', 'ar.L1', 'ma.L1', 'sigma2']
+(1, 1, 1) trend = None -> ['ar.L1', 'ma.L1', 'sigma2']
+(1, 1, 1) trend = t -> ['x1', 'ar.L1', 'ma.L1', 'sigma2']
+(1, 2, 1) trend = t -> ValueError In models with integration (`d > 0`) or seasonal integration (`D > 0`), trend terms of lower order than `d + D` cannot be (as they would be eliminated due to th
+(1, 2, 1) trend = [0, 0, 1] -> ['x1', 'ar.L1', 'ma.L1', 'sigma2']
+d=0 const = 919.3505  media muestral = 919.35
+d=1 trend='t': x1 = -2.8518 e.e. = 2.124 t = -1.343

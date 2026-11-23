@@ -1,0 +1,125 @@
+R R version 4.6.0 (2026-04-24) · forecast 9.0.2 
+
+== [m7-09] umbral de raíces en el código
+líneas con 'minroot <' : minroot <- 2 || minroot <- min(minroot, abs(proots)) || minroot <- min(minroot, abs(proots)) || if (minroot < 1 + 0.01 || checkarima(fit)) { 
+aparece 1.001 en myarima: FALSE 
+líneas que asignan Inf al ic: 4 
+ [1] "}"                                                     
+ [2] "}"                                                     
+ [3] "}"                                                     
+ [4] "if (minroot < 1 + 0.01 || checkarima(fit)) {"          
+ [5] "fit$ic <- Inf"                                         
+ [6] "}"                                                     
+ [7] "fit$xreg <- xreg"                                      
+ [8] "if (trace) {"                                          
+ [9] "cat(\"\\n\", arima.string(fit, padding = TRUE), \":\","
+[10] "fit$ic)"                                               
+
+== [m7-09, m7-10] ARIMA(2,1,2) del Nilo: raíces AR y logL según estimador (con y sin deriva)
+drift=FALSE CSS-ML logL = -630.169  min|raíz AR| = 1.000937  min|raíz MA| = 1.006377  aicc = 1270.98362058301
+drift=FALSE ML     logL = -630.445  min|raíz AR| = 2.240705  min|raíz MA| = 1.121803  aicc = 1271.53573543961
+drift=TRUE  CSS-ML logL = -629.335  min|raíz AR| = 1.000875  min|raíz MA| = 1.006130  aicc = 1271.58400937777
+drift=TRUE  ML     logL = -629.553  min|raíz AR| = 2.006354  min|raíz MA| = 1.076443  aicc = 1272.01976421228
+¿1.0009 (4 dec.) o 1.00094…<1.001?  Con CSS-ML sin deriva:  TRUE 
+
+== [m7-12] traza de auto.arima(Nile): conteo y podio
+modelos evaluados (escalonada): 18  · ganador: ARIMA(1,1,1)  · aicc = 1267.507 
+ [1] " ARIMA(2,1,2) with drift         : Inf"     
+ [2] " ARIMA(0,1,0) with drift         : 1298.77" 
+ [3] " ARIMA(1,1,0) with drift         : 1283.598"
+ [4] " ARIMA(0,1,1) with drift         : 1270.562"
+ [5] " ARIMA(0,1,0)                    : 1296.738"
+ [6] " ARIMA(1,1,1) with drift         : 1268.063"
+ [7] " ARIMA(2,1,1) with drift         : 1269.777"
+ [8] " ARIMA(1,1,2) with drift         : 1269.779"
+ [9] " ARIMA(0,1,2) with drift         : 1268.969"
+[10] " ARIMA(2,1,0) with drift         : 1279.708"
+[11] " ARIMA(1,1,1)                    : 1267.507"
+[12] " ARIMA(0,1,1)                    : 1269.216"
+[13] " ARIMA(1,1,0)                    : 1281.605"
+[14] " ARIMA(2,1,1)                    : 1269.322"
+[15] " ARIMA(1,1,2)                    : 1269.348"
+[16] " ARIMA(0,1,2)                    : 1268.21" 
+[17] " ARIMA(2,1,0)                    : 1277.737"
+[18] " ARIMA(2,1,2)                    : Inf"     
+
+modelos evaluados (exhaustiva): 42  · ganador: ARIMA(1,1,1)  · aicc = 1267.507 
+podio (exhaustiva):
+                    modelo     aicc  dif
+1             ARIMA(1,1,1) 1267.507 0.00
+2  ARIMA(1,1,1) with drift 1268.063 0.56
+3             ARIMA(0,1,2) 1268.210 0.70
+4  ARIMA(0,1,2) with drift 1268.969 1.46
+5             ARIMA(0,1,1) 1269.216 1.71
+6             ARIMA(2,1,1) 1269.322 1.81
+7             ARIMA(1,1,2) 1269.348 1.84
+8             ARIMA(0,1,3) 1269.633 2.13
+9  ARIMA(2,1,1) with drift 1269.777 2.27
+10 ARIMA(1,1,2) with drift 1269.779 2.27
+modelos de la exhaustiva a menos de 2 puntos: 7  · con AICc = Inf: 5 
+d de todos los modelos de la exhaustiva: 1 
+max p+q en la exhaustiva: 5  · nº de órdenes (p,q) distintos: 21 
+
+== [m7-11] approximation por defecto con el Nilo
+length(Nile) > 150 || frequency(Nile) > 12: FALSE  · ndiffs(Nile) = 1 
+
+== [m7-04, m5-13] auto.arima: modelos iniciales y constante, con d = 1
+primeras líneas de la traza:
+[1] " ARIMA(2,1,2) with drift         : Inf"     
+[2] " ARIMA(0,1,0) with drift         : 1298.77" 
+[3] " ARIMA(1,1,0) with drift         : 1283.598"
+[4] " ARIMA(0,1,1) with drift         : 1270.562"
+[5] " ARIMA(0,1,0)                    : 1296.738"
+[6] " ARIMA(1,1,1) with drift         : 1268.063"
+Nile d=2 forzado, ¿aparece 'with drift' o 'with non-zero mean'?: FALSE 
+Nile d=0: ¿aparece 'with non-zero mean'?: TRUE  · ¿'drift'?: FALSE 
+[1] ""                                           
+[2] " ARIMA(2,0,2) with non-zero mean : 1285.14" 
+[3] " ARIMA(0,0,0) with non-zero mean : 1313.155"
+[4] " ARIMA(1,0,0) with non-zero mean : 1286.154"
+[5] " ARIMA(0,0,1) with non-zero mean : 1295.692"
+Nile d=1: ¿'with drift'?: TRUE  · ¿hay el mismo orden con y sin deriva?: TRUE 
+
+== [m6-02..04] n* = n - d en forecast::Arima
+[1] "npar <- length(tmp$coef[tmp$mask]) + 1"                      
+[2] "nstar <- n - tmp$arma[6] - tmp$arma[7] * tmp$arma[5]"        
+[3] "tmp$aicc <- tmp$aic + 2 * npar * (nstar/(nstar - npar - 1) -"
+[4] "tmp$bic <- tmp$aic + npar * (log(nstar) - 2)"                
+[5] "tmp$sigma2 <- sum(tmp$residuals^2, na.rm = TRUE)/(nstar -"   
+[6] "npar + 1)"                                                   
+Arima(1,1,1) ML: aicc = 1267.5074 · a mano con n* = n-d = 99: 1267.5074 · con n = 100: 1267.5048 · aic = 1267.2548 · bic = 1275.0401 · bic a mano (log 99): 1275.0401
+stats::arima: nobs = 99  (n - d = 99) · n.cond = 0 
+stats::arima d=2: nobs = 98 
+
+== [m6-01, m6-05] la verosimilitud es la de los datos diferenciados: logL de arima(Nile,(0,1,1)) = logL de arima(diff(Nile),(0,0,1), include.mean=FALSE)?
+logL ARIMA(0,1,1) sobre Nile = -632.5456 · logL MA(1) sobre diff(Nile) = -632.5456 · theta: -0.7329 / -0.7329
+Nota: aic de ?arima solo válido con method='ML'; el bloque del capítulo usa ML.
+
+== [m5-10] arima ignora include.mean con d >= 1, sin aviso
+coef: ar1 ma1  · avisos: 0 
+d=0: ar1 ma1 intercept  intercept = 920.7037  · media muestral = 919.3500 
+
+== [m5-11, m5-12, m5-16] Arima con deriva = regresión con xreg = seq_along
+Arima include.drift:  ar1 0.2707 | ma1 -0.9054 | drift -2.8827 
+arima xreg=seq_along: ar1 0.2707 | ma1 -0.9054 | seq_along(Nile) -2.8827 
+coincide (tol 1e-3): TRUE 
+cuerpo de Arima: cbind(drift = seq_along(x), xreg): TRUE 
+drift = -2.8827 e.e. = 2.0167 t = -1.429 · phi1 = 0.2707 · c = delta(1-phi1) = -2.1024 · aicc con deriva = 1268.063 · sin deriva = 1267.507
+phi1 sin deriva = 0.2544
+d=2 con drift: coef = ar1 ma1  · aviso: No drift term fitted as the order of difference is 2 or more. 
+include.drift por defecto: FALSE 
+
+== [m5-19] media de las diferencias y aporte de 1899
+Nile[1]=1120 Nile[100]=740 · (740-1120)/99 = -3.8384 · mean(diff(Nile)) = -3.8384
+diff 1899 = -326 · /99 = -3.2929
+Nile 1898, 1899: 1100 774 
+
+== [m6, rejilla] los mejores de cada d, raíces y modelos a menos de 2 puntos (replica del bloque del capítulo)
+modelos ajustados: 27 
+d=0  n*=100  mejor AICc: (1,0,1) 1282.50 [raíz AR 1.161, raíz MA 1.932] · mejor BIC: (1,0,1) 1292.50 [raíz MA 1.932] · a menos de 2 del mejor (sin él): 3
+d=1  n*=99  mejor AICc: (1,1,1) 1267.51 [raíz AR 3.931, raíz MA 1.144] · mejor BIC: (0,1,1) 1274.28 [raíz MA 1.364] · a menos de 2 del mejor (sin él): 4
+d=2  n*=98  mejor AICc: (1,2,2) 1264.60 [raíz AR 3.744, raíz MA 1.032] · mejor BIC: (0,2,2) 1273.50 [raíz MA 1] · a menos de 2 del mejor (sin él): 2
+d=2: raíces MA de los 9 (3 decimales): NA 1 1 NA 1 1.032 NA 1 1.048  · con raíz MA < 1.0005: 4 
+AICc mínimo global: 1264.598  en d = 2  ( 1 2 )
+raíz MA del ARIMA(1,2,2): 1.0316 
+log(99) = 4.595  · log(99)/2 = 2.298 

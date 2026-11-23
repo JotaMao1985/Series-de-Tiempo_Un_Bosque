@@ -1,0 +1,87 @@
+== versiones
+R version 4.6.0 (2026-04-24) | forecast 9.0.2 | tseries 0.10.62 | urca 1.3.4 
+
+== M8 · la firma de la sobrediferenciación (c4-m8-03, -04, -05, -06)
+d=1 var=28268.34 rho1=-0.402 theta=-0.732941 |raiz MA|=1.364366 sigma2_MA1=20599.87
+d=2 var=80055.01 rho1=-0.626 theta=-1.000000 |raiz MA|=1.000000 sigma2_MA1=28268.34
+d=3 var=262507.29 rho1=-0.719 theta=-0.999999 |raiz MA|=1.000001 sigma2_MA1=80055.05
+var(diff(Nile))     = 28268.34 
+var(diff(Nile,2))   = 80055.01 
+mean(w^2) con w = diff(Nile) = 27997.54  var(w) = 28268.34 
+rejilla d=2 (q en 1:2, p en 0:2), min|raiz MA| con 6 decimales:
+  ARIMA(0,2,1) min|raiz MA| = 1.000000
+  ARIMA(1,2,1) min|raiz MA| = 1.000001
+  ARIMA(2,2,1) min|raiz MA| = 1.000001
+  ARIMA(0,2,2) min|raiz MA| = 1.000014
+  ARIMA(1,2,2) min|raiz MA| = 1.031564
+  ARIMA(2,2,2) min|raiz MA| = 1.048272
+
+== M8 · la ayuda de Nile dice 'near 1898'; medias y escalón (c4-m8-12, -14, -15)
+media antes de 1899 = 1097.75  desde 1899 = 849.97 
+beta = -247.78  e.e. = 28.15  t = -8.8 
+AICc escalon (forecast::Arima, n = 100 ) = 1257.91  Ljung-Box(20) p = 0.812 
+  d=0 ARMA(0,0) AICc = 1313.16
+  d=0 ARMA(0,1) AICc = 1295.69
+  d=0 ARMA(0,2) AICc = 1291.90
+  d=0 ARMA(1,0) AICc = 1286.15
+  d=0 ARMA(1,1) AICc = 1282.50
+  d=0 ARMA(1,2) AICc = 1283.70
+  d=0 ARMA(2,0) AICc = 1284.38
+  d=0 ARMA(2,1) AICc = 1283.18
+  d=0 ARMA(2,2) AICc = 1285.14
+ARIMA(1,1,1) AICc (d = 1, NO comparable con los d = 0): 1267.51 
+
+== M8 · log(lynx): varianza, r1 y pruebas (c4-m8-09, -10, -11, -22)
+var(log lynx) = 1.653  var(diff) = 0.687  reduccion = 58.4 %
+r1 de diff(log lynx) = 0.565 
+ndiffs por prueba: 0 0 0 (kpss, adf, pp)
+adf.test p = 0.01  kpss.test p = 0.1  PP.test (stats) p = 0.01  pp.test (tseries) p = 0.01 
+Warning messages:
+1: In adf.test(ll) : p-value smaller than printed p-value
+2: In kpss.test(ll) : p-value greater than printed p-value
+3: In pp.test(ll) : p-value smaller than printed p-value
+ARIMA(2,1,1) en log(lynx): |raiz MA| = 1 
+cociente var(diff)/var = 0.416  2(1 - r1) = 0.43 
+Nile: cociente var(diff)/var = 0.987  2(1 - r1) = 1.003  r1 = 0.498 
+
+== M8 · diagnóstico del ARIMA(1,1,1) del Nilo (c4-m8-01, -02)
+Ljung-Box(20, fitdf=2) p = 0.8  | sin fitdf p = 0.883  | Shapiro p = 0.731  | gl = 18 
+
+== M9 · forma del pronóstico (c4-m9-01 a -08)
+d=0 con media      1a dif h=30:   0.254  2a dif: -0.040903  ancho95 h=1: 561 h=30: 677  media h=30: 918.99
+d=1 sin constante  1a dif h=30:   0.000  2a dif:  0.000000  ancho95 h=1: 557 h=30: 781  media h=30: 842.17
+d=1 con deriva     1a dif h=30:  -2.883  2a dif: -0.000000  ancho95 h=1: 555 h=30: 708  media h=30: 738.63
+d=2                1a dif h=30:  -4.049  2a dif:  0.000000  ancho95 h=1: 613 h=30: 2771  media h=30: 610.05
+media muestral de Nile = 919.35  | intercept CSS-ML (Arima) = 920.56  | intercept ML (arima) = 920.7 
+Arima(d=2, include.drift=TRUE) avisa: No drift term fitted as the order of difference is 2 or more. | ajusta drift: FALSE 
+ultimo 740  h1 816.18  h30 842.17  limite 842.17 
+d=2: phi = -0.392  theta = -1  (segunda dif. pronostico: potencias de phi)
+2a dif del pronostico d=2, h=1..6: -41.8401 16.4174 -6.4419 2.5277 -0.9918 0.3892 ; cociente consecutivo: -0.392 -0.392 -0.392 -0.392 
+
+== M9 · pesos psi, sigma_h, invertible frente a no invertible (c4-m9-09 a -22)
+max|semiancho - 1.96*sigma_h| = 9.078e-11 
+psi_inf = 0.169  psi_30 = 0.169  sigma = 142.045  sigma_30 = 199.4  camino aleatorio sigma*sqrt(30) = 778 
+d=2: theta = -1  psi_29 = 0.718  1/(1-phi) = 0.718  ancho_psi = 2428  ancho_forecast = 2771.5 
+  theta fijo -0.90: ancho_psi 6542.2 vs ancho_forecast 6542.2 (razon 1.0000)
+  theta fijo -0.99: ancho_psi 2785.4 vs ancho_forecast 2884.3 (razon 1.0355)
+  theta fijo -1.00: ancho_psi 2415.4 vs ancho_forecast 2757.1 (razon 1.1415)
+predict(ARIMA(1,2,1) del Nilo) avisa de no invertibilidad: no avisa 
+forecast(f2, h=3) avisa: no avisa 
+forecast.Arima usa predict.Arima (cuerpo): TRUE 
+
+== M9 · sigma2 de arima() frente a Arima() (c4-m9-31)
+sigma2 arima ML = 19769.29 | Arima defecto = 20176.91 | Arima ML = 20176.92 | razon = 1.02062  99/97 = 1.02062 | SCR/99 = 19769.3  SCR/97 = 20176.92 
+
+== M9 · BJsales, psi_inf (c4-m9-15, -22)
+BJsales ARIMA(1,1,1): phi = 0.88  theta = -0.641  psi_inf = 2.99 
+sigma_12 / (sigma*sqrt(12)) = 1.96 
+
+== M9 · TRM: Shapiro y cobertura del 80 % a un mes (c4-m9-25, -26)
+n = 138  Shapiro p = 6e-04  cubre 80 % = 0.8394  ( 115 de 137 )  cubre 95 % = 0.9562 
+curtosis = 5.1  asimetria = 0.76 
+z_0.975 = 1.96  z_0.90 = 1.2816 
+
+== M9 · forma cerrada de psi_j y trayectoria del ARIMA(1,1,1) sin constante (c4-m9-13, -67)
+max|psi_j (ARMAtoMA) - forma cerrada| j=1..30: 4.996e-16  | psi_0 = 1 
+max|dif. pronosticada - phi^(h-1)(phi*dy_T + theta*e_T)| h=1..30: 1.855e-11 
+h=1: 816.18  h=30: 842.17  limite: 842.17 

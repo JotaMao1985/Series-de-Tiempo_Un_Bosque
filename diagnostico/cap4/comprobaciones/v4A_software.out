@@ -1,0 +1,228 @@
+R version 4.6.0 (2026-04-24) | forecast 9.0.2 | tseries 0.10.62 | urca 1.3.4 
+
+==================== M1 · ajuste ARIMA(1,1,1) del Nilo y raíces (c4-m1-07, -24, -66) ====================
+        ar1     ma1
+coef 0.2544 -0.8741
+ee   0.1194  0.0605
+raíz MA: 1.144 
+AR expandido: 1.2544 -0.2544  suma: 1  |raíces|: 1 3.9308 
+
+==================== M1 · c4-m1-23: razón de varianzas al integrar (set.seed(2026), n = 200) ====================
+var_w 1.426 var_y 1.434 razón 1.006 
+sin MA: razón 32.8 
+
+==================== M1 · c4-m1-66: varianza de largo plazo / gamma0, con y sin MA ====================
+ARMA(1,1) Nilo: LRV/g0 = 0.0202 | AR(1) sin MA: LRV/g0 = 1.6824 
+(1+theta)^2 = 0.0159 
+
+==================== M1 · c4-m1-12: ses() frente a ARIMA(0,1,1) sobre el Nilo ====================
+ses alpha = 0.2457 | 1 + theta(ARIMA 0,1,1) = 0.2671 
+max |yhat_{t+1} - (a y_t + (1-a) yhat_t)| = 2.27e-13 
+
+==================== M1 · c4-m1-16: el nivel alrededor de 1899 ====================
+Time Series:
+Start = 1895 
+End = 1903 
+Frequency = 1 
+[1] 1260 1220 1030 1100  774  840  874  694  940
+media 1871-1898: 1097.75 | media 1899-1970: 849.97 
+
+==================== M1 · c4-m1-27 / -28: convenio de signo de R y rho1 del MA(1) ====================
+ARMAacf(ma = +0.5)[2] = 0.4 | ARMAacf(ma = -0.5)[2] = -0.4 
+arima(order = c(0,0,1)) sobre MA(1) con theta = +0.6: ma1 = 0.5897 
+
+==================== M2 · c4-m2-62: un escalón sin modelar sube d o infla sigma^2 ====================
+ndiffs(Nile) = 1 
+sigma2 ARMA(1,1) con media, sin escalón: 19891.7 | con escalón como xreg: 15552.9 
+sigma2 ruido blanco con media: 28351.6 | media + escalón: 15974.6 
+
+==================== M3 · pruebas sobre el Nilo (tabla de evidencias, c4-m3-09, -10, -11, -12, -13) ====================
+adf.test: stat -3.3657 p 0.0642 k 4 
+trunc((n-1)^(1/3)) = 4 
+Warning message:
+In kpss.test(nilo) : p-value smaller than printed p-value
+kpss.test: stat 0.9654 p 0.01 trunc 4 
+PP.test: Dickey-Fuller -6.6901 p 0.01 
+ndiffs kpss/adf/pp: 1 0 0 
+formals(ndiffs)$test: c("kpss", "adf", "pp") 
+formals(auto.arima)$test: c("kpss", "adf", "pp") | ic: c("aicc", "aic", "bic") 
+ndiffs, líneas con ur.df / ur.kpss / use.lag:
+    kpss_wrap <- function(..., use.lag = trunc(3 * sqrt(length(x))/13)) {
+        ur.kpss(..., use.lag = use.lag)
+                type = c("mu", "tau")[type], ...)) < alpha, adf = urca_pval(ur.df(x, 
+                pp = urca_pval(ur.pp(x, type = "Z-tau", model = c("constant", 
+formals(ur.df)$lags = 1 
+ur.df(drift, lags = 1): tau2 = -4.0487 | cval tau2 5pct = -2.89 
+ADF de d = 1 y 2, rho1: -0.402 -0.626 
+raíz MA del ARIMA(0,1,1): 1.3644 
+
+==================== M3 · c4-m3-60: varianza por orden de diferencia y 2(1 - r1) ====================
+d = 0 var = 28637.95 
+d = 1 var = 28268.34 
+d = 2 var = 80055.01 
+d = 3 var = 262507.3 
+r1 = 0.4984 | 2(1-r1) = 1.003 | cociente = 0.987 | baja d0->d1 = 1.29 % | d2/d1 = 2.83 
+
+==================== M3 · c4-m3-15: ARIMA(1,1,1) con raíz unitaria verdadera, 1000 réplicas ====================
+PP.test rechaza 100 % | adf.test(k = 4) rechaza 51.3 %
+
+==================== M3 · modelo de dos medias (beta, sigma de los residuales) ====================
+beta = -247.78 | sd resid = 127.03 | beta/sd = 1.951 | posición = 29 
+100/sd = 0.787 
+
+==================== M3 · c4-m3-18 y -66: Monte Carlo de 1000 réplicas (sin escalón, luego con él) ====================
+sin escalón:
+       kpss_rechaza adf_test_no_rechaza         ndiffs_kpss          ndiffs_adf 
+              0.048               0.054               0.052               0.000 
+con escalón beta:
+       kpss_rechaza adf_test_no_rechaza         ndiffs_kpss          ndiffs_adf 
+              1.000               0.864               1.000               0.005 
+
+==================== M3 · c4-m3-67 y -34: malla de 400 réplicas (deltas 0..300 en orden) ====================
+delta   0 (0.000 sd): kpss_rechaza 0.0450 | l12 0.0350 | kpss medio 0.17
+delta  25 (0.197 sd): kpss_rechaza 0.0950 | l12 0.0625 | kpss medio 0.21
+delta  50 (0.394 sd): kpss_rechaza 0.2275 | l12 0.1475 | kpss medio 0.32
+delta  75 (0.590 sd): kpss_rechaza 0.4825 | l12 0.2700 | kpss medio 0.47
+delta 100 (0.787 sd): kpss_rechaza 0.7075 | l12 0.4450 | kpss medio 0.64
+delta 150 (1.181 sd): kpss_rechaza 0.9600 | l12 0.7275 | kpss medio 0.90
+delta 200 (1.574 sd): kpss_rechaza 1.0000 | l12 0.8700 | kpss medio 1.07
+delta 250 (1.968 sd): kpss_rechaza 1.0000 | l12 0.9425 | kpss medio 1.17
+delta 300 (2.362 sd): kpss_rechaza 1.0000 | l12 0.9800 | kpss medio 1.23
+
+==================== M3 · c4-m3-19, -64, -31: fórmula del KPSS y truncamientos ====================
+a mano l = 4: 0.9654349 74193.51 | tseries: 0.9654349 
+Warning message:
+In kpss.test(nilo) : p-value smaller than printed p-value
+a mano l = 12: 0.5497197 130301 | tseries lshort = FALSE: 0.5497197 
+a mano l = 2: 1.315226 54461.34 | ur.kpss(use.lag = 2): 1.315226 | trunc(3 sqrt(n)/13) = 2 
+ACF del Nilo, rezagos 1-12: 0.498 0.385 0.328 0.239 0.228 0.227 0.222 0.3 0.142 0.09 0.215 0.213 
+tabla de kpss.test (cuerpo):
+        table <- c(0.216, 0.176, 0.146, 0.119)
+        table <- c(0.739, 0.574, 0.463, 0.347)
+    tablep <- c(0.01, 0.025, 0.05, 0.1)
+
+==================== M3 · c4-m3-71: puente browniano (ruido blanco, n = 400, 4000 réplicas) ====================
+Var(S_t/sqrt n) en r = 0.10, 0.25, 0.50, 0.75: 0.0864 0.184 0.2501 0.1908 | r(1-r): 0.09 0.1875 0.25 0.1875 | max|S_n| = 2.2e-15 
+
+==================== M3 · c4-m3-20 y -22: caminata aleatoria, S_t ~ t^(3/2) y KPSS ====================
+n =  100: mean max|S|/n^1.5 = 0.139 | KPSS medio = 1.11 | rechazo = 0.85
+n =  400: mean max|S|/n^1.5 = 0.143 | KPSS medio = 3.59 | rechazo = 0.99
+n = 1600: mean max|S|/n^1.5 = 0.132 | KPSS medio = 8.85 | rechazo = 1.00
+
+==================== M4 · ACF/PACF del Nilo y de su diferencia; ARIMA(0,1,1); vecinos (c4-m4-02..17) ====================
+ACF Nilo 1-4: 0.498 0.385 0.328 0.239 
+PACF Nilo 1-8: 0.498 0.181 0.111 0.006 0.065 0.071 0.06 0.163 | fuera de ± 0.196 en: 1 
+0.5^(1:4) = 0.5 0.25 0.125 0.0625 | banda n = 100: 0.196 
+banda n = 99: 0.197 | ACF fuera en: 1 8 valores -0.402 0.231 
+PACF de la diferencia 1-4: -0.402 -0.246 -0.119 -0.173 
+ARIMA(0,1,1): theta -0.7329 ee 0.1143 t -6.41 sigma2 20599.87 LB(20, fitdf 1) p 0.6737 | 1 + theta = 0.267 
+Arima(0,1,1): AICc 1269.216 BIC 1274.281
+Arima(1,1,1): AICc 1267.507 BIC 1275.040
+Arima(0,1,2): AICc 1268.210 BIC 1275.743
+Arima(1,1,0): AICc 1281.605 BIC 1286.671
+
+==================== M5 · constante y deriva (c4-m5-04, -10, -11, -12, -13, -17, -18, -19) ====================
+arima(1,0,1) coef: ar1 ma1 intercept 0.861 -0.5177 920.7037 | media muestral 919.35 
+arima(1,1,1, include.mean = TRUE): coef ar1 ma1 | avisos: 0 
+Arima con deriva: ar1 ma1 drift 0.2707 -0.9054 -2.8829 | arima xreg seq_along: 0.2707 -0.9054 -2.8829 
+deriva -2.8829 ee 2.0166 t -1.43 | c = delta(1-phi) = -2.1024 | AICc con 1268.063 sin 1267.507 
+cuerpo de Arima con seq_along: TRUE 
+formals(Arima)$include.drift = FALSE 
+Arima(1,2,1, include.drift = TRUE): coef ar1 ma1 | aviso: No drift term fitted as the order of difference is 2 or more. 
+auto.arima, líneas allowdrift/allowmean:
+    allowdrift <- allowdrift && (d + D) == 1
+    allowmean <- allowmean && (d + D) == 0
+traza d = 0: 'drift' 0 veces, 'non-zero mean' 10 veces, 15 líneas
+traza d = 1: 'drift' 9 veces, 'non-zero mean' 0 veces, 22 líneas
+traza d = 2: 'drift' 0 veces, 'non-zero mean' 0 veces, 15 líneas
+Nile[1] = 1120 Nile[100] = 740 | (y100 - y1)/99 = -3.8384 | mean(diff) = -3.8384 | beta/99 = -2.5028 
+medias 1871-1898 y 1899-1970: 1097.75 849.97 
+
+==================== M6 · criterios y n efectivo (c4-m6-02, -05) ====================
+AICc a mano con n* = 99: 1267.5074 | BIC: 1275.0401
+AICc a mano con n* = 100: 1267.5048 | BIC: 1275.0703
+Arima: AICc 1267.5074 BIC 1275.0401 
+nobs(arima d = 1, 2): 99 98 
+loglik arima(Nile, 0,1,1) = -632.5456 | MA(1) sin media sobre diff: -632.5456 
+log(99) = 4.5951 
+
+==================== M6 · rejilla de 27 modelos con forecast::Arima (c4-m6-08, -09, -10, -11, -60, tabla) ====================
+ p d q    aicc     bic nobs min_ar min_ma     lb  daicc
+ 0 0 0 1313.16 1318.24  100     NA     NA 0.0000  30.66
+ 0 0 1 1295.69 1303.26  100     NA 2.6437 0.0001  13.19
+ 0 0 2 1291.90 1301.90  100     NA 2.0505 0.0080   9.40
+ 1 0 0 1286.15 1293.72  100 1.9751     NA 0.2117   3.66
+ 1 0 1 1282.50 1292.50  100 1.1614 1.9318 0.6954   0.00
+ 1 0 2 1283.70 1296.09  100 1.0487 1.2670 0.7003   1.20
+ 2 0 0 1284.38 1294.38  100 1.4381     NA 0.4731   1.88
+ 2 0 1 1283.18 1295.56  100 1.0356 1.1867 0.7038   0.68
+ 2 0 2 1285.14 1299.87  100 1.0332 1.1524 0.6419   2.64
+ 0 1 0 1296.74 1299.29   99     NA     NA 0.0100  29.23
+ 0 1 1 1269.22 1274.28   99     NA 1.3644 0.6737   1.71
+ 0 1 2 1268.21 1275.74   99     NA 1.1784 0.7959   0.70
+ 1 1 0 1281.61 1286.67   99 2.5155     NA 0.1853  14.10
+ 1 1 1 1267.51 1275.04   99 3.9313 1.1440 0.7997   0.00
+ 1 1 2 1269.35 1279.30   99 2.1125 1.1220 0.7556   1.84
+ 2 1 0 1277.74 1285.27   99 2.0340     NA 0.3898  10.23
+ 2 1 1 1269.32 1279.28   99 2.4035 1.1240 0.7503   1.81
+ 2 1 2 1271.54 1283.87   99 2.2407 1.1218 0.6916   4.03
+ 0 2 0 1385.61 1388.16   98     NA     NA 0.0000 121.02
+ 0 2 1 1291.28 1296.33   98     NA 1.0000 0.0069  26.69
+ 0 2 2 1266.00 1273.50   98     NA 1.0000 0.6167   1.40
+ 1 2 0 1338.91 1343.96   98 1.6009     NA 0.0002  74.32
+ 1 2 1 1276.95 1284.45   98 2.5485 1.0000 0.1505  12.35
+ 1 2 2 1264.60 1274.51   98 3.7443 1.0316 0.7560   0.00
+ 2 2 0 1315.54 1323.04   98 1.4406     NA 0.0210  50.94
+ 2 2 1 1273.55 1283.46   98 2.0616 1.0000 0.3293   8.95
+ 2 2 2 1266.30 1278.57   98 2.1488 1.0483 0.7136   1.70
+d = 0: mejor AICc (1,0,1) 1282.50 | mejor BIC (1,0,1) 1292.50 | a menos de 2 (sin el mejor): 3
+d = 1: mejor AICc (1,1,1) 1267.51 | mejor BIC (0,1,1) 1274.28 | a menos de 2 (sin el mejor): 4
+d = 2: mejor AICc (1,2,2) 1264.60 | mejor BIC (0,2,2) 1273.50 | a menos de 2 (sin el mejor): 2
+LB(20) rechaza en 8 de 27; ¿alguno de ellos a menos de 2 del mejor de su d? FALSE 
+d = 2, min|raíz MA|: (0,2,1) 1.00000; (0,2,2) 1.00001; (1,2,1) 1.00000; (1,2,2) 1.03156; (2,2,1) 1.00000; (2,2,2) 1.04827 
+d = 2 con raíz MA < 1.0005: 4 de 9 modelos
+diferencia AICc (1,1,1) vs (0,1,1): 1.71 
+
+==================== M6 · c4-m6-08: «el Módulo 7 contará siete» (d = 1, con y sin deriva) y traza de auto.arima ====================
+ p q deriva    aicc   dif
+ 1 1  FALSE 1267.51  0.00
+ 1 1   TRUE 1268.06  0.56
+ 0 2  FALSE 1268.21  0.70
+ 0 2   TRUE 1268.97  1.46
+ 0 1  FALSE 1269.22  1.71
+ 2 1  FALSE 1269.32  1.81
+ 1 2  FALSE 1269.35  1.84
+ 2 1   TRUE 1269.78  2.27
+ 1 2   TRUE 1269.78  2.27
+ 0 1   TRUE 1270.56  3.05
+ 2 2  FALSE 1271.54  4.03
+ 2 2   TRUE 1272.02  4.51
+ 2 0  FALSE 1277.74 10.23
+ 2 0   TRUE 1279.71 12.20
+ 1 0  FALSE 1281.61 14.10
+ 1 0   TRUE 1283.60 16.09
+ 0 0  FALSE 1296.74 29.23
+ 0 0   TRUE 1298.77 31.26
+con d = 1 y p, q <= 2, con y sin deriva: modelos a menos de 2 del mejor, contando el mejor: 7 
+
+ ARIMA(2,1,2) with drift         : Inf
+ ARIMA(0,1,0) with drift         : 1298.77
+ ARIMA(1,1,0) with drift         : 1283.598
+ ARIMA(0,1,1) with drift         : 1270.562
+ ARIMA(0,1,0)                    : 1296.738
+ ARIMA(1,1,1) with drift         : 1268.063
+ ARIMA(2,1,1) with drift         : 1269.777
+ ARIMA(1,1,2) with drift         : 1269.779
+ ARIMA(0,1,2) with drift         : 1268.969
+ ARIMA(2,1,0) with drift         : 1279.708
+ ARIMA(1,1,1)                    : 1267.507
+ ARIMA(0,1,1)                    : 1269.216
+ ARIMA(1,1,0)                    : 1281.605
+ ARIMA(2,1,1)                    : 1269.322
+ ARIMA(1,1,2)                    : 1269.348
+ ARIMA(0,1,2)                    : 1268.21
+ ARIMA(2,1,0)                    : 1277.737
+ ARIMA(2,1,2)                    : Inf
+
+ Best model: ARIMA(1,1,1)                    
+

@@ -329,7 +329,10 @@ cat(sprintf("   arima(ML) vs Arima(): coeficientes iguales a 5 decimales, sigma^
             metodos_estimacion$ml$sigma2, metodos_estimacion$css_ml$sigma2,
             100 * metodos_estimacion$dif_relativa_sigma2))
 
-# ---- El cambio de nivel de 1899 (presa de Asuán) ---------------------------
+# ---- El cambio de nivel de 1899 -------------------------------------------
+# (R4 del cap. 4, 2026-11-22: la atribución a la presa de Asuán no tenía fuente
+# leída y se retira; ?Nile habla de un cambio aparente cerca de 1898 y remite a
+# Cobb, 1978. El año 1899 es el primer año del segundo tramo en este capítulo.)
 # Alternativa honesta a diferenciar: modelar el escalón explícitamente.
 escalon <- as.numeric(time(nilo) >= 1899)
 fit_escalon <- arima(nilo, order = c(0, 0, 0), xreg = escalon, method = "ML")
@@ -338,7 +341,7 @@ res_esc <- as.numeric(residuals(fit_escalon))
 
 cambio_nivel <- list(
   anio = 1899,
-  fuente = "Cobb (1978); el descenso coincide con la construcción de la presa baja de Asuán",
+  fuente = "ayuda de R ?Nile: cambio aparente cerca de 1898 (remite a Cobb, 1978)",
   media_antes = round(mean(nilo[time(nilo) < 1899]), 2),
   media_despues = round(mean(nilo[time(nilo) >= 1899]), 2),
   escalon = list(
