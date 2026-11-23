@@ -14,7 +14,7 @@ con sus fuentes contrastadas y con práctica antes del final. Es la cuarta aplic
 [[PLAN_Mejora_Cap1]], [[PLAN_Mejora_Cap2]] y [[PLAN_Mejora_Cap3]]: cinco rondas, un redactor por ronda,
 un verificador independiente sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: APROBADO por Javier el 2026-11-22; R1 y R2 publicadas el mismo día (R2: `29106f5` · gh-pages `af3a60a`); R3 publicada el mismo día (`21ab628` · gh-pages `60a7bf9`); R4 publicada el 2026-11-23 (`d35dc3b`, registro `b00eb85` · gh-pages `756029a`)**, con D1–D10 y las recomendaciones de las preguntas 1 y 2 de §7.
+**Estado: APROBADO por Javier el 2026-11-22; R1 y R2 publicadas el mismo día (R2: `29106f5` · gh-pages `af3a60a`); R3 publicada el mismo día (`21ab628` · gh-pages `60a7bf9`); R4 publicada el 2026-11-23 (`d35dc3b`, registro `b00eb85` · gh-pages `756029a`); R5 hecha el 2026-11-23 (`2c4173e`), sin publicar**, con D1–D10 y las recomendaciones de las preguntas 1 y 2 de §7.
 El diagnóstico es del mismo día; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-22
@@ -246,6 +246,63 @@ Cada una lleva mi recomendación; las decide Javier.
     todos nuevos: `citas/cap4.yml`, `herramientas/cap4/` y las páginas web de `forecast`, `tseries`, `urca`, R y FPP3),
     `audita_citas` OK allí con 1067 literales comprobados; gh-pages `756029a`, construido; índice y caps. 1–6 en vivo,
     idénticos byte a byte a `b00eb85`.
+- **R5 (práctica) — hecha el 2026-11-23 (`2c4173e`), SIN PUBLICAR.**
+  - **Redactor y verificación.** Redactor: subagente (Fable 5.2). Dos verificadores independientes
+    (Opus 5.5), cada uno con segunda lectura:
+    - A: los «Para practicar»;
+    - B: E1–E3, el quiz, los minutos y el ensamblado.
+
+    Informes: `diagnostico/cap4/R5_cambios.md`, `R5_verificacion_A.md` y `R5_verificacion_B.md`.
+  - **T5.1.** Nueve «Para practicar», uno al final de cada módulo del M1 al M9 (D9), cada uno con su
+    solución en R bajo `#>`:
+    - M1: `tcm1y`.
+    - M2, M3 y M8: simulados, con semilla y frecuencia declaradas.
+    - M4: las importaciones de Colombia de `global_economy`.
+    - M5: `log(airmiles)`; con esto el M5 gana su actividad.
+    - M6: GOOG 2018.
+    - M7: `NelPlo` ip.
+    - M9: `austres`, sobre la forma del pronóstico según $d$ y la constante.
+  - **T5.2, ejercicios:**
+    - E1 rehecho: la trampa entre $d$ muerde por 17.5 puntos, y el ARIMA(1,2,2) es $(1-B)(1-0.625B)$.
+    - E2 pasa a `log(pelt$Hare)`. La frase del M8 que lo resolvía ya no lo resuelve, y el bloque del
+      lince va al M8.
+    - E3 sin el resultado impreso en el M9 y sin el apartado de la deriva.
+  - **T5.2, quiz:**
+    - P5 y P8 rehechas.
+    - P4 con retro por opción y sin «Son tres».
+    - Ninguna pregunta del Nilo; la más larga acierta 1 de 6.
+    - Pistas sin el criterio.
+    - P2 con tolerancia 0.011.
+    - Las notas de la R4 que tocaban el quiz, atendidas: la convención de los 2 puntos, la parsimonia
+      al elegir $d$ y «consistente».
+  - **Hallazgos de los verificadores.**
+    - Primera lectura:
+      - A: 1 error leve (el ARIMA(0,2,1) con θ = −1 es una caminata **con** deriva), 1 cifra, 5 de
+        pedagogía y 6 menores.
+      - B: 2 errores (la P5 afirmaba que KPSS deja de rechazar en `beaver2` sin el escalón; la pista
+        del E2 volvía a contar la varianza como evidencia), 1 cifra, 6 de pedagogía y 10 menores.
+    - Todos corregidos. B7 se aceptó como transferencia: el E2 se sigue resolviendo por analogía con
+      la caja del lince del M8; queda para Javier.
+    - Segunda lectura: tres menores, aplicados.
+  - **Registro.**
+    - c4-m10-69 retirada por repetir c4-m10-68 (285 entradas).
+    - Notas de c4-m10-65, -67 y -150 rehechas y vueltas a firmar por B (283 firmadas; sin firma, los
+      dos pendientes de KPSS).
+    - Ninguna otra marca cambia de texto.
+  - **Cifras de cierre.**
+    - Portada y README: 40 → 49 ejercicios.
+    - Minutos declarados = medidos: M1 16, M2 12, M3 19, M4 14, M5 10, M6 14, M7 14, M8 18, M9 20,
+      M10 49.
+    - Bloques: 822/822 → 1348/1348.
+    - `verifica_todo.py` 11/11.
+    - Ensamblado reproducible; caps. 5 y 6 idénticos.
+    - HTTP a 1200 y 375 px sin errores.
+  - **Fuera de la ronda.**
+    - El motor cuenta como acierto el segundo intento (igual que en el cap. 3).
+    - Las soluciones, solo en R.
+    - [fuera del repo] Simulacro: «método de Holt», la nula de cada prueba en la P9 y la columna de
+      varianza de la P10.
+    - [fuera del repo] Preparcial: S5, B10, «25.6 veces», ningún ítem del escalón.
 
 ## 5. Criterios de aceptación
 
