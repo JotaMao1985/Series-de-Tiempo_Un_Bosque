@@ -3,7 +3,7 @@ tipo: plan
 curso: "[[20948 Series de Tiempo]]"
 capitulo: "[[20948-04 Modelos ARIMA y Box-Jenkins]]"
 fecha: 2026-11-22
-estado: APROBADO (2026-11-22) — D1–D10 y las recomendaciones de §7.1 y §7.2
+estado: CERRADO (2026-11-23) — R1–R5 publicadas · main 2c4173e · gh-pages 1749293
 ---
 
 # Plan — Mejora del capítulo 4 · Modelos ARIMA y Box–Jenkins (Fase 4)
@@ -14,8 +14,9 @@ con sus fuentes contrastadas y con práctica antes del final. Es la cuarta aplic
 [[PLAN_Mejora_Cap1]], [[PLAN_Mejora_Cap2]] y [[PLAN_Mejora_Cap3]]: cinco rondas, un redactor por ronda,
 un verificador independiente sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: APROBADO por Javier el 2026-11-22; R1 y R2 publicadas el mismo día (R2: `29106f5` · gh-pages `af3a60a`); R3 publicada el mismo día (`21ab628` · gh-pages `60a7bf9`); R4 publicada el 2026-11-23 (`d35dc3b`, registro `b00eb85` · gh-pages `756029a`); R5 publicada el 2026-11-23 (`2c4173e`, registro `82a53b8` · gh-pages `1749293`): las cinco rondas, publicadas**, con D1–D10 y las recomendaciones de las preguntas 1 y 2 de §7.
-El diagnóstico es del mismo día; las rondas se registrarán en §4.
+**Estado: CERRADO por Javier el 2026-11-23.** Aprobado el 2026-11-22 (D1–D10 y las recomendaciones de las
+preguntas 1 y 2 de §7); R1, R2 y R3 publicadas el 22, R4 y R5 el 23. Lo que sigue es el diagnóstico y el plan;
+las rondas se registran en §4, y lo que la Fase 4 deja fuera está en §9.
 
 ## 1. El hueco — diagnóstico del 2026-11-22
 
@@ -309,19 +310,29 @@ Cada una lleva mi recomendación; las decide Javier.
 
 ## 5. Criterios de aceptación
 
-- [ ] Los dos errores de §1 tienen su comprobación en R y dejan de reproducirse; el cap. 4 no contradice al 2.
-- [ ] `verifica_bloques_cap6.py --html` sobre el capítulo 4 da 0 discrepancias (hoy 713/735); los bloques de
-      Python, comprobados aparte.
-- [ ] PP, el «modelo de dos medias», la TRM, `auto.arima`, Holt y el suavizamiento exponencial se presentan
-      o se anuncian donde se usan por primera vez; ninguna cifra de la prosa sin un bloque o un generador.
-- [ ] Los lienzos se leen a 1200, 800 y 375 px; el ΔAICc rotula todas sus barras; ninguna frase que el
-      dibujo contradiga.
+- [x] Los dos errores de §1 tienen su comprobación en R y dejan de reproducirse; el cap. 4 no contradice al 2
+      (R1: la tabla del M9 y la varianza, que ya no decide $d$; la R4 añadió que la regla de 2 puntos es
+      convención del capítulo).
+- [x] `verifica_bloques_cap6.py --html` sobre el capítulo 4 da 0 discrepancias: de 713/735 antes de la R1 a
+      1348/1348 al cerrar la R5. Los bloques de Python entran en el verificador; los 10 de la R1 se corrieron además
+      uno a uno (`r1_bloques_python.out`).
+- [x] PP, el «modelo de dos medias», la TRM, `auto.arima`, Holt y el suavizamiento exponencial se presentan o se
+      anuncian donde se usan por primera vez (R3, revisado por su verificador); ninguna cifra de la prosa sin un
+      bloque o un generador. Nadie ha releído el capítulo entero después de la R4 y la R5.
+- [x] Los lienzos se leen a 1200, 800 y 375 px; el ΔAICc rotula todas sus barras; las frases que el dibujo
+      contradecía, corregidas (R2). De los 44 problemas, 41 arreglados, 2 en parte y 1 que cerró la R1.
 - [ ] `audita_citas.py --cierre` en verde para lo registrado, con las afirmaciones de prioridad alta registradas.
-- [ ] Cada módulo del M1 al M9 tiene al menos una práctica; la opción más larga no acierta más de 1 de 5;
-      ninguna retro adelanta un ejercicio.
-- [ ] La duración declarada de cada módulo dista menos de 3 min de la medida.
-- [ ] `verifica_todo.py` en verde, el capítulo 4 reproducible byte a byte y los 5–6 idénticos salvo lo que
-      la ronda quería.
+      **Falla** por las 4 `pendiente`: dos de KPSS (Kwiatkowski et al., 1992), el dato de datos.gov.co y la 4.ª
+      de Shumway y Stoffer. De las 188 filas de alta del inventario, 145 se registraron, 8 ya no existían y 35
+      quedan sin marcar con su motivo (la mayoría en cadenas de JavaScript del quiz o del simulacro); de la
+      media, 42 siguen sin marcar. Al cerrar: 285 afirmaciones (la R5 retiró la c4-m10-69), 283 firmadas.
+- [x] Cada módulo del M1 al M9 tiene al menos una práctica (nueve «Para practicar»); la opción más larga acierta
+      1 de 6 preguntas (antes, 4 de 5); ninguna retro adelanta un ejercicio, tras las correcciones de los dos
+      verificadores de la R5.
+- [x] La duración declarada de cada módulo dista menos de 3 min de la medida: como mucho 0.5 min, con los paneles
+      abiertos.
+- [x] `verifica_todo.py` en verde (11 verificadores), el capítulo 4 reproducible byte a byte y los 5–6 idénticos en
+      todas las rondas salvo el diff del armazón que la R2 quería.
 
 ## 6. Riesgos
 
@@ -350,7 +361,7 @@ entran en la R1). La 3 sigue abierta.
    deck está publicado.*
 3. **Los textos que solo consigues tú**, con el acceso institucional: Box y Jenkins (1970 o la 5.ª ed.),
    Cobb (1978), Kwiatkowski et al. (1992), Ljung y Box (1978) y la 4.ª de Shumway y Stoffer. Sin ellos,
-   lo que dependa de ellos queda `pendiente` o se reescribe.
+   lo que dependa de ellos queda `pendiente` o se reescribe. *Sigue abierta al cerrar la fase (§9).*
 
 ## 8. Enlaces
 
@@ -360,3 +371,43 @@ entran en la R1). La 3 sigue abierta.
 - Capítulo: [[20948-04 Modelos ARIMA y Box-Jenkins]]
 - Criterio: [[Criterio de contenido]] · [[Capa de fuentes]]
 - Bitácora: [[2026-11-22]]
+
+## 9. Cierre (2026-11-23)
+
+Javier cerró la Fase 4 con las cinco rondas publicadas, y aceptó que el ejercicio 2 (la liebre) quede como
+ejercicio de transferencia, aunque se resuelve por analogía con la caja del lince del M8 (hallazgo B7 de la R5).
+De los ocho criterios de §5 se cumplen siete; el de las fuentes no, y queda con lo demás **fuera de esta fase**,
+sin plan:
+
+- **Las 4 afirmaciones `pendiente`** y la pregunta 3 de §7: hace falta el texto de Kwiatkowski et al. (1992), que
+  está en la biblioteca sin él (dos), el de la 4.ª de Shumway y Stoffer (que también cierra pendientes de los caps. 2
+  y 3), y dar de alta la serie de datos.gov.co en «4 Datos y software» con su URL y la fecha de la copia. Box y Jenkins, Cobb (1978) y Ljung y Box (1978) siguen sin texto; las frases que dependían de ellos
+  se reescribieron para no necesitarlos.
+- **El inventario sin cerrar:** 35 filas de alta y 42 de media sin marcar, cada una con su motivo en
+  `bibliografia/contraste/cap4_inventario.tsv`.
+- **Una relectura completa del capítulo ya corregido** por un par que no haya visto ninguna ronda.
+- **Lo que anotaron las rondas sin resolver:**
+  - el M10 mide 49 min y no baja sin partirlo, y partirlo renumera (D6);
+  - los rótulos del selector del M9;
+  - las soluciones de los ejercicios y de los «Para practicar», solo en R;
+  - de la R2: la barra de 3 px del mejor en el ΔAICc y la leyenda de dos renglones del gráfico de residuales del
+    quiz, arregladas en parte;
+  - el campo `fuente` del Nilo en `datos_series.json` (de `genera_datos.R`, compartido con los caps. 2, 3 y 6) dice
+    «Cobb (1978)», y `?Nile` da Durbin y Koopman; no se ve en pantalla.
+- **Lo que no es del capítulo, sino del sistema o de otra página:**
+  - Las diapositivas del cap. 4 y `precalculo/genera_soluciones.R` siguen nombrando la presa de Asuán y la
+    «Serie M»/«de libro», que el capítulo retiró en la R4.
+  - El motor del quiz llama «impecable» a un 8 de 8 logrado al segundo intento (igual que en el cap. 3).
+  - [fuera del repo] El simulacro del M11: «método de Holt» frente a «modelo» (notas 1 y 25 de la R4), la nula de
+    cada prueba en la P9 (nota 8) y la columna de varianza de la P10 (nota 24).
+  - [fuera del repo] El preparcial: el S5 acepta el error de $n$ frente a $n^*$ (395.66), el B10 solo acepta la cifra
+    exacta, «25.6 veces» frente a 25.549 y ningún ítem sobre el escalón.
+  - Las copias del armazón en el cap. 1, la plantilla, los preparciales, los talleres y la guía del proyecto
+    siguen dibujando las líneas de la leyenda como cajas (R2).
+  - Una copia de `bibliografia/_local/` fuera de este equipo.
+
+En la fase, el capítulo pasó de 150 a 186 minutos declarados en M1–M10 (ahora medidos con todo abierto), de 3 a 12
+ejercicios y de 0 a 285 afirmaciones registradas, 283 firmadas, con 251 citas visibles; y el verificador de bloques,
+de 713/735 a 1348/1348. Entraron tres obras de software (`forecast`, `tseries` y `urca`, en la versión que se
+leyó). El molde se mantuvo: un solo redactor por ronda, verificadores independientes de contexto limpio sobre el
+diff (dos en paralelo en la R4 y en la R5, con segunda lectura en la R5) y la sesión maestra volviendo a medir en R.
