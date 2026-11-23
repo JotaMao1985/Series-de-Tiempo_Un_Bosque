@@ -1,0 +1,778 @@
+{
+ "cap5": [
+  {
+   "instrumento": "cap5",
+   "n": 1,
+   "linea_bloque": 9365,
+   "tipo": "opcion",
+   "modulo": 1,
+   "pregunta": "La TRM mensual en niveles tiene xx12 = 0.636, muy por encima de su banda de 0.167. ¿Qué se concluye?",
+   "pista": "Fíjate en qué vale xx1 en esa misma serie, y en qué le pasa a la ACF de cualquier serie con tendencia.",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "dibujar": null,
+   "opciones": [
+    {
+     "texto": "Que la TRM tiene estacionalidad anual, porque 0.636 supera claramente la banda.",
+     "largo": 79,
+     "correcta": false,
+     "retro": "Es la conclusión que el módulo está diseñado para evitar. Una serie con tendencia da autocorrelaciones grandes en todos los rezagos, incluidos los múltiplos de 12. Cuatro evidencias independientes (Módulo 8) muestran que esta serie no tiene estacionalidad."
+    },
+    {
+     "texto": "Que hace falta una diferencia estacional, porque xx12 está fuera de banda.",
+     "largo": 74,
+     "correcta": false,
+     "retro": "Sería una lectura razonable si la serie estuviera sin tendencia, pero no lo está. De hecho nsdiffs() devuelve 0 con las dos pruebas disponibles: no hay ninguna raíz unitaria estacional que quitar."
+    },
+    {
+     "texto": "Que la banda está mal calculada, porque con n = 138 debería ser mayor.",
+     "largo": 70,
+     "correcta": false,
+     "retro": "La banda es 1.96/n = 1.96/138 = 0.1668, correcta. El problema no está en la banda sino en aplicarla a una serie no estacionaria: bajo tendencia, la distribución de referencia de xxk ya no es la que justifica esa banda."
+    },
+    {
+     "texto": "Nada todavía: en niveles la tendencia infla todos los xxk, así que el diagnóstico hay que hacerlo sobre la serie ya diferenciada.",
+     "largo": 129,
+     "correcta": true,
+     "retro": "En esa misma serie xx1 = 0.964 y xx36 = 0.225: es el decaimiento lento típico de una tendencia, no un pico estacional. Sobre xTRM los tres múltiplos de 12 valen -0.0025, -0.067 y 0.071, todos dentro de la banda."
+    }
+   ]
+  },
+  {
+   "instrumento": "cap5",
+   "n": 2,
+   "linea_bloque": 9365,
+   "tipo": "multiple",
+   "modulo": 2,
+   "pregunta": "En un SARIMA(1,0,0)(1,0,0)12, ¿cuáles de estas afirmaciones son ciertas?",
+   "pista": "Expande (1-x B)(1-x B12) y cuenta: cuántos coeficientes distintos de cero salen, y cuántos de ellos se estiman.",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "dibujar": null,
+   "opciones": [
+    {
+     "texto": "El modelo toca el rezago 13 aunque nadie haya puesto un parámetro ahí.",
+     "largo": 70,
+     "correcta": true,
+     "retro": "Sí: el término cruzado xx B13 aparece al multiplicar los polinomios."
+    },
+    {
+     "texto": "Tiene 2 parámetros libres.",
+     "largo": 26,
+     "correcta": true,
+     "retro": "Son x y x. El coeficiente del rezago 13 es su producto, no un tercer parámetro."
+    },
+    {
+     "texto": "Su ACF teórica es cero en los rezagos 2 a 11.",
+     "largo": 45,
+     "correcta": false,
+     "retro": "No: con x = 0.6 y x = 0.7, x2 = x12 x 0.36 y así sucesivamente. La parte AR regular llena los rezagos bajos con una geométrica. Los rezagos intermedios sí son cero cuando solo hay parte estacional (x = 0)."
+    },
+    {
+     "texto": "Escrito como AR no estacional, es un AR(13).",
+     "largo": 44,
+     "correcta": true,
+     "retro": "El polinomio completo tiene grado 13, con solo tres coeficientes no nulos (1, 12 y 13)."
+    }
+   ]
+  },
+  {
+   "instrumento": "cap5",
+   "n": 3,
+   "linea_bloque": 9365,
+   "tipo": "numerica",
+   "modulo": 2,
+   "pregunta": "Un SARIMA(0,1,1)(0,1,1)12 se ajusta a una serie mensual de n = 96 observaciones. ¿Cuántas observaciones quedan tras aplicar las dos diferencias?",
+   "pista": "La diferencia regular cuesta d = 1 observación; la estacional cuesta D x m, no D.",
+   "respuesta": 83,
+   "tolerancia": 0.5,
+   "retroAcierto": "96 - d - D,m = 96 - 1 - 12 = 83. Ese es el n efectivo con el que se evalúa la verosimilitud, y por eso el AICc de un modelo con D=1 no se puede comparar con el de uno con D=0, que tendría 95.",
+   "retroFallo": "La diferencia estacional cuesta m = 12 observaciones, no una: 96 - 1 - 12 = 83. Si respondiste 94, restaste d + D = 2; si respondiste 84, olvidaste la diferencia regular. Esa cuenta es justamente la que hace incomparables los AICc entre distintos D.",
+   "dibujar": null,
+   "opciones": []
+  },
+  {
+   "instrumento": "cap5",
+   "n": 4,
+   "linea_bloque": 9365,
+   "tipo": "opcion",
+   "modulo": 3,
+   "pregunta": "Sobre USAccDeaths, ndiffs() devuelve 0 en la serie cruda y 1 tras aplicar x12. ¿Qué significa?",
+   "pista": "Los operadores x y x12 conmutan. Piensa entonces qué es lo que cambia entre las dos llamadas.",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "dibujar": null,
+   "opciones": [
+    {
+     "texto": "Que la estacionalidad domina la varianza y tapa la tendencia, así que D se decide antes que d.",
+     "largo": 94,
+     "correcta": true,
+     "retro": "Los operadores conmutan —la serie xx12y es idéntica en cualquier orden, diferencia máxima medida 0—, pero las pruebas no: aplicadas a la serie cruda, la varianza estacional impide ver la raíz unitaria regular. En Python pasa igual: KPSS sobre x12y da 0.8672 y rechaza."
+    },
+    {
+     "texto": "Que ndiffs() tiene un error, porque el resultado debería ser el mismo.",
+     "largo": 70,
+     "correcta": false,
+     "retro": "No hay error: son dos series de entrada distintas. La primera llamada recibe yt y la segunda x12yt. Que dos entradas distintas den salidas distintas es lo esperable; lo interesante es por qué."
+    },
+    {
+     "texto": "Que la serie está sobrediferenciada tras aplicar x12.",
+     "largo": 53,
+     "correcta": false,
+     "retro": "Al revés: tras x12 todavía falta una diferencia, y por eso ndiffs() devuelve 1. La firma de la sobrediferenciación sería un xx pegado a -1 con la raíz MA sobre el círculo unitario, y aquí el modelo final da xx = -0.4303."
+    },
+    {
+     "texto": "Que hay que aplicar x dos veces, una por cada resultado.",
+     "largo": 56,
+     "correcta": false,
+     "retro": "No: el 1 de la segunda llamada es la respuesta, no un añadido al 0 de la primera. El modelo final es (0,1,1)(0,1,1)12, con d = 1. Con d = 2 aparecería la firma de la sobrediferenciación."
+    }
+   ]
+  },
+  {
+   "instrumento": "cap5",
+   "n": 5,
+   "linea_bloque": 9365,
+   "tipo": "grafico",
+   "modulo": 4,
+   "pregunta": "La ACF teórica del gráfico corresponde a un proceso estacional puro con m = 12. ¿Qué modelo es?",
+   "pista": "Mira si los picos en 12, 24, 36 decaen o se cortan de golpe, y compara con la tabla de identificación del Módulo 4.",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "dibujar": "function (canvas) {\n          const ar = new Array(12).fill(0); ar[11] = 0.7;\n          const psi = pesosPsi(ar, [], 1500);\n          const acf = acfDesdePsi(psi, 36);\n          return crearGraficoBarras(canvas, etiquetasRezago(36), acf, {\n            etiqueta: 'ACF teórica', tituloX: 'Rezago'\n          });\n        }",
+   "opciones": [
+    {
+     "texto": "Un SMA(1)12: hay un pico en el rezago 12 y estacionalidad clara.",
+     "largo": 64,
+     "correcta": false,
+     "retro": "Un SMA(1)12 se corta: tendría un pico en el 12 y exactamente 0 en el 24 y el 36. Aquí los tres picos están presentes y decaen, que es la firma del SAR."
+    },
+    {
+     "texto": "Un modelo airline, por los picos en los múltiplos de 12.",
+     "largo": 56,
+     "correcta": false,
+     "retro": "El airline tiene además parte regular, así que su ACF sería distinta de cero en el rezago 1 y en los satélites 11 y 13. Aquí esos rezagos valen cero, así que no hay componente regular."
+    },
+    {
+     "texto": "Un SAR(1)12 con x > 0: los picos decaen geométricamente (0.70, 0.49, 0.34).",
+     "largo": 75,
+     "correcta": true,
+     "retro": "Los tres picos son x, x2 y x3 con x = 0.7, y todos los rezagos intermedios valen exactamente cero porque no hay parte regular. La PACF de este proceso se cortaría tras el rezago 12."
+    },
+    {
+     "texto": "Un AR(1)xSAR(1): se ven los satélites alrededor de los picos.",
+     "largo": 61,
+     "correcta": false,
+     "retro": "Justamente lo contrario: no hay satélites. Los rezagos 11 y 13 valen cero. Con un AR(1) regular multiplicando, x11 y x13 serían del orden de x1x12 y se verían con claridad."
+    }
+   ]
+  },
+  {
+   "instrumento": "cap5",
+   "n": 6,
+   "linea_bloque": 9365,
+   "tipo": "opcion",
+   "modulo": 6,
+   "pregunta": "Ajustas dos modelos a la misma serie mensual: una regresión armónica (D = 0, AICc = -521.2) y un SARIMA airline (D = 1, AICc = -483.2). ¿Cuál eliges?",
+   "pista": "Antes de comparar dos AICc, pregúntate sobre cuántas observaciones se ha evaluado la verosimilitud de cada uno.",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "dibujar": null,
+   "opciones": [
+    {
+     "texto": "La armónica, que gana por 38 puntos de AICc, que es una diferencia enorme.",
+     "largo": 74,
+     "correcta": false,
+     "retro": "La diferencia es enorme precisamente porque los dos números no viven en la misma escala: doce observaciones menos cambian la log-verosimilitud mucho más que cualquier parámetro. Comparar esos AICc es el error que el módulo señala."
+    },
+    {
+     "texto": "Ninguno con esa información: los AICc no son comparables porque se calculan sobre 143 y 131 observaciones.",
+     "largo": 106,
+     "correcta": true,
+     "retro": "Es la lección central del Módulo 10: la misma trampa que el Capítulo 4 documentó con d, agravada porque cada D cuesta m = 12 observaciones en vez de una. Entre familias solo se puede comparar fuera de muestra."
+    },
+    {
+     "texto": "El airline, porque tiene 2 parámetros frente a 16 y la parsimonia desempata.",
+     "largo": 76,
+     "correcta": false,
+     "retro": "La conclusión final del capítulo es en efecto favorable al airline, pero por otra razón: gana fuera de muestra sobre 61 orígenes. Invocar la parsimonia aquí es aceptar la comparación de AICc y luego corregirla a mano; lo correcto es rechazarla."
+    },
+    {
+     "texto": "La armónica, porque su Ljung–Box no rechaza y eso es lo que decide.",
+     "largo": 67,
+     "correcta": false,
+     "retro": "El diagnóstico sí es comparable entre familias —no depende del n efectivo de la verosimilitud—, así que el razonamiento va por buen camino. Pero los dos pasan Ljung–Box (0.1341 y 0.2330), así que no desempata; y el airline lo pasa con más holgura."
+    }
+   ]
+  },
+  {
+   "instrumento": "cap5",
+   "n": 7,
+   "linea_bloque": 9365,
+   "tipo": "numerica",
+   "modulo": 9,
+   "pregunta": "El coeficiente de (días del mes) vale xx = 1.0840 con error estándar 0.4462. ¿Cuál es el estadístico t para contrastar H0: x = 1? Da cuatro decimales.",
+   "pista": "El estadístico no es xx / e.e., que contrastaría x = 0. Aquí el valor bajo la hipótesis nula es 1.",
+   "respuesta": 0.1883,
+   "tolerancia": 0.005,
+   "retroAcierto": "t = (1.0840 - 1)/0.4462 = 0.1883: no se rechaza. Los pasajeros son compatibles con ser exactamente proporcionales a los días del mes, que es lo que predice la aritmética del calendario. Un coeficiente significativo y además igual a su valor teórico es una confirmación fuerte.",
+   "retroFallo": "El contraste de x = 1 usa t = (xx - 1)/e.e. = (1.0840-1)/0.4462 = 0.1883. Si respondiste 2.4291, contrastaste x = 0 —que también es informativo: el regresor sí aporta—, pero la pregunta interesante aquí es si el efecto es exactamente proporcional.",
+   "dibujar": null,
+   "opciones": []
+  },
+  {
+   "instrumento": "cap5",
+   "n": 8,
+   "linea_bloque": 9365,
+   "tipo": "opcion",
+   "modulo": 11,
+   "pregunta": "Sobre los últimos 24 meses el SARIMA queda cuarto (RMSE 43.18) y la regresión armónica, segunda por RMSE (19.51, a 0.08 del ETS sobre el logaritmo), es la primera por MAE y por MAPE. Sobre 61 orígenes el SARIMA es primero (16.81) y la armónica cuarta (22.38). ¿Qué explica esto?",
+   "pista": "Pregúntate cuántos números independientes hay realmente detrás de cada una de las dos comparaciones.",
+   "respuesta": null,
+   "tolerancia": null,
+   "retroAcierto": null,
+   "retroFallo": null,
+   "dibujar": null,
+   "opciones": [
+    {
+     "texto": "Una sola partición mide el comportamiento en un tramo concreto; con 24 puntos, qué tramo toque pesa más que la diferencia entre métodos.",
+     "largo": 136,
+     "correcta": true,
+     "retro": "El corte cae justo detrás de 1958, el único año en que el tráfico casi no creció: el SARIMA ajusta su pendiente a ese frenazo y se queda corto en 1959–1960, y la armónica lo arrastra menos. Promediando sobre 61 orígenes el efecto del tramo se diluye y el SARIMA le gana a cada rival en más del 85,% de ellos. Construir esa evaluación es el contenido del Capítulo 6."
+    },
+    {
+     "texto": "Que el RMSE no sirve para comparar métodos y hay que usar MAPE.",
+     "largo": 63,
+     "correcta": false,
+     "retro": "Con cualquiera de las tres métricas de la tabla —RMSE, MAE o MAPE— el SARIMA queda cuarto en la partición única; solo cambia quién va primero: el ETS sobre el logaritmo por RMSE y la armónica por MAE y por MAPE. El problema no es la métrica sino el número de particiones sobre las que se calcula."
+    },
+    {
+     "texto": "Que el SARIMA está mal especificado y por eso falla en la partición corta.",
+     "largo": 74,
+     "correcta": false,
+     "retro": "El SARIMA pasa todos los diagnósticos (Ljung–Box 0.2330, Shapiro 0.1674, raíces invertibles) y es el mínimo de AICc y de BIC dentro de su familia. Un modelo bien especificado también puede quedar mal en un tramo concreto: eso es varianza, no sesgo."
+    },
+    {
+     "texto": "Que los 61 orígenes se solapan entre sí, así que ese resultado no vale.",
+     "largo": 71,
+     "correcta": false,
+     "retro": "Es cierto que las ventanas se solapan y que por eso los 61 errores no son independientes —conviene saberlo al poner barras de error—. Pero eso afecta a la precisión de la estimación, no la invalida: una diferencia de 16.81 frente a 22.38 con victoria en el 90,% de los orígenes no se explica por el solape."
+    }
+   ]
+  }
+ ],
+ "simulacro_meta": {
+  "minutos": 50,
+  "etapas": {
+   "1": "preguntas 1 a 9",
+   "2": "preguntas 10 a 12"
+  },
+  "versiones": 1,
+  "linea_bloque": 9974,
+  "caso": "Vehículos en un peaje — simulacro Una vía intermunicipal registra los vehículos que pasan cada mes por un peaje, en miles de vehículos, de enero de 2011 a diciembre de 2025: N = 180 meses. Se analiza su logaritmo natural, log yt, con el recorrido del capítulo: diferenciar, comparar candidatos, diagnosticar y pronosticar. Las preguntas 1 a 7 siguen el análisis de esta serie, la 8 y la 9 miran otras dos series de la concesión y las 10 a 12 son de otros contextos. Aquí están todas en la misma página; ninguna necesita la respuesta de otra. Escriba cada cifra con los decimales que pida su pregunta, con punto o con coma como separador decimal y sin separar los miles. El reloj da 50 minutos para las 12. En el quiz de Brightspace se ve una pregunta por página, no se puede volver a la anterior y cada pregunta trae los datos que necesita."
+ },
+ "simulacro": [
+  {
+   "instrumento": "simulacro",
+   "n": 1,
+   "id": "S1",
+   "etapa": 1,
+   "etiqueta": "cap. 5 · mód. 5.1, 5.3, 5.7 y 5.8 · Las diferencias",
+   "tipo": "opcion",
+   "enunciado": "La tabla resume cinco formas de diferenciar log yt: con d diferencias regulares y D estacionales, los n datos que quedan, su varianza y sus autocorrelaciones muestrales en los rezagos 1 y 12: d D n Varianza ρ̂1 ρ̂12 0 0 180 0.067411 0.6361 0.7258 1 0 179 0.047480 −0.2743 0.8797 0 1 168 0.014465 0.8154 0.1208 1 1 167 0.005259 −0.2783 −0.4782 2 1 166 0.013502 −0.6012 −0.4812 ¿Con qué diferencias se sigue el análisis?",
+   "enunciado_html": "<p>La tabla resume cinco formas de diferenciar log y<sub>t</sub>: con d diferencias regulares y D estacionales, los n datos que quedan, su varianza y sus autocorrelaciones muestrales en los rezagos 1 y 12:</p><table style=\"border-collapse:collapse;margin:6px 0 12px 0;font-size:95%\"><thead><tr><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">d</th><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">D</th><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">n</th><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">Varianza</th><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">ρ̂<sub>1</sub></th><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">ρ̂<sub>12</sub></th></tr></thead><tbody><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">180</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0.067411</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0.6361</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0.7258</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">1</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">179</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0.047480</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">−0.2743</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0.8797</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">1</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">168</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0.014465</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0.8154</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0.1208</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">1</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">1</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">167</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0.005259</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">−0.2783</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">−0.4782</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">2</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">1</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">166</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0.013502</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">−0.6012</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">−0.4812</td></tr></tbody></table><p>¿Con qué diferencias se sigue el análisis?</p>",
+   "clave": null,
+   "cuenta": null,
+   "rutas": [],
+   "correcta": 2,
+   "opciones": [
+    {
+     "texto": "d = 0 y D = 1",
+     "largo": 13,
+     "correcta": false,
+     "retro": "Con solo ∇12 queda ρ̂1 = 0.8154: la serie conserva su tendencia. Primero D y después d, sobre la serie ya diferenciada estacionalmente, y ahí hace falta d = 1 (módulos 5.3 y 5.8)."
+    },
+    {
+     "texto": "d = 1 y D = 0",
+     "largo": 13,
+     "correcta": false,
+     "retro": "Con solo ∇, ρ̂12 pasa de 0.7258 a 0.8797: la diferencia regular no toca la estacionalidad, y la varianza, 0.047480, sigue siendo 9.0 veces la de d = 1 y D = 1 (módulo 5.3)."
+    },
+    {
+     "texto": "d = 1 y D = 1",
+     "largo": 13,
+     "correcta": true,
+     "retro": "Sin diferenciar, ρ̂12 = 0.7258: la estación pide ∇12, y se decide primero. Tras ∇12 queda ρ̂1 = 0.8154, una tendencia sin resolver, así que hace falta además ∇. Con las dos, la varianza es la menor de la tabla (0.005259) y las barras de 1 y 12 quedan negativas, la huella de dos diferencias justas (módulos 5.3 y 5.7)."
+    },
+    {
+     "texto": "d = 2 y D = 1",
+     "largo": 13,
+     "correcta": false,
+     "retro": "Una diferencia regular de más sube la varianza de 0.005259 a 0.013502: es sobrediferenciar, y al estimar dejaría un θ̂ pegado a −1 (módulo 5.3)."
+    }
+   ],
+   "otros_campos": []
+  },
+  {
+   "instrumento": "simulacro",
+   "n": 2,
+   "id": "N2",
+   "etapa": 1,
+   "etiqueta": "cap. 5 · mód. 5.3 · Una diferencia doble a mano",
+   "tipo": "numero",
+   "enunciado": "Los vehículos de cuatro meses, en miles de vehículos, fueron: Mes yt (miles de vehículos) agosto de 2024 496.19 septiembre de 2024 445.82 agosto de 2025 506.77 septiembre de 2025 434.25 Calcule ∇∇12 log yt en septiembre de 2025, con el logaritmo natural y al menos cuatro decimales en cada logaritmo. Responda con cuatro decimales; si es negativo, con su signo.",
+   "enunciado_html": "<p>Los vehículos de cuatro meses, en miles de vehículos, fueron:</p><table style=\"border-collapse:collapse;margin:6px 0 12px 0;font-size:95%\"><thead><tr><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">Mes</th><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">y<sub>t</sub> (miles de vehículos)</th></tr></thead><tbody><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">agosto de 2024</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">496.19</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">septiembre de 2024</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">445.82</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">agosto de 2025</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">506.77</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">septiembre de 2025</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">434.25</td></tr></tbody></table><p>Calcule ∇∇<sub>12</sub> log y<sub>t</sub> en septiembre de 2025, con el logaritmo natural y al menos cuatro decimales en cada logaritmo. Responda con cuatro decimales; si es negativo, con su signo.</p>",
+   "clave": {
+    "valor": -0.0474,
+    "tol": 0.000379,
+    "texto": "−0.0474"
+   },
+   "cuenta": "∇∇12 log yt = log yt − log yt−1 − log yt−12 + log yt−13 = 6.073620 − 6.228057 − 6.099915 + 6.206959 = −0.047393, que con cuatro decimales es −0.0474. Son las cuatro esquinas del cuadrado del Módulo 5.3: el mes y el anterior, este año y el pasado. Los operadores conmutan, así que da igual aplicar primero ∇ o ∇12.",
+   "rutas": [
+    {
+     "valor": -22.15,
+     "cifra": "−22.1500",
+     "texto": "no tomó logaritmos: diferenció las noches en miles"
+    },
+    {
+     "valor": -0.026295,
+     "cifra": "−0.0263",
+     "texto": "aplicó solo la diferencia estacional, ∇12"
+    },
+    {
+     "valor": -0.154437,
+     "cifra": "−0.1544",
+     "texto": "aplicó solo la diferencia regular, ∇"
+    },
+    {
+     "valor": -0.020583,
+     "cifra": "−0.0206",
+     "texto": "usó el logaritmo en base 10 y no el natural"
+    }
+   ],
+   "correcta": null,
+   "opciones": [],
+   "otros_campos": []
+  },
+  {
+   "instrumento": "simulacro",
+   "n": 3,
+   "id": "S3",
+   "etapa": 1,
+   "etiqueta": "cap. 5 · mód. 5.6 y 5.10 · La rejilla por AICc",
+   "tipo": "opcion",
+   "enunciado": "Para log yt se ajustaron estos candidatos, donde n es el número de datos sobre el que se evalúa la verosimilitud y k el de coeficientes ARMA: Modelo d D n k AICc ARIMA(0,1,2)(0,1,1)12 1 1 167 3 −473.84 ARIMA(0,1,1)(1,0,1)12 1 0 179 3 −479.13 ARIMA(0,1,1)(0,1,1)12 1 1 167 2 −474.98 ARIMA(1,1,1)(0,1,1)12 1 1 167 3 −473.93 ARIMA(0,1,1)(1,1,1)12 1 1 167 3 −473.73 Un compañero propone quedarse con el modelo de menor AICc de toda la tabla. ¿Qué se le responde?",
+   "enunciado_html": "<p>Para log y<sub>t</sub> se ajustaron estos candidatos, donde n es el número de datos sobre el que se evalúa la verosimilitud y k el de coeficientes ARMA:</p><table style=\"border-collapse:collapse;margin:6px 0 12px 0;font-size:95%\"><thead><tr><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">Modelo</th><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">d</th><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">D</th><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">n</th><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">k</th><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">AICc</th></tr></thead><tbody><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">ARIMA(0,1,2)(0,1,1)<sub>12</sub></td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">1</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">1</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">167</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">3</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">−473.84</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">ARIMA(0,1,1)(1,0,1)<sub>12</sub></td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">1</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">179</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">3</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">−479.13</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">ARIMA(0,1,1)(0,1,1)<sub>12</sub></td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">1</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">1</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">167</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">2</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">−474.98</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">ARIMA(1,1,1)(0,1,1)<sub>12</sub></td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">1</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">1</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">167</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">3</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">−473.93</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">ARIMA(0,1,1)(1,1,1)<sub>12</sub></td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">1</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">1</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">167</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">3</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">−473.73</td></tr></tbody></table><p>Un compañero propone quedarse con el modelo de menor AICc de toda la tabla. ¿Qué se le responde?</p>",
+   "clave": null,
+   "cuenta": null,
+   "rutas": [],
+   "correcta": 1,
+   "opciones": [
+    {
+     "texto": "No: ese modelo tiene más coeficientes que otros de la tabla, y eso lo descarta.",
+     "largo": 79,
+     "correcta": false,
+     "retro": "Tener más coeficientes no descarta a nadie: el AICc ya los cobra en su penalización. Lo que lo descarta es su D, que lo evalúa sobre 179 datos y no sobre 167 (módulo 5.6)."
+    },
+    {
+     "texto": "No: ese modelo tiene otra D, y su AICc se calcula sobre otros datos.",
+     "largo": 68,
+     "correcta": true,
+     "retro": "El de menor AICc, el ARIMA(0,1,1)(1,0,1)12, usa D = 0: su verosimilitud se evalúa sobre n = 179 datos y la de los demás sobre 167. Doce datos más mueven el AICc más que cualquier parámetro, así que las cifras no viven en la misma escala. Entre los que comparten d = 1 y D = 1 gana el airline, con AICc = −474.98 (módulos 5.6 y 5.10)."
+    },
+    {
+     "texto": "Sí: todos comparten d y D, así que manda el menor AICc.",
+     "largo": 55,
+     "correcta": false,
+     "retro": "No todos comparten D: el de menor AICc tiene D = 0 y su verosimilitud se evalúa sobre 12 datos más. Su AICc no se compara con el de los demás (módulos 5.6 y 5.10)."
+    },
+    {
+     "texto": "No: el AICc solo compara modelos con el mismo número de coeficientes.",
+     "largo": 69,
+     "correcta": false,
+     "retro": "El AICc existe justamente para comparar modelos con distinto número de coeficientes: su penalización cobra cada uno. Lo que no puede cambiar es el conjunto de datos sobre el que se evalúa la verosimilitud, que es lo que fijan d y D (módulo 5.6)."
+    }
+   ],
+   "otros_campos": []
+  },
+  {
+   "instrumento": "simulacro",
+   "n": 4,
+   "id": "N4",
+   "etapa": 1,
+   "etiqueta": "cap. 5 · mód. 5.2, 5.4 y 5.7 · El satélite del modelo ajustado",
+   "tipo": "numero",
+   "enunciado": "Para log yt se eligió el airline, ARIMA(0,1,1)(0,1,1)12, que en la notación del capítulo es (1 − B)(1 − B12) log yt = (1 + θB)(1 + ΘB12) εt, con θ̂ = −0.4012 y Θ̂ = −0.6514. Calcule la autocorrelación teórica en el rezago 13 de ∇∇12 log yt que implica el modelo ajustado. Responda con cuatro decimales.",
+   "enunciado_html": "<p>Para log y<sub>t</sub> se eligió el airline, ARIMA(0,1,1)(0,1,1)<sub>12</sub>, que en la notación del capítulo es (1 − B)(1 − B<sup>12</sup>) log y<sub>t</sub> = (1 + θB)(1 + ΘB<sup>12</sup>) ε<sub>t</sub>, con θ̂ = −0.4012 y Θ̂ = −0.6514. Calcule la autocorrelación teórica en el rezago 13 de ∇∇<sub>12</sub> log y<sub>t</sub> que implica el modelo ajustado. Responda con cuatro decimales.</p>",
+   "clave": {
+    "valor": 0.158,
+    "tol": 0.001264,
+    "texto": "0.1580"
+   },
+   "cuenta": "En el airline, ρ13 = θΘ / [(1 + θ²)(1 + Θ²)] = ρ1·ρ12: (−0.4012)·(−0.6514) / [(1 + 0.1610)(1 + 0.4243)] = 0.2613 / 1.6536 = 0.1580. El producto de dos coeficientes negativos da un satélite positivo, y ese satélite no pide un parámetro: lo produce la multiplicación de los dos polinomios.",
+   "rutas": [
+    {
+     "valor": 0.261342,
+     "cifra": "0.2613",
+     "texto": "dio el coeficiente θΘ del rezago 13 y no la autocorrelación"
+    },
+    {
+     "valor": -0.802916,
+     "cifra": "−0.8029",
+     "texto": "sumó ρ1 y ρ12 en vez de multiplicarlas"
+    },
+    {
+     "valor": -0.345576,
+     "cifra": "−0.3456",
+     "texto": "dio ρ1 = θ/(1 + θ²), la autocorrelación del rezago 1"
+    },
+    {
+     "valor": -0.158046,
+     "cifra": "−0.1580",
+     "texto": "cambió el signo: el producto de dos negativos es positivo"
+    }
+   ],
+   "correcta": null,
+   "opciones": [],
+   "otros_campos": []
+  },
+  {
+   "instrumento": "simulacro",
+   "n": 5,
+   "id": "N5",
+   "etapa": 1,
+   "etiqueta": "cap. 5 · mód. 5.6 y 5.7 · Ljung–Box con 2m rezagos",
+   "tipo": "numero",
+   "enunciado": "Los n = 167 residuales del airline ajustado a log yt tienen autocorrelaciones muestrales r12 = −0.0801 y r24 = 0.0180. Para los otros 22 rezagos entre 1 y 24, la suma de los términos de Ljung–Box es Σ rk²/(n − k) = 0.0006073. Calcule el estadístico Q(24) de Ljung–Box. Responda con dos decimales.",
+   "enunciado_html": "<p>Los n = 167 residuales del airline ajustado a log y<sub>t</sub> tienen autocorrelaciones muestrales r<sub>12</sub> = −0.0801 y r<sub>24</sub> = 0.0180. Para los otros 22 rezagos entre 1 y 24, la suma de los términos de Ljung–Box es Σ r<sub>k</sub>²/(n − k) = 0.0006073. Calcule el estadístico Q(24) de Ljung–Box. Responda con dos decimales.</p>",
+   "clave": {
+    "valor": 18.37,
+    "tol": 0.14696,
+    "texto": "18.37"
+   },
+   "cuenta": "Q(24) = n(n + 2) Σk=124 rk²/(n − k) = 167·169·(0.0006073 + (−0.0801)²/155 + 0.0180²/143) = 28 223·0.0006510 = 18.37. Con 24 − 2 = 22 grados de libertad (se descuentan θ y Θ), el valor crítico al 5 % es 33.92, así que la prueba no rechaza. Se usan 2m = 24 rezagos para que las barras de 12 y 24 pesen en el estadístico.",
+   "rutas": [
+    {
+     "valor": 1.232198,
+     "cifra": "1.23",
+     "texto": "sumó solo los términos de los rezagos 12 y 24"
+    },
+    {
+     "valor": 207.36313,
+     "cifra": "207.36",
+     "texto": "no dividió entre n − k los términos de los rezagos 12 y 24"
+    },
+    {
+     "valor": 21.21431,
+     "cifra": "21.21",
+     "texto": "usó los N = 180 meses de la serie en vez de los n = 167 residuales"
+    },
+    {
+     "valor": 32.610759,
+     "cifra": "32.61",
+     "texto": "dividió entre k en vez de entre n − k los términos de los rezagos 12 y 24"
+    }
+   ],
+   "correcta": null,
+   "opciones": [],
+   "otros_campos": []
+  },
+  {
+   "instrumento": "simulacro",
+   "n": 6,
+   "id": "N6",
+   "etapa": 1,
+   "etiqueta": "cap. 5 · mód. 5.5 · La desviación del pronóstico",
+   "tipo": "numero",
+   "enunciado": "En el airline ajustado a log yt, θ̂ = −0.4012, Θ̂ = −0.6514 y σ̂² = 0.003152. Sus pesos ψ valen ψ0 = 1, ψj = 1 + θ para j = 1, …, 11 y, al cruzar el rezago estacional, ψ12 = (1 + θ) + (1 + Θ). Calcule σ13, la desviación típica del error cuando se pronostica a h = 13 meses, en la escala de log yt. Responda con cuatro decimales.",
+   "enunciado_html": "<p>En el airline ajustado a log y<sub>t</sub>, θ̂ = −0.4012, Θ̂ = −0.6514 y σ̂² = 0.003152. Sus pesos ψ valen ψ<sub>0</sub> = 1, ψ<sub>j</sub> = 1 + θ para j = 1, …, 11 y, al cruzar el rezago estacional, ψ<sub>12</sub> = (1 + θ) + (1 + Θ). Calcule σ<sub>13</sub>, la desviación típica del error cuando se pronostica a h = 13 meses, en la escala de log y<sub>t</sub>. Responda con cuatro decimales.</p>",
+   "clave": {
+    "valor": 0.1357,
+    "tol": 0.001086,
+    "texto": "0.1357"
+   },
+   "cuenta": "σh² = σ² Σj=0h−1 ψj², así que a h = 13 entran ψ0 a ψ12: 1 + 11·(1 + θ)² + (2 + θ + Θ)² = 1 + 11·0.358561 + 0.897567 = 5.841743, y σ13 = √(0.003152·5.841743) = 0.1357. El salto de ψ12 es la huella de la estación: la incertidumbre crece a ritmo constante dentro del año y pega un escalón al cruzar el rezago 12.",
+   "rutas": [
+    {
+     "valor": 0.129284,
+     "cifra": "0.1293",
+     "texto": "no vio el escalón: tomó ψ12 = 1 + θ"
+    },
+    {
+     "valor": 0.164012,
+     "cifra": "0.1640",
+     "texto": "sumó los pesos ψj en vez de sus cuadrados"
+    },
+    {
+     "valor": 0.018413,
+     "cifra": "0.0184",
+     "texto": "dio la varianza: olvidó la raíz"
+    },
+    {
+     "valor": 0.143069,
+     "cifra": "0.1431",
+     "texto": "sumó trece pesos: añadió ψ13"
+    }
+   ],
+   "correcta": null,
+   "opciones": [],
+   "otros_campos": []
+  },
+  {
+   "instrumento": "simulacro",
+   "n": 7,
+   "id": "N7",
+   "etapa": 1,
+   "etiqueta": "cap. 5 · mód. 5.2 y 5.7 · El pronóstico de enero",
+   "tipo": "numero",
+   "enunciado": "Para pronosticar enero de 2026 con el airline ajustado a log yt, es decir, (1 − B)(1 − B12) log yt = (1 + θB)(1 + ΘB12) εt, con θ̂ = −0.4012 y Θ̂ = −0.6514, se tienen el logaritmo de los vehículos y el residual de tres meses: Mes log yt Residual diciembre de 2024 6.3973 0.0294 enero de 2025 6.3034 0.0313 diciembre de 2025 6.4671 0.0764 Calcule el pronóstico puntual de enero de 2026 en la escala original, en miles de vehículos, es decir, e elevado al pronóstico en logaritmos. Responda con dos decimales.",
+   "enunciado_html": "<p>Para pronosticar enero de 2026 con el airline ajustado a log y<sub>t</sub>, es decir, (1 − B)(1 − B<sup>12</sup>) log y<sub>t</sub> = (1 + θB)(1 + ΘB<sup>12</sup>) ε<sub>t</sub>, con θ̂ = −0.4012 y Θ̂ = −0.6514, se tienen el logaritmo de los vehículos y el residual de tres meses:</p><table style=\"border-collapse:collapse;margin:6px 0 12px 0;font-size:95%\"><thead><tr><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">Mes</th><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">log y<sub>t</sub></th><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">Residual</th></tr></thead><tbody><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">diciembre de 2024</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">6.3973</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0.0294</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">enero de 2025</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">6.3034</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0.0313</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">diciembre de 2025</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">6.4671</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0.0764</td></tr></tbody></table><p>Calcule el pronóstico puntual de enero de 2026 en la escala original, en miles de vehículos, es decir, e elevado al pronóstico en logaritmos. Responda con dos decimales.</p>",
+   "clave": {
+    "valor": 561.07,
+    "tol": 4.48856,
+    "texto": "561.07"
+   },
+   "cuenta": "Despejado, el modelo dice log yt = log yt−1 + log yt−12 − log yt−13 + εt + θεt−1 + Θεt−12 + θΘεt−13. Para enero de 2026 el choque del mes se pronostica con 0 y los otros tres son los residuales: 6.4671 + 6.3034 − 6.3973 + (−0.4012)·0.0764 + (−0.6514)·0.0313 + 0.261342·0.0294 = 6.32984. De vuelta con exp, e6.32984 = 561.07 miles de vehículos: la mediana del pronóstico, no su media.",
+   "rutas": [
+    {
+     "valor": 585.929808,
+     "cifra": "585.93",
+     "texto": "olvidó los términos MA: usó solo las dos diferencias"
+    },
+    {
+     "valor": 6.329843,
+     "cifra": "6.33",
+     "texto": "no deshizo el logaritmo"
+    },
+    {
+     "valor": 546.426606,
+     "cifra": "546.43",
+     "texto": "repitió enero de 2025 (el pronóstico ingenuo estacional)"
+    },
+    {
+     "valor": 202134312.018342,
+     "cifra": "202134312.02",
+     "texto": "sumó el log de diciembre de 2024 en vez de restarlo"
+    }
+   ],
+   "correcta": null,
+   "opciones": [],
+   "otros_campos": []
+  },
+  {
+   "instrumento": "simulacro",
+   "n": 8,
+   "id": "GI",
+   "etapa": 1,
+   "etiqueta": "cap. 5 · mód. 5.4 · Identificar por la ACF y la PACF",
+   "tipo": "opcion",
+   "enunciado": "La misma concesión lleva la serie mensual de camiones que pasan por otro peaje de la vía. La figura muestra la ACF y la PACF muestrales de ∇∇12 log yt de esa serie, con n = 179 datos tras las dos diferencias y la banda ±1.96/√n en línea discontinua. ¿Qué modelo sugieren? ACF de ∇∇₁₂ log y −0.5 0 0.5 6 12 18 24 30 36 Rezago (meses) PACF de ∇∇₁₂ log y −0.5 0 0.5 6 12 18 24 30 36 Rezago (meses) Arriba, la ACF; abajo, la PACF, de los rezagos 1 a 36. La banda vale ±0.15.",
+   "enunciado_html": "<p>La misma concesión lleva la serie mensual de camiones que pasan por otro peaje de la vía. La figura muestra la ACF y la PACF muestrales de ∇∇<sub>12</sub> log y<sub>t</sub> de esa serie, con n = 179 datos tras las dos diferencias y la banda ±1.96/√n en línea discontinua. ¿Qué modelo sugieren?</p><figure class='simulacro-figura'><div class='simulacro-figura-paneles'><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 460 214' role='img' aria-label='Correlograma: ACF de ∇∇₁₂ log y' data-panel='acf' font-family='Montserrat, system-ui, sans-serif' font-size='12'><text x='230' y='17' text-anchor='middle' fill='#012820' font-size='13.5' font-weight='600'>ACF de ∇∇₁₂ log y</text><rect x='48' y='30' width='400' height='144' fill='none' stroke='#cbd5e1'/><g stroke='#e2e8f0'><line class='grid-y' data-v='-0.5' x1='48' x2='448' y1='147' y2='147'/><line class='grid-y' data-v='0' x1='48' x2='448' y1='102' y2='102'/><line class='grid-y' data-v='0.5' x1='48' x2='448' y1='57' y2='57'/></g><g fill='#475569' text-anchor='end'><text class='tick-y' data-v='-0.5' x='42' y='151'>−0.5</text><text class='tick-y' data-v='0' x='42' y='106'>0</text><text class='tick-y' data-v='0.5' x='42' y='61'>0.5</text></g><g stroke='#e2e8f0'><line class='grid-x' data-v='6' x1='112.9' x2='112.9' y1='30' y2='174'/><line class='grid-x' data-v='12' x1='177.7' x2='177.7' y1='30' y2='174'/><line class='grid-x' data-v='18' x1='242.6' x2='242.6' y1='30' y2='174'/><line class='grid-x' data-v='24' x1='307.5' x2='307.5' y1='30' y2='174'/><line class='grid-x' data-v='30' x1='372.3' x2='372.3' y1='30' y2='174'/><line class='grid-x' data-v='36' x1='437.2' x2='437.2' y1='30' y2='174'/></g><g fill='#475569' text-anchor='middle'><text class='tick-x' data-v='6' x='112.9' y='189'>6</text><text class='tick-x' data-v='12' x='177.7' y='189'>12</text><text class='tick-x' data-v='18' x='242.6' y='189'>18</text><text class='tick-x' data-v='24' x='307.5' y='189'>24</text><text class='tick-x' data-v='30' x='372.3' y='189'>30</text><text class='tick-x' data-v='36' x='437.2' y='189'>36</text></g><text x='248' y='206' text-anchor='middle' fill='#475569'>Rezago (meses)</text><line class='cero' x1='48' x2='448' y1='102' y2='102' stroke='#64748b' stroke-width='1'/><line class='banda' data-v='0.1465' x1='48' x2='448' y1='88.8' y2='88.8' stroke='#2563eb' stroke-width='1.3' stroke-dasharray='5 4'/><line class='banda' data-v='-0.1465' x1='48' x2='448' y1='115.2' y2='115.2' stroke='#2563eb' stroke-width='1.3' stroke-dasharray='5 4'/><g stroke='#012820' stroke-width='4' stroke-linecap='butt'><line class='barra' data-k='1' x1='58.8' x2='58.8' y1='102' y2='147'/><line class='barra' data-k='2' x1='69.6' x2='69.6' y1='102' y2='96.7'/><line class='barra' data-k='3' x1='80.4' x2='80.4' y1='102' y2='105'/><line class='barra' data-k='4' x1='91.2' x2='91.2' y1='102' y2='99.7'/><line class='barra' data-k='5' x1='102.1' x2='102.1' y1='102' y2='100.6'/><line class='barra' data-k='6' x1='112.9' x2='112.9' y1='102' y2='98.5'/><line class='barra' data-k='7' x1='123.7' x2='123.7' y1='102' y2='111.1'/><line class='barra' data-k='8' x1='134.5' x2='134.5' y1='102' y2='103.1'/><line class='barra' data-k='9' x1='145.3' x2='145.3' y1='102' y2='95.3'/><line class='barra' data-k='10' x1='156.1' x2='156.1' y1='102' y2='103.3'/><line class='barra' data-k='11' x1='166.9' x2='166.9' y1='102' y2='78.9'/><line class='barra' data-k='12' x1='177.7' x2='177.7' y1='102' y2='160.3'/><line class='barra' data-k='13' x1='188.5' x2='188.5' y1='102' y2='66'/><line class='barra' data-k='14' x1='199.4' x2='199.4' y1='102' y2='107.8'/><line class='barra' data-k='15' x1='210.2' x2='210.2' y1='102' y2='100.9'/><line class='barra' data-k='16' x1='221' x2='221' y1='102' y2='107.3'/><line class='barra' data-k='17' x1='231.8' x2='231.8' y1='102' y2='98.4'/><line class='barra' data-k='18' x1='242.6' x2='242.6' y1='102' y2='105.9'/><line class='barra' data-k='19' x1='253.4' x2='253.4' y1='102' y2='93.9'/><line class='barra' data-k='20' x1='264.2' x2='264.2' y1='102' y2='100.1'/><line class='barra' data-k='21' x1='275' x2='275' y1='102' y2='109.5'/><line class='barra' data-k='22' x1='285.8' x2='285.8' y1='102' y2='103.6'/><line class='barra' data-k='23' x1='296.6' x2='296.6' y1='102' y2='108'/><line class='barra' data-k='24' x1='307.5' x2='307.5' y1='102' y2='68'/><line class='barra' data-k='25' x1='318.3' x2='318.3' y1='102' y2='133.7'/><line class='barra' data-k='26' x1='329.1' x2='329.1' y1='102' y2='91.1'/><line class='barra' data-k='27' x1='339.9' x2='339.9' y1='102' y2='103.3'/><line class='barra' data-k='28' x1='350.7' x2='350.7' y1='102' y2='98.6'/><line class='barra' data-k='29' x1='361.5' x2='361.5' y1='102' y2='105.6'/><line class='barra' data-k='30' x1='372.3' x2='372.3' y1='102' y2='99.1'/><line class='barra' data-k='31' x1='383.1' x2='383.1' y1='102' y2='109.4'/><line class='barra' data-k='32' x1='393.9' x2='393.9' y1='102' y2='103.3'/><line class='barra' data-k='33' x1='404.8' x2='404.8' y1='102' y2='93.3'/><line class='barra' data-k='34' x1='415.6' x2='415.6' y1='102' y2='102.3'/><line class='barra' data-k='35' x1='426.4' x2='426.4' y1='102' y2='104'/><line class='barra' data-k='36' x1='437.2' x2='437.2' y1='102' y2='117'/></g></svg><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 460 214' role='img' aria-label='Correlograma: PACF de ∇∇₁₂ log y' data-panel='pacf' font-family='Montserrat, system-ui, sans-serif' font-size='12'><text x='230' y='17' text-anchor='middle' fill='#012820' font-size='13.5' font-weight='600'>PACF de ∇∇₁₂ log y</text><rect x='48' y='30' width='400' height='144' fill='none' stroke='#cbd5e1'/><g stroke='#e2e8f0'><line class='grid-y' data-v='-0.5' x1='48' x2='448' y1='162' y2='162'/><line class='grid-y' data-v='0' x1='48' x2='448' y1='102' y2='102'/><line class='grid-y' data-v='0.5' x1='48' x2='448' y1='42' y2='42'/></g><g fill='#475569' text-anchor='end'><text class='tick-y' data-v='-0.5' x='42' y='166'>−0.5</text><text class='tick-y' data-v='0' x='42' y='106'>0</text><text class='tick-y' data-v='0.5' x='42' y='46'>0.5</text></g><g stroke='#e2e8f0'><line class='grid-x' data-v='6' x1='112.9' x2='112.9' y1='30' y2='174'/><line class='grid-x' data-v='12' x1='177.7' x2='177.7' y1='30' y2='174'/><line class='grid-x' data-v='18' x1='242.6' x2='242.6' y1='30' y2='174'/><line class='grid-x' data-v='24' x1='307.5' x2='307.5' y1='30' y2='174'/><line class='grid-x' data-v='30' x1='372.3' x2='372.3' y1='30' y2='174'/><line class='grid-x' data-v='36' x1='437.2' x2='437.2' y1='30' y2='174'/></g><g fill='#475569' text-anchor='middle'><text class='tick-x' data-v='6' x='112.9' y='189'>6</text><text class='tick-x' data-v='12' x='177.7' y='189'>12</text><text class='tick-x' data-v='18' x='242.6' y='189'>18</text><text class='tick-x' data-v='24' x='307.5' y='189'>24</text><text class='tick-x' data-v='30' x='372.3' y='189'>30</text><text class='tick-x' data-v='36' x='437.2' y='189'>36</text></g><text x='248' y='206' text-anchor='middle' fill='#475569'>Rezago (meses)</text><line class='cero' x1='48' x2='448' y1='102' y2='102' stroke='#64748b' stroke-width='1'/><line class='banda' data-v='0.1465' x1='48' x2='448' y1='84.4' y2='84.4' stroke='#2563eb' stroke-width='1.3' stroke-dasharray='5 4'/><line class='banda' data-v='-0.1465' x1='48' x2='448' y1='119.6' y2='119.6' stroke='#2563eb' stroke-width='1.3' stroke-dasharray='5 4'/><g stroke='#c2410c' stroke-width='4' stroke-linecap='butt'><line class='barra' data-k='1' x1='58.8' x2='58.8' y1='102' y2='162'/><line class='barra' data-k='2' x1='69.6' x2='69.6' y1='102' y2='132.6'/><line class='barra' data-k='3' x1='80.4' x2='80.4' y1='102' y2='123.3'/><line class='barra' data-k='4' x1='91.2' x2='91.2' y1='102' y2='113.4'/><line class='barra' data-k='5' x1='102.1' x2='102.1' y1='102' y2='104.4'/><line class='barra' data-k='6' x1='112.9' x2='112.9' y1='102' y2='93.5'/><line class='barra' data-k='7' x1='123.7' x2='123.7' y1='102' y2='107.7'/><line class='barra' data-k='8' x1='134.5' x2='134.5' y1='102' y2='117.5'/><line class='barra' data-k='9' x1='145.3' x2='145.3' y1='102' y2='105.8'/><line class='barra' data-k='10' x1='156.1' x2='156.1' y1='102' y2='101.6'/><line class='barra' data-k='11' x1='166.9' x2='166.9' y1='102' y2='53.4'/><line class='barra' data-k='12' x1='177.7' x2='177.7' y1='102' y2='161.1'/><line class='barra' data-k='13' x1='188.5' x2='188.5' y1='102' y2='131.6'/><line class='barra' data-k='14' x1='199.4' x2='199.4' y1='102' y2='112.7'/><line class='barra' data-k='15' x1='210.2' x2='210.2' y1='102' y2='106.8'/><line class='barra' data-k='16' x1='221' x2='221' y1='102' y2='114.4'/><line class='barra' data-k='17' x1='231.8' x2='231.8' y1='102' y2='107.5'/><line class='barra' data-k='18' x1='242.6' x2='242.6' y1='102' y2='96.6'/><line class='barra' data-k='19' x1='253.4' x2='253.4' y1='102' y2='107.5'/><line class='barra' data-k='20' x1='264.2' x2='264.2' y1='102' y2='102.6'/><line class='barra' data-k='21' x1='275' x2='275' y1='102' y2='97.7'/><line class='barra' data-k='22' x1='285.8' x2='285.8' y1='102' y2='104.5'/><line class='barra' data-k='23' x1='296.6' x2='296.6' y1='102' y2='95.3'/><line class='barra' data-k='24' x1='307.5' x2='307.5' y1='102' y2='97.3'/><line class='barra' data-k='25' x1='318.3' x2='318.3' y1='102' y2='112.4'/><line class='barra' data-k='26' x1='329.1' x2='329.1' y1='102' y2='103.6'/><line class='barra' data-k='27' x1='339.9' x2='339.9' y1='102' y2='98.6'/><line class='barra' data-k='28' x1='350.7' x2='350.7' y1='102' y2='105'/><line class='barra' data-k='29' x1='361.5' x2='361.5' y1='102' y2='106.9'/><line class='barra' data-k='30' x1='372.3' x2='372.3' y1='102' y2='104.4'/><line class='barra' data-k='31' x1='383.1' x2='383.1' y1='102' y2='104'/><line class='barra' data-k='32' x1='393.9' x2='393.9' y1='102' y2='110.8'/><line class='barra' data-k='33' x1='404.8' x2='404.8' y1='102' y2='101.9'/><line class='barra' data-k='34' x1='415.6' x2='415.6' y1='102' y2='100.5'/><line class='barra' data-k='35' x1='426.4' x2='426.4' y1='102' y2='105.2'/><line class='barra' data-k='36' x1='437.2' x2='437.2' y1='102' y2='96.6'/></g></svg></div><figcaption>Arriba, la ACF; abajo, la PACF, de los rezagos 1 a 36. La banda vale ±0.15.</figcaption></figure>",
+   "clave": null,
+   "cuenta": null,
+   "rutas": [],
+   "correcta": 3,
+   "opciones": [
+    {
+     "texto": "ARIMA(0,1,1)(0,1,1)12",
+     "largo": 21,
+     "correcta": false,
+     "retro": "Esa lectura falla en la parte estacional: en 12, 24 y 36 la ACF decae (r12 = −0.65, r24 = 0.38) y la PACF se corta tras el 12 (p12 = −0.49, p24 = 0.04): un AR(1) estacional (módulo 5.4)."
+    },
+    {
+     "texto": "ARIMA(1,1,0)(0,1,1)12",
+     "largo": 21,
+     "correcta": false,
+     "retro": "Esa lectura falla en las dos partes. La regular: en los rezagos bajos la ACF se corta tras el 1 (r1 = −0.50, y de 2 a 4 dentro de ±0.15) y la PACF decae (p1 = −0.50, p2 = −0.26): un MA(1) regular. La estacional: en 12, 24 y 36 la ACF decae (r12 = −0.65, r24 = 0.38) y la PACF se corta tras el 12 (p12 = −0.49, p24 = 0.04): un AR(1) estacional (módulo 5.4)."
+    },
+    {
+     "texto": "ARIMA(1,1,0)(1,1,0)12",
+     "largo": 21,
+     "correcta": false,
+     "retro": "Esa lectura falla en la parte regular: en los rezagos bajos la ACF se corta tras el 1 (r1 = −0.50, y de 2 a 4 dentro de ±0.15) y la PACF decae (p1 = −0.50, p2 = −0.26): un MA(1) regular (módulo 5.4)."
+    },
+    {
+     "texto": "ARIMA(0,1,1)(1,1,0)12",
+     "largo": 21,
+     "correcta": true,
+     "retro": "La tabla del Módulo 5.4, leída dos veces: en los rezagos bajos la ACF se corta tras el 1 (r1 = −0.50, y de 2 a 4 dentro de ±0.15) y la PACF decae (p1 = −0.50, p2 = −0.26): un MA(1) regular; y en 12, 24 y 36 la ACF decae (r12 = −0.65, r24 = 0.38) y la PACF se corta tras el 12 (p12 = −0.49, p24 = 0.04): un AR(1) estacional. Las barras de 11 y 13 son satélites del producto de los dos polinomios y no piden parámetros."
+    }
+   ],
+   "otros_campos": []
+  },
+  {
+   "instrumento": "simulacro",
+   "n": 9,
+   "id": "GD",
+   "etapa": 1,
+   "etiqueta": "cap. 5 · mód. 5.6 y 5.7 · El diagnóstico de un primer intento",
+   "tipo": "opcion",
+   "enunciado": "En la concesión, la serie de galones de combustible que vende cada mes una estación de servicio de la vía se modeló con un SARIMA de dos parámetros. La figura muestra sus 150 residuales estandarizados contra el tiempo y su ACF, con la banda ±1.96/√n en línea discontinua. Ljung–Box con 24 rezagos da Q = 20.94, con 24 − 2 = 22 grados de libertad, y χ²0.95(22) = 33.92. ¿Qué indica el diagnóstico? Residuales estandarizados −4 −2 0 2 4 25 50 75 100 125 150 Mes ACF de los residuales −0.2 0 0.2 6 12 18 24 30 36 Rezago (meses) Arriba, cada residual dividido entre la desviación estándar de todos ellos, contra el número de mes; abajo, su ACF de los rezagos 1 a 36. La banda vale ±0.16.",
+   "enunciado_html": "<p>En la concesión, la serie de galones de combustible que vende cada mes una estación de servicio de la vía se modeló con un SARIMA de dos parámetros. La figura muestra sus 150 residuales estandarizados contra el tiempo y su ACF, con la banda ±1.96/√n en línea discontinua. Ljung–Box con 24 rezagos da Q = 20.94, con 24 − 2 = 22 grados de libertad, y χ²<sub>0.95</sub>(22) = 33.92. ¿Qué indica el diagnóstico?</p><figure class='simulacro-figura'><div class='simulacro-figura-paneles'><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 460 214' role='img' aria-label='Residuales en el tiempo: Residuales estandarizados' data-panel='tiempo' font-family='Montserrat, system-ui, sans-serif' font-size='12'><text x='230' y='17' text-anchor='middle' fill='#012820' font-size='13.5' font-weight='600'>Residuales estandarizados</text><rect x='48' y='30' width='400' height='144' fill='none' stroke='#cbd5e1'/><g stroke='#e2e8f0'><line class='grid-y' data-v='-4' x1='48' x2='448' y1='174' y2='174'/><line class='grid-y' data-v='-2' x1='48' x2='448' y1='138' y2='138'/><line class='grid-y' data-v='0' x1='48' x2='448' y1='102' y2='102'/><line class='grid-y' data-v='2' x1='48' x2='448' y1='66' y2='66'/><line class='grid-y' data-v='4' x1='48' x2='448' y1='30' y2='30'/></g><g fill='#475569' text-anchor='end'><text class='tick-y' data-v='-4' x='42' y='178'>−4</text><text class='tick-y' data-v='-2' x='42' y='142'>−2</text><text class='tick-y' data-v='0' x='42' y='106'>0</text><text class='tick-y' data-v='2' x='42' y='70'>2</text><text class='tick-y' data-v='4' x='42' y='34'>4</text></g><g stroke='#e2e8f0'><line class='grid-x' data-v='25' x1='114.2' x2='114.2' y1='30' y2='174'/><line class='grid-x' data-v='50' x1='180.5' x2='180.5' y1='30' y2='174'/><line class='grid-x' data-v='75' x1='246.7' x2='246.7' y1='30' y2='174'/><line class='grid-x' data-v='100' x1='312.9' x2='312.9' y1='30' y2='174'/><line class='grid-x' data-v='125' x1='379.1' x2='379.1' y1='30' y2='174'/><line class='grid-x' data-v='150' x1='445.4' x2='445.4' y1='30' y2='174'/></g><g fill='#475569' text-anchor='middle'><text class='tick-x' data-v='25' x='114.2' y='189'>25</text><text class='tick-x' data-v='50' x='180.5' y='189'>50</text><text class='tick-x' data-v='75' x='246.7' y='189'>75</text><text class='tick-x' data-v='100' x='312.9' y='189'>100</text><text class='tick-x' data-v='125' x='379.1' y='189'>125</text><text class='tick-x' data-v='150' x='445.4' y='189'>150</text></g><text x='248' y='206' text-anchor='middle' fill='#475569'>Mes</text><line class='cero' x1='48' x2='448' y1='102' y2='102' stroke='#64748b' stroke-width='1.2' stroke-dasharray='5 4'/><polyline points='50.6,109 53.3,114.1 55.9,102.5 58.6,107 61.2,109.8 63.9,109 66.5,98.9 69.2,89.8 71.8,99.3 74.5,93.3 77.1,91.6 79.8,101 82.4,106.1 85.1,93.7 87.7,106.7 90.4,97.5 93,90.4 95.7,102 98.3,109.8 101,104.1 103.6,98 106.3,100.3 108.9,111 111.6,89.9 114.2,88.3 116.9,101.3 119.5,89.3 122.2,92.5 124.8,110 127.5,108.5 130.1,113.9 132.8,89.8 135.4,102.3 138.1,91.2 140.7,84.5 143.4,101.4 146,90.5 148.7,105.9 151.3,101.7 154,85.6 156.6,135.5 159.3,79.3 161.9,101.2 164.6,93.5 167.2,96.9 169.9,104.3 172.5,76.6 175.2,93.8 177.8,89.3 180.5,117.3 183.1,101.1 185.7,92.4 188.4,117 191,109.6 193.7,106.7 196.3,86.9 199,90.6 201.6,78.5 204.3,114.8 206.9,110.1 209.6,100.1 212.2,119.4 214.9,100.9 217.5,106.9 220.2,83.5 222.8,104.8 225.5,105.5 228.1,120.7 230.8,119.8 233.4,91.1 236.1,86.6 238.7,107.2 241.4,112.4 244,117.4 246.7,87.7 249.3,108.3 252,104.6 254.6,114.9 257.3,91.6 259.9,115.8 262.6,96.6 265.2,100.7 267.9,101.7 270.5,84.4 273.2,130.7 275.8,108.3 278.5,121.4 281.1,90.9 283.8,125.7 286.4,102.5 289.1,98.6 291.7,116.8 294.4,111.2 297,111 299.7,116.9 302.3,114.9 305,81 307.6,111 310.3,83.4 312.9,94.3 315.5,98 318.2,105.4 320.8,107.8 323.5,75.7 326.1,93.8 328.8,97.7 331.4,82.3 334.1,135.1 336.7,102.2 339.4,106.2 342,112.3 344.7,115.4 347.3,68.2 350,68.5 352.6,96.6 355.3,135.1 357.9,86 360.6,103.5 363.2,78.1 365.9,77.2 368.5,137.1 371.2,99.6 373.8,62.7 376.5,65.9 379.1,108.7 381.8,151.6 384.4,113.2 387.1,132.5 389.7,138.4 392.4,160 395,149.8 397.7,132.7 400.3,139.9 403,79.6 405.6,83.5 408.3,112.9 410.9,107.3 413.6,115 416.2,111.4 418.9,127.9 421.5,106.6 424.2,61.5 426.8,120.5 429.5,93.1 432.1,111.9 434.8,55.2 437.4,147.2 440.1,85.5 442.7,69.2 445.4,114.4' fill='none' stroke='#94a3b8' stroke-width='0.8'/><g fill='#012820'><circle class='pt' data-t='1' cx='50.6' cy='109' r='2.2'/><circle class='pt' data-t='2' cx='53.3' cy='114.1' r='2.2'/><circle class='pt' data-t='3' cx='55.9' cy='102.5' r='2.2'/><circle class='pt' data-t='4' cx='58.6' cy='107' r='2.2'/><circle class='pt' data-t='5' cx='61.2' cy='109.8' r='2.2'/><circle class='pt' data-t='6' cx='63.9' cy='109' r='2.2'/><circle class='pt' data-t='7' cx='66.5' cy='98.9' r='2.2'/><circle class='pt' data-t='8' cx='69.2' cy='89.8' r='2.2'/><circle class='pt' data-t='9' cx='71.8' cy='99.3' r='2.2'/><circle class='pt' data-t='10' cx='74.5' cy='93.3' r='2.2'/><circle class='pt' data-t='11' cx='77.1' cy='91.6' r='2.2'/><circle class='pt' data-t='12' cx='79.8' cy='101' r='2.2'/><circle class='pt' data-t='13' cx='82.4' cy='106.1' r='2.2'/><circle class='pt' data-t='14' cx='85.1' cy='93.7' r='2.2'/><circle class='pt' data-t='15' cx='87.7' cy='106.7' r='2.2'/><circle class='pt' data-t='16' cx='90.4' cy='97.5' r='2.2'/><circle class='pt' data-t='17' cx='93' cy='90.4' r='2.2'/><circle class='pt' data-t='18' cx='95.7' cy='102' r='2.2'/><circle class='pt' data-t='19' cx='98.3' cy='109.8' r='2.2'/><circle class='pt' data-t='20' cx='101' cy='104.1' r='2.2'/><circle class='pt' data-t='21' cx='103.6' cy='98' r='2.2'/><circle class='pt' data-t='22' cx='106.3' cy='100.3' r='2.2'/><circle class='pt' data-t='23' cx='108.9' cy='111' r='2.2'/><circle class='pt' data-t='24' cx='111.6' cy='89.9' r='2.2'/><circle class='pt' data-t='25' cx='114.2' cy='88.3' r='2.2'/><circle class='pt' data-t='26' cx='116.9' cy='101.3' r='2.2'/><circle class='pt' data-t='27' cx='119.5' cy='89.3' r='2.2'/><circle class='pt' data-t='28' cx='122.2' cy='92.5' r='2.2'/><circle class='pt' data-t='29' cx='124.8' cy='110' r='2.2'/><circle class='pt' data-t='30' cx='127.5' cy='108.5' r='2.2'/><circle class='pt' data-t='31' cx='130.1' cy='113.9' r='2.2'/><circle class='pt' data-t='32' cx='132.8' cy='89.8' r='2.2'/><circle class='pt' data-t='33' cx='135.4' cy='102.3' r='2.2'/><circle class='pt' data-t='34' cx='138.1' cy='91.2' r='2.2'/><circle class='pt' data-t='35' cx='140.7' cy='84.5' r='2.2'/><circle class='pt' data-t='36' cx='143.4' cy='101.4' r='2.2'/><circle class='pt' data-t='37' cx='146' cy='90.5' r='2.2'/><circle class='pt' data-t='38' cx='148.7' cy='105.9' r='2.2'/><circle class='pt' data-t='39' cx='151.3' cy='101.7' r='2.2'/><circle class='pt' data-t='40' cx='154' cy='85.6' r='2.2'/><circle class='pt' data-t='41' cx='156.6' cy='135.5' r='2.2'/><circle class='pt' data-t='42' cx='159.3' cy='79.3' r='2.2'/><circle class='pt' data-t='43' cx='161.9' cy='101.2' r='2.2'/><circle class='pt' data-t='44' cx='164.6' cy='93.5' r='2.2'/><circle class='pt' data-t='45' cx='167.2' cy='96.9' r='2.2'/><circle class='pt' data-t='46' cx='169.9' cy='104.3' r='2.2'/><circle class='pt' data-t='47' cx='172.5' cy='76.6' r='2.2'/><circle class='pt' data-t='48' cx='175.2' cy='93.8' r='2.2'/><circle class='pt' data-t='49' cx='177.8' cy='89.3' r='2.2'/><circle class='pt' data-t='50' cx='180.5' cy='117.3' r='2.2'/><circle class='pt' data-t='51' cx='183.1' cy='101.1' r='2.2'/><circle class='pt' data-t='52' cx='185.7' cy='92.4' r='2.2'/><circle class='pt' data-t='53' cx='188.4' cy='117' r='2.2'/><circle class='pt' data-t='54' cx='191' cy='109.6' r='2.2'/><circle class='pt' data-t='55' cx='193.7' cy='106.7' r='2.2'/><circle class='pt' data-t='56' cx='196.3' cy='86.9' r='2.2'/><circle class='pt' data-t='57' cx='199' cy='90.6' r='2.2'/><circle class='pt' data-t='58' cx='201.6' cy='78.5' r='2.2'/><circle class='pt' data-t='59' cx='204.3' cy='114.8' r='2.2'/><circle class='pt' data-t='60' cx='206.9' cy='110.1' r='2.2'/><circle class='pt' data-t='61' cx='209.6' cy='100.1' r='2.2'/><circle class='pt' data-t='62' cx='212.2' cy='119.4' r='2.2'/><circle class='pt' data-t='63' cx='214.9' cy='100.9' r='2.2'/><circle class='pt' data-t='64' cx='217.5' cy='106.9' r='2.2'/><circle class='pt' data-t='65' cx='220.2' cy='83.5' r='2.2'/><circle class='pt' data-t='66' cx='222.8' cy='104.8' r='2.2'/><circle class='pt' data-t='67' cx='225.5' cy='105.5' r='2.2'/><circle class='pt' data-t='68' cx='228.1' cy='120.7' r='2.2'/><circle class='pt' data-t='69' cx='230.8' cy='119.8' r='2.2'/><circle class='pt' data-t='70' cx='233.4' cy='91.1' r='2.2'/><circle class='pt' data-t='71' cx='236.1' cy='86.6' r='2.2'/><circle class='pt' data-t='72' cx='238.7' cy='107.2' r='2.2'/><circle class='pt' data-t='73' cx='241.4' cy='112.4' r='2.2'/><circle class='pt' data-t='74' cx='244' cy='117.4' r='2.2'/><circle class='pt' data-t='75' cx='246.7' cy='87.7' r='2.2'/><circle class='pt' data-t='76' cx='249.3' cy='108.3' r='2.2'/><circle class='pt' data-t='77' cx='252' cy='104.6' r='2.2'/><circle class='pt' data-t='78' cx='254.6' cy='114.9' r='2.2'/><circle class='pt' data-t='79' cx='257.3' cy='91.6' r='2.2'/><circle class='pt' data-t='80' cx='259.9' cy='115.8' r='2.2'/><circle class='pt' data-t='81' cx='262.6' cy='96.6' r='2.2'/><circle class='pt' data-t='82' cx='265.2' cy='100.7' r='2.2'/><circle class='pt' data-t='83' cx='267.9' cy='101.7' r='2.2'/><circle class='pt' data-t='84' cx='270.5' cy='84.4' r='2.2'/><circle class='pt' data-t='85' cx='273.2' cy='130.7' r='2.2'/><circle class='pt' data-t='86' cx='275.8' cy='108.3' r='2.2'/><circle class='pt' data-t='87' cx='278.5' cy='121.4' r='2.2'/><circle class='pt' data-t='88' cx='281.1' cy='90.9' r='2.2'/><circle class='pt' data-t='89' cx='283.8' cy='125.7' r='2.2'/><circle class='pt' data-t='90' cx='286.4' cy='102.5' r='2.2'/><circle class='pt' data-t='91' cx='289.1' cy='98.6' r='2.2'/><circle class='pt' data-t='92' cx='291.7' cy='116.8' r='2.2'/><circle class='pt' data-t='93' cx='294.4' cy='111.2' r='2.2'/><circle class='pt' data-t='94' cx='297' cy='111' r='2.2'/><circle class='pt' data-t='95' cx='299.7' cy='116.9' r='2.2'/><circle class='pt' data-t='96' cx='302.3' cy='114.9' r='2.2'/><circle class='pt' data-t='97' cx='305' cy='81' r='2.2'/><circle class='pt' data-t='98' cx='307.6' cy='111' r='2.2'/><circle class='pt' data-t='99' cx='310.3' cy='83.4' r='2.2'/><circle class='pt' data-t='100' cx='312.9' cy='94.3' r='2.2'/><circle class='pt' data-t='101' cx='315.5' cy='98' r='2.2'/><circle class='pt' data-t='102' cx='318.2' cy='105.4' r='2.2'/><circle class='pt' data-t='103' cx='320.8' cy='107.8' r='2.2'/><circle class='pt' data-t='104' cx='323.5' cy='75.7' r='2.2'/><circle class='pt' data-t='105' cx='326.1' cy='93.8' r='2.2'/><circle class='pt' data-t='106' cx='328.8' cy='97.7' r='2.2'/><circle class='pt' data-t='107' cx='331.4' cy='82.3' r='2.2'/><circle class='pt' data-t='108' cx='334.1' cy='135.1' r='2.2'/><circle class='pt' data-t='109' cx='336.7' cy='102.2' r='2.2'/><circle class='pt' data-t='110' cx='339.4' cy='106.2' r='2.2'/><circle class='pt' data-t='111' cx='342' cy='112.3' r='2.2'/><circle class='pt' data-t='112' cx='344.7' cy='115.4' r='2.2'/><circle class='pt' data-t='113' cx='347.3' cy='68.2' r='2.2'/><circle class='pt' data-t='114' cx='350' cy='68.5' r='2.2'/><circle class='pt' data-t='115' cx='352.6' cy='96.6' r='2.2'/><circle class='pt' data-t='116' cx='355.3' cy='135.1' r='2.2'/><circle class='pt' data-t='117' cx='357.9' cy='86' r='2.2'/><circle class='pt' data-t='118' cx='360.6' cy='103.5' r='2.2'/><circle class='pt' data-t='119' cx='363.2' cy='78.1' r='2.2'/><circle class='pt' data-t='120' cx='365.9' cy='77.2' r='2.2'/><circle class='pt' data-t='121' cx='368.5' cy='137.1' r='2.2'/><circle class='pt' data-t='122' cx='371.2' cy='99.6' r='2.2'/><circle class='pt' data-t='123' cx='373.8' cy='62.7' r='2.2'/><circle class='pt' data-t='124' cx='376.5' cy='65.9' r='2.2'/><circle class='pt' data-t='125' cx='379.1' cy='108.7' r='2.2'/><circle class='pt' data-t='126' cx='381.8' cy='151.6' r='2.2'/><circle class='pt' data-t='127' cx='384.4' cy='113.2' r='2.2'/><circle class='pt' data-t='128' cx='387.1' cy='132.5' r='2.2'/><circle class='pt' data-t='129' cx='389.7' cy='138.4' r='2.2'/><circle class='pt' data-t='130' cx='392.4' cy='160' r='2.2'/><circle class='pt' data-t='131' cx='395' cy='149.8' r='2.2'/><circle class='pt' data-t='132' cx='397.7' cy='132.7' r='2.2'/><circle class='pt' data-t='133' cx='400.3' cy='139.9' r='2.2'/><circle class='pt' data-t='134' cx='403' cy='79.6' r='2.2'/><circle class='pt' data-t='135' cx='405.6' cy='83.5' r='2.2'/><circle class='pt' data-t='136' cx='408.3' cy='112.9' r='2.2'/><circle class='pt' data-t='137' cx='410.9' cy='107.3' r='2.2'/><circle class='pt' data-t='138' cx='413.6' cy='115' r='2.2'/><circle class='pt' data-t='139' cx='416.2' cy='111.4' r='2.2'/><circle class='pt' data-t='140' cx='418.9' cy='127.9' r='2.2'/><circle class='pt' data-t='141' cx='421.5' cy='106.6' r='2.2'/><circle class='pt' data-t='142' cx='424.2' cy='61.5' r='2.2'/><circle class='pt' data-t='143' cx='426.8' cy='120.5' r='2.2'/><circle class='pt' data-t='144' cx='429.5' cy='93.1' r='2.2'/><circle class='pt' data-t='145' cx='432.1' cy='111.9' r='2.2'/><circle class='pt' data-t='146' cx='434.8' cy='55.2' r='2.2'/><circle class='pt' data-t='147' cx='437.4' cy='147.2' r='2.2'/><circle class='pt' data-t='148' cx='440.1' cy='85.5' r='2.2'/><circle class='pt' data-t='149' cx='442.7' cy='69.2' r='2.2'/><circle class='pt' data-t='150' cx='445.4' cy='114.4' r='2.2'/></g></svg><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 460 214' role='img' aria-label='Correlograma: ACF de los residuales' data-panel='acf-res' font-family='Montserrat, system-ui, sans-serif' font-size='12'><text x='230' y='17' text-anchor='middle' fill='#012820' font-size='13.5' font-weight='600'>ACF de los residuales</text><rect x='48' y='30' width='400' height='144' fill='none' stroke='#cbd5e1'/><g stroke='#e2e8f0'><line class='grid-y' data-v='-0.2' x1='48' x2='448' y1='150' y2='150'/><line class='grid-y' data-v='0' x1='48' x2='448' y1='102' y2='102'/><line class='grid-y' data-v='0.2' x1='48' x2='448' y1='54' y2='54'/></g><g fill='#475569' text-anchor='end'><text class='tick-y' data-v='-0.2' x='42' y='154'>−0.2</text><text class='tick-y' data-v='0' x='42' y='106'>0</text><text class='tick-y' data-v='0.2' x='42' y='58'>0.2</text></g><g stroke='#e2e8f0'><line class='grid-x' data-v='6' x1='112.9' x2='112.9' y1='30' y2='174'/><line class='grid-x' data-v='12' x1='177.7' x2='177.7' y1='30' y2='174'/><line class='grid-x' data-v='18' x1='242.6' x2='242.6' y1='30' y2='174'/><line class='grid-x' data-v='24' x1='307.5' x2='307.5' y1='30' y2='174'/><line class='grid-x' data-v='30' x1='372.3' x2='372.3' y1='30' y2='174'/><line class='grid-x' data-v='36' x1='437.2' x2='437.2' y1='30' y2='174'/></g><g fill='#475569' text-anchor='middle'><text class='tick-x' data-v='6' x='112.9' y='189'>6</text><text class='tick-x' data-v='12' x='177.7' y='189'>12</text><text class='tick-x' data-v='18' x='242.6' y='189'>18</text><text class='tick-x' data-v='24' x='307.5' y='189'>24</text><text class='tick-x' data-v='30' x='372.3' y='189'>30</text><text class='tick-x' data-v='36' x='437.2' y='189'>36</text></g><text x='248' y='206' text-anchor='middle' fill='#475569'>Rezago (meses)</text><line class='cero' x1='48' x2='448' y1='102' y2='102' stroke='#64748b' stroke-width='1'/><line class='banda' data-v='0.16' x1='48' x2='448' y1='63.6' y2='63.6' stroke='#2563eb' stroke-width='1.3' stroke-dasharray='5 4'/><line class='banda' data-v='-0.16' x1='48' x2='448' y1='140.4' y2='140.4' stroke='#2563eb' stroke-width='1.3' stroke-dasharray='5 4'/><g stroke='#012820' stroke-width='4' stroke-linecap='butt'><line class='barra' data-k='1' x1='58.8' x2='58.8' y1='102' y2='78.5'/><line class='barra' data-k='2' x1='69.6' x2='69.6' y1='102' y2='82.2'/><line class='barra' data-k='3' x1='80.4' x2='80.4' y1='102' y2='93.9'/><line class='barra' data-k='4' x1='91.2' x2='91.2' y1='102' y2='80.7'/><line class='barra' data-k='5' x1='102.1' x2='102.1' y1='102' y2='85.3'/><line class='barra' data-k='6' x1='112.9' x2='112.9' y1='102' y2='127.3'/><line class='barra' data-k='7' x1='123.7' x2='123.7' y1='102' y2='81.3'/><line class='barra' data-k='8' x1='134.5' x2='134.5' y1='102' y2='122.4'/><line class='barra' data-k='9' x1='145.3' x2='145.3' y1='102' y2='100.2'/><line class='barra' data-k='10' x1='156.1' x2='156.1' y1='102' y2='71.5'/><line class='barra' data-k='11' x1='166.9' x2='166.9' y1='102' y2='111.5'/><line class='barra' data-k='12' x1='177.7' x2='177.7' y1='102' y2='122'/><line class='barra' data-k='13' x1='188.5' x2='188.5' y1='102' y2='120.8'/><line class='barra' data-k='14' x1='199.4' x2='199.4' y1='102' y2='94.4'/><line class='barra' data-k='15' x1='210.2' x2='210.2' y1='102' y2='113.4'/><line class='barra' data-k='16' x1='221' x2='221' y1='102' y2='132.8'/><line class='barra' data-k='17' x1='231.8' x2='231.8' y1='102' y2='118.9'/><line class='barra' data-k='18' x1='242.6' x2='242.6' y1='102' y2='96.3'/><line class='barra' data-k='19' x1='253.4' x2='253.4' y1='102' y2='107.3'/><line class='barra' data-k='20' x1='264.2' x2='264.2' y1='102' y2='114'/><line class='barra' data-k='21' x1='275' x2='275' y1='102' y2='92.4'/><line class='barra' data-k='22' x1='285.8' x2='285.8' y1='102' y2='97.2'/><line class='barra' data-k='23' x1='296.6' x2='296.6' y1='102' y2='85.7'/><line class='barra' data-k='24' x1='307.5' x2='307.5' y1='102' y2='120.5'/><line class='barra' data-k='25' x1='318.3' x2='318.3' y1='102' y2='106.3'/><line class='barra' data-k='26' x1='329.1' x2='329.1' y1='102' y2='110.8'/><line class='barra' data-k='27' x1='339.9' x2='339.9' y1='102' y2='121.8'/><line class='barra' data-k='28' x1='350.7' x2='350.7' y1='102' y2='117'/><line class='barra' data-k='29' x1='361.5' x2='361.5' y1='102' y2='105.4'/><line class='barra' data-k='30' x1='372.3' x2='372.3' y1='102' y2='113.9'/><line class='barra' data-k='31' x1='383.1' x2='383.1' y1='102' y2='103.4'/><line class='barra' data-k='32' x1='393.9' x2='393.9' y1='102' y2='96.2'/><line class='barra' data-k='33' x1='404.8' x2='404.8' y1='102' y2='118.2'/><line class='barra' data-k='34' x1='415.6' x2='415.6' y1='102' y2='115.9'/><line class='barra' data-k='35' x1='426.4' x2='426.4' y1='102' y2='79.7'/><line class='barra' data-k='36' x1='437.2' x2='437.2' y1='102' y2='89.3'/></g></svg></div><figcaption>Arriba, cada residual dividido entre la desviación estándar de todos ellos, contra el número de mes; abajo, su ACF de los rezagos 1 a 36. La banda vale ±0.16.</figcaption></figure>",
+   "clave": null,
+   "cuenta": null,
+   "rutas": [],
+   "correcta": 0,
+   "opciones": [
+    {
+     "texto": "La dispersión crece con el tiempo: hay que revisar la transformación.",
+     "largo": 69,
+     "correcta": true,
+     "retro": "Contra el tiempo, los residuales se abren: la dispersión del último tercio es 2.4 veces la del primero. La varianza crece con el tiempo, a medida que sube la serie, y eso no lo arregla ningún parámetro: hay que volver a la transformación, la etapa 1 (módulos 5.1 y 5.7)."
+    },
+    {
+     "texto": "Queda una barra fuera de la banda en el rezago 12: falta un término estacional.",
+     "largo": 79,
+     "correcta": false,
+     "retro": "La barra del rezago 12 vale r12 = −0.08, dentro de la banda ±0.16: no falta un término estacional."
+    },
+    {
+     "texto": "Queda una barra fuera de la banda en el rezago 1: falta un término regular.",
+     "largo": 75,
+     "correcta": false,
+     "retro": "La barra del rezago 1 vale r1 = 0.10, dentro de la banda ±0.16: no falta un término regular."
+    },
+    {
+     "texto": "Los residuales no muestran ningún problema: el modelo puede pronosticar.",
+     "largo": 72,
+     "correcta": false,
+     "retro": "Ljung–Box no rechaza (Q = 20.94 < 33.92) y ninguna barra sale de la banda, pero el panel de arriba se abre: la dispersión del último tercio es 2.4 veces la del primero. Ljung–Box mira autocorrelaciones, no la varianza (módulo 5.7)."
+    }
+   ],
+   "otros_campos": []
+  },
+  {
+   "instrumento": "simulacro",
+   "n": 10,
+   "id": "N10",
+   "etapa": 2,
+   "etiqueta": "cap. 5 · mód. 5.9 · Un regresor de calendario",
+   "tipo": "numero",
+   "enunciado": "Una red de cajeros automáticos explica el logaritmo del valor retirado cada mes con dos variables de calendario —el logaritmo del número de días del mes y una variable que vale 1 en el mes de la Semana Santa— y errores SARIMA. Las estimaciones son β̂días = 2.0094 (error estándar 0.3601) y β̂Pascua = 0.0192 (error estándar 0.0107). Si el valor retirado fuera proporcional a la duración del mes, βdías valdría 1. Calcule el estadístico t para contrastar H0: βdías = 1. Responda con dos decimales; si es negativo, con su signo.",
+   "enunciado_html": "<p>Una red de cajeros automáticos explica el logaritmo del valor retirado cada mes con dos variables de calendario —el logaritmo del número de días del mes y una variable que vale 1 en el mes de la Semana Santa— y errores SARIMA. Las estimaciones son β̂<sub>días</sub> = 2.0094 (error estándar 0.3601) y β̂<sub>Pascua</sub> = 0.0192 (error estándar 0.0107). Si el valor retirado fuera proporcional a la duración del mes, β<sub>días</sub> valdría 1. Calcule el estadístico t para contrastar H<sub>0</sub>: β<sub>días</sub> = 1. Responda con dos decimales; si es negativo, con su signo.</p>",
+   "clave": {
+    "valor": 2.8,
+    "tol": 0.0224,
+    "texto": "2.80"
+   },
+   "cuenta": "t = (β̂ − 1)/e.e. = (2.0094 − 1)/0.3601 = 2.80. Como |t| > 1.96, se rechaza que el valor retirado sea proporcional a los días del mes: el efecto es mayor que el de la pura duración. Contrastar contra 0 daría 5.58, que solo dice si los días importan, no si importan en proporción.",
+   "rutas": [
+    {
+     "valor": 5.580117,
+     "cifra": "5.58",
+     "texto": "contrastó β = 0 y no β = 1"
+    },
+    {
+     "valor": -2.80311,
+     "cifra": "−2.80",
+     "texto": "cambió el signo: restó β̂ de 1"
+    },
+    {
+     "valor": 1.0094,
+     "cifra": "1.01",
+     "texto": "no dividió entre el error estándar"
+    },
+    {
+     "valor": 1.794393,
+     "cifra": "1.79",
+     "texto": "usó el coeficiente de Pascua"
+    }
+   ],
+   "correcta": null,
+   "opciones": [],
+   "otros_campos": []
+  },
+  {
+   "instrumento": "simulacro",
+   "n": 11,
+   "id": "S11",
+   "etapa": 2,
+   "etiqueta": "cap. 5 · mód. 5.10 · Fourier con m grande",
+   "tipo": "opcion",
+   "enunciado": "Una aseguradora tiene las llamadas semanales a su línea de atención, en cientos, de cinco años: n = 260 semanas y m = 52. Se ajustó una regresión armónica con K pares de términos de Fourier y errores AR(1), para K = 1 a 7, y un ARIMA(1,0,0)(0,1,0)52: Modelo D n Términos de Fourier AICc Armónica, K = 1 0 260 2 1768.74 Armónica, K = 2 0 260 4 1744.44 Armónica, K = 3 0 260 6 1710.07 Armónica, K = 4 0 260 8 1674.23 Armónica, K = 5 0 260 10 1493.47 Armónica, K = 6 0 260 12 1496.20 Armónica, K = 7 0 260 14 1499.73 ARIMA(1,0,0)(0,1,0)52 1 208 — 1324.10 ¿Con qué modelo de la tabla conviene quedarse?",
+   "enunciado_html": "<p>Una aseguradora tiene las llamadas semanales a su línea de atención, en cientos, de cinco años: n = 260 semanas y m = 52. Se ajustó una regresión armónica con K pares de términos de Fourier y errores AR(1), para K = 1 a 7, y un ARIMA(1,0,0)(0,1,0)<sub>52</sub>:</p><table style=\"border-collapse:collapse;margin:6px 0 12px 0;font-size:95%\"><thead><tr><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">Modelo</th><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">D</th><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">n</th><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">Términos de Fourier</th><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">AICc</th></tr></thead><tbody><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">Armónica, K = 1</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">260</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">2</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">1768.74</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">Armónica, K = 2</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">260</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">4</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">1744.44</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">Armónica, K = 3</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">260</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">6</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">1710.07</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">Armónica, K = 4</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">260</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">8</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">1674.23</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">Armónica, K = 5</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">260</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">10</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">1493.47</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">Armónica, K = 6</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">260</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">12</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">1496.20</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">Armónica, K = 7</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">260</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">14</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">1499.73</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">ARIMA(1,0,0)(0,1,0)<sub>52</sub></td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">1</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">208</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">—</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">1324.10</td></tr></tbody></table><p>¿Con qué modelo de la tabla conviene quedarse?</p>",
+   "clave": null,
+   "cuenta": null,
+   "rutas": [],
+   "correcta": 2,
+   "opciones": [
+    {
+     "texto": "La armónica con K = 1.",
+     "largo": 22,
+     "correcta": false,
+     "retro": "Con K = 1 el patrón es una sinusoide pura, y su AICc (1768.74) queda 275.27 puntos por encima del de K = 5: le faltan armónicos (módulo 5.10)."
+    },
+    {
+     "texto": "La armónica con K = 7.",
+     "largo": 22,
+     "correcta": false,
+     "retro": "K = 7 añade 4 términos que no compran ajuste: su AICc, 1499.73, es mayor que el de K = 5, 1493.47 (módulo 5.10)."
+    },
+    {
+     "texto": "La armónica con K = 5.",
+     "largo": 22,
+     "correcta": true,
+     "retro": "Dentro de la familia armónica todos tienen D = 0 y se evalúan sobre las mismas 260 semanas, así que el AICc compara: el mínimo, 1493.47, está en K = 5, con 10 términos. Esos 2K términos no dependen de m; un SARIMA con m = 52 gasta 52 datos en ∇52 y su polinomio llega al rezago 52 (módulo 5.10)."
+    },
+    {
+     "texto": "El ARIMA(1,0,0)(0,1,0)52.",
+     "largo": 25,
+     "correcta": false,
+     "retro": "Su AICc es el menor de la tabla, pero se calcula sobre 208 semanas y no sobre 260: ∇52 gasta 52 datos y las cifras no viven en la misma escala. Entre familias distintas solo decide la comparación fuera de muestra (módulos 5.10 y 5.11)."
+    }
+   ],
+   "otros_campos": []
+  },
+  {
+   "instrumento": "simulacro",
+   "n": 12,
+   "id": "S12",
+   "etapa": 2,
+   "etiqueta": "cap. 5 · mód. 5.11 · Una partición o muchas",
+   "tipo": "opcion",
+   "enunciado": "Una empresa de mensajería compara cuatro métodos para pronosticar los envíos que despacha cada mes, en miles. Sobre una sola partición —entrenar hasta diciembre de 2023 y medir en los 24 meses siguientes— obtuvo: Método RMSE MAE MAPE (%) SARIMA estacional 44.04 35.69 5.09 ETS sobre el log 44.02 37.70 5.38 STL + ARIMA 25.62 20.49 2.95 Naïve estacional 39.40 31.76 4.72 Y al repetir la comparación sobre 48 orígenes (origen móvil), con el corte cada vez un mes más adelante y el error medido en los 12 meses que le siguen, obtuvo: Método RMSE medio a 12 meses Orígenes en que es el mejor (%) SARIMA estacional 37.89 8.3 ETS sobre el log 25.55 87.5 STL + ARIMA 37.42 4.2 Naïve estacional 45.02 0.0 ¿Con qué método conviene pronosticar los próximos 12 meses?",
+   "enunciado_html": "<p>Una empresa de mensajería compara cuatro métodos para pronosticar los envíos que despacha cada mes, en miles. Sobre una sola partición —entrenar hasta diciembre de 2023 y medir en los 24 meses siguientes— obtuvo:</p><table style=\"border-collapse:collapse;margin:6px 0 12px 0;font-size:95%\"><thead><tr><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">Método</th><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">RMSE</th><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">MAE</th><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">MAPE (%)</th></tr></thead><tbody><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">SARIMA estacional</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">44.04</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">35.69</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">5.09</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">ETS sobre el log</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">44.02</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">37.70</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">5.38</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">STL + ARIMA</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">25.62</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">20.49</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">2.95</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">Naïve estacional</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">39.40</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">31.76</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">4.72</td></tr></tbody></table><p>Y al repetir la comparación sobre 48 orígenes (origen móvil), con el corte cada vez un mes más adelante y el error medido en los 12 meses que le siguen, obtuvo:</p><table style=\"border-collapse:collapse;margin:6px 0 12px 0;font-size:95%\"><thead><tr><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">Método</th><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">RMSE medio a 12 meses</th><th style=\"border:1px solid #999;padding:3px 8px;background:#eef\">Orígenes en que es el mejor (%)</th></tr></thead><tbody><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">SARIMA estacional</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">37.89</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">8.3</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">ETS sobre el log</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">25.55</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">87.5</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">STL + ARIMA</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">37.42</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">4.2</td></tr><tr><td style=\"border:1px solid #999;padding:3px 8px;text-align:left\">Naïve estacional</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">45.02</td><td style=\"border:1px solid #999;padding:3px 8px;text-align:right\">0.0</td></tr></tbody></table><p>¿Con qué método conviene pronosticar los próximos 12 meses?</p>",
+   "clave": null,
+   "cuenta": null,
+   "rutas": [],
+   "correcta": 1,
+   "opciones": [
+    {
+     "texto": "Con el SARIMA estacional.",
+     "largo": 25,
+     "correcta": false,
+     "retro": "No es el mejor ni en la partición única ni sobre los 48 orígenes, donde su RMSE medio es 37.89 frente a 25.55 (módulo 5.11)."
+    },
+    {
+     "texto": "Con el ETS sobre el log.",
+     "largo": 24,
+     "correcta": true,
+     "retro": "Sobre 48 orígenes, con el mismo horizonte (12 meses) y la misma métrica (RMSE) en todos, el ETS sobre el log tiene el menor error medio, 25.55, y es el mejor en el 87.5 % de los orígenes. La partición única la gana el STL + ARIMA, pero una sola partición depende de dónde cae el corte (módulo 5.11)."
+    },
+    {
+     "texto": "Con el STL + ARIMA.",
+     "largo": 19,
+     "correcta": false,
+     "retro": "Gana las tres métricas de la partición única, pero con una sola partición el azar de dónde cae el corte pesa más que la diferencia entre los métodos. Sobre 48 orígenes su RMSE medio es 37.42, por encima del que obtiene el ETS sobre el log, 25.55 (módulo 5.11)."
+    },
+    {
+     "texto": "Con el naïve estacional.",
+     "largo": 24,
+     "correcta": false,
+     "retro": "No es el mejor ni en la partición única ni sobre los 48 orígenes, donde su RMSE medio es 45.02 frente a 25.55 (módulo 5.11)."
+    }
+   ],
+   "otros_campos": []
+  }
+ ]
+}

@@ -1,0 +1,108 @@
+R R version 4.6.0 (2026-04-24) | forecast 9.0.2 | TRM congelada n = 138 
+
+==================== M1 · tabla de la l. 3141-3145 ====================
+logAP        n=144  r1=0.9537 r12=0.7619 r24=0.5205 r36=0.3193 banda=0.1633
+USAccDeaths  n= 72  r1=0.7075 r12=0.6286 r24=0.4503 r36=0.3020 banda=0.2310
+co2          n=468  r1=0.9909 r12=0.9284 r24=0.8555 r36=0.7832 banda=0.0906
+TRM          n=138  r1=0.9637 r12=0.6365 r24=0.4895 r36=0.2252 banda=0.1668
+dTRM         n=137  r1=0.0876 r12=-0.0025 r24=-0.0672 r36=0.0714 banda=0.1675
+
+==================== M1/M7 · ARIMA no estacional del cap. 4 y airline (l. 3076-3081, 4933-4936) ====================
+ARIMA(0,1,5)  r12 = 0.7245  r24 = 0.6727  Q24 = 222.4  p = 0  nobs = 143 
+airline: coef = -0.401828 -0.556945  sigma2 = 0.00137126  r12 resid = -0.0515  LB24 p = 0.233 
+
+==================== M1 (l. 3109-3110) y M7 (l. 4865-4869) · barras fuera de banda en la ACF de nabla nabla12 log AP ====================
+n = 131  banda = 0.1712 
+rezagos 1-36 fuera de banda: 1 3 9 12 23 32 
+[1] -0.3411 -0.2021  0.1764 -0.3866  0.2233  0.1957
+r11 = 0.0644  r13 = 0.1516  r3 = -0.2021  r9 = 0.1764  r23 = 0.2233 
+residuales airline (n=144, banda 0.1633): r3 = -0.1254  r9 = 0.1166  r23 = 0.2196  fuera de banda (1-24): 23 
+residuales airline sin los 13 primeros: banda 0.1712  fuera (1-24): 23 
+con la ACF de nabla log AP (n=143): r12, r24, r36 = 0.8414 0.7369 0.6574  banda 0.1639 
+
+==================== M2 · varianzas y factorización ====================
+theta12=0.5, Theta=0.6: exacta 2.3  factorizada 1.7 
+(1+th^2)(1+Th^2) = 1.5217   gamma0 = 0.002087   var muestral = 0.002102 
+sigma2 de forecast = 0.00137126 
+  SSR(144 resid)/(131-2) = 0.00137126   SSR(144)/131 = 0.001350325 
+  sigma2 de stats::arima (ML) = 0.001348035 
+phi=0.60 phi^12=0.002 exacta=3.073 factorizada=3.064 error=-0.3%
+phi=0.80 phi^12=0.069 exacta=5.997 factorizada=5.447 error=-9.2%
+phi=0.90 phi^12=0.282 exacta=15.406 factorizada=10.320 error=-33.0%
+phi=0.95 phi^12=0.540 exacta=44.580 factorizada=20.111 error=-54.9%
+AR1xSAR1: r11 = 0.42298  r13 = 0.4218  r1*r12 = 0.4218 
+airline exacto: r1 r11 r12 r13 = -0.34597 0.14707 -0.42509 0.14707  producto 0.14707  dif r13 - r1*r12 = 0 
+
+==================== M3 · crecimiento anual medio de log AP (l. 3885) y varianzas ====================
+ 1950  1951  1952  1953  1954  1955  1956  1957  1958  1959  1960 
+0.095 0.201 0.146 0.131 0.058 0.173 0.145 0.114 0.032 0.118 0.106 
+razones de varianza: var/var(d=1) = 17.16  var/var(D=1) = 51.28 
+D=0 n=143 var=0.011354 Theta=+0.7397 ee=0.0610 |raiz MA|^-1=0.9752  |Theta|^(1/12)=0.9752
+D=1 n=131 var=0.002102 Theta=-0.5569 ee=0.0731 |raiz MA|^-1=0.9524  |Theta|^(1/12)=0.9524
+D=2 n=119 var=0.005960 Theta=-0.9973 ee=0.0830 |raiz MA|^-1=0.9998  |Theta|^(1/12)=0.9998
+
+==================== M3/M8 · ndiffs y nsdiffs (tabla l. 5112-5118), con la TRM congelada ====================
+logAP        ndiffs=1 ndiffs_tras_D=1 nsdiffs_seas=1 nsdiffs_ocsb=0
+USAccDeaths  ndiffs=0 ndiffs_tras_D=1 nsdiffs_seas=1 nsdiffs_ocsb=0
+co2          ndiffs=1 ndiffs_tras_D=1 nsdiffs_seas=1 nsdiffs_ocsb=1
+TRM          ndiffs=1 ndiffs_tras_D=1 nsdiffs_seas=0 nsdiffs_ocsb=0
+auto.arima(TRM congelada) = ARIMA(0,1,0) 
+TRM forzada: Phi = 0.0013  ee = 0.0899  t = 0.0146  AICc forzado = 1708.001  simple = 1705.941 
+TRM: r12 de diff con 5 decimales = -0.00245 
+
+==================== M4 · tabla de la l. 4269-4276 (ACF teóricas) ====================
+SAR1 0.7                   r1=0.0000 r11=0.0000 r12=0.7000 r13=0.0000 r24=0.4900
+SMA1 -0.6                  r1=0.0000 r11=0.0000 r12=-0.4412 r13=0.0000 r24=0.0000
+AR1xSAR1 0.6/0.7           r1=0.6016 r11=0.4230 r12=0.7011 r13=0.4218 r24=0.4908
+airline -0.4018/-0.5569    r1=-0.3459 r11=0.1471 r12=-0.4251 r13=0.1471 r24=0.0000
+AR1xSMA1 0.5/-0.7          r1=0.4998 r11=-0.2345 r12=-0.4697 r13=-0.2348 r24=-0.0001
+  AR1xSMA1: r1*r12 = -0.2348 
+
+==================== M5 · pesos psi y sigma_h con los coeficientes sin redondear ====================
+psi1 = 0.5982  psi12 = 1.0412  psi13 = 0.8632 
+sigma_1, 12, 24 = 0.037 0.0823 0.1396  sigma12/sigma1 = 2.222  sqrt(12) = 3.464 
+sigma_h / (sigma_1 sqrt(h)) en h = 12, 24, 36, 48, 60, 120, 240: 0.641 0.77 0.912 1.058 1.207 1.961 3.484 
+primer h en que el airline acumula MAS incertidumbre que la caminata: 42 
+
+==================== M6 · rejilla de 36 modelos (d = D = 1) ====================
+convergen: 36  min AICc: (0,1,1)(0,1,1)  min BIC: (0,1,1)(0,1,1) 
+                m k     aicc      bic       lb
+6  (0,1,1)(0,1,1) 2 -483.210 -474.773 0.233032
+30 (2,1,1)(0,1,1) 4 -481.792 -467.896 0.137070
+8  (0,1,1)(1,1,1) 3 -481.596 -470.412 0.227073
+18 (1,1,1)(0,1,1) 3 -481.582 -470.399 0.245267
+22 (1,1,2)(0,1,1) 4 -481.563 -467.667 0.184936
+               m k     aicc      bic          lb
+1 (0,1,0)(0,1,0) 0 -434.799 -431.955 2.30779e-08
+distancia AICc entre el 1.o y el 4.o: 1.628 
+
+==================== M7 · rango relativo, Ljung-Box de checkresiduals y t ====================
+rango relativo (max-min)/media = 1.848 
+Q* = 26.446  df = 22  p = 0.233 
+t = -4.48 -7.62  ee = 0.0896 0.0731  0.1^(1/12) = 0.825 
+1/sqrt(131) = 0.0874 
+h=24: media 525.46  lo95 399.66  hi95 690.85 
+
+==================== M8 · USAccDeaths ====================
+ARIMA(0,1,1)(0,1,1)[12]  coef -0.4303 -0.5528  ee 0.1228 0.1784  AICc 857.32  razones ee: 1.37 2.44 
+
+==================== M9 · calendario ====================
+Pascuas en marzo: 2 de 12
+f0: AICc -483.21  BIC -474.77 
+f1: AICc -486.54  BIC -475.35  coef -0.3774 -0.5383 1.1157  t -4.09 -7.32 2.39 
+f2: AICc -490.72  BIC -476.83  coef -0.3337 -0.5206 1.084 0.029  t -3.4 -6.98 2.43 2.6 
+mejora AICc f2 vs f0 = 7.51   31/28 - 1 = 0.1071 
+
+==================== M10 · Fourier, STL y m grande ====================
+K=1 n_ef=143 Regression with ARIMA(5,1,0) errors npar_total=9 AICc=-359.18 LB=0.0000
+K=2 n_ef=143 Regression with ARIMA(0,1,4) errors npar_total=10 AICc=-409.18 LB=0.0000
+K=3 n_ef=143 Regression with ARIMA(2,1,2) errors npar_total=12 AICc=-460.96 LB=0.0000
+K=4 n_ef=143 Regression with ARIMA(1,1,4) errors npar_total=15 AICc=-495.24 LB=0.0001
+K=5 n_ef=143 Regression with ARIMA(0,1,4) errors npar_total=16 AICc=-521.22 LB=0.1341
+K=6 n_ef=143 Regression with ARIMA(0,1,4) errors npar_total=17 AICc=-521.45 LB=0.1100
+stlm: ARIMA(1,1,1) with drift  aic = -543.24  aicc = -542.95 
+
+==================== Ejercicio 3 · airline sobre co2 ====================
+AICc 178.209  nobs 455  LB24 p 0.4081 
+
+fin

@@ -1,0 +1,150 @@
+R version 4.6.0 (2026-04-24) | forecast 9.0.2 | tseries 0.10.62 
+co2 == JSON: TRUE | USAccDeaths == JSON: TRUE | AirPassengers == JSON: TRUE | TRM n = 138 
+
+
+==================== E1 · co2 ====================
+   cruda       d1       D1    ambas 
+223.9877   1.4555   0.3882   0.1543 
+      nsdiffs  nsdiffs_ocsb  ndiffs_crudo ndiffs_tras_D 
+            1             1             1             1 
+no converge: (2,1,3)(1,1,1) 
+modelos que convergen: 47 
+                  m k    aicc     bic nobs       lb    daicc
+ (0,1,3)(0,1,1)[12] 4 176.998 197.466  455 0.631001 0.000000
+ (2,1,1)(0,1,1)[12] 4 177.961 198.429  455 0.563113 0.963254
+ (1,1,1)(0,1,1)[12] 3 178.156 194.548  455 0.469191 1.157903
+ (0,1,1)(0,1,1)[12] 2 178.209 190.517  455 0.408013 1.210787
+ (0,1,3)(1,1,1)[12] 5 178.522 203.057  455 0.636018 1.524092
+ (1,1,2)(0,1,1)[12] 4 178.761 199.229  455 0.511354 1.762547
+ (1,1,3)(0,1,1)[12] 5 179.025 203.559  455 0.569737 2.026650
+ (0,1,2)(0,1,1)[12] 3 179.181 195.574  455 0.400346 2.183108
+ (2,1,2)(0,1,1)[12] 5 179.264 203.798  455 0.546723 2.265959
+ (2,1,1)(1,1,1)[12] 5 179.621 204.155  455 0.533056 2.622801
+mejor AICc: (0,1,3)(0,1,1)[12]  mejor BIC: (0,1,1)(0,1,1)[12] 
+puesto del airline por AICc: 4 de 47 | AICc airline (ML): 178.2089 | diferencia: 1.211 
+modelos a menos de 2 del mejor: 6 | que no pasan LB(24) al 5 %: 26 
+aicc_sinD nobs_sinD aicc_conD nobs_conD 
+  988.100   467.000   178.209   455.000 
+  lb_sinD   lb_conD 
+0.0000000 0.4081411 
+auto.arima(co2) exhaustivo: ARIMA(0,1,3)(0,1,1)[12] 
+
+
+==================== E2 · USAccDeaths ====================
+d_a D_a D_b d_b 
+  0   1   1   1 
+max |∇∇12 - ∇12∇| = 0 
+    lb_a     lb_b 
+0.000050 0.247671 
+ aicc_a  nobs_a  aicc_b  nobs_b 
+905.963  60.000 857.316  59.000 
+auto.arima: ARIMA(0,1,1)(0,1,1)[12] 
+    ma1    sma1 
+-0.4303 -0.5528 
+   ma1   sma1 
+0.1228 0.1784 
+seas ocsb 
+   1    0 
+raíces MA de fa (módulo): 1.1057 1.1057 1.1057 ...
+coef fa: 0.6249 -0.2995 
+
+
+==================== E3 · TRM (a) y armónicos de co2 (b) ====================
+seas ocsb 
+   0    0 
+      r12       r24       r36  banda_n1 
+-0.002453 -0.067215  0.071383  0.167454 
+Phi.sar1  ee.sar1   t.sar1 
+  0.0013   0.0899   0.0146 
+ forzado   simple 
+1708.001 1705.941 
+auto.arima(trm): ARIMA(0,1,0) 
+ K terminos n_ef                              modelo    aicc     lb
+ 1        2  467 Regression with ARIMA(5,1,0) errors 435.509 0.0000
+ 2        4  467 Regression with ARIMA(0,1,5) errors 268.475 0.0000
+ 3        6  467 Regression with ARIMA(0,1,4) errors 223.402 0.0000
+ 4        8  467 Regression with ARIMA(3,1,1) errors 180.200 0.0439
+ 5       10  467 Regression with ARIMA(3,1,1) errors 181.494 0.0516
+ 6       11  467 Regression with ARIMA(3,1,1) errors 183.624 0.0515
+airline co2: AICc 178.209 n 455 LB(24) p 0.4081 
+mejor K por AICc: 4 | AICc armónico - AICc airline = 1.991 | ¿airline < armónico?  TRUE 
+lectura ingenua (menor AICc) elige: el airline 
+
+
+==================== Quiz cap5 · claves ====================
+-- Q1 (TRM en niveles)
+       n       r1      r12      r36    banda 
+138.0000   0.9637   0.6365   0.2252   0.1668 
+   d_r12    d_r24    d_r36 
+-0.00245 -0.06721  0.07138 
+-- Q2 SARIMA(1,0,0)(1,0,0)12, phi 0.6, Phi 0.7: polinomio y ACF teórica
+     1      2      3     11     12     13 
+0.6016 0.3637 0.2227 0.4230 0.7011 0.4218 
+coeficientes no nulos del AR(13): 1 12 13 
+-- Q3 n efectivo: 96 - 1 - 12 = 83 
+-- Q4 USAccDeaths: ndiffs crudo 0 tras D 1 | theta fb -0.4303 
+Warning in kpss.test(diff(ua, lag = 12), lshort = TRUE) :
+  p-value smaller than printed p-value
+Warning in kpss.test(diff(diff(ua, lag = 12)), lshort = TRUE) :
+  p-value greater than printed p-value
+   KPSS (tseries, nivel, lshort) sobre ∇12y: 1.0225 ; sobre ∇∇12y: 0.0588 
+-- Q5 SAR(1)12 Phi = 0.7: ACF en 11, 12, 13, 24, 36
+   11    12    13    24    36 
+0.000 0.700 0.000 0.490 0.343 
+-- Q6 armónica vs airline sobre log(AirPassengers)
+        K  aicc_arm     n_arm     k_arm    lb_arm  aicc_air     n_air     k_air    lb_air 
+   6.0000 -521.4512  143.0000   16.0000    0.1100 -483.2101  131.0000    2.0000    0.2330 
+   modelo de errores de la armónica: Regression with ARIMA(0,1,4) errors 
+-- Q7 calendario: beta log(días) sobre el airline
+beta.log_dias   ee.log_dias  t_0.log_dias  t_1.log_dias 
+       1.1157        0.4675        2.3863        0.2474 
+   con las cifras del enunciado: (1.0840 - 1)/0.4462 = 0.188256 
+-- Q8 partición única (últimos 24) y origen móvil (61 orígenes, h = 12)
+            RMSE    MAE   MAPE
+ets_log   19.429 16.125  3.547
+armonica  19.505 14.690  3.151
+stl       35.481 30.291  6.330
+sarima    43.184 39.447  8.516
+auto      43.184 39.447  8.516
+ets_crudo 72.548 63.213 13.303
+snaive    76.995 71.250 15.523
+   puesto del SARIMA por RMSE/MAE/MAPE entre estos 7 (sin el SARIMA + calendario): 4.5 4.5 4.5 
+   orígenes: 61 
+  sarima  ets_log      stl armonica ets_orig   snaive 
+  16.812   21.416   21.848   22.385   26.384   41.238 
+   % de orígenes en que el SARIMA gana a cada rival:
+  snaive armonica  ets_log ets_orig      stl 
+    88.5     90.2     91.8     85.2     91.8 
+
+
+==================== Simulacro · claves numéricas desde el enunciado ====================
+-- N2 ∇∇12 log y (sep 2025)
+    exacto      logs4     solo_D     solo_d      log10    sin_log 
+ -0.047393  -0.047400  -0.026295  -0.154437  -0.020583 -22.150000 
+-- N4 rho13 del airline
+  formula   ARMAacf      rho1     rho12 
+ 0.158046  0.158046 -0.345576 -0.457340 
+-- N5 Q(24)
+                 Q dividiendo_entre_n        sin_n_mas_2         critico_22         critico_24                p22 
+           18.3720            18.2789            18.1546            33.9244            36.4150             0.6837 
+-- N6 sigma_13
+          [,1]   [,2]   [,3]   [,4]   [,5]   [,6]   [,7]   [,8]   [,9]  [,10]  [,11]  [,12]  [,13]
+enunciado    1 0.5988 0.5988 0.5988 0.5988 0.5988 0.5988 0.5988 0.5988 0.5988 0.5988 0.5988 0.9474
+expansion    1 0.5988 0.5988 0.5988 0.5988 0.5988 0.5988 0.5988 0.5988 0.5988 0.5988 0.5988 0.9474
+    sigma13 sin_escalon   sin_psi12 sumando_psi 
+   0.135695    0.129284    0.124836    0.164012 
+-- N7 pronóstico de enero de 2026
+             log           exacto     sin_satelite satelite_restado        sin_theta        sin_Theta log_redondeado_2 
+          6.3298         561.0685         556.7740         552.5125         578.5324         572.6254         561.1566 
+log_redondeado_3  media_lognormal 
+        561.1566         561.9534 
+   tolerancia 0.008·561.07 = 4.48856 ; |variante − clave|:
+          exacto     sin_satelite satelite_restado        sin_theta        sin_Theta log_redondeado_2 log_redondeado_3 
+           0.002            4.296            8.558           17.462           11.555            0.087            0.087 
+ media_lognormal 
+           0.883 
+-- N10 t de β = 1
+      t1       t0 
+2.803110 5.580117 
+-- S11 (comparación dentro de la familia, D = 0, n = 260): menor AICc K = 5 
+-- S12 ETS sobre el log: menor RMSE medio de 4: ETS 

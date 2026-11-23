@@ -1,0 +1,37 @@
+library(forecast)
+ap <- log(AirPassengers)
+
+# --- Regresion armonica: 2K parametros, INDEPENDIENTES de m -----------------
+for (K in 1:6) {
+  xr <- fourier(ap, K = K)
+  f  <- auto.arima(ap, xreg = xr, seasonal = FALSE, stepwise = FALSE, approximation = FALSE)
+  cat(sprintf("K=%d  terminos=%2d  n_ef=%d  %-36s AICc=%9.2f  LB=%.4f\n",
+      K, ncol(xr), f$nobs, as.character(f), f$aicc,
+      Box.test(residuals(f), lag = 24, type = "Ljung-Box", fitdf = sum(f$arma[1:4]))$p.value))
+}
+#> K=1  terminos= 2  n_ef=143  Regression with ARIMA(5,1,0) errors   AICc =  -359.18  LB=0.0000
+#> K=2  terminos= 4  n_ef=143  Regression with ARIMA(0,1,4) errors   AICc =  -409.18  LB=0.0000
+#> K=3  terminos= 6  n_ef=143  Regression with ARIMA(2,1,2) errors   AICc =  -460.96  LB=0.0000
+#> K=4  terminos= 8  n_ef=143  Regression with ARIMA(1,1,4) errors   AICc =  -495.24  LB=0.0001
+#> K=5  terminos=10  n_ef=143  Regression with ARIMA(0,1,4) errors   AICc =  -521.22  LB=0.1341
+#> K=6  terminos=11  n_ef=143  Regression with ARIMA(0,1,4) errors   AICc =  -521.45  LB=0.1100
+
+# NO comparar con el airline por AICc: su n efectivo es 131, no 143.
+Arima(ap, order=c(0,1,1), seasonal=list(order=c(0,1,1), period=12))$nobs
+#> [1] 131
+
+# --- Por que con m grande no hay alternativa --------------------------------
+set.seed(1); n <- 156
+y <- ts(10 + 0.02*(1:n) + 2*sin(2*pi*(1:n)/52) + rnorm(n, 0, 0.5), frequency = 52)
+n - 52                                 # lo que deja nabla_52
+#> [1] 104
+ncol(fourier(y, K = 3))                # los armonicos no dependen de m
+#> [1] 6
+z <- ts(3 * sin(2 * pi * (1:800) / 365) + rnorm(800), frequency = 365)   # estacion anual real
+as.character(auto.arima(z))            # con m = 365: una diferencia y ningun Phi ni Theta
+#> [1] "ARIMA(0,0,0)(0,1,0)[365]"
+
+# --- STL + ARIMA ------------------------------------------------------------
+s <- stlm(ap, s.window = "periodic", method = "arima")
+as.character(s$model)
+#> [1] "ARIMA(1,1,1) with drift"

@@ -1,0 +1,54 @@
+
+==================== Partición única: entrena hasta 1958-12, prueba 24 meses ====================
+K elegido (AICc sobre la serie completa, incluida la prueba): 6 
+auto.arima en entrenamiento: ARIMA(0,1,1)(0,1,1)[12] 
+ETS cruda: ETS(M,Ad,M)  npar = 17 
+ETS log: ETS(M,A,M)  npar = 16 
+armónica: Regression with ARIMA(0,1,4) errors  ncoef = 16  nombres: ma1 ma2 ma3 ma4 drift S1-12 C1-12 S2-12 C2-12 S3-12 C3-12 S4-12 C4-12 S5-12 C5-12 C6-12 
+stlm entrenamiento: ARIMA(1,1,0) with drift  ncoef = 2 
+          rmse   mae  mape sesgo
+ets_log  19.43 16.12  3.55  8.92
+armonica 19.51 14.69  3.15  3.22
+stl      35.48 30.29  6.33 28.29
+sarima   43.18 39.45  8.52 39.45
+auto     43.18 39.45  8.52 39.45
+ets      72.55 63.21 13.30 63.21
+snaive   76.99 71.25 15.52 71.25
+
+==================== Crecimiento anual de los totales ====================
+1950 1951 1952 1953 1954 1955 1956 1957 1958 1959 1960 
+10.3 21.8 15.8 14.2  6.2 18.9 15.6 12.2  3.4 12.4 11.2 
+sarima    1959 vs 1958 real: 4.7%   1960 vs 1959 pronosticado: 6.9%   1960 vs 1959 real: -0.4%
+ets_log   1959 vs 1958 real: 9.4%   1960 vs 1959 pronosticado: 12.8%   1960 vs 1959 real: 9.7%
+armonica  1959 vs 1958 real: 10.6%   1960 vs 1959 pronosticado: 13.1%   1960 vs 1959 real: 11.3%
+errores del SARIMA (obs - pron) todos positivos: TRUE 
+
+==================== Origen móvil ====================
+
+H = 12: 61 orígenes (primero 1954-12, último 1959-12)
+RMSE medio:
+  sarima  ets_log      stl armonica ets_orig   snaive 
+  16.812   21.416   21.848   22.385   26.384   41.238 
+% de orígenes en que cada uno gana al SARIMA:
+  snaive   sarima armonica  ets_log ets_orig      stl 
+    11.5      0.0      9.8      8.2     14.8      8.2 
+orígenes en que el SARIMA NO es el mejor de los seis: 14 
+  fechas: 1955-05 1956-06 1957-05 1957-06 1957-07 1957-08 1957-09 1957-10 1957-11 1957-12 1958-01 1958-11 1958-12 1959-01 
+solo el mes 12 · media de |e12|:
+ ets_log armonica      stl   sarima ets_orig   snaive 
+   15.96    16.17    16.27    18.22    23.61    38.61 
+solo el mes 12 · RMSE entre orígenes de e12:
+ ets_log      stl armonica   sarima ets_orig   snaive 
+   20.92    21.24    21.25    22.61    27.73    42.65 
+
+H = 24: 49 orígenes (primero 1954-12, último 1958-12)
+RMSE medio:
+  sarima  ets_log      stl armonica ets_orig   snaive 
+  26.001   26.608   27.800   28.296   34.843   59.534 
+% de orígenes en que cada uno gana al SARIMA:
+  snaive   sarima armonica  ets_log ets_orig      stl 
+     8.2      0.0     32.7     49.0     40.8     32.7 
+orígenes en que el SARIMA NO es el mejor de los seis: 31 
+  fechas: 1954-12 1955-05 1956-01 1956-02 1956-04 1956-05 1956-06 1956-07 1956-08 1956-09 1956-10 1956-11 1956-12 1957-01 1957-02 1957-03 1957-04 1957-05 1957-06 1957-07 1957-08 1957-09 1957-10 1957-11 1957-12 1958-04 1958-05 1958-09 1958-10 1958-11 1958-12 
+
+fin

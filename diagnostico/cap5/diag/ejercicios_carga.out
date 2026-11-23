@@ -1,0 +1,50 @@
+Mód      líneas palabras código simul tabs dur.decl min@150 min@200
+  1  3058-3238       628     62     1    2       14     4.2     3.1
+  2  3240-3754      1795    163     2    6       12    12.0     9.0
+  3  3756-4212      1321    173     3    4       16     8.8     6.6
+  4  4214-4507      1046     55     1    2       16     7.0     5.2
+  5  4509-4622       539      0     1    0       14     3.6     2.7
+  6  4624-4792       501     70     1    2       16     3.3     2.5
+  7  4794-5075      1022     98     1    2       21     6.8     5.1
+  8  5077-5279       551     91     1    2       16     3.7     2.8
+  9  5281-5477       594     86     1    2       14     4.0     3.0
+ 10  5479-5688       645     81     1    2       16     4.3     3.2
+ 11  5690-6195      2331    144     1    0       20    15.5    11.7
+ 12  6197-6275       583      0     1    0       50     3.9     2.9
+
+Primera tarea con respuesta comprobable: quiz cap5 en la línea 5895 (M11); ejercicios en [5911, 5988, 6063]
+«Para practicar» en el capítulo: 0 []
+Enlaces al Excel: líneas [6163, 6166]
+Prosa antes de esa tarea: M1-M10 8642 palabras + M11 hasta el quiz 1270 = 9912
+  a 150 ppm: 66 min; a 200 ppm: 50 min
+  duración declarada M1-M10: 155 min; M11 entero: 20 min
+  líneas de código M1-M10: 879; simuladores M1-M10: 13
+
+Consignas de los simuladores (párrafo simulador-intro) por módulo:
+  M1 l.3105 [mapa-firma]: Elige la serie, si se toma logaritmo y qué diferencias se aplican. El mapa y la ACF cambian a la vez, así que se ve qué le hace cada operación al patrón y a la autocorrelación. Prueba AirPassengers con logaritmo y las dos diferencias: las bandas verticales desaparecen y la ACF se queda con dos barras, en los rezagos $1$ y $12$. Y prueba la TRM en cualquier combinación: nunca hay bandas. Con la TRM sin logaritmo y una diferencia regular, la lectura reproduce exactamente la última fila de la tabla de más abajo.
+  M2 l.3337 [receta-mes]: Mueve $\phi$ y $\Phi$ y mira cuánto pesa cada mes conocido en el pronóstico de marzo de 2025. Las dos rutas de la lectura siempre dan lo mismo. Prueba $\Phi = 0$, después $\phi = 0$, y por último $\phi = \Phi = 1$.
+  M2 l.3524 [constructor-polinomio]: Elige los seis órdenes y mira el polinomio completo ya multiplicado. Fíjate en dos columnas de la lectura: los parámetros libres ($p+q+P+Q$) casi nunca coinciden con el rezago más lejano que toca el modelo, y esa distancia es justamente lo que hace útil a la notación multiplicativa. Sube $D$ a $1$ y verás también cuántas observaciones cuesta.
+  M3 l.3854 [tienda-cuadricula]: Elige qué restar y mira la cuadrícula. Empieza por la serie tal cual, pasa a $\nabla_{12}$ y compara con $\nabla$. Después cambia al escenario en que la tienda acelera en 2024. La lectura hace la cuenta de marzo de 2024 con los números de la serie.
+  M3 l.4036 [cuatro-combinaciones]: Los dos interruptores dan las cuatro combinaciones. Mira sobre todo la ACF en el rezago 12: con solo la diferencia regular baja de $0.762$ a… $0.841$, es decir sube. Diferenciar de forma regular no toca la estacionalidad; concentrarla es incluso más fácil de ver después.
+  M3 l.4083 [sobrediferenciacion-estacional]: El deslizador recorre $D = 0, 1, 2$ con $d = 1$ fijo, y en cada posición ajusta un SARIMA($0,1,1$)($0,D,1$)$_{12}$ de verdad. Busca la firma algebraica del Capítulo 4, ahora en la parte estacional: cuando sobra una diferencia, $\hat\Theta$ se pega a $-1$ y la raíz del polinomio MA cae sobre el círculo unitario.
+  M4 l.4301 [firma-teorica]: Cuatro deslizadores, uno por cada parte del modelo, y las ACF/PACF teóricas exactas (calculadas expandiendo el polinomio, no aproximadas). Empieza con todo en cero y sube solo $\Phi$: verás picos limpios en $12, 24, 36$ y nada más. Añade después $\phi$ y observa cómo brotan los satélites en $11$ y $13$ sin que hayas tocado ningún parámetro nuevo.
+  M5 l.4597 [airline-pesos]: Mueve $\theta$ y $\Theta$ y mira las dos curvas: los pesos $\psi_j$ (arriba) y la desviación del pronóstico $\sigma_h$ (abajo). Lleva $\Theta$ hacia $0$ y el escalón del rezago $12$ desaparece —sin término estacional, el modelo no distingue el mes—. Llévalo hacia $-1$ y los pesos se aplanan: el modelo casi cancela la diferencia estacional que le acabamos de imponer.
+  M6 l.4664 [explorador-sarima]: Los cuatro selectores recorren los $36$ modelos SARIMA($p,1,q$)($P,1,Q$)$_{12}$ ajustados de verdad en R sobre $\log(\text{AirPassengers})$. El gráfico muestra la ACF de los residuales del modelo elegido con la banda al $95\,\%$. Pon $P=Q=0$ para ver qué pasa sin parte estacional, y fíjate en que el mínimo de AICc y el de BIC coinciden aquí —cosa que no siempre ocurre—.
+  M7 l.4944 [pronostico-estacional]: El deslizador mueve el horizonte y el interruptor pasa de la escala logarítmica a la original. Dos cosas que ver: en logaritmos el abanico se abre a escalones —se ensancha de golpe al cruzar cada rezago estacional— y al volver a la escala original deja de ser simétrico, porque $\exp$ no lo es.
+  M8 l.5136 [contraejemplo-trm]: El selector cambia entre $\log(\text{AirPassengers})$ y la TRM, las dos ya diferenciadas de forma regular. Es la comparación honesta: sobre la serie sin tendencia, una tiene barras enormes en $12, 24, 36$ y la otra no tiene ninguna. En niveles las dos parecían estacionales, y por eso el diagnóstico nunca se hace en niveles.
+  M9 l.5334 [calendario-regresores]: Los interruptores activan cada regresor sobre el modelo airline; los tres ajustes están hechos en R. La lectura muestra el coeficiente con su $t$ y el AICc —comparable aquí, porque los tres modelos comparten $d=1$ y $D=1$—. El gráfico dibuja el regresor activo junto a la serie, para ver de dónde sale la señal.
+  M10 l.5536 [armonicos-K]: El deslizador mueve $K$ sobre $\log(\text{AirPassengers})$: arriba, el componente estacional que dibujan los $2K$ términos; abajo, el AICc dentro de la familia armónica y el $p$-valor de Ljung–Box. Fíjate en dónde deja de rechazar el diagnóstico: hasta $K=4$ los residuales conservan estructura estacional, y hace falta llegar a $K=5$ para que la sinusoide represente bien el pico de verano.
+  M11 l.5725 [comparativa-particion]: El selector cambia la métrica y los interruptores encienden y apagan métodos en el gráfico. Los ocho pronósticos están calculados en R sobre el mismo conjunto de entrenamiento (hasta 1958-12). Antes de leer el párrafo siguiente, apunta cuál dirías que es el mejor método.
+
+Preguntas (¿…?) en la prosa por módulo (fuera de <pre>):
+  M1: 0
+  M2: 2
+  M3: 1
+  M4: 1
+  M5: 0
+  M6: 0
+  M7: 0
+  M8: 0
+  M9: 0
+  M10: 1
+  M11: 4

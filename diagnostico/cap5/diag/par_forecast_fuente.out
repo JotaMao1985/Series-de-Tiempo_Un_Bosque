@@ -1,0 +1,19 @@
+# forecast NEWS.md (instalado, 9.0.2), líneas 135-147
+# forecast 8.3
+  * Added `mstl()` to handle multiple seasonal decomposition
+  * `stlf()`, `stlm()`, `tsoutliers()` and `tsclean()` all now use `mstl()`.
+  * Updated `tsCV()` to handle multiple horizons
+  * Switched unit root tests in `ndiffs()` to use urca package
+  * Added `ocsb.test()`
+  * Changed method for choosing D in `auto.arima()` to a measure of seasonal strength.
+  * Added `baggedModel()` function to generalize baggedETS
+  * Added bootstrapped PI to more functions
+  * Allowed lambda='auto' for all functions with lambda argument.
+  * Updated author list to include all major contributors
+  * Documentation improvements
+  * Bug fixes
+
+# auto.arima (forecast 9.0.2): tope de P y Q según la longitud
+    serieslength <- sum(!missing[firstnonmiss:lastnonmiss])
+    max.P <- min(max.P, floor(serieslength/3/m))
+    max.Q <- min(max.Q, floor(serieslength/3/m))

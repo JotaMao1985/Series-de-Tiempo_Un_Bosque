@@ -1,0 +1,135 @@
+Bloques encontrados: 15 de R, 12 de Python
+
+--- bloque #11 (python, capitulo-5-sarima.html) ---
+    empieza por: import numpy as np, pandas as pd, statsmodels.api as sm
+    NO aparecen en la salida: ['0.463']
+    salida real:
+      d=0 D=0  n=144  var=0.194884  r1=+0.9537  r12=+0.7619
+      d=0 D=1  n=132  var=0.003800  r1=+0.7137  r12=-0.2430
+      d=1 D=0  n=143  var=0.011354  r1=+0.1998  r12=+0.8414
+      d=1 D=1  n=131  var=0.002102  r1=-0.3411  r12=-0.3866
+      0
+      0.8672
+      0.0713
+
+--- bloque #12 (r, capitulo-5-sarima.html) ---
+    empieza por: library(forecast)
+    NO aparecen en la salida: ['0.7000', '0.4900']
+    salida real:
+      1   11   12   13   24 
+      0.00 0.00 0.70 0.00 0.49 
+           1     11     12     13     24 
+      0.6016 0.4230 0.7011 0.4218 0.4908 
+            1      11      12      13      24 
+      -0.3459  0.1471 -0.4251  0.1471  0.0000
+
+--- bloque #15 (python, capitulo-5-sarima.html) ---
+    empieza por: import numpy as np, pandas as pd, statsmodels.api as sm, warnings
+    NO aparecen en la salida: ['-0.4019', '0.3675']
+    salida real:
+      simple_differencing=False  nobs=144  ma1=-0.4021  sma1=-0.5571  llf=244.6965
+      simple_differencing=True   nobs=131  ma1=-0.4018  sma1=-0.5569  llf=244.6965
+      0.2261
+      0.3676
+
+--- bloque #16 (r, capitulo-5-sarima.html) ---
+    empieza por: library(forecast)
+    NO aparecen en la salida: ['-0.401800', '-0.556900', '-483.2101']
+    salida real:
+      nsdiffs ndiffs_tras_D 
+                  1             1 
+             n       r1      r12    banda 
+      131.0000  -0.3411  -0.3866   0.1712 
+         r11    r13 
+      0.0644 0.1516 
+              ma1        sma1      sigma2        aicc 
+        -0.401828   -0.556945    0.001371 -483.210085 
+      
+      	Ljung-Box test
+      
+      data:  Residuals from ARIMA(0,1,1)(0,1,1)[12]
+      Q* = 26.446, df = 22, p-value = 0.233
+      
+      Model df: 2.   Total lags used: 24
+      
+         rho1   rho11   rho12   rho13 
+      -0.3460  0.1471 -0.4251  0.1471 
+      [1] 0.1471
+         media lo95.95% hi95.95% 
+        525.46   399.66   690.85 
+       abajo arriba 
+
+--- bloque #17 (python, capitulo-5-sarima.html) ---
+    empieza por: import numpy as np, pandas as pd, statsmodels.api as sm, warnings
+    NO aparecen en la salida: ['525.46', '400.62', '689.21']
+    salida real:
+      0.0
+      [525.47 400.65 689.17]
+      [-0.3459  0.1471 -0.4251  0.1471] 0.1471
+      530.52
+
+--- bloque #21 (python, capitulo-5-sarima.html) ---
+    empieza por: import numpy as np, pandas as pd, statsmodels.api as sm, warnings
+    NO aparecen en la salida: ['0.1882']
+    salida real:
+      28.0 31.0
+      [(4, 17), (4, 9), (3, 25), (4, 13)]
+      12
+      [1.0764 0.029 ] [0.4069 0.009 ] [2.6457 3.2195]
+      0.1879
+
+--- bloque #23 (python, capitulo-5-sarima.html) ---
+    empieza por: import numpy as np, pandas as pd, statsmodels.api as sm, warnings
+    NO aparecen en la salida: ['-414.34']
+    salida real:
+      K=1  terminos= 2  aic=  -306.95
+      K=2  terminos= 4  aic=  -389.88
+      K=3  terminos= 6  aic=  -414.35
+      K=4  terminos= 8  aic=  -470.58
+      K=5  terminos=10  aic=  -502.38
+      K=6  terminos=12  aic=  -501.62
+      12 11 ['sin(6,12)']
+      -643.05
+      
+      /opt/homebrew/Caskroom/mambaforge/base/lib/python3.10/site-packages/statsmodels/base/model.py:607: ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check mle_retvals
+        warnings.warn("Maximum Likelihood optimization failed to "
+      /opt/homebrew/Caskroom/mambaforge/base/lib/python3.10/site-packages/statsmodels/base/model.py:607: ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check mle_retvals
+        warnings.warn("Maximum Likelihood optimization failed to "
+      /tmp/verifica_cap6/bloques.py:162: InterpolationWarning: The test statistic is outside of the range of p-values available in the
+      look-up table. The actual p-value is smaller than the p-value returned.
+      
+        print(round(kpss(diferenciar(uad, 0, 1), regression="c", nlags=4)[0], 4))
+      /tmp/verifica_cap6/bloques.py:163: InterpolationWarning: The test statistic is outside of the range of p-values available in the
+      look-up table. The actual p-value is greater than the p-value returned.
+      
+        print(round(kpss(diferenciar(uad, 1, 1), regression="c", nlags=4)[0], 4))
+
+!! la sesión de r terminó con código 1
+    ma1    sma1 
+-0.4303 -0.5528 
+seas ocsb 
+   1    0 
+
+###BLOQUE-14###
+seas ocsb 
+   0    0 
+    r12     r24     r36   banda 
+-0.0024 -0.0672  0.0714  0.1675 
+Phi.sar1  ee.sar1   t.sar1 
+  0.0013   0.0899   0.0147 
+ forzado   simple 
+1708.001 1705.941 
+K=1  terminos= 2  n_ef=467  AICc= 435.509  LB=0.0000
+K=2  terminos= 4  n_ef=467  AICc= 268.475  LB=0.0000
+K=3  terminos= 6  n_ef=467  AICc= 223.402  LB=0.0000
+K=4  terminos= 8  n_ef=467  AICc= 180.200  LB=0.0439
+K=5  terminos=10  n_ef=467  AICc= 181.494  LB=0.0516
+K=6  terminos=11  n_ef=467  AICc= 183.624  LB=0.0515
+armonico_K4  n_armonico     airline   n_airline 
+    180.200     467.000     178.209     455.000 
+
+Error: write failed
+Execution halted
+
+=== 1199 de 1212 cifras anunciadas aparecen en la salida real (7 bloques con discrepancias) ===
+exit 1

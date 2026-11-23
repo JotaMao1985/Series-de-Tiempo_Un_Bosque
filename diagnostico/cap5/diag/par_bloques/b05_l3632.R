@@ -1,0 +1,28 @@
+library(forecast)
+ap <- log(AirPassengers)
+fit <- Arima(ap, order = c(0, 1, 1), seasonal = list(order = c(0, 1, 1), period = 12))
+th <- coef(fit)["ma1"]; Th <- coef(fit)["sma1"]; s2 <- fit$sigma2
+
+# gamma_0 de la serie YA diferenciada, que es la estacionaria. El modelo con
+# d = D = 1 no tiene varianza finita y preguntar por la suya no significa nada.
+round(unname(s2 * (1 + th^2) * (1 + Th^2)), 6)
+#> 0.002087
+round(var(diff(diff(ap), lag = 12)), 6)
+#> 0.002102
+
+# La ACF tambien se factoriza: rho_11 = rho_13 = rho_1 * rho_12, EXACTO.
+r <- ARMAacf(ma = c(th, rep(0, 10), Th, th * Th), lag.max = 13)
+round(unname(r[c("1", "11", "12", "13")]), 4)
+#> -0.3460  0.1471 -0.4251  0.1471
+c(r["13"], r["1"] * r["12"])
+#> 0.1470662  0.1470662     <- iguales a precision de maquina
+
+# El AR NO se factoriza: psi_12 recibe dos caminos y se suman.
+phi <- 0.9; Phi <- 0.7
+psi <- c(1, ARMAtoMA(ar = c(phi, rep(0, 10), Phi, -phi * Phi), lag.max = 20000))
+round(c(exacta = sum(psi^2), factorizada = 1 / ((1 - phi^2) * (1 - Phi^2))), 3)
+#>      exacta factorizada
+#>      15.406      10.320
+round(c(psi_12 = psi[13], phi12_mas_Phi = phi^12 + Phi), 5)
+#>        psi_12 phi12_mas_Phi
+#>       0.98243       0.98243

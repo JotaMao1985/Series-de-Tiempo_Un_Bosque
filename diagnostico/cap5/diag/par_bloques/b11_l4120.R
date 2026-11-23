@@ -1,0 +1,40 @@
+library(forecast)
+ap  <- log(AirPassengers)
+uad <- USAccDeaths
+
+# --- El orden importa: primero D, despues d --------------------------------
+c(ndiffs_crudo = ndiffs(uad), nsdiffs = nsdiffs(uad))
+#> ndiffs_crudo      nsdiffs
+#>            0            1
+ndiffs(diff(uad, lag = 12))       # d se decide DESPUES de quitar la estacion
+#> [1] 1
+
+# ...pero los operadores si conmutan
+max(abs(diff(diff(uad, lag = 12)) - diff(diff(uad), lag = 12)))
+#> [1] 0
+
+# --- Las cuatro combinaciones ----------------------------------------------
+comb <- expand.grid(d = 0:1, D = 0:1)
+for (i in seq_len(nrow(comb))) {
+  w <- ap
+  if (comb$D[i] > 0) w <- diff(w, lag = 12, differences = comb$D[i])
+  if (comb$d[i] > 0) w <- diff(w, differences = comb$d[i])   # d=0 aparte: diff(x, differences=0) es ERROR
+  a <- Acf(w, lag.max = 12, plot = FALSE)$acf
+  cat(sprintf("d=%d D=%d  n=%3d  var=%.6f  r1=%+.4f  r12=%+.4f\n",
+              comb$d[i], comb$D[i], length(w), var(w), a[2], a[13]))
+}
+#> d=0 D=0  n=144  var=0.194884  r1=+0.9537  r12=+0.7619
+#> d=1 D=0  n=143  var=0.011354  r1=+0.1998  r12=+0.8414
+#> d=0 D=1  n=132  var=0.003800  r1=+0.7137  r12=-0.2430
+#> d=1 D=1  n=131  var=0.002102  r1=-0.3411  r12=-0.3866
+
+# --- Sobrediferenciacion estacional: la firma es la raiz MA -----------------
+for (D in 0:2) {
+  f <- Arima(ap, order = c(0,1,1), seasonal = list(order = c(0,D,1), period = 12))
+  cat(sprintf("D=%d  Theta=%+.4f (e.e. %.4f)  |raiz MA|^-1=%.4f\n", D,
+      coef(f)["sma1"], sqrt(diag(f$var.coef))["sma1"],
+      max(Mod(1/polyroot(c(1, f$model$theta))))))
+}
+#> D=0  Theta=+0.7397 (e.e. 0.0610)  |raiz MA|^-1=0.9752
+#> D=1  Theta=-0.5569 (e.e. 0.0731)  |raiz MA|^-1=0.9524
+#> D=2  Theta=-0.9973 (e.e. 0.0830)  |raiz MA|^-1=0.9998

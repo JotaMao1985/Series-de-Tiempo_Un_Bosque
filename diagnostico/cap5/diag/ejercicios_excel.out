@@ -1,0 +1,535 @@
+Hoja                 fórm.sol fórm.est en blanco % pedido comprob.  ¿…? valid.
+Portada                    14       14         0     0.0%        7    0      0
+Datos                     147      147         0     0.0%        1    0      0
+M1 Firma                 1422     1070       352    24.8%        0    1      0
+M2 Multiplicativo        1781      296      1485    83.4%        2    3      0
+M3 Diferenciar           1355      972       383    28.3%        1    7      1
+M4 Identificar           1909      537      1372    71.9%        1    3      0
+M5 Airline                235      163        72    30.6%        1    0      0
+M6 Diagnóstico            896      613       283    31.6%        0    0      0
+M7 Pronóstico            1440     1174       266    18.5%        0    0      1
+M8 Contraejemplo          496      379       117    23.6%        0    3      0
+M9 Calendario            1059      577       482    45.5%        0    1      0
+M10 Fourier              3812     2076      1736    45.5%        0    1      1
+M11 Métricas               56       24        32    57.1%        0    1      0
+TOTAL                   14622     8042      6580    45.0%
+
+### Celdas que se piden (en blanco en el libro del estudiante), por hoja: fórmula de la solución e instrucción del comentario
+
+[M1 Firma] 352 celdas
+  J47: =SUMPRODUCT(($D$48:INDEX($D$48:$D$190,143-$H47)-AVERAGE($D$48:$D$190))*(INDEX($D$48:$D$190,1+$H47):$D$190-AVER
+      comentario: Copia la fórmula de I47 y cambia $C$47:$C$190 por el rango de tu serie, y 144 por su n: D48:D190 y 143 para ∇log y; F48:F184 y 137 para ∇TRM. Luego arrástrala hasta el rezago 36.
+  L47: =SUMPRODUCT(($F$48:INDEX($F$48:$F$184,137-$H47)-AVERAGE($F$48:$F$184))*(INDEX($F$48:$F$184,1+$H47):$F$184-AVER
+      comentario: Copia la fórmula de I47 y cambia $C$47:$C$190 por el rango de tu serie, y 144 por su n: D48:D190 y 143 para ∇log y; F48:F184 y 137 para ∇TRM. Luego arrástrala hasta el rezago 36.
+  D48: =C48-C47
+      comentario: ∇ log y_t = log y_t − log y_{t−1}: =C48-C47, el log y de esta fila menos el de la fila de arriba. Escríbela en D48 y arrástrala hasta D190.
+  F48: =E48-E47
+      comentario: ∇TRM_t = TRM_t − TRM_{t−1}. Escríbela en F48 y arrástrala hasta F184.
+
+[M2 Multiplicativo] 1485 celdas
+  C16: =D12-C8*C12
+      comentario: u = y(mar 24) − φ·y(feb 24): lo que febrero no explica de marzo.
+  C17: =C9*C16
+      comentario: Φ·u: la pregunta estacional, ¿se repite la sorpresa de hace un año?
+  C18: =C8*C13+C17
+      comentario: φ·y(feb 25) más la sorpresa esperada.
+  C19: =C8*C13+C9*D12-C8*C9*C12
+      comentario: φ·y(t−1) + Φ·y(t−12) − φΦ·y(t−13). El satélite pesa −φΦ.
+  C20: =C8*C13+C9*D12
+      comentario: φ·y(feb 25) + Φ·y(mar 24): sin satélite, usa marzo de 2024 entero.
+  D27: =-C8*C9
+      comentario: El satélite pesa −φΦ: sale de los otros dos, no es un parámetro nuevo.
+  D35: =(-C8)*(-C9)
+      comentario: El término cruzado: (−φ)·(−Φ), en el rezago 1 + 12 = 13.
+  C67: =SUMSQ($B$169:$B$888)
+      comentario: Σψ_j²: SUMSQ (SUMA.CUADRADOS) de la columna de ψ.
+  C68: =1/((1-C8^2)*(1-C9^2))
+      comentario: 1 / ((1 − φ²)(1 − Φ²)): multiplicar las dos varianzas por separado.
+  J70: =SUMPRODUCT($B$169:INDEX($B$169:$B$888,720-I70),INDEX($B$169:$B$888,1+I70):$B$888)/SUMSQ($B$169:$B$888)
+      comentario: ρ_k = Σψ_jψ_{j+k} / Σψ_j²: SUMPRODUCT de la columna de ψ sin sus últimos k pesos por la columna sin sus primeros k, dividido por SUMSQ. Arrástrala hasta k = 36.
+  F169: =$C$8*F168+$C$9*F157-$C$8*$C$9*F156+E169
+      comentario: y_t = φ·y_{t−1} + Φ·y_{t−12} − φΦ·y_{t−13} + ε_t. Arrástrala hasta t = 720.
+  B170: =$C$8*B169+$C$9*B158-$C$8*$C$9*B157
+      comentario: ψ_j = φ·ψ_{j−1} + Φ·ψ_{j−12} − φΦ·ψ_{j−13}. Con $ en φ y Φ; arrástrala hasta j = 719.
+
+[M3 Diferenciar] 383 celdas
+  C30: =C24-C23
+      comentario: ∇₁₂: la celda de y de la misma posición menos la de arriba (el mismo mes del año anterior). Escríbela en C30 y arrástrala a C30:N32.
+  D30: =D24-D23
+  E30: =E24-E23
+  F30: =F24-F23
+  G30: =G24-G23
+  H30: =H24-H23
+  I30: =I24-I23
+  J30: =J24-J23
+  K30: =K24-K23
+  L30: =L24-L23
+  M30: =M24-M23
+  N30: =N24-N23
+  D35: =D23-C23
+      comentario: ∇: la celda de y menos la de su izquierda. Escríbela en D35 y arrástrala a D35:N38.
+  E35: =E23-D23
+  F35: =F23-E23
+  G35: =G23-F23
+  H35: =H23-G23
+  I35: =I23-H23
+  J35: =J23-I23
+  K35: =K23-J23
+  L35: =L23-K23
+  M35: =M23-L23
+  N35: =N23-M23
+  C36: =C24-N23
+      comentario: A enero le toca el diciembre de la fila de arriba: C36 = C24 − N23. Arrástrala a C37:C38.
+  B57: =B53-B55
+      comentario: y_t − y_{t−12}: marzo de 2024 menos marzo de 2023.
+  B58: =B53-B54-B55+B56
+      comentario: y_t − y_{t−1} − y_{t−12} + y_{t−13}: (1 − B)(1 − B¹²) = 1 − B − B¹² + B¹³.
+
+[M4 Identificar] 1372 celdas
+  C9: =1.96/SQRT(C8)
+      comentario: 1.96/√n con n = 131: la banda se mide sobre la serie que queda.
+  D13: =IF(ABS(C13)>$C$9,"fuera","")
+      comentario: IF(ABS(ρ̂) > banda, "fuera", ""). Con $ en la banda; arrástrala hasta k = 36.
+  D58: =C62/(1+C62^2)
+      comentario: θ/(1 + θ²): en ρ₁ el factor estacional se cancela.
+  D60: =D58*D59
+      comentario: ρ₁·ρ₁₂: en un airline (solo MA) el satélite es exactamente el producto.
+  C81: =IF(C$76>$B81,"",$AN81)
+  D81: =IF(D$76>$B81,"",$AN81)
+  E81: =IF(E$76>$B81,"",$AN81)
+  F81: =IF(F$76>$B81,"",$AN81)
+  G81: =IF(G$76>$B81,"",$AN81)
+  H81: =IF(H$76>$B81,"",$AN81)
+  I81: =IF(I$76>$B81,"",$AN81)
+  J81: =IF(J$76>$B81,"",$AN81)
+  K81: =IF(K$76>$B81,"",$AN81)
+  L81: =IF(L$76>$B81,"",$AN81)
+  M81: =IF(M$76>$B81,"",$AN81)
+  N81: =IF(N$76>$B81,"",$AN81)
+  O81: =IF(O$76>$B81,"",$AN81)
+  P81: =IF(P$76>$B81,"",$AN81)
+  Q81: =IF(Q$76>$B81,"",$AN81)
+  R81: =IF(R$76>$B81,"",$AN81)
+  S81: =IF(S$76>$B81,"",$AN81)
+  T81: =IF(T$76>$B81,"",$AN81)
+  U81: =IF(U$76>$B81,"",$AN81)
+  V81: =IF(V$76>$B81,"",$AN81)
+  W81: =IF(W$76>$B81,"",$AN81)
+  X81: =IF(X$76>$B81,"",$AN81)
+  Y81: =IF(Y$76>$B81,"",$AN81)
+  Z81: =IF(Z$76>$B81,"",$AN81)
+  AA81: =IF(AA$76>$B81,"",$AN81)
+  AB81: =IF(AB$76>$B81,"",$AN81)
+  AC81: =IF(AC$76>$B81,"",$AN81)
+  AD81: =IF(AD$76>$B81,"",$AN81)
+  AE81: =IF(AE$76>$B81,"",$AN81)
+  AF81: =IF(AF$76>$B81,"",$AN81)
+  AG81: =IF(AG$76>$B81,"",$AN81)
+  AH81: =IF(AH$76>$B81,"",$AN81)
+  AI81: =IF(AI$76>$B81,"",$AN81)
+  AJ81: =IF(AJ$76>$B81,"",$AN81)
+  AK81: =IF(AK$76>$B81,"",$AN81)
+  AL81: =IF(AL$76>$B81,"",$AN81)
+  AN81: =C77
+      comentario: φ_11 = ρ₁.
+  C82: =IF(C$76>$B82,"",IF(C$76=$B82,$AN82,INDEX($C81:$AL81,C$76)-$AN82*INDEX($C81:$AL81,$B82-C$76)))
+      comentario: φ_kj = φ_{k−1,j} − φ_kk·φ_{k−1,k−j}; vacía si j > k y φ_kk si j = k. Una sola fórmula para todo el cuadro: escríbela en C82 y arrástrala a C82:AL116. La fila 81 es IF(j > 1, "", AN81).
+  D82: =IF(D$76>$B82,"",IF(D$76=$B82,$AN82,INDEX($C81:$AL81,D$76)-$AN82*INDEX($C81:$AL81,$B82-D$76)))
+  E82: =IF(E$76>$B82,"",IF(E$76=$B82,$AN82,INDEX($C81:$AL81,E$76)-$AN82*INDEX($C81:$AL81,$B82-E$76)))
+  F82: =IF(F$76>$B82,"",IF(F$76=$B82,$AN82,INDEX($C81:$AL81,F$76)-$AN82*INDEX($C81:$AL81,$B82-F$76)))
+  G82: =IF(G$76>$B82,"",IF(G$76=$B82,$AN82,INDEX($C81:$AL81,G$76)-$AN82*INDEX($C81:$AL81,$B82-G$76)))
+  H82: =IF(H$76>$B82,"",IF(H$76=$B82,$AN82,INDEX($C81:$AL81,H$76)-$AN82*INDEX($C81:$AL81,$B82-H$76)))
+  I82: =IF(I$76>$B82,"",IF(I$76=$B82,$AN82,INDEX($C81:$AL81,I$76)-$AN82*INDEX($C81:$AL81,$B82-I$76)))
+  J82: =IF(J$76>$B82,"",IF(J$76=$B82,$AN82,INDEX($C81:$AL81,J$76)-$AN82*INDEX($C81:$AL81,$B82-J$76)))
+  K82: =IF(K$76>$B82,"",IF(K$76=$B82,$AN82,INDEX($C81:$AL81,K$76)-$AN82*INDEX($C81:$AL81,$B82-K$76)))
+  L82: =IF(L$76>$B82,"",IF(L$76=$B82,$AN82,INDEX($C81:$AL81,L$76)-$AN82*INDEX($C81:$AL81,$B82-L$76)))
+  M82: =IF(M$76>$B82,"",IF(M$76=$B82,$AN82,INDEX($C81:$AL81,M$76)-$AN82*INDEX($C81:$AL81,$B82-M$76)))
+  N82: =IF(N$76>$B82,"",IF(N$76=$B82,$AN82,INDEX($C81:$AL81,N$76)-$AN82*INDEX($C81:$AL81,$B82-N$76)))
+  O82: =IF(O$76>$B82,"",IF(O$76=$B82,$AN82,INDEX($C81:$AL81,O$76)-$AN82*INDEX($C81:$AL81,$B82-O$76)))
+  P82: =IF(P$76>$B82,"",IF(P$76=$B82,$AN82,INDEX($C81:$AL81,P$76)-$AN82*INDEX($C81:$AL81,$B82-P$76)))
+  Q82: =IF(Q$76>$B82,"",IF(Q$76=$B82,$AN82,INDEX($C81:$AL81,Q$76)-$AN82*INDEX($C81:$AL81,$B82-Q$76)))
+  R82: =IF(R$76>$B82,"",IF(R$76=$B82,$AN82,INDEX($C81:$AL81,R$76)-$AN82*INDEX($C81:$AL81,$B82-R$76)))
+  S82: =IF(S$76>$B82,"",IF(S$76=$B82,$AN82,INDEX($C81:$AL81,S$76)-$AN82*INDEX($C81:$AL81,$B82-S$76)))
+  T82: =IF(T$76>$B82,"",IF(T$76=$B82,$AN82,INDEX($C81:$AL81,T$76)-$AN82*INDEX($C81:$AL81,$B82-T$76)))
+  U82: =IF(U$76>$B82,"",IF(U$76=$B82,$AN82,INDEX($C81:$AL81,U$76)-$AN82*INDEX($C81:$AL81,$B82-U$76)))
+  V82: =IF(V$76>$B82,"",IF(V$76=$B82,$AN82,INDEX($C81:$AL81,V$76)-$AN82*INDEX($C81:$AL81,$B82-V$76)))
+  W82: =IF(W$76>$B82,"",IF(W$76=$B82,$AN82,INDEX($C81:$AL81,W$76)-$AN82*INDEX($C81:$AL81,$B82-W$76)))
+  X82: =IF(X$76>$B82,"",IF(X$76=$B82,$AN82,INDEX($C81:$AL81,X$76)-$AN82*INDEX($C81:$AL81,$B82-X$76)))
+  Y82: =IF(Y$76>$B82,"",IF(Y$76=$B82,$AN82,INDEX($C81:$AL81,Y$76)-$AN82*INDEX($C81:$AL81,$B82-Y$76)))
+  Z82: =IF(Z$76>$B82,"",IF(Z$76=$B82,$AN82,INDEX($C81:$AL81,Z$76)-$AN82*INDEX($C81:$AL81,$B82-Z$76)))
+  AA82: =IF(AA$76>$B82,"",IF(AA$76=$B82,$AN82,INDEX($C81:$AL81,AA$76)-$AN82*INDEX($C81:$AL81,$B82-AA$76)))
+  AB82: =IF(AB$76>$B82,"",IF(AB$76=$B82,$AN82,INDEX($C81:$AL81,AB$76)-$AN82*INDEX($C81:$AL81,$B82-AB$76)))
+  AC82: =IF(AC$76>$B82,"",IF(AC$76=$B82,$AN82,INDEX($C81:$AL81,AC$76)-$AN82*INDEX($C81:$AL81,$B82-AC$76)))
+  AD82: =IF(AD$76>$B82,"",IF(AD$76=$B82,$AN82,INDEX($C81:$AL81,AD$76)-$AN82*INDEX($C81:$AL81,$B82-AD$76)))
+  AE82: =IF(AE$76>$B82,"",IF(AE$76=$B82,$AN82,INDEX($C81:$AL81,AE$76)-$AN82*INDEX($C81:$AL81,$B82-AE$76)))
+  AF82: =IF(AF$76>$B82,"",IF(AF$76=$B82,$AN82,INDEX($C81:$AL81,AF$76)-$AN82*INDEX($C81:$AL81,$B82-AF$76)))
+  AG82: =IF(AG$76>$B82,"",IF(AG$76=$B82,$AN82,INDEX($C81:$AL81,AG$76)-$AN82*INDEX($C81:$AL81,$B82-AG$76)))
+  AH82: =IF(AH$76>$B82,"",IF(AH$76=$B82,$AN82,INDEX($C81:$AL81,AH$76)-$AN82*INDEX($C81:$AL81,$B82-AH$76)))
+  AI82: =IF(AI$76>$B82,"",IF(AI$76=$B82,$AN82,INDEX($C81:$AL81,AI$76)-$AN82*INDEX($C81:$AL81,$B82-AI$76)))
+  AJ82: =IF(AJ$76>$B82,"",IF(AJ$76=$B82,$AN82,INDEX($C81:$AL81,AJ$76)-$AN82*INDEX($C81:$AL81,$B82-AJ$76)))
+  AK82: =IF(AK$76>$B82,"",IF(AK$76=$B82,$AN82,INDEX($C81:$AL81,AK$76)-$AN82*INDEX($C81:$AL81,$B82-AK$76)))
+  AL82: =IF(AL$76>$B82,"",IF(AL$76=$B82,$AN82,INDEX($C81:$AL81,AL$76)-$AN82*INDEX($C81:$AL81,$B82-AL$76)))
+  AN82: =(INDEX($C$77:$AL$77,$B82)-SUMPRODUCT($C81:INDEX($C81:$AL81,$B82-1),INDEX($C$78:$AL$78,38-$B82):$AL$78))/(1-SU
+      comentario: φ_kk = (ρ_k − SUMPRODUCT(fila k−1 de 1 a k−1, ρ al revés de 38−k a 36)) / (1 − SUMPRODUCT(fila k−1 de 1 a k−1, ρ de 1 a k−1)). La fila de arriba va con $ en la columna y sin $ en la fila ($C81:$AL81), para poder arrastra
+
+[M5 Airline] 72 celdas
+  I21: =I20+I9-I8+G21
+      comentario: ψ_j = ψ_{j−1} + ψ_{j−12} − ψ_{j−13} + c_j: la división de polinomios, rezago a rezago. Escríbela en I21 (j = 0) y arrástrala hasta j = 35.
+  L21: =SQRT($B$8*SUM($J$21:J21))
+      comentario: σ_h = √(σ² · Σ_{j<h} ψ_j²): la raíz de σ² por la suma acumulada de ψ² hasta esta fila. Con $ en el primer ψ²; arrástrala hasta h = 36.
+
+[M6 Diagnóstico] 283 celdas
+  D5: =B5/C5
+      comentario: t = coeficiente / error estándar.
+  B25: =144*(144+2)*SUMPRODUCT(I100:I123^2/(144-H100:H123))
+      comentario: n(n+2)·SUMPRODUCT(ρ̂² / (n − k)) con k = 1…24.
+  B26: =_xlfn.CHISQ.DIST.RT(B25,24-$B$10)
+      comentario: CHISQ.DIST.RT(Q, 24 − fitdf), en español DISTR.CHICUAD.CD.
+  B29: =131*(131+2)*SUMPRODUCT(J100:J123^2/(131-H100:H123))
+      comentario: Con la ACF de los residuales CSS (columna J) y n = 131.
+  H40: =-2*D40+2*(B40+1)+2*(B40+1)*(B40+2)/(C40-B40-2)
+      comentario: AICc = −2ℓ + 2(k+1) + 2(k+1)(k+2)/(n − k − 2), con k + 1 porque σ² también se estima. Arrástrala por los 36 modelos.
+  I40: =-2*D40+(B40+1)*LN(C40)
+      comentario: BIC = −2ℓ + (k + 1)·LN(n).
+  J40: =RANK(H40,$H$40:$H$75,1)
+      comentario: RANK(AICc, columna de AICc, 1): 1 al menor.
+  K40: =RANK(I40,$I$40:$I$75,1)
+      comentario: Lo mismo con el BIC.
+  D113: =C113-$B$5*D112-$B$6*D101-$B$5*$B$6*D100
+      comentario: e_t = w_t − θ·e_{t−1} − Θ·e_{t−12} − θΘ·e_{t−13}, con $ en θ̂ (B5) y Θ̂ (B6). Las 13 filas de arriba son el arranque en cero. Arrástrala hasta t = 144.
+
+[M7 Pronóstico] 266 celdas
+  B8: =_xlfn.NORM.S.INV(0.9)
+      comentario: NORM.S.INV(0.9), en español INV.NORM.ESTAND: el cuantil 0.9 de la normal.
+  C204: =C203+C192-C191+$B$6*D203+$B$7*D192+$B$6*$B$7*D191
+      comentario: ŷ_t = y_{t−1} + y_{t−12} − y_{t−13} + θ·e_{t−1} + Θ·e_{t−12} + θΘ·e_{t−13}, con $ en θ̂ (B6) y Θ̂ (B7). Arrástrala hasta t = 168: ya usa los pronósticos como si fueran datos.
+  G204: =C204-$B$8*F204
+      comentario: ŷ − z₈₀·σ_h, con $ en z₈₀ (B8). Las columnas H, I y J son ŷ + z₈₀·σ_h, ŷ − z₉₅·σ_h y ŷ + z₉₅·σ_h, con z₉₅ en B9.
+  H204: =C204+$B$8*F204
+  K204: =EXP(C204)
+      comentario: EXP(ŷ): la mediana en pasajeros.
+  L204: =EXP(C204+F204^2/2)
+      comentario: EXP(ŷ + σ_h²/2): la media. Si log y ~ N(μ, σ²), E[y] = e^{μ + σ²/2}.
+  M204: =EXP(G204)
+      comentario: EXP de cada límite de G:J. Los límites sí se transforman sin más: exp es monótona y respeta los cuantiles.
+  N204: =EXP(H204)
+  O204: =EXP(I204)
+  P204: =EXP(J204)
+
+[M8 Contraejemplo] 117 celdas
+  D10: =SUMPRODUCT(($D$101:INDEX($D$101:$D$171,71-B10)-AVERAGE($D$101:$D$171))*(INDEX($D$101:$D$171,1+B10):$D$171-AVE
+      comentario: La ACF del M1, con el rango de ∇USAccDeaths: $D$101:$D$171 (n = 71).
+  D51: =IF(ABS(C51)>$C$48,"fuera","")
+      comentario: IF(ABS(ρ̂) > banda, "fuera", ""), con la banda de cada serie.
+  F51: =IF(ABS(E51)>$D$48,"fuera","")
+  C61: =E61/F61
+      comentario: t = Φ̂ / e.e.: prácticamente cero.
+  C62: =E62-F62
+      comentario: AICc(forzado) − AICc(simple): positivo, el forzado es peor. Aquí sí se comparan: los dos tienen d = 1 y D = 0.
+  F67: =E67/C67
+      comentario: Cociente de los errores estándar: con la mitad de observaciones, mayores.
+  D101: =C101-C100
+      comentario: ∇: la celda menos la de arriba. Arrástrala hasta D171.
+
+[M9 Calendario] 482 celdas
+  B11: =(MAX(C60:C203)-MIN(C60:C203))/MIN(C60:C203)
+      comentario: (máximo − mínimo) / mínimo: aritmética del calendario, no de los pasajeros.
+  I21: =MOD(19*B21+C21-E21-H21+15,30)
+      comentario: h = MOD(19a + b − d − g + 15, 30), con a en B, b en C, d en E y g en H.
+  L21: =MOD(32+2*F21+2*J21-I21-K21,7)
+      comentario: l = MOD(32 + 2e + 2i − h − k, 7), con e en F, i en J, h en I y k en K.
+  N21: =INT((I21+L21-7*M21+114)/31)
+      comentario: mes = INT((h + l − 7m + 114)/31), con h en I, l en L y m en M.
+  O21: =MOD(I21+L21-7*M21+114,31)+1
+      comentario: día = MOD(h + l − 7m + 114, 31) + 1, con h en I, l en L y m en M.
+  B41: =(D39-1)/E39
+      comentario: (β̂ − 1) / e.e.: si los pasajeros fueran proporcionales a los días, β = 1.
+  C60: =DAY(EOMONTH(A60,0))
+      comentario: DAY(EOMONTH(A60, 0)): el último día del mes es su número de días. En español, DIA y FIN.MES.
+  D60: =LN(C60)
+      comentario: LN(días): el regresor entra en logaritmos.
+  G60: =IF(F60=INDEX($N$21:$N$32,MATCH(E60,$A$21:$A$32,0)),1,0)
+      comentario: 1 si el mes es el de la Pascua de su año: IF(F60 = INDEX(columna mes de Meeus, MATCH(E60, años de Meeus, 0)), 1, 0), con $ en los dos rangos. En español, SI, INDICE y COINCIDIR.
+
+[M10 Fourier] 1736 celdas
+  B11: =INDEX(LINEST($O$60:$O$203,OFFSET($B$60,0,0,144,B10),TRUE,TRUE),5,2)
+      comentario: INDEX(LINEST(log y, OFFSET(B60, 0, 0, 144, B10), TRUE, TRUE), 5, 2): la fila 5, columna 2 de la salida de LINEST es la suma de cuadrados de los residuos. OFFSET (DESREF) elige t y las primeras 2K columnas de Fourier.
+  C17: =INDEX(LINEST($O$60:$O$203,OFFSET($B$60,0,0,144,1+B17),TRUE,TRUE),5,2)
+      comentario: La SSR de B11 con 1 + B17 columnas en vez de B10. Arrástrala hasta K = 6.
+  C60: =SIN(2*PI()*C$57*$B60/12)
+      comentario: SIN(2·PI()·k·t/12), con k de la fila 57 (C$57) y t de la columna B ($B60). Va en las columnas de seno: C, E, G, I, K y N (en k = 6, el seno es la última).
+  D60: =COS(2*PI()*D$57*$B60/12)
+      comentario: COS(2·PI()·k·t/12): lo mismo con el coseno, en D, F, H, J, L y M. Ojo: en k = 6 el coseno va en M y el seno en N.
+  E60: =SIN(2*PI()*E$57*$B60/12)
+  F60: =COS(2*PI()*F$57*$B60/12)
+  G60: =SIN(2*PI()*G$57*$B60/12)
+  H60: =COS(2*PI()*H$57*$B60/12)
+  I60: =SIN(2*PI()*I$57*$B60/12)
+  J60: =COS(2*PI()*J$57*$B60/12)
+  K60: =SIN(2*PI()*K$57*$B60/12)
+  L60: =COS(2*PI()*L$57*$B60/12)
+  M60: =COS(2*PI()*M$57*$B60/12)
+  N60: =SIN(2*PI()*N$57*$B60/12)
+
+[M11 Métricas] 32 celdas
+  C35: =SQRT(SUMXMY2($B$9:$B$32,C$9:C$32)/COUNT($B$9:$B$32))
+      comentario: √(SUMXMY2(observado, pronóstico)/n). SUMXMY2 (SUMAXMENOSY2) suma los cuadrados de las diferencias. Arrástrala a la derecha.
+  D35: =SQRT(SUMXMY2($B$9:$B$32,D$9:D$32)/COUNT($B$9:$B$32))
+  E35: =SQRT(SUMXMY2($B$9:$B$32,E$9:E$32)/COUNT($B$9:$B$32))
+  F35: =SQRT(SUMXMY2($B$9:$B$32,F$9:F$32)/COUNT($B$9:$B$32))
+  G35: =SQRT(SUMXMY2($B$9:$B$32,G$9:G$32)/COUNT($B$9:$B$32))
+  H35: =SQRT(SUMXMY2($B$9:$B$32,H$9:H$32)/COUNT($B$9:$B$32))
+  I35: =SQRT(SUMXMY2($B$9:$B$32,I$9:I$32)/COUNT($B$9:$B$32))
+  J35: =SQRT(SUMXMY2($B$9:$B$32,J$9:J$32)/COUNT($B$9:$B$32))
+  C36: =SUMPRODUCT(ABS($B$9:$B$32-C$9:C$32))/COUNT($B$9:$B$32)
+      comentario: SUMPRODUCT(ABS(observado − pronóstico))/n.
+  D36: =SUMPRODUCT(ABS($B$9:$B$32-D$9:D$32))/COUNT($B$9:$B$32)
+  E36: =SUMPRODUCT(ABS($B$9:$B$32-E$9:E$32))/COUNT($B$9:$B$32)
+  F36: =SUMPRODUCT(ABS($B$9:$B$32-F$9:F$32))/COUNT($B$9:$B$32)
+  G36: =SUMPRODUCT(ABS($B$9:$B$32-G$9:G$32))/COUNT($B$9:$B$32)
+  H36: =SUMPRODUCT(ABS($B$9:$B$32-H$9:H$32))/COUNT($B$9:$B$32)
+  I36: =SUMPRODUCT(ABS($B$9:$B$32-I$9:I$32))/COUNT($B$9:$B$32)
+  J36: =SUMPRODUCT(ABS($B$9:$B$32-J$9:J$32))/COUNT($B$9:$B$32)
+  C37: =100*SUMPRODUCT(ABS(($B$9:$B$32-C$9:C$32)/$B$9:$B$32))/COUNT($B$9:$B$32)
+      comentario: 100·SUMPRODUCT(ABS((observado − pronóstico)/observado))/n.
+  D37: =100*SUMPRODUCT(ABS(($B$9:$B$32-D$9:D$32)/$B$9:$B$32))/COUNT($B$9:$B$32)
+  E37: =100*SUMPRODUCT(ABS(($B$9:$B$32-E$9:E$32)/$B$9:$B$32))/COUNT($B$9:$B$32)
+  F37: =100*SUMPRODUCT(ABS(($B$9:$B$32-F$9:F$32)/$B$9:$B$32))/COUNT($B$9:$B$32)
+  G37: =100*SUMPRODUCT(ABS(($B$9:$B$32-G$9:G$32)/$B$9:$B$32))/COUNT($B$9:$B$32)
+  H37: =100*SUMPRODUCT(ABS(($B$9:$B$32-H$9:H$32)/$B$9:$B$32))/COUNT($B$9:$B$32)
+  I37: =100*SUMPRODUCT(ABS(($B$9:$B$32-I$9:I$32)/$B$9:$B$32))/COUNT($B$9:$B$32)
+  J37: =100*SUMPRODUCT(ABS(($B$9:$B$32-J$9:J$32)/$B$9:$B$32))/COUNT($B$9:$B$32)
+  C39: =RANK(C35,$C$35:$J$35,1)
+      comentario: RANK(RMSE, fila de RMSE, 1): 1 al menor.
+  D39: =RANK(D35,$C$35:$J$35,1)
+  E39: =RANK(E35,$C$35:$J$35,1)
+  F39: =RANK(F35,$C$35:$J$35,1)
+  G39: =RANK(G35,$C$35:$J$35,1)
+  H39: =RANK(H35,$C$35:$J$35,1)
+  I39: =RANK(I35,$C$35:$J$35,1)
+  J39: =RANK(J35,$C$35:$J$35,1)
+
+### Series y textos de la portada
+  A1: Capítulo 5 · Modelos SARIMA, celda a celda
+  A2: Libro del estudiante: las fórmulas clave están en blanco, con borde naranja. La solución es el libro hermano, capitulo-5-sarima-solucion.xlsx.
+  A4: Para qué sirve
+  A5: En R, diff(), Acf() o Arima() devuelven el resultado y esconden la cuenta. Aquí cada número es una celda con su fórmula a la vista: restar la celda de arriba es ∇₁₂, restar las cuatro esquinas de un cuadrado de 2 × 2 es ∇∇₁₂, y los pesos ψ,
+  A6: Lo que Excel no hace. Excel no estima un SARIMA por máxima verosimilitud. La estimación se queda en R: el libro toma θ̂ = -0.4018, Θ̂ = -0.5569, σ̂² = 0.001371 y el log-verosimilitud (244.6995) como datos, en gris, y muestra lo que implican
+  A8: Cómo se usa
+  A9: 1. Las hojas van en el orden del capítulo, de M1 a M11. Conviene tener el capítulo abierto al lado.
+  A10: 2. Las celdas con borde naranja son las que se completan. Su instrucción está al lado o en el comentario de la celda (el triángulo rojo de la esquina).
+  A11: 3. En un bloque de celdas basta escribir la primera fórmula y arrastrarla: los $ de las fórmulas ya resueltas muestran qué se fija y qué se mueve.
+  A12: 4. Cada resultado tiene una comprobación al lado. Se pone en verde (✔) cuando coincide con el capítulo; hasta entonces sale en rojo (✘). Unas pocas comprueban lo que el libro ya trae resuelto (los datos, los ejemplos hechos) y salen en verd
+  A13: 5. Las celdas amarillas se pueden cambiar para explorar. Mientras no tengan los valores del capítulo, las comprobaciones que dependen de ellas muestran «—».
+  A14: 6. Las celdas que dependen de una que falta muestran #¡DIV/0! o #¡VALOR! (#DIV/0! o #VALUE! en un Excel en inglés) hasta que se completa. Es normal, y vale también entre hojas: el M4 y el M6 leen el M3, el M7 lee el M5 y el M6, y el M8 lee 
+  A15: 7. Si al abrir el libro las celdas salen vacías o en cero, pulsa «Habilitar edición»: en la vista protegida Excel no calcula.
+  A17: Colores
+  B18: Entrada: se puede cambiar
+  B19: Completa aquí: la fórmula es tuya
+  B20: Dato de R o del capítulo: no se toca
+  B21: ✔ coincide con el capítulo
+  B22: ✘ revisar, o falta completar
+  B23: — comprobación en pausa (otra entrada)
+  A25: Avance por hoja
+  B26: Hoja
+  C26: Comprobaciones en verde
+  E26: Qué cubre
+  B27: Datos
+  C27: =('Datos'!L5="✔")+('Datos'!L7="✔")+('Datos'!L9="✔")
+  E27: Las tres series y su comprobación
+  B28: M1 Firma
+  C28: =('M1 Firma'!I83="✔")+('M1 Firma'!J83="✔")+('M1 Firma'!K83="✔")+('M1 Firma'!L83="✔")
+  E28: Mapa mes × año, ACF por fórmula, banda
+  B29: M2 Multiplicativo
+  C29: =('M2 Multiplicativo'!E16="✔")+('M2 Multiplicativo'!E17="✔")+('M2 Multiplicativo'!E18="✔")+('M2 Multiplicativo'!E19="✔")+('M2 Multiplicativo'!E20="✔")+('M2 Multiplicativo'!E21="✔")+('M2 Multiplicativo'!E22="✔")+('M2 Multiplicativo'!E27="✔")
+  E29: Heladería, polinomio multiplicado, pesos ψ, satélites
+  B30: M3 Diferenciar
+  C30: =('M3 Diferenciar'!O13="✔")+('M3 Diferenciar'!O30="✔")+('M3 Diferenciar'!O36="✔")+('M3 Diferenciar'!O42="✔")+('M3 Diferenciar'!O44="✔")+('M3 Diferenciar'!E57="✔")+('M3 Diferenciar'!E58="✔")+('M3 Diferenciar'!L66="✔")+('M3 Diferenciar'!L67="
+  E30: Tienda: ∇, ∇₁₂, ∇∇₁₂; las cuatro combinaciones
+  B31: M4 Identificar
+  C31: =('M4 Identificar'!E9="✔")+('M4 Identificar'!C49="✔")+('M4 Identificar'!E50="✔")+('M4 Identificar'!F58="✔")+('M4 Identificar'!F59="✔")+('M4 Identificar'!F60="✔")+('M4 Identificar'!G67="✔")+('M4 Identificar'!G68="✔")+('M4 Identificar'!AN117=
+  E31: ACF de ∇∇₁₂ log y, airline teórico, PACF (opcional)
+  B32: M5 Airline
+  C32: =('M5 Airline'!D13="✔")+('M5 Airline'!D14="✔")+('M5 Airline'!D15="✔")+('M5 Airline'!D16="✔")+('M5 Airline'!D17="✔")+('M5 Airline'!D18="✔")+('M5 Airline'!D19="✔")+('M5 Airline'!D20="✔")
+  E32: Pesos ψ del airline y σ_h a escalones
+  B33: M6 Diagnóstico
+  C33: =('M6 Diagnóstico'!E5="✔")+('M6 Diagnóstico'!E6="✔")+('M6 Diagnóstico'!E16="✔")+('M6 Diagnóstico'!E18="✔")+('M6 Diagnóstico'!E25="✔")+('M6 Diagnóstico'!E26="✔")+('M6 Diagnóstico'!E27="✔")+('M6 Diagnóstico'!E28="✔")+('M6 Diagnóstico'!E29="✔"
+  E33: Residuales CSS, Ljung–Box, AICc de la rejilla
+  B34: M7 Pronóstico
+  C34: =('M7 Pronóstico'!E15="✔")+('M7 Pronóstico'!E16="✔")+('M7 Pronóstico'!E17="✔")+('M7 Pronóstico'!E18="✔")+('M7 Pronóstico'!E19="✔")+('M7 Pronóstico'!E21="✔")+('M7 Pronóstico'!E22="✔")+('M7 Pronóstico'!E23="✔")+('M7 Pronóstico'!E24="✔")+('M7 
+  E34: Pronóstico a 24 meses, bandas, mediana y media
+  B35: M8 Contraejemplo
+  C35: =('M8 Contraejemplo'!D46="✔")+('M8 Contraejemplo'!C46="✔")+('M8 Contraejemplo'!G54="✔")+('M8 Contraejemplo'!G61="✔")+('M8 Contraejemplo'!G62="✔")+('M8 Contraejemplo'!G67="✔")
+  E35: ∇TRM frente a ∇USAccDeaths; evidencias
+  B36: M9 Calendario
+  C36: =('M9 Calendario'!E9="✔")+('M9 Calendario'!E10="✔")+('M9 Calendario'!E11="✔")+('M9 Calendario'!E12="✔")+('M9 Calendario'!E13="✔")+('M9 Calendario'!E14="✔")+('M9 Calendario'!E41="✔")
+  E36: Días del mes, Pascua (Meeus), regresores
+  B37: M10 Fourier
+  C37: =('M10 Fourier'!E11="✔")+('M10 Fourier'!E13="✔")+('M10 Fourier'!E14="✔")+('M10 Fourier'!E17="✔")
+  E37: Fourier con K armónicos frente a indicadoras
+  B38: M11 Métricas
+  C38: =('M11 Métricas'!C46="✔")+('M11 Métricas'!D46="✔")+('M11 Métricas'!E46="✔")+('M11 Métricas'!F46="✔")+('M11 Métricas'!G46="✔")+('M11 Métricas'!H46="✔")+('M11 Métricas'!I46="✔")+('M11 Métricas'!J46="✔")+('M11 Métricas'!C47="✔")+('M11 Métricas
+  E38: RMSE, MAE, MAPE y el ranking que se invierte
+  B39: Total
+  C39: =SUM(C27:C38)
+  D39: =SUM(D27:D38)
+  A41: Dónde la cuenta de Excel no es la de R, medido
+  C42: R (capítulo)
+  D42: Este libro
+  E42: Por qué
+  B43: Ljung–Box(24) del airline (M6)
+  C43: Q = 26.4458, p = 0.233
+  D43: Q = 22.49, p = 0.431 con los residuales CSS; idéntico con los de R
+  E43: La recursión arranca con e = 0 y su primer año es otro: R usa la verosimilitud exacta.
+  B44: Pronóstico a 24 meses (M7)
+  C44: 525.46 pasajeros
+  D44: 525.34 con CSS; 525.46 con los residuales de R
+  E44: Los últimos residuales CSS difieren de los de R en 2·10⁻⁴: un 0.02 %.
+  B45: ψ₁₂ y ψ₁₃ del airline (M5)
+  C45: 1.0412 y 0.8632
+  D45: 1.0413 y 0.8633
+  E45: El libro usa θ̂ y Θ̂ con 4 decimales; R, todos.
+  B46: ρ₁ del airline teórico (M4)
+  C46: −0.3460
+  D46: −0.3459
+  E46: −0.34595 queda en el empate del redondeo; el capítulo lo calcula con θ̂ completo.
+  A48: Funciones que usa el libro (Excel en español · en inglés)
+  B49: SUMAPRODUCTO · SUMPRODUCT
+  D49: ACF, Ljung–Box, MAE, MAPE
+  B50: INDICE · INDEX
+  D50: recortar un rango: INDEX(r,1):INDEX(r,n−k)
+  B51: DESVIA2 · DEVSQ
+  D51: Σ(x − x̄)², el denominador de la ACF
+  B52: VAR · VAR
+  D52: varianza muestral (divisor n − 1), como var() de R
+  B53: SUMA.CUADRADOS · SUMSQ
+  B54: SUMAXMENOSY2 · SUMXMY2
+  D54: Σ(y − ŷ)², para el RMSE
+  B55: DISTR.CHICUAD.CD · CHISQ.DIST.RT
+  D55: valor p de Ljung–Box
+  B56: INV.NORM.ESTAND · NORM.S.INV
+  D56: z de las bandas: 1.2816 y 1.9600
+  B57: ESTIMACION.LINEAL · LINEST
+  D57: la regresión armónica (M10)
+  B58: DESREF · OFFSET
+  D58: elegir 2K columnas de Fourier
+  B59: DIA · DAY, FIN.MES · EOMONTH
+  D59: días del mes (M9)
+  B60: RESIDUO · MOD, ENTERO · INT
+  D60: el algoritmo de la Pascua (M9)
+  B61: JERARQUIA · RANK
+  D61: ordenar modelos y métodos
+  A63: En un Excel en español las funciones aparecen con su nombre en español y el separador de argumentos suele ser el punto y coma (;). Las instrucciones las escriben con su nombre en inglés y la coma, como las guarda el archivo. Excel traduce l
+  A65: Compatibilidad y datos
+  A66: Está comprobado en Microsoft Excel. Solo usa funciones clásicas, sin LET, LAMBDA, SEQUENCE ni matrices dinámicas, que también existen en LibreOffice Calc y en Google Sheets (Archivo › Importar), aunque en ellos todavía no se ha probado.
+  A67: Datos: AirPassengers y USAccDeaths, de los datasets de R; la TRM mensual, de la Superintendencia Financiera de Colombia vía datos.gov.co (consulta: 2026-07-26). Coeficientes y cifras de comparación: los que el capítulo calcula en R (precalc
+
+### Cabeceras de la hoja Datos
+  A1: Datos · las tres series del capítulo
+  A2: AirPassengers (1949–1960), USAccDeaths (1973–1978) y la TRM (2015–2026), tal com
+  K3: Comprobación de los datos
+
+### Preguntas abiertas (texto con «¿») en las hojas del estudiante
+  [M1 Firma] ¿= R?
+  [M2 Multiplicativo] Φ·u: la pregunta estacional, ¿se repite la sorpresa de hace un año?
+  [M2 Multiplicativo] ¿Las dos rutas dan lo mismo?
+  [M2 Multiplicativo] ¿= R?
+  [M3 Diferenciar] ¿Acelera? (0 = no, 1 = sí)
+  [M3 Diferenciar] ¿suma cero?
+  [M3 Diferenciar] ¿= celda de arriba?
+  [M3 Diferenciar] ¿= celda de la izquierda?
+  [M3 Diferenciar] ¿= el otro orden?
+  [M3 Diferenciar] ¿= R en el capítulo?
+  [M3 Diferenciar] ¿∇∇₁₂ = ∇₁₂∇? (columnas F y G)
+  [M4 Identificar] ¿fuera?
+  [M4 Identificar] ¿= R?
+  [M4 Identificar] ¿= R?
+  [M8 Contraejemplo] ¿=?
+  [M8 Contraejemplo] ¿fuera?
+  [M8 Contraejemplo] ¿fuera?
+  [M9 Calendario] ¿Pasajeros proporcionales a los días? t de β = 1
+  [M10 Fourier] Con K = 6, ¿Fourier = indicadoras?
+  [M11 Métricas] ¿= R?
+
+### Primeras líneas de instrucciones de cada hoja (filas 1-6, columna A-B)
+  [M1 Firma] A1: M1 · La firma de la estacionalidad
+  [M1 Firma] A2: Ver la estacionalidad en el mapa mes × año y medirla en la ACF, en los rezagos 12, 24 y 36.
+  [M1 Firma] A4: 1 · Verla antes de medirla: el mapa mes × año
+  [M1 Firma] A5: La fila es el año y la columna el mes. La celda del año a y el mes m es la observación número 12·(a − 1949) + m de la columna de Datos. Si un mes es siempre alto aparece una banda vertical; si el patrón crece con el nivel, las bandas se ensanchan hacia abajo.
+  [M2 Multiplicativo] A1: M2 · Notación SARIMA y el polinomio multiplicativo
+  [M2 Multiplicativo] A2: La parte estacional multiplica a la regular: el rezago 13 aparece solo, con un peso que no es libre.
+  [M2 Multiplicativo] A4: 1 · La heladería: pronosticar marzo de 2025 con un SARIMA(1,0,0)(1,0,0)₁₂
+  [M2 Multiplicativo] A5: (1 − φB)(1 − ΦB¹²) y_t = ε_t. Ventas inventadas, medidas como desvío de su promedio. Se conocen tres meses y se pronostica marzo de 2025 por dos rutas: dos preguntas una detrás de otra, o una sola cuenta con el polinomio ya multiplicado.
+  [M2 Multiplicativo] A6: ✎ Completa: los cinco pasos de C16:C20 y el peso del satélite en D27. La instrucción de cada uno está en la columna F.
+  [M3 Diferenciar] A1: M3 · Diferenciación estacional: cuántas y en qué orden
+  [M3 Diferenciar] A2: ∇₁₂ resta la celda de arriba, ∇ la de la izquierda; las dos juntas, las cuatro esquinas de un cuadrado.
+  [M3 Diferenciar] A4: 1 · La tienda inventada, celda a celda
+  [M3 Diferenciar] A5: y_t = 100 + (t − 1) + s_mes: la tienda parte de un nivel de 100 unidades en enero de 2022 (con el −6 de enero vende 94), gana una unidad por mes y repite cada año el mismo patrón, que suma cero. Con el interruptor en 1, desde 2024 crece tres unidades al mes.
+  [M3 Diferenciar] A6: ✎ Completa: las rejillas de ∇₁₂ (C30:N32), ∇ (C35:N38) y ∇∇₁₂ (C42:N44), y las dos cuentas de marzo de 2024 (B57 y B58). La instrucción está en el comentario de la primera celda de cada rejilla.
+  [M4 Identificar] A1: M4 · Identificar los órdenes estacionales
+  [M4 Identificar] A2: Leer P y Q en los rezagos 12, 24 y 36 con la tabla del capítulo 3, y no contar un satélite como parámetro.
+  [M4 Identificar] A4: 1 · La ACF de ∇∇₁₂ log y, con su banda
+  [M4 Identificar] A5: La serie ya diferenciada es la de la columna F del M3, copiada abajo (fila 158). La banda se calcula con las observaciones que quedan después de diferenciar, no con las 144 de partida.
+  [M4 Identificar] A6: ✎ Completa: la banda en C9, la marca «fuera» en D13:D48 (IF: si el valor absoluto de ρ̂ pasa la banda) y la ACF teórica del airline en D58:D60. La serie viene del M3: si allí falta, aquí sale en error.
+  [M5 Airline] A1: M5 · El modelo airline
+  [M5 Airline] A2: Los pesos ψ del airline suben a escalones, y con ellos la incertidumbre del pronóstico.
+  [M5 Airline] A4: 1 · (1 − B)(1 − B¹²) y_t = (1 + θB)(1 + ΘB¹²) ε_t
+  [M6 Diagnóstico] A1: M6 · Estimar, comparar y diagnosticar
+  [M6 Diagnóstico] A2: Residuales, Ljung–Box con 2m = 24 rezagos y el AICc de la rejilla, celda a celda.
+  [M6 Diagnóstico] A4: 1 · Lo que estimó R (datos)
+  [M7 Pronóstico] A1: M7 · El pronóstico a 24 meses
+  [M7 Pronóstico] A2: La recursión del airline en logaritmos, las bandas con σ_h y la vuelta a pasajeros con exp.
+  [M7 Pronóstico] A4: 1 · Datos y elecciones
+  [M7 Pronóstico] A5: Residuales: 1 = recursión CSS (M6), 2 = los de R
+  [M8 Contraejemplo] A1: M8 · Segundo caso y contraejemplo
+  [M8 Contraejemplo] A2: Sobre la serie sin tendencia, una serie estacional tiene picos en 12, 24, 36 y la TRM no tiene ninguno.
+  [M8 Contraejemplo] A4: 1 · ∇TRM frente a ∇USAccDeaths: la ACF de las dos series sin tendencia
+  [M8 Contraejemplo] A5: Las dos llevan una diferencia regular. En niveles las dos parecían estacionales, porque una tendencia infla todos los rezagos; sin ella, USAccDeaths conserva sus picos en 12 y 24 y la TRM no tiene ninguno. La ACF de ∇TRM viene del M1.
+  [M8 Contraejemplo] A6: ✎ Completa: ∇USAccDeaths en D101:D171 (columnas de cálculo), su ACF en D10:D45, la marca «fuera» de la tabla de rezagos estacionales y, más abajo, el t de C61, la diferencia de AICc de C62 y los cocientes de F67:F68. La ACF de ∇TRM viene del M1: si allí falta,
+  [M9 Calendario] A1: M9 · Regresores de calendario
+  [M9 Calendario] A2: Lo que el término estacional no ve: la longitud del mes y una fiesta que cambia de mes.
+  [M9 Calendario] A4: 1 · Días del mes y Semana Santa
+  [M9 Calendario] A5: Un SARIMA supone que el patrón cae en la misma posición cada 12 meses. Febrero dura 28 o 29 días y la Pascua cae en marzo o en abril: dos efectos que se mueven de año en año y que ningún Φ ni Θ puede absorber. Van como regresores: log(días del mes) y una indic
+  [M9 Calendario] A6: ✎ Completa: en las columnas de cálculo (fila 58), los días del mes con DAY(EOMONTH(fecha, 0)) (en español DIA y FIN.MES), su logaritmo y la indicadora de Pascua; en la tabla de Meeus (fila 20), las columnas h, l, mes y día; y la diferencia de duración en B11 y
+  [M10 Fourier] A1: M10 · Cuando m es grande: los términos de Fourier
+  [M10 Fourier] A2: La estacionalidad como suma de senos y cosenos: 2K parámetros, sea cual sea m.
+  [M10 Fourier] A4: 1 · log y = β₀ + β₁t + Σ_k [α_k sen(2πkt/12) + δ_k cos(2πkt/12)] + error
+  [M10 Fourier] A5: K, número de armónicos (1 a 6)
+  [M10 Fourier] A6: Excel no ajusta los errores ARIMA del capítulo, pero sí la parte que importa aquí: la regresión por mínimos cuadrados de log y sobre una tendencia y 2K columnas de Fourier, con LINEST (ESTIMACION.LINEAL). Con K = m/2 = 6, sen(2π·6t/12) = sen(πt) vale cero siem
+  [M11 Métricas] A1: M11 · Panorama comparativo: RMSE, MAE y MAPE
+  [M11 Métricas] A2: Ocho métodos sobre los últimos 24 meses, y por qué una sola partición no decide nada.
+  [M11 Métricas] A4: 1 · Los pronósticos de R para 1959–1960 (entrenamiento hasta 1958-12)
+  [M11 Métricas] A5: Cada método se ajustó en R con los primeros 120 meses. Las métricas se calculan en pasajeros, la única escala en que los ocho son comparables: RMSE = √(Σ(y − ŷ)²/n), MAE = Σ|y − ŷ|/n y MAPE = 100·Σ|y − ŷ|/y / n.
+  [M11 Métricas] A6: ✎ Completa: RMSE, MAE y MAPE en C35:J37 (escribe la columna C y arrástrala a la derecha) y el puesto por RMSE en C39:J39 con RANK (JERARQUIA).
+
+### Fórmulas distintas que escribe el estudiante (celdas en blanco con instrucción en comentario) y comprobaciones ✔/✘ por hoja
+  Portada              celdas     0 · fórmulas con instrucción   0 · celdas de comprobación ✔/✘  12
+  Datos                celdas     0 · fórmulas con instrucción   0 · celdas de comprobación ✔/✘   3
+  M1 Firma             celdas   352 · fórmulas con instrucción   4 · celdas de comprobación ✔/✘   4
+  M2 Multiplicativo    celdas  1485 · fórmulas con instrucción  13 · celdas de comprobación ✔/✘  16
+  M3 Diferenciar       celdas   383 · fórmulas con instrucción   8 · celdas de comprobación ✔/✘  13
+  M4 Identificar       celdas  1372 · fórmulas con instrucción   8 · celdas de comprobación ✔/✘   9
+  M5 Airline           celdas    72 · fórmulas con instrucción   2 · celdas de comprobación ✔/✘   8
+  M6 Diagnóstico       celdas   283 · fórmulas con instrucción  11 · celdas de comprobación ✔/✘  14
+  M7 Pronóstico        celdas   266 · fórmulas con instrucción   7 · celdas de comprobación ✔/✘  10
+  M8 Contraejemplo     celdas   117 · fórmulas con instrucción   6 · celdas de comprobación ✔/✘   6
+  M9 Calendario        celdas   482 · fórmulas con instrucción   9 · celdas de comprobación ✔/✘   7
+  M10 Fourier          celdas  1736 · fórmulas con instrucción   5 · celdas de comprobación ✔/✘   4
+  M11 Métricas         celdas    32 · fórmulas con instrucción   4 · celdas de comprobación ✔/✘  10
+  TOTAL fórmulas con instrucción 77 · celdas de comprobación 116 · preguntas «¿» 20
+
+### Menciones de series en el libro del estudiante: {'heladería': 2, 'tienda': 4, 'USAccDeaths': 12, 'TRM': 24, 'AirPassengers': 10}
+
+### ¿La instrucción dicta la fórmula? (comentario con una llamada a función de Excel, «=» seguido de celda, o la ecuación con sus celdas)
+  M1 Firma             1 de 4
+  M2 Multiplicativo    0 de 13
+  M3 Diferenciar       1 de 8
+  M4 Identificar       3 de 8
+  M5 Airline           0 de 2
+  M6 Diagnóstico       4 de 11
+  M7 Pronóstico        4 de 7
+  M8 Contraejemplo     1 de 6
+  M9 Calendario        7 de 9
+  M10 Fourier          3 de 5
+  M11 Métricas         4 de 4
+  TOTAL 28 de 77

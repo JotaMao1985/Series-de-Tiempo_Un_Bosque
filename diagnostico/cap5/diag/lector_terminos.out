@@ -1,0 +1,157 @@
+termino | primer uso (linea, modulo) | presentacion (linea, modulo) | distancia en lineas | nota
+airline (el modelo) | 3080 (M1) | 4527 (M5) | 1447 | M1 3080 («el modelo airline, con solo dos parametros»); M2 lo usa 6 veces antes del M5; el cap. 4 (puente) ya lo dio como «avance»; la caja que lo define con su nombre de origen esta en el M5
+∇ (diferencia regular) | 3145 (M1) | — (M—) | — | M1 3145 («∇TRM») y los selectores del simulador del M1; nunca se define en el capitulo como objeto (∇ = 1 - B); solo ∇_m se define (M3 3776). M2 3548 escribe w_t = ∇^d ∇_m^D y_t
+∇_m (diferencia estacional) y ∇∇₁₂ | 3360 (M2) | 3776 (M3) | 416 | primer uso M2 (3360 «∇∇₁₂ del Modulo 3» y 3548); M1 ya habla de «las dos diferencias» en el simulador (3109)
+ETS / ETS(M,A,M) | 5712 (M11) | — (M—) | — | M11 5712 («el ETS, en las dos escalas»); no se presenta en ningun modulo; solo la tabla de 5832 lo glosa («Holt–Winters y familia», «suavizamiento exponencial»); la notacion (M,A,M) y A_d no se explica
+naïve estacional | 5750 (M11) | — (M—) | — | M11 5750 (fila de la tabla); no se define en el cap. 5 (el cap. 4 lo nombra; el cap. 6 lo desarrolla)
+USAccDeaths (la serie) | 3142 (M1) | 4549 (M5) | 1407 | M1 3142 (fila de la tabla), M3 4078; se describe por primera vez en la tabla del M5 4549 («Muertes accidentales en EE. UU., 1973–1978»); el M8 5097 la «presenta» de nuevo
+co2 (la serie) | 3143 (M1) | 5912 (M11) | 2769 | M1 3143 (fila de la tabla, «Mauna Loa»), M8 5117 (tabla); se presenta como ejercicio 1 en M11 5912 (n = 468)
+RMSE / MAE / MAPE | 5373 (M9) | — (M—) | — | M9 5373 («RMSE 45.48 frente a 43.18»); la tabla del M11 5740 las da sin definirlas; el cap. 4 usa RMSE/MAE en su M8; el cap. 6 las desarrolla
+«fuera de muestra» | 5372 (M9) | 5711 (M11) | 339 | M9 5372 (advertencia que remite al M11); M10 5574 («solo fuera de muestra, que es el Modulo 11»); M11 5711 lo hace (entrenar 120, medir 24)
+«origen(es)» / origen movil | 5761 (M11) | 5761 (M11) | 0 | M11 5761 («61 orígenes… avanzando el corte mes a mes»): se explica en la misma frase; el cap. 6 lo desarrolla
+Fourier (regresion armonica) | 5485 (M10) | 5524 (M10) | 39 | primer uso M10 5485 (titulo) y la tabla de 5509; la definicion es 5524
+STL | 4204 (M3) | — (M—) | — | M3 4204 (la trampa de nsdiffs «fuerza estacional de la descomposicion STL»); cap. 1 la desarrolla; M10 5580 la usa con remision al Capitulo 1
+Box–Cox / BoxCox.lambda() | 4332 (M4) | — (M—) | — | M4 4332 y 4376 (ciclo, «¿Log o Box–Cox?»); no se usa en ningun bloque; cap. 2 (2.8) lo presenta
+checkresiduals() | 4998 (M7) | 4998 (M7) | 0 | primer uso = M7 4998, con su glosa en el comentario del bloque («grafico + Ljung-Box en una sola llamada»)
+rango relativo (1.848) | 4815 (M7) | — (M—) | — | M7 4815; no se define en ningun modulo; ningun bloque lo calcula (resulta ser (max - min)/media)
+rejilla (de candidatos) | 4428 (M4) | 4650 (M6) | 222 | M4 4428 (ciclo, etapa 5) la usa antes de que el M6 (4650) la presente; en M1 y M3 «rejilla» es una clase CSS del mapa, no prosa
+satelite(s) (rezagos satelite) | 3331 (M2) | 3331 (M2) | 0 | primer uso = presentacion (M2 3331, con ejemplo numerico)
+n efectivo | 4837 (M7) | 4648 (M6) | -189 | M3 4056 (tabla con la columna n); M6 4648 lo explica; el cap. 4 presenta n* = n - d (aqui no se reutiliza el simbolo)
+ndiffs() / nsdiffs() | 4078 (M3) | — (M—) | — | M3 4078/4125; cap. 2 (4120–4130) los presenta; nsdiffs con test = 'seas'/'ocsb': M3 4203 (trampa de version)
+SARIMAX (clase de statsmodels) | 3663 (M2) | 5318 (M9) | 1655 | M2 3663 (bloque Python: `SARIMAX(...)` para ajustar el airline); el M9 (5318) lo define como «regresion con errores SARIMA» y avisa que el nombre engana
+Holt–Winters / suavizamiento exponencial | 5832 (M11) | — (M—) | — | solo M11 5832–5833 (tabla); ni el cap. 5 ni los caps. 1–3 lo presentan
+Prophet / LSTM / Transformers / TBATS | 5844 (M11) | — (M—) | — | solo M11 5844–5859 y la lista de lecturas (TBATS 6180); sin presentacion
+competencias M4 y M5 | 5869 (M11) | — (M—) | — | M11 5869: sin presentar (que son, quien las organizo)
+cobertura (empirica / nominal) | 5807 (M11) | — (M—) | — | M11 5807 (nota puente); la desarrolla el cap. 6
+«once módulos» (M11 5755) | 5755 (M11) | — (M—) | — | M11 5755: «el modelo que ha ocupado once módulos»; hay diez antes del 11
+
+== Remisiones «Modulo N» (hacia delante / hacia atras) por modulo, con linea ==
+M1: hacia delante 2 ['3080->M5', '3155->M8'] ; hacia atras 0 []
+M2: hacia delante 6 ['3360->M3', '3520->M4', '3561->M5', '3624->M4', '3681->M6', '3750->M6'] ; hacia atras 0 []
+M3: hacia delante 0 [] ; hacia atras 1 ['3842->M1']
+M4: hacia delante 0 [] ; hacia atras 4 ['4262->M2', '4286->M2', '4298->M2', '4376->M1']
+M5: hacia delante 1 ['4586->M9'] ; hacia atras 0 []
+M6: hacia delante 0 [] ; hacia atras 0 []
+M7: hacia delante 1 ['5024->M9'] ; hacia atras 7 ['4815->M1', '4839->M4', '4841->M2', '4842->M4', '4904->M3', '4938->M6', '4987->M2']
+M8: hacia delante 0 [] ; hacia atras 0 []
+M9: hacia delante 1 ['5372->M11'] ; hacia atras 0 []
+M10: hacia delante 2 ['5575->M11', '5592->M11'] ; hacia atras 0 []
+M11: hacia delante 0 [] ; hacia atras 13 ['5710->M10', '5882->M1', '5882->M8', '5883->M2', '5883->M4', '5884->M3', '5885->M3', '5886->M5', '5886->M7', '5887->M6', '5887->M10', '5888->M9', '5889->M10']
+M12: hacia delante 0 [] ; hacia atras 0 []
+
+Veces que cada modulo es citado desde otro (hacia delante / hacia atras):
+  M1: desde modulos anteriores 0 [] | desde posteriores 4
+  M2: desde modulos anteriores 0 [] | desde posteriores 6
+  M3: desde modulos anteriores 1 [3360] | desde posteriores 3
+  M4: desde modulos anteriores 2 [3520, 3624] | desde posteriores 3
+  M5: desde modulos anteriores 2 [3080, 3561] | desde posteriores 1
+  M6: desde modulos anteriores 2 [3681, 3750] | desde posteriores 2
+  M7: desde modulos anteriores 0 [] | desde posteriores 1
+  M8: desde modulos anteriores 1 [3155] | desde posteriores 1
+  M9: desde modulos anteriores 2 [4586, 5024] | desde posteriores 1
+  M10: desde modulos anteriores 0 [] | desde posteriores 3
+  M11: desde modulos anteriores 3 [5372, 5575, 5592] | desde posteriores 0
+  M12: desde modulos anteriores 0 [] | desde posteriores 0
+
+== «Capitulo N» en la prosa (linea, modulo, fragmento) ==
+  3076 (M1): Capítulo 4 terminó con un fracaso deliberado
+  3089 (M1): Capítulo 3—
+  3277 (M2): Capítulos 3 y 4, aplicado al polinomio ya multiplicado
+  3354 (M2): Capítulo 3
+  3540 (M2): Capítulo 3 sigue valiendo sin cambios:
+  3561 (M2): Capítulo 3, aplicadas a los $\psi_j$ del polinomio ya multiplicado
+  3564 (M2): Capítulo 4 usa para los intervalos de pronóstico, $\sigma_h^2 = \sigma^2\sum_{j<h}\psi_j^2$, llevada
+  4067 (M3): Capítulo 4— señala $d=1, D=1$, y aquí acierta
+  4086 (M3): Capítulo 4, ahora en la parte
+  4111 (M3): Capítulo 4 diferenciar de más
+  4191 (M3): Capitulo 2 se aplican SIEMPRE a la
+  4208 (M3): Capítulo 2: al comparar dos salidas, mira primero qué prueba usa
+  4227 (M4): Capítulo 3, y no confundir un satélite con un parámetro que falta
+  4233 (M4): Capítulo 3, aplicada a
+  4321 (M4): Capítulo 4 con dos etapas insertadas
+  4414 (M4): Capítulo 3 aplicada dos veces
+  4586 (M5): Capítulo 4, Módulo 9) eso da
+  4593 (M5): Capítulo 4
+  4616 (M5): Capítulo 4
+  4643 (M6): Capítulo 3
+  4646 (M6): Capítulo 4 lo estableció
+  4658 (M6): Capítulo 3 dejó el caso contrario, un modelo con $0$ de $20$ barras fuera
+  4693 (M6): Capítulo 3 los dos
+  4775 (M6): Capitulo 3
+  4784 (M6): Capítulo 4 encontró lo mismo con $d$—
+  4807 (M7): Capítulo 4
+  4814 (M7): Capítulo 2 dejó zanjado que $\text{AirPassengers}$ pide logaritmo: la amplitud estacional crece con 
+  4933 (M7): Capítulo 4, cerrado
+  5024 (M7): Capitulo 4, Modulo 9): aqui solo se usa
+  5166 (M8): Capítulo 4 por otro camino
+  5570 (M10): Capítulo 4 documentó con $d$, ahora con
+  5580 (M10): Capítulo 1: se separa el componente estacional con STL, se modela con
+  5760 (M11): Capítulo 6
+  5805 (M11): Capítulo 6
+  5890 (M11): Capítulo 6
+  6149 (M11): Capítulo 6
+  6189 (M11): Capítulo 6 se ocupa de lo que este dejó abierto en el Módulo 11: cómo se
+
+== Notacion y vocabulario por modulo (numero de apariciones, solo el marcado de los modulos) ==
+autocorrelacion muestral «\hat\rho_k»: total 29  M1:9 M3:4 M6:1 M7:11 M8:3 M11:1
+autocorrelacion muestral «r_k» / «\hat r»: total 0  —
+tamano de muestra «n» (math): total 28  M1:1 M3:10 M4:1 M5:1 M6:2 M7:2 M8:4 M10:3 M11:4
+tamano de muestra «T» (math): total 0  —
+proceso de errores «n_t» (choca con n; sin contar \varepsilon_t): total 4  M9:2 M10:2
+«residuales»: total 12  M1:1 M4:2 M6:3 M7:3 M10:1 M11:1 M12:1
+«residuos»: total 0  —
+«periodo» (sin tilde): total 6  M1:1 M2:1 M3:1 M10:1 M11:2
+«período» (con tilde): total 0  —
+«diferencia doble / doble diferencia»: total 1  M5:1
+«las dos diferencias»: total 3  M1:1 M6:1 M7:1
+«caminata (aleatoria)»: total 3  M5:2 M8:1
+«satélite(s)»: total 33  M2:16 M4:5 M7:10 M11:1 M12:1
+«airline» en cursiva: total 39  M1:1 M2:6 M4:2 M5:4 M6:1 M7:3 M8:1 M9:3 M10:2 M11:15 M12:1
+«airline» sin cursiva: total 14  M4:1 M5:3 M7:2 M10:1 M11:7
+«estacionalidad»: total 44  M1:10 M2:1 M3:6 M4:3 M5:1 M7:1 M8:6 M9:1 M10:4 M11:11
+«estación» (corto): total 7  M1:1 M4:1 M5:1 M8:1 M10:2 M11:1
+«parte estacional / término estacional»: total 11  M2:3 M5:2 M6:1 M8:2 M9:2 M11:1
+«tendencia» / «deriva»: total 27  M1:8 M3:8 M5:2 M8:3 M11:6
+«|raíz MA|^-1» o «módulo inverso»: total 1  M7:1
+«Módulo N» en prosa: total 44  M1:3 M2:7 M3:2 M4:5 M5:2 M6:1 M7:9 M8:1 M9:2 M10:3 M11:8 M12:1
+«5.N»/«4.N» como cita de modulo: total 31  M1:13 M2:1 M3:1 M4:1 M5:1 M6:1 M7:2 M8:1 M9:1 M10:1 M11:2 M12:6
+«Capítulo N»: total 36  M1:2 M2:4 M3:5 M4:4 M5:3 M6:6 M7:4 M8:1 M10:2 M11:5
+«evidencias» / «pruebas»: total 28  M1:1 M2:1 M3:7 M4:2 M6:1 M7:1 M8:6 M11:9
+«tres/cuatro evidencias»: total 3  M8:1 M11:2
+
+== Ingles en la prosa (fuera de <pre>, <code>, titulos «/ English» y formulas) ==
+  airline: M1:1 M2:6 M4:2 M5:4 M6:1 M7:4 M8:1 M9:3 M10:2 M11:15 M12:1
+  brilla: M11:2
+  cycle: M1:1
+  forecasting: M11:3
+  naïve: M11:3
+  seasonality: M1:1
+  tuneo: M11:1
+  Expresiones entre <em> con aspecto de ingles:
+   M1: ['seasonality', 'cycle']
+   M11: ['Forecasting: Principles and Practice', 'Time Series Analysis and Its Applications', 'Time Series Analysis: Forecasting and Control']
+
+== Registro informal o coloquial en la prosa (lineas) ==
+  «algo bonito»: 5361(M9)
+  «de otro planeta»: 5933(M11)
+  «demoledora»: 5755(M11)
+  «tuneo»: 5846(M11)
+  «brilla»: 5822(M11), 5869(M11)
+  «de cabeza»: 3294(M2)
+  «a mano»: 3280(M2), 3818(M3), 4191(M3), 4862(M7), 5674(M10), 5676(M10), 6218(M12), 6264(M12)
+  «el error m[aá]s caro»: 5131(M8)
+  «rar[ií]simo»: 4386(M4)
+
+== Voz: 2.ª persona del singular y 1.ª del plural (formas inequivocas) por modulo ==
+M1: prosa 0 [] | plural 0 [] | intros de simulador 2 ['Elige', 'Prueba'] | ciclo 0 | ejercicios 0
+M2: prosa 1 ['mira'] | plural 2 ['tomamos', 'multiplicamos'] | intros de simulador 9 ['mira', 'mira', 'fíjate', 'verás', 'Mueve', 'Prueba', 'Elige'] | ciclo 0 | ejercicios 0
+M3: prosa 1 ['mira'] | plural 0 [] | intros de simulador 6 ['mira', 'mira', 'Elige', 'Empieza', 'Mira', 'Busca'] | ciclo 0 | ejercicios 0
+M4: prosa 1 ['te'] | plural 0 [] | intros de simulador 2 ['verás', 'Empieza'] | ciclo 7 | ejercicios 0
+M5: prosa 0 [] | plural 1 ['escribimos'] | intros de simulador 3 ['mira', 'Mueve', 'Lleva'] | ciclo 0 | ejercicios 0
+M6: prosa 0 [] | plural 0 [] | intros de simulador 2 ['fíjate', 'Pon'] | ciclo 0 | ejercicios 0
+M7: prosa 1 ['comprueba'] | plural 0 [] | intros de simulador 0 [] | ciclo 0 | ejercicios 0
+M8: prosa 1 ['Prueba'] | plural 0 [] | intros de simulador 0 [] | ciclo 0 | ejercicios 0
+M9: prosa 1 ['Cuidado'] | plural 0 [] | intros de simulador 0 [] | ciclo 0 | ejercicios 0
+M10: prosa 0 [] | plural 0 [] | intros de simulador 2 ['fíjate', 'Fíjate'] | ciclo 0 | ejercicios 0
+M11: prosa 1 ['puedes'] | plural 1 ['hemos'] | intros de simulador 0 [] | ciclo 0 | ejercicios 4
+M12: prosa 9 ['teclea', 'hazlo', 'pulsa', 'repítelo', 'teclea', 'sales', 'cierres'] | plural 0 [] | intros de simulador 0 [] | ciclo 0 | ejercicios 0

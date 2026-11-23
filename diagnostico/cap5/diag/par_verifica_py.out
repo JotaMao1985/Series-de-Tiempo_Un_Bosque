@@ -1,0 +1,40 @@
+statsmodels 0.14.6 numpy 2.2.6
+
+==================== M6/M7 · airline con simple_differencing=False: ¿converge? ====================
+{}                                                           conv=False ma1=-0.40206 sma1=-0.55708 llf=244.69648
+{'maxiter': 1000}                                            conv=False ma1=-0.40206 sma1=-0.55708 llf=244.69648
+{'method': 'nm', 'maxiter': 5000}                            conv=True ma1=-0.40185 sma1=-0.55690 llf=244.69649
+{'method': 'powell', 'maxiter': 5000}                        conv=True ma1=-0.40185 sma1=-0.55695 llf=244.69649
+{'start_params': [-0.4018, -0.5569, 0.00137], 'maxiter': 1000} conv=True ma1=-0.40180 sma1=-0.55690 llf=244.69648
+por defecto h=24 exp: [525.47 400.65 689.17]  LB24 p: 0.2261  sin 13: 0.3676  sigma2: 0.001348
+maxiter=1000 h=24 exp: [525.47 400.65 689.17]  LB24 p: 0.2261  sin 13: 0.3676  sigma2: 0.001348
+simple_differencing=True:  [-0.40181 -0.55695  0.00135]  llf 244.69648
+diferencia de coeficientes (maxiter=1000 frente a R -0.401828 -0.556945): [-0.00023 -0.00013]
+
+==================== M6/M8 · USAccDeaths sin simple_differencing ====================
+{}                                                           conv=True ma1=-0.3924 sma1=-0.5475 llf=-423.5293
+{'maxiter': 1000}                                            conv=True ma1=-0.3924 sma1=-0.5475 llf=-423.5293
+{'method': 'nm', 'maxiter': 5000}                            conv=True ma1=-0.3924 sma1=-0.5475 llf=-423.5293
+{'method': 'powell', 'maxiter': 5000}                        conv=True ma1=-0.3932 sma1=-0.5468 llf=-423.5293
+{'start_params': [-0.4303, -0.5528, 102860.0], 'maxiter': 1000} conv=True ma1=-0.3924 sma1=-0.5475 llf=-423.5293
+simple_differencing=True: [-0.4303 -0.5527]
+
+==================== M9 · regresores: ¿por qué difieren los errores estándar? ====================
+exog que ve el modelo (primeras filas): está diferenciada = True [[0.0, 0.0], [0.0, 0.0], [0.0, 0.0]]
+{}                             conv=True coef=[ 1.0764  0.029  -0.3338 -0.5207  0.0012] llf=250.6002
+{'maxiter': 1000}              conv=True coef=[ 1.0764  0.029  -0.3338 -0.5207  0.0012] llf=250.6002
+{'method': 'nm', 'maxiter': 20000} conv=True coef=[ 1.0844  0.029  -0.3337 -0.5206  0.0012] llf=250.6004
+cov_type=opg     ee(x1, x2) = [0.4069 0.009 ]  t = [2.6457 3.2195]  (beta-1)/ee = 0.1879
+cov_type=oim     ee(x1, x2) = [0.4479 0.0111]  t = [2.4034 2.6082]  (beta-1)/ee = 0.1707
+cov_type=approx  ee(x1, x2) = [0.4462 0.0111]  t = [2.4123 2.6031]  (beta-1)/ee = 0.1713
+cov_type=robust  ee(x1, x2) = [0.5015 0.0141]  t = [2.1465 2.0602]  (beta-1)/ee = 0.1524
+llf en los coeficientes de R (orden x1,x2,ma,sma,sigma2): 250.6003  llf propia: 250.6002
+orden de parámetros: ['x1', 'x2', 'ma.L1', 'ma.S.L12', 'sigma2']
+
+==================== M10 · Fourier K = 3 con ARIMA(0,1,4) ====================
+{} conv False aic -414.346
+{'maxiter': 1000} conv True aic -414.346
+
+==================== M7 · pronóstico a 24 meses con el ajuste difuso CONVERGIDO ====================
+{'method': 'nm', 'maxiter': 5000} [525.46 400.59 689.25]  LB24 sin 13: 0.3675
+{'start_params': [-0.4018, -0.5569, 0.00137], 'maxiter': 1000} [525.46 400.6  689.24]  LB24 sin 13: 0.3674

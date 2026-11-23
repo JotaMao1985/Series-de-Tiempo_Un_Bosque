@@ -1,0 +1,44 @@
+library(forecast)
+ua <- USAccDeaths
+
+# (a) Camino equivocado: ndiffs primero
+d_a <- ndiffs(ua); d_a
+#> [1] 0
+D_a <- nsdiffs(ua); D_a          # sobre la serie sin diferenciar, porque d = 0
+#> [1] 1
+
+# (b) Camino correcto: nsdiffs primero
+D_b <- nsdiffs(ua); D_b
+#> [1] 1
+d_b <- ndiffs(diff(ua, lag = 12)); d_b
+#> [1] 1
+
+# ¿La serie diferenciada es la misma? Los OPERADORES conmutan:
+max(abs(diff(diff(ua, lag = 12)) - diff(diff(ua), lag = 12)))
+#> [1] 0
+# pero (a) llega a d = 0 y (b) a d = 1, asi que ni siquiera diferencian lo mismo.
+
+fa <- Arima(ua, order = c(0, d_a, 1), seasonal = list(order = c(0, D_a, 1), period = 12))
+fb <- Arima(ua, order = c(0, d_b, 1), seasonal = list(order = c(0, D_b, 1), period = 12))
+
+# El criterio VALIDO: el diagnostico
+round(c(a = Box.test(residuals(fa), lag=24, type="Ljung-Box", fitdf=2)$p.value,
+        b = Box.test(residuals(fb), lag=24, type="Ljung-Box", fitdf=2)$p.value), 4)
+#>      a      b
+#> 0.0000 0.2477
+
+# El criterio INVALIDO, para verlo: distinto d, distinto n efectivo
+round(c(aicc_a = fa$aicc, nobs_a = fa$nobs, aicc_b = fb$aicc, nobs_b = fb$nobs), 3)
+#>  aicc_a  nobs_a  aicc_b  nobs_b
+#> 905.963  60.000 857.316  59.000
+
+as.character(auto.arima(ua, stepwise = FALSE, approximation = FALSE))
+#> [1] "ARIMA(0,1,1)(0,1,1)[12]"
+round(coef(fb), 4)
+#>     ma1    sma1
+#> -0.4303 -0.5528
+
+# Y la trampa de version que hay que conocer:
+c(seas = nsdiffs(ua), ocsb = nsdiffs(ua, test = "ocsb"))
+#> seas ocsb
+#>    1    0
