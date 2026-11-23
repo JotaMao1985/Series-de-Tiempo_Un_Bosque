@@ -14,7 +14,7 @@ con sus fuentes contrastadas y con práctica antes del final. Es la cuarta aplic
 [[PLAN_Mejora_Cap1]], [[PLAN_Mejora_Cap2]] y [[PLAN_Mejora_Cap3]]: cinco rondas, un redactor por ronda,
 un verificador independiente sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: APROBADO por Javier el 2026-11-22; R1 y R2 publicadas el mismo día (R2: `29106f5` · gh-pages `af3a60a`); R3 publicada el mismo día (`21ab628` · gh-pages `60a7bf9`); R4 publicada el 2026-11-23 (`d35dc3b`, registro `b00eb85` · gh-pages `756029a`); R5 hecha el 2026-11-23 (`2c4173e`), sin publicar**, con D1–D10 y las recomendaciones de las preguntas 1 y 2 de §7.
+**Estado: APROBADO por Javier el 2026-11-22; R1 y R2 publicadas el mismo día (R2: `29106f5` · gh-pages `af3a60a`); R3 publicada el mismo día (`21ab628` · gh-pages `60a7bf9`); R4 publicada el 2026-11-23 (`d35dc3b`, registro `b00eb85` · gh-pages `756029a`); R5 publicada el 2026-11-23 (`2c4173e`, registro `82a53b8` · gh-pages `1749293`): las cinco rondas, publicadas**, con D1–D10 y las recomendaciones de las preguntas 1 y 2 de §7.
 El diagnóstico es del mismo día; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-22
@@ -246,7 +246,7 @@ Cada una lleva mi recomendación; las decide Javier.
     todos nuevos: `citas/cap4.yml`, `herramientas/cap4/` y las páginas web de `forecast`, `tseries`, `urca`, R y FPP3),
     `audita_citas` OK allí con 1067 literales comprobados; gh-pages `756029a`, construido; índice y caps. 1–6 en vivo,
     idénticos byte a byte a `b00eb85`.
-- **R5 (práctica) — hecha el 2026-11-23 (`2c4173e`), SIN PUBLICAR.**
+- **R5 (práctica) — hecha y PUBLICADA el 2026-11-23 (`main` `2c4173e`, registro `82a53b8` · gh-pages `1749293`).**
   - **Redactor y verificación.** Redactor: subagente (Fable 5.2). Dos verificadores independientes
     (Opus 5.5), cada uno con segunda lectura:
     - A: los «Para practicar»;
@@ -303,6 +303,9 @@ Cada una lleva mi recomendación; las decide Javier.
     - [fuera del repo] Simulacro: «método de Holt», la nula de cada prueba en la P9 y la columna de
       varianza de la P10.
     - [fuera del repo] Preparcial: S5, B10, «25.6 veces», ningún ítem del escalón.
+  - **Publicación (2026-11-23).** `main` empujado hasta `82a53b8`; `_local/` copiado a la copia principal
+    (`citas/cap4.yml` y `r4_entradas.json`, más nuevos), `audita_citas` OK allí; gh-pages `1749293`, construido;
+    índice, README y caps. 1–6 en vivo idénticos byte a byte a `82a53b8`.
 
 ## 5. Criterios de aceptación
 
