@@ -2784,7 +2784,8 @@
         <p style="margin-bottom:0;">donde $\phi(B) = 1 - \phi_1 B - \cdots - \phi_p B^p$ y
           $\theta(B) = 1 + \theta_1 B + \cdots + \theta_q B^q$, exactamente los del capítulo anterior. La letra
           <strong>I</strong> es de <em>integrated</em>: para volver de $w_t$ a $y_t$ hay que sumar
-          (<em>integrar</em>) $d$ veces.</p>
+          (<em>integrar</em>) $d$ veces. La constante $c$ cambia de significado según $d$: la trata el Módulo 5, y
+          hasta entonces el modelo va sin ella.</p>
       </div>
 
       <p>Lo importante de esa fórmula está en el lado izquierdo. El polinomio autorregresivo completo no es
@@ -2834,7 +2835,14 @@
         </div>
       </div>
 
-      <h3>Casos particulares ya conocidos</h3>
+      <h3>Casos particulares</h3>
+
+      <p>Dos de las filas nombran métodos de pronóstico que los capítulos anteriores no presentaron. El
+        <strong>suavizamiento exponencial simple</strong> pronostica con un promedio ponderado de todo el pasado, con
+        pesos que decaen geométricamente: cada pronóstico corrige el anterior con una fracción $\alpha$ de su error.
+        El método de <strong>Holt</strong> hace lo mismo con el nivel y con la pendiente de la serie. Aquí solo
+        importa que los dos resultan ser ARIMA con los coeficientes restringidos: el capítulo no los usa más allá de
+        esa equivalencia.</p>
 
       <div class="diagram">
         <table style="position:relative;">
@@ -2850,8 +2858,8 @@
             <tr><td>ARIMA($0,1,1$)</td><td>IMA(1,1)</td><td>Equivale al <strong>suavizamiento exponencial
               simple</strong>: $\hat y_{t+1\mid t} = \alpha\, y_t + (1-\alpha)\,\hat y_{t\mid t-1}$ con
               $\alpha = 1 + \theta$, un promedio ponderado que decae hacia el pasado.</td></tr>
-            <tr><td>ARIMA($0,2,2$)</td><td>IMA(2,2)</td><td>Incluye al método de <strong>Holt</strong> con
-              tendencia, con restricciones sobre los coeficientes.</td></tr>
+            <tr><td>ARIMA($0,2,2$)</td><td>IMA(2,2)</td><td>Incluye al método de <strong>Holt</strong>
+              (nivel y tendencia suavizados), con restricciones sobre los coeficientes.</td></tr>
           </tbody>
         </table>
       </div>
@@ -2868,11 +2876,10 @@
         <p class="simulador-intro">La serie que acompaña todo el capítulo: el caudal anual del río Nilo medido en
           Asuán entre 1871 y 1970 ($n = 100$, en $10^8\,\text{m}^3$). Antes de mover nada, mira la serie original:
           más que vagar sin rumbo, su nivel parece caer de golpe hacia 1899. Luego sube $d$ y lee los números de
-          abajo, no solo el gráfico. La media cae a casi cero, porque diferenciar convierte el caudal en su cambio de
-          un año al siguiente. Fíjate sobre todo en $\hat\rho_1$: cambia de signo, y con $d = 2$ queda por debajo
-          de $-0.5$, el valor que tendría la diferencia de un ruido blanco. La varianza apenas baja con $d = 1$ y
-          casi se triplica con $d = 2$, pero no es una pista aparte: el Módulo 3 explica por qué repite lo que ya
-          dice $\hat\rho_1$. ¿Hacía falta diferenciar?</p>
+          abajo, no solo el gráfico. ¿Qué le pasa a la media, si diferenciar convierte el caudal en su cambio de un
+          año al siguiente? Fíjate sobre todo en $\hat\rho_1$: ¿cambia de signo? ¿Con qué $d$ baja de $-0.5$, el
+          valor que tendría la diferencia de un ruido blanco? La varianza también cambia, pero no es una pista
+          aparte: el Módulo 3 explica por qué repite lo que ya dice $\hat\rho_1$. ¿Hacía falta diferenciar?</p>
         <div class="simulador-controles"></div>
         <div class="grafico-wrapper" style="height:260px;">
           <canvas aria-label="Serie del Nilo en el nivel de diferenciación seleccionado" role="img"></canvas>
@@ -2890,9 +2897,20 @@
 length(Nile)
 #&gt; [1] 100
 
+# El modelo que acompana todo el capitulo: un ARIMA(1,1,1) para el Nilo,
+# por maxima verosimilitud (el estimador del Capitulo 3)
+f &lt;- arima(Nile, order = c(1, 1, 1), method = "ML")
+round(rbind(coef = coef(f), ee = sqrt(diag(f$var.coef))), 4)
+#&gt;         ar1     ma1
+#&gt; coef 0.2544 -0.8741
+#&gt; ee   0.1194  0.0605
+phi   &lt;- round(coef(f)[["ar1"]], 4)       #  0.2544
+theta &lt;- round(coef(f)[["ma1"]], 4)       # -0.8741
+round(Mod(polyroot(c(1, theta))), 3)      # la raiz del polinomio MA
+#&gt; [1] 1.144
+
 # Un ARIMA(1,1,1) es un ARMA(2,1) con una raiz unitaria impuesta.
 # Se comprueba expandiendo el polinomio:
-phi &lt;- 0.2544
 ar_expandido &lt;- c(1 + phi, -phi)     # phi*_1 = 1 + phi, phi*_2 = -phi
 round(ar_expandido, 4)
 #&gt; [1]  1.2544 -0.2544
@@ -2904,7 +2922,7 @@ round(Mod(polyroot(c(1, -ar_expandido))), 4)
 
 # Simular un ARIMA(1,1,1) es simular el ARMA(1,1) y acumular (integrar):
 set.seed(2026)
-w &lt;- arima.sim(list(ar = 0.2544, ma = -0.8741), n = 200)  # la diferencia
+w &lt;- arima.sim(list(ar = phi, ma = theta), n = 200)       # la diferencia
 y &lt;- cumsum(w)                                            # la serie integrada
 round(c(var_w = var(w), var_y = var(y), razon = var(y) / var(w)), 3)
 #&gt;  var_w  var_y  razon
@@ -2912,13 +2930,13 @@ round(c(var_w = var(w), var_y = var(y), razon = var(y) / var(w)), 3)
 
 # Con el mismo AR pero SIN el termino MA la historia es la esperada:
 set.seed(2026)
-w0 &lt;- arima.sim(list(ar = 0.2544), n = 200)
+w0 &lt;- arima.sim(list(ar = phi), n = 200)
 round(var(cumsum(w0)) / var(w0), 1)
 #&gt; [1] 32.8                  aqui integrar la multiplica por 32.8
 
 # arima.sim lo hace directamente con order = c(p, d, q)
 set.seed(2026)
-y2 &lt;- arima.sim(list(order = c(1, 1, 1), ar = 0.2544, ma = -0.8741), n = 200)
+y2 &lt;- arima.sim(list(order = c(1, 1, 1), ar = phi, ma = theta), n = 200)
 length(y2)                # devuelve n + d valores (arranca en y_0)
 #&gt; [1] 201</code></pre>
         </div>
@@ -2926,13 +2944,22 @@ length(y2)                # devuelve n + d valores (arranca en y_0)
           <pre><code class="language-python">import numpy as np
 import statsmodels.api as sm
 from statsmodels.tsa.arima_process import ArmaProcess
+from statsmodels.tsa.arima.model import ARIMA
 
 nilo = sm.datasets.nile.load_pandas().data["volume"].values
 print(len(nilo))
 #&gt; 100
 
+# El modelo que acompana todo el capitulo: un ARIMA(1,1,1) para el Nilo
+ajuste = ARIMA(nilo, order=(1, 1, 1), trend="n").fit()
+print(np.round(ajuste.params[:2], 4), np.round(ajuste.bse[:2], 4))
+#&gt; [ 0.2549 -0.8749] [0.1287 0.0546]
+#   R da 0.2544 y -0.8741, con e.e. 0.1194 y 0.0605: otro arranque y otra
+#   covarianza, la misma lectura. Abajo se usan los de R, para que las
+#   cifras de los dos lenguajes se puedan comparar
+phi, theta = 0.2544, -0.8741
+
 # El mismo polinomio expandido
-phi = 0.2544
 ar_expandido = np.array([1 + phi, -phi])
 print(np.round(ar_expandido, 4), ar_expandido.sum())
 #&gt; [ 1.2544 -0.2544] 1.0
@@ -2945,8 +2972,8 @@ print(np.round(np.abs(np.roots(coef[::-1])), 4))
 # Simular: ArmaProcess pide los polinomios con el signo YA aplicado.
 # El generador de numeros aleatorios NO es el de R, asi que una realizacion
 # suelta no coincide; se promedian 500 para que la comparacion signifique algo.
-proceso  = ArmaProcess(ar=np.r_[1, -0.2544], ma=np.r_[1, -0.8741])
-proceso0 = ArmaProcess(ar=np.r_[1, -0.2544], ma=np.r_[1])      # sin termino MA
+proceso  = ArmaProcess(ar=np.r_[1, -phi], ma=np.r_[1, theta])
+proceso0 = ArmaProcess(ar=np.r_[1, -phi], ma=np.r_[1])         # sin termino MA
 rng = np.random.default_rng(7)
 razon  = np.mean([np.cumsum(w).var() / w.var()
                   for w in (proceso.generate_sample(200, distrvs=rng.standard_normal)
@@ -2965,8 +2992,8 @@ print(round(razon, 3), round(razon0, 1))
       <div class="note">
         <h4><i class="fas fa-magnifying-glass mr-2" aria-hidden="true"></i>Una anomalía que vale la pena guardar</h4>
         <p>En el bloque de arriba pasa algo que no cuadra. Integrar una serie estacionaria debería disparar su
-          varianza —es lo que ocurre sin el término MA, donde se multiplica por $32.8$— y con los coeficientes reales
-          del Nilo, en esta realización, la deja prácticamente igual: una razón de $1.006$ (el bloque de Python,
+          varianza —es lo que ocurre sin el término MA, donde se multiplica por $32.8$— y con los coeficientes
+          estimados del Nilo, en esta realización, la deja prácticamente igual: una razón de $1.006$ (el bloque de Python,
           promediando 500 réplicas, obtiene $1.363$; sin el término MA, decenas). La causa está en el valor de
           $\theta$. Escrito con sus raíces, el modelo del Nilo es</p>
         $$\begin{aligned}
@@ -2978,7 +3005,7 @@ print(round(razon, 3), round(razon0, 1))
           impone. Dicho de otro modo: el ARIMA($1,1,1$) del Nilo diferencia con una mano y deshace la diferencia con
           la otra. Esto se llama <strong>cancelación casi exacta de raíces</strong> (factores AR y MA casi comunes),
           y no es un tecnicismo: es un síntoma clásico de sobrediferenciación, la pista de que a esta serie quizá no
-          había que diferenciarla. El Módulo 3 explica por qué el software decidió que sí, y el Módulo 8 cierra el
+          había que diferenciarla. El Módulo 3 explica por qué la regla automática que elige $d$ decidió que sí, y el Módulo 8 cierra el
           caso.</p>
       </div>
 
@@ -3167,6 +3194,8 @@ print(round(razon, 3), round(razon0, 1))
 # ---- Etapa 1: identificacion --------------------------------------------
 plot(Nile)                              # SIEMPRE lo primero
 d &lt;- ndiffs(Nile)                       # cuantas diferencias
+d
+#&gt; [1] 1
 w &lt;- if (d == 0) Nile else diff(Nile, differences = d)
 par(mfrow = c(1, 2)); acf(w); pacf(w); par(mfrow = c(1, 1))
 
@@ -3256,15 +3285,15 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
               ¿Hay saltos? ¿La ACF decae despacio, sin cortar?</td><td>A primera vista parece vagar, pero el rasgo
               dominante es un descenso brusco alrededor de 1899. La ACF decae despacio desde $0.498$
               (Módulo 4).</td></tr>
-            <tr><td><strong>2. Las pruebas</strong></td><td>ADF y PP ($H_0$: hay raíz unitaria) y KPSS ($H_0$:
-              es estacionaria)</td><td>ADF de <code>adf.test</code> (constante y tendencia, $k = 4$) $-3.366$
+            <tr><td><strong>2. Las pruebas</strong></td><td>ADF y PP (Phillips–Perron; $H_0$: hay raíz unitaria) y
+              KPSS ($H_0$: es estacionaria)</td><td>ADF de <code>adf.test</code> (constante y tendencia, $k = 4$) $-3.366$
               ($p = 0.064$, no rechaza); KPSS $0.965$ ($p &lt; 0.01$, rechaza la estacionariedad). Estas dos apuntan a
               diferenciar. PP, en cambio, $Z(t_\alpha) = -6.690$ ($p &lt; 0.01$), rechaza la raíz unitaria.</td></tr>
             <tr><td><strong>3. Los síntomas de haber diferenciado de más</strong></td><td>En el modelo
               ajustado, una raíz MA cerca de $1$. En la serie diferenciada, un $\hat\rho_1$ cerca de $-0.5$ o por debajo es
               solo un indicio: falla en los dos sentidos (Módulo 2.7)</td><td>Con $d = 1$, $\hat\rho_1 = -0.402$, no muy
               lejos de $-0.5$; con $d = 2$, $-0.626$, ya por debajo. La raíz MA del ARIMA($1,1,1$) queda en $1.144$
-              (Módulo 6), más cerca del círculo que la del MA(1) del Módulo 8, en $1.364$; ninguna está sobre
+              (Módulos 1 y 6), más cerca del círculo que la del MA(1) del Módulo 8, en $1.364$; ninguna está sobre
               él.</td></tr>
           </tbody>
         </table>
@@ -3296,8 +3325,8 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
         Módulo 8, el modelo ajustado.</p>
 
       <div class="warning">
-        <h4><i class="fas fa-triangle-exclamation mr-2" aria-hidden="true"></i>Tres pruebas, tres respuestas, la
-          misma serie</h4>
+        <h4><i class="fas fa-triangle-exclamation mr-2" aria-hidden="true"></i>Una misma serie, tres respuestas de
+          <code>ndiffs()</code></h4>
         <p>La función <code>ndiffs()</code> devuelve el $d$ recomendado, pero <strong>depende de la prueba que se
           le pida</strong>, y sobre el Nilo las tres no coinciden:</p>
         $$\begin{aligned}
@@ -3306,8 +3335,9 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
           {\footnotesize\texttt{ndiffs(Nile, test = "pp")}} &= 0
         \end{aligned}$$
         <p style="margin-bottom:0;">Dos de las tres dicen que <strong>no</strong> hay que diferenciar. Y el valor por
-          defecto de <code>ndiffs()</code> —y por tanto el que usa <code>auto.arima()</code>— es KPSS, la única que
-          dice que sí. Hay además un matiz: el ADF de <code>ndiffs()</code> no es el de <code>adf.test()</code> de la tabla.
+          defecto de <code>ndiffs()</code> es KPSS, la única que dice que sí. Es también el que usa
+          <code>auto.arima()</code>, la función de <code>forecast</code> que ajusta sola varios ARIMA y se queda
+          con el de menor AICc; el Módulo 7 la abre. Hay además un matiz: el ADF de <code>ndiffs()</code> no es el de <code>adf.test()</code> de la tabla.
           Usa solo constante y un rezago ($\alpha_1 = 0$, $k = 1$), y con esa especificación rechaza la raíz
           unitaria ($\tau_\mu = -4.05$, frente al valor crítico de $-2.89$ al $5\,\%$); con la de la tabla no la
           rechaza. No es un fallo de ninguna función: KPSS invierte la hipótesis nula, y ADF y PP, que comparten la
@@ -3328,22 +3358,23 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
         KPSS está diseñado para detectar como "no estacionariedad". Si la sospecha es cierta, KPSS debería rechazar
         incluso en series que <em>por construcción</em> no tienen ninguna raíz unitaria.</p>
 
-      <p>Se puede comprobar. Se generan series de ruido blanco puro de la misma longitud y desviación que los
-        residuales del modelo de dos medias del Nilo —una antes y otra después de 1899— ($n = 100$,
-        $\hat\sigma = 127.0$), se les añade un escalón en la posición 29 —el año 1899— de tamaño $\beta$ regulable,
-        y se cuenta cuántas veces rechaza KPSS:</p>
+      <p>Se puede comprobar. El <strong>modelo de dos medias</strong> del Nilo,
+        $y_t = \mu + \beta\,\mathbf{1}\{t \ge 1899\} + \varepsilon_t$, da a la serie una media hasta 1898 y otra
+        desde 1899; el bloque de código de este módulo lo ajusta y el Módulo 8 lo estudia. Se generan series de
+        ruido blanco puro de la misma longitud y desviación que sus residuales ($n = 100$,
+        desviación típica $127.0$), se les añade un escalón en la posición 29 —el año 1899— de tamaño $\beta$
+        regulable, y se cuenta cuántas veces rechaza KPSS:</p>
 
       <div class="simulador" data-simulador="escalon-vs-raiz">
         <h4><i class="fas fa-stairs" aria-hidden="true"></i> Un escalón disfrazado de raíz unitaria</h4>
         <p class="simulador-intro">El deslizador fija el tamaño del descenso en 1899, $|\beta|$. Arriba, una
           realización concreta; abajo, la tasa de rechazo de KPSS al $5\,\%$ medida en R sobre 400 réplicas en nueve
           valores de $|\beta|$, interpolada entre ellos. Recuerda que <strong>ninguna</strong> de estas series tiene
-          raíz unitaria: todas son ruido blanco más una constante a trozos. Empieza en $|\beta| = 0$: KPSS rechaza
-          cerca del $5\,\%$ nominal, así que la prueba funciona. Luego sube el descenso y busca dónde cruza la curva
-          el $50\,\%$; la línea vertical marca el que de verdad tiene el Nilo, $|\beta| = 247.8$. La segunda curva
+          raíz unitaria: todas son ruido blanco más una constante a trozos. Recorre $|\beta|$ desde $0$ y busca
+          dónde cruza la curva el $50\,\%$; la línea vertical marca el descenso que tiene el Nilo. La segunda curva
           es la misma prueba con otro truncamiento de la varianza de largo plazo, $\ell = 12$ en vez de $4$, el de
-          <code>nlags="legacy"</code> en Python: rechaza menos, pero no deja de engañarse, solo necesita descensos
-          mayores. El recuadro «R y Python no calculan el mismo KPSS», más abajo, explica ese parámetro.</p>
+          <code>nlags="legacy"</code> en Python; el recuadro «R y Python no calculan el mismo KPSS», más abajo,
+          explica ese parámetro.</p>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">Una realización: ruido blanco + escalón</p>
         <div class="grafico-wrapper" style="height:230px;">
@@ -3460,6 +3491,11 @@ kpss.test(Nile)$statistic       # H0: es estacionaria
 #&gt;  0.9654349
 # rechaza (p &lt; 0.01): diferenciar. kpss.test avisa "p-value smaller than
 # printed p-value": la tabla se acaba en 0.01, no es un error
+PP.test(Nile)$statistic         # Phillips-Perron: H0, hay raiz unitaria
+#&gt; Dickey-Fuller
+#&gt;     -6.690051
+# rechaza: su p-valor es 0.01, el minimo de su tabla (p &lt; 0.01), y apunta a NO
+# diferenciar
 
 # --- Y las tres respuestas de ndiffs ------------------------------------
 sapply(c("kpss", "adf", "pp"), function(t) ndiffs(Nile, test = t))
@@ -3473,12 +3509,19 @@ sapply(c("kpss", "adf", "pp"), function(t) ndiffs(Nile, test = t))
 round(sapply(1:2, function(d) acf(diff(Nile, differences = d), plot = FALSE)$acf[2]), 3)
 #&gt; [1] -0.402 -0.626
 
+# --- El modelo de dos medias: y = mu + beta * 1{t &gt;= 1899} + e ----------
+escalon &lt;- as.numeric(1:100 &gt;= 29)      # 1899 es la observacion 29
+dos_medias &lt;- arima(Nile, order = c(0, 0, 0), xreg = escalon, method = "ML")
+round(c(antes = mean(Nile[1:28]), despues = mean(Nile[29:100]),
+        beta = coef(dos_medias)[["escalon"]], sd_resid = sd(residuals(dos_medias))), 2)
+#&gt;    antes  despues     beta sd_resid
+#&gt;  1097.75   849.97  -247.78   127.03
+
 # --- El experimento del escalon -----------------------------------------
 set.seed(2026)
-escalon &lt;- as.numeric(1:100 &gt;= 29)      # 1899 es la observacion 29
 simula &lt;- function(beta, reps = 400) {       # beta = tamano del escalon
   mean(replicate(reps, {
-    x &lt;- 1000 + beta * escalon + rnorm(100, 0, 127.03)
+    x &lt;- 1000 + beta * escalon + rnorm(100, 0, 127.03)    # sd_resid de arriba
     suppressWarnings(kpss.test(x)$p.value) &lt;= 0.05
   }))
 }
@@ -3514,6 +3557,7 @@ est, p, *_ = adfuller(nilo, regression="ct", autolag=None,
 print(round(est, 4), round(p, 4))
 #&gt; -3.3657 0.0561    mismo estadistico que R (-3.3657); el p-valor difiere
 #&gt;                   porque R interpola en tablas y statsmodels usa MacKinnon
+# La prueba PP no esta en statsmodels: aqui solo se reproducen ADF y KPSS
 
 # CUIDADO con el truncamiento de KPSS: no es el mismo por defecto.
 print(round(kpss(nilo, regression="c")[0], 4))                   # 'auto': 5 rezagos
@@ -3523,9 +3567,15 @@ print(round(kpss(nilo, regression="c", nlags="legacy")[0], 4))   # 12 rezagos
 print(round(kpss(nilo, regression="c", nlags=4)[0], 4))          # como R
 #&gt; 0.9654        identico
 
+# El modelo de dos medias: una media hasta 1898 y otra desde 1899
+escalon = (np.arange(100) &gt;= 28).astype(float)
+res = np.r_[nilo[:28] - nilo[:28].mean(), nilo[28:] - nilo[28:].mean()]
+print(round(nilo[:28].mean(), 2), round(nilo[28:].mean(), 2), round(res.std(ddof=1), 2))
+#&gt; 1097.75 849.97 127.03
+#   beta es la diferencia de las dos medias: 849.97 - 1097.75 = -247.78
+
 # El experimento del escalon, ya con el truncamiento de R
 rng = np.random.default_rng(2026)
-escalon = (np.arange(100) &gt;= 28).astype(float)
 def simula(beta, reps=400):                   # beta = tamano del escalon
     return np.mean([kpss(1000 + beta * escalon + rng.normal(0, 127.03, 100),
                          regression="c", nlags=4)[1] &lt;= 0.05
@@ -3602,16 +3652,10 @@ print(simula(0.0), simula(-247.78))
 
       <div class="simulador" data-simulador="identificacion-nilo">
         <h4><i class="fas fa-chart-column" aria-hidden="true"></i> ACF y PACF por orden de diferenciación</h4>
-        <p class="simulador-intro">Cambia el orden y lee las dos funciones, no solo la ACF. En $d = 0$ la ACF decae
-          despacio, que es lo que deja un nivel que se mueve —por una raíz unitaria o por un cambio de nivel como el
-          de 1899— y no dice nada de $p$ ni de $q$. La trampa está en la PACF: solo se sale el rezago 1, como en un
-          AR(1) con $\phi \approx 0.5$, pero ese AR(1) tendría la ACF dentro de la banda desde el rezago 3. En
-          $d = 1$ la ACF corta en 1 y la PACF decae con signo negativo, la firma de un MA(1). El rezago 8 de la ACF
-          ($0.231$) se sale por poco, aislado y sin patrón; con 20 rezagos al $5\,\%$, uno fuera por azar es lo
-          esperable. En $d = 2$, $\hat\rho_1 = -0.626$ cae por debajo de $-0.5$, el valor que tendría la diferencia
-          de un ruido blanco: la huella de haber diferenciado de más. Y fíjate en el $-0.402$ de $d = 1$: un pico
-          negativo en el rezago 1, no muy lejos de $-0.5$, es también lo que deja diferenciar una serie que no lo
-          necesitaba. La tabla elige $p$ y $q$; no confirma $d$.</p>
+        <p class="simulador-intro">Cambia el orden y lee las dos funciones, no solo la ACF. Con cada $d$, ¿cuál de
+          las dos corta y cuál decae? ¿Qué signo tiene el rezago 1? ¿Qué barras se salen de la banda, y con qué
+          patrón? La lectura de abajo da $\hat\rho_1$ y cuenta las barras de la ACF y de la PACF que salen de la
+          banda.</p>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">Serie</p>
         <div class="grafico-wrapper" style="height:230px;">
@@ -3626,6 +3670,15 @@ print(simula(0.0), simula(-247.78))
           <canvas aria-label="Función de autocorrelación parcial de la serie seleccionada" role="img"></canvas>
         </div>
         <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="note">
+        <p style="margin-bottom:0;"><strong>Lo que enseña el simulador.</strong> Con $d = 0$, la trampa del párrafo
+          de arriba: un AR(1) con $\phi \approx 0.5$ tendría la ACF dentro de la banda desde el rezago 3, y esta
+          decae despacio. Con $d = 2$, $\hat\rho_1 = -0.626$ cae por debajo de $-0.5$, el valor que tendría la diferencia de un ruido
+          blanco: la huella de haber diferenciado de más. Y el $-0.402$ de $d = 1$, un pico negativo en el
+          rezago 1 no muy lejos de $-0.5$, es también lo que deja diferenciar una serie que no lo necesitaba. La
+          tabla elige $p$ y $q$; no confirma $d$.</p>
       </div>
 
       <h3>La tabla, aplicada a $\nabla$Nilo</h3>
@@ -3651,7 +3704,8 @@ print(simula(0.0), simula(-247.78))
       </div>
 
       <p>La lectura es razonablemente clara: la ACF corta en el rezago 1 —el único otro que sale de la banda de
-        $\pm 0.197$ es el 8 ($0.231$), aislado y sin patrón— y la PACF decae con signo negativo, como la de un
+        $\pm 0.197$ es el 8 ($0.231$), aislado y sin patrón; con 20 rezagos al $5\,\%$, uno fuera por azar es lo
+        esperable— y la PACF decae con signo negativo, como la de un
         MA(1) con $\theta &lt; 0$. La tabla propone, por tanto, un <strong>ARIMA($0,1,1$)</strong>. Ajustado por
         máxima verosimilitud:</p>
 
@@ -3662,7 +3716,8 @@ print(simula(0.0), simula(-247.78))
 
       <p>con $\hat\theta = -0.7329$ (e.e. $0.1143$, $t = -6.41$) y Ljung–Box(20) $p = 0.674$: pasa el
         diagnóstico sin problemas. Es el IMA(1,1) del Módulo 1, el equivalente del suavizamiento exponencial
-        simple.</p>
+        simple con $\alpha = 1 + \hat\theta = 0.267$: es el $\alpha$ implícito en el modelo; <code>ses()</code>
+        lo estima por su cuenta y da un valor algo distinto.</p>
 
       <div class="note">
         <p><strong>Pero no se propone uno: se proponen varios.</strong> La tabla acota la búsqueda, no la resuelve.
@@ -3702,6 +3757,9 @@ ma1 &lt;- arima(Nile, order = c(0, 1, 1), method = "ML")
 round(c(theta = coef(ma1)[["ma1"]], ee = sqrt(ma1$var.coef[1, 1])), 4)
 #&gt;   theta      ee
 #&gt; -0.7329  0.1143
+# el IMA(1,1) es el suavizamiento exponencial simple, con alfa = 1 + theta
+round(1 + coef(ma1)[["ma1"]], 3)
+#&gt; [1] 0.267
 Box.test(residuals(ma1), lag = 20, type = "Ljung-Box", fitdf = 1)$p.value
 #&gt; [1] 0.6736635</code></pre>
         </div>
@@ -3729,6 +3787,8 @@ ma1 = ARIMA(nilo, order=(0, 1, 1), trend="n").fit()
 print(round(ma1.params[0], 4))
 #&gt; -0.7334
 #   R da -0.7329
+print(round(1 + ma1.params[0], 3))
+#&gt; 0.267
 # el primer residual es y_1 = 1120 (inicializacion difusa), no un error: se descarta
 print(round(float(acorr_ljungbox(ma1.resid[1:], lags=[20], model_df=1)["lb_pvalue"].iloc[0]), 4))
 #&gt; 0.6984
@@ -3779,7 +3839,7 @@ print(round(float(acorr_ljungbox(ma1.resid[1:], lags=[20], model_df=1)["lb_pvalu
             <strong>cuadrática</strong>. Prácticamente nunca se quiere.</li>
         </ul>
         <p style="margin-bottom:0;">Regla mnemotécnica: <strong>cada diferencia sube en un grado el polinomio de la
-          tendencia</strong> que la constante genera: a largo plazo, $\hat y_{n+h}$ crece como
+          tendencia</strong> que la constante genera: a largo plazo, $\hat y_{T+h}$ (con $T$ el último dato) crece como
           $\mu_w\, h^d / d!$. Sin constante: $d=0$ tiende a cero, $d=1$ se aplana (no necesariamente en el último
           dato: el Módulo 9 lo mide), $d=2$ sigue una recta. Con
           constante: $d=0$ vuelve a la media, $d=1$ recta, $d=2$ parábola. El simulador «La forma del pronóstico
@@ -3844,18 +3904,6 @@ print(round(float(acorr_ljungbox(ma1.resid[1:], lags=[20], model_df=1)["lb_pvalu
         1899 aporta por sí solo $-2.50$ de ella. Con $d = 1$, un cambio de nivel que ocurre una vez solo puede
         entrar como un choque o repartido en pendiente; el Módulo 8 lo ajusta como escalón. Una deriva estimada es una tendencia que se
         extrapola sin límite, y eso es una afirmación fuerte sobre el futuro que conviene no hacer a la ligera.</p>
-
-      <div class="note">
-        <p><strong>El mismo cálculo en la TRM.</strong> Sobre la tasa de cambio mensual, añadiendo deriva a la
-          caminata aleatoria que elige <code>auto.arima</code> —un ARIMA($0,1,0$), en el que $\hat\delta$ es
-          simplemente la media de las diferencias—, la deriva estimada es
-          $8.00$ pesos/mes con error estándar $10.36$: $t = 0.77$. Tampoco es significativa, aunque a ojo la serie
-          "claramente sube". Como en el Nilo, esa media se reduce a $(y_n - y_1)/(n-1)$: la estimación depende
-          solo del primer mes y del último, y lo que la serie hace entre ellos solo entra en el error estándar. Que
-          una tendencia visible no sea estadísticamente distinguible de cero con $n = 138$
-          dice más sobre la variabilidad de la serie que sobre la tendencia, y es exactamente el tipo de conclusión
-          que un modelo obliga a hacer explícita.</p>
-      </div>
 
       <div class="code-tabs">
         <div class="code-tabs-nav" role="tablist" aria-label="Media y deriva">
@@ -3968,9 +4016,10 @@ print(f2.param_names)
         $$\mathrm{AIC} = -2\log L + 2k$$
         $$\mathrm{AICc} = \mathrm{AIC} + \frac{2k(k+1)}{n^{*} - k - 1}$$
         $$\mathrm{BIC} = -2\log L + k\log n^{*}$$
-        <p style="margin:0.6rem 0 0 0; font-size:0.9rem;">con $k = p + q + 1$ (los coeficientes ARMA más
-          $\hat\sigma^2$; más uno si hay constante o deriva) y $n^{*} = n - d$ el <strong>número efectivo</strong> de
-          observaciones.</p>
+        <p style="margin:0.6rem 0 0 0; font-size:0.9rem;">con $n$ el número de observaciones —lo que los
+          Capítulos 2 y 3 llamaban $T$; aquí $T$ queda para el origen del pronóstico, el último dato, y vale
+          $T = n$—, $k = p + q + 1$ (los coeficientes ARMA más $\hat\sigma^2$; más uno si hay constante o deriva) y
+          $n^{*} = n - d$ el <strong>número efectivo</strong> de observaciones.</p>
       </div>
 
       <div class="warning">
@@ -3998,14 +4047,10 @@ print(f2.param_names)
         <p class="simulador-intro">Los 27 modelos con $p, d, q \in \{0,1,2\}$, ajustados por máxima verosimilitud
           sobre el Nilo (precalculados en R). El campo «diferencia» de la lectura y el segundo gráfico, donde el
           modelo elegido sale resaltado, comparan su AICc solo con el mejor <em>de su propio $d$</em>. Empieza en
-          $d = 1$: cuatro modelos quedan a menos de 2 puntos del mejor, y con diferencias así el AICc apenas los
-          distingue. Luego mira el correlograma de los residuales, cuyas barras se vuelven rojas cuando
-          Ljung–Box(20) rechaza: descarta ocho modelos que se quedan cortos, pero todos los que quedan cerca del
-          mejor pasan, así que filtra y no elige. Por último, mira las raíces de la
-          lectura. El mejor de $d = 0$ tiene una raíz AR en $1.161$, cerca del círculo unitario, como si pidiera
-          una diferencia; el mejor de $d = 1$, una raíz MA en $1.144$, como si quisiera deshacerla; y los buenos
-          de $d = 2$ la tienen entre $1.000$ y $1.048$. Ningún $d$ sale limpio, y el Módulo 8 explica por
-          qué.</p>
+          $d = 1$ y cuenta cuántos modelos quedan a menos de 2 puntos del mejor. Luego mira el correlograma de los
+          residuales, cuyas barras se vuelven rojas cuando Ljung–Box(20) rechaza, y busca qué modelos rechazan y si
+          alguno de ellos está cerca del mejor. Por último, lee las raíces en la lectura, para el mejor de cada
+          $d$: ¿alguna roza el círculo unitario?</p>
         <div class="simulador-controles"></div>
         <div class="simulador-lectura"></div>
         <p class="grafico-etiqueta">ACF de los residuales del modelo seleccionado</p>
@@ -4016,6 +4061,17 @@ print(f2.param_names)
         <div class="grafico-wrapper" style="height:250px;">
           <canvas aria-label="ΔAICc de los nueve modelos con el mismo orden de diferenciación" role="img"></canvas>
         </div>
+      </div>
+
+      <div class="note">
+        <p style="margin-bottom:0;"><strong>Lo que enseña el explorador.</strong> Con $d = 1$ cuatro modelos más
+          quedan a menos de 2 puntos del mejor (el Módulo 7 contará siete, porque cuenta también las variantes con
+          deriva), y con diferencias así el AICc apenas los distingue. Ljung–Box(20) rechaza en 8 de los 27 modelos,
+          pero ninguno de los que quedan cerca del mejor de su $d$ está entre ellos, así que el correlograma filtra
+          y no elige. Y las raíces: el mejor de $d = 0$ tiene una raíz AR en $1.161$, cerca del círculo unitario,
+          como si pidiera una diferencia; el mejor de $d = 1$, una raíz MA en $1.144$, como si quisiera deshacerla;
+          y los buenos de $d = 2$ la tienen entre $1.000$ y $1.048$. Ningún $d$ sale limpio, y el Módulo 8 explica
+          por qué.</p>
       </div>
 
       <h3>Los mejores de cada $d$</h3>
@@ -4245,7 +4301,9 @@ print(tabla.loc[tabla.groupby("d")["aicc"].idxmin(), ["d","modelo","nobs","n_ef"
       </div>
 
       <div class="note">
-        <p><strong>Siete modelos a menos de $2$ puntos de AICc.</strong> La regla de referencia habitual es que
+        <p><strong>Siete modelos a menos de $2$ puntos de AICc.</strong> Son el ganador, otros cuatro sin
+          constante —los del explorador del Módulo 6— y dos variantes con deriva. La regla de referencia habitual es
+          que
           diferencias menores que $2$ no distinguen modelos. Es decir: <code>auto.arima</code> devuelve un ganador
           con toda la seguridad de una sola línea de salida, y detrás de él hay <strong>seis candidatos
           indistinguibles según el propio criterio</strong>, incluido el ARIMA($0,1,1$) que proponía el correlograma
@@ -4402,9 +4460,8 @@ print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
 
       <div class="simulador" data-simulador="sobrediferenciacion">
         <h4><i class="fas fa-scissors" aria-hidden="true"></i> Diferenciar de más, y verlo</h4>
-        <p class="simulador-intro">Sube el orden $d$ sobre el Nilo y ajusta un MA(1) a cada resultado. En $d = 2$ y
-          $d = 3$ el $\hat\theta$ se clava en $-1$ y $|\text{raíz MA}| = 1$: el término MA está deshaciendo la
-          diferencia que acabas de imponer.</p>
+        <p class="simulador-intro">Sube el orden $d$ sobre el Nilo y ajusta un MA(1) a cada resultado. ¿Con qué $d$
+          llega $\hat\theta$ a $-1$? ¿Qué le pasa entonces a $|\text{raíz MA}|$, y qué dice el diagnóstico?</p>
         <div class="simulador-controles"></div>
         <div class="simulador-lectura"></div>
         <p class="grafico-etiqueta">Serie diferenciada $\nabla^d y_t$</p>
@@ -4434,6 +4491,9 @@ print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
         </table>
       </div>
 
+      <p>En $d = 2$ y $d = 3$ el $\hat\theta$ se clava en $-1$ y la raíz MA queda sobre el círculo unidad: el
+        término MA está deshaciendo la diferencia que se acaba de imponer.</p>
+
       <p>Hay una prueba más de que el MA está deshaciendo la diferencia. Con $\hat\theta = -1$, el MA(1) ajustado
         sobre $\nabla^2 y$ da $\hat\sigma^2 = 28\,268.34$, que es exactamente $\operatorname{Var}(\nabla y)$: el
         modelo ha recuperado la serie con una sola diferencia. Con $d = 3$ ocurre lo mismo, y su $\hat\sigma^2 =
@@ -4462,14 +4522,14 @@ print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
       <h3>El caso del Nilo, cerrado</h3>
 
       <p>Queda por cerrar lo que quedó pendiente. En el Módulo 1 apareció que integrar la serie del Nilo con sus
-        coeficientes reales <em>casi no cambia la varianza</em> (razón $1.006$), porque $\theta = -0.874$ está cerca
+        coeficientes estimados <em>casi no cambia la varianza</em> (razón $1.006$), porque $\theta = -0.874$ está cerca
         de $-1$. En el Módulo 3, que dos de las tres pruebas de raíz unitaria dicen que no hay que diferenciar, y que
         KPSS —la que usa <code>auto.arima</code>— rechaza el $100\,\%$ de las veces cuando hay un escalón. Las dos
         piezas encajan en una sola explicación.</p>
 
       <p>La serie cae de una media de $1097.75$ antes de 1899 a $849.97$ desde ese año, que coincide con la
-        construcción de la presa baja de Asuán. La alternativa a la raíz unitaria es un escalón: un modelo con
-        $d = 0$ y un solo regresor, que vale $1$ desde 1899,</p>
+        construcción de la presa baja de Asuán. La alternativa a la raíz unitaria es un escalón: el modelo de dos
+        medias del Módulo 3, con $d = 0$ y un solo regresor, que vale $1$ desde 1899,</p>
 
       <div class="formula">
         $$y_t = \mu + \beta\,\mathbf{1}\{t \ge 1899\} + \varepsilon_t$$
@@ -4490,7 +4550,9 @@ print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
       <div class="warning">
         <p><strong>Y ahora la parte incómoda.</strong> Todo lo anterior es evidencia dentro de muestra. Comparar el
           escalón contra el ARIMA($1,1,1$) por AICc <strong>no se puede</strong>: uno tiene $d=0$ y el otro $d=1$.
-          La comparación válida es fuera de muestra. Entrenando hasta 1950 y pronosticando los 20 años siguientes:</p>
+          La comparación válida es fuera de muestra. Se entrena hasta 1950, se pronostican los 20 años siguientes y se
+          miden la raíz del error cuadrático medio (RMSE) y el error absoluto medio (MAE) de esos 20 pronósticos. El
+          <em>naïve</em> repite siempre el último valor observado: es la caminata aleatoria.</p>
         <table style="position:relative;">
           <thead><tr><th>Modelo</th><th>RMSE</th><th>MAE</th></tr></thead>
           <tbody>
@@ -4504,7 +4566,7 @@ print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
         <p style="margin-bottom:0;">El modelo del escalón, que dominaba dentro de muestra por $25$ puntos de AICc,
           <strong>no pronostica mejor</strong>. Y el que gana es el más simple de todos. Conviene no
           sobreinterpretarlo:
-          el abanico completo va de $123$ a $133$ mientras la desviación típica de los residuales es $139.67$, así
+          el rango completo va de $123$ a $133$ mientras la desviación típica de los residuales es $139.67$, así
           que <em>ninguna</em> de estas diferencias es grande. La conclusión no es "el naïve es mejor", sino que
           <strong>una ventaja de ajuste dentro de muestra no se traduce automáticamente en capacidad de
           pronóstico</strong>. Medir eso con seriedad —con más de un origen, y preguntándose si la diferencia es
@@ -4685,7 +4747,8 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
           $2771$, tres veces y media más ancho que el de $d = 1$.</p>
         <p style="margin-bottom:0;">Y ese ARIMA($1,2,1$) tiene $\hat\theta = -1$: es el modelo sobrediferenciado del
           Módulo 8. Su MA cancela una de las dos diferencias, así que los $\psi_j$ tienden a
-          $1/(1-\hat\phi) = 0.72$ en vez de a $0.169$. Eso explica buena parte del abanico, pero no todo: con
+          $1/(1-\hat\phi) = 0.72$ en vez de a $0.169$. Eso explica buena parte del abanico (la banda del pronóstico, que se abre con el horizonte),
+          pero no todo: con
           esos pesos, la fórmula de abajo da un ancho de $2428$ en $h = 30$, y <code>forecast()</code> devuelve
           $2771$. La diferencia es el precio de la no invertibilidad —con $\hat\theta = -1$ los choques pasados
           no se recuperan de los datos—, y el desarrollo del final del módulo lo explica.</p>
@@ -4926,9 +4989,10 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3).tolist())
       </div>
 
       <p>Con esto el ciclo queda completo: identificar $d$ y los órdenes, estimar, diagnosticar y pronosticar con su
-        intervalo. El Módulo 10 reúne primero las piezas del Nilo en un solo cuadro y recorre después el ciclo de
-        principio a fin sobre una serie colombiana, la TRM, cuyos residuales pondrán a prueba el supuesto de
-        normalidad de este último paso.</p>
+        intervalo. El Módulo 10 reúne las piezas del Nilo en un solo cuadro y recorre después el ciclo de
+        principio a fin sobre una serie colombiana, la TRM, cuyos residuales ponen a prueba el supuesto de
+        normalidad de este último paso: ahí se mide cuánto cubren de verdad los intervalos del $80\,\%$ y del
+        $95\,\%$. Cierra con el puente al Capítulo 5 y el resumen del capítulo.</p>
     </div>
   </template>
 
@@ -4951,9 +5015,11 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3).tolist())
       </div>
 
       <p>Nueve módulos han desmontado el ciclo de Box–Jenkins pieza a pieza, casi siempre sobre el Nilo. Este
-        último lo vuelve a montar dos veces: primero con las piezas del Nilo, puestas en el orden del ciclo, y
-        después de un tirón sobre una serie que no se eligió por dócil, hasta la etapa que el Módulo 9 dejó
-        preparada: usar el modelo para pronosticar y leer el ancho de su intervalo.</p>
+        último lo vuelve a montar en cuatro tiempos. Primero, el Nilo, resumido una sola vez con las piezas en el
+        orden del ciclo. Después, de un tirón, una serie que no se eligió por dócil, la TRM, hasta la etapa que el
+        Módulo 9 dejó preparada: usar el modelo para pronosticar y leer el ancho de su intervalo. Luego, el puente al
+        Capítulo 5, y al final el resumen del capítulo, que cierra el módulo antes de la autoevaluación, los
+        ejercicios y las lecturas.</p>
 
       <h3>El Nilo, de principio a fin</h3>
 
@@ -4970,82 +5036,70 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3).tolist())
               <td class="block lg:table-cell pb-1 lg:pb-4 border-b-0 lg:border-b">
                 <strong>1. Identificación de $d$</strong><br><span class="text-gray-500 text-sm">Módulos 1 y 3</span></td>
               <td class="block lg:table-cell pt-0 lg:pt-4">
-                El gráfico muestra un descenso brusco hacia 1899, y la ACF decae despacio desde $0.498$. Las
-                pruebas no coinciden:
-                <code>adf.test</code> ($p = 0.064$) y KPSS ($p &lt; 0.01$) apuntan a diferenciar, y PP
-                ($p &lt; 0.01$) rechaza la raíz unitaria. Se sigue a KPSS, la prueba de <code>auto.arima</code>:
+                Un descenso brusco hacia 1899 en el gráfico y una ACF que decae despacio desde $0.498$. Las
+                pruebas discrepan: <code>adf.test</code> ($p = 0.064$) y KPSS ($p &lt; 0.01$) apuntan a diferenciar,
+                y PP ($p &lt; 0.01$) rechaza la raíz unitaria. Se sigue a KPSS, la de <code>auto.arima</code>:
                 <strong>$d = 1$</strong>, a título provisional.</td></tr>
             <tr class="block lg:table-row">
               <td class="block lg:table-cell pb-1 lg:pb-4 border-b-0 lg:border-b">
                 <strong>1. Identificación de $p,q$</strong><br><span class="text-gray-500 text-sm">Módulo 4</span></td>
               <td class="block lg:table-cell pt-0 lg:pt-4">
-                La ACF de $\nabla$Nilo corta en el rezago 1 ($\hat\rho_1 = -0.402$, banda $\pm 0.197$) y la PACF
-                decae con signo negativo. La tabla propone un ARIMA($0,1,1$), y a la estimación van también sus
-                vecinos: $(1,1,1)$, $(0,1,2)$ y $(1,1,0)$.</td></tr>
+                La ACF de $\nabla$Nilo corta en el rezago 1 ($\hat\rho_1 = -0.402$) y la PACF decae con signo
+                negativo: ARIMA($0,1,1$), y a la estimación van también sus vecinos.</td></tr>
             <tr class="block lg:table-row">
               <td class="block lg:table-cell pb-1 lg:pb-4 border-b-0 lg:border-b">
                 <strong>2. Estimación: la constante</strong><br><span class="text-gray-500 text-sm">Módulo 5</span></td>
               <td class="block lg:table-cell pt-0 lg:pt-4">
-                Con deriva, $\hat\delta = -2.883$ ($t = -1.43$) y el AICc empeora: $1268.06$ frente a $1267.51$.
-                El modelo va <strong>sin constante</strong>. De la media de las diferencias, $-3.84$, el descenso
-                de 1899 aporta por sí solo $-2.50$: no es una pendiente.</td></tr>
+                Con deriva, $\hat\delta = -2.883$ ($t = -1.43$) y el AICc empeora ($1268.06$ frente a
+                $1267.51$): el modelo va <strong>sin constante</strong>. De la media de las diferencias, $-3.84$,
+                el descenso de 1899 aporta $-2.50$: no es una pendiente.</td></tr>
             <tr class="block lg:table-row">
               <td class="block lg:table-cell pb-1 lg:pb-4 border-b-0 lg:border-b">
                 <strong>2. Estimación: la rejilla</strong><br><span class="text-gray-500 text-sm">Módulos 6 y 7</span></td>
               <td class="block lg:table-cell pt-0 lg:pt-4">
                 Dentro de $d = 1$, el AICc elige el <strong>ARIMA($1,1,1$)</strong> ($1267.51$) y el BIC el
-                $(0,1,1)$ de la tabla ($1274.28$). <code>auto.arima</code> llega al mismo $(1,1,1)$ por la búsqueda
-                escalonada ($18$ modelos) y por la exhaustiva ($42$), pero siete modelos caben en $2$ puntos. El
-                menor AICc de toda la rejilla, el ARIMA($1,2,2$) con $1264.60$, no cuenta: se calcula sobre $98$
-                observaciones y no sobre $99$.</td></tr>
+                $(0,1,1)$ ($1274.28$); <code>auto.arima</code> llega al $(1,1,1)$ evaluando $18$ modelos o $42$,
+                aunque siete caben en $2$ puntos. El ARIMA($1,2,2$), con $1264.60$, no cuenta: ese AICc se calcula
+                sobre $98$ observaciones y no sobre $99$.</td></tr>
             <tr class="block lg:table-row">
               <td class="block lg:table-cell pb-1 lg:pb-4 border-b-0 lg:border-b">
                 <strong>3. Diagnóstico</strong><br><span class="text-gray-500 text-sm">Módulo 8</span></td>
               <td class="block lg:table-cell pt-0 lg:pt-4">
-                Ljung–Box(20) $p = 0.800$ y Shapiro $p = 0.731$: los residuales pasan. Las raíces quedan fuera
-                del círculo (AR $3.93$, MA $1.144$), pero la del MA está cerca: con $\hat\theta = -0.874$, el MA
-                casi deshace la diferencia. Es la anomalía del Módulo 1, donde integrar la serie casi no cambiaba
-                su varianza.</td></tr>
+                Ljung–Box(20) $p = 0.800$: los residuales pasan. Pero la raíz MA ($1.144$; la AR, $3.93$) está
+                cerca del círculo: con $\hat\theta = -0.874$ el MA casi deshace la diferencia, la anomalía del
+                Módulo 1.</td></tr>
             <tr class="block lg:table-row">
               <td class="block lg:table-cell pb-1 lg:pb-4 border-b-0 lg:border-b">
                 <strong>Vuelta a la etapa 1</strong><br><span class="text-gray-500 text-sm">Módulo 8</span></td>
               <td class="block lg:table-cell pt-0 lg:pt-4">
-                Sin diferenciar y con un escalón en 1899, $\hat\beta = -247.78$ ($t = -8.80$): le saca casi $25$
-                puntos de AICc al mejor ARMA con $d = 0$, y sus residuales pasan Ljung–Box ($p = 0.812$). Contra el
-                ARIMA($1,1,1$) no se compara por AICc, porque el $d$ es otro. Fuera de muestra, en 1951–1970, el
-                ARIMA da un RMSE de $125.05$, el escalón $127.99$ y el naïve $123.06$: ninguno se impone.</td></tr>
+                Un escalón en 1899 sin diferenciar ($\hat\beta = -247.78$, $t = -8.80$) le saca casi $25$ puntos de
+                AICc al mejor ARMA con $d = 0$ y sus residuales pasan Ljung–Box ($p = 0.812$), pero contra el
+                ARIMA($1,1,1$) el AICc no compara: el $d$ es otro. Fuera de muestra, en 1951–1970, el RMSE es
+                $125.05$ el del ARIMA, $127.99$ el del escalón y $123.06$ el del naïve: ninguno se impone.</td></tr>
             <tr class="block lg:table-row">
               <td class="block lg:table-cell pb-1 lg:pb-4 border-b-0 lg:border-b">
                 <strong>4. Uso (pronóstico)</strong><br><span class="text-gray-500 text-sm">Módulo 9</span></td>
               <td class="block lg:table-cell pt-0 lg:pt-4">
                 Sin constante y con $d = 1$, el pronóstico se aplana: $816.18$ para 1971 y $842.17$ a los pocos
-                años, no el último dato ($740$). El semiancho al $95\,\%$ pasa de $\pm 278$ a un año a $\pm 391$ a
-                treinta: con $\psi_\infty = 0.169$, $\sigma_{30}/\sigma_1 = 1.404$, frente al
-                $\sqrt{30} = 5.48$ de una caminata aleatoria.</td></tr>
+                años, no el último dato ($740$). Con $\psi_\infty = 0.169$, el intervalo se abre mucho más despacio
+                que el de una caminata aleatoria (se compara más abajo).</td></tr>
           </tbody>
         </table>
       </div>
 
-      <p>El modelo que sale del ciclo es el mismo que el Módulo 1 escribió con sus raíces:</p>
-
-      <div class="formula">
-        $$\begin{aligned}
-          &(1 - 0.2544\,B)(1 - B)\,y_t \\
-          &\quad = (1 - 0.8741\,B)\,\varepsilon_t
-        \end{aligned}$$
-      </div>
-
-      <p>con $\hat\phi = 0.2544$ (e.e. $0.1194$) y $\hat\theta = -0.8741$ (e.e. $0.0605$). En nivel, su pronóstico
-        casi coincide con el de su rival: el escalón pronostica $849.97$, la media desde 1899, y el ARIMA se queda
-        en $842.17$. Lo que los separa es la banda, que en el escalón no se ensancha y en el ARIMA sí.</p>
+      <p>El modelo que sale del ciclo es el del Módulo 1, con $\hat\phi = 0.2544$ y $\hat\theta = -0.8741$. En
+        nivel, su pronóstico casi coincide con el de su rival: el escalón pronostica $849.97$, la media desde 1899, y
+        el ARIMA se queda en $842.17$. Lo que los separa es la banda, que en el escalón no se ensancha y en el
+        ARIMA sí.</p>
 
       <div class="note">
-        <p><strong>Leído de corrido, el caso deja dos lecciones.</strong> La primera: el ciclo funciona y aun así
-          no basta. El ARIMA($1,1,1$) supera cada etapa con las herramientas previstas, y la pista de que $d = 1$
-          podía sobrar asomó en casi todas —las pruebas que discrepan, el $\hat\rho_1 = -0.402$ de la serie
-          diferenciada, el $\hat\theta$ cerca de $-1$—, pero solo el gráfico la explica. La segunda: la duda final, diferenciar o
-          modelar el escalón, no la resuelve ningún criterio dentro de muestra, porque los dos modelos tienen
-          distinto $d$. Hay que medirla fuera de muestra, y eso es el Capítulo 6.</p>
+        <p style="margin-bottom:0;"><strong>Leído de corrido, el caso deja dos lecciones.</strong> La primera: el
+          ciclo funciona y aun así no basta. El ARIMA($1,1,1$) supera cada etapa con las herramientas previstas, y la
+          pista de que $d = 1$ podía sobrar asomó en casi todas —las pruebas que discrepan, el
+          $\hat\rho_1 = -0.402$ de la serie diferenciada, el $\hat\theta$ cerca de $-1$—, pero solo el gráfico la
+          explica. La segunda: la duda final, diferenciar o modelar el escalón, no la resuelve ningún criterio dentro
+          de muestra, porque los dos modelos tienen distinto $d$. Hay que medirla fuera de muestra, y eso es el
+          Capítulo 6.</p>
       </div>
 
       <p>En el Nilo el ciclo encontró estructura y dejó abierta la duda sobre $d$. La serie siguiente invierte la
@@ -5062,10 +5116,9 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3).tolist())
 
       <div class="simulador" data-simulador="trm-identificacion">
         <h4><i class="fas fa-dollar-sign" aria-hidden="true"></i> Etapa 1 · La TRM y su diferencia</h4>
-        <p class="simulador-intro">La ACF de la serie en niveles arranca en $0.964$ y decae lentísimo: el retrato
-          de un proceso no estacionario. Tras una diferencia solo una barra de veinte se sale, y por poco:
-          $\hat\rho_8 = -0.190$ frente a $\pm 0.167$, que es lo que el azar da al $5\,\%$. Cambia de serie y
-          compara.</p>
+        <p class="simulador-intro">Empieza por la serie en niveles: ¿cómo arranca su ACF y a qué ritmo decae?
+          Cambia luego a la diferencia y cuenta cuántas de las veinte barras salen de la banda, que es lo que el azar
+          da al $5\,\%$, y por cuánto.</p>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">Serie</p>
         <div class="grafico-wrapper" style="height:230px;">
@@ -5087,6 +5140,7 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3).tolist())
               <td class="block lg:table-cell pb-1 lg:pb-4 border-b-0 lg:border-b">
                 <strong>1. Identificación de $d$</strong></td>
               <td class="block lg:table-cell pt-0 lg:pt-4">
+                La ACF en niveles arranca en $0.964$ y decae lentísimo: el retrato de un proceso no estacionario.
                 ADF $-1.978$ ($p = 0.585$: no rechaza la raíz unitaria); KPSS $2.243$ ($p &lt; 0.01$: rechaza la
                 estacionariedad). Tras diferenciar, ADF $-3.880$ ($p = 0.017$) y KPSS $0.241$ ($p &gt; 0.10$). Las
                 cuatro pruebas coinciden: <strong>$d = 1$</strong>. Y <code>nsdiffs</code> $= 0$: sin
@@ -5103,8 +5157,8 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3).tolist())
                 <strong>2. Estimación</strong></td>
               <td class="block lg:table-cell pt-0 lg:pt-4">
                 El mínimo de AICc de la rejilla es el ARIMA($2,1,2$) con $1703.38$; el mínimo de BIC es el
-                ARIMA($0,1,0$) con $1708.83$. <code>auto.arima</code> con búsqueda exhaustiva sobre $192$ modelos
-                (con la parte estacional permitida; sin ella son $42$) devuelve <strong>ARIMA($0,1,0$)</strong>.</td></tr>
+                ARIMA($0,1,0$) con $1708.83$. <code>auto.arima</code> con búsqueda exhaustiva devuelve
+                <strong>ARIMA($0,1,0$)</strong>.</td></tr>
             <tr class="block lg:table-row">
               <td class="block lg:table-cell pb-1 lg:pb-4 border-b-0 lg:border-b">
                 <strong>3. Diagnóstico</strong></td>
@@ -5137,7 +5191,7 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3).tolist())
         <p style="margin-bottom:0;">Los dos polinomios son casi el mismo, y las raíces del MA caen
           <strong>exactamente sobre el círculo unitario</strong>: el modelo no es invertible, en el sentido preciso
           del Capítulo 3. Las del AR quedan en $1.0042$, prácticamente encima. Un ajuste así es numéricamente
-          degenerado: los factores AR y MA se cancelan entre sí, los coeficientes no están identificados y el AICc
+          degenerado: los factores AR y MA se cancelan entre sí, los coeficientes no son identificables y el AICc
           premia un espejismo. <code>auto.arima</code> descarta por diseño los modelos con alguna raíz de módulo
           menor que $1.01$ (el umbral del código de <code>forecast</code>), y aquí acierta. Y es el caso de la
           salvedad del Módulo 2: la raíz MA unitaria tiene pareja en el AR, así que lo que sobra son $p$ y $q$, no
@@ -5149,21 +5203,25 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3).tolist())
           significa $y_t = y_{t-1} + \varepsilon_t$. El mejor pronóstico para el próximo mes es el valor de este mes,
           y para dentro de un año, también. Con deriva, $y_t = \delta + y_{t-1} + \varepsilon_t$, la estimación da
           $\hat\delta = 8.00$ pesos/mes con error estándar $10.36$ ($t = 0.77$): no significativa, así que ni
-          siquiera hay una tendencia que extrapolar.</p>
+          siquiera hay una tendencia que extrapolar, aunque a ojo la serie «claramente sube». En un
+          ARIMA($0,1,0$) esa deriva es exactamente la media de las diferencias, $(y_n - y_1)/(n-1)$: depende solo
+          del primer mes y del último. (En el ARIMA($1,1,1$) del Nilo no coinciden: el Módulo 5 lo muestra.) Que una tendencia visible no sea distinguible de cero con $n = 138$ dice más sobre la
+          variabilidad de la serie que sobre la tendencia.</p>
         <p style="margin-bottom:0;">Es un resultado que decepciona y que conviene no maquillar. Coincide con lo que
           predice la teoría financiera para el precio con que se negocia —si el tipo de cambio fuera predecible,
           alguien ya habría arbitrado la diferencia—, aunque aquí se modela su promedio mensual, que no es
           exactamente ese precio; y coincide con lo que encontró el Capítulo 3 sobre sus log-retornos. Un modelo que dice
           <em>"no hay señal aquí"</em> es un resultado, no un fracaso. En el Capítulo 6 la caminata aleatoria
-          reaparece con otro nombre —el método <em>naïve</em>— y como <strong>referencia que hay que batir</strong>.</p>
+          reaparece como el método <em>naïve</em>, el mismo que el Módulo 8 usó de referencia, y como
+          <strong>referencia que hay que batir</strong>.</p>
       </div>
 
-      <p>Queda una etapa, y en esta serie es la más instructiva de todas. El Módulo 9 dedujo que el ancho del
-        intervalo sale de los pesos $\psi$, $\sigma_h^2 = \sigma^2\sum_{j=0}^{h-1}\psi_j^2$, y que la caminata
-        aleatoria es el caso de referencia porque <strong>todos sus $\psi$ valen $1$</strong>: la integración no
-        amortigua nada, así que ningún choque se olvida nunca. Aquí no hay que aplicar la fórmula, hay que leerla.
-        A $h$ pasos, el cambio desde el último dato es la suma de los $h$ choques que aún no han ocurrido. Como su
-        esperanza es cero, el pronóstico es el último valor, y el error de pronóstico es esa misma suma:</p>
+      <p>Queda la etapa 4, y en esta serie es la más instructiva. El Módulo 9 dedujo que el ancho del intervalo
+        sale de los pesos $\psi$, $\sigma_h^2 = \sigma^2\sum_{j=0}^{h-1}\psi_j^2$, y que la caminata aleatoria es el
+        caso de referencia: <strong>todos sus $\psi$ valen $1$</strong>, la integración no amortigua nada y ningún
+        choque se olvida. Aquí la fórmula no se aplica, se lee: a $h$ pasos, el cambio desde el último dato es la
+        suma de los $h$ choques que aún no han ocurrido, de esperanza cero, así que el pronóstico es el último valor
+        y el error es esa misma suma:</p>
 
       <div class="formula">
         $$y_{T+h} - y_T = \sum_{j=1}^{h}\varepsilon_{T+j}$$
@@ -5248,9 +5306,9 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3).tolist())
         curtosis de $5.1$ y asimetría de $0.76$, es decir, saltos grandes más frecuentes de lo que la normal admite,
         y los mayores, de devaluación (marzo de 2020, julio de 2022).</p>
 
-      <p>Su efecto sobre el abanico no es el que cabría suponer. A un mes, el $95\,\%$ se cumple dentro de la
-        muestra —solo $6$ de los $137$ cambios mensuales caen fuera, un $4.4\,\%$—, pero $5$ de esos $6$ caen
-        <strong>por arriba</strong>: el intervalo es simétrico y el riesgo no lo es, así que subestima la
+      <p>Su efecto sobre el abanico no es el que cabría suponer. A un mes, ninguno de los dos intervalos queda
+        corto dentro de la muestra: el $95\,\%$ deja fuera solo $6$ de los $137$ cambios mensuales, un $4.4\,\%$, y el $80\,\%$ del
+        Módulo 9 cubre el $83.9\,\%$. Pero $5$ de esos $6$ caen <strong>por arriba</strong>: el intervalo es simétrico y el riesgo no lo es, así que subestima la
         devaluación y sobrestima la revaluación. A doce meses la situación se invierte. Las colas pesadas
         desaparecen —los cambios a doce meses tienen curtosis $2.8$, casi la de una normal— y, aun así, caen fuera
         $11$ de los $126$ cambios, un $8.7\,\%$. Fuera de la muestra el Capítulo 6 mide algo parecido: el intervalo
@@ -5499,7 +5557,7 @@ print(np.round([np.mean((y[h:] - y[:-h])**2) / (h * s**2) for h in (3, 6, 12)], 
 
       <h3>El puente al Capítulo 5</h3>
 
-      <p>La TRM no tenía estacionalidad; la mayoría de las series mensuales sí. El capítulo termina con un
+      <p>La TRM no tenía estacionalidad; la mayoría de las series mensuales sí. El puente es un
         experimento que muestra por qué hace falta el siguiente. Se toma $\log(\text{AirPassengers})$ —una serie
         mensual con estacionalidad evidente— y se pide a <code>auto.arima</code> el mejor modelo
         <strong>no estacional</strong> con búsqueda exhaustiva. Con $p + q \le 5$, el tope por defecto de <code>auto.arima</code>, el mejor es un ARIMA($0,1,5$): cinco términos MA
@@ -5552,6 +5610,97 @@ print(np.round([np.mean((y[h:] - y[:-h])**2) / (h * s**2) for h in (3, 6, 12)], 
           decide aquí no es un criterio de información sino el <strong>diagnóstico</strong>, que es categórico.</p>
       </div>
 
+      <p>El experimento entero, de la búsqueda no estacional al modelo <em>airline</em>, en un solo bloque:</p>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="El puente al Capítulo 5">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel" data-lang="r">
+          <pre><code class="language-r">library(forecast)
+
+lap &lt;- log(AirPassengers)                  # 144 meses, 1949-1960
+length(lap)
+#&gt; [1] 144
+
+# El mejor ARIMA NO estacional, con busqueda exhaustiva (p + q &lt;= 5 por defecto)
+mejor &lt;- auto.arima(lap, seasonal = FALSE, stepwise = FALSE, approximation = FALSE)
+as.character(mejor)
+#&gt; [1] "ARIMA(0,1,5)"
+
+# Su diagnostico: lo que sobra en los residuales esta en los rezagos 12 y 24
+res &lt;- residuals(mejor)
+r &lt;- Acf(res, lag.max = 24, plot = FALSE)$acf[-1]
+round(c(rho12 = r[12], rho24 = r[24], banda = 1.96 / sqrt(length(res))), 4)
+#&gt;  rho12  rho24  banda
+#&gt; 0.7245 0.6727 0.1633
+lb &lt;- Box.test(res, lag = 24, type = "Ljung-Box", fitdf = 5)   # fitdf = p + q
+round(unname(lb$statistic), 1)
+#&gt; [1] 222.4
+lb$p.value &lt; 1e-6
+#&gt; [1] TRUE
+
+# Subir el tope de p y q no lo arregla
+amplio &lt;- auto.arima(lap, seasonal = FALSE, stepwise = FALSE, approximation = FALSE,
+                     max.p = 8, max.q = 8, max.order = 16)
+as.character(amplio)
+#&gt; [1] "ARIMA(8,1,3) with drift"
+round(Acf(residuals(amplio), lag.max = 24, plot = FALSE)$acf[13], 3)
+#&gt; [1] 0.437
+
+# El modelo estacional "airline" del Capitulo 5, solo como avance
+airline &lt;- Arima(lap, order = c(0, 1, 1), seasonal = list(order = c(0, 1, 1), period = 12))
+res2 &lt;- residuals(airline)
+round(c(rho12 = Acf(res2, lag.max = 24, plot = FALSE)$acf[13],
+        lb24_p = Box.test(res2, lag = 24, type = "Ljung-Box", fitdf = 2)$p.value), 4)
+#&gt;   rho12  lb24_p
+#&gt; -0.0515  0.2330
+
+# Los AICc no se comparan: sus verosimilitudes usan distinto numero de datos
+c(no_estacional = mejor$nobs, airline = airline$nobs)
+#&gt; no_estacional       airline
+#&gt;           143           131</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" hidden>
+          <pre><code class="language-python">import numpy as np, statsmodels.api as sm
+from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.tsa.stattools import acf
+from statsmodels.stats.diagnostic import acorr_ljungbox
+import warnings; warnings.filterwarnings("ignore")
+
+ap = np.log(sm.datasets.get_rdataset("AirPassengers").data["value"].values)
+print(len(ap))
+#&gt; 144
+
+# El ARIMA(0,1,5) que elige auto.arima en R. statsmodels no trae auto.arima, ni
+# por tanto la busqueda amplia (p, q &lt;= 8): aqui se ajusta el orden que R eligio
+f = ARIMA(ap, order=(0, 1, 5), trend="n").fit()
+e = f.resid[1:]                       # el primer residual es el dato: se descarta
+r = acf(e, nlags=24, fft=False)
+print(np.round([r[12], r[24], 1.96 / np.sqrt(len(e))], 4).tolist())
+#&gt; [0.7218, 0.6676, 0.1639]
+#   R da 0.7245, 0.6727 y 0.1633: coeficientes casi iguales, residuales algo distintos
+lb = acorr_ljungbox(e, lags=[24], model_df=5)
+print(round(float(lb["lb_stat"].iloc[0]), 1), float(lb["lb_pvalue"].iloc[0]) &lt; 1e-6)
+#&gt; 219.3 True
+#   R da Q = 222.4: la misma lectura, rechaza
+
+# El modelo estacional "airline", solo como avance
+air = ARIMA(ap, order=(0, 1, 1), seasonal_order=(0, 1, 1, 12), trend="n").fit()
+e2 = air.resid[13:]                   # los 13 primeros residuales son del arranque (1 + 12)
+r2 = acf(e2, nlags=24, fft=False)
+lb2 = acorr_ljungbox(e2, lags=[24], model_df=2)
+print(round(r2[12], 4), round(float(lb2["lb_pvalue"].iloc[0]), 4))
+#&gt; -0.0525 0.3676
+#   R da -0.0515 y 0.2330: el mismo veredicto, no rechaza
+
+# Los AICc no se comparan: sus verosimilitudes usan distinto numero de datos
+print(f.nobs_effective, air.nobs_effective)
+#&gt; 143 131</code></pre>
+        </div>
+      </div>
+
       <h3>Resumen del capítulo</h3>
 
       <div class="definition">
@@ -5563,8 +5712,8 @@ print(np.round([np.mean((y[h:] - y[:-h])**2) / (h * s**2) for h in (3, 6, 12)], 
           <li>El ciclo de <strong>Box–Jenkins</strong> es iterativo: identificar → estimar → diagnosticar, y volver
             atrás cuando el diagnóstico lo pida.</li>
           <li>$d$ se elige con <strong>tres evidencias</strong> —el gráfico con la ACF, las pruebas y los síntomas
-            de haber diferenciado de más— y las pruebas pueden engañar: con un escalón como el del Nilo, KPSS
-            confunde el cambio de nivel con una raíz unitaria el $100\,\%$ de las veces. La varianza por orden de
+            de haber diferenciado de más— y las pruebas pueden engañar: un cambio de nivel como el del Nilo
+            hace que KPSS lo lea como una raíz unitaria. La varianza por orden de
             diferencia no es una evidencia más: repite lo que dice $r_1$ (Módulo 2.7).</li>
           <li>$p$ y $q$ se leen en la ACF/PACF de la serie <strong>ya diferenciada</strong>, y se proponen varios
             candidatos, no uno.</li>
@@ -6086,18 +6235,25 @@ round(c(h12_con = forecast(fd, h = H)$mean[H],
     const courseData = {
       title: "Series de Tiempo",
       modules: [
-        { id: 1, title: "De ARMA a ARIMA", shortTitle: "ARIMA", duration: "12 min" },
-        { id: 2, title: "La metodología Box–Jenkins", shortTitle: "Box–Jenkins", duration: "10 min" },
-        { id: 3, title: "Elegir el orden d", shortTitle: "Elegir d", duration: "16 min" },
-        { id: 4, title: "Identificar p y q", shortTitle: "Identificar p,q", duration: "14 min" },
-        { id: 5, title: "La constante: media y deriva", shortTitle: "Media y deriva", duration: "12 min" },
-        { id: 6, title: "Estimar y comparar modelos", shortTitle: "Explorador", duration: "16 min" },
-        { id: 7, title: "Dentro de auto.arima", shortTitle: "auto.arima", duration: "14 min" },
-        { id: 8, title: "Diagnóstico y errores comunes", shortTitle: "Diagnóstico", duration: "16 min" },
-        { id: 9, title: "Pronóstico: forma e intervalos", shortTitle: "Pronóstico", duration: "16 min" },
-        { id: 10, title: "Caso TRM, puente y cierre", shortTitle: "Cierre", duration: "24 min" },
+        // `duration` son minutos de LECTURA, medidos con la fórmula de los capítulos
+        // 1 a 3 (palabras / 180 + 3 por simulador + 2 por bloque de código),
+        // leyendo también la pista y la solución de cada ejercicio. No incluyen el
+        // tiempo de resolverlos, los desarrollos plegados (unos 4 min entre tres
+        // módulos), la autoevaluación del Módulo 10 (unos 18 min de lectura) ni,
+        // en el Módulo 11, nada de lo escrito: sus 40 min son el reloj del ensayo.
+        // Medida: diagnostico/cap4/comprobaciones/r3_minutos.py (2026-11-22).
+        { id: 1, title: "De ARMA a ARIMA", shortTitle: "ARIMA", duration: "11 min" },
+        { id: 2, title: "La metodología Box–Jenkins", shortTitle: "Box–Jenkins", duration: "7 min" },
+        { id: 3, title: "Elegir el orden d", shortTitle: "Elegir d", duration: "14 min" },
+        { id: 4, title: "Identificar p y q", shortTitle: "Identificar p,q", duration: "9 min" },
+        { id: 5, title: "La constante: media y deriva", shortTitle: "Media y deriva", duration: "6 min" },
+        { id: 6, title: "Estimar y comparar modelos", shortTitle: "Explorador", duration: "10 min" },
+        { id: 7, title: "Dentro de auto.arima", shortTitle: "auto.arima", duration: "10 min" },
+        { id: 8, title: "Diagnóstico y errores comunes", shortTitle: "Diagnóstico", duration: "11 min" },
+        { id: 9, title: "Pronóstico: forma e intervalos", shortTitle: "Pronóstico", duration: "14 min" },
+        { id: 10, title: "Caso TRM, puente y cierre", shortTitle: "Cierre", duration: "43 min" },
         { id: 11, title: "Simulacro del quiz", shortTitle: "Simulacro", duration: "40 min" },
-        { id: 12, title: "Preparcial del Corte II", shortTitle: "Preparcial", duration: "5 min" }
+        { id: 12, title: "Preparcial del Corte II", shortTitle: "Preparcial", duration: "3 min" }
       ]
     };
 
