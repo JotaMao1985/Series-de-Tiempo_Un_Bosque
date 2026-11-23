@@ -14,7 +14,7 @@ con sus fuentes contrastadas y con práctica antes del final. Es la cuarta aplic
 [[PLAN_Mejora_Cap1]], [[PLAN_Mejora_Cap2]] y [[PLAN_Mejora_Cap3]]: cinco rondas, un redactor por ronda,
 un verificador independiente sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: APROBADO por Javier el 2026-11-22; R1 y R2 publicadas el mismo día (R2: `29106f5` · gh-pages `af3a60a`); R3 hecha (`21ab628`, sin publicar)**, con D1–D10 y las recomendaciones de las preguntas 1 y 2 de §7.
+**Estado: APROBADO por Javier el 2026-11-22; R1 y R2 publicadas el mismo día (R2: `29106f5` · gh-pages `af3a60a`); R3 publicada el mismo día (`21ab628` · gh-pages `60a7bf9`)**, con D1–D10 y las recomendaciones de las preguntas 1 y 2 de §7.
 El diagnóstico es del mismo día; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-22
@@ -195,7 +195,7 @@ Cada una lleva mi recomendación; las decide Javier.
     sin errores de consola.
   - Publicación: `main` empujado hasta `ae9511d`, `audita_citas` OK (591 literales), `_local/` ya al día en
     la copia principal; los caps. 2–6 en vivo, idénticos byte a byte a `ae9511d`.
-- **R3 (estructura) — hecha el 2026-11-22 (`main` local `21ab628`, sin publicar).** Redactor:
+- **R3 (estructura) — hecha y PUBLICADA el 2026-11-22 (`main` `21ab628`, registro `0cacb6d` · gh-pages `60a7bf9`).** Redactor:
   `diagnostico/cap4/R3_cambios.md`; verificador independiente: `R3_verificacion.md`, con lo que hizo la
   sesión maestra al final. Solo cambia el cap. 4; los caps. 5 y 6, idénticos.
   - D5: el ARIMA(1,1,1) del Nilo se ajusta en un bloque visible del M1 (antes entraba como constante); PP,
@@ -214,6 +214,8 @@ Cada una lleva mi recomendación; las decide Javier.
     selector del M9, la caja de `lynx` del M8 y la nota de `BJsales` del M9 (dan respuestas de los
     ejercicios) quedan para la R5.
   - `verifica_todo.py`, 11 en verde; bloques 822/822 (antes 762); recorrido por HTTP a 1200 y 375 px sin errores.
+  - Publicación: `main` empujado hasta `0cacb6d`, `audita_citas` OK; los caps. 2–6 en vivo, idénticos byte a byte
+    a `0cacb6d`.
 
 ## 5. Criterios de aceptación
 
