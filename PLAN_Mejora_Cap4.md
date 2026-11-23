@@ -14,7 +14,7 @@ con sus fuentes contrastadas y con práctica antes del final. Es la cuarta aplic
 [[PLAN_Mejora_Cap1]], [[PLAN_Mejora_Cap2]] y [[PLAN_Mejora_Cap3]]: cinco rondas, un redactor por ronda,
 un verificador independiente sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: APROBADO por Javier el 2026-11-22; R1 y R2 publicadas el mismo día (R2: `29106f5` · gh-pages `af3a60a`); R3 publicada el mismo día (`21ab628` · gh-pages `60a7bf9`)**, con D1–D10 y las recomendaciones de las preguntas 1 y 2 de §7.
+**Estado: APROBADO por Javier el 2026-11-22; R1 y R2 publicadas el mismo día (R2: `29106f5` · gh-pages `af3a60a`); R3 publicada el mismo día (`21ab628` · gh-pages `60a7bf9`); R4 hecha el 2026-11-23 (`d35dc3b`), sin publicar**, con D1–D10 y las recomendaciones de las preguntas 1 y 2 de §7.
 El diagnóstico es del mismo día; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-22
@@ -216,6 +216,32 @@ Cada una lleva mi recomendación; las decide Javier.
   - `verifica_todo.py`, 11 en verde; bloques 822/822 (antes 762); recorrido por HTTP a 1200 y 375 px sin errores.
   - Publicación: `main` empujado hasta `0cacb6d`, `audita_citas` OK; los caps. 2–6 en vivo, idénticos byte a byte
     a `0cacb6d`.
+
+- **R4 (fuentes) — hecha el 2026-11-23 (`d35dc3b`), SIN PUBLICAR.** Javier decidió arrancarla con los textos que
+  hay en disco (§7.3 sigue abierta). T4.1: alta por DOI de CRAN de `forecast` 9.0.2, `tseries` 0.10-62 y `urca` 1.3-4,
+  como software con la versión leída (`enmiendas.yml`); 17 ayudas y los caps. 8 y 10 de FPP3 a la caché;
+  `extrae_fuente.py --doc paquete::tema`. Phillips–Perron, Fuller, Box–Pierce y Hurvich–Tsai no se dieron de alta: sin
+  texto solo serían `pendiente`, y esas pruebas se citan a Hamilton y a Cryer y Chan, leídos. T4.2 (redactor Fable 5.2
+  con seis lectores): **286 afirmaciones registradas** (138 `respaldada`, 68 `con-matiz`, 76 `propia`, 4 `pendiente`:
+  KPSS ×2, datos.gov.co y Shumway 4.ª), **252 citas visibles** (FPP3, Cryer y Chan, ayuda de forecast y de R, Hyndman y
+  Khandakar, Hamilton, tseries). De las 188 altas del inventario, 145 registradas, 8 fuera y 35 sin marcar con motivo
+  (16 en cadenas del quiz y el simulacro); la media no se cierra (42 sin marcar). 71 cambios de prosa, todos por lo que
+  la fuente decía: el umbral de `auto.arima` con las dos cifras (1.001 del artículo, 1.01 del código); la regla de 2
+  puntos de AICc como convención del capítulo; la presa de Asuán fuera (también de `genera_cap4.R`); nada depende ya de
+  Box y Jenkins. Sección 0 de `ensambla_cap4.py` bajada a `ensambla_cap5.py`; pie y listas generados.
+  - Dos verificadores independientes (Opus 5.5; M1–M6 y M7–M10): 0 Altos, 4 Medios (c4-m1-29 «solo», c4-m7-05 AIC
+    frente a AICc, c4-m7-10 la raíz 1.0009, c4-m8-10 la cita de §9.1 pegada a las pruebas) y una decena de Bajos;
+    los corrigió la sesión maestra (`r4_ediciones_maestra.py`) y los verificadores volvieron a firmar: **284 de 286
+    firmadas** (sin firma, las dos KPSS `pendiente`).
+  - La sesión maestra también: unificó «Rob J.» Hyndman (APA ponía iniciales en 139 citas); `genera_referencias.py`
+    ordena sin la «y» ante el último autor (los caps. 1–3 no cambian); minutos de M1, M2, M8, M9, M10 = 12, 8, 12, 15,
+    46 (declarado = medido, ≤ 0.4).
+  - `verifica_todo.py` 11 en verde; bloques 822/822; `audita_citas.py` OK (`--cierre` falla por las 16 `pendiente`
+    del sitio, 4 de este capítulo); caps. 5 y 6 byte a byte iguales; HTTP a 1200 y 375 px sin errores.
+  - Fuera de la ronda: la presa y «Serie M»/«de libro» siguen en las diapositivas del cap. 4 y en
+    `genera_soluciones.R`; el campo `fuente` del Nilo en `datos_series.json` dice «Cobb (1978)» y `?Nile` da Durbin y
+    Koopman (no se ve); el quiz del M7 dice «umbral habitual de 2» (R5). Al publicar hay que copiar
+    `bibliografia/_local/citas/cap4.yml` y `_local/herramientas/cap4/` a la copia principal.
 
 ## 5. Criterios de aceptación
 
