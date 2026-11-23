@@ -36,7 +36,8 @@
         <p style="margin-bottom:0;">donde $\phi(B) = 1 - \phi_1 B - \cdots - \phi_p B^p$ y
           $\theta(B) = 1 + \theta_1 B + \cdots + \theta_q B^q$, exactamente los del capítulo anterior. La letra
           <strong>I</strong> es de <em>integrated</em>: para volver de $w_t$ a $y_t$ hay que sumar
-          (<em>integrar</em>) $d$ veces.</p>
+          (<em>integrar</em>) $d$ veces. La constante $c$ cambia de significado según $d$: la trata el Módulo 5, y
+          hasta entonces el modelo va sin ella.</p>
       </div>
 
       <p>Lo importante de esa fórmula está en el lado izquierdo. El polinomio autorregresivo completo no es
@@ -86,7 +87,14 @@
         </div>
       </div>
 
-      <h3>Casos particulares ya conocidos</h3>
+      <h3>Casos particulares</h3>
+
+      <p>Dos de las filas nombran métodos de pronóstico que los capítulos anteriores no presentaron. El
+        <strong>suavizamiento exponencial simple</strong> pronostica con un promedio ponderado de todo el pasado, con
+        pesos que decaen geométricamente: cada pronóstico corrige el anterior con una fracción $\alpha$ de su error.
+        El método de <strong>Holt</strong> hace lo mismo con el nivel y con la pendiente de la serie. Aquí solo
+        importa que los dos resultan ser ARIMA con los coeficientes restringidos: el capítulo no los usa más allá de
+        esa equivalencia.</p>
 
       <div class="diagram">
         <table style="position:relative;">
@@ -102,8 +110,8 @@
             <tr><td>ARIMA($0,1,1$)</td><td>IMA(1,1)</td><td>Equivale al <strong>suavizamiento exponencial
               simple</strong>: $\hat y_{t+1\mid t} = \alpha\, y_t + (1-\alpha)\,\hat y_{t\mid t-1}$ con
               $\alpha = 1 + \theta$, un promedio ponderado que decae hacia el pasado.</td></tr>
-            <tr><td>ARIMA($0,2,2$)</td><td>IMA(2,2)</td><td>Incluye al método de <strong>Holt</strong> con
-              tendencia, con restricciones sobre los coeficientes.</td></tr>
+            <tr><td>ARIMA($0,2,2$)</td><td>IMA(2,2)</td><td>Incluye al método de <strong>Holt</strong>
+              (nivel y tendencia suavizados), con restricciones sobre los coeficientes.</td></tr>
           </tbody>
         </table>
       </div>
@@ -120,11 +128,10 @@
         <p class="simulador-intro">La serie que acompaña todo el capítulo: el caudal anual del río Nilo medido en
           Asuán entre 1871 y 1970 ($n = 100$, en $10^8\,\text{m}^3$). Antes de mover nada, mira la serie original:
           más que vagar sin rumbo, su nivel parece caer de golpe hacia 1899. Luego sube $d$ y lee los números de
-          abajo, no solo el gráfico. La media cae a casi cero, porque diferenciar convierte el caudal en su cambio de
-          un año al siguiente. Fíjate sobre todo en $\hat\rho_1$: cambia de signo, y con $d = 2$ queda por debajo
-          de $-0.5$, el valor que tendría la diferencia de un ruido blanco. La varianza apenas baja con $d = 1$ y
-          casi se triplica con $d = 2$, pero no es una pista aparte: el Módulo 3 explica por qué repite lo que ya
-          dice $\hat\rho_1$. ¿Hacía falta diferenciar?</p>
+          abajo, no solo el gráfico. ¿Qué le pasa a la media, si diferenciar convierte el caudal en su cambio de un
+          año al siguiente? Fíjate sobre todo en $\hat\rho_1$: ¿cambia de signo? ¿Con qué $d$ baja de $-0.5$, el
+          valor que tendría la diferencia de un ruido blanco? La varianza también cambia, pero no es una pista
+          aparte: el Módulo 3 explica por qué repite lo que ya dice $\hat\rho_1$. ¿Hacía falta diferenciar?</p>
         <div class="simulador-controles"></div>
         <div class="grafico-wrapper" style="height:260px;">
           <canvas aria-label="Serie del Nilo en el nivel de diferenciación seleccionado" role="img"></canvas>
@@ -142,9 +149,20 @@
 length(Nile)
 #&gt; [1] 100
 
+# El modelo que acompana todo el capitulo: un ARIMA(1,1,1) para el Nilo,
+# por maxima verosimilitud (el estimador del Capitulo 3)
+f &lt;- arima(Nile, order = c(1, 1, 1), method = "ML")
+round(rbind(coef = coef(f), ee = sqrt(diag(f$var.coef))), 4)
+#&gt;         ar1     ma1
+#&gt; coef 0.2544 -0.8741
+#&gt; ee   0.1194  0.0605
+phi   &lt;- round(coef(f)[["ar1"]], 4)       #  0.2544
+theta &lt;- round(coef(f)[["ma1"]], 4)       # -0.8741
+round(Mod(polyroot(c(1, theta))), 3)      # la raiz del polinomio MA
+#&gt; [1] 1.144
+
 # Un ARIMA(1,1,1) es un ARMA(2,1) con una raiz unitaria impuesta.
 # Se comprueba expandiendo el polinomio:
-phi &lt;- 0.2544
 ar_expandido &lt;- c(1 + phi, -phi)     # phi*_1 = 1 + phi, phi*_2 = -phi
 round(ar_expandido, 4)
 #&gt; [1]  1.2544 -0.2544
@@ -156,7 +174,7 @@ round(Mod(polyroot(c(1, -ar_expandido))), 4)
 
 # Simular un ARIMA(1,1,1) es simular el ARMA(1,1) y acumular (integrar):
 set.seed(2026)
-w &lt;- arima.sim(list(ar = 0.2544, ma = -0.8741), n = 200)  # la diferencia
+w &lt;- arima.sim(list(ar = phi, ma = theta), n = 200)       # la diferencia
 y &lt;- cumsum(w)                                            # la serie integrada
 round(c(var_w = var(w), var_y = var(y), razon = var(y) / var(w)), 3)
 #&gt;  var_w  var_y  razon
@@ -164,13 +182,13 @@ round(c(var_w = var(w), var_y = var(y), razon = var(y) / var(w)), 3)
 
 # Con el mismo AR pero SIN el termino MA la historia es la esperada:
 set.seed(2026)
-w0 &lt;- arima.sim(list(ar = 0.2544), n = 200)
+w0 &lt;- arima.sim(list(ar = phi), n = 200)
 round(var(cumsum(w0)) / var(w0), 1)
 #&gt; [1] 32.8                  aqui integrar la multiplica por 32.8
 
 # arima.sim lo hace directamente con order = c(p, d, q)
 set.seed(2026)
-y2 &lt;- arima.sim(list(order = c(1, 1, 1), ar = 0.2544, ma = -0.8741), n = 200)
+y2 &lt;- arima.sim(list(order = c(1, 1, 1), ar = phi, ma = theta), n = 200)
 length(y2)                # devuelve n + d valores (arranca en y_0)
 #&gt; [1] 201</code></pre>
         </div>
@@ -178,13 +196,22 @@ length(y2)                # devuelve n + d valores (arranca en y_0)
           <pre><code class="language-python">import numpy as np
 import statsmodels.api as sm
 from statsmodels.tsa.arima_process import ArmaProcess
+from statsmodels.tsa.arima.model import ARIMA
 
 nilo = sm.datasets.nile.load_pandas().data["volume"].values
 print(len(nilo))
 #&gt; 100
 
+# El modelo que acompana todo el capitulo: un ARIMA(1,1,1) para el Nilo
+ajuste = ARIMA(nilo, order=(1, 1, 1), trend="n").fit()
+print(np.round(ajuste.params[:2], 4), np.round(ajuste.bse[:2], 4))
+#&gt; [ 0.2549 -0.8749] [0.1287 0.0546]
+#   R da 0.2544 y -0.8741, con e.e. 0.1194 y 0.0605: otro arranque y otra
+#   covarianza, la misma lectura. Abajo se usan los de R, para que las
+#   cifras de los dos lenguajes se puedan comparar
+phi, theta = 0.2544, -0.8741
+
 # El mismo polinomio expandido
-phi = 0.2544
 ar_expandido = np.array([1 + phi, -phi])
 print(np.round(ar_expandido, 4), ar_expandido.sum())
 #&gt; [ 1.2544 -0.2544] 1.0
@@ -197,8 +224,8 @@ print(np.round(np.abs(np.roots(coef[::-1])), 4))
 # Simular: ArmaProcess pide los polinomios con el signo YA aplicado.
 # El generador de numeros aleatorios NO es el de R, asi que una realizacion
 # suelta no coincide; se promedian 500 para que la comparacion signifique algo.
-proceso  = ArmaProcess(ar=np.r_[1, -0.2544], ma=np.r_[1, -0.8741])
-proceso0 = ArmaProcess(ar=np.r_[1, -0.2544], ma=np.r_[1])      # sin termino MA
+proceso  = ArmaProcess(ar=np.r_[1, -phi], ma=np.r_[1, theta])
+proceso0 = ArmaProcess(ar=np.r_[1, -phi], ma=np.r_[1])         # sin termino MA
 rng = np.random.default_rng(7)
 razon  = np.mean([np.cumsum(w).var() / w.var()
                   for w in (proceso.generate_sample(200, distrvs=rng.standard_normal)
@@ -217,8 +244,8 @@ print(round(razon, 3), round(razon0, 1))
       <div class="note">
         <h4><i class="fas fa-magnifying-glass mr-2" aria-hidden="true"></i>Una anomalía que vale la pena guardar</h4>
         <p>En el bloque de arriba pasa algo que no cuadra. Integrar una serie estacionaria debería disparar su
-          varianza —es lo que ocurre sin el término MA, donde se multiplica por $32.8$— y con los coeficientes reales
-          del Nilo, en esta realización, la deja prácticamente igual: una razón de $1.006$ (el bloque de Python,
+          varianza —es lo que ocurre sin el término MA, donde se multiplica por $32.8$— y con los coeficientes
+          estimados del Nilo, en esta realización, la deja prácticamente igual: una razón de $1.006$ (el bloque de Python,
           promediando 500 réplicas, obtiene $1.363$; sin el término MA, decenas). La causa está en el valor de
           $\theta$. Escrito con sus raíces, el modelo del Nilo es</p>
         $$\begin{aligned}
@@ -230,7 +257,7 @@ print(round(razon, 3), round(razon0, 1))
           impone. Dicho de otro modo: el ARIMA($1,1,1$) del Nilo diferencia con una mano y deshace la diferencia con
           la otra. Esto se llama <strong>cancelación casi exacta de raíces</strong> (factores AR y MA casi comunes),
           y no es un tecnicismo: es un síntoma clásico de sobrediferenciación, la pista de que a esta serie quizá no
-          había que diferenciarla. El Módulo 3 explica por qué el software decidió que sí, y el Módulo 8 cierra el
+          había que diferenciarla. El Módulo 3 explica por qué la regla automática que elige $d$ decidió que sí, y el Módulo 8 cierra el
           caso.</p>
       </div>
 
@@ -419,6 +446,8 @@ print(round(razon, 3), round(razon0, 1))
 # ---- Etapa 1: identificacion --------------------------------------------
 plot(Nile)                              # SIEMPRE lo primero
 d &lt;- ndiffs(Nile)                       # cuantas diferencias
+d
+#&gt; [1] 1
 w &lt;- if (d == 0) Nile else diff(Nile, differences = d)
 par(mfrow = c(1, 2)); acf(w); pacf(w); par(mfrow = c(1, 1))
 
@@ -508,15 +537,15 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
               ¿Hay saltos? ¿La ACF decae despacio, sin cortar?</td><td>A primera vista parece vagar, pero el rasgo
               dominante es un descenso brusco alrededor de 1899. La ACF decae despacio desde $0.498$
               (Módulo 4).</td></tr>
-            <tr><td><strong>2. Las pruebas</strong></td><td>ADF y PP ($H_0$: hay raíz unitaria) y KPSS ($H_0$:
-              es estacionaria)</td><td>ADF de <code>adf.test</code> (constante y tendencia, $k = 4$) $-3.366$
+            <tr><td><strong>2. Las pruebas</strong></td><td>ADF y PP (Phillips–Perron; $H_0$: hay raíz unitaria) y
+              KPSS ($H_0$: es estacionaria)</td><td>ADF de <code>adf.test</code> (constante y tendencia, $k = 4$) $-3.366$
               ($p = 0.064$, no rechaza); KPSS $0.965$ ($p &lt; 0.01$, rechaza la estacionariedad). Estas dos apuntan a
               diferenciar. PP, en cambio, $Z(t_\alpha) = -6.690$ ($p &lt; 0.01$), rechaza la raíz unitaria.</td></tr>
             <tr><td><strong>3. Los síntomas de haber diferenciado de más</strong></td><td>En el modelo
               ajustado, una raíz MA cerca de $1$. En la serie diferenciada, un $\hat\rho_1$ cerca de $-0.5$ o por debajo es
               solo un indicio: falla en los dos sentidos (Módulo 2.7)</td><td>Con $d = 1$, $\hat\rho_1 = -0.402$, no muy
               lejos de $-0.5$; con $d = 2$, $-0.626$, ya por debajo. La raíz MA del ARIMA($1,1,1$) queda en $1.144$
-              (Módulo 6), más cerca del círculo que la del MA(1) del Módulo 8, en $1.364$; ninguna está sobre
+              (Módulos 1 y 6), más cerca del círculo que la del MA(1) del Módulo 8, en $1.364$; ninguna está sobre
               él.</td></tr>
           </tbody>
         </table>
@@ -548,8 +577,8 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
         Módulo 8, el modelo ajustado.</p>
 
       <div class="warning">
-        <h4><i class="fas fa-triangle-exclamation mr-2" aria-hidden="true"></i>Tres pruebas, tres respuestas, la
-          misma serie</h4>
+        <h4><i class="fas fa-triangle-exclamation mr-2" aria-hidden="true"></i>Una misma serie, tres respuestas de
+          <code>ndiffs()</code></h4>
         <p>La función <code>ndiffs()</code> devuelve el $d$ recomendado, pero <strong>depende de la prueba que se
           le pida</strong>, y sobre el Nilo las tres no coinciden:</p>
         $$\begin{aligned}
@@ -558,8 +587,9 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
           {\footnotesize\texttt{ndiffs(Nile, test = "pp")}} &= 0
         \end{aligned}$$
         <p style="margin-bottom:0;">Dos de las tres dicen que <strong>no</strong> hay que diferenciar. Y el valor por
-          defecto de <code>ndiffs()</code> —y por tanto el que usa <code>auto.arima()</code>— es KPSS, la única que
-          dice que sí. Hay además un matiz: el ADF de <code>ndiffs()</code> no es el de <code>adf.test()</code> de la tabla.
+          defecto de <code>ndiffs()</code> es KPSS, la única que dice que sí. Es también el que usa
+          <code>auto.arima()</code>, la función de <code>forecast</code> que ajusta sola varios ARIMA y se queda
+          con el de menor AICc; el Módulo 7 la abre. Hay además un matiz: el ADF de <code>ndiffs()</code> no es el de <code>adf.test()</code> de la tabla.
           Usa solo constante y un rezago ($\alpha_1 = 0$, $k = 1$), y con esa especificación rechaza la raíz
           unitaria ($\tau_\mu = -4.05$, frente al valor crítico de $-2.89$ al $5\,\%$); con la de la tabla no la
           rechaza. No es un fallo de ninguna función: KPSS invierte la hipótesis nula, y ADF y PP, que comparten la
@@ -580,22 +610,23 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
         KPSS está diseñado para detectar como "no estacionariedad". Si la sospecha es cierta, KPSS debería rechazar
         incluso en series que <em>por construcción</em> no tienen ninguna raíz unitaria.</p>
 
-      <p>Se puede comprobar. Se generan series de ruido blanco puro de la misma longitud y desviación que los
-        residuales del modelo de dos medias del Nilo —una antes y otra después de 1899— ($n = 100$,
-        $\hat\sigma = 127.0$), se les añade un escalón en la posición 29 —el año 1899— de tamaño $\beta$ regulable,
-        y se cuenta cuántas veces rechaza KPSS:</p>
+      <p>Se puede comprobar. El <strong>modelo de dos medias</strong> del Nilo,
+        $y_t = \mu + \beta\,\mathbf{1}\{t \ge 1899\} + \varepsilon_t$, da a la serie una media hasta 1898 y otra
+        desde 1899; el bloque de código de este módulo lo ajusta y el Módulo 8 lo estudia. Se generan series de
+        ruido blanco puro de la misma longitud y desviación que sus residuales ($n = 100$,
+        desviación típica $127.0$), se les añade un escalón en la posición 29 —el año 1899— de tamaño $\beta$
+        regulable, y se cuenta cuántas veces rechaza KPSS:</p>
 
       <div class="simulador" data-simulador="escalon-vs-raiz">
         <h4><i class="fas fa-stairs" aria-hidden="true"></i> Un escalón disfrazado de raíz unitaria</h4>
         <p class="simulador-intro">El deslizador fija el tamaño del descenso en 1899, $|\beta|$. Arriba, una
           realización concreta; abajo, la tasa de rechazo de KPSS al $5\,\%$ medida en R sobre 400 réplicas en nueve
           valores de $|\beta|$, interpolada entre ellos. Recuerda que <strong>ninguna</strong> de estas series tiene
-          raíz unitaria: todas son ruido blanco más una constante a trozos. Empieza en $|\beta| = 0$: KPSS rechaza
-          cerca del $5\,\%$ nominal, así que la prueba funciona. Luego sube el descenso y busca dónde cruza la curva
-          el $50\,\%$; la línea vertical marca el que de verdad tiene el Nilo, $|\beta| = 247.8$. La segunda curva
+          raíz unitaria: todas son ruido blanco más una constante a trozos. Recorre $|\beta|$ desde $0$ y busca
+          dónde cruza la curva el $50\,\%$; la línea vertical marca el descenso que tiene el Nilo. La segunda curva
           es la misma prueba con otro truncamiento de la varianza de largo plazo, $\ell = 12$ en vez de $4$, el de
-          <code>nlags="legacy"</code> en Python: rechaza menos, pero no deja de engañarse, solo necesita descensos
-          mayores. El recuadro «R y Python no calculan el mismo KPSS», más abajo, explica ese parámetro.</p>
+          <code>nlags="legacy"</code> en Python; el recuadro «R y Python no calculan el mismo KPSS», más abajo,
+          explica ese parámetro.</p>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">Una realización: ruido blanco + escalón</p>
         <div class="grafico-wrapper" style="height:230px;">
@@ -712,6 +743,11 @@ kpss.test(Nile)$statistic       # H0: es estacionaria
 #&gt;  0.9654349
 # rechaza (p &lt; 0.01): diferenciar. kpss.test avisa "p-value smaller than
 # printed p-value": la tabla se acaba en 0.01, no es un error
+PP.test(Nile)$statistic         # Phillips-Perron: H0, hay raiz unitaria
+#&gt; Dickey-Fuller
+#&gt;     -6.690051
+# rechaza: su p-valor es 0.01, el minimo de su tabla (p &lt; 0.01), y apunta a NO
+# diferenciar
 
 # --- Y las tres respuestas de ndiffs ------------------------------------
 sapply(c("kpss", "adf", "pp"), function(t) ndiffs(Nile, test = t))
@@ -725,12 +761,19 @@ sapply(c("kpss", "adf", "pp"), function(t) ndiffs(Nile, test = t))
 round(sapply(1:2, function(d) acf(diff(Nile, differences = d), plot = FALSE)$acf[2]), 3)
 #&gt; [1] -0.402 -0.626
 
+# --- El modelo de dos medias: y = mu + beta * 1{t &gt;= 1899} + e ----------
+escalon &lt;- as.numeric(1:100 &gt;= 29)      # 1899 es la observacion 29
+dos_medias &lt;- arima(Nile, order = c(0, 0, 0), xreg = escalon, method = "ML")
+round(c(antes = mean(Nile[1:28]), despues = mean(Nile[29:100]),
+        beta = coef(dos_medias)[["escalon"]], sd_resid = sd(residuals(dos_medias))), 2)
+#&gt;    antes  despues     beta sd_resid
+#&gt;  1097.75   849.97  -247.78   127.03
+
 # --- El experimento del escalon -----------------------------------------
 set.seed(2026)
-escalon &lt;- as.numeric(1:100 &gt;= 29)      # 1899 es la observacion 29
 simula &lt;- function(beta, reps = 400) {       # beta = tamano del escalon
   mean(replicate(reps, {
-    x &lt;- 1000 + beta * escalon + rnorm(100, 0, 127.03)
+    x &lt;- 1000 + beta * escalon + rnorm(100, 0, 127.03)    # sd_resid de arriba
     suppressWarnings(kpss.test(x)$p.value) &lt;= 0.05
   }))
 }
@@ -766,6 +809,7 @@ est, p, *_ = adfuller(nilo, regression="ct", autolag=None,
 print(round(est, 4), round(p, 4))
 #&gt; -3.3657 0.0561    mismo estadistico que R (-3.3657); el p-valor difiere
 #&gt;                   porque R interpola en tablas y statsmodels usa MacKinnon
+# La prueba PP no esta en statsmodels: aqui solo se reproducen ADF y KPSS
 
 # CUIDADO con el truncamiento de KPSS: no es el mismo por defecto.
 print(round(kpss(nilo, regression="c")[0], 4))                   # 'auto': 5 rezagos
@@ -775,9 +819,15 @@ print(round(kpss(nilo, regression="c", nlags="legacy")[0], 4))   # 12 rezagos
 print(round(kpss(nilo, regression="c", nlags=4)[0], 4))          # como R
 #&gt; 0.9654        identico
 
+# El modelo de dos medias: una media hasta 1898 y otra desde 1899
+escalon = (np.arange(100) &gt;= 28).astype(float)
+res = np.r_[nilo[:28] - nilo[:28].mean(), nilo[28:] - nilo[28:].mean()]
+print(round(nilo[:28].mean(), 2), round(nilo[28:].mean(), 2), round(res.std(ddof=1), 2))
+#&gt; 1097.75 849.97 127.03
+#   beta es la diferencia de las dos medias: 849.97 - 1097.75 = -247.78
+
 # El experimento del escalon, ya con el truncamiento de R
 rng = np.random.default_rng(2026)
-escalon = (np.arange(100) &gt;= 28).astype(float)
 def simula(beta, reps=400):                   # beta = tamano del escalon
     return np.mean([kpss(1000 + beta * escalon + rng.normal(0, 127.03, 100),
                          regression="c", nlags=4)[1] &lt;= 0.05

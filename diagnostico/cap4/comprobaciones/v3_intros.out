@@ -1,0 +1,33 @@
+M1 · nilo-y-diferencia · palabras 143 -> 143 · igual
+   AHORA: La serie que acompaña todo el capítulo: el caudal anual del río Nilo medido en Asuán entre 1871 y 1970 ($n = 100$, en $10^8\,\text{m}^3$). Antes de mover nada, mira la serie original: más que vagar sin rumbo, su nivel parece caer de golpe hacia 1899. Luego sube $d$ y lee los números de abajo, no solo el gráfico. La media cae a casi cero, porque diferenciar convierte el caudal en su cambio de un año al siguiente. Fíjate sobre todo en $\hat\rho_1$: cambia de signo, y con $d = 2$ queda por debajo de $-0.5$, el valor que tendría la diferencia de un ruido blanco. La varianza apenas baja con $d = 1$ y casi se triplica con $d = 2$, pero no es una pista aparte: el Módulo 3 explica por qué repite lo que ya dice $\hat\rho_1$. ¿Hacía falta diferenciar?
+
+M3 · escalon-vs-raiz · palabras 151 -> 120 · CAMBIA
+   AHORA: El deslizador fija el tamaño del descenso en 1899, $|\beta|$. Arriba, una realización concreta; abajo, la tasa de rechazo de KPSS al $5\,\%$ medida en R sobre 400 réplicas en nueve valores de $|\beta|$, interpolada entre ellos. Recuerda que ninguna de estas series tiene raíz unitaria: todas son ruido blanco más una constante a trozos. Recorre $|\beta|$ desde $0$ y busca dónde cruza la curva el $50\,\%$; la línea vertical marca el descenso que tiene el Nilo. La segunda curva es la misma prueba con otro truncamiento de la varianza de largo plazo, $\ell = 12$ en vez de $4$, el de nlags="legacy" en Python; el recuadro «R y Python no calculan el mismo KPSS», más abajo, explica ese parámetro.
+
+M4 · identificacion-nilo · palabras 206 -> 62 · CAMBIA
+   AHORA: Cambia el orden y lee las dos funciones, no solo la ACF. Con cada $d$, ¿cuál de las dos corta y cuál decae? ¿Qué signo tiene el rezago 1? ¿Qué barras se salen de la banda, y con qué patrón? La lectura de abajo da $\hat\rho_1$ y cuenta las barras de la ACF y de la PACF que salen de la banda.
+
+M6 · explorador-modelos · palabras 175 -> 111 · CAMBIA
+   AHORA: Los 27 modelos con $p, d, q \in \{0,1,2\}$, ajustados por máxima verosimilitud sobre el Nilo (precalculados en R). El campo «diferencia» de la lectura y el segundo gráfico, donde el modelo elegido sale resaltado, comparan su AICc solo con el mejor de su propio $d$. Empieza en $d = 1$ y cuenta cuántos modelos quedan a menos de 2 puntos del mejor. Luego mira el correlograma de los residuales, cuyas barras se vuelven rojas cuando Ljung–Box(20) rechaza, y busca qué modelos rechazan y si alguno de ellos está cerca del mejor. Por último, lee las raíces en la lectura, para el mejor de cada $d$: ¿alguna roza el círculo unitario?
+
+M7 · traza-auto-arima · palabras 54 -> 54 · igual
+   AHORA: Traza real capturada con auto.arima(Nile, trace = TRUE). La línea verde marca el mejor AICc encontrado hasta cada momento; los puntos naranjas son los modelos que lo mejoraron, y los descartados (AICc $=\infty$) aparecen como marcas en el borde superior. Cambia al modo exhaustivo para ver los 42 modelos que evalúa stepwise = FALSE.
+
+M8 · sobrediferenciacion · palabras 44 -> 44 · igual
+   AHORA: Sube el orden $d$ sobre el Nilo y ajusta un MA(1) a cada resultado. En $d = 2$ y $d = 3$ el $\hat\theta$ se clava en $-1$ y $|\text{raíz MA}| = 1$: el término MA está deshaciendo la diferencia que acabas de imponer.
+
+M9 · forma-pronostico · palabras 39 -> 39 · igual
+   AHORA: Los cuatro casos ajustados sobre el Nilo, con pronóstico a 30 años. Cambia el modelo y observa hacia dónde va la línea naranja cuando se acaban los datos. La banda ancha es el $95\,\%$ y la estrecha el $80\,\%$.
+
+M9 · pesos-psi-sigma · palabras 67 -> 67 · igual
+   AHORA: Arriba, los pesos $\psi_j$ del ARIMA($1,1,1$) del Nilo; en naranja, los $\psi_0,\dots,\psi_{h-1}$ que entran en $\sigma_h$. Abajo, $\sigma_h$ frente a $\sigma\sqrt{h}$, que es exactamente lo que daría una caminata aleatoria con la misma $\sigma$: en un ARIMA($0,1,0$) todos los pesos valen $\psi_j = 1$ y la fórmula se reduce a $\sigma\sqrt{h}$. Mueve el horizonte: el marcador recorre las dos curvas y la lectura da cuánto se separan.
+
+M10 · trm-identificacion · palabras 54 -> 54 · igual
+   AHORA: La ACF de la serie en niveles arranca en $0.964$ y decae lentísimo: el retrato de un proceso no estacionario. Tras una diferencia solo una barra de veinte se sale, y por poco: $\hat\rho_8 = -0.190$ frente a $\pm 0.167$, que es lo que el azar da al $5\,\%$. Cambia de serie y compara.
+
+M10 · trm-abanico · palabras 51 -> 51 · igual
+   AHORA: El deslizador mueve el horizonte. El pronóstico es una recta horizontal —ARIMA($0,1,0$) sin deriva— y lo único que ocurre al alejarse es que el abanico se abre, como $\sqrt{h}$ y sin llegar nunca a un techo. Las bandas se calculan aquí mismo a partir de $\hat\sigma^2 = 14756.38$, no están precalculadas.
+
+M10 · puente-estacional · palabras 28 -> 28 · igual
+   AHORA: ACF de los residuales del mejor ARIMA no estacional sobre $\log(\text{AirPassengers})$, y del modelo estacional que verás en el Capítulo 5. Fíjate en los rezagos 12 y 24.
+

@@ -28,16 +28,10 @@
 
       <div class="simulador" data-simulador="identificacion-nilo">
         <h4><i class="fas fa-chart-column" aria-hidden="true"></i> ACF y PACF por orden de diferenciación</h4>
-        <p class="simulador-intro">Cambia el orden y lee las dos funciones, no solo la ACF. En $d = 0$ la ACF decae
-          despacio, que es lo que deja un nivel que se mueve —por una raíz unitaria o por un cambio de nivel como el
-          de 1899— y no dice nada de $p$ ni de $q$. La trampa está en la PACF: solo se sale el rezago 1, como en un
-          AR(1) con $\phi \approx 0.5$, pero ese AR(1) tendría la ACF dentro de la banda desde el rezago 3. En
-          $d = 1$ la ACF corta en 1 y la PACF decae con signo negativo, la firma de un MA(1). El rezago 8 de la ACF
-          ($0.231$) se sale por poco, aislado y sin patrón; con 20 rezagos al $5\,\%$, uno fuera por azar es lo
-          esperable. En $d = 2$, $\hat\rho_1 = -0.626$ cae por debajo de $-0.5$, el valor que tendría la diferencia
-          de un ruido blanco: la huella de haber diferenciado de más. Y fíjate en el $-0.402$ de $d = 1$: un pico
-          negativo en el rezago 1, no muy lejos de $-0.5$, es también lo que deja diferenciar una serie que no lo
-          necesitaba. La tabla elige $p$ y $q$; no confirma $d$.</p>
+        <p class="simulador-intro">Cambia el orden y lee las dos funciones, no solo la ACF. Con cada $d$, ¿cuál de
+          las dos corta y cuál decae? ¿Qué signo tiene el rezago 1? ¿Qué barras se salen de la banda, y con qué
+          patrón? La lectura de abajo da $\hat\rho_1$ y cuenta las barras de la ACF y de la PACF que salen de la
+          banda.</p>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">Serie</p>
         <div class="grafico-wrapper" style="height:230px;">
@@ -52,6 +46,15 @@
           <canvas aria-label="Función de autocorrelación parcial de la serie seleccionada" role="img"></canvas>
         </div>
         <div class="simulador-lectura"></div>
+      </div>
+
+      <div class="note">
+        <p style="margin-bottom:0;"><strong>Lo que enseña el simulador.</strong> Con $d = 0$, la trampa del párrafo
+          de arriba: un AR(1) con $\phi \approx 0.5$ tendría la ACF dentro de la banda desde el rezago 3, y esta
+          decae despacio. Con $d = 2$, $\hat\rho_1 = -0.626$ cae por debajo de $-0.5$, el valor que tendría la diferencia de un ruido
+          blanco: la huella de haber diferenciado de más. Y el $-0.402$ de $d = 1$, un pico negativo en el
+          rezago 1 no muy lejos de $-0.5$, es también lo que deja diferenciar una serie que no lo necesitaba. La
+          tabla elige $p$ y $q$; no confirma $d$.</p>
       </div>
 
       <h3>La tabla, aplicada a $\nabla$Nilo</h3>
@@ -77,7 +80,8 @@
       </div>
 
       <p>La lectura es razonablemente clara: la ACF corta en el rezago 1 —el único otro que sale de la banda de
-        $\pm 0.197$ es el 8 ($0.231$), aislado y sin patrón— y la PACF decae con signo negativo, como la de un
+        $\pm 0.197$ es el 8 ($0.231$), aislado y sin patrón; con 20 rezagos al $5\,\%$, uno fuera por azar es lo
+        esperable— y la PACF decae con signo negativo, como la de un
         MA(1) con $\theta &lt; 0$. La tabla propone, por tanto, un <strong>ARIMA($0,1,1$)</strong>. Ajustado por
         máxima verosimilitud:</p>
 
@@ -88,7 +92,8 @@
 
       <p>con $\hat\theta = -0.7329$ (e.e. $0.1143$, $t = -6.41$) y Ljung–Box(20) $p = 0.674$: pasa el
         diagnóstico sin problemas. Es el IMA(1,1) del Módulo 1, el equivalente del suavizamiento exponencial
-        simple.</p>
+        simple con $\alpha = 1 + \hat\theta = 0.267$: es el $\alpha$ implícito en el modelo; <code>ses()</code>
+        lo estima por su cuenta y da un valor algo distinto.</p>
 
       <div class="note">
         <p><strong>Pero no se propone uno: se proponen varios.</strong> La tabla acota la búsqueda, no la resuelve.
@@ -128,6 +133,9 @@ ma1 &lt;- arima(Nile, order = c(0, 1, 1), method = "ML")
 round(c(theta = coef(ma1)[["ma1"]], ee = sqrt(ma1$var.coef[1, 1])), 4)
 #&gt;   theta      ee
 #&gt; -0.7329  0.1143
+# el IMA(1,1) es el suavizamiento exponencial simple, con alfa = 1 + theta
+round(1 + coef(ma1)[["ma1"]], 3)
+#&gt; [1] 0.267
 Box.test(residuals(ma1), lag = 20, type = "Ljung-Box", fitdf = 1)$p.value
 #&gt; [1] 0.6736635</code></pre>
         </div>
@@ -155,6 +163,8 @@ ma1 = ARIMA(nilo, order=(0, 1, 1), trend="n").fit()
 print(round(ma1.params[0], 4))
 #&gt; -0.7334
 #   R da -0.7329
+print(round(1 + ma1.params[0], 3))
+#&gt; 0.267
 # el primer residual es y_1 = 1120 (inicializacion difusa), no un error: se descarta
 print(round(float(acorr_ljungbox(ma1.resid[1:], lags=[20], model_df=1)["lb_pvalue"].iloc[0]), 4))
 #&gt; 0.6984
@@ -205,7 +215,7 @@ print(round(float(acorr_ljungbox(ma1.resid[1:], lags=[20], model_df=1)["lb_pvalu
             <strong>cuadrática</strong>. Prácticamente nunca se quiere.</li>
         </ul>
         <p style="margin-bottom:0;">Regla mnemotécnica: <strong>cada diferencia sube en un grado el polinomio de la
-          tendencia</strong> que la constante genera: a largo plazo, $\hat y_{n+h}$ crece como
+          tendencia</strong> que la constante genera: a largo plazo, $\hat y_{T+h}$ (con $T$ el último dato) crece como
           $\mu_w\, h^d / d!$. Sin constante: $d=0$ tiende a cero, $d=1$ se aplana (no necesariamente en el último
           dato: el Módulo 9 lo mide), $d=2$ sigue una recta. Con
           constante: $d=0$ vuelve a la media, $d=1$ recta, $d=2$ parábola. El simulador «La forma del pronóstico
@@ -270,18 +280,6 @@ print(round(float(acorr_ljungbox(ma1.resid[1:], lags=[20], model_df=1)["lb_pvalu
         1899 aporta por sí solo $-2.50$ de ella. Con $d = 1$, un cambio de nivel que ocurre una vez solo puede
         entrar como un choque o repartido en pendiente; el Módulo 8 lo ajusta como escalón. Una deriva estimada es una tendencia que se
         extrapola sin límite, y eso es una afirmación fuerte sobre el futuro que conviene no hacer a la ligera.</p>
-
-      <div class="note">
-        <p><strong>El mismo cálculo en la TRM.</strong> Sobre la tasa de cambio mensual, añadiendo deriva a la
-          caminata aleatoria que elige <code>auto.arima</code> —un ARIMA($0,1,0$), en el que $\hat\delta$ es
-          simplemente la media de las diferencias—, la deriva estimada es
-          $8.00$ pesos/mes con error estándar $10.36$: $t = 0.77$. Tampoco es significativa, aunque a ojo la serie
-          "claramente sube". Como en el Nilo, esa media se reduce a $(y_n - y_1)/(n-1)$: la estimación depende
-          solo del primer mes y del último, y lo que la serie hace entre ellos solo entra en el error estándar. Que
-          una tendencia visible no sea estadísticamente distinguible de cero con $n = 138$
-          dice más sobre la variabilidad de la serie que sobre la tendencia, y es exactamente el tipo de conclusión
-          que un modelo obliga a hacer explícita.</p>
-      </div>
 
       <div class="code-tabs">
         <div class="code-tabs-nav" role="tablist" aria-label="Media y deriva">
@@ -394,9 +392,10 @@ print(f2.param_names)
         $$\mathrm{AIC} = -2\log L + 2k$$
         $$\mathrm{AICc} = \mathrm{AIC} + \frac{2k(k+1)}{n^{*} - k - 1}$$
         $$\mathrm{BIC} = -2\log L + k\log n^{*}$$
-        <p style="margin:0.6rem 0 0 0; font-size:0.9rem;">con $k = p + q + 1$ (los coeficientes ARMA más
-          $\hat\sigma^2$; más uno si hay constante o deriva) y $n^{*} = n - d$ el <strong>número efectivo</strong> de
-          observaciones.</p>
+        <p style="margin:0.6rem 0 0 0; font-size:0.9rem;">con $n$ el número de observaciones —lo que los
+          Capítulos 2 y 3 llamaban $T$; aquí $T$ queda para el origen del pronóstico, el último dato, y vale
+          $T = n$—, $k = p + q + 1$ (los coeficientes ARMA más $\hat\sigma^2$; más uno si hay constante o deriva) y
+          $n^{*} = n - d$ el <strong>número efectivo</strong> de observaciones.</p>
       </div>
 
       <div class="warning">
@@ -419,14 +418,10 @@ print(f2.param_names)
         <p class="simulador-intro">Los 27 modelos con $p, d, q \in \{0,1,2\}$, ajustados por máxima verosimilitud
           sobre el Nilo (precalculados en R). El campo «diferencia» de la lectura y el segundo gráfico, donde el
           modelo elegido sale resaltado, comparan su AICc solo con el mejor <em>de su propio $d$</em>. Empieza en
-          $d = 1$: cuatro modelos quedan a menos de 2 puntos del mejor, y con diferencias así el AICc apenas los
-          distingue. Luego mira el correlograma de los residuales, cuyas barras se vuelven rojas cuando
-          Ljung–Box(20) rechaza: descarta ocho modelos que se quedan cortos, pero todos los que quedan cerca del
-          mejor pasan, así que filtra y no elige. Por último, mira las raíces de la
-          lectura. El mejor de $d = 0$ tiene una raíz AR en $1.161$, cerca del círculo unitario, como si pidiera
-          una diferencia; el mejor de $d = 1$, una raíz MA en $1.144$, como si quisiera deshacerla; y los buenos
-          de $d = 2$ la tienen entre $1.000$ y $1.048$. Ningún $d$ sale limpio, y el Módulo 8 explica por
-          qué.</p>
+          $d = 1$ y cuenta cuántos modelos quedan a menos de 2 puntos del mejor. Luego mira el correlograma de los
+          residuales, cuyas barras se vuelven rojas cuando Ljung–Box(20) rechaza, y busca qué modelos rechazan y si
+          alguno de ellos está cerca del mejor. Por último, lee las raíces en la lectura, para el mejor de cada
+          $d$: ¿alguna roza el círculo unitario?</p>
         <div class="simulador-controles"></div>
         <div class="simulador-lectura"></div>
         <p class="grafico-etiqueta">ACF de los residuales del modelo seleccionado</p>
@@ -437,6 +432,17 @@ print(f2.param_names)
         <div class="grafico-wrapper" style="height:250px;">
           <canvas aria-label="ΔAICc de los nueve modelos con el mismo orden de diferenciación" role="img"></canvas>
         </div>
+      </div>
+
+      <div class="note">
+        <p style="margin-bottom:0;"><strong>Lo que enseña el explorador.</strong> Con $d = 1$ cuatro modelos más
+          quedan a menos de 2 puntos del mejor (el Módulo 7 contará siete, porque cuenta también las variantes con
+          deriva), y con diferencias así el AICc apenas los distingue. Ljung–Box(20) rechaza en 8 de los 27 modelos,
+          pero ninguno de los que quedan cerca del mejor de su $d$ está entre ellos, así que el correlograma filtra
+          y no elige. Y las raíces: el mejor de $d = 0$ tiene una raíz AR en $1.161$, cerca del círculo unitario,
+          como si pidiera una diferencia; el mejor de $d = 1$, una raíz MA en $1.144$, como si quisiera deshacerla;
+          y los buenos de $d = 2$ la tienen entre $1.000$ y $1.048$. Ningún $d$ sale limpio, y el Módulo 8 explica
+          por qué.</p>
       </div>
 
       <h3>Los mejores de cada $d$</h3>

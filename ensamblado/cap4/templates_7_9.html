@@ -108,7 +108,9 @@
       </div>
 
       <div class="note">
-        <p><strong>Siete modelos a menos de $2$ puntos de AICc.</strong> La regla de referencia habitual es que
+        <p><strong>Siete modelos a menos de $2$ puntos de AICc.</strong> Son el ganador, otros cuatro sin
+          constante —los del explorador del Módulo 6— y dos variantes con deriva. La regla de referencia habitual es
+          que
           diferencias menores que $2$ no distinguen modelos. Es decir: <code>auto.arima</code> devuelve un ganador
           con toda la seguridad de una sola línea de salida, y detrás de él hay <strong>seis candidatos
           indistinguibles según el propio criterio</strong>, incluido el ARIMA($0,1,1$) que proponía el correlograma
@@ -265,9 +267,8 @@ print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
 
       <div class="simulador" data-simulador="sobrediferenciacion">
         <h4><i class="fas fa-scissors" aria-hidden="true"></i> Diferenciar de más, y verlo</h4>
-        <p class="simulador-intro">Sube el orden $d$ sobre el Nilo y ajusta un MA(1) a cada resultado. En $d = 2$ y
-          $d = 3$ el $\hat\theta$ se clava en $-1$ y $|\text{raíz MA}| = 1$: el término MA está deshaciendo la
-          diferencia que acabas de imponer.</p>
+        <p class="simulador-intro">Sube el orden $d$ sobre el Nilo y ajusta un MA(1) a cada resultado. ¿Con qué $d$
+          llega $\hat\theta$ a $-1$? ¿Qué le pasa entonces a $|\text{raíz MA}|$, y qué dice el diagnóstico?</p>
         <div class="simulador-controles"></div>
         <div class="simulador-lectura"></div>
         <p class="grafico-etiqueta">Serie diferenciada $\nabla^d y_t$</p>
@@ -297,6 +298,9 @@ print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
         </table>
       </div>
 
+      <p>En $d = 2$ y $d = 3$ el $\hat\theta$ se clava en $-1$ y la raíz MA queda sobre el círculo unidad: el
+        término MA está deshaciendo la diferencia que se acaba de imponer.</p>
+
       <p>Hay una prueba más de que el MA está deshaciendo la diferencia. Con $\hat\theta = -1$, el MA(1) ajustado
         sobre $\nabla^2 y$ da $\hat\sigma^2 = 28\,268.34$, que es exactamente $\operatorname{Var}(\nabla y)$: el
         modelo ha recuperado la serie con una sola diferencia. Con $d = 3$ ocurre lo mismo, y su $\hat\sigma^2 =
@@ -325,14 +329,14 @@ print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
       <h3>El caso del Nilo, cerrado</h3>
 
       <p>Queda por cerrar lo que quedó pendiente. En el Módulo 1 apareció que integrar la serie del Nilo con sus
-        coeficientes reales <em>casi no cambia la varianza</em> (razón $1.006$), porque $\theta = -0.874$ está cerca
+        coeficientes estimados <em>casi no cambia la varianza</em> (razón $1.006$), porque $\theta = -0.874$ está cerca
         de $-1$. En el Módulo 3, que dos de las tres pruebas de raíz unitaria dicen que no hay que diferenciar, y que
         KPSS —la que usa <code>auto.arima</code>— rechaza el $100\,\%$ de las veces cuando hay un escalón. Las dos
         piezas encajan en una sola explicación.</p>
 
       <p>La serie cae de una media de $1097.75$ antes de 1899 a $849.97$ desde ese año, que coincide con la
-        construcción de la presa baja de Asuán. La alternativa a la raíz unitaria es un escalón: un modelo con
-        $d = 0$ y un solo regresor, que vale $1$ desde 1899,</p>
+        construcción de la presa baja de Asuán. La alternativa a la raíz unitaria es un escalón: el modelo de dos
+        medias del Módulo 3, con $d = 0$ y un solo regresor, que vale $1$ desde 1899,</p>
 
       <div class="formula">
         $$y_t = \mu + \beta\,\mathbf{1}\{t \ge 1899\} + \varepsilon_t$$
@@ -353,7 +357,9 @@ print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
       <div class="warning">
         <p><strong>Y ahora la parte incómoda.</strong> Todo lo anterior es evidencia dentro de muestra. Comparar el
           escalón contra el ARIMA($1,1,1$) por AICc <strong>no se puede</strong>: uno tiene $d=0$ y el otro $d=1$.
-          La comparación válida es fuera de muestra. Entrenando hasta 1950 y pronosticando los 20 años siguientes:</p>
+          La comparación válida es fuera de muestra. Se entrena hasta 1950, se pronostican los 20 años siguientes y se
+          miden la raíz del error cuadrático medio (RMSE) y el error absoluto medio (MAE) de esos 20 pronósticos. El
+          <em>naïve</em> repite siempre el último valor observado: es la caminata aleatoria.</p>
         <table style="position:relative;">
           <thead><tr><th>Modelo</th><th>RMSE</th><th>MAE</th></tr></thead>
           <tbody>
@@ -367,7 +373,7 @@ print(mejor, round(mejor_aicc, 3), f"({evaluados} modelos)")
         <p style="margin-bottom:0;">El modelo del escalón, que dominaba dentro de muestra por $25$ puntos de AICc,
           <strong>no pronostica mejor</strong>. Y el que gana es el más simple de todos. Conviene no
           sobreinterpretarlo:
-          el abanico completo va de $123$ a $133$ mientras la desviación típica de los residuales es $139.67$, así
+          el rango completo va de $123$ a $133$ mientras la desviación típica de los residuales es $139.67$, así
           que <em>ninguna</em> de estas diferencias es grande. La conclusión no es "el naïve es mejor", sino que
           <strong>una ventaja de ajuste dentro de muestra no se traduce automáticamente en capacidad de
           pronóstico</strong>. Medir eso con seriedad —con más de un origen, y preguntándose si la diferencia es
@@ -548,7 +554,8 @@ print(round(float(acorr_ljungbox(fe.resid, lags=[20])["lb_pvalue"].iloc[0]), 4))
           $2771$, tres veces y media más ancho que el de $d = 1$.</p>
         <p style="margin-bottom:0;">Y ese ARIMA($1,2,1$) tiene $\hat\theta = -1$: es el modelo sobrediferenciado del
           Módulo 8. Su MA cancela una de las dos diferencias, así que los $\psi_j$ tienden a
-          $1/(1-\hat\phi) = 0.72$ en vez de a $0.169$. Eso explica buena parte del abanico, pero no todo: con
+          $1/(1-\hat\phi) = 0.72$ en vez de a $0.169$. Eso explica buena parte del abanico (la banda del pronóstico, que se abre con el horizonte),
+          pero no todo: con
           esos pesos, la fórmula de abajo da un ancho de $2428$ en $h = 30$, y <code>forecast()</code> devuelve
           $2771$. La diferencia es el precio de la no invertibilidad —con $\hat\theta = -1$ los choques pasados
           no se recuperan de los datos—, y el desarrollo del final del módulo lo explica.</p>
@@ -789,8 +796,9 @@ print(np.round([s, sigma_h[0], sigma_h[29], psi[30]], 3).tolist())
       </div>
 
       <p>Con esto el ciclo queda completo: identificar $d$ y los órdenes, estimar, diagnosticar y pronosticar con su
-        intervalo. El Módulo 10 reúne primero las piezas del Nilo en un solo cuadro y recorre después el ciclo de
-        principio a fin sobre una serie colombiana, la TRM, cuyos residuales pondrán a prueba el supuesto de
-        normalidad de este último paso.</p>
+        intervalo. El Módulo 10 reúne las piezas del Nilo en un solo cuadro y recorre después el ciclo de
+        principio a fin sobre una serie colombiana, la TRM, cuyos residuales ponen a prueba el supuesto de
+        normalidad de este último paso: ahí se mide cuánto cubren de verdad los intervalos del $80\,\%$ y del
+        $95\,\%$. Cierra con el puente al Capítulo 5 y el resumen del capítulo.</p>
     </div>
   </template>

@@ -1,0 +1,77 @@
+== Nilo (cuadro del M10 y modulos 1-9) ==
+[ok] M1/M10 phi                                                     citado 0.2544     calculado 0.25437      M1 bloque (ajuste)
+[ok] M1/M10 theta                                                   citado -0.8741    calculado -0.87414     M1 bloque (ajuste)
+[ok] M1 e.e. phi                                                    citado 0.1194     calculado 0.1194       M1 bloque
+[ok] M1 e.e. theta                                                  citado 0.0605     calculado 0.060483     M1 bloque
+[ok] M1/M10 raiz MA 1.144                                           citado 1.144      calculado 1.144        M1 bloque
+[ok] M10 raiz AR 3.93                                               citado 3.93       calculado 3.9313       M1 bloque (3.9308)
+[ok] M10 ACF Nilo rezago 1 = 0.498                                  citado 0.498      calculado 0.49841      M4 bloque
+[ok] M10 adf.test p = 0.064                                         citado 0.064      calculado 0.064195     M3 bloque
+[ok] M10 KPSS p < 0.01 (p reportado = 0.01)                         citado 0.01       calculado 0.01         M3 bloque
+[ok] M3/M10 PP.test estadistico -6.690                              citado -6.69      calculado -6.6901      M3 bloque (nuevo)
+[ok] M3/M10 PP.test p <= 0.01 (p reportado = 0.01)                  citado 0.01       calculado 0.01         M3 bloque (nuevo)
+[ok] M10 r1 de nabla Nilo -0.402                                    citado -0.402     calculado -0.40204     M4 bloque
+[ok] M10 delta -2.883                                               citado -2.883     calculado -2.8827      M5 bloque
+[ok] M10 t de delta -1.43                                           citado -1.43      calculado -1.4294      M5 bloque (-1.429)
+[ok] M10 AICc con deriva 1268.06                                    citado 1268.06    calculado 1268.1       M5 bloque
+[ok] M10 AICc sin deriva 1267.51                                    citado 1267.51    calculado 1267.5       M5 bloque
+[ok] M10 media de las diferencias -3.84                             citado -3.84      calculado -3.8384      M5 prosa (aritmetica)
+[ok] M10 aporte del escalon -2.50                                   citado -2.5       calculado -2.5028      M5 prosa (aritmetica)
+[ok] M10 BIC (0,1,1) 1274.28                                        citado 1274.28    calculado 1274.3       M6 bloque
+[ok] M10 AICc (1,2,2) 1264.60                                       citado 1264.6     calculado 1264.6       M6 bloque
+[ok] M10 LB(20) p = 0.800 del ARIMA(1,1,1)                          citado 0.8        calculado 0.79974      M2 bloque (0.7997)
+[ok] M10 beta -247.78                                               citado -247.78    calculado -247.78      M3/M8 bloque
+[ok] M10 t = -8.80                                                  citado -8.8       calculado -8.8022      M8 prosa (e.e. 28.15 del bloque)
+[ok] M10 AICc del mejor ARMA d=0 menos el del escalon: casi 25      citado 25         calculado 24.586       M6 + M8 (JSON)
+[ok] M10 LB(20) escalon p = 0.812                                   citado 0.812      calculado 0.81243      M8 bloque
+[ok] M3/M10 media 1871-1898 = 1097.75                               citado 1097.75    calculado 1097.8       M3 bloque (nuevo)
+[ok] M3/M10 media desde 1899 = 849.97                               citado 849.97     calculado 849.97       M3 bloque (nuevo)
+[ok] M3 sigma del modelo de dos medias = 127.03                     citado 127.03     calculado 127.03       M3 bloque (nuevo)
+[ok] M10 RMSE ARIMA 125.05                                          citado 125.05     calculado 125.05       M8 bloque
+[ok] M10 RMSE escalon 127.99                                        citado 127.99     calculado 127.99       M8 bloque
+[ok] M10 RMSE naive 123.06                                          citado 123.06     calculado 123.06       M8 bloque
+[ok] M10 pronostico h=1 816.18                                      citado 816.18     calculado 816.18       M2/M9 bloque
+[ok] M10 pronostico h=30 842.17                                     citado 842.17     calculado 842.17       M9 bloque
+[ok] M10 psi_inf = 0.169                                            citado 0.169      calculado 0.1688       M9 bloque (psi_30)
+[ok] M10 lista psi_inf = 0.1688 (sin redondear)                     citado 0.1688     calculado 0.1688       aritmetica del bloque M9
+[ok] M10 lista sigma_30/sigma_1 = 1.404                             citado 1.404      calculado 1.4035       M9 bloque (199.363/142.045)
+[ok] M9 sigma_1 = 142.0 (M10 ya no lo cita)                         citado 142.045    calculado 142.05       M9 bloque
+
+== Modulo 6: lo que dice el recuadro tras el explorador (precalculado en genera_cap4.R; aqui, recalculado) ==
+[ok] M6 modelos con Ljung-Box(20) < 0.05: 8 de 27                   citado 8          calculado 8            JSON del explorador
+[ok] M6 modelos ajustados: 27                                       citado 27         calculado 27           JSON del explorador
+[ok] M6 d = 1: cuatro modelos mas a menos de 2 puntos               citado 4          calculado 4            JSON del explorador
+[ok] M6 de los cercanos al mejor de su d, los que rechazan LB: 0    citado 0          calculado 0            JSON del explorador
+[ok] M6 mejor de d = 0: raiz AR minima 1.161                        citado 1.161      calculado 1.1614       JSON / lectura
+[ok] M6 mejor de d = 1: raiz MA minima 1.144                        citado 1.144      calculado 1.144        JSON / lectura
+   (M6) raices MA minimas de los modelos de d = 2 con MA: 1 1 1 1 1.032 1.048
+
+== Modulo 4: alfa del IMA(1,1) ==
+[ok] M4 alfa = 1 + theta = 0.267                                    citado 0.267      calculado 0.26706      M4 bloque (nuevo)
+[ok] M4 t de theta = -6.41                                          citado -6.41      calculado -6.4113      M4 prosa
+
+== TRM (M10, un solo bloque; aqui, recalculado) ==
+[ok] TRM n = 138                                                    citado 138        calculado 138          M10 bloque
+[ok] TRM sigma = 121.48                                             citado 121.48     calculado 121.48       M10 bloque
+[ok] TRM ACF del nivel en el rezago 1 = 0.964 (intro del simulador, JSON) citado 0.964      calculado 0.96366      JSON
+[ok] TRM rho8 de nabla TRM = -0.190 y banda 0.167                   citado -0.19      calculado -0.19035     M10 bloque
+[ok] TRM sigma^2 = 14756.38 (intro del simulador, JSON)             citado 14756.38   calculado 14756        JSON
+[ok] TRM cubre el 80 % a un mes: 0.839 (promesa del M9)             citado 0.839      calculado 0.83942      M10 bloque (nuevo en R1)
+[ok] TRM cubre el 95 % a un mes: 6 de 137 fuera                     citado 6          calculado 6            M10 bloque
+[ok] TRM 4.4 % fuera = 6/137                                        citado 4.4        calculado 4.3796       M10 prosa (aritmetica)
+[ok] TRM deriva = media de las diferencias (y_n - y_1)/(n-1) = 8.00 citado 8          calculado 8.0009       M10 bloque (deriva 8.00)
+[ok] TRM t de la deriva 0.77                                        citado 0.77       calculado 0.77259      M10 prosa
+   (M10) los dos mayores aumentos mensuales: 2020-03 y 2022-07 con 470.2 y 466.8  [prosa: marzo de 2020 y julio de 2022; NO sale de un bloque]
+
+== Puente (M10, bloque nuevo) ==
+[ok] Puente rho12 = 0.7245                                          citado 0.7245     calculado 0.72451      M10 bloque (nuevo)
+[ok] Puente rho24 = 0.6727                                          citado 0.6727     calculado 0.67271      M10 bloque (nuevo)
+[ok] Puente banda = 0.1633                                          citado 0.1633     calculado 0.16333      M10 bloque (nuevo)
+[ok] Puente 0.7245 / 0.1633 = mas de cuatro veces la banda          citado 4.4        calculado 4.4358       M10 prosa (aritmetica)
+[ok] Puente Q_LB(24) = 222.4                                        citado 222.4      calculado 222.4        M10 bloque (nuevo)
+[ok] Puente (8,1,3): rho12 = 0.437                                  citado 0.437      calculado 0.43703      M10 bloque (nuevo)
+[ok] Puente airline rho12 = -0.0515                                 citado -0.0515    calculado -0.051463    M10 bloque (nuevo)
+[ok] Puente airline LB(24) p = 0.233                                citado 0.233      calculado 0.23303      M10 bloque (nuevo)
+[ok] Puente 143 observaciones (no estacional)                       citado 143        calculado 143          M10 bloque (nuevo)
+[ok] Puente 131 observaciones (airline)                             citado 131        calculado 131          M10 bloque (nuevo)
+[ok] Puente max.order por defecto = 5 (p + q <= 5)                  citado 5          calculado 5            M10 prosa
