@@ -14,7 +14,7 @@ con sus fuentes contrastadas y con práctica antes del final. Es la cuarta aplic
 [[PLAN_Mejora_Cap1]], [[PLAN_Mejora_Cap2]] y [[PLAN_Mejora_Cap3]]: cinco rondas, un redactor por ronda,
 un verificador independiente sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: APROBADO por Javier el 2026-11-22; R1 y R2 publicadas el mismo día (R2: `29106f5` · gh-pages `af3a60a`); R3 publicada el mismo día (`21ab628` · gh-pages `60a7bf9`); R4 hecha el 2026-11-23 (`d35dc3b`), sin publicar**, con D1–D10 y las recomendaciones de las preguntas 1 y 2 de §7.
+**Estado: APROBADO por Javier el 2026-11-22; R1 y R2 publicadas el mismo día (R2: `29106f5` · gh-pages `af3a60a`); R3 publicada el mismo día (`21ab628` · gh-pages `60a7bf9`); R4 publicada el 2026-11-23 (`d35dc3b`, registro `b00eb85` · gh-pages `756029a`)**, con D1–D10 y las recomendaciones de las preguntas 1 y 2 de §7.
 El diagnóstico es del mismo día; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-22
@@ -217,7 +217,7 @@ Cada una lleva mi recomendación; las decide Javier.
   - Publicación: `main` empujado hasta `0cacb6d`, `audita_citas` OK; los caps. 2–6 en vivo, idénticos byte a byte
     a `0cacb6d`.
 
-- **R4 (fuentes) — hecha el 2026-11-23 (`d35dc3b`), SIN PUBLICAR.** Javier decidió arrancarla con los textos que
+- **R4 (fuentes) — hecha y PUBLICADA el 2026-11-23 (`main` `d35dc3b`, registro `b00eb85` · gh-pages `756029a`).** Javier decidió arrancarla con los textos que
   hay en disco (§7.3 sigue abierta). T4.1: alta por DOI de CRAN de `forecast` 9.0.2, `tseries` 0.10-62 y `urca` 1.3-4,
   como software con la versión leída (`enmiendas.yml`); 17 ayudas y los caps. 8 y 10 de FPP3 a la caché;
   `extrae_fuente.py --doc paquete::tema`. Phillips–Perron, Fuller, Box–Pierce y Hurvich–Tsai no se dieron de alta: sin
@@ -242,6 +242,10 @@ Cada una lleva mi recomendación; las decide Javier.
     `genera_soluciones.R`; el campo `fuente` del Nilo en `datos_series.json` dice «Cobb (1978)» y `?Nile` da Durbin y
     Koopman (no se ve); el quiz del M7 dice «umbral habitual de 2» (R5). Al publicar hay que copiar
     `bibliografia/_local/citas/cap4.yml` y `_local/herramientas/cap4/` a la copia principal.
+  - Publicación (2026-11-23): `main` empujado hasta `b00eb85`; `_local/` copiado a la copia principal (122 archivos,
+    todos nuevos: `citas/cap4.yml`, `herramientas/cap4/` y las páginas web de `forecast`, `tseries`, `urca`, R y FPP3),
+    `audita_citas` OK allí con 1067 literales comprobados; gh-pages `756029a`, construido; índice y caps. 1–6 en vivo,
+    idénticos byte a byte a `b00eb85`.
 
 ## 5. Criterios de aceptación
 
