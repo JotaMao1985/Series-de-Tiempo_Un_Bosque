@@ -1,0 +1,336 @@
+R version 4.6.0 (2026-04-24) 
+tseries 0.10.62 
+tsibbledata 0.4.1 
+fpp3 1.0.3 
+forecast 9.0.2 
+
+===== tcm ( tseries ) =====
+Monthly Yields on Treasury Securities
+
+Description:
+
+     This data set contains monthly 1 year, 3 year, 5 year, and 10 year
+     yields on treasury securities at constant, fixed maturity.
+
+Usage:
+
+     data(tcm)
+     
+Format:
+
+     4 univariate time series 'tcm1y', 'tcm3y', 'tcm5y', and 'tcm10y'
+     and the joint series 'tcm'.
+
+Details:
+
+     The yields at constant fixed maturity have been constructed by the
+     Treasury Department, based on the most actively traded marketable
+     treasury securities.
+
+Source:
+
+     U.S. Fed <https://www.federalreserve.gov/Releases/H15/>
+
+
+===== NelPlo ( tseries ) =====
+Nelson-Plosser Macroeconomic Time Series
+
+Description:
+
+     These are the extended Nelson-Plosser Data.
+
+Usage:
+
+     data(NelPlo)
+     
+Format:
+
+     14 macroeconomic time series: 'cpi', 'ip', 'gnp.nom', 'vel',
+     'emp', 'int.rate', 'nom.wages', 'gnp.def', 'money.stock',
+     'gnp.real', 'stock.prices', 'gnp.capita', 'real.wages', and
+     'unemp' and the joint series 'NelPlo'.
+
+Details:
+
+     The series are of various lengths but all end in 1988.  The data
+     set contains the following series: consumer price index,
+     industrial production, nominal GNP, velocity, employment, interest
+     rate, nominal wages, GNP deflator, money stock, real GNP, stock
+     prices (S&P500), GNP per capita, real wages, unemployment.
+
+Source:
+
+     Nelson CR, Plosser CR (1982). "Trends and Random Walks in
+     Macroeconmic Time Series." _Journal of Monetary Economics_,
+     *10*(2), 139-162. doi:10.1016/0304-3932(82)90012-5
+     <https://doi.org/10.1016/0304-3932%2882%2990012-5>.
+
+     Formerly in the Journal of Business and Economic Statistics data
+     archive, currently at
+     <http://korora.econ.yale.edu/phillips/data/np&enp.dat>.
+
+
+===== global_economy ( tsibbledata ) =====
+Global economic indicators
+
+Description:
+
+     Economic indicators featured by the World Bank from 1960 to 2017.
+
+Format:
+
+     Time series of class 'tsibble'
+
+Details:
+
+     'global_economy' is an annual 'tsibble' with six values:
+
+       GDP:         Gross domestic product (in $USD February 2019). 
+       Growth:      Annual percentage growth in GDP.                
+       CPI:         Consumer price index (base year 2010).          
+       Imports:     Imports of goods and services (% of GDP).       
+       Exports:     Exports of goods and services (% of GDP).       
+       Population:  Total population.                               
+      
+     Each series is uniquely identified by one key:
+
+       Country:  The country or region of the series. 
+      
+Source:
+
+     The World Bank,
+     <http://datatopics.worldbank.org/world-development-indicators/>
+
+
+===== gafa_stock ( tsibbledata ) =====
+GAFA stock prices
+
+Description:
+
+     Historical stock prices from 2014-2018 for Google, Amazon,
+     Facebook and Apple. All prices are in $USD.
+
+Format:
+
+     Time series of class 'tsibble'
+
+Details:
+
+     'gafa_stock' is a 'tsibble' containing data on irregular trading
+     days:
+
+       Open:       The opening price for the stock.          
+       High:       The stock's highest trading price.        
+       Low:        The stock's lowest trading price.         
+       Close:      The closing price for the stock.          
+       Adj_Close:  The adjusted closing price for the stock. 
+       Volume:     The amount of stock traded.               
+      
+     Each stock is uniquely identified by one key:
+
+       Symbol:  The ticker symbol for the stock. 
+      
+Source:
+
+     Yahoo Finance historical data
+
+
+===== pelt ( tsibbledata ) =====
+Pelt trading records
+
+Description:
+
+     Hudson Bay Company trading records for Snowshoe Hare and Canadian
+     Lynx furs from 1845 to 1935. This data contains trade records for
+     all areas of the company.
+
+Format:
+
+     Time series of class 'tsibble'
+
+Details:
+
+     'pelt' is an annual 'tsibble' with two values:
+
+       Hare:  The number of Snowshoe Hare pelts traded. 
+       Lynx:  The number of Canadian Lynx pelts traded. 
+      
+Source:
+
+     Hudson Bay Company
+
+
+===== airmiles ( datasets ) =====
+Passenger Miles on Commercial US Airlines, 1937-1960
+
+Description:
+
+     The revenue passenger miles flown by commercial airlines in the
+     United States for each year from 1937 to 1960.
+
+Usage:
+
+     airmiles
+     
+Format:
+
+     A time series of 24 observations; yearly, 1937-1960.
+
+Source:
+
+     F.A.A. Statistical Handbook of Aviation.
+
+
+===== BJsales ( datasets ) =====
+Sales Data with Leading Indicator
+
+Description:
+
+     The sales time series 'BJsales' and leading indicator
+     'BJsales.lead' each contain 150 observations.  The objects are of
+     class '"ts"'.
+
+Usage:
+
+     BJsales
+     BJsales.lead
+     
+Source:
+
+     The data are given in Box and Jenkins (1976, p. 537).  Obtained
+     from the Time Series Data Library at
+     <https://robjhyndman.com/TSDL/>
+
+
+===== lynx ( datasets ) =====
+Annual Canadian Lynx trappings 1821-1934
+
+Description:
+
+     Annual numbers of lynx trappings for 1821-1934 in Canada.  Taken
+     from Brockwell and Davis (1991), this appears to be the series
+     considered by Campbell and Walker (1977).
+
+Usage:
+
+     lynx
+     
+Source:
+
+     Brockwell PJ, Davis RA (1991). _Time Series: Theory and Methods_,
+     series Springer Series in Statistics, Second edition. Springer,
+     New York. ISBN 9780387974293. Series G (page 557).
+
+
+===== beaver1 ( datasets ) =====
+Body Temperature Series of Two Beavers
+
+Description:
+
+     Reynolds (1994) describes a small part of a study of the long-term
+     temperature dynamics of beaver _Castor canadensis_ in
+     north-central Wisconsin.  Body temperature was measured by
+     telemetry every 10 minutes for four females, but data from a one
+     period of less than a day for each of two animals is used there.
+
+Usage:
+
+     beaver1
+     beaver2
+     
+Format:
+
+     The 'beaver1' data frame has 114 rows and 4 columns on body
+     temperature measurements at 10 minute intervals.
+
+     The 'beaver2' data frame has 100 rows and 4 columns on body
+     temperature measurements at 10 minute intervals.
+
+     The variables are as follows:
+
+     'day'
+          Day of observation (in days since the beginning of 1990),
+          December 12-13 ('beaver1') and November 3-4 ('beaver2').
+
+     'time'
+          Time of observation, in the form '0330' for 3:30am
+
+     'temp'
+          Measured body temperature in degrees Celsius.
+
+     'activ'
+          Indicator of activity outside the retreat.
+
+
+===== austres ( datasets ) =====
+Quarterly Time Series of the Number of Australian Residents
+
+Description:
+
+     Numbers (in thousands) of Australian residents measured quarterly
+     from March 1971 to March 1994.  The object is of class '"ts"'.
+
+Usage:
+
+     austres
+     
+Source:
+
+     Brockwell PJ, Davis RA (1996). _Introduction to Time Series and
+     Forecasting_, series Springer Texts in Statistics. Springer, New
+     York. doi:10.1007/978-1-4757-2526-1
+     <https://doi.org/10.1007/978-1-4757-2526-1>.
+
+
+===== uspop ( datasets ) =====
+Populations Recorded by the US Census
+
+Description:
+
+     The population of the United States (in millions) at the 19
+     decennial censuses from 1790 to 1970.
+
+Usage:
+
+     uspop
+     
+Format:
+
+     A time series of 19 values.
+
+Source:
+
+     McNeil D (1977). _Interactive Data Analysis: A Practical Primer_.
+     John Wiley & Sons. ISBN 978-0471026310.
+
+
+===== aus_airpassengers ( fpp3 ) =====
+Air Transport Passengers Australia
+
+Description:
+
+     Total annual air passengers (in millions) including domestic and
+     international aircraft passengers of air carriers registered in
+     Australia. 1970-2016.
+
+Format:
+
+     Annual time series of class `tsibble`.
+
+Source:
+
+     World Bank.
+
+
+tcm1y tsp: 1953.25 1999.667 12 n: 558 rango: 0.82 16.72 
+NelPlo ip tsp: 1860 1988 1 n: 129 rango: -0.1053605 5.228565 
+Colombia: anios 1960 2017 n: 58 Imports rango: 9.709364 22.71055 NA: 0 
+GOOG 2018: n 251 fechas 2018-01-02 2018-12-31 Close rango 976.22 1268.33 
+pelt: anios 1845 1935 n: 91 Hare rango: 1800 152650 
+airmiles tsp: 1937 1960 1 n: 24 rango: 412 30514 
+BJsales.lead tsp: 1 150 1 n: 150 rango: 9.75 13.87 
+lynx tsp: 1821 1934 1 n: 114 
+beaver2: n 100 dias 307 308 horas 0 2350 primera lectura con activ = 1: 39 temp rango 36.58 38.35 
+austres tsp: 1971.25 1993.25 4 n: 89 rango: 13067.3 17661.5 
+uspop tsp: 1790 1970 0.1 n: 19 
+aus_airpassengers: anios 1970 2016 n: 47 rango: 7.3187 72.5977 

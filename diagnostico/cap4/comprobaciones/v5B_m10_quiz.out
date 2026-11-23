@@ -1,0 +1,255 @@
+R version 4.6.0 (2026-04-24) | forecast 9.0.2 | tseries 0.10.62 | tsibbledata 0.4.1 
+
+====================  E1 BJsales  ====================
+n = 150 
+    adf_p    kpss_d     adf_d      pp_d 
+0.5301832 1.0000000 1.0000000 1.0000000 
+r1 diff1, diff2: 0.3117991 -0.4755556 
+   d p q aicc_Arima aicc_mio     bic        lb20  raizMA
+1  1 0 0    545.544  545.544 548.521 6.33118e-06      NA
+2  1 1 0    526.209  526.209 532.134 1.82952e-01      NA
+3  1 2 0    520.088  520.088 528.935 2.62715e-01      NA
+4  1 0 1    533.348  533.348 539.274 3.39886e-02 3.90282
+5  1 1 1    514.902  514.902 523.748 6.21555e-01 1.55890
+6  1 2 1    516.922  516.922 528.660 5.57609e-01 1.64737
+7  1 0 2    527.856  527.856 536.702 1.34622e-01 2.27413
+8  1 1 2    516.914  516.914 528.652 5.59247e-01 1.66330
+9  1 2 2    518.575  518.575 533.175 4.61325e-01 1.22364
+10 2 0 0    577.705  577.705 580.675 1.16469e-05      NA
+11 2 1 0    542.047  542.047 547.959 2.75996e-03      NA
+12 2 2 0    532.465  532.465 541.290 9.15879e-02      NA
+13 2 0 1    517.220  517.220 523.132 5.58602e-01 1.33697
+14 2 1 1    519.140  519.140 527.965 4.87424e-01 1.28194
+15 2 2 1    520.548  520.548 532.257 3.88008e-01 1.11353
+16 2 0 2    519.164  519.164 527.989 4.89511e-01 1.29243
+17 2 1 2    515.859  515.859 527.568 5.64964e-01 1.00000
+18 2 2 2    522.408  522.408 536.971 3.26187e-01 1.22474
+puesto del (0,1,1) en d=1: 8 de 9  distancia al mejor: 18.4463 
+min BIC d=1: 1 1 
+mejor d=2 por AICc: 1 2 2 515.8587  | mejor d=1: 514.9016  | min global en d = 1 
+ACF resid IMA 1..20:
+ [1]  0.0142  0.2483  0.1185  0.2087  0.0711  0.1188 -0.0006  0.1454 -0.0490 -0.0217  0.1231 -0.0441  0.0077 -0.0631
+[15] -0.0579  0.0216 -0.0015 -0.0791  0.0303  0.0720
+banda 0.1600333  fuera en: 2 4 
+banda con n-1 = 0.1605695 
+        ar1         ma1      se.ar1      se.ma1 
+ 0.87990794 -0.64147778  0.06439027  0.10347912 
+Shapiro 0.6294597  LB20 0.6215554 
+auto.arima exhaustiva: ARIMA(1,1,1)  | por defecto: ARIMA(1,1,1) 
+       ar1        ma1        ma2 
+ 0.8597394 -1.6252379  0.6252383 
+1 + ma1 + ma2 = 3.449372e-07   raices MA: 1.000001 1.599389 
+factor restante (1 - cB): c = -0.6252383  comprobacion -(1+c) = -0.3747617 vs ma1 -1.625238 
+AICc IMA (d=1) - AICc (1,2,2) = 17.48914 
+AICc (1,1,1) - AICc(1,2,2) = -0.9571615 
+
+====================  E2 pelt$Hare (ayuda)  ====================
+Pelt trading records
+
+Description:
+
+     Hudson Bay Company trading records for Snowshoe Hare and Canadian
+     Lynx furs from 1845 to 1935. This data contains trade records for
+     all areas of the company.
+
+Format:
+
+     Time series of class 'tsibble'
+
+Details:
+
+     'pelt' is an annual 'tsibble' with two values:
+
+       Hare:  The number of Snowshoe Hare pelts traded. 
+       Lynx:  The number of Canadian Lynx pelts traded. 
+      
+Source:
+
+     Hudson Bay Company
+
+Examples:
+
+     library(tsibble)
+     pelt
+     
+
+====================  E2 calculos  ====================
+anios 1845 1935  n = 91  min Hare 1800 
+kpss  adf   pp 
+   0    0    0 
+kpss_p  adf_p   pp_p 
+  0.10   0.01   0.01 
+[1] 1.3231933 0.8898584 1.6919250
+caida 1 - v1/v0 = 0.3274918 
+r1 0.6655021  cociente 0.6725082  2(1-r1) 0.6689957  r1 dif 0.0427826 
+ARIMA(0,1,1) theta= 0.04579 |raizMA|= 21.8369 AICc=247.863 LB20 p=0.0019  ARroots=-
+ARIMA(1,1,1) theta= 0.68732 |raizMA|=  1.4549 AICc=249.864 LB20 p=0.0009  ARroots=1.5594
+ARIMA(2,1,1) theta=-1.00000 |raizMA|=  1.0000 AICc=233.764 LB20 p=0.0434  ARroots=2.0343,2.0343
+ARIMA(3,1,1) theta=-0.98019 |raizMA|=  1.0202 AICc=230.962 LB20 p=0.2340  ARroots=1.3371,2.3427,1.3371
+AR(2) AICc=232.467 LB20 p=0.0546 min|raiz|=2.0009  periodo(raiz compleja)=10.65,10.65
+AR(3) AICc=229.258 LB20 p=0.3003 min|raiz|=1.3340  periodo(raiz compleja)=9.78,9.78
+AR(4) AICc=223.212 LB20 p=0.8829 min|raiz|=1.1453  periodo(raiz compleja)=10.62,2.83,2.83,10.62
+auto.arima exhaustiva: ARIMA(4,0,0) with non-zero mean  | por defecto: ARIMA(2,0,2) with non-zero mean 
+maximos locales (anios): 1847 1853 1856 1861 1863 1872 1875 1886 1895 1900 1904 1912 1923 1933 
+  separaciones: 6 3 5 2 9 3 11 9 5 4 8 11 10 
+
+====================  E2 lynx (parrafo de la solucion)  ====================
+kpss  adf   pp 
+   0    0    0 
+var 1.653239 0.6870583  caida 0.5844169  r1 0.785124  cociente 0.4155831  2(1-r1) 0.4297519  r1dif 0.5649139 
+lynx (2,1,1) theta -0.9999998 
+
+====================  E3 BJsales ARIMA(1,1,1) con Arima()  ====================
+          phi         theta         sigma        limite phi_mas_theta 
+    0.8800270    -0.6414897     1.3416025     2.9882586     0.2385373 
+max |psi cerrada - expandida| = 2.220446e-15 
+ [1] 1.0000 1.2385 1.4485 1.6332 1.7958 1.9388 2.0647 2.1755 2.2730 2.3588 2.4344 2.5008 2.5593
+max dif semiancho: 2.398082e-14 
+sigma12/sigma1 6.796336  sqrt12 3.464102  cociente 1.961933  psi12 2.559291 
+      drift          se           t    aicc_con    aicc_sin         dif     h12_con     h12_sin 
+  0.4000699   0.2557382   1.5643729 515.0615253 514.9015605   0.1599648 266.9874755 263.7590928 
+Nilo psi_inf: 0.168802 
+
+====================  P1 aus_airpassengers  ====================
+anios 1970 2016  n = 47 
+kpss  adf   pp 
+   2    1    1 
+sin constante  d = 1  min AICc = 204.28  en (p,q) = 1,1 
+sin constante  d = 2  min AICc = 198.324  en (p,q) = 0,1 
+con deriva (d=1)  d = 1  min AICc = 200.59  en (p,q) = 0,0 
+con deriva (d=1)  d = 2  min AICc = 198.324  en (p,q) = 0,1 
+auto.arima: ARIMA(0,2,1) 
+
+====================  P2 ARIMA(1,1,0) phi = 0.5 sigma = 2  ====================
+[1] 1.000 1.500 1.750 1.875
+sigma3 exacto 5.024938 
+variantes de redondeo:
+  3.0625->3.063, suma 6.313, sqrt 2.5126 -> 2* 5.025137 
+  sqrt(6.3125) a 3 dec 2.512 ->  5.024 ; a 2 dec 2.51 -> 5.02 
+  suma 6.313 y sqrt a 3 dec: 5.026 
+  1.75^2 -> 3.06 (2 dec):  5.023943 
+distractores: phi^j 2.291288  caminata 3.464102  sin psi0 4.609772  sin cuadrado 4.123106  psi3 de mas 6.269968  sin sigma 2.512469 
+  sin cuadrado y sin raiz 2*(1+1.5+1.75) = 8.5 
+
+====================  P4 constante  ====================
+[1] 816.18 842.17
+[1] "No drift term fitted as the order of difference is 2 or more."
+intercept 920.5567  mean(Nile) 919.35 
+
+====================  P5 beaver2 (ayuda)  ====================
+Body Temperature Series of Two Beavers
+
+Description:
+
+     Reynolds (1994) describes a small part of a study of the long-term
+     temperature dynamics of beaver _Castor canadensis_ in
+     north-central Wisconsin.  Body temperature was measured by
+     telemetry every 10 minutes for four females, but data from a one
+     period of less than a day for each of two animals is used there.
+
+Usage:
+
+     beaver1
+     beaver2
+     
+Format:
+
+     The 'beaver1' data frame has 114 rows and 4 columns on body
+     temperature measurements at 10 minute intervals.
+
+     The 'beaver2' data frame has 100 rows and 4 columns on body
+     temperature measurements at 10 minute intervals.
+
+     The variables are as follows:
+
+     'day'
+          Day of observation (in days since the beginning of 1990),
+          December 12-13 ('beaver1') and November 3-4 ('beaver2').
+
+     'time'
+          Time of observation, in the form '0330' for 3:30am
+
+     'temp'
+          Measured body temperature in degrees Celsius.
+
+     'activ'
+          Indicator of activity outside the retreat.
+
+Note:
+
+     The observation at 22:20 is missing in 'beaver1'.
+
+Source:
+
+     Reynolds (1994)
+
+References:
+
+     Reynolds PS (1994). "Time-series Analyses of Beaver Body
+     Temperatures." In Lange N (ed.), _Case Studies in Biometry_,
+     chapter 11. Wiley, New York.
+
+Examples:
+
+     require(graphics)
+     (yl <- range(beaver1$temp, beaver2$temp))
+     
+     beaver.plot <- function(bdat, ...) {
+       nam <- deparse(substitute(bdat))
+       with(bdat, {
+         # Hours since start of day:
+         hours <- time %/% 100 + 24*(day - day[1]) + (time %% 100)/60
+         plot (hours, temp, type = "l", ...,
+               main = paste(nam, "body temperature"))
+         abline(h = 37.5, col = "gray", lty = 2)
+         is.act <- activ == 1
+         points(hours[is.act], temp[is.act], col = 2, cex = .8)
+       })
+     }
+     op <- par(mfrow = c(2, 1), mar = c(3, 3, 4, 2), mgp = 0.9 * 2:0)
+      beaver.plot(beaver1, ylim = yl)
+      beaver.plot(beaver2, ylim = yl)
+     par(op)
+     
+
+====================  P5 calculos  ====================
+n = 100  primera lectura con activ = 1: 39  todas desde ahi: TRUE 
+dif. de medias: 0.8062224 
+intervalo entre lecturas (time): 930 940 950 1000 1010 1020 
+   kpss_p     adf_p      pp_p 
+0.0100000 0.5695925 0.4556357 
+kpss  adf   pp 
+   1    1    1 
+escalon OLS 0.8062224  KPSS resid p 0.1  r1 resid 0.7785297 
+AR(1)+escalon: 0.8727889 37.19162 0.614925  LB10 0.5353541 
+        adf_resid          pp_resid ndiffs_kpss_resid  ndiffs_adf_resid 
+       0.09877884        0.01310516        0.00000000        0.00000000 
+
+====================  P6/P7 Chile, exportaciones % PIB  ====================
+anios 1960 2017  n = 58  NA: 0 
+ [1] 0.946 0.868 0.802 0.734 0.662 0.593 0.526 0.469 0.429 0.392 0.344 0.291 0.238 0.198 0.178 0.164 0.137 0.100 0.070
+[20] 0.039
+banda 0.2573606  ultimo rezago fuera: 12  todos fuera hasta: 12 
+ACF diff: 0.27 -0.193 0.017 0.043 -0.039 -0.055 -0.15 -0.255 -0.016 0.034 -0.062 -0.05 -0.061 -0.036 0.08 0.155 0.007 -0.079 0.096 0.101 
+ banda 0.2596083  fuera: 1 
+kpss  adf   pp 
+   1    1    1 
+escalonada: ARIMA(0,1,2) with drift 265.8487  | exhaustiva: ARIMA(0,1,1) 264.3215 
+modelos en la traza exhaustiva: 45  finitos: 15 
+                   modelo     aicc  delta
+1            ARIMA(0,1,1) 264.3215 0.0000
+2 ARIMA(0,1,2) with drift 265.8487 1.5272
+3 ARIMA(0,1,1) with drift 266.2632 1.9417
+4            ARIMA(2,1,0) 267.1834 2.8619
+5            ARIMA(3,1,0) 267.2039 2.8824
+6 ARIMA(2,1,0) with drift 268.8140 4.4925
+modelos en la escalonada: 14 
+
+====================  P8 Peru, importaciones % PIB  ====================
+anios 1960 2017  n = 58  NA: 0 
+d=1 theta=-0.2888 sigma2=4.6296 var=5.1209 LB10(fitdf=1) p=0.4329 LB10(fitdf=0) p=0.5276 n=57
+    (como ARIMA(0,1,1) sin media) theta=-0.2882 sigma2=4.6320
+d=2 theta=-1.0000 sigma2=5.1083 var=13.1773 LB10(fitdf=1) p=0.1620 LB10(fitdf=0) p=0.2229 n=56
+    (como ARIMA(0,2,1) sin media) theta=-1.0000 sigma2=5.1209
+kpss  adf   pp 
+   1    1    1 

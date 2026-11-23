@@ -1,0 +1,24 @@
+set.seed(2026)
+y <- arima.sim(n = 200, model = list(ar = 0.8))    # estacionaria: no le falta ninguna diferencia
+w <- diff(y)                                       # y aun asi se diferencia
+
+# (a) el indicio: el r1 de la serie diferenciada
+round(c(r1_medido = acf(w, plot = FALSE)$acf[2], r1_teorico = -(1 - 0.8) / 2), 3)
+#>  r1_medido r1_teorico 
+#>     -0.185     -0.100 
+
+# (b) dos modelos con d = 1
+for (o in list(c(0, 1, 1), c(1, 1, 1))) {
+  f <- arima(y, order = o, method = "ML")
+  cat(sprintf("ARIMA(%d,1,%d)  coef: %s  |raiz MA| = %.4f  LB(20) p = %.3f\n", o[1], o[3],
+      paste(names(coef(f)), sprintf("%.4f", coef(f)), collapse = "  "),
+      Mod(polyroot(c(1, coef(f)[["ma1"]]))),
+      Box.test(residuals(f), lag = 20, type = "Ljung-Box", fitdf = o[1] + o[3])$p.value))
+}
+#> ARIMA(0,1,1)  coef: ma1 -0.2010  |raiz MA| = 4.9756  LB(20) p = 0.563
+#> ARIMA(1,1,1)  coef: ar1 0.8092  ma1 -1.0000  |raiz MA| = 1.0000  LB(20) p = 0.679
+
+# (c) el modelo sin diferenciar
+round(coef(arima(y, order = c(1, 0, 0), method = "ML")), 4)
+#>       ar1 intercept 
+#>    0.7999    0.2682 

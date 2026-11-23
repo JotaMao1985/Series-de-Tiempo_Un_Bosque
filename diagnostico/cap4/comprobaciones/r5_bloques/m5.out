@@ -1,0 +1,29 @@
+library(forecast)
+y <- log(airmiles)                   # 24 datos anuales, 1937-1960
+n <- length(y)
+
+# (a) la media de las diferencias: solo cuentan el primer dato y el ultimo
+round(c(media_de_las_diferencias = mean(diff(y)), telescopica = (y[n] - y[1]) / (n - 1)), 4)
+#> media_de_las_diferencias              telescopica 
+#>                   0.1872                   0.1872 
+
+# (b) el mismo ARIMA(0,1,1), sin deriva y con ella
+sin <- Arima(y, order = c(0, 1, 1))
+con <- Arima(y, order = c(0, 1, 1), include.drift = TRUE)
+d  <- coef(con)[["drift"]]; ee <- sqrt(diag(con$var.coef))[["drift"]]
+round(c(deriva = d, ee = ee, t = d / ee), 4)
+#> deriva     ee      t 
+#> 0.1818 0.0407 4.4688 
+round(c(aicc_sin = sin$aicc, aicc_con = con$aicc), 2)
+#> aicc_sin aicc_con 
+#>   -11.13   -20.89 
+
+# (c) el pronostico a 1, 5 y 10 anios (en logaritmos) y lo que supone la deriva
+round(rbind(sin = forecast(sin, h = 10)$mean[c(1, 5, 10)],
+            con = forecast(con, h = 10)$mean[c(1, 5, 10)]), 3)
+#>       [,1]   [,2]   [,3]
+#> sin 10.227 10.227 10.227
+#> con 10.422 11.149 12.059
+round(c(ultimo_dato = y[n], factor_anual = exp(d), factor_en_10_anios = exp(10 * d)), 3)
+#>        ultimo_dato       factor_anual factor_en_10_anios 
+#>             10.326              1.199              6.162 

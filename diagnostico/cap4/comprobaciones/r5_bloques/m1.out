@@ -1,0 +1,36 @@
+library(tseries); data(tcm)       # tcm1y: rendimiento a un anio, mensual
+y <- tcm1y
+length(y)
+#> [1] 558
+
+# (a) AR(2) con media, sin diferenciar: la raiz se ESTIMA
+ar2 <- arima(y, order = c(2, 0, 0), method = "ML")
+round(coef(ar2), 4)
+#>       ar1       ar2 intercept 
+#>    1.3429   -0.3599    5.8072 
+round(c(suma = sum(coef(ar2)[1:2]), modulo = sort(Mod(polyroot(c(1, -coef(ar2)[1:2]))))), 4)
+#>    suma modulo1 modulo2 
+#>  0.9830  1.0278  2.7033 
+
+# (b) ARIMA(1,1,0): la raiz se IMPONE. Escrito sobre y_t es un AR(2)
+ari <- arima(y, order = c(1, 1, 0), method = "ML")
+phi <- coef(ari)[["ar1"]]
+round(c(phi = phi, phi1_estrella = 1 + phi, phi2_estrella = -phi), 4)
+#>           phi phi1_estrella phi2_estrella 
+#>        0.3518        1.3518       -0.3518 
+round(c(suma = (1 + phi) - phi, modulo = sort(Mod(polyroot(c(1, -(1 + phi), phi))))), 4)
+#>    suma modulo1 modulo2 
+#>  1.0000  1.0000  2.8423 
+
+# (c) lo que pronostica cada uno a 1, 5 y 10 anios
+h <- c(12, 60, 120)
+p2 <- predict(ar2, n.ahead = 120); p1 <- predict(ari, n.ahead = 120)
+round(rbind(AR2 = p2$pred[h], ARIMA110 = p1$pred[h], ee_AR2 = p2$se[h], ee_ARIMA110 = p1$se[h]), 2)
+#>             [,1] [,2] [,3]
+#> AR2         5.42 5.70 5.79
+#> ARIMA110    5.28 5.28 5.28
+#> ee_AR2      1.98 2.89 2.95
+#> ee_ARIMA110 2.24 5.18 7.36
+round(c(ultimo_dato = as.numeric(tail(y, 1)), desv_tipica_de_la_serie = sd(y)), 2)
+#>             ultimo_dato desv_tipica_de_la_serie 
+#>                    5.25                    2.98 

@@ -1,0 +1,80 @@
+
+=== ANTES de la R5 (b53fdcb) ===
+ítem tipo      longitudes (✔ = correcta)                    correcta más larga media dist.  ¿la correcta es la más larga?
+Q1   opcion    42  86✔  74  63                                    86        86        59.7  SÍ
+Q2   numerica  (sin opciones)
+Q3   grafico   51  75  81✔  87                                    81        87        71.0  no
+Q4   multiple  97✔  53✔  59  53✔  99                               -        99        79.0  (múltiple) media correctas 67.7 · media falsas 79.0
+Q5   opcion    91✔  72  71  65                                    91        91        69.3  SÍ
+Q6   grafico   67  59  58  92✔                                    92        92        61.3  SÍ
+Q7   opcion    82  85  109✔  98                                  109       109        88.3  SÍ
+Q8   numerica  (sin opciones)
+-> eligiendo siempre la opción más larga se aciertan 4 de 5 ítems de una sola respuesta; eligiendo siempre la más corta, 0
+   Q4 (múltiple, 3 correctas): las 3 más largas son las correctas: no; las 3 más cortas: no
+   Q1    42  El ARIMA(1,2,2), porque 1264.60 < 1267.51.
+   Q1 ✔  86  Ninguno de los dos por esta comparación: no son comparables, porque tienen distinto d.
+   Q1    74  El ARIMA(1,1,1), porque menos diferencias es siempre mejor por parsimonia.
+   Q1    63  El que tenga mejor BIC, que sí es comparable entre distintos d.
+   Q3    51  Aumentar q hasta que las barras entren en la banda.
+   Q3    75  Diferenciar una vez más: la autocorrelación alta indica no estacionariedad.
+   Q3 ✔  81  Pasar a un modelo estacional: el patrón está en los múltiplos del período m = 12.
+   Q3    87  Nada: la mayoría de las barras están dentro de la banda, así que el modelo es adecuado.
+   Q4 ✔  97  Con d = 1 la deriva, w = c/(1), es la media de las diferencias: una tendencia lineal en la serie.
+   Q4 ✔  53  Con d 1, stats::arima ignora include.mean sin avisar.
+   Q4    59  Sin constante, un modelo con d = 2 pronostica una parábola.
+   Q4 ✔  53  Con d 2, forecast::Arima avisa y no ajusta la deriva.
+   Q4    99  La constante de un ARIMA(p,0,q) es la ordenada al origen de una regresión, no la media del proceso.
+   Q5 ✔  91  Prácticamente siempre, si el escalón es apreciable: con el del Nilo, el 100 % de las veces.
+   Q5    72  Alrededor del 5 %, porque las series son estacionarias por construcción.
+   Q5    71  Nunca, porque KPSS solo detecta raíces unitarias y aquí no hay ninguna.
+   Q5    65  Depende del tamaño de la muestra, pero no del tamaño del escalón.
+   Q6    67  Es un AR de orden alto, porque hay muchas barras fuera de la banda.
+   Q6    59  Es un MA(q) con q igual al número de barras significativas.
+   Q6    58  Que d = 1, porque el primer valor es 0.498, cercano a 0.5.
+   Q6 ✔  92  Nada todavía: esa forma indica no estacionariedad, y hay que resolver d antes de leer p y q.
+   Q7    82  Que el ARIMA(1,1,1) es el modelo verdadero, ya que lo confirman las dos búsquedas.
+   Q7    85  Que la búsqueda escalonada es innecesaria, porque la exhaustiva llega al mismo sitio.
+   Q7 ✔ 109  Que hay siete modelos prácticamente indistinguibles, y conviene decirlo en vez de presentar un único ganador.
+   Q7    98  Que como la diferencia es menor que 2, hay que elegir el modelo con menos parámetros de los siete.
+
+=== DESPUÉS de la R5 (archivo de trabajo) ===
+ítem tipo      longitudes (✔ = correcta)                    correcta más larga media dist.  ¿la correcta es la más larga?
+Q1   opcion    83  84✔  86  83                                    84        86        84.0  no
+Q2   numerica  (sin opciones)
+Q3   grafico   77  80  79✔  78                                    79        80        78.3  no
+Q4   multiple  88✔  93  93✔  72✔  88                               -        93        90.5  (múltiple) media correctas 84.3 · media falsas 90.5
+Q5   opcion    82  78✔  81  76                                    78        82        79.7  no
+Q6   grafico   71  67  77  73✔                                    73        77        71.7  no
+Q7   opcion    87  88  87✔  92                                    87        92        89.0  no
+Q8   opcion    83✔  84  86  78                                    83        86        82.7  no
+-> eligiendo siempre la opción más larga se aciertan 0 de 6 ítems de una sola respuesta; eligiendo siempre la más corta, 0
+   Q4 (múltiple, 3 correctas): las 3 más largas son las correctas: no; las 3 más cortas: no
+   Q1    83  Que conviene d = 2: seis puntos de AICc son una diferencia clara entre dos modelos.
+   Q1 ✔  84  Nada: cada AICc se calcula sobre datos distintos, y solo se comparan con un mismo d.
+   Q1    86  Que conviene d = 1: a igualdad de ajuste, se prefiere el modelo con menos diferencias.
+   Q1    83  Que hay que decidir con el BIC, que penaliza más y sí se compara entre distintos d.
+   Q3    77  Aumentar q hasta que todas las barras queden dentro de la banda de confianza.
+   Q3    80  Diferenciar una vez más: una autocorrelación tan alta indica no estacionariedad.
+   Q3 ✔  79  Pasar a un modelo estacional: lo que sobra está en los rezagos múltiplos de 12.
+   Q3    78  Nada: casi todas las barras están dentro de la banda, y el modelo es adecuado.
+   Q4 ✔  88  Con d = 1, la deriva w = c/(1) es el incremento medio por período: una tendencia lineal.
+   Q4    93  Sin constante, un modelo con d = 2 pronostica a largo plazo una parábola, no una línea recta.
+   Q4 ✔  93  Con d = 1 y sin deriva, el pronóstico se aplana en un nivel, que puede no ser el último dato.
+   Q4 ✔  72  Con d 2, forecast::Arima avisa y no ajusta la deriva, aunque se le pida.
+   Q4    88  En un ARIMA(p,0,q), el intercept que da R es la constante c de la ecuación, no la media.
+   Q5    82  Diferenciar una vez: las dos pruebas coinciden, y eso cierra la discusión sobre d.
+   Q5 ✔  78  Ajustar el salto como un escalón y volver a examinar lo que queda de la serie.
+   Q5    81  Diferenciar dos veces: una diferencia para la raíz unitaria y otra para el salto.
+   Q5    76  No diferenciar: un salto con causa conocida prueba que no hay raíz unitaria.
+   Q6    71  Que es un AR de orden alto, porque hay muchas barras fuera de la banda.
+   Q6    67  Que es un MA(q), con q igual al número de barras fuera de la banda.
+   Q6    77  Que hace falta d = 2, porque las barras tardan más de diez rezagos en entrar.
+   Q6 ✔  73  Nada todavía: una caída tan lenta obliga a decidir d antes de leer p y q.
+   Q7    87  Que la búsqueda escalonada falló, y su modelo debe sustituirse por el de la exhaustiva.
+   Q7    88  Que el ARIMA(0,1,1) es el modelo verdadero, porque es el mínimo de la búsqueda completa.
+   Q7 ✔  87  Que hay tres modelos que el AICc apenas separa, y conviene decirlo al dar el resultado.
+   Q7    92  Que, con menos de 2 puntos entre ellos, se elige sin más el de menos parámetros de los tres.
+   Q8 ✔  83  Que d = 2 sobra: con = -1, la raíz MA cae sobre el círculo y deshace la diferencia.
+   Q8    84  Que d = 2 también es válido: sus residuales pasan Ljung–Box, igual que los de d = 1.
+   Q8    86  Que d = 1 es mejor, porque con la segunda diferencia la varianza sube de 5.12 a 13.18.
+   Q8    78  Que hay que comparar el AICc de los dos modelos y quedarse con el d del menor.

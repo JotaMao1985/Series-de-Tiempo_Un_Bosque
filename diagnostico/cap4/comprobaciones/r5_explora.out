@@ -1,0 +1,357 @@
+== pelt (Hare) ==
+# A tibble: 3 x 3
+   Year  Hare  Lynx
+  <dbl> <dbl> <dbl>
+1  1845 19580 30090
+2  1846 19600 45150
+3  1847 19610 49150
+[1] 1845 1935
+h n 91 ndiffs k/a/p 0 0 0 var d0..2 1.323e+09 897400000 1.443e+09 r1 0.658 r1 dif 0.178 
+Warning in kpss.test(y) : p-value greater than printed p-value
+Warning in adf.test(y) : p-value smaller than printed p-value
+Warning in pp.test(y) : p-value smaller than printed p-value
+ kpss p 0.1 adf p 0.01 pp p 0.01 
+  ARIMA(2,1,0) raizMA=- aicc=2110.96
+  ARIMA(2,1,1) raizMA=1.0002 aicc=2088.82
+  ARIMA(0,1,1) raizMA=4.4225 aicc=2110.09
+  ARIMA(1,1,1) raizMA=2.6775 aicc=2112.05
+  ARIMA(3,1,1) raizMA=1.0269 aicc=2087.90
+  ARIMA(2,1,2) raizMA=1.1105 aicc=2081.85
+  ARIMA(4,1,1) raizMA=1.0506 aicc=2085.32
+  auto: ARIMA(2,0,1) with non-zero mean 
+  AR(1) aicc=2122.80 LB20 p=0.0000 minroot=1.5159
+  AR(2) aicc=2107.88 LB20 p=0.4121 minroot=1.5396
+  AR(3) aicc=2106.77 LB20 p=0.7585 minroot=1.2793
+  AR(4) aicc=2104.82 LB20 p=0.9641 minroot=1.1607
+lh n 91 ndiffs k/a/p 0 0 0 var d0..2 1.323 0.8899 1.692 r1 0.666 r1 dif 0.043 
+Warning in kpss.test(y) : p-value greater than printed p-value
+Warning in adf.test(y) : p-value smaller than printed p-value
+Warning in pp.test(y) : p-value smaller than printed p-value
+ kpss p 0.1 adf p 0.01 pp p 0.01 
+  ARIMA(2,1,0) raizMA=- aicc=249.96
+  ARIMA(2,1,1) raizMA=1.0000 aicc=233.76
+  ARIMA(0,1,1) raizMA=21.8369 aicc=247.86
+  ARIMA(1,1,1) raizMA=1.4549 aicc=249.86
+  ARIMA(3,1,1) raizMA=1.0202 aicc=230.96
+  ARIMA(2,1,2) raizMA=1.0759 aicc=226.99
+  ARIMA(4,1,1) raizMA=1.0596 aicc=224.04
+  auto: ARIMA(4,0,0) with non-zero mean 
+  AR(1) aicc=236.06 LB20 p=0.0000 minroot=1.5129
+  AR(2) aicc=232.47 LB20 p=0.0546 minroot=2.0009
+  AR(3) aicc=229.26 LB20 p=0.3003 minroot=1.3340
+  AR(4) aicc=223.21 LB20 p=0.8829 minroot=1.1453
+
+== tcm1y ==
+[1] 1953.250 1999.667   12.000
+n 558 
+
+Call:
+arima(x = y, order = c(2, 0, 0), method = "ML")
+
+Coefficients:
+         ar1      ar2  intercept
+      1.3429  -0.3599     5.8072
+s.e.  0.0394   0.0395     1.0185
+
+sigma^2 estimated as 0.1886:  log likelihood = -328.34,  aic = 664.68
+[1] 1.027754 2.703290
+
+Call:
+arima(x = y, order = c(1, 1, 0), method = "ML")
+
+Coefficients:
+         ar1
+      0.3518
+s.e.  0.0396
+
+sigma^2 estimated as 0.1912:  log likelihood = -329.58,  aic = 663.17
+ndiffs 1 1 1 
+
+== gnp.real y otras NelPlo: ACF/PACF de la diferencia ==
+gnp.real n 80 anios 1909 1988 banda 0.221 ndiffs 1 1 1 
+  ACF  0.334 0.025 -0.182 -0.223 -0.176 0.015 0.074 -0.052 -0.212 -0.203 
+  PACF 0.334 -0.097 -0.181 -0.116 -0.08 0.076 -0.007 -0.165 -0.211 -0.088 
+  auto esc: ARIMA(1,1,0) with drift | exh: ARIMA(1,1,0) with drift 
+real.wages n 89 anios 1900 1988 banda 0.209 ndiffs 1 1 1 
+  ACF  0.223 -0.031 -0.066 -0.063 -0.079 -0.067 0.063 0.103 -0.038 -0.113 
+  PACF 0.223 -0.084 -0.042 -0.043 -0.065 -0.045 0.081 0.06 -0.086 -0.086 
+  auto esc: ARIMA(0,1,1) with drift | exh: ARIMA(0,1,1) with drift 
+ip n 129 anios 1860 1988 banda 0.173 ndiffs 1 1 1 
+  ACF  0.039 -0.129 -0.015 -0.099 -0.257 0.045 0.133 -0.013 -0.189 -0.018 
+  PACF 0.039 -0.13 -0.004 -0.117 -0.258 0.033 0.062 -0.032 -0.236 -0.08 
+  auto esc: ARIMA(0,1,0) with drift | exh: ARIMA(0,1,5) with drift 
+emp n 99 anios 1890 1988 banda 0.198 ndiffs 1 1 1 
+  ACF  0.314 -0.061 -0.085 -0.162 -0.191 0.009 0.11 0.011 -0.165 -0.144 
+  PACF 0.314 -0.177 -0.008 -0.159 -0.112 0.089 0.036 -0.067 -0.195 -0.054 
+  auto esc: ARIMA(0,1,1) with drift | exh: ARIMA(0,1,1) with drift 
+unemp n 99 anios 1890 1988 banda 0.198 ndiffs 0 0 0 
+  ACF  0.093 -0.295 0.018 -0.029 -0.175 0.004 0.14 -0.119 -0.109 0.049 
+  PACF 0.093 -0.306 0.092 -0.151 -0.133 -0.009 0.052 -0.16 -0.042 -0.056 
+  auto esc: ARIMA(1,0,1) with non-zero mean | exh: ARIMA(1,0,1) with non-zero mean 
+gnp.capita n 80 anios 1909 1988 banda 0.221 ndiffs 1 1 1 
+  ACF  0.324 0.02 -0.177 -0.207 -0.169 0.019 0.082 -0.052 -0.205 -0.192 
+  PACF 0.324 -0.095 -0.173 -0.106 -0.085 0.077 0.007 -0.164 -0.196 -0.08 
+  auto esc: ARIMA(2,1,2) with drift | exh: ARIMA(2,1,2) with drift 
+cpi n 129 anios 1860 1988 banda 0.173 ndiffs 2 1 1 
+  ACF  0.623 0.241 0.118 0.103 0.145 0.126 0.088 0.09 0.083 0.061 
+  PACF 0.623 -0.24 0.141 0.007 0.117 -0.047 0.045 0.038 -0.001 -0.005 
+  auto esc: ARIMA(1,2,2) | exh: ARIMA(1,2,2) 
+money.stock n 100 anios 1889 1988 banda 0.197 ndiffs 1 1 1 
+  ACF  0.627 0.311 0.158 0.039 -0.022 -0.004 -0.025 -0.073 -0.125 -0.147 
+  PACF 0.627 -0.136 0.036 -0.078 -0.005 0.052 -0.065 -0.057 -0.08 -0.029 
+  auto esc: ARIMA(1,1,1) with drift | exh: ARIMA(1,1,1) with drift 
+
+== beaver2 ==
+act
+ 0  1 
+38 62 
+[1] 38
+  day time  temp activ
+1 307  930 36.58     0
+2 307  940 36.73     0
+3 307  950 36.93     0
+    day time  temp activ
+98  308  140 38.01     1
+99  308  150 38.04     1
+100 308  200 38.07     1
+ndiffs 1 1 1 
+       0        1 
+37.09684 37.90306 
+              Estimate Std. Error    t value      Pr(>|t|)
+(Intercept) 37.0968421 0.03456240 1073.32955 2.895092e-201
+activ        0.8062224 0.04389429   18.36736  1.682051e-33
+Warning in kpss.test(r) : p-value greater than printed p-value
+resid step: r1..5 0.779 0.54 0.34 0.191 0.106 kpss p 0.1 adf p 0.09877884 
+Series: y 
+Regression with ARIMA(1,0,0) errors 
+
+Coefficients:
+         ar1  intercept    xreg
+      0.8733    37.1920  0.6139
+s.e.  0.0684     0.1187  0.1381
+
+sigma^2 = 0.01565:  log likelihood = 66.78
+AIC=-125.55   AICc=-125.13   BIC=-115.13
+LB10 0.5351294 shapiro 0.02544372 
+r1 nivel 0.923 r1 dif 0.037 0.004 0.097 -0.132 -0.109 
+ARIMA(0,1,0) LB10 0.7913747 sigma2 0.01802665  fe sigma2 0.01564967 
+antes/despues por separado: ndiffs 1 1  kpss p 0.016317 0.02201038 adf 0.2584433 0.02443468 
+
+== airmiles / aus_airpassengers ==
+[1] 1937 1960    1
+Time Series:
+Start = 1937 
+End = 1960 
+Frequency = 1 
+ [1]   412   480   683  1052  1385  1418  1634  2178  3362  5948  6109  5981  6753  8003 10566 12528 14760 16769 19819 22362 25340 25343 29269 30514
+ndiffs 1 1 2 
+ARIMA(0,1,0) deriva=0.1872 ee=0.0306 t=6.11 aicc con=-18.37 sin=1.41 LB con=0.009
+ARIMA(0,1,1) deriva=0.1818 ee=0.0407 t=4.47 aicc con=-20.89 sin=-11.13 LB con=0.210
+ARIMA(1,1,0) deriva=0.1828 ee=0.0440 t=4.15 aicc con=-19.07 sin=-15.59 LB con=0.016
+[1] 1970 2016    1
+Time Series:
+Start = 1970 
+End = 2016 
+Frequency = 1 
+ [1]  7.32  7.33  7.80  9.38 10.66 11.06 10.86 11.31 12.12 13.02 13.65 13.22 13.19 12.60 13.24 14.41 15.50 16.88 18.82 15.11 17.55 21.86 23.89 26.93
+[25] 26.89 28.83 30.08 30.95 30.19 31.58 32.58 33.48 39.02 41.39 41.60 44.66 46.95 48.73 51.49 50.03 60.64 63.36 66.36 68.20 68.12 69.78 72.60
+ndiffs 2 1 1 
+ARIMA(0,1,0) AICc=216.500 BIC=218.238 LB10=0.717 raizMA=-
+ARIMA(1,1,0) AICc=214.251 BIC=217.629 LB10=0.256 raizMA=-
+ARIMA(2,1,0) AICc=211.877 BIC=216.791 LB10=0.260 raizMA=-
+ARIMA(0,1,1) AICc=215.893 BIC=219.271 LB10=0.435 raizMA=4.9163
+ARIMA(1,1,1) AICc=204.280 BIC=209.194 LB10=0.576 raizMA=1.1185
+ARIMA(2,1,1) AICc=205.897 BIC=212.236 LB10=0.601 raizMA=1.1478
+ARIMA(0,1,2) AICc=214.618 BIC=219.532 LB10=0.362 raizMA=1.8529
+ARIMA(1,1,2) AICc=205.831 BIC=212.170 LB10=0.616 raizMA=1.1580
+ARIMA(2,1,2) AICc=205.879 BIC=213.522 LB10=0.602 raizMA=1.0000
+ARIMA(0,2,0) AICc=226.924 BIC=228.638 LB10=0.011 raizMA=-
+ARIMA(1,2,0) AICc=212.996 BIC=216.323 LB10=0.157 raizMA=-
+ARIMA(2,2,0) AICc=209.035 BIC=213.870 LB10=0.371 raizMA=-
+ARIMA(0,2,1) AICc=198.324 BIC=201.651 LB10=0.669 raizMA=1.1157
+ARIMA(1,2,1) AICc=199.830 BIC=204.664 LB10=0.700 raizMA=1.1418
+ARIMA(2,2,1) AICc=202.177 BIC=208.404 LB10=0.618 raizMA=1.1516
+ARIMA(0,2,2) AICc=199.761 BIC=204.596 LB10=0.712 raizMA=1.1509
+ARIMA(1,2,2) AICc=201.660 BIC=207.887 LB10=0.665 raizMA=1.3229
+ARIMA(2,2,2) AICc=204.377 BIC=211.872 LB10=0.598 raizMA=1.1486
+con deriva ARIMA(0,1,0) aicc=200.590 t=4.71
+con deriva ARIMA(0,1,1) aicc=202.861 t=4.81
+con deriva ARIMA(1,1,0) aicc=202.857 t=4.82
+auto: ARIMA(0,2,1) | adf: ARIMA(0,1,0) with drift 
+
+== austres ==
+[1] 1971.25 1993.25    4.00
+ndiffs 2 1 1 
+
+ ARIMA(2,2,2)(1,0,1)[4]                    : Inf
+ ARIMA(0,2,0)                              : 672.5046
+ ARIMA(1,2,0)(1,0,0)[4]                    : 662.0899
+ ARIMA(0,2,1)(0,0,1)[4]                    : 652.3751
+ ARIMA(0,2,1)                              : 653.134
+ ARIMA(0,2,1)(1,0,1)[4]                    : Inf
+ ARIMA(0,2,1)(0,0,2)[4]                    : 654.5584
+ ARIMA(0,2,1)(1,0,0)[4]                    : 652.1537
+ ARIMA(0,2,1)(2,0,0)[4]                    : 653.9808
+ ARIMA(0,2,1)(2,0,1)[4]                    : Inf
+ ARIMA(0,2,0)(1,0,0)[4]                    : 672.1348
+ ARIMA(1,2,1)(1,0,0)[4]                    : 653.4438
+ ARIMA(0,2,2)(1,0,0)[4]                    : 653.2852
+ ARIMA(1,2,2)(1,0,0)[4]                    : 654.795
+
+ Best model: ARIMA(0,2,1)(1,0,0)[4]                    
+
+
+ ARIMA(0,2,0)                              : 672.5046
+ ARIMA(0,2,0)(0,0,1)[4]                    : 672.474
+ ARIMA(0,2,0)(0,0,2)[4]                    : 674.329
+ ARIMA(0,2,0)(1,0,0)[4]                    : 672.1348
+ ARIMA(0,2,0)(1,0,1)[4]                    : Inf
+ ARIMA(0,2,0)(1,0,2)[4]                    : Inf
+ ARIMA(0,2,0)(2,0,0)[4]                    : 673.4075
+ ARIMA(0,2,0)(2,0,1)[4]                    : Inf
+ ARIMA(0,2,0)(2,0,2)[4]                    : Inf
+ ARIMA(0,2,1)                              : 653.134
+ ARIMA(0,2,1)(0,0,1)[4]                    : 652.3751
+ ARIMA(0,2,1)(0,0,2)[4]                    : 654.5584
+ ARIMA(0,2,1)(1,0,0)[4]                    : 652.1537
+ ARIMA(0,2,1)(1,0,1)[4]                    : Inf
+ ARIMA(0,2,1)(1,0,2)[4]                    : Inf
+ ARIMA(0,2,1)(2,0,0)[4]                    : 653.9808
+ ARIMA(0,2,1)(2,0,1)[4]                    : Inf
+ ARIMA(0,2,1)(2,0,2)[4]                    : Inf
+ ARIMA(0,2,2)                              : 654.3384
+ ARIMA(0,2,2)(0,0,1)[4]                    : 653.4707
+ ARIMA(0,2,2)(0,0,2)[4]                    : 655.7177
+ ARIMA(0,2,2)(1,0,0)[4]                    : 653.2852
+ ARIMA(0,2,2)(1,0,1)[4]                    : Inf
+ ARIMA(0,2,2)(1,0,2)[4]                    : Inf
+ ARIMA(0,2,2)(2,0,0)[4]                    : 655.3132
+ ARIMA(0,2,2)(2,0,1)[4]                    : Inf
+ ARIMA(0,2,3)                              : 655.0957
+ ARIMA(0,2,3)(0,0,1)[4]                    : 655.3069
+ ARIMA(0,2,3)(0,0,2)[4]                    : 657.5951
+ ARIMA(0,2,3)(1,0,0)[4]                    : 655.2627
+ ARIMA(0,2,3)(1,0,1)[4]                    : Inf
+ ARIMA(0,2,3)(2,0,0)[4]                    : 657.4666
+ ARIMA(1,2,0)                              : 664.4767
+ ARIMA(1,2,0)(0,0,1)[4]                    : 662.8928
+ ARIMA(1,2,0)(0,0,2)[4]                    : 664.5693
+ ARIMA(1,2,0)(1,0,0)[4]                    : 662.0899
+ ARIMA(1,2,0)(1,0,1)[4]                    : Inf
+ ARIMA(1,2,0)(1,0,2)[4]                    : Inf
+ ARIMA(1,2,0)(2,0,0)[4]                    : 662.7028
+ ARIMA(1,2,0)(2,0,1)[4]                    : Inf
+ ARIMA(1,2,0)(2,0,2)[4]                    : Inf
+ ARIMA(1,2,1)                              : 654.7074
+ ARIMA(1,2,1)(0,0,1)[4]                    : 653.69
+ ARIMA(1,2,1)(0,0,2)[4]                    : 655.9246
+ ARIMA(1,2,1)(1,0,0)[4]                    : 653.4438
+ ARIMA(1,2,1)(1,0,1)[4]                    : Inf
+ ARIMA(1,2,1)(1,0,2)[4]                    : Inf
+ ARIMA(1,2,1)(2,0,0)[4]                    : 655.4073
+ ARIMA(1,2,1)(2,0,1)[4]                    : 657.5679
+ ARIMA(1,2,2)                              : 656.1518
+ ARIMA(1,2,2)(0,0,1)[4]                    : 654.9551
+ ARIMA(1,2,2)(0,0,2)[4]                    : 657.2587
+ ARIMA(1,2,2)(1,0,0)[4]                    : 654.795
+ ARIMA(1,2,2)(1,0,1)[4]                    : Inf
+ ARIMA(1,2,2)(2,0,0)[4]                    : 656.8755
+ ARIMA(1,2,3)                              : 657.2022
+ ARIMA(1,2,3)(0,0,1)[4]                    : 657.2574
+ ARIMA(1,2,3)(1,0,0)[4]                    : 657.0632
+ ARIMA(2,2,0)                              : 656.1467
+ ARIMA(2,2,0)(0,0,1)[4]                    : 655.942
+ ARIMA(2,2,0)(0,0,2)[4]                    : 658.1878
+ ARIMA(2,2,0)(1,0,0)[4]                    : 655.8545
+ ARIMA(2,2,0)(1,0,1)[4]                    : Inf
+ ARIMA(2,2,0)(1,0,2)[4]                    : Inf
+ ARIMA(2,2,0)(2,0,0)[4]                    : 657.9168
+ ARIMA(2,2,0)(2,0,1)[4]                    : Inf
+ ARIMA(2,2,1)                              : 654.3917
+ ARIMA(2,2,1)(0,0,1)[4]                    : 655.3208
+ ARIMA(2,2,1)(0,0,2)[4]                    : 657.6082
+ ARIMA(2,2,1)(1,0,0)[4]                    : 655.3002
+ ARIMA(2,2,1)(1,0,1)[4]                    : Inf
+ ARIMA(2,2,1)(2,0,0)[4]                    : 657.5265
+ ARIMA(2,2,2)                              : 655.291
+ ARIMA(2,2,2)(0,0,1)[4]                    : 657.5695
+ ARIMA(2,2,2)(1,0,0)[4]                    : 657.0524
+ ARIMA(2,2,3)                              : Inf
+ ARIMA(3,2,0)                              : 652.6565
+ ARIMA(3,2,0)(0,0,1)[4]                    : 654.8972
+ ARIMA(3,2,0)(0,0,2)[4]                    : 657.1979
+ ARIMA(3,2,0)(1,0,0)[4]                    : 654.8977
+ ARIMA(3,2,0)(1,0,1)[4]                    : Inf
+ ARIMA(3,2,0)(2,0,0)[4]                    : 657.1741
+ ARIMA(3,2,1)                              : 654.9088
+ ARIMA(3,2,1)(0,0,1)[4]                    : 657.2003
+ ARIMA(3,2,1)(1,0,0)[4]                    : 657.202
+ ARIMA(3,2,2)                              : Inf
+
+
+
+ Best model: ARIMA(0,2,1)(1,0,0)[4]                    
+
+
+ ARIMA(2,2,2)                              : 655.291
+ ARIMA(0,2,0)                              : 672.5046
+ ARIMA(1,2,0)                              : 664.4767
+ ARIMA(0,2,1)                              : 653.134
+ ARIMA(1,2,1)                              : 654.7074
+ ARIMA(0,2,2)                              : 654.3384
+ ARIMA(1,2,2)                              : 656.1518
+
+ Best model: ARIMA(0,2,1)                              
+
+
+ ARIMA(0,2,0)                              : 672.5046
+ ARIMA(0,2,1)                              : 653.134
+ ARIMA(0,2,2)                              : 654.3384
+ ARIMA(0,2,3)                              : 655.0957
+ ARIMA(0,2,4)                              : 656.8217
+ ARIMA(0,2,5)                              : 657.4364
+ ARIMA(1,2,0)                              : 664.4767
+ ARIMA(1,2,1)                              : 654.7074
+ ARIMA(1,2,2)                              : 656.1518
+ ARIMA(1,2,3)                              : 657.2022
+ ARIMA(1,2,4)                              : 658.7142
+ ARIMA(2,2,0)                              : 656.1467
+ ARIMA(2,2,1)                              : 654.3917
+ ARIMA(2,2,2)                              : 655.291
+ ARIMA(2,2,3)                              : Inf
+ ARIMA(3,2,0)                              : 652.6565
+ ARIMA(3,2,1)                              : 654.9088
+ ARIMA(3,2,2)                              : Inf
+ ARIMA(4,2,0)                              : 654.9084
+ ARIMA(4,2,1)                              : 657.1743
+ ARIMA(5,2,0)                              : 656.563
+
+
+
+ Best model: ARIMA(3,2,0)                              
+
+
+== BJsales.lead ==
+ACF dif -0.447 0.085 -0.07 0.13 -0.091 0.078 -0.078 0.12 -0.052 -0.125 
+PACF dif -0.447 -0.143 -0.116 0.075 0.004 0.058 -0.022 0.085 0.057 -0.169 
+Series: y 
+ARIMA(0,1,1) 
+
+Coefficients:
+          ma1
+      -0.4475
+s.e.   0.0635
+
+sigma^2 = 0.08036:  log likelihood = -23.2
+AIC=50.41   AICc=50.49   BIC=56.41
+Series: y 
+ARIMA(0,1,1) with drift 
+
+Coefficients:
+          ma1   drift
+      -0.4744  0.0235
+s.e.   0.0639  0.0121
+
+sigma^2 = 0.079:  log likelihood = -21.43
+AIC=48.87   AICc=49.04   BIC=57.88
+LB20 0.5715547 shapiro 0.9275141 

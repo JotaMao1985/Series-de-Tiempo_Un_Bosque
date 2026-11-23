@@ -1398,44 +1398,56 @@
       };
     };
 
+    // ACF de la pregunta 6 de la autoevaluación: exportaciones de bienes y servicios de Chile
+    // (% del PIB, 1960-2017; tsibbledata::global_economy), sin diferenciar, rezagos 1 a 20.
+    // Salen de diagnostico/cap4/comprobaciones/r5_cifras.R, etiqueta [P6-01].
+    const ACF_P6 = [0.946, 0.868, 0.802, 0.734, 0.662, 0.593, 0.526, 0.469, 0.429, 0.392,
+      0.344, 0.291, 0.238, 0.198, 0.178, 0.164, 0.137, 0.100, 0.070, 0.039];
+    const N_P6 = 58;
+
+    // Autoevaluación del capítulo (ronda R5, 2026-11-23). Procedencia de las cifras, en
+    // diagnostico/cap4/comprobaciones/r5_cifras.out: P1, etiquetas P1-01 a P1-03 (pasajeros aéreos
+    // de Australia, fpp3::aus_airpassengers); P2, P2-01 a P2-03; P5, P5-01 a P5-04 (datasets::beaver2);
+    // P6 y P7, P6-01 a P7-03 (exportaciones de Chile); P8, P8-01 a P8-04 (importaciones de Perú).
+    // Las de la P3 son las del puente al Capítulo 5 y las del Nilo de la P4, las del Módulo 9.
     AUTOEVALUACIONES['cap4'] = [
       {
         tipo: 'opcion',
         modulo: 6,
-        pregunta: 'Sobre la misma serie de $n = 100$ obtienes AICc $= 1267.51$ para un ARIMA($1,1,1$) y AICc $= 1264.60$ para un ARIMA($1,2,2$). ¿Cuál eliges?',
-        pista: 'Antes de comparar dos números, pregúntate si están calculados sobre los mismos datos. ¿Cuántas observaciones entran en la verosimilitud de cada uno?',
+        pregunta: 'Sobre los pasajeros aéreos anuales de Australia entre 1970 y 2016 ($n = 47$), el mejor ARIMA sin constante de la rejilla con $d = 1$ tiene AICc $= 204.28$, y el mejor con $d = 2$, AICc $= 198.32$. ¿Qué dice esa comparación sobre $d$?',
+        pista: 'Mira de dónde sale un AICc: vuelve a su fórmula en el Módulo 6 y sigue qué cambia en ella al pasar de $d = 1$ a $d = 2$.',
         opciones: [
           {
-            texto: 'El ARIMA($1,2,2$), porque $1264.60 < 1267.51$.',
+            texto: 'Que conviene $d = 2$: seis puntos de AICc son una diferencia clara entre dos modelos.',
             correcta: false,
-            retro: 'Es la trampa central del capítulo. Un AICc menor con más diferencias no significa un modelo mejor: es la verosimilitud de <strong>otros datos</strong>, con una observación menos. Y en el Nilo ese modelo concreto tiene además una raíz MA en $1.03$, casi sobre el círculo unitario.'
+            retro: 'Seis puntos serían una diferencia clara dentro de un mismo $d$. Aquí no: el segundo AICc es la verosimilitud de <strong>otros datos</strong>, con una observación menos, y un valor menor no significa un modelo mejor.'
           },
           {
-            texto: 'Ninguno de los dos por esta comparación: no son comparables, porque tienen distinto $d$.',
+            texto: 'Nada: cada AICc se calcula sobre datos distintos, y solo se comparan con un mismo $d$.',
             correcta: true,
-            retro: 'El primero se calcula sobre $n^{*} = 99$ diferencias y el segundo sobre $98$ segundas diferencias: <strong>datos distintos</strong>. La comparación por AICc solo vale dentro de un mismo $d$. Para decidir entre distintos $d$ hay que usar las pruebas de raíz unitaria, el gráfico, o una evaluación fuera de muestra.'
+            retro: 'El primero se calcula sobre $n^{*} = 46$ diferencias y el segundo sobre $45$ segundas diferencias: <strong>datos distintos</strong>. En esta serie la duda sobre $d$ es real —KPSS pide dos diferencias, y ADF y PP, una—, pero no se resuelve restando dos AICc.'
           },
           {
-            texto: 'El ARIMA($1,1,1$), porque menos diferencias es siempre mejor por parsimonia.',
+            texto: 'Que conviene $d = 1$: a igualdad de ajuste, se prefiere el modelo con menos diferencias.',
             correcta: false,
-            retro: 'La conclusión acierta por casualidad pero el razonamiento no sirve. La parsimonia es un criterio para $p$ y $q$ una vez fijado $d$; el orden de diferenciación no se elige por parsimonia sino por si la serie tiene o no raíz unitaria.'
+            retro: 'No diferenciar más de lo necesario es una cautela razonable, y el Módulo 8 explica por qué. Pero no sale de esta comparación: aquí no hay «igualdad de ajuste» que valorar, porque los dos AICc no miden lo mismo.'
           },
           {
-            texto: 'El que tenga mejor BIC, que sí es comparable entre distintos $d$.',
+            texto: 'Que hay que decidir con el BIC, que penaliza más y sí se compara entre distintos $d$.',
             correcta: false,
-            retro: 'El BIC tiene exactamente el mismo problema: también parte de $-2\\log L$, y esa verosimilitud está calculada sobre $n^{*} = n - d$ observaciones. Cambiar de criterio no arregla el que los datos sean distintos.'
+            retro: 'El BIC tiene el mismo problema: también parte de $-2\\log L$, y esa verosimilitud se calcula sobre $n^{*} = n - d$ observaciones. Cambiar de criterio no arregla que los datos sean distintos.'
           }
         ]
       },
       {
         tipo: 'numerica',
         modulo: 9,
-        pregunta: 'Para el ARIMA($1,1,1$) del Nilo, $\\hat\\sigma = 142.045$ y el primer peso es $\\psi_1 = 0.3802$ (con $\\psi_0 = 1$). ¿Cuánto vale $\\sigma_2$, la desviación del error de pronóstico a dos pasos? Da dos decimales.',
-        pista: 'La fórmula es $\\sigma_h = \\sigma\\sqrt{\\sum_{j=0}^{h-1}\\psi_j^2}$. Con $h = 2$ entran solo dos términos: $\\psi_0 = 1$ y $\\psi_1$.',
-        respuesta: 151.97,
-        tolerancia: 0.4,
-        retroAcierto: '$142.045 \\times \\sqrt{1 + 0.3802^2} = 142.045 \\times 1.0699 = 151.97$. Fíjate en que crece poco: el intervalo a dos pasos es apenas un $7\\,\\%$ más ancho que a uno.',
-        retroFallo: 'Es $\\sigma_2 = \\sigma\\sqrt{\\psi_0^2 + \\psi_1^2} = 142.045\\sqrt{1 + 0.1445} = 151.97$. Los dos errores frecuentes: olvidar el término $\\psi_0 = 1$ (daría $54.0$), o sumar los $\\psi$ sin elevarlos al cuadrado. El $\\psi_0$ está siempre, y por eso $\\sigma_1 = \\sigma$ exactamente.'
+        pregunta: 'Un ARIMA($1,1,0$) tiene $\\phi = 0.5$ y $\\sigma = 2$. ¿Cuánto vale $\\sigma_3$, la desviación típica del error de pronóstico a tres pasos? Da dos decimales.',
+        pista: 'Para los pesos $\\psi$, escribe primero el modelo sobre $y_t$, como en el desarrollo del Módulo 1, y cuenta cuántos pesos entran en $\\sigma_3$. Conserva al menos tres decimales en los pasos intermedios.',
+        respuesta: 5.02,
+        tolerancia: 0.011,
+        retroAcierto: 'Sobre $y_t$ el modelo es un AR(2) con $\\phi^{*} = (1.5,\\ -0.5)$, así que $\\psi_0 = 1$, $\\psi_1 = 1.5$ y $\\psi_2 = 1.5 \\times 1.5 - 0.5 = 1.75$. Entonces $\\sigma_3 = 2\\sqrt{1 + 1.5^2 + 1.75^2} = 2\\sqrt{6.3125} = 5.02$.',
+        retroFallo: 'Sobre $y_t$ el modelo es un AR(2) con $\\phi^{*} = (1.5,\\ -0.5)$: $\\psi_0 = 1$, $\\psi_1 = 1.5$ y $\\psi_2 = 1.75$, y $\\sigma_3 = 2\\sqrt{1 + 2.25 + 3.0625} = 5.02$. Si te salió $2.29$, usaste $\\psi_j = \\phi^{\\,j}$, los pesos del AR(1) sin la diferencia; $3.46$ es tomar todos los pesos iguales a $1$; $4.61$, olvidar $\\psi_0$; $4.12$, sumar los pesos sin elevarlos al cuadrado; $6.27$, sumar un peso de más, $\\psi_3$; $2.51$, olvidar $\\sigma$; y $5.00$, redondear la raíz a $2.5$ antes de multiplicar.'
       },
       {
         tipo: 'grafico',
@@ -1444,8 +1456,8 @@
         descripcionGrafico: describirBarrasQuiz(
           'Función de autocorrelación de los residuales de un ARIMA ajustado a una serie mensual',
           PUENTE.no_estacional.acf_residuales, PUENTE.no_estacional.banda),
-        pregunta: 'Esta es la ACF de los residuales de un ARIMA ajustado a una serie <strong>mensual</strong>. ¿Qué hay que hacer?',
-        pista: 'No mires solo si hay barras fuera de la banda: mira <em>en qué rezagos</em> están. ¿Tienen algo en común los números 12 y 24 en una serie mensual?',
+        pregunta: 'Esta es la ACF de los residuales de un ARIMA ajustado a una serie mensual. ¿Qué hay que hacer?',
+        pista: 'No te quedes en cuántas barras salen de la banda: fíjate en cuáles son.',
         dibujar: canvas => crearGraficoBarras(canvas,
           etiquetasRezago(PUENTE.no_estacional.acf_residuales.length),
           PUENTE.no_estacional.acf_residuales, {
@@ -1454,22 +1466,22 @@
           }),
         opciones: [
           {
-            texto: 'Aumentar $q$ hasta que las barras entren en la banda.',
+            texto: 'Aumentar $q$ hasta que todas las barras queden dentro de la banda de confianza.',
             correcta: false,
-            retro: 'Funcionaría en el sentido técnico, pero necesitarías $q = 24$ para alcanzar el rezago 24, es decir veinticuatro parámetros para describir un patrón que se repite cada doce meses. Un modelo estacional captura lo mismo con dos.'
+            retro: 'Funcionaría en el sentido técnico, pero haría falta $q = 24$ para alcanzar el rezago 24: veinticuatro parámetros para describir un patrón que se repite cada doce meses. Un modelo estacional recoge lo mismo con dos.'
           },
           {
-            texto: 'Diferenciar una vez más: la autocorrelación alta indica no estacionariedad.',
+            texto: 'Diferenciar una vez más: una autocorrelación tan alta indica no estacionariedad.',
             correcta: false,
-            retro: 'Diferenciar de nuevo en el rezago 1 no toca el patrón de los rezagos 12 y 24, y además introduciría la raíz unitaria en el MA que estudió el Módulo 8. Lo que hace falta aquí es una diferencia <strong>estacional</strong> $\\nabla_{12}$, que es otra cosa.'
+            retro: 'Diferenciar de nuevo en el rezago 1 no toca el patrón de los rezagos 12 y 24, y además puede dejar en el MA la raíz unitaria que estudió el Módulo 8. Lo que hace falta aquí es una diferencia <strong>estacional</strong>, $\\nabla_{12}$, que es otra cosa.'
           },
           {
-            texto: 'Pasar a un modelo estacional: el patrón está en los múltiplos del período $m = 12$.',
+            texto: 'Pasar a un modelo estacional: lo que sobra está en los rezagos múltiplos de 12.',
             correcta: true,
-            retro: '$\\hat\\rho_{12} = 0.72$ y $\\hat\\rho_{24} = 0.67$ frente a una banda de $0.163$: la estructura sobrante es exactamente estacional. Subir $q$ hasta 24 lo cubriría con dos docenas de parámetros; un SARIMA lo hace con dos. Es el Capítulo 5.'
+            retro: '$\\hat\\rho_{12} = 0.72$ y $\\hat\\rho_{24} = 0.67$, frente a una banda de $0.163$: la estructura que sobra es estacional. Subir $q$ hasta 24 la cubriría con dos docenas de parámetros; un SARIMA lo hace con dos. Es el Capítulo 5.'
           },
           {
-            texto: 'Nada: la mayoría de las barras están dentro de la banda, así que el modelo es adecuado.',
+            texto: 'Nada: casi todas las barras están dentro de la banda, y el modelo es adecuado.',
             correcta: false,
             retro: 'Contar cuántas barras se salen no basta, y aquí las que se salen lo hacen por un factor de cuatro. Ljung–Box(24) da $Q = 222.4$ con $p < 10^{-6}$: el rechazo es rotundo. Un patrón sistemático en pocos rezagos es peor señal que ruido repartido en muchos.'
           }
@@ -1478,43 +1490,63 @@
       {
         tipo: 'multiple',
         modulo: 5,
-        pregunta: 'Marca <strong>todas</strong> las afirmaciones correctas sobre la constante en un modelo ARIMA.',
-        pista: 'Son tres. Piensa en: qué significa la constante cuando $d = 1$, qué hace <code>stats::arima</code> con <code>include.mean</code> si $d \\ge 1$, y qué grado de tendencia genera cada $d$.',
+        pregunta: 'Marca <strong>todas</strong> las afirmaciones correctas sobre la constante de un modelo ARIMA.',
+        pista: 'Para cada afirmación, piensa qué grado tiene la tendencia que genera la constante con ese $d$, y qué le pasa al pronóstico cuando la constante no está.',
         opciones: [
-          { texto: 'Con $d = 1$ la deriva, $\\mu_w = c/\\phi(1)$, es la media de las <em>diferencias</em>: una tendencia lineal en la serie.', correcta: true },
-          { texto: 'Con $d \\ge 1$, <code>stats::arima</code> ignora <code>include.mean</code> sin avisar.', correcta: true },
-          { texto: 'Sin constante, un modelo con $d = 2$ pronostica una parábola.', correcta: false },
-          { texto: 'Con $d \\ge 2$, <code>forecast::Arima</code> avisa y no ajusta la deriva.', correcta: true },
-          { texto: 'La constante de un ARIMA($p,0,q$) es la ordenada al origen de una regresión, no la media del proceso.', correcta: false }
+          {
+            texto: 'Con $d = 1$, la deriva $\\mu_w = c/\\phi(1)$ es el incremento medio por período: una tendencia lineal.',
+            correcta: true,
+            retro: 'Tomando esperanzas en la ecuación, $\\mu_w = c/\\phi(1)$ es la media de $\\nabla y_t$: lo que la serie sube o baja en promedio cada período, es decir, una pendiente. Es lo que <code>forecast</code> llama deriva.'
+          },
+          {
+            texto: 'Sin constante, un modelo con $d = 2$ pronostica a largo plazo una parábola, no una línea recta.',
+            correcta: false,
+            retro: 'Sin constante, con $d = 2$ el pronóstico acaba en una recta: la segunda diferencia del pronóstico tiende a cero. La parábola necesitaría una constante con $d = 2$.'
+          },
+          {
+            texto: 'Con $d = 1$ y sin deriva, el pronóstico se aplana en un nivel, que puede no ser el último dato.',
+            correcta: true,
+            retro: 'Sin deriva no hay pendiente a largo plazo y el pronóstico se aplana; pero la parte ARMA lo mueve durante unos pasos, y el nivel al que llega no es, en general, el último dato. En el Nilo parte de $740$ y se aplana en $842.17$.'
+          },
+          {
+            texto: 'Con $d \\ge 2$, <code>forecast::Arima</code> avisa y no ajusta la deriva, aunque se le pida.',
+            correcta: true,
+            retro: 'Es lo que hace: avisa de que no ajusta la deriva con dos o más diferencias. Una constante con $d = 2$ generaría una tendencia cuadrática, y el Módulo 5 explica por qué no conviene extrapolarla.'
+          },
+          {
+            texto: 'En un ARIMA($p,0,q$), el <code>intercept</code> que da R es la constante $c$ de la ecuación, no la media.',
+            correcta: false,
+            retro: 'Es al revés: lo que R llama <code>intercept</code> en un modelo con $d = 0$ es la media $\\mu$ del proceso. La constante de la ecuación es $c = \\mu\\,\\phi(1)$, y solo coinciden si $p = 0$.'
+          }
         ],
-        retroAcierto: 'Las tres. Y las dos falsas son justo las que el capítulo desmiente midiendo: con $d = 2$ y sin constante la segunda diferencia del pronóstico tiende a cero ($\\nabla^2\\hat y \\to 0$), es decir a largo plazo sale una <strong>recta</strong>; y el <code>intercept</code> que devuelve R para un ARIMA($p,0,q$) <strong>es</strong> la media del proceso, $920.70$ en el Nilo, pese al nombre.',
-        retroFallo: 'Las tres correctas son las que hablan de la deriva con $d = 1$ (que es $\\mu_w = c/\\phi(1)$, no la $c$ de la ecuación salvo con $p = 0$), de <code>include.mean</code> con $d \\ge 1$ y de la deriva con $d \\ge 2$. Sobre las falsas: la parábola necesitaría constante <em>con</em> $d = 2$, y <code>forecast</code> se niega precisamente a eso; sin constante, el pronóstico con $d = 2$ es una recta (lo verifica el Módulo 9 midiendo $\\nabla^2\\hat y$). Y el <code>intercept</code> de R en un modelo con $d = 0$ es la media, no una ordenada al origen: el nombre despista.'
+        retroAcierto: 'Las que hablan de la deriva con $d = 1$, del pronóstico que se aplana y de lo que hace <code>forecast::Arima</code> con $d \\ge 2$. Las dos falsas son las que el capítulo desmiente midiendo: con $d = 2$ y sin constante el pronóstico termina en una <strong>recta</strong>, y el <code>intercept</code> de R <strong>es</strong> la media del proceso, pese al nombre.',
+        retroFallo: 'Las correctas son las que hablan de la deriva con $d = 1$, del pronóstico que se aplana cuando no hay deriva y de lo que hace <code>forecast::Arima</code> con $d \\ge 2$. Abajo va la explicación de cada opción que quedó mal juzgada.'
       },
       {
         tipo: 'opcion',
         modulo: 3,
-        pregunta: 'Simulas $1000$ series de ruido blanco puro de longitud $100$ y les añades a todas un escalón en la posición $29$ (la de 1899 en el Nilo). ¿Con qué frecuencia rechaza KPSS la hipótesis de estacionariedad?',
-        pista: 'Recuerda cómo se construye el estadístico: sobre las <em>sumas parciales</em> de los residuales respecto de la media global. ¿Qué le pasa a esas sumas cuando todos los residuales de un tramo tienen el mismo signo?',
+        pregunta: '<code>beaver2</code> trae la temperatura corporal de un castor medida cada 10 minutos (100 lecturas). Desde la lectura 39, cuando el animal sale de su refugio, la media sube unos $0.8$ °C. Sobre la serie completa, KPSS rechaza la estacionariedad ($p < 0.01$) y ADF no rechaza la raíz unitaria ($p = 0.57$). ¿Qué conviene hacer antes de fijar $d$?',
+        pista: 'Repasa en el Módulo 3 qué contrasta cada prueba y qué le pasó a cada una en el experimento del cambio de nivel.',
         opciones: [
           {
-            texto: 'Prácticamente siempre, si el escalón es apreciable: con el del Nilo, el $100\\,\\%$ de las veces.',
+            texto: 'Diferenciar una vez: las dos pruebas coinciden, y eso cierra la discusión sobre $d$.',
+            correcta: false,
+            retro: 'Que coincidan no las hace fiables aquí. El experimento del Módulo 3 mostró que un escalón hace rechazar a KPSS y también impide rechazar al ADF de <code>adf.test</code>: con el salto dentro, las dos pueden estar respondiendo al escalón y no a una raíz unitaria.'
+          },
+          {
+            texto: 'Ajustar el salto como un escalón y volver a examinar lo que queda de la serie.',
             correcta: true,
-            retro: 'Es el experimento del Módulo 3. Sin escalón rechaza el $4.8\\,\\%$ —su tamaño nominal—, y con el escalón real del Nilo ($1.95$ desviaciones típicas) el $100\\,\\%$. Basta un escalón de $0.79$ desviaciones para llegar al $70.8\\,\\%$. KPSS no distingue una raíz unitaria de un cambio de nivel.'
+            retro: 'Con el salto dentro, las pruebas no separan una raíz unitaria de un cambio de nivel (Módulo 3). Quitado el escalón ($0.81$ °C), lo que queda sigue muy autocorrelacionado ($r_1 = 0.78$), y probadas en cada tramo, a un lado y otro de la lectura 39, las tres pruebas siguen pidiendo una diferencia: la discusión sobre $d$ no termina ahí, pero ya es sobre la serie, y no sobre el salto.'
           },
           {
-            texto: 'Alrededor del $5\\,\\%$, porque las series son estacionarias por construcción.',
+            texto: 'Diferenciar dos veces: una diferencia para la raíz unitaria y otra para el salto.',
             correcta: false,
-            retro: 'Eso es lo que ocurre <strong>sin</strong> el escalón, y confirma que la prueba está bien calibrada: $4.8\\,\\%$ frente al $5\\,\\%$ nominal. Con el escalón la cosa cambia por completo, porque las sumas parciales dejan de compensarse y el estadístico se dispara.'
+            retro: 'Una sola diferencia ya convierte un escalón en un único valor atípico: no hace falta otra para «quitarlo». Y diferenciar de más deja una raíz unitaria en la parte MA (Módulo 8). Antes de subir $d$ conviene volver al gráfico.'
           },
           {
-            texto: 'Nunca, porque KPSS solo detecta raíces unitarias y aquí no hay ninguna.',
+            texto: 'No diferenciar: un salto con causa conocida prueba que no hay raíz unitaria.',
             correcta: false,
-            retro: 'KPSS no prueba "hay raíz unitaria": su hipótesis nula es <strong>la serie es estacionaria alrededor de una media constante</strong>. Una serie con un escalón no lo es, así que la prueba rechaza con toda la razón. El error está en traducir su rechazo por "hay que diferenciar".'
-          },
-          {
-            texto: 'Depende del tamaño de la muestra, pero no del tamaño del escalón.',
-            correcta: false,
-            retro: 'Depende de los dos, y la simulación lo muestra: con $n$ fijo en 100, la tasa de rechazo pasa de alrededor del $5\\,\\%$ al $100\\,\\%$ solo moviendo el tamaño del escalón $\\beta$. Mientras el escalón es pequeño, el estadístico crece aproximadamente como $n\\beta^2/\\hat\\sigma^2_{LP}$.'
+            retro: 'El salto puede bastar para que KPSS rechace, pero no dice nada de lo que hay a cada lado: quitado el escalón, lo que queda tiene $r_1 = 0.78$ y hay que examinarlo. Fijar $d = 0$ sin mirarlo es el mismo error que diferenciar sin mirar el gráfico, en sentido contrario.'
           }
         ]
       },
@@ -1522,75 +1554,92 @@
         tipo: 'grafico',
         modulo: 4,
         alto: 250,
-        descripcionGrafico: describirBarrasQuiz('Función de autocorrelación muestral de una serie sin diferenciar',
-          NILO.identificacion.cruda.acf, NILO.identificacion.cruda.banda),
-        pregunta: 'Esta es la ACF de una serie <strong>sin diferenciar</strong>. ¿Qué se puede concluir sobre $p$ y $q$?',
-        pista: 'Antes de leer $p$ y $q$ en un correlograma hay que estar seguro de una cosa. ¿Qué condición exige la tabla de identificación del Capítulo 3?',
-        dibujar: canvas => crearGraficoBarras(canvas, REZAGOS, NILO.identificacion.cruda.acf, {
+        descripcionGrafico: describirBarrasQuiz('Función de autocorrelación muestral de una serie anual sin diferenciar',
+          ACF_P6, banda(N_P6)),
+        pregunta: 'Esta es la ACF de las exportaciones de bienes y servicios de Chile, en porcentaje del PIB (58 datos anuales, de 1960 a 2017), <strong>sin diferenciar</strong>. ¿Qué se puede concluir sobre $p$ y $q$?',
+        pista: 'Antes de contar barras, mira la forma en que bajan.',
+        dibujar: canvas => crearGraficoBarras(canvas, REZAGOS, ACF_P6, {
           etiqueta: 'ACF muestral', color: COLORES_GRAFICO.primario,
-          lineas: lineasBanda(NILO.identificacion.cruda.n), tituloX: 'Rezago k'
+          lineas: lineasBanda(N_P6), tituloX: 'Rezago k'
         }),
         opciones: [
           {
-            texto: 'Es un AR de orden alto, porque hay muchas barras fuera de la banda.',
+            texto: 'Que es un AR de orden alto, porque hay muchas barras fuera de la banda.',
             correcta: false,
-            retro: 'Es el error de principiante más caro del capítulo. Un AR estacionario tiene una ACF que decae <strong>geométricamente</strong> y pronto entra en la banda; esta baja despacio y, pasado el rezago 3, sigue fuera de la banda en $8$ de los $17$ rezagos que quedan hasta el 20 (aún $0.237$ en el 13). Lo que ves no es memoria del proceso: es que el nivel de la serie se mueve.'
+            retro: 'Un AR estacionario tiene una ACF que decae, de forma exponencial u oscilante (Capítulo 3), y esa lectura presupone que la serie es estacionaria. Con una caída tan lenta, lo primero es preguntarse si el nivel de la serie se mueve: leer órdenes aquí es confundir la no estacionariedad con dinámica.'
           },
           {
-            texto: 'Es un MA($q$) con $q$ igual al número de barras significativas.',
+            texto: 'Que es un MA($q$), con $q$ igual al número de barras fuera de la banda.',
             correcta: false,
-            retro: 'Un MA($q$) tiene la ACF <strong>exactamente</strong> cero a partir del rezago $q$ — un corte limpio, no un descenso gradual. Aquí no hay corte por ninguna parte.'
+            retro: 'Un MA($q$) tiene la ACF teórica nula después del rezago $q$: un corte, no un descenso gradual. Aquí no hay corte por ninguna parte.'
           },
           {
-            texto: 'Que $d = 1$, porque el primer valor es $0.498$, cercano a $0.5$.',
+            texto: 'Que hace falta $d = 2$, porque las barras tardan más de diez rezagos en entrar.',
             correcta: false,
-            retro: 'Que la serie no sea estacionaria es razonable, pero de ahí no sale $d = 1$, y el argumento tampoco sirve: el valor de $\\hat\\rho_1$ no determina $d$. Lo que indica no estacionariedad es la <strong>forma</strong> del decaimiento —lento y sin cortar—, no la altura de la primera barra. Un AR(1) con $\\phi = 0.5$ tendría también $\\rho_1 = 0.5$ y sería perfectamente estacionario.'
+            retro: 'Que la serie no parezca estacionaria es razonable, pero la ACF no dice cuántas diferencias hacen falta: la lentitud de la caída no mide $d$. Eso lo deciden el gráfico, las pruebas y los síntomas de haber diferenciado de más (Módulo 3).'
           },
           {
-            texto: 'Nada todavía: esa forma indica no estacionariedad, y hay que resolver $d$ antes de leer $p$ y $q$.',
+            texto: 'Nada todavía: una caída tan lenta obliga a decidir $d$ antes de leer $p$ y $q$.',
             correcta: true,
-            retro: 'Una ACF que decae despacio y no corta —aquí $0.498,\\ 0.385,\\ 0.328,\\ 0.239,\\dots$— es el retrato de una serie que no es estacionaria alrededor de una media fija: por una raíz unitaria o por un cambio de nivel como el de 1899 (Módulos 3 y 8). La tabla de identificación presupone estacionariedad; aplicarla aquí no informa de nada. Con $d = 1$, la ACF corta: solo destacan el rezago 1 ($-0.402$) y, aislado, el 8 ($0.231$).'
+            retro: 'Una ACF que baja despacio y sin cortar —aquí $0.946,\\ 0.868,\\ 0.802,\\dots$, fuera de la banda hasta el rezago 12— es compatible con una serie no estacionaria. La tabla de identificación se lee sobre la serie ya estacionaria: primero se decide $d$, y después se leen $p$ y $q$ en la ACF y la PACF de la serie diferenciada. Con $d = 1$, en esta serie solo sale de la banda el rezago 1 ($0.270$).'
           }
         ]
       },
       {
         tipo: 'opcion',
         modulo: 7,
-        pregunta: '<code>auto.arima</code> devuelve un ARIMA($1,1,1$) con AICc $1267.507$. La búsqueda exhaustiva confirma que es el mínimo, y el séptimo clasificado tiene $1269.348$. ¿Qué se concluye?',
-        pista: '¿Cuánta diferencia de AICc hace falta para distinguir dos modelos? Compara ese umbral con la distancia entre el primero y el séptimo.',
+        pregunta: 'Sobre esa misma serie de exportaciones de Chile, <code>auto.arima</code> devuelve un ARIMA($0,1,2$) con deriva, AICc $265.85$. La búsqueda exhaustiva encuentra un ARIMA($0,1,1$) sin deriva con AICc $264.32$, y su tercer clasificado tiene $266.26$. ¿Qué se concluye?',
+        pista: 'Mide primero cuánto separa el AICc a esos tres modelos, y busca en el Módulo 7 qué hace el capítulo con distancias de ese tamaño.',
         opciones: [
           {
-            texto: 'Que el ARIMA($1,1,1$) es el modelo verdadero, ya que lo confirman las dos búsquedas.',
+            texto: 'Que la búsqueda escalonada falló, y su modelo debe sustituirse por el de la exhaustiva.',
             correcta: false,
-            retro: 'Que dos búsquedas coincidan dice que el <em>algoritmo</em> es consistente, no que el modelo sea verdadero. Ambas optimizan el mismo criterio sobre los mismos datos, así que coincidir es lo esperable. Y con siete candidatos a menos de $2$ puntos, el criterio apenas los separa.'
+            retro: 'La escalonada explora un vecindario y no garantiza el mínimo: aquí se quedó a $1.53$ puntos de él, y por eso conviene contrastarla con la exhaustiva. Pero una distancia así no descarta a nadie: este capítulo toma por convención que diferencias menores que $2$ puntos no distinguen modelos.'
           },
           {
-            texto: 'Que la búsqueda escalonada es innecesaria, porque la exhaustiva llega al mismo sitio.',
+            texto: 'Que el ARIMA($0,1,1$) es el modelo verdadero, porque es el mínimo de la búsqueda completa.',
             correcta: false,
-            retro: 'Aquí llegaron al mismo sitio, pero eso no está garantizado: la escalonada explora un vecindario y puede quedarse en un óptimo local. Es la escalonada la que existe por eficiencia ($18$ modelos frente a $42$); precisamente por eso conviene contrastar con la completa en casos difíciles.'
+            retro: 'Ser el mínimo de la búsqueda completa dice que es el mejor según el AICc de los que la búsqueda pudo ajustar, no que sea el verdadero. Y hay otro modelo a $1.53$ puntos y otro a $1.94$: el criterio apenas los separa.'
           },
           {
-            texto: 'Que hay siete modelos prácticamente indistinguibles, y conviene decirlo en vez de presentar un único ganador.',
+            texto: 'Que hay tres modelos que el AICc apenas separa, y conviene decirlo al dar el resultado.',
             correcta: true,
-            retro: 'La diferencia entre el primero y el séptimo es de $1.84$ puntos, por debajo del umbral habitual de $2$. Entre esos siete está el ARIMA($0,1,1$) que proponía el correlograma. <code>auto.arima</code> no miente, pero su salida de una línea no comunica esa incertidumbre; <code>trace = TRUE</code> sí.'
+            retro: 'Del primero al tercero hay $1.94$ puntos, menos de los $2$ que este capítulo toma por convención como indistinguibles. La salida de una línea de <code>auto.arima</code> no comunica esa incertidumbre; <code>trace = TRUE</code> sí.'
           },
           {
-            texto: 'Que como la diferencia es menor que $2$, hay que elegir el modelo con menos parámetros de los siete.',
+            texto: 'Que, con menos de $2$ puntos entre ellos, se elige sin más el de menos parámetros de los tres.',
             correcta: false,
-            retro: 'La parsimonia es un criterio razonable para desempatar y llevaría al ARIMA($0,1,1$), que es defendible. Pero la conclusión que pide la pregunta es previa: lo primero es <strong>reconocer que hay un empate</strong>. Elegir por parsimonia sin decir que había siete candidatos oculta la misma incertidumbre.'
+            retro: 'La parsimonia es un criterio razonable para desempatar, y llevaría al ARIMA($0,1,1$), que es defendible. Pero lo primero es <strong>reconocer que hay un empate</strong>: elegir por parsimonia sin decir que había tres candidatos oculta la misma incertidumbre.'
           }
         ]
       },
       {
-        tipo: 'numerica',
+        tipo: 'opcion',
         modulo: 8,
-        unidad: '',
-        pregunta: 'Ajustas un MA($1$) a $\\nabla^2$Nilo y obtienes $\\hat\\theta = -1.0000$. ¿Cuál es el módulo de la raíz del polinomio $\\theta(B) = 1 + \\hat\\theta B$? Da cuatro decimales.',
-        pista: 'La raíz de $1 + \\theta B = 0$ es $B = -1/\\theta$. Sustituye $\\theta = -1$ y toma el valor absoluto.',
-        respuesta: 1.0,
-        tolerancia: 0.002,
-        retroAcierto: 'La raíz es $B = -1/(-1) = 1$, de módulo $1.0000$: cae <strong>exactamente sobre el círculo unitario</strong>. Eso significa que $\\theta(B) = 1 - B$, el mismo operador de diferencia, así que el término MA está deshaciendo la segunda diferencia. Es la firma algebraica de la sobrediferenciación.',
-        retroFallo: 'La raíz de $1 + \\theta B$ es $B = -1/\\theta$, y con $\\theta = -1$ da $B = 1$, módulo $1.0000$. Si respondiste $-1$, te faltó el módulo; si respondiste $0$, quizá resolviste $\\theta B = 0$. Lo importante es la lectura: módulo exactamente $1$ significa no invertible, y aquí es porque $(1+\\theta B) = (1-B)$ cancela la diferencia que acabas de imponer.'
+        pregunta: 'Importaciones de bienes y servicios de Perú, en porcentaje del PIB (58 datos anuales). Un MA(1) sin media ajustado a $\\nabla y_t$ da $\\hat\\theta = -0.288$ y pasa Ljung–Box(10) ($p = 0.43$). Ajustado a $\\nabla^2 y_t$ da $\\hat\\theta = -1.000$ y también lo pasa ($p = 0.17$). La varianza de $\\nabla y_t$ es $5.12$, y la de $\\nabla^2 y_t$, $13.18$. ¿Qué se concluye sobre $d$?',
+        pista: 'Los dos modelos pasan Ljung–Box. Repasa todo lo que el Módulo 8 enseña a mirar en un modelo ajustado.',
+        opciones: [
+          {
+            texto: 'Que $d = 2$ sobra: con $\\hat\\theta = -1$, la raíz MA cae sobre el círculo y deshace la diferencia.',
+            correcta: true,
+            retro: 'La raíz de $1 + \\hat\\theta B$ es $-1/\\hat\\theta$, de módulo $1.000$ con tres decimales: el polinomio MA es, en la práctica, $(1 - B)$, el mismo operador de diferencia, y cancela la segunda. Hay una comprobación: el $\\hat\\sigma^2$ de ese MA(1) es $5.12$, la varianza de $\\nabla y_t$. El modelo ha vuelto a la serie diferenciada una sola vez.'
+          },
+          {
+            texto: 'Que $d = 2$ también es válido: sus residuales pasan Ljung–Box, igual que los de $d = 1$.',
+            correcta: false,
+            retro: 'Pasar Ljung–Box no basta: un modelo con una diferencia de más puede dejar residuales sin estructura, porque su parte MA deshace la diferencia que sobra. El diagnóstico incluye las raíces, y la de este MA(1) tiene módulo $1.000$.'
+          },
+          {
+            texto: 'Que $d = 1$ es mejor, porque con la segunda diferencia la varianza sube de $5.12$ a $13.18$.',
+            correcta: false,
+            retro: 'La conclusión es la buena y el argumento no sirve. Que la varianza suba o baje al diferenciar repite lo que dice $r_1$ (Módulo 2.7) y no decide $d$: hay series estacionarias en las que diferenciar reduce la varianza. Lo que delata la diferencia sobrante es la raíz MA sobre el círculo.'
+          },
+          {
+            texto: 'Que hay que comparar el AICc de los dos modelos y quedarse con el $d$ del menor.',
+            correcta: false,
+            retro: 'Los AICc de modelos con distinto $d$ no se comparan: uno se calcula sobre $57$ observaciones y el otro sobre $56$ (Módulo 6). Y aquí no hace falta ningún criterio: $\\hat\\theta = -1$ ya dice que la segunda diferencia sobra.'
+          }
+        ]
       }
     ];
 

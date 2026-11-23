@@ -275,6 +275,72 @@ print(round(razon, 3), round(razon0, 1))
       <p>Con el modelo definido queda la pregunta práctica: frente a una serie concreta, ¿cómo se eligen $p$, $d$ y
         $q$, y cómo se sabe que la elección fue buena? El módulo siguiente presenta el procedimiento que responde
         a ambas cosas.</p>
+
+      <div class="exercise">
+        <h4><i class="fas fa-pen-to-square mr-2" aria-hidden="true"></i>Para practicar</h4>
+        <div class="ejercicio-guiado">
+          <p class="ejercicio-enunciado" style="margin-bottom: 0.75rem;"><code>tcm1y</code>, del paquete <code>tseries</code> (se carga con <code>data(tcm)</code>), es el rendimiento mensual a un año de los títulos del Tesoro de Estados Unidos: 558 datos, de abril de 1953 a septiembre de 1999. Ajústale dos modelos, sin diferenciarla antes, y entrega:</p>
+          <ol style="list-style-type: lower-alpha; margin-top: 0.5rem; margin-bottom: 0;">
+            <li>Un AR(2) con media: la suma $\hat\phi_1 + \hat\phi_2$ y el módulo de sus dos raíces.</li>
+            <li>Un ARIMA($1,1,0$), escrito como AR(2) sobre $y_t$ con el desarrollo del módulo: $\phi_1^{*}$ y $\phi_2^{*}$, su suma y el módulo de sus raíces.</li>
+            <li>El pronóstico de cada modelo a 1, 5 y 10 años, con su error estándar. ¿En qué se nota que uno estima la raíz y el otro la impone?</li>
+          </ol>
+          <div class="ejercicio-acciones">
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c4m1-pista">
+              <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c4m1-sol">
+              <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="ejercicio-panel pista" id="c4m1-pista" hidden>
+            <p style="margin:0;">Para (b), una vez ajustado el ARIMA($1,1,0$), no hace falta nada más: el desarrollo paso a paso del módulo dice cómo pasar de $\phi$ a $(\phi_1^{*},\ \phi_2^{*})$. Para (c), <code>predict()</code> devuelve el pronóstico y su error estándar; mira hacia dónde va cada uno al alejarse.</p>
+          </div>
+          <div class="ejercicio-panel solucion" id="c4m1-sol" hidden>
+            <p><strong>Respuesta: los dos modelos son un AR(2) sobre $y_t$ con coeficientes casi iguales. La diferencia está en una raíz: el AR(2) la estima en $1.028$ y el ARIMA($1,1,0$) la fija en $1$, y de eso depende todo el pronóstico a largo plazo.</strong></p>
+            <pre><code class="language-r">library(tseries); data(tcm)       # tcm1y: rendimiento a un anio, mensual
+y &lt;- tcm1y
+length(y)
+#&gt; [1] 558
+
+# (a) AR(2) con media, sin diferenciar: la raiz se ESTIMA
+ar2 &lt;- arima(y, order = c(2, 0, 0), method = "ML")
+round(coef(ar2), 4)
+#&gt;       ar1       ar2 intercept
+#&gt;    1.3429   -0.3599    5.8072
+round(c(suma = sum(coef(ar2)[1:2]), modulo = sort(Mod(polyroot(c(1, -coef(ar2)[1:2]))))), 4)
+#&gt;    suma modulo1 modulo2
+#&gt;  0.9830  1.0278  2.7033
+
+# (b) ARIMA(1,1,0): la raiz se IMPONE. Escrito sobre y_t es un AR(2)
+ari &lt;- arima(y, order = c(1, 1, 0), method = "ML")
+phi &lt;- coef(ari)[["ar1"]]
+round(c(phi = phi, phi1_estrella = 1 + phi, phi2_estrella = -phi), 4)
+#&gt;           phi phi1_estrella phi2_estrella
+#&gt;        0.3518        1.3518       -0.3518
+round(c(suma = (1 + phi) - phi, modulo = sort(Mod(polyroot(c(1, -(1 + phi), phi))))), 4)
+#&gt;    suma modulo1 modulo2
+#&gt;  1.0000  1.0000  2.8423
+
+# (c) lo que pronostica cada uno a 1, 5 y 10 anios
+h &lt;- c(12, 60, 120)
+p2 &lt;- predict(ar2, n.ahead = 120); p1 &lt;- predict(ari, n.ahead = 120)
+round(rbind(AR2 = p2$pred[h], ARIMA110 = p1$pred[h], ee_AR2 = p2$se[h], ee_ARIMA110 = p1$se[h]), 2)
+#&gt;             [,1] [,2] [,3]
+#&gt; AR2         5.42 5.70 5.79
+#&gt; ARIMA110    5.28 5.28 5.28
+#&gt; ee_AR2      1.98 2.89 2.95
+#&gt; ee_ARIMA110 2.24 5.18 7.36
+round(c(ultimo_dato = as.numeric(tail(y, 1)), desv_tipica_de_la_serie = sd(y)), 2)
+#&gt;             ultimo_dato desv_tipica_de_la_serie
+#&gt;                    5.25                    2.98</code></pre>
+            <p><strong>(a)</strong> El AR(2) da $(1.3429,\ -0.3599)$: suman $0.9830$, y las raíces tienen módulo $1.0278$ y $2.7033$. Es estacionario por poco: una raíz queda a menos de tres centésimas del círculo unitario.</p>
+            <p><strong>(b)</strong> El ARIMA($1,1,0$) da $\hat\phi = 0.3518$, así que sobre $y_t$ es el AR(2) con $\phi_1^{*} = 1.3518$ y $\phi_2^{*} = -0.3518$: suman $1$ exactamente, y sus raíces tienen módulo $1$ y $2.8423$ (que es $1/\hat\phi$). Los coeficientes se parecen a los de (a); lo que cambia es que aquí la suma no se estima: la fija el factor $(1-B)$.</p>
+            <p style="margin-bottom:0;"><strong>(c)</strong> El AR(2) vuelve a su media, $5.81$: pronostica $5.42$, $5.70$ y $5.79$, y su error estándar se estabiliza cerca de la desviación típica de la serie ($2.95$ a diez años, frente a $2.98$). El ARIMA($1,1,0$) se queda en $5.28$, junto al último dato ($5.25$), y su error estándar no deja de crecer: $2.24$, $5.18$ y $7.36$. Una raíz en $1.028$ o en $1$ apenas cambia el ajuste y cambia por completo lo que el modelo dice del futuro lejano. Por eso el módulo llama a $d$ una decisión: el Módulo 3 enseña a tomarla, y el Módulo 9, de dónde salen esos errores estándar.</p>
+          </div>
+        </div>
+      </div>
+
       <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
         <h4>Fuentes citadas en este módulo</h4>
         <!--FUENTES-MODULO:inicio-->
@@ -509,6 +575,74 @@ print(np.round(ajuste.get_forecast(3).predicted_mean, 2))
       <p>El esqueleto anterior despacha la etapa 1 en una línea, <code>d &lt;- ndiffs(Nile)</code>, y ahí está la
         decisión más consecuente de todo el ciclo: el número de diferencias. El módulo siguiente se dedica entero a
         ella.</p>
+
+      <div class="exercise">
+        <h4><i class="fas fa-pen-to-square mr-2" aria-hidden="true"></i>Para practicar</h4>
+        <div class="ejercicio-guiado">
+          <p class="ejercicio-enunciado" style="margin-bottom: 0.75rem;">Una serie simulada, para practicar las vueltas atrás sabiendo cuál es el modelo: <code>set.seed(2026); y &lt;- arima.sim(n = 200, model = list(order = c(2, 1, 0), ar = c(0.4, 0.3)))</code>. Ajústale, por máxima verosimilitud, tres modelos mal elegidos a propósito —un ARIMA($0,1,1$), un ARIMA($2,2,1$) y un ARIMA($2,1,2$)— y, con el ciclo del módulo delante, entrega:</p>
+          <ol style="list-style-type: lower-alpha; margin-top: 0.5rem; margin-bottom: 0;">
+            <li>Para cada ajuste, el hallazgo que lo invalida y la etapa en la que aparece.</li>
+            <li>A qué etapa devuelve cada hallazgo y qué se cambia al volver.</li>
+            <li>El modelo al que llevan los tres hallazgos, con su diagnóstico.</li>
+          </ol>
+          <div class="ejercicio-acciones">
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c4m2-pista">
+              <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c4m2-sol">
+              <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="ejercicio-panel pista" id="c4m2-pista" hidden>
+            <p style="margin:0;">Los tres hallazgos están en los paneles «Qué te devuelve atrás» de las etapas 2 y 3. De cada ajuste mira tres cosas: los errores estándar de los coeficientes, el módulo de las raíces del MA y Ljung–Box.</p>
+          </div>
+          <div class="ejercicio-panel solucion" id="c4m2-sol" hidden>
+            <p><strong>Respuesta: el primero falla en el diagnóstico (le falta orden); el segundo, en la estimación (le sobra una diferencia); el tercero, también en la estimación (le sobran parámetros). Los tres devuelven a la etapa 1, y los tres cambios llevan al ARIMA($2,1,0$).</strong></p>
+            <pre><code class="language-r">set.seed(2026)
+y &lt;- arima.sim(n = 200, model = list(order = c(2, 1, 0), ar = c(0.4, 0.3)))
+
+ajusta &lt;- function(orden) {
+  f  &lt;- arima(y, order = orden, method = "ML")
+  ma &lt;- coef(f)[grepl("^ma", names(coef(f)))]
+  print(round(rbind(coef = coef(f), ee = sqrt(diag(f$var.coef))), 3))
+  cat(sprintf("|raiz MA| menor = %s    Ljung-Box(20) p = %.4f\n",
+      if (length(ma)) sprintf("%.4f", min(Mod(polyroot(c(1, ma))))) else "no hay",
+      Box.test(residuals(f), lag = 20, type = "Ljung-Box", fitdf = orden[1] + orden[3])$p.value))
+}
+
+ajusta(c(0, 1, 1))     # ajuste 1
+#&gt;        ma1
+#&gt; coef 0.334
+#&gt; ee   0.051
+#&gt; |raiz MA| menor = 2.9928    Ljung-Box(20) p = 0.0000
+ajusta(c(2, 2, 1))     # ajuste 2
+#&gt;        ar1   ar2    ma1
+#&gt; coef 0.346 0.386 -1.000
+#&gt; ee   0.066 0.066  0.015
+#&gt; |raiz MA| menor = 1.0000    Ljung-Box(20) p = 0.7008
+ajusta(c(2, 1, 2))     # ajuste 3
+#&gt;        ar1    ar2    ma1   ma2
+#&gt; coef 0.893 -0.126 -0.565 0.331
+#&gt; ee   0.323  0.308  0.315 0.204
+#&gt; |raiz MA| menor = 1.7375    Ljung-Box(20) p = 0.4396
+
+# de vuelta a la etapa 1: la PACF de la serie diferenciada
+round(pacf(diff(y), lag.max = 6, plot = FALSE)$acf[, 1, 1], 3)
+#&gt; [1]  0.542  0.372  0.012 -0.062 -0.034 -0.055
+round(1.96 / sqrt(length(diff(y))), 3)
+#&gt; [1] 0.139
+ajusta(c(2, 1, 0))     # el modelo al que llevan los tres hallazgos
+#&gt;        ar1   ar2
+#&gt; coef 0.343 0.382
+#&gt; ee   0.065 0.065
+#&gt; |raiz MA| menor = no hay    Ljung-Box(20) p = 0.7070</code></pre>
+            <p><strong>(a)</strong> ARIMA($0,1,1$): Ljung–Box(20) da $p &lt; 0.0001$; los residuales tienen estructura, y eso se ve en la etapa 3. ARIMA($2,2,1$): pasa Ljung–Box ($p = 0.70$), pero $\hat\theta = -1.000$ y la raíz MA tiene módulo $1.0000$; es un hallazgo de la etapa 2, al comprobar las raíces. ARIMA($2,1,2$): también pasa Ljung–Box ($p = 0.44$) y sus raíces están lejos del círculo, pero los errores estándar de sus coeficientes van de $0.20$ a $0.32$, entre tres y cinco veces los del ARIMA($2,1,0$) ($0.065$): sobreparametrización, etapa 2.</p>
+            <p><strong>(b)</strong> Los tres devuelven a la identificación. El primero, a proponer más orden: la PACF de $\nabla y_t$ sale de la banda ($\pm 0.139$) en los rezagos 1 y 2 ($0.542$ y $0.372$) y no después, la firma de un AR(2). El segundo, a bajar $d$: una raíz MA sobre el círculo es el modelo deshaciendo una diferencia que sobra. El tercero, a quitar parámetros.</p>
+            <p style="margin-bottom:0;"><strong>(c)</strong> El ARIMA($2,1,0$): $\hat\phi = (0.343,\ 0.382)$, con errores estándar de $0.065$ (los verdaderos son $0.4$ y $0.3$), y Ljung–Box(20) $p = 0.71$. Nótese que el ARIMA($2,2,1$) y el ARIMA($2,1,2$) pasaban Ljung–Box: un modelo puede dejar los residuales en orden y estar mal especificado, y por eso la etapa 2 no se limita a estimar. La semilla está elegida para que se vean los cinco rasgos a la vez. En 200 series generadas igual (semillas 1 a 200), Ljung–Box rechaza el ARIMA($0,1,1$) en el $99.5\,\%$; pero el ARIMA($2,2,1$) solo deja la raíz MA sobre el círculo en el $65.5\,\%$, y los cinco rasgos coinciden en el $53\,\%$.</p>
+          </div>
+        </div>
+      </div>
+
       <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
         <h4>Fuentes citadas en este módulo</h4>
         <!--FUENTES-MODULO:inicio-->
@@ -892,6 +1026,75 @@ print(simula(0.0), simula(-247.78))
         $\nabla$Nilo, los Módulos 5 a 7 deciden la constante, estiman y comparan candidatos hasta llegar al
         ARIMA($1,1,1$), y el Módulo 8 lo pone a prueba contra
         la alternativa que este módulo dejó planteada, un modelo de dos medias sin diferenciar.</p>
+
+      <div class="exercise">
+        <h4><i class="fas fa-pen-to-square mr-2" aria-hidden="true"></i>Para practicar</h4>
+        <div class="ejercicio-guiado">
+          <p class="ejercicio-enunciado" style="margin-bottom: 0.75rem;">Una serie con un cambio de nivel y sin raíz unitaria, para practicar la decisión conociendo la respuesta: <code>set.seed(43); y &lt;- ts(10 + 3 * (1:120 &gt;= 71) + arima.sim(n = 120, model = list(ar = 0.5)))</code>. Son 120 datos de un AR(1) con $\phi = 0.5$ alrededor de un nivel que pasa de $10$ a $13$ en $t = 71$. Trátala como una serie cualquiera y entrega:</p>
+          <ol style="list-style-type: lower-alpha; margin-top: 0.5rem; margin-bottom: 0;">
+            <li>El $d$ que pide <code>ndiffs()</code> con cada una de las tres pruebas, sobre la serie completa.</li>
+            <li>Lo mismo en cada tramo, antes y después de $t = 71$.</li>
+            <li>El ARIMA($1,1,1$) al que lleva seguir a KPSS, con su $\hat\theta$ y el módulo de su raíz MA; y el modelo de dos medias con un AR(1), con su escalón y su diagnóstico. ¿Qué $d$ eliges, y con cuáles de las tres evidencias del módulo?</li>
+          </ol>
+          <div class="ejercicio-acciones">
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c4m3-pista">
+              <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c4m3-sol">
+              <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="ejercicio-panel pista" id="c4m3-pista" hidden>
+            <p style="margin:0;">Empieza por el gráfico, <code>plot(y)</code>. Lo que se vea ahí dice qué comprobar después con las pruebas y dónde partir la serie.</p>
+          </div>
+          <div class="ejercicio-panel solucion" id="c4m3-sol" hidden>
+            <p><strong>Respuesta: $d = 0$, con el escalón dentro del modelo. KPSS pide $d = 1$ sobre la serie completa y $d = 0$ en cada tramo: lo que rechazaba era el cambio de nivel.</strong></p>
+            <pre><code class="language-r">library(forecast)
+set.seed(43)
+n &lt;- 120
+escalon &lt;- as.numeric(seq_len(n) &gt;= 71)        # 0 hasta t = 70, 1 desde t = 71
+y &lt;- ts(10 + 3 * escalon + arima.sim(n = n, model = list(ar = 0.5)))
+plot(y)                                        # el salto se ve a simple vista
+
+pruebas &lt;- function(x) c(kpss = ndiffs(x, test = "kpss"), adf = ndiffs(x, test = "adf"),
+                         pp = ndiffs(x, test = "pp"))
+# (a) el d que pide cada prueba, sobre la serie completa
+pruebas(y)
+#&gt; kpss  adf   pp
+#&gt;    1    0    0
+
+# (b) y en cada tramo por separado
+antes &lt;- window(y, end = 70); despues &lt;- window(y, start = 71)
+rbind(antes = pruebas(antes), despues = pruebas(despues))
+#&gt;         kpss adf pp
+#&gt; antes      0   0  0
+#&gt; despues    0   0  0
+round(c(media_antes = mean(antes), media_despues = mean(despues)), 2)
+#&gt;   media_antes media_despues
+#&gt;         10.14         13.31
+
+# (c) el ARIMA(1,1,1) que saldria de seguir a KPSS, y sus raices
+f111 &lt;- arima(y, order = c(1, 1, 1), method = "ML")
+round(c(coef(f111), raiz_MA = Mod(polyroot(c(1, coef(f111)[["ma1"]])))), 4)
+#&gt;     ar1     ma1 raiz_MA
+#&gt;  0.4884 -0.8581  1.1653
+
+# el modelo de dos medias, con un AR(1) para lo que queda
+fesc &lt;- arima(y, order = c(1, 0, 0), xreg = escalon, method = "ML")
+round(rbind(coef = coef(fesc), ee = sqrt(diag(fesc$var.coef))), 3)
+#&gt;        ar1 intercept escalon
+#&gt; coef 0.473    10.163   3.124
+#&gt; ee   0.080     0.216   0.329
+Box.test(residuals(fesc), lag = 20, type = "Ljung-Box", fitdf = 1)$p.value
+#&gt; [1] 0.6783999</code></pre>
+            <p><strong>(a)</strong> KPSS pide $d = 1$; ADF y PP, $d = 0$. Es el mismo reparto que en el Nilo.</p>
+            <p><strong>(b)</strong> En cada tramo, las tres pruebas piden $d = 0$. Las medias son $10.14$ y $13.31$: a cada lado del salto la serie vuelve a su nivel, y KPSS rechazaba porque no hay un nivel único.</p>
+            <p><strong>(c)</strong> El ARIMA($1,1,1$) da $\hat\phi = 0.488$ y $\hat\theta = -0.858$, con la raíz MA en $1.165$: cerca del círculo, el síntoma de haber diferenciado de más (en el Nilo, $1.144$). El modelo de dos medias con AR(1) estima el escalón en $3.12$ (e.e. $0.33$) y $\hat\phi = 0.473$ (e.e. $0.080$) —los verdaderos son $3$ y $0.5$— y pasa Ljung–Box(20) con $p = 0.68$. Las tres evidencias coinciden una vez que se mira el gráfico: el salto se ve, las pruebas dejan de pedir la diferencia cuando se aplican a cada lado, y el modelo diferenciado tiene la raíz MA cerca de $1$.</p>
+            <p style="margin-bottom:0;">La semilla está elegida para que salga el caso completo. En 500 series generadas igual (semillas 1 a 500), KPSS pide diferenciar la serie completa en todas, y en el $65\,\%$ pide $d = 0$ en los dos tramos; el reparto del Nilo (ADF y PP en $d = 0$) sale en el $52\,\%$, y con las tres pruebas en $d = 0$ en cada tramo, en el $33\,\%$. La raíz MA del ARIMA($1,1,1$) tiene mediana $1.15$.</p>
+          </div>
+        </div>
+      </div>
+
       <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
         <h4>Fuentes citadas en este módulo</h4>
         <!--FUENTES-MODULO:inicio-->

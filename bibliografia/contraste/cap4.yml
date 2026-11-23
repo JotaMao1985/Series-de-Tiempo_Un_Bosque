@@ -6837,8 +6837,29 @@ afirmaciones:
     instantanea: arima
     cita_sha256: "5fb0edec93b1c5666f5dca65445ac6f5b722b0a6e9c877d481e9e68cca5670fe"
     cita_palabras: 9
+  nota: >-
+    La cita respalda lo que dice el campo afirmacion: elegir por AICc y comprobar los residuales son pasos
+    distintos del procedimiento. Desde la R5 el ejercicio 1 ilustra la lección con un modelo cuyos residuales
+    pasan Ljung–Box y cuya raíz MA está en el círculo unitario: el diagnóstico que enseña el capítulo incluye
+    las raíces (resumen del Módulo 10), que es más de lo que dice el pasaje; la frase solo afirma la parte
+    respaldada.
   redactado_por: subagente redactor de la ronda R4 del capítulo 4 (Fable 5.2)
-  verificado_por: "verificador independiente B de la R4 del capítulo 4 (subagente, M7–M10), leyó el pasaje en la caché el 2026-11-23"
+  verificado_por: "verificador independiente B de la R5 del capítulo 4 (subagente, E1–E3 y quiz), leyó el pasaje en la caché el 2026-11-23"
+  fecha: 2026-11-22
+
+- id: c4-m10-67
+  tipo: resultado
+  afirmacion: "En una serie estacionaria la varianza de la primera diferencia es 2(1 − ρ1) veces la de la serie, así que baja al diferenciar cuando r1 es alto sin que haya raíz unitaria."
+  hash_texto: "64d3e57db0ab1fcb"
+  veredicto: propia
+  nota: >-
+    Se deduce en el material: Var(y_t − y_{t−1}) = 2γ0 − 2γ1 = 2(1 − ρ1)Var(y) para una serie estacionaria; es
+    la misma afirmación que el capítulo 2 registró como c2-m7-08 (propia, verificada en su R4). Desde la R5 la
+    frase está en el apartado (b) del ejercicio 2, sobre log(pelt$Hare): r1 = 0.666, cociente esperado 2(1 − r1)
+    = 0.669 y medido 0.673 (R 4.6.0, bloque e2). Comprobación: diagnostico/cap4/comprobaciones/r5_bloques/e2.R
+    (salida en e2.out): R 4.6.0, r1 = 0.666, cociente = 0.673, 2(1 − r1) = 0.669.
+  redactado_por: subagente redactor de la ronda R4 del capítulo 4 (Fable 5.2)
+  verificado_por: "verificador independiente B de la R5 del capítulo 4 (subagente, E1–E3 y quiz), leyó el pasaje en la caché el 2026-11-23"
   fecha: 2026-11-22
 
 - id: c4-m10-151
@@ -6886,33 +6907,19 @@ afirmaciones:
 
 - id: c4-m10-150
   tipo: dato
-  afirmacion: "El AR(2) que el ejercicio ajusta a log(lynx) tiene ciclos cuyo periodo medio ronda los 10 años (9.78 por las raíces del polinomio AR; 10.02 con la fórmula del periodo medio de FPP3 §9.5)."
+  afirmacion: "Un AR(2) ajustado a log(lynx) tiene ciclos cuyo periodo medio ronda los 10 años (9.78 por las raíces del polinomio AR; 10.02 con la fórmula del periodo medio de FPP3 §9.5)."
   hash_texto: "ea7863ef05c2610c"
   veredicto: propia
   nota: >-
-    Sale del propio ajuste: arima(log(lynx), order = c(2,0,0), method = 'ML') da phi1 = 1.3776 y phi2 = -0.7399;
-    el periodo por las raíces es 9.7839 (el que imprime el bloque del ejercicio) y la fórmula del periodo medio
-    de un AR(2) con ciclos (FPP3 §9.5, condición phi1^2 + 4 phi2 < 0, que aquí vale -1.0617) da 10.0236. «Unos
-    10 años en promedio» es el redondeo de ambos. Comprobación:
+    Sale de un ajuste propio: arima(log(lynx), order = c(2,0,0), method = 'ML') da phi1 = 1.3776 y phi2 =
+    -0.7399; el periodo por las raíces es 9.7839 y la fórmula del periodo medio de un AR(2) con ciclos (FPP3
+    §9.5, condición phi1^2 + 4 phi2 < 0, que aquí vale -1.0617) da 10.0236. «Unos 10 años en promedio» es el
+    redondeo de ambos. Desde la R5 ese AR(2) no se imprime en ningún bloque de la página; la cifra queda
+    respaldada por el guion de comprobación. Comprobación:
     diagnostico/cap4/comprobaciones/r4_software/lectorF/sigma2_y_lince.R (salida en sigma2_y_lince.out, sección
     2): R 4.6.0, periodo por raíz 9.7839, por la fórmula de FPP3 10.0236.
   redactado_por: subagente redactor de la ronda R4 del capítulo 4 (Fable 5.2)
-  verificado_por: "verificador independiente B de la R4 del capítulo 4 (subagente, M7–M10), leyó el pasaje en la caché el 2026-11-23"
-  fecha: 2026-11-22
-
-- id: c4-m10-67
-  tipo: resultado
-  afirmacion: "En una serie estacionaria la varianza de la primera diferencia es 2(1 − ρ1) veces la de la serie, así que baja al diferenciar cuando r1 es alto sin que haya raíz unitaria."
-  hash_texto: "64d3e57db0ab1fcb"
-  veredicto: propia
-  nota: >-
-    Se deduce en el material: Var(y_t − y_{t−1}) = 2γ0 − 2γ1 = 2(1 − ρ1)Var(y) para una serie estacionaria; es
-    la misma afirmación que el capítulo 2 registró como c2-m7-08 (propia, verificada en su R4). Con r1 = 0.785
-    el cociente esperado es 0.430 y el medido en log(lynx) es 0.416 (R 4.6.0). Comprobación:
-    diagnostico/cap4/comprobaciones/r4_software/lectorF/sigma2_y_lince.R (sección 2): r1 = 0.785, cociente =
-    0.416, 2(1 − r1) = 0.430.
-  redactado_por: subagente redactor de la ronda R4 del capítulo 4 (Fable 5.2)
-  verificado_por: "verificador independiente B de la R4 del capítulo 4 (subagente, M7–M10), leyó el pasaje en la caché el 2026-11-23"
+  verificado_por: "verificador independiente B de la R5 del capítulo 4 (subagente, E1–E3 y quiz), leyó el pasaje en la caché el 2026-11-23"
   fecha: 2026-11-22
 
 - id: c4-m10-68
@@ -6931,33 +6938,6 @@ afirmaciones:
     FPP3 §9.1 dice que una serie con ciclos, sin tendencia ni estacionalidad, es estacionaria, porque los ciclos
     no tienen longitud fija. «Vuelve a su media» es la lectura que el capítulo hace de esa estacionariedad
     (media constante); la fuente no usa esa expresión.
-  redactado_por: subagente redactor de la ronda R4 del capítulo 4 (Fable 5.2)
-  verificado_por: "verificador independiente B de la R4 del capítulo 4 (subagente, M7–M10), leyó el pasaje en la caché el 2026-11-23"
-  fecha: 2026-11-22
-
-- id: c4-m10-69
-  tipo: resultado
-  afirmacion: "La serie con ciclos fuertes de longitud no fija es estacionaria, y por eso no hace falta diferenciarla."
-  hash_texto: "3943fbfd321b3a16"
-  veredicto: con-matiz
-  fuentes:
-  - clave: hyndman2021forecasting
-    loc: "§9.1"
-    clase: WEB
-    instantanea: arima
-    cita_sha256: "181b7e661364d87558f4a674a5c9b26bcb6b42286ddc35a1d2361191c4f37164"
-    cita_palabras: 14
-  - clave: hyndman2021forecasting
-    loc: "§9.1"
-    clase: WEB
-    instantanea: arima
-    cita_sha256: "7f2676cbdf35621f2bc5dfc20ad6655ef1b826688261fc6e8a3b4259659d3365"
-    cita_palabras: 11
-  nota: >-
-    FPP3 §9.1 respalda el principio (la serie cíclica sin tendencia ni estacionalidad es estacionaria) y trata
-    como estacionaria una serie de linces; que la serie lynx de R sea estacionaria lo dicen las pruebas del
-    bloque de código (R). El texto de la caché no dice qué conjunto de datos es la serie de FPP, y «vuelve a su
-    media» es la lectura del capítulo de esa estacionariedad.
   redactado_por: subagente redactor de la ronda R4 del capítulo 4 (Fable 5.2)
   verificado_por: "verificador independiente B de la R4 del capítulo 4 (subagente, M7–M10), leyó el pasaje en la caché el 2026-11-23"
   fecha: 2026-11-22

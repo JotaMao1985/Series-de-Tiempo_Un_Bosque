@@ -1,0 +1,37 @@
+P1 (opcion) longitudes [81, 84, 84, 83]  correcta(s) [2]  mas larga 2  cociente max/min 1.04
+       81  Que conviene d=2: seis puntos de AICc son una diferencia clara entre dos modelos.
+    *  84  Nada: cada AICc se calcula sobre datos distintos, y solo se comparan con un mismo d.
+       84  Que conviene d=1: a igualdad de ajuste, se prefiere el modelo con menos diferencias.
+       83  Que hay que decidir con el BIC, que penaliza más y sí se compara entre distintos d.
+P3 (grafico) longitudes [77, 80, 79, 78]  correcta(s) [3]  mas larga 2  cociente max/min 1.04
+       77  Aumentar q hasta que todas las barras queden dentro de la banda de confianza.
+       80  Diferenciar una vez más: una autocorrelación tan alta indica no estacionariedad.
+    *  79  Pasar a un modelo estacional: lo que sobra está en los rezagos múltiplos de 12.
+       78  Nada: casi todas las barras están dentro de la banda, y el modelo es adecuado.
+P4 (multiple) longitudes [86, 91, 91, 72, 88]  correcta(s) [1, 3, 4]  mas larga 2  cociente max/min 1.26
+    las 3 mas largas: [2, 3, 5]; las 3 mas cortas: [1, 4, 5]
+    *  86  Con d=1, la deriva xw=c/x(1) es el incremento medio por período: una tendencia lineal.
+       91  Sin constante, un modelo con d=2 pronostica a largo plazo una parábola, no una línea recta.
+    *  91  Con d=1 y sin deriva, el pronóstico se aplana en un nivel, que puede no ser el último dato.
+    *  72  Con dx2, forecast::Arima avisa y no ajusta la deriva, aunque se le pida.
+       88  En un ARIMA(p,0,q), el intercept que da R es la constante c de la ecuación, no la media.
+P5 (opcion) longitudes [82, 78, 81, 76]  correcta(s) [2]  mas larga 1  cociente max/min 1.08
+       82  Diferenciar una vez: las dos pruebas coinciden, y eso cierra la discusión sobre d.
+    *  78  Ajustar el salto como un escalón y volver a examinar lo que queda de la serie.
+       81  Diferenciar dos veces: una diferencia para la raíz unitaria y otra para el salto.
+       76  No diferenciar: un salto con causa conocida prueba que no hay raíz unitaria.
+P6 (grafico) longitudes [71, 67, 75, 73]  correcta(s) [4]  mas larga 3  cociente max/min 1.12
+       71  Que es un AR de orden alto, porque hay muchas barras fuera de la banda.
+       67  Que es un MA(q), con q igual al número de barras fuera de la banda.
+       75  Que hace falta d=2, porque las barras tardan más de diez rezagos en entrar.
+    *  73  Nada todavía: una caída tan lenta obliga a decidir d antes de leer p y q.
+P7 (opcion) longitudes [87, 88, 87, 92]  correcta(s) [3]  mas larga 4  cociente max/min 1.06
+       87  Que la búsqueda escalonada falló, y su modelo debe sustituirse por el de la exhaustiva.
+       88  Que el ARIMA(0,1,1) es el modelo verdadero, porque es el mínimo de la búsqueda completa.
+    *  87  Que hay tres modelos que el AICc apenas separa, y conviene decirlo al dar el resultado.
+       92  Que, con menos de 2 puntos entre ellos, se elige sin más el de menos parámetros de los tres.
+P8 (opcion) longitudes [82, 80, 84, 78]  correcta(s) [1]  mas larga 3  cociente max/min 1.08
+    *  82  Que d=2 sobra: con xx=-1, la raíz MA cae sobre el círculo y deshace la diferencia.
+       80  Que d=2 también es válido: sus residuales pasan Ljung–Box, igual que los de d=1.
+       84  Que d=1 es mejor, porque con la segunda diferencia la varianza sube de 5.12 a 13.18.
+       78  Que hay que comparar el AICc de los dos modelos y quedarse con el d del menor.

@@ -26,11 +26,17 @@ import yaml
 AQUI = pathlib.Path(__file__).resolve().parent
 RAIZ = AQUI.parents[2]
 REGISTRO = RAIZ / "bibliografia" / "contraste" / "cap4.yml"
+# Entradas retiradas después de firmarse (p. ej. c4-m10-69 en la R5): sus firmas viejas se ignoran.
+RETIRADAS = {"c4-m10-69"}
 FIRMAS = {
     "A": ("v4_firmas_A.txt", "verificador independiente A de la R4 del capítulo 4 (subagente, M1–M6), "
                              "leyó el pasaje en la caché el 2026-11-23"),
     "B": ("v4_firmas_B.txt", "verificador independiente B de la R4 del capítulo 4 (subagente, M7–M10), "
                              "leyó el pasaje en la caché el 2026-11-23"),
+    # Ronda R5: lo que la práctica movió o cambió de nota lo vuelve a firmar su verificador B,
+    # que no redactó la R5 ni las notas (las escribió la maestra en r5_registro_maestra.py).
+    "R5B": ("v5_firmas_B.txt", "verificador independiente B de la R5 del capítulo 4 (subagente, E1–E3 y quiz), "
+                               "leyó el pasaje en la caché el 2026-11-23"),
 }
 
 
@@ -42,10 +48,13 @@ def main() -> int:
     nuevas_aplicadas = []
     puestas, ya, faltan = 0, 0, []
     for lote, (archivo, firma) in FIRMAS.items():
+        if not (AQUI / archivo).exists():
+            continue
         ids = [x.strip() for x in (AQUI / archivo).read_text("utf-8").split() if x.strip()]
         for ident, veces in collections.Counter(ids).items():
             if ident not in entradas:
-                faltan.append(f"{lote}: {ident}")
+                if ident not in RETIRADAS:          # una firma de algo que una ronda posterior retiró
+                    faltan.append(f"{lote}: {ident}")
                 continue
             if veces <= aplicadas[f"{lote}:{ident}"]:
                 ya += 1

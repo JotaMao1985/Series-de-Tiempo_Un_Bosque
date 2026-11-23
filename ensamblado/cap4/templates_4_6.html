@@ -175,6 +175,66 @@ print(round(float(acorr_ljungbox(ma1.resid[1:], lags=[20], model_df=1)["lb_pvalu
       <p>Antes de estimar esos candidatos queda una decisión que la ACF no resuelve: si el modelo lleva
         constante. Con $d = 1$ esa constante ya no es una media sino una pendiente, y el Módulo 5 explica por qué
         conviene decidirlo a propósito y no dejarlo en manos del valor por defecto del programa.</p>
+
+      <div class="exercise">
+        <h4><i class="fas fa-pen-to-square mr-2" aria-hidden="true"></i>Para practicar</h4>
+        <div class="ejercicio-guiado">
+          <p class="ejercicio-enunciado" style="margin-bottom: 0.75rem;"><code>global_economy</code>, del paquete <code>tsibbledata</code>, reúne indicadores anuales del Banco Mundial por país, de 1960 a 2017. Toma las importaciones de bienes y servicios de Colombia, en porcentaje del PIB (58 datos). Las tres pruebas piden $d = 1$, así que la identificación se hace sobre $\nabla y_t$. Entrega:</p>
+          <ol style="list-style-type: lower-alpha; margin-top: 0.5rem; margin-bottom: 0;">
+            <li>La ACF y la PACF de $\nabla y_t$ hasta el rezago 10, con su banda: ¿corta alguna?, ¿decae alguna?</li>
+            <li>Los candidatos que llevarías a la estimación, y por qué más de uno.</li>
+            <li>El AICc, el BIC y Ljung–Box(20) de cada candidato. ¿Los separan?</li>
+          </ol>
+          <div class="ejercicio-acciones">
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c4m4-pista">
+              <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c4m4-sol">
+              <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="ejercicio-panel pista" id="c4m4-pista" hidden>
+            <p style="margin:0;">Con 57 diferencias la banda es ancha. Antes de decidir si una función «decae», cuenta cuántas de sus barras salen de verdad de la banda, y piensa qué enseñarían un AR(1) y un MA(1) cuando su único coeficiente es pequeño.</p>
+          </div>
+          <div class="ejercicio-panel solucion" id="c4m4-sol" hidden>
+            <p><strong>Respuesta: la tabla no elige. La ACF y la PACF de $\nabla y_t$ tienen una sola barra clara, la del rezago 1, y eso lo producen igual un MA(1) y un AR(1). Se llevan los dos, y el AICc los deja a $0.03$ puntos.</strong></p>
+            <pre><code class="language-r">library(forecast); library(tsibbledata)    # global_economy: indicadores anuales por pais
+col &lt;- subset(as.data.frame(global_economy), Country == "Colombia")
+y &lt;- ts(col$Imports, start = 1960)         # importaciones, en % del PIB
+c(kpss = ndiffs(y, test = "kpss"), adf = ndiffs(y, test = "adf"), pp = ndiffs(y, test = "pp"))
+#&gt; kpss  adf   pp
+#&gt;    1    1    1
+
+# (a) ACF y PACF de la serie diferenciada, con su banda
+w &lt;- diff(y)
+round(1.96 / sqrt(length(w)), 3)
+#&gt; [1] 0.26
+round(acf(w, lag.max = 10, plot = FALSE)$acf[-1], 3)
+#&gt;  [1] -0.288  0.038  0.027 -0.123  0.121 -0.216 -0.153  0.177 -0.179  0.158
+round(pacf(w, lag.max = 10, plot = FALSE)$acf[, 1, 1], 3)
+#&gt;  [1] -0.288 -0.049  0.027 -0.116  0.058 -0.184 -0.297  0.036 -0.125  0.031
+
+# (b) y (c) los candidatos, con el mismo d
+aicc &lt;- function(f, n) { k &lt;- length(f$coef) + 1; f$aic + 2*k*(k+1)/(n-k-1) }
+for (o in list(c(0, 1, 1), c(1, 1, 0), c(1, 1, 1), c(0, 1, 0))) {
+  f &lt;- arima(y, order = o, method = "ML")
+  cat(sprintf("ARIMA(%d,1,%d)  AICc=%7.3f  BIC=%7.3f  LB(20) p=%.3f  coef: %s  ee: %s\n",
+      o[1], o[3], aicc(f, length(y) - 1), BIC(f),
+      Box.test(residuals(f), lag = 20, type = "Ljung-Box", fitdf = o[1] + o[3])$p.value,
+      paste(sprintf("%.3f", coef(f)), collapse = " "),
+      paste(sprintf("%.3f", sqrt(diag(f$var.coef))), collapse = " ")))
+}
+#&gt; ARIMA(0,1,1)  AICc=222.505  BIC=226.369  LB(20) p=0.667  coef: -0.291  ee: 0.127
+#&gt; ARIMA(1,1,0)  AICc=222.530  BIC=226.394  LB(20) p=0.666  coef: -0.285  ee: 0.127
+#&gt; ARIMA(1,1,1)  AICc=224.643  BIC=230.319  LB(20) p=0.618  coef: -0.148 -0.151  ee: 0.450 0.454
+#&gt; ARIMA(0,1,0)  AICc=225.191  BIC=227.161  LB(20) p=0.229  coef:   ee:</code></pre>
+            <p><strong>(a)</strong> La banda es $\pm 0.260$. En la ACF solo sale el rezago 1 ($-0.288$), y por poco; en la PACF, el rezago 1 ($-0.288$) y, aislado, el 7 ($-0.297$). Ninguna de las dos decae a la vista: las dos «cortan en 1».</p>
+            <p><strong>(b)</strong> Con una sola barra de $-0.29$, la tabla no distingue. Un MA(1) con $\theta = -0.29$ tiene una PACF que decae, pero su segundo valor es $-0.08$, dentro de la banda; un AR(1) con $\phi = -0.29$ tiene una ACF que decae, y su segundo valor es $0.08$, también dentro. Los dos son compatibles con lo que se ve. Se proponen el ARIMA($0,1,1$) y el ARIMA($1,1,0$), su vecino ARIMA($1,1,1$) y, como la barra apenas asoma, la caminata aleatoria, ARIMA($0,1,0$).</p>
+            <p style="margin-bottom:0;"><strong>(c)</strong> El ARIMA($0,1,1$) ($\hat\theta = -0.291$) y el ARIMA($1,1,0$) ($\hat\phi = -0.285$) tienen AICc $222.505$ y $222.530$: $0.03$ puntos. El ARIMA($1,1,1$) queda a $2.14$, y sus dos coeficientes tienen errores estándar de $0.45$, mayores que ellos: sobra un parámetro. La caminata aleatoria queda a $2.69$ por AICc y, por BIC, es la tercera, a $0.79$ puntos. Los cuatro pasan Ljung–Box(20). Con 58 datos, lo que se puede afirmar es que hay dos modelos de un parámetro que los datos no separan.</p>
+          </div>
+        </div>
+      </div>
+
       <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
         <h4>Fuentes citadas en este módulo</h4>
         <!--FUENTES-MODULO:inicio-->
@@ -374,6 +434,65 @@ print(f2.param_names)
       <p>Con el orden de diferenciación, los candidatos y la constante decididos, queda estimarlos y compararlos.
         La estimación no trae novedades; la comparación sí, porque es ahí donde el ARIMA esconde su trampa
         principal. Es el tema del Módulo 6.</p>
+
+      <div class="exercise">
+        <h4><i class="fas fa-pen-to-square mr-2" aria-hidden="true"></i>Para practicar</h4>
+        <div class="ejercicio-guiado">
+          <p class="ejercicio-enunciado" style="margin-bottom: 0.75rem;"><code>airmiles</code> trae las millas-pasajero de pago voladas cada año por las aerolíneas comerciales de Estados Unidos, de 1937 a 1960 (24 datos). Crece tan deprisa que conviene trabajar con su logaritmo, <code>y &lt;- log(airmiles)</code> (Capítulo 2). Con un ARIMA($0,1,1$), entrega:</p>
+          <ol style="list-style-type: lower-alpha; margin-top: 0.5rem; margin-bottom: 0;">
+            <li>La media de las diferencias, calculada de dos maneras: con <code>mean(diff(y))</code> y solo con el primer dato y el último.</li>
+            <li>La deriva estimada, su error estándar y su estadístico $t$, y el AICc del modelo con deriva y sin ella. ¿Lleva deriva?</li>
+            <li>El pronóstico a 1, 5 y 10 años de los dos modelos. ¿Qué afirma la deriva sobre el futuro, en la escala original?</li>
+          </ol>
+          <div class="ejercicio-acciones">
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c4m5-pista">
+              <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c4m5-sol">
+              <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="ejercicio-panel pista" id="c4m5-pista" hidden>
+            <p style="margin:0;">En <code>forecast::Arima</code> la deriva se pide con <code>include.drift = TRUE</code>. Para (c), recuerda que la serie está en logaritmos: una pendiente constante en el logaritmo es un factor constante en la serie original.</p>
+          </div>
+          <div class="ejercicio-panel solucion" id="c4m5-sol" hidden>
+            <p><strong>Respuesta: sí lleva deriva: $\hat\delta = 0.182$ con $t = 4.47$, y el AICc baja de $-11.13$ a $-20.89$. Es el caso contrario al del Nilo.</strong></p>
+            <pre><code class="language-r">library(forecast)
+y &lt;- log(airmiles)                   # 24 datos anuales, 1937-1960
+n &lt;- length(y)
+
+# (a) la media de las diferencias: solo cuentan el primer dato y el ultimo
+round(c(media_de_las_diferencias = mean(diff(y)), telescopica = (y[n] - y[1]) / (n - 1)), 4)
+#&gt; media_de_las_diferencias              telescopica
+#&gt;                   0.1872                   0.1872
+
+# (b) el mismo ARIMA(0,1,1), sin deriva y con ella
+sin &lt;- Arima(y, order = c(0, 1, 1))
+con &lt;- Arima(y, order = c(0, 1, 1), include.drift = TRUE)
+d  &lt;- coef(con)[["drift"]]; ee &lt;- sqrt(diag(con$var.coef))[["drift"]]
+round(c(deriva = d, ee = ee, t = d / ee), 4)
+#&gt; deriva     ee      t
+#&gt; 0.1818 0.0407 4.4688
+round(c(aicc_sin = sin$aicc, aicc_con = con$aicc), 2)
+#&gt; aicc_sin aicc_con
+#&gt;   -11.13   -20.89
+
+# (c) el pronostico a 1, 5 y 10 anios (en logaritmos) y lo que supone la deriva
+round(rbind(sin = forecast(sin, h = 10)$mean[c(1, 5, 10)],
+            con = forecast(con, h = 10)$mean[c(1, 5, 10)]), 3)
+#&gt;       [,1]   [,2]   [,3]
+#&gt; sin 10.227 10.227 10.227
+#&gt; con 10.422 11.149 12.059
+round(c(ultimo_dato = y[n], factor_anual = exp(d), factor_en_10_anios = exp(10 * d)), 3)
+#&gt;        ultimo_dato       factor_anual factor_en_10_anios
+#&gt;             10.326              1.199              6.162</code></pre>
+            <p><strong>(a)</strong> Las dos cuentas dan $0.1872$: la suma de las diferencias es telescópica y queda $(y_{1960} - y_{1937})/23$.</p>
+            <p><strong>(b)</strong> $\hat\delta = 0.1818$ (e.e. $0.0407$), $t = 4.47$: claramente distinta de cero. El AICc pasa de $-11.13$ sin deriva a $-20.89$ con ella, casi diez puntos menos, y los dos modelos tienen el mismo $d$, así que la comparación vale. La deriva estimada ($0.182$) no es exactamente la media de las diferencias ($0.187$), porque se estima a la vez que $\theta$ y no como un promedio simple; se parecen, como cabe esperar.</p>
+            <p style="margin-bottom:0;"><strong>(c)</strong> Sin deriva el pronóstico es plano, $10.227$ a cualquier horizonte (no en el último dato, $10.326$). Con deriva es una recta: $10.422$, $11.149$ y $12.059$. En la escala original, una pendiente de $0.182$ por año en el logaritmo equivale a multiplicar por $e^{0.182} = 1.20$ cada año, y por $6.2$ en diez. Dentro de la muestra esa tendencia está bien medida; lo que el modelo añade es que seguirá igual sin límite, y esa es la afirmación sobre el futuro contra la que previene el módulo.</p>
+          </div>
+        </div>
+      </div>
+
       <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
         <h4>Fuentes citadas en este módulo</h4>
         <!--FUENTES-MODULO:inicio-->
@@ -578,6 +697,76 @@ print(tabla.loc[tabla.groupby("d")["aicc"].idxmin(), ["d","modelo","nobs","n_ef"
       <p>Recorrer 27 modelos a mano es viable con tres órdenes y una sola serie, pero no escala. La función
         <code>auto.arima</code> automatiza esta búsqueda con reglas explícitas; el Módulo 7 muestra cuáles son y
         dónde se equivoca.</p>
+
+      <div class="exercise">
+        <h4><i class="fas fa-pen-to-square mr-2" aria-hidden="true"></i>Para practicar</h4>
+        <div class="ejercicio-guiado">
+          <p class="ejercicio-enunciado" style="margin-bottom: 0.75rem;"><code>gafa_stock</code>, del paquete <code>tsibbledata</code>, trae los precios diarios de cuatro acciones entre 2014 y 2018. Toma el precio de cierre de Google (<code>Symbol == "GOOG"</code>) en 2018: 251 días de mercado, en dólares. Las tres pruebas piden $d = 1$. Ajusta la rejilla con $p, q \in \{0,1,2\}$ para $d = 1$ y para $d = 2$, por máxima verosimilitud, y entrega:</p>
+          <ol style="list-style-type: lower-alpha; margin-top: 0.5rem; margin-bottom: 0;">
+            <li>El mejor modelo por AICc de cada $d$.</li>
+            <li>El mínimo de los 18: ¿en qué $d$ cae? ¿Es razón para elegir ese $d$?</li>
+            <li>El coeficiente y la raíz MA del mejor modelo con $d = 2$, y su $\hat\sigma^2$ frente a $\operatorname{Var}(\nabla y)$. ¿Qué modelo es en realidad?</li>
+          </ol>
+          <div class="ejercicio-acciones">
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c4m6-pista">
+              <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c4m6-sol">
+              <i class="fas fa-key" aria-hidden="true"></i> Solución <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="ejercicio-panel pista" id="c4m6-pista" hidden>
+            <p style="margin:0;">Dos preguntas antes de elegir: ¿sobre qué datos se calcula cada AICc?, y ¿qué raíces tiene el modelo que gana?</p>
+          </div>
+          <div class="ejercicio-panel solucion" id="c4m6-sol" hidden>
+            <p><strong>Respuesta: el mínimo de la rejilla está en $d = 2$, y no vale: se calcula sobre otros datos, y el modelo que lo alcanza es una caminata aleatoria con deriva escrita con una diferencia de más.</strong></p>
+            <pre><code class="language-r">library(tsibbledata)                 # gafa_stock: precios diarios de cuatro acciones
+g &lt;- subset(as.data.frame(gafa_stock), Symbol == "GOOG" &amp; format(Date, "%Y") == "2018")
+y &lt;- ts(g$Close)                     # cierre diario de Google en 2018, en dolares
+n &lt;- length(y); n
+#&gt; [1] 251
+
+# (a) la rejilla de AICc, con d = 1 y con d = 2
+aicc &lt;- function(f, n) { k &lt;- length(f$coef) + 1; f$aic + 2*k*(k+1)/(n-k-1) }
+rejilla &lt;- function(d) {
+  m &lt;- outer(0:2, 0:2, Vectorize(function(p, q) aicc(arima(y, order = c(p, d, q), method = "ML"), n - d)))
+  dimnames(m) &lt;- list(paste0("p=", 0:2), paste0("q=", 0:2)); m
+}
+r1 &lt;- rejilla(1); r2 &lt;- rejilla(2)
+round(r1, 2)
+#&gt;         q=0     q=1     q=2
+#&gt; p=0 2190.69 2192.69 2191.81
+#&gt; p=1 2192.69 2191.65 2192.00
+#&gt; p=2 2192.11 2191.81 2193.83
+round(r2, 2)
+#&gt;         q=0     q=1     q=2
+#&gt; p=0 2352.42 2190.48 2192.46
+#&gt; p=1 2300.39 2192.47 2191.40
+#&gt; p=2 2246.80 2192.11 2191.76
+
+# (b) el mejor de cada d
+round(c(mejor_d1 = min(r1), mejor_d2 = min(r2), diferencia = min(r1) - min(r2)), 3)
+#&gt;   mejor_d1   mejor_d2 diferencia
+#&gt;   2190.690   2190.479      0.212
+
+# (c) el mejor de d = 2, por dentro
+f021 &lt;- arima(y, order = c(0, 2, 1), method = "ML")
+round(c(theta = coef(f021)[["ma1"]], raiz_MA = Mod(polyroot(c(1, coef(f021)[["ma1"]])))), 4)
+#&gt;   theta raiz_MA
+#&gt;      -1       1
+round(c(sigma2_del_021 = f021$sigma2, varianza_de_la_diferencia = var(diff(y))), 2)
+#&gt;            sigma2_del_021 varianza_de_la_diferencia
+#&gt;                    372.71                    372.71
+round(c(sigma2_del_010 = arima(y, order = c(0, 1, 0), method = "ML")$sigma2), 2)   # sin constante
+#&gt; sigma2_del_010
+#&gt;         371.23</code></pre>
+            <p><strong>(a)</strong> Con $d = 1$ gana el ARIMA($0,1,0$), con AICc $2190.69$; con $d = 2$, el ARIMA($0,2,1$), con $2190.48$.</p>
+            <p><strong>(b)</strong> El mínimo de los 18 es el ARIMA($0,2,1$), por $0.21$ puntos. No es razón para elegir $d = 2$: el primero se calcula sobre $250$ diferencias y el segundo sobre $249$ segundas diferencias, y un AICc solo se compara con otro calculado sobre los mismos datos. Las pruebas, que sí hablan de $d$, piden una diferencia.</p>
+            <p style="margin-bottom:0;"><strong>(c)</strong> $\hat\theta = -1.000$, y la raíz MA tiene módulo $1.000$: el factor $(1 - B)$ del MA cancela una de las dos diferencias. Su $\hat\sigma^2 = 372.71$ coincide con la varianza de $\nabla y$ alrededor de su media: el ARIMA($0,2,1$) es una caminata aleatoria con deriva —la constante la pone la diferencia que el MA deshace— y no la caminata sin ella, cuya $\hat\sigma^2$ es $371.23$. La rejilla ha premiado, por dos décimas, un modelo degenerado. Y dentro de $d = 1$ el resultado también dice algo: gana la caminata aleatoria, y los otros ocho modelos quedan entre $1.0$ y $3.1$ puntos por encima de ella. Es el resultado «no hay señal» que el Módulo 10 encontrará en la TRM.</p>
+          </div>
+        </div>
+      </div>
+
       <aside class="fuentes-modulo" aria-label="Fuentes citadas en este módulo">
         <h4>Fuentes citadas en este módulo</h4>
         <!--FUENTES-MODULO:inicio-->

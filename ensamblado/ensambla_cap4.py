@@ -202,20 +202,22 @@ course_nuevo = """    const courseData = {
         // 1 a 3 (palabras / 180 + 3 por simulador + 2 por bloque de código),
         // leyendo también la pista y la solución de cada ejercicio. No incluyen el
         // tiempo de resolverlos, los desarrollos plegados (unos 4 min entre tres
-        // módulos), la autoevaluación del Módulo 10 (unos 18 min de lectura) ni,
+        // módulos), la autoevaluación del Módulo 10 (unos 23 min de lectura) ni,
         // en el Módulo 11, nada de lo escrito: sus 40 min son el reloj del ensayo.
         // Medida: diagnostico/cap4/comprobaciones/r3_minutos.py (2026-11-22; de nuevo
-        // el 2026-11-23, tras la R4: el texto de las citas suma minutos a M1, M2, M8–M10).
-        { id: 1, title: "De ARMA a ARIMA", shortTitle: "ARIMA", duration: "12 min" },
-        { id: 2, title: "La metodología Box–Jenkins", shortTitle: "Box–Jenkins", duration: "8 min" },
-        { id: 3, title: "Elegir el orden d", shortTitle: "Elegir d", duration: "14 min" },
-        { id: 4, title: "Identificar p y q", shortTitle: "Identificar p,q", duration: "9 min" },
-        { id: 5, title: "La constante: media y deriva", shortTitle: "Media y deriva", duration: "6 min" },
-        { id: 6, title: "Estimar y comparar modelos", shortTitle: "Explorador", duration: "10 min" },
-        { id: 7, title: "Dentro de auto.arima", shortTitle: "auto.arima", duration: "10 min" },
-        { id: 8, title: "Diagnóstico y errores comunes", shortTitle: "Diagnóstico", duration: "12 min" },
-        { id: 9, title: "Pronóstico: forma e intervalos", shortTitle: "Pronóstico", duration: "15 min" },
-        { id: 10, title: "Caso TRM, puente y cierre", shortTitle: "Cierre", duration: "46 min" },
+        // el 2026-11-23, tras la R4: el texto de las citas suma minutos a M1, M2, M8–M10;
+        // y otra vez el 2026-11-23, tras la R5: cada módulo del 1 al 9 gana un ejercicio
+        // «Para practicar», que se cuenta con su pista y su solución leídas).
+        { id: 1, title: "De ARMA a ARIMA", shortTitle: "ARIMA", duration: "16 min" },
+        { id: 2, title: "La metodología Box–Jenkins", shortTitle: "Box–Jenkins", duration: "12 min" },
+        { id: 3, title: "Elegir el orden d", shortTitle: "Elegir d", duration: "19 min" },
+        { id: 4, title: "Identificar p y q", shortTitle: "Identificar p,q", duration: "14 min" },
+        { id: 5, title: "La constante: media y deriva", shortTitle: "Media y deriva", duration: "10 min" },
+        { id: 6, title: "Estimar y comparar modelos", shortTitle: "Explorador", duration: "14 min" },
+        { id: 7, title: "Dentro de auto.arima", shortTitle: "auto.arima", duration: "14 min" },
+        { id: 8, title: "Diagnóstico y errores comunes", shortTitle: "Diagnóstico", duration: "18 min" },
+        { id: 9, title: "Pronóstico: forma e intervalos", shortTitle: "Pronóstico", duration: "20 min" },
+        { id: 10, title: "Caso TRM, puente y cierre", shortTitle: "Cierre", duration: "49 min" },
         { id: 11, title: "Simulacro del quiz", shortTitle: "Simulacro", duration: "40 min" },
         { id: 12, title: "Preparcial del Corte II", shortTitle: "Preparcial", duration: "3 min" }
       ]
@@ -411,13 +413,14 @@ if n_paneles_der != 3:
     fallos.append(f"hay {n_paneles_der} paneles de derivación, se esperaban 3")
 
 # Ejercicios guiados con sus dos desplegables cada uno
+# (3 en el Módulo 10 y, desde la ronda R5, un «Para practicar» en cada módulo del 1 al 9)
 n_ej = html.count('<div class="ejercicio-guiado">')
-if n_ej != 3:
-    fallos.append(f"hay {n_ej} ejercicios guiados, se esperaban 3")
-for k in (1, 2, 3):
+if n_ej != 12:
+    fallos.append(f"hay {n_ej} ejercicios guiados, se esperaban 12")
+for ident in [f"c4e{k}" for k in (1, 2, 3)] + [f"c4m{k}" for k in range(1, 10)]:
     for suf in ("pista", "sol"):
-        if html.count(f'id="c4e{k}-{suf}"') != 1:
-            fallos.append(f"falta el panel c4e{k}-{suf}")
+        if html.count(f'id="{ident}-{suf}"') != 1:
+            fallos.append(f"falta el panel {ident}-{suf}")
 
 # ---------------------------------------------------------------------------
 # 9b. Citas, listas de fuentes y pie: los escribe el generador
@@ -453,5 +456,5 @@ if fallos:
 CAP4.write_text(html, encoding="utf-8")
 print(f"OK  {CAP4.name} escrito ({len(html.encode('utf-8')) / 1024:.1f} KB)")
 print(f"    12 plantillas · {len(SIMULADORES)} simuladores · 3 derivaciones · "
-      f"3 ejercicios · 8 preguntas de autoevaluación · 1 tabla de ranking · "
+      f"12 ejercicios · 8 preguntas de autoevaluación · 1 tabla de ranking · "
       f"simulacro del quiz")

@@ -1,0 +1,38 @@
+set.seed(2026)
+y <- arima.sim(n = 200, model = list(order = c(2, 1, 0), ar = c(0.4, 0.3)))
+
+ajusta <- function(orden) {
+  f  <- arima(y, order = orden, method = "ML")
+  ma <- coef(f)[grepl("^ma", names(coef(f)))]
+  print(round(rbind(coef = coef(f), ee = sqrt(diag(f$var.coef))), 3))
+  cat(sprintf("|raiz MA| menor = %s    Ljung-Box(20) p = %.4f\n",
+      if (length(ma)) sprintf("%.4f", min(Mod(polyroot(c(1, ma))))) else "no hay",
+      Box.test(residuals(f), lag = 20, type = "Ljung-Box", fitdf = orden[1] + orden[3])$p.value))
+}
+
+ajusta(c(0, 1, 1))     # ajuste 1
+#>        ma1
+#> coef 0.334
+#> ee   0.051
+#> |raiz MA| menor = 2.9928    Ljung-Box(20) p = 0.0000
+ajusta(c(2, 2, 1))     # ajuste 2
+#>        ar1   ar2    ma1
+#> coef 0.346 0.386 -1.000
+#> ee   0.066 0.066  0.015
+#> |raiz MA| menor = 1.0000    Ljung-Box(20) p = 0.7008
+ajusta(c(2, 1, 2))     # ajuste 3
+#>        ar1    ar2    ma1   ma2
+#> coef 0.893 -0.126 -0.565 0.331
+#> ee   0.323  0.308  0.315 0.204
+#> |raiz MA| menor = 1.7375    Ljung-Box(20) p = 0.4396
+
+# de vuelta a la etapa 1: la PACF de la serie diferenciada
+round(pacf(diff(y), lag.max = 6, plot = FALSE)$acf[, 1, 1], 3)
+#> [1]  0.542  0.372  0.012 -0.062 -0.034 -0.055
+round(1.96 / sqrt(length(diff(y))), 3)
+#> [1] 0.139
+ajusta(c(2, 1, 0))     # el modelo al que llevan los tres hallazgos
+#>        ar1   ar2
+#> coef 0.343 0.382
+#> ee   0.065 0.065
+#> |raiz MA| menor = no hay    Ljung-Box(20) p = 0.7070

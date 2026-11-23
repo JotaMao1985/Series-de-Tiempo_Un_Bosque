@@ -755,9 +755,16 @@ print(f.nobs_effective, air.nobs_effective)
       <h3>Ejercicios propuestos</h3>
 
       <div class="ejercicio-guiado">
-        <p class="ejercicio-enunciado"><span class="ejercicio-numero">1.</span>Toma <span data-afirma="c4-m10-61"><code>BJsales</code> ($n = 150$), la serie de ventas cuyos datos figuran en Box y Jenkins (1976, p. 537) <cite class="cita" data-ref="rcoreteam2026r" data-loc="§Source"><a href="#ref-m10-rcoreteam2026r" title="R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/">(R Core Team, 2026, §Source)</a></cite></span>. Recorre el ciclo completo: elige $d$, identifica $p$ y $q$,
-          ajusta la rejilla con $p,q \in \{0,1,2\}$ y diagnostica. Parte del IMA($1,1$), es decir ARIMA($0,1,1$): <strong>¿sobrevive al diagnóstico?</strong> Comprueba además qué pasa
-          si comparas su AICc con el del mejor modelo de $d = 2$.</p>
+        <p class="ejercicio-enunciado" style="margin-bottom: 0.75rem;"><span class="ejercicio-numero">1.</span>Toma <span data-afirma="c4-m10-61"><code>BJsales</code> ($n = 150$), la serie de ventas cuyos datos figuran en Box y Jenkins (1976, p. 537) <cite class="cita" data-ref="rcoreteam2026r" data-loc="§Source"><a href="#ref-m10-rcoreteam2026r" title="R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/">(R Core Team, 2026, §Source)</a></cite></span>. Recorre el ciclo completo partiendo del IMA($1,1$), es decir, del
+          ARIMA($0,1,1$), y entrega:</p>
+        <ol style="list-style-type: lower-alpha; margin-top: 0.5rem; margin-bottom: 0;">
+          <li>El $d$ que eliges, y con qué evidencias.</li>
+          <li>La rejilla con $p, q \in \{0,1,2\}$ para ese $d$: el puesto del IMA($1,1$) por AICc y su
+            diagnóstico, con Ljung–Box y con la ACF de sus residuales barra por barra.</li>
+          <li>El modelo con el que te quedas, con sus coeficientes y su diagnóstico.</li>
+          <li>La misma rejilla con $d = 2$. Su mejor modelo tiene un AICc más de 17 puntos menor que el
+            del IMA($1,1$): ¿es una razón para pasar a $d = 2$? Diagnostica también ese modelo.</li>
+        </ol>
         <div class="ejercicio-acciones">
           <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c4e1-pista">
             <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
@@ -769,19 +776,20 @@ print(f.nobs_effective, air.nobs_effective)
         <div class="ejercicio-panel pista" id="c4e1-pista" hidden>
           <p style="margin:0;">Para $d$, mira el gráfico y las pruebas. El $\hat\rho_1$ de la serie diferenciada es solo
             un indicio, que falla en los dos sentidos (Módulo 2.7): no basta para decir que la diferencia sobra ni que
-            hace falta. Para el
-            diagnóstico del ARIMA($0,1,1$), no te quedes en el $p$-valor global: mira la ACF de sus residuales
-            <strong>barra por barra</strong> con la banda $\pm 0.160$, y en particular los rezagos 2 y 4. Y cuando
-            compares con $d = 2$, apunta el $n$ efectivo de cada uno antes de mirar ningún AICc.</p>
+            hace falta. Para (b), no te quedes en el $p$-valor global. Y para (d), mira la fórmula del AICc antes
+            de comparar, y recuerda que diagnosticar no es solo mirar los residuales.</p>
         </div>
         <div class="ejercicio-panel solucion" id="c4e1-sol" hidden>
-          <p><strong>Respuesta: $d = 1$ sin discusión, pero el IMA($1,1$) de partida NO pasa el diagnóstico. Gana el
-            ARIMA($1,1,1$), por AICc, por BIC y por <code>auto.arima</code>.</strong></p>
+          <p><strong>Respuesta: $d = 1$. El IMA($1,1$) de partida no pasa el diagnóstico, y el AICc ya lo dejaba
+            penúltimo; queda el ARIMA($1,1,1$). Y el mejor modelo con $d = 2$, pese a su AICc, es ese mismo
+            ARIMA($1,1,1$) con una diferencia de más.</strong></p>
           <pre><code class="language-r">library(forecast); library(tseries)
 aicc &lt;- function(f, n) { k &lt;- length(f$coef) + 1; f$aic + 2*k*(k+1)/(n-k-1) }
+raiz_ma &lt;- function(f) { ma &lt;- coef(f)[grepl("^ma", names(coef(f)))]
+                         if (length(ma)) sprintf("%.4f", min(Mod(polyroot(c(1, ma))))) else "   -  " }
 n &lt;- length(BJsales)   # 150
 
-# --- Etapa 1: d ---------------------------------------------------------
+# --- (a) d ---------------------------------------------------------------
 round(c(adf = adf.test(BJsales)$p.value, ndiffs = ndiffs(BJsales)), 4)
 #&gt;    adf ndiffs
 #&gt; 0.5302 1.0000
@@ -790,65 +798,98 @@ round(sapply(1:2, function(d) acf(diff(BJsales, differences = d), plot = FALSE)$
 #&gt; [1]  0.3118 -0.4756
 # un indicio, no una regla (Modulo 2.7): con d = 1 no avisa; con d = 2 ronda -0.5
 
-# --- Etapa 2: la rejilla con d = 1 --------------------------------------
-for (q in 0:2) for (p in 0:2) {
-  f &lt;- arima(BJsales, order = c(p, 1, q), method = "ML")
-  cat(sprintf("ARIMA(%d,1,%d)  AICc=%8.3f  BIC=%8.3f  LB(20) p=%.4f\n", p, q,
-      aicc(f, n - 1), BIC(f),
-      Box.test(residuals(f), lag = 20, type = "Ljung-Box", fitdf = p + q)$p.value))
+# --- (b) la rejilla, con d = 1 y con d = 2 -------------------------------
+for (d in 1:2) for (q in 0:2) for (p in 0:2) {
+  f &lt;- arima(BJsales, order = c(p, d, q), method = "ML")
+  cat(sprintf("ARIMA(%d,%d,%d)  AICc=%8.3f  BIC=%8.3f  LB(20) p=%.4f  |raiz MA|=%s\n", p, d, q,
+      aicc(f, n - d), BIC(f),
+      Box.test(residuals(f), lag = 20, type = "Ljung-Box", fitdf = p + q)$p.value, raiz_ma(f)))
 }
-#&gt; ARIMA(0,1,0)  AICc= 545.544  BIC= 548.521  LB(20) p=0.0000
-#&gt; ARIMA(1,1,0)  AICc= 526.209  BIC= 532.134  LB(20) p=0.1830
-#&gt; ARIMA(2,1,0)  AICc= 520.088  BIC= 528.935  LB(20) p=0.2627
-#&gt; ARIMA(0,1,1)  AICc= 533.348  BIC= 539.274  LB(20) p=0.0340   &lt;- RECHAZA
-#&gt; ARIMA(1,1,1)  AICc= 514.902  BIC= 523.748  LB(20) p=0.6216   &lt;- min AICc y BIC
-#&gt; ARIMA(2,1,1)  AICc= 516.922  BIC= 528.660  LB(20) p=0.5576
-#&gt; ARIMA(0,1,2)  AICc= 527.856  BIC= 536.702  LB(20) p=0.1346
-#&gt; ARIMA(1,1,2)  AICc= 516.914  BIC= 528.652  LB(20) p=0.5592
-#&gt; ARIMA(2,1,2)  AICc= 518.575  BIC= 533.175  LB(20) p=0.4613
+#&gt; ARIMA(0,1,0)  AICc= 545.544  BIC= 548.521  LB(20) p=0.0000  |raiz MA|=   -
+#&gt; ARIMA(1,1,0)  AICc= 526.209  BIC= 532.134  LB(20) p=0.1830  |raiz MA|=   -
+#&gt; ARIMA(2,1,0)  AICc= 520.088  BIC= 528.935  LB(20) p=0.2627  |raiz MA|=   -
+#&gt; ARIMA(0,1,1)  AICc= 533.348  BIC= 539.274  LB(20) p=0.0340  |raiz MA|=3.9028
+#&gt; ARIMA(1,1,1)  AICc= 514.902  BIC= 523.748  LB(20) p=0.6216  |raiz MA|=1.5589
+#&gt; ARIMA(2,1,1)  AICc= 516.922  BIC= 528.660  LB(20) p=0.5576  |raiz MA|=1.6474
+#&gt; ARIMA(0,1,2)  AICc= 527.856  BIC= 536.702  LB(20) p=0.1346  |raiz MA|=2.2741
+#&gt; ARIMA(1,1,2)  AICc= 516.914  BIC= 528.652  LB(20) p=0.5592  |raiz MA|=1.6633
+#&gt; ARIMA(2,1,2)  AICc= 518.575  BIC= 533.175  LB(20) p=0.4613  |raiz MA|=1.2236
+#&gt; ARIMA(0,2,0)  AICc= 577.705  BIC= 580.675  LB(20) p=0.0000  |raiz MA|=   -
+#&gt; ARIMA(1,2,0)  AICc= 542.047  BIC= 547.959  LB(20) p=0.0028  |raiz MA|=   -
+#&gt; ARIMA(2,2,0)  AICc= 532.465  BIC= 541.290  LB(20) p=0.0916  |raiz MA|=   -
+#&gt; ARIMA(0,2,1)  AICc= 517.220  BIC= 523.132  LB(20) p=0.5586  |raiz MA|=1.3370
+#&gt; ARIMA(1,2,1)  AICc= 519.140  BIC= 527.965  LB(20) p=0.4874  |raiz MA|=1.2819
+#&gt; ARIMA(2,2,1)  AICc= 520.548  BIC= 532.257  LB(20) p=0.3880  |raiz MA|=1.1135
+#&gt; ARIMA(0,2,2)  AICc= 519.164  BIC= 527.989  LB(20) p=0.4895  |raiz MA|=1.2924
+#&gt; ARIMA(1,2,2)  AICc= 515.859  BIC= 527.568  LB(20) p=0.5650  |raiz MA|=1.0000
+#&gt; ARIMA(2,2,2)  AICc= 522.408  BIC= 536.971  LB(20) p=0.3262  |raiz MA|=1.2247
 
-# --- Etapa 3: por que falla el IMA(1,1) ---------------------------------
+# --- (b) por que falla el IMA(1,1) ---------------------------------------
 f011 &lt;- arima(BJsales, order = c(0, 1, 1), method = "ML")
 round(as.numeric(acf(residuals(f011), lag.max = 4, plot = FALSE)$acf)[-1], 4)
 #&gt; [1] 0.0142 0.2483 0.1185 0.2087
 round(1.96 / sqrt(length(residuals(f011))), 4)   # residuals() devuelve 150
 #&gt; [1] 0.16
-# los rezagos 2 y 4 se salen holgadamente: queda estructura AR
 
+# --- (c) el modelo que queda ----------------------------------------------
 f111 &lt;- arima(BJsales, order = c(1, 1, 1), method = "ML")
 round(c(phi = coef(f111)[["ar1"]], ee_phi = sqrt(f111$var.coef[1,1]),
         theta = coef(f111)[["ma1"]], ee_theta = sqrt(f111$var.coef[2,2])), 4)
-#&gt;     phi  ee_phi   theta ee_theta
-#&gt;  0.8799  0.0644 -0.6415   0.1035
+#&gt;      phi   ee_phi    theta ee_theta
+#&gt;   0.8799   0.0644  -0.6415   0.1035
 shapiro.test(residuals(f111))$p.value
-#&gt; [1] 0.6294597                    normalidad, sin problema
-
+#&gt; [1] 0.6294597
 as.character(auto.arima(BJsales, stepwise = FALSE, approximation = FALSE))
 #&gt; [1] "ARIMA(1,1,1)"
 
-# --- La comparacion que NO vale -----------------------------------------
+# --- (d) la comparacion que NO vale --------------------------------------
 f122 &lt;- arima(BJsales, order = c(1, 2, 2), method = "ML")
-round(c(d1 = aicc(f111, n - 1), d2 = aicc(f122, n - 2)), 3)
-#&gt;      d1      d2
-#&gt; 514.902 515.859
-round(min(Mod(polyroot(c(1, coef(f122)[grepl("^ma", names(coef(f122)))])))), 4)
-#&gt; [1] 1</code></pre>
-          <p><strong>Discusión.</strong> Dos lecciones. <span data-afirma="c4-m10-65">La primera: <strong>un criterio de información no sustituye
-            al diagnóstico</strong> <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.7"><a href="#ref-m10-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.7)</a></cite></span>. El ARIMA($0,1,1$) no es el peor de la rejilla por AICc, pero deja
-            autocorrelación residual de $0.248$ en el rezago 2 y $0.209$ en el 4, con banda $0.160$: hay una parte AR
-            que no ha modelado. El ARIMA($1,1,1$) la recoge con $\hat\phi = 0.880$ y entonces Ljung–Box sube de
-            $0.034$ a $0.622$. La segunda: el mejor modelo con $d = 2$ tiene AICc $515.86$ y el de $d = 1$, $514.90$
-            — parecen comparables y <strong>no lo son</strong>, porque se calculan sobre $148$ y $149$
-            observaciones. Y por si hubiera duda, ese modelo con $d=2$ tiene $|\text{raíz MA}| = 1.000$: la firma de
-            sobrediferenciación del Módulo 8.</p>
+round(c(ima_d1 = aicc(f011, n - 1), mejor_d2 = aicc(f122, n - 2),
+        diferencia = aicc(f011, n - 1) - aicc(f122, n - 2)), 3)
+#&gt;     ima_d1   mejor_d2 diferencia
+#&gt;    533.348    515.859     17.489
+c(n_efectivo_d1 = n - 1, n_efectivo_d2 = n - 2)
+#&gt; n_efectivo_d1 n_efectivo_d2
+#&gt;           149           148
+round(rbind(coef = coef(f122), ee = sqrt(diag(f122$var.coef))), 4)
+#&gt;         ar1     ma1    ma2
+#&gt; coef 0.8597 -1.6252 0.6252
+#&gt; ee   0.0797  0.1144 0.1134</code></pre>
+          <p><strong>(a)</strong> ADF no rechaza la raíz unitaria ($p = 0.53$) y <code>ndiffs()</code> pide una
+            diferencia; el $\hat\rho_1$ de la serie diferenciada una vez es $0.31$, y dos veces, $-0.48$. Se toma
+            $d = 1$.</p>
+          <p><strong>(b)</strong> El IMA($1,1$) es el octavo de nueve por AICc ($533.35$, a $18.4$ puntos del mejor) y
+            no pasa Ljung–Box(20) ($p = 0.034$). Aquí el criterio y el diagnóstico dicen lo mismo, y la ACF de los
+            residuales dice por qué: $0.248$ en el rezago 2 y $0.209$ en el 4, con banda $\pm 0.160$. Queda una
+            parte AR sin modelar.</p>
+          <p><strong>(c)</strong> El ARIMA($1,1,1$) la recoge con $\hat\phi = 0.880$ (e.e. $0.064$) y
+            $\hat\theta = -0.641$ (e.e. $0.103$). Es el mínimo de AICc y de BIC, pasa Ljung–Box ($p = 0.622$) y
+            Shapiro–Wilk ($p = 0.629$), y es el que devuelve <code>auto.arima</code>.</p>
+          <p style="margin-bottom:0;"><strong>(d)</strong> Dos lecciones. <span data-afirma="c4-m10-65">La primera: <strong>un criterio de información no sustituye
+            al diagnóstico</strong> <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.7"><a href="#ref-m10-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.7)</a></cite></span>. El mejor modelo con $d = 2$ es el ARIMA($1,2,2$): AICc $515.86$,
+            residuales sin estructura (Ljung–Box $p = 0.565$) y, sin embargo, una raíz MA de módulo $1.000$. Su
+            polinomio MA es $1 - 1.625B + 0.625B^2 = (1 - B)(1 - 0.625B)$: lleva dentro el factor que deshace la
+            segunda diferencia, y lo que queda es un ARIMA($1,1,1$) con $\hat\phi = 0.860$ y
+            $\hat\theta = -0.625$, prácticamente el de (c). Ni el AICc ni Ljung–Box lo delatan; las raíces, sí. La segunda: los
+            $17.5$ puntos que separan al IMA($1,1$) de ese modelo no dicen nada sobre $d$, porque un AICc se
+            calcula sobre $149$ observaciones y el otro sobre $148$. Quien los comparase pasaría a $d = 2$ por la
+            razón equivocada; el IMA($1,1$) se descarta dentro de $d = 1$, que es donde se puede comparar.</p>
         </div>
       </div>
 
       <div class="ejercicio-guiado">
-        <p class="ejercicio-enunciado"><span class="ejercicio-numero">2.</span>La serie <code>lynx</code> (<span data-afirma="c4-m10-151">capturas anuales de lince canadiense, 1821–1934) <cite class="cita" data-ref="rcoreteam2026r" data-loc="§Description"><a href="#ref-m10-rcoreteam2026r" title="R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/">(R Core Team, 2026, §Description)</a></cite></span> tiene <span data-afirma="c4-m10-66">ciclos marcadísimos y sin longitud fija <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.1"><a href="#ref-m10-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.1)</a></cite></span>, <span data-afirma="c4-m10-150">de unos 10 años en promedio</span>. Trabaja con
-          $\log(\text{lynx})$ y responde: <strong>¿hay que diferenciarla?</strong> Mira qué dicen las pruebas de raíz
-          unitaria, qué le pasa a la varianza al diferenciar y qué <em>raíces</em> tiene un modelo ajustado con
-          $d = 1$.</p>
+        <p class="ejercicio-enunciado" style="margin-bottom: 0.75rem;"><span class="ejercicio-numero">2.</span><code>pelt</code>, del paquete <code>tsibbledata</code>, recoge las pieles de liebre americana y de
+          lince canadiense que comerció cada año la Compañía de la Bahía de Hudson entre 1845 y 1935 (91 datos).
+          Trabaja con el logaritmo de las de liebre, <code>log(pelt$Hare)</code>, una serie de ciclos muy marcados,
+          y responde a una sola pregunta: <strong>¿hay que diferenciarla?</strong> Entrega:</p>
+        <ol style="list-style-type: lower-alpha; margin-top: 0.5rem; margin-bottom: 0;">
+          <li>Lo que piden las tres pruebas de raíz unitaria.</li>
+          <li>La varianza de la serie y de sus dos primeras diferencias, y el cociente
+            $\operatorname{Var}(\nabla y)/\operatorname{Var}(y)$ frente a $2(1 - r_1)$. ¿Dice algo sobre $d$?</li>
+          <li>El módulo de la raíz MA de los ARIMA($0,1,1$), ($1,1,1$), ($2,1,1$) y ($3,1,1$). ¿Cuáles
+            delatan la diferencia, y por qué no todos?</li>
+          <li>Un modelo sin diferenciar que pase el diagnóstico.</li>
+        </ol>
         <div class="ejercicio-acciones">
           <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c4e2-pista">
             <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
@@ -858,77 +899,88 @@ round(min(Mod(polyroot(c(1, coef(f122)[grepl("^ma", names(coef(f122)))])))), 4)
           </button>
         </div>
         <div class="ejercicio-panel pista" id="c4e2-pista" hidden>
-          <p style="margin:0;">Cuidado: aquí diferenciar <strong>reduce</strong> la varianza, y quien la usara como
-            criterio diferenciaría. <span data-afirma="c4-m10-67">No es una señal de raíz unitaria: en una serie estacionaria esa caída solo
-            repite que $r_1$ es alto (Módulo 2.7)</span>. Para decidir, ajusta un modelo con $d = 1$ que tenga parte AR suficiente para el ciclo <em>y</em> parte MA —por
-            ejemplo un ARIMA($2,1,1$)— y mira el módulo de la raíz de $\theta(B)$. Sin la parte AR, el MA se
-            ocupa del ciclo y la raíz no delata nada. <span data-afirma="c4-m10-68">Un ciclo
-            no es una tendencia: una serie que sube y baja en ciclos de longitud no fija <em>sí</em> vuelve a su media <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.1"><a href="#ref-m10-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.1)</a></cite></span>.</p>
+          <p style="margin:0;">Para (a) y (c), la segunda y la tercera evidencia del Módulo 3; para (b), lo que el Módulo 3
+            dice de la varianza. Para (c), piensa qué parte del modelo tiene que recoger el ciclo antes de que el
+            término MA pueda delatar algo.</p>
         </div>
         <div class="ejercicio-panel solucion" id="c4e2-sol" hidden>
-          <p><strong>Respuesta: no hay que diferenciarla ($d = 0$), y la varianza, usada como criterio, llevaría a
-            diferenciar.</strong></p>
-          <pre><code class="language-r">library(forecast); library(tseries)
-ly &lt;- log(lynx); n &lt;- length(ly)   # 114
+          <p><strong>Respuesta: no hay que diferenciarla ($d = 0$). Lo dicen las tres pruebas, y lo confirma la raíz
+            MA de los modelos con $d = 1$ que tienen parte AR suficiente. La varianza, que baja un tercio al
+            diferenciar, no dice nada.</strong></p>
+          <pre><code class="language-r">library(forecast); library(tsibbledata)
+x &lt;- ts(log(pelt$Hare), start = 1845); n &lt;- length(x)   # 91
+aicc &lt;- function(f, n) { k &lt;- length(f$coef) + 1; f$aic + 2*k*(k+1)/(n-k-1) }
 
-# --- Las pruebas: las dos dicen d = 0 ------------------------------------
-c(ndiffs_kpss = ndiffs(ly, test = "kpss"), ndiffs_adf = ndiffs(ly, test = "adf"))
-#&gt; ndiffs_kpss  ndiffs_adf
-#&gt;           0           0
-c(kpss_p = kpss.test(ly)$p.value, adf_p = adf.test(ly)$p.value)
-#&gt; kpss_p  adf_p
-#&gt;   0.10   0.01     KPSS no rechaza estacionariedad; ADF rechaza raiz unitaria
+# --- (a) las pruebas ------------------------------------------------------
+c(kpss = ndiffs(x, test = "kpss"), adf = ndiffs(x, test = "adf"), pp = ndiffs(x, test = "pp"))
+#&gt; kpss  adf   pp
+#&gt;    0    0    0
 
-# --- La varianza: baja al diferenciar, pero solo repite r1 ---------------
-round(sapply(0:3, function(d) var(if (d == 0) ly else diff(ly, differences = d))), 4)
-#&gt; [1] 1.6532 0.6871 0.6026 1.1532
-# la varianza BAJA al diferenciar (-58 %) y su minimo esta en d = 2. No es una
-# senal de raiz unitaria: en una serie estacionaria el cociente se acerca a
-# 2(1 - r1) (Modulo 2.7), y aqui r1 es alto
-r1 &lt;- acf(ly, plot = FALSE)$acf[2]
-round(c(r1 = r1, cociente = var(diff(ly)) / var(ly), dos_por_1_menos_r1 = 2 * (1 - r1)), 3)
-#&gt;                 r1           cociente dos_por_1_menos_r1
-#&gt;              0.785              0.416              0.430
+# --- (b) la varianza y r1 -------------------------------------------------
+round(sapply(0:2, function(d) var(if (d == 0) x else diff(x, differences = d))), 4)
+#&gt; [1] 1.3232 0.8899 1.6919
+r1 &lt;- acf(x, plot = FALSE)$acf[2]
+round(c(r1 = r1, cociente = var(diff(x)) / var(x), dos_por_1_menos_r1 = 2 * (1 - r1),
+        r1_de_la_diferencia = acf(diff(x), plot = FALSE)$acf[2]), 3)
+#&gt;                  r1            cociente  dos_por_1_menos_r1 r1_de_la_diferencia
+#&gt;               0.666               0.673               0.669               0.043
 
-# --- Las raices sí lo detectan -------------------------------------------
-for (o in list(c(2,1,0), c(2,1,1), c(0,1,1))) {
-  f &lt;- arima(ly, order = o, method = "ML")
-  ma &lt;- coef(f)[grepl("^ma", names(coef(f)))]
-  cat(sprintf("ARIMA(%d,%d,%d)  |raiz MA| = %s\n", o[1], o[2], o[3],
-      if (length(ma)) sprintf("%.4f", min(Mod(polyroot(c(1, ma))))) else "-"))
+# --- (c) las raices MA de cuatro modelos con d = 1 ------------------------
+for (o in list(c(0, 1, 1), c(1, 1, 1), c(2, 1, 1), c(3, 1, 1))) {
+  f &lt;- arima(x, order = o, method = "ML")
+  cat(sprintf("ARIMA(%d,1,%d)  theta = %7.4f  |raiz MA| = %7.4f  AICc = %.2f\n", o[1], o[3],
+      coef(f)[["ma1"]], Mod(polyroot(c(1, coef(f)[["ma1"]]))), aicc(f, n - 1)))
 }
-#&gt; ARIMA(2,1,0)  |raiz MA| = -
-#&gt; ARIMA(2,1,1)  |raiz MA| = 1.0000     &lt;- el MA cancela la diferencia
-#&gt; ARIMA(0,1,1)  |raiz MA| = 1.5076
+#&gt; ARIMA(0,1,1)  theta =  0.0458  |raiz MA| = 21.8369  AICc = 247.86
+#&gt; ARIMA(1,1,1)  theta =  0.6873  |raiz MA| =  1.4549  AICc = 249.86
+#&gt; ARIMA(2,1,1)  theta = -1.0000  |raiz MA| =  1.0000  AICc = 233.76
+#&gt; ARIMA(3,1,1)  theta = -0.9802  |raiz MA| =  1.0202  AICc = 230.96
 
-# --- El modelo sin diferenciar: el ciclo, recuperado ----------------------
-f &lt;- arima(ly, order = c(2, 0, 0), method = "ML")
-r &lt;- polyroot(c(1, -coef(f)[1:2]))
-round(c(phi1 = coef(f)[["ar1"]], phi2 = coef(f)[["ar2"]],
-        modulo = Mod(r)[1], periodo = 2*pi/Arg(r[which.max(Im(r))])), 4)
-#&gt;    phi1    phi2  modulo periodo
-#&gt;  1.3776 -0.7399  1.1626  9.7839
-Box.test(residuals(f), lag = 20, type = "Ljung-Box", fitdf = 2)$p.value
-#&gt; [1] 0.009434283     el AR(2) tampoco basta
-as.character(auto.arima(ly, stepwise = FALSE, approximation = FALSE, seasonal = FALSE))
-#&gt; [1] "ARIMA(2,0,3) with non-zero mean"</code></pre>
-          <p><strong>Discusión.</strong> Las dos pruebas coinciden en $d = 0$: <span data-afirma="c4-m10-69">la serie es estacionaria, y tiene
-            sentido, porque un ciclo de longitud no fija <em>sí</em> vuelve a su media <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.1"><a href="#ref-m10-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.1)</a></cite></span>. Lo interesante es lo que hace la
-            varianza: diferenciar la reduce un $58\,\%$ y su mínimo ($0.6026$) está en $d = 2$, así que quien la
-            usara como criterio diferenciaría <strong>dos veces</strong>. Pero esa caída no dice nada de raíces
+# --- (d) sin diferenciar --------------------------------------------------
+for (p in c(2, 4)) {
+  f &lt;- arima(x, order = c(p, 0, 0), method = "ML")
+  cat(sprintf("AR(%d)  AICc = %.2f  LB(20) p = %.4f  |raiz AR| menor = %.4f\n", p, aicc(f, n),
+      Box.test(residuals(f), lag = 20, type = "Ljung-Box", fitdf = p)$p.value,
+      min(Mod(polyroot(c(1, -coef(f)[1:p]))))))
+}
+#&gt; AR(2)  AICc = 232.47  LB(20) p = 0.0546  |raiz AR| menor = 2.0009
+#&gt; AR(4)  AICc = 223.21  LB(20) p = 0.8829  |raiz AR| menor = 1.1453
+as.character(auto.arima(x, stepwise = FALSE, approximation = FALSE))
+#&gt; [1] "ARIMA(4,0,0) with non-zero mean"</code></pre>
+          <p><strong>(a)</strong> Las tres pruebas coinciden en $d = 0$: según las tres, la serie es estacionaria.</p>
+          <p><strong>(b)</strong> La varianza pasa de $1.323$ a $0.890$ al diferenciar una vez, un $33\,\%$ menos, y
+            sube a $1.692$ con la segunda diferencia. <span data-afirma="c4-m10-67">No es una señal de raíz unitaria: en una serie estacionaria esa caída solo
+            repite que $r_1$ es alto (Módulo 2.7)</span>: con $r_1 = 0.666$ cabe esperar un cociente cercano a $2(1 - r_1) = 0.669$, y el medido es
+            $0.673$. El $\hat\rho_1$ de la serie diferenciada tampoco avisa: vale $0.043$.</p>
+          <p><strong>(c)</strong> El ARIMA($0,1,1$) tiene la raíz MA en $21.84$ y el ARIMA($1,1,1$), en $1.45$: ninguna
+            señal. El ARIMA($2,1,1$) la tiene en $1.0000$, con $\hat\theta = -1.000$, y el ARIMA($3,1,1$), en
+            $1.020$. La firma aparece cuando el modelo tiene parte AR suficiente para el ciclo, y aquí hacen falta
+            al menos dos coeficientes; con menos, el término MA se ocupa de otra cosa y la raíz no delata nada. Es
+            lo que mostraba la práctica del Módulo 8.</p>
+          <p><strong>(d)</strong> El AR(2) se queda en el borde (Ljung–Box(20) $p = 0.055$). El AR(4), que es el que
+            elige la búsqueda exhaustiva de <code>auto.arima</code>, pasa con holgura ($p = 0.883$) y tiene mejor AICc ($223.21$ frente a
+            $232.47$).</p>
+          <p style="margin-bottom:0;"><strong>El mismo patrón en otra serie.</strong> La serie <code>lynx</code> (<span data-afirma="c4-m10-151">capturas anuales de lince canadiense, 1821–1934) <cite class="cita" data-ref="rcoreteam2026r" data-loc="§Description"><a href="#ref-m10-rcoreteam2026r" title="R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/">(R Core Team, 2026, §Description)</a></cite></span> tiene <span data-afirma="c4-m10-66">ciclos marcadísimos y sin longitud fija <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.1"><a href="#ref-m10-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.1)</a></cite></span>, <span data-afirma="c4-m10-150">de unos 10 años en promedio</span>. <span data-afirma="c4-m10-68">Un ciclo
+            no es una tendencia: una serie que sube y baja en ciclos de longitud no fija <em>sí</em> vuelve a su media <cite class="cita" data-ref="hyndman2021forecasting" data-loc="§9.1"><a href="#ref-m10-hyndman2021forecasting" title="Hyndman, R. J., y Athanasopoulos, G. (2021). Forecasting: principles and practice (3.ª ed.). OTexts. https://otexts.com/fpp3/">(Hyndman y Athanasopoulos, 2021, §9.1)</a></cite></span>. Con su logaritmo ocurre lo mismo que con la liebre, y más marcado: las tres pruebas piden $d = 0$: la serie es estacionaria. Diferenciar reduce la varianza un $58\,\%$ ($1.653 \to 0.687$), pero esa caída no dice nada de raíces
             unitarias: <span data-afirma="c4-m10-70">con $r_1 = 0.785$, lo que cabe esperar en una serie estacionaria es un cociente cercano a
             $2(1-r_1) = 0.430$, y el medido es $0.416$. Es lo que advirtió el Capítulo 2 (Módulo 2.7): la varianza
-            repite lo que dice $r_1$</span>. Lo que sí lo detecta sin ambigüedad es la <strong>raíz</strong>: el ARIMA($2,1,1$) coloca $|\text{raíz MA}| = 1.000$,
-            es decir, el término MA reconstruye el factor $(1-B)$ que acabas de imponer. Nota honesta: el AR(2) tampoco pasa Ljung–Box ($p = 0.0094$) y <code>auto.arima</code> propone un ARMA($2,3$); la dinámica
-            del lince es más rica que un AR(2), pero eso no cambia la respuesta sobre $d$.</p>
+            repite lo que dice $r_1$</span>. El $\hat\rho_1$ de la serie diferenciada vale $0.565$, y el ARIMA($2,1,1$) tiene
+            $\hat\theta = -1.000$, con la raíz MA de módulo $1.000$. Las cifras de las pruebas, de la varianza, de $r_1$ y del ARIMA($2,1,1$) son las del bloque que
+            sigue al aviso «La columna de la varianza no decide $d$» del Módulo 8.</p>
         </div>
       </div>
 
       <div class="ejercicio-guiado">
-        <p class="ejercicio-enunciado"><span class="ejercicio-numero">3.</span>Sobre el ARIMA($1,1,1$) de
-          <code>BJsales</code> del ejercicio 1, <strong>construye el intervalo de pronóstico a mano</strong> desde
-          los pesos $\psi$ y comprueba que coincide con el de <code>forecast()</code>. ¿Crece $\sigma_h$ como
-          $\sqrt{h}$? Ajusta después el mismo modelo con deriva y compara.</p>
+        <p class="ejercicio-enunciado" style="margin-bottom: 0.75rem;"><span class="ejercicio-numero">3.</span>Sobre el ARIMA($1,1,1$) de <code>BJsales</code> del ejercicio 1, ajustado con
+          <code>Arima()</code>, entrega:</p>
+        <ol style="list-style-type: lower-alpha; margin-top: 0.5rem; margin-bottom: 0;">
+          <li>El valor al que tienden los pesos $\psi_j$, con la forma cerrada del Módulo 9 y antes de
+            expandir nada. ¿Qué anticipa sobre el intervalo, comparado con el del Nilo?</li>
+          <li>El intervalo de pronóstico del $95\,\%$ para $h = 1, \dots, 12$, <strong>construido a
+            mano</strong> desde los pesos $\psi$, y su diferencia con el de <code>forecast()</code>.</li>
+          <li>$\sigma_{12}/\sigma_1$ frente a $\sqrt{12}$: ¿crece $\sigma_h$ como en una caminata
+            aleatoria?</li>
+        </ol>
         <div class="ejercicio-acciones">
           <button type="button" class="ejercicio-boton" aria-expanded="false" aria-controls="c4e3-pista">
             <i class="fas fa-lightbulb" aria-hidden="true"></i> Pista <i class="fas fa-chevron-down" aria-hidden="true"></i>
@@ -938,21 +990,28 @@ as.character(auto.arima(ly, stepwise = FALSE, approximation = FALSE, seasonal = 
           </button>
         </div>
         <div class="ejercicio-panel pista" id="c4e3-pista" hidden>
-          <p style="margin:0;">Los $\psi$ no salen del ARIMA directamente: hay que expandirlo primero como el
-            ARMA($2,1$) del Módulo 1, con $\phi^{*} = (1+\phi,\ -\phi)$. Y el $\sigma$ y los $\psi$ tienen que venir
+          <p style="margin:0;">Los $\psi$ salen de la forma cerrada del Módulo 9, o de expandir el modelo como el
+            ARMA($2,1$) del Módulo 1, con $\phi^{*} = (1+\phi,\ -\phi)$: las dos vías dan lo mismo. Y el $\sigma$ y los $\psi$ tienen que venir
             del <strong>mismo ajuste</strong> — <span data-afirma="c4-m10-71">mezclar <code>arima(method = "ML")</code> con <code>Arima()</code>
             produce $\hat\sigma^2$ distintos, sobre todo porque <code>Arima()</code> divide la suma de cuadrados de
             los residuales entre $n^* - p - q$ ($97$ en el Nilo) <cite class="cita" data-ref="hyndman2026forecast" data-loc="§Value"><a href="#ref-m10-hyndman2026forecast" title="Hyndman, R. J., Athanasopoulos, G., Bergmeir, C., Caceres, G., Chhay, L., Kuroptev, K., Mücke, M., O’Hara-Wild, M., Petropoulos, F., Razbash, S., Wang, E., y Yasmeen, F. (2026). forecast: Forecasting Functions for Time Series and Linear Models (Versión 9.0.2) [Software]. Comprehensive R Archive Network (CRAN). https://doi.org/10.32614/CRAN.package.forecast">(Hyndman et al., 2026, §Value)</a></cite> y <code>arima()</code> da la de máxima verosimilitud <cite class="cita" data-ref="rcoreteam2026r" data-loc="§Value"><a href="#ref-m10-rcoreteam2026r" title="R Core Team. (2026). R: A Language and Environment for Statistical Computing (Versión 4.6.0) [Software]. R Foundation for Statistical Computing. https://www.R-project.org/">(R Core Team, 2026, §Value)</a></cite>, que divide entre
             $n^*$</span>; la comprobación falla por esa razón, no por la fórmula.</p>
         </div>
         <div class="ejercicio-panel solucion" id="c4e3-sol" hidden>
-          <p><strong>Respuesta: coinciden con error $2.4\times 10^{-14}$, y $\sigma_h$ crece bastante más rápido que
-            $\sqrt{h}$.</strong></p>
+          <p><strong>Respuesta: $\psi_\infty = 2.99$, así que cada choque acaba pesando casi el triple, al revés
+            que en el Nilo. El intervalo hecho a mano coincide con el de <code>forecast()</code> (error
+            $2.4\times 10^{-14}$), y $\sigma_h$ crece bastante más rápido que $\sqrt{h}$.</strong></p>
           <pre><code class="language-r">library(forecast)
 f  &lt;- Arima(BJsales, order = c(1, 1, 1))
 ph &lt;- coef(f)[["ar1"]]; th &lt;- coef(f)[["ma1"]]; s &lt;- sqrt(f$sigma2)
 H  &lt;- 12
 
+# --- (a) el limite de los psi, antes de expandir nada ---------------------
+round(c(phi = ph, theta = th, limite = (1 + th) / (1 - ph)), 4)
+#&gt;     phi   theta  limite
+#&gt;  0.8800 -0.6415  2.9883
+
+# --- (b) el intervalo, a mano ---------------------------------------------
 # ARIMA(1,1,1) = ARMA(2,1) con ar* = (1 + phi, -phi)
 psi     &lt;- c(1, ARMAtoMA(ar = c(1 + ph, -ph), ma = th, lag.max = H))
 sigma_h &lt;- s * sqrt(cumsum(psi^2))[1:H]
@@ -965,46 +1024,30 @@ fc &lt;- forecast(f, h = H, level = 95)
 semi &lt;- as.numeric((fc$upper - fc$lower) / 2)
 round(semi[1:5], 4)
 #&gt; [1] 2.6295 4.1857 5.6592 7.1042 8.5303
-max(abs(semi - qnorm(0.975) * sigma_h))
-#&gt; [1] 2.398082e-14        identicos salvo error de maquina
+max(abs(semi - qnorm(0.975) * sigma_h))    # identicos salvo error de maquina
+#&gt; [1] 2.398082e-14
 
-# ¿Crece como una caminata aleatoria? En un ARIMA(0,1,0) todos los psi
-# valen 1 y sigma_h = sigma*sqrt(h) EXACTAMENTE; esa es la referencia.
+# --- (c) ¿crece como una caminata aleatoria? ------------------------------
+# En un ARIMA(0,1,0) todos los psi valen 1 y sigma_h = sigma*sqrt(h): esa es la referencia
 round(c(sigma_12_sobre_sigma_1 = sigma_h[H] / sigma_h[1], raiz_de_12 = sqrt(H),
         frente_a_la_caminata   = sigma_h[H] / (s * sqrt(H))), 4)
 #&gt; sigma_12_sobre_sigma_1             raiz_de_12   frente_a_la_caminata
 #&gt;                 6.7963                 3.4641                 1.9619
-
-# psi tiende a (1 + theta)/(1 - phi); con phi = 0.88 converge muy despacio
 round(c(psi_12 = psi[H + 1], limite = (1 + th) / (1 - ph)), 4)
 #&gt; psi_12 limite
-#&gt; 2.5593 2.9883
-
-# --- Con deriva ----------------------------------------------------------
-fd &lt;- Arima(BJsales, order = c(1, 1, 1), include.drift = TRUE)
-round(c(deriva = coef(fd)[["drift"]], ee = sqrt(diag(fd$var.coef))[["drift"]],
-        t = coef(fd)[["drift"]] / sqrt(diag(fd$var.coef))[["drift"]]), 4)
-#&gt; deriva     ee      t
-#&gt; 0.4001 0.2557 1.5644
-round(c(aicc_con = fd$aicc, aicc_sin = f$aicc), 3)
-#&gt; aicc_con aicc_sin
-#&gt;  515.062  514.902
-round(c(h12_con = forecast(fd, h = H)$mean[H],
-        h12_sin = forecast(f,  h = H)$mean[H]), 2)
-#&gt; h12_con h12_sin
-#&gt;  266.99  263.76</code></pre>
-          <p><strong>Discusión.</strong> La fórmula reproduce el intervalo hasta el error de máquina: no hay ninguna
-            magia en <code>forecast()</code>. Lo interesante es la segunda pregunta, y conviene decir bien contra qué se
-            compara: $\sigma\sqrt{h}$ no es "el caso de errores independientes" sino <span data-afirma="c4-m10-72"><strong>el de una caminata
+#&gt; 2.5593 2.9883</code></pre>
+          <p><strong>(a)</strong> $\psi_\infty = (1+\hat\theta)/(1-\hat\phi) = 2.99$, mayor que $1$: los choques se
+            amplifican en vez de amortiguarse. En el Nilo era $0.169$.</p>
+          <p><strong>(b)</strong> La fórmula reproduce el intervalo hasta el error de máquina: no hay ninguna magia en
+            <code>forecast()</code>.</p>
+          <p style="margin-bottom:0;"><strong>(c)</strong> Conviene decir bien contra qué se compara: $\sigma\sqrt{h}$ no es "el caso de
+            errores independientes" sino <span data-afirma="c4-m10-72"><strong>el de una caminata
             aleatoria</strong>, donde $\psi_j = 1$ para todo $j$ y la fórmula se reduce exactamente a eso <cite class="cita" data-ref="cryer2008time" data-loc="p. 202"><a href="#ref-m10-cryer2008time" title="Cryer, J. D., y Chan, K.-S. (2008). Time Series Analysis (2.ª ed.). Springer New York. https://doi.org/10.1007/978-0-387-75959-3">(Cryer y Chan, 2008, p. 202)</a></cite></span>. Aquí
             $\sigma_{12}$ es $1.96$ veces la de una caminata, porque los $\psi_j$ no decaen a cero sino que tienden
-            a $(1+\theta)/(1-\phi) = 2.99$; a $h = 12$ van por $2.56$, todavía subiendo, porque $\hat\phi = 0.88$ hace
+            a $2.99$; a $h = 12$ van por $2.56$, todavía subiendo, porque $\hat\phi = 0.88$ hace
             la convergencia lenta. <strong>Cada nuevo choque se acumula con casi tres veces su peso.</strong> Es el
             contraste exacto del Nilo, donde $\psi_\infty = 0.169$ y la incertidumbre crece cuatro veces
-            <em>menos</em> que la de una caminata. Sobre la deriva: $\hat\delta = 0.400$ con $t = 1.56$ no es significativa y empeora el
-            AICc ($515.06$ frente a $514.90$), aunque desplace el pronóstico a doce meses de $263.76$ a $266.99$.
-            Una tendencia que parece plausible y no se sostiene estadísticamente es exactamente el caso en que
-            conviene <strong>no</strong> extrapolarla.</p>
+            <em>menos</em> que la de una caminata.</p>
         </div>
       </div>
 
