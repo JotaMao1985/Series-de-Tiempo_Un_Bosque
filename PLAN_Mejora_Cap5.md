@@ -14,7 +14,7 @@ la prosa, con sus fuentes contrastadas y con práctica en cada módulo. Es la qu
 [[PLAN_Mejora_Cap1]] a [[PLAN_Mejora_Cap4]]: cinco rondas, un redactor por ronda, verificadores
 independientes sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: APROBADO por Javier el 2026-11-23; R1 y R2 publicadas y R3 hecha el 2026-11-24**, con D1–D11 y las recomendaciones de las preguntas 1, 2, 3,
+**Estado: APROBADO por Javier el 2026-11-23; R1, R2 y R3 publicadas el 2026-11-24**, con D1–D11 y las recomendaciones de las preguntas 1, 2, 3,
 4 y 6 de §7. El diagnóstico es del mismo día; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-23
@@ -232,7 +232,8 @@ Cada una lleva mi recomendación; las decide Javier.
   - **Verificaciones:** bloques 1335/1335, `verifica_todo` 11 en verde, Tailwind sin cambios, deck 774/774;
     reensamblado reproducible.
 
-- **R3 (estructura) — hecha el 2026-11-24, sin publicar.** Redactor: `diagnostico/cap5/R3_cambios.md`; verificador
+- **R3 (estructura) — hecha y PUBLICADA el 2026-11-24 (`main` `40be846` · gh-pages `326f161`).** La portada,
+  los seis capítulos, la guía y el deck en vivo, idénticos al commit. Redactor: `diagnostico/cap5/R3_cambios.md`; verificador
   independiente: `R3_verificacion.md`, con lo que se hizo con cada hallazgo.
   - **Orden (D6), sin renumerar ni cambiar títulos:**
     - el *airline* ajustado, al principio del M2;
