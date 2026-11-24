@@ -14,7 +14,7 @@ la prosa, con sus fuentes contrastadas y con práctica en cada módulo. Es la qu
 [[PLAN_Mejora_Cap1]] a [[PLAN_Mejora_Cap4]]: cinco rondas, un redactor por ronda, verificadores
 independientes sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: APROBADO por Javier el 2026-11-23**, con D1–D11 y las recomendaciones de las preguntas 1, 2, 3,
+**Estado: APROBADO por Javier el 2026-11-23; R1 hecha el 2026-11-24, sin publicar**, con D1–D11 y las recomendaciones de las preguntas 1, 2, 3,
 4 y 6 de §7. El diagnóstico es del mismo día; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-23
@@ -168,6 +168,44 @@ Cada una lleva mi recomendación; las decide Javier.
 | T4.2 | R4 | Contrastar, marcar, citar y registrar (D9); pie generado; sección 0 a `ensambla_cap6.py` | L | R3, T4.1 |
 | T5.1 | R5 | Los «Para practicar» de M1–M10 (D10), con solución calculada en R bajo `#>` | L | R3 |
 | T5.2 | R5 | Ejercicios 1, 2 y 3; quiz; aviso del Excel | M | R3 |
+
+### Registro de rondas
+
+- **R1 (errores) — hecha el 2026-11-24, sin publicar.** Redactor: `diagnostico/cap5/R1_cambios.md`. Dos
+  verificadores independientes: `R1_verificacion_A.md` (el capítulo) y `R1_verificacion_B.md` (el deck, el
+  generador, la reproducibilidad y el aspecto). Cada uno lleva lo que hizo la sesión maestra al final.
+  - **Los errores de §1:**
+    - M5, *airline* frente a la caminata: menos incertidumbre el primer año y más desde $h = 42$, por la raíz
+      unitaria doble, con un bloque que lo imprime y la remisión a los momentos del M2 (§7.6).
+    - Intro del simulador de pesos ψ: el salto vale $1+\Theta$.
+    - Regla de la varianza retirada en el M3, el ciclo, el M7, el resumen y el E1.
+    - Sobrediferenciar se lee en $\hat\Theta$ frente a $-1$, en errores estándar, como señal y no como
+      veredicto.
+    - E3(b), con lo que dan los números.
+    - Remisión a las manchas solares, retirada.
+  - **Lo demás del par:** las 7 imprecisiones, los 9 menores y los 2 dudosos.
+    - Python sin silenciar la no convergencia (D11), y OPG frente a la hessiana.
+    - La TRM leída de la copia congelada (D2).
+    - Tildes de `SERIES_CAP5` arregladas en el generador, con una guarda.
+    - El M12 en pasado.
+    - 13 diapositivas del deck: 774 claims, 0 que no coinciden; 84 a escala ≥ 88 %.
+  - **Los verificadores hallaron 3 imprecisiones y 18 menores**, ningún error. Las de más peso:
+    - el criterio de $\pm 1.96$ e.e. avisaba como veredicto (con $\Theta = -0.85$ y nada de más, alarma en 137
+      de 200);
+    - la solución del E3(b) ordenaba modelos por el p-valor;
+    - el M9 decía que statsmodels diferencia los datos, contra el M6.
+    
+    Todas corregidas, salvo dos que esperan: una retro del simulacro que usa la varianza (para el banco) y la
+    TRM como fuente de datos sin alta (para la R4).
+  - **`verifica_bloques_cap6.py`** usa ahora un dispositivo gráfico nulo y falla si una sesión de R o Python
+    termina con error. El cap. 6 da 415/434, igual que antes del cambio: le toca a su R1.
+  - **Verificaciones:**
+    - Bloques: 1335/1335 (antes 1199/1212).
+    - `verifica_todo.py`: 11 en verde.
+    - Por HTTP, a 1200 y 375 px: sin errores.
+    - Cap. 6: idéntico.
+  - **Decisiones para Javier al publicar:** el deck se reconstruyó con la skill del 14 nov (la fuente en el pie,
+    a 12.5 px), como el del cap. 4 ya publicado.
 
 ## 5. Criterios de aceptación
 

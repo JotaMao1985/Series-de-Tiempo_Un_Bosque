@@ -1,0 +1,295 @@
+tamaño: 772818 -> 785310 caracteres
+bloques <style>: 1 -> 1; <script> en línea: 5 -> 5; diapositivas <section>: 84 -> 84
+recursos externos iguales: True
+
+== CSS: +136 / -11 líneas
+   --- 
+   +++ 
+   @@ -80 +80 @@
+   -        :root[data-tema="ucompensar"] .cierre .pie { color: rgba(255, 255, 255, 0.62); }
+   +        :root[data-tema="ucompensar"] .cierre .pie, :root[data-tema="ucompensar"] .gancho .pie { color: rgba(255, 255, 255, 0.62); }
+   @@ -93 +93,4 @@
+   -        :root[data-tema="ucompensar"] .principal h2 { font-weight: 700; }
+   +        :root[data-tema="ucompensar"] .principal h2,
+   +        :root[data-tema="ucompensar"] .idea h2,
+   +        :root[data-tema="ucompensar"] .gancho h2 { font-weight: 700; }
+   +        :root[data-tema="ucompensar"] .dato .cifra, :root[data-tema="ucompensar"] .numero-grande { font-weight: 900; }
+   @@ -104 +107 @@
+   -        :root[data-tema="ucompensar"] .cierre .pie .num { color: rgba(255, 255, 255, 0.7); }
+   +        :root[data-tema="ucompensar"] .cierre .pie .num, :root[data-tema="ucompensar"] .gancho .pie .num { color: rgba(255, 255, 255, 0.7); }
+   @@ -305,0 +309,4 @@
+   +        /* Lo accesorio, de verdad pequeño: una aclaración no compite con la idea. */
+   +        .cuerpo small { font-size: 0.74em; color: var(--gris); }
+   +
+   +        /* La frase que remata la diapositiva: una banda, no un párrafo más. */
+   @@ -308 +315 @@
+   -            padding: 0.1em 0 0.1em 0.9em;
+   +            padding: 0.1em 0 0.1em 0.9em;   /* las medidas de antes: la banda no le quita ancho ni alto al texto */
+   @@ -309,0 +317,2 @@
+   +            border-radius: 0 12px 12px 0;
+   +            background: linear-gradient(90deg, rgba(var(--secondary-rgb), 0.09) 0%, rgba(var(--secondary-rgb), 0.02) 70%, transparent 100%);
+   @@ -318,0 +328,3 @@
+   +        /* Proyectada, la rejilla completa pesa más que las cifras: solo filetes
+   +           horizontales y cabecera con el color del curso. Las medidas (cuerpo,
+   +           relleno) son las de antes: ninguna tabla que cabía deja de caber. */
+   @@ -324 +336 @@
+   -            background: #fff;
+   +            background: transparent;
+   @@ -332 +344,2 @@
+   -            border: 1px solid var(--borde);
+   +            border: 0;
+   +            border-bottom: 2px solid var(--primary);
+   @@ -338 +351,2 @@
+   -            border: 1px solid var(--borde);
+   +            border: 0;
+   +            border-bottom: 1px solid var(--borde);
+   @@ -340,0 +355,3 @@
+   +
+   +        .cuerpo tbody tr:last-child td { border-bottom: 0; }
+   +        .cierre .cuerpo td { border-bottom-color: rgba(255, 255, 255, 0.14); }
+   @@ -631,0 +649 @@
+   +            z-index: 3;
+   @@ -636 +654,10 @@
+   -        .pie .sello::before { content: ''; width: 22px; height: 3px; border-radius: 3px; background: var(--grad); }
+   +        .pie .sello::before { content: ''; width: 22px; height: 3px; border-radius: 3px; background: var(--grad); flex-shrink: 0; }
+   +
+   +        /* La cita bibliográfica (`fuente=`) vive aquí, no en el cuerpo: se puede
+   +           leer de cerca y no le quita sitio ni peso a lo que se proyecta. */
+   +        .pie.con-fuente { align-items: flex-end; gap: 28px; }
+   +        .pie .fuente { color: var(--gris); font-size: 12.5px; line-height: 1.35; letter-spacing: 0; max-width: 1010px; align-items: flex-start; }
+   +        .pie .fuente::before { margin-top: 7px; }
+   +        .pie .fuente code { font-size: 0.92em; }
+   +        .pie.con-fuente .num { white-space: nowrap; }
+   +        .cierre .pie .fuente, .gancho .pie .fuente { color: rgba(255, 255, 255, 0.62); }
+   @@ -766,0 +794,20 @@
+   +        /* El divisor es un cambio de acto, no un índice: la barra lateral cede
+   +           ancho y el título de la sección manda en la lámina. */
+   +        .seccion .lateral { width: 340px; padding-right: 22px; }
+   +        .seccion .principal {
+   +            padding-left: 84px;
+   +            background:
+   +                radial-gradient(620px 440px at 100% 0%, rgba(var(--secondary-rgb), 0.11), transparent 70%),
+   +                radial-gradient(520px 380px at 0% 100%, rgba(var(--primary-rgb), 0.06), transparent 70%);
+   +        }
+   +        .seccion .parte { font-size: 12.5px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--secondary-texto); margin-bottom: 14px; }
+   +        .seccion .numero-grande { font-size: 156px; margin-bottom: 14px; }
+   +        .seccion .principal h2 { font-size: 54px; line-height: 1.06; max-width: 760px; }
+   +        .seccion .principal .gancho { font-size: 25px; line-height: 1.4; margin-top: 30px; border-left-width: 5px; padding-left: 20px; max-width: 740px; }
+   +        .seccion .enlace-material { left: 84px; }
+   +        .diapo.activa.seccion .numero-grande { animation: entrarNumero 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+   +        @keyframes entrarNumero {
+   +            from { opacity: 0; transform: translateY(26px); }
+   +            to { opacity: 1; transform: translateY(0); }
+   +        }
+   +
+   @@ -803,2 +850,70 @@
+   -        .idea h2 { margin: 0; font-size: 46px; line-height: 1.2; font-weight: 700; color: var(--primary); border-left: 6px solid var(--secondary); padding-left: 30px; letter-spacing: -0.01em; }
+   -        .idea .cuerpo { flex: 0 1 auto; margin-top: 28px; padding-left: 36px; color: #475569; font-size: calc(24px * var(--k)); }
+   +        .idea h2 { margin: 0; font-size: 50px; line-height: 1.16; font-weight: 800; color: var(--primary); border-left: 8px solid var(--secondary); padding-left: 30px; letter-spacing: -0.015em; }
+   +        .idea .cuerpo { flex: 0 1 auto; margin-top: 30px; padding-left: 38px; color: #475569; font-size: calc(25px * var(--k)); }
+   +        /* Que la regla que se llevan se reconozca desde el fondo del aula y en
+   +           la hoja de contactos: una banda del degradado a todo lo alto y un
+   +           brillo del color secundario en la esquina. */
+   +        .diapo.idea::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 14px; background: var(--grad); z-index: 1; }
+   +        .diapo.idea::after { content: ''; position: absolute; inset: 0; background: radial-gradient(680px 460px at 100% 100%, rgba(var(--secondary-rgb), 0.16), transparent 70%); pointer-events: none; }
+   +        .idea .marco, .pregunta .marco { z-index: 2; }
+   +
+   +        /* --- Pregunta: un lavado del color claro, para que se note el cambio -- */
+   +        .diapo.pregunta { background: linear-gradient(180deg, var(--lila) 0%, #fff 62%); }
+   +
+   +        /* --- Gancho: el problema o la pregunta que abre, a lámina completa -- */
+   +        .diapo.gancho { background: var(--grad-navy); color: #fff; }
+   +        .gancho .brillo {
+   +            position: absolute;
+   +            inset: 0;
+   +            background:
+   +                radial-gradient(720px 460px at 100% 0%, rgba(var(--secondary-rgb), 0.30), transparent 70%),
+   +                radial-gradient(520px 420px at 0% 100%, rgba(var(--primary-rgb), 0.55), transparent 70%);
+   +            pointer-events: none;
+   +        }
+   +        .gancho .marco { justify-content: center; padding: 60px 110px 76px; }
+   +        .gancho .etq-gancho { display: flex; align-items: center; gap: 12px; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.2em; font-weight: 700; color: var(--gold); margin-bottom: 28px; }
+   +        .gancho .etq-gancho .punto { width: 38px; height: 38px; border-radius: 999px; background: var(--grad); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 15px; box-shadow: 0 0 0
+   +        .gancho h2 { margin: 0; font-size: 56px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em; color: #fff; max-width: 1000px; }
+   +        .gancho .cuerpo { flex: 0 1 auto; margin-top: 30px; color: rgba(255, 255, 255, 0.82); font-size: calc(26px * var(--k)); max-width: 940px; }
+   +        .gancho .cuerpo strong { color: #fff; }
+   +        .gancho .cuerpo li::marker { color: var(--gold); }
+   +        .gancho .cuerpo code:not(pre code) { background: rgba(255, 255, 255, 0.12); color: #fff; }
+   +        .gancho .cuerpo .cita { color: #fff; background: rgba(255, 255, 255, 0.07); }
+   +        .gancho .caja { color: var(--texto); }
+   +        .gancho .pie { color: rgba(255, 255, 255, 0.45); }
+   +        .gancho .pie .num { color: rgba(255, 255, 255, 0.7); }
+   +
+   +        /* --- Dato: una cifra que se lee desde la última fila --------------- */
+   +        .diapo.dato { background: linear-gradient(135deg, #fff 0%, #fff 55%, rgba(var(--secondary-rgb), 0.07) 100%); }
+   +        .dato .marco { justify-content: center; padding: 56px 110px 72px; }
+   +        .dato .antetitulo { margin-bottom: 6px; }
+   +        .dato .cifra {
+   +            width: fit-content;
+   +            max-width: 100%;
+   +            padding-right: 0.04em;
+   +            font-size: var(--cifra, 170px);
+   +            line-height: 1;
+   +            font-weight: 800;
+   +            letter-spacing: -0.045em;
+   +            font-variant-numeric: tabular-nums;
+   +            white-space: nowrap;
+   +            background: var(--grad);
+   +            -webkit-background-clip: text;
+   +            background-clip: text;
+   +            color: transparent;
+   +            margin-bottom: 18px;
+   +        }
+   +        .dato h2 { margin: 0; font-size: 40px; line-height: 1.18; font-weight: 700; color: var(--tinta); letter-spacing: -0.01em; max-width: 980px; }
+   +        .dato .cuerpo { flex: 0 1 auto; margin-top: 20px; color: #475569; font-size: calc(24px * var(--k)); max-width: 940px; }
+   +        .diapo.activa.dato .cifra { animation: entrarNumero 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+   +
+   +        /* --- Plena: la figura manda; el título, arriba y compacto ---------- */
+   +        .plena .marco { padding: 26px 48px 52px; }
+   +        .plena .cabecera { border-bottom: 0; padding-bottom: 0; margin-bottom: 10px; gap: 0; }
+   +        .plena .ficha-icono { display: none; }
+   +        .plena .antetitulo { font-size: 11.5px; margin-bottom: 2px; }
+   +        .plena .cabecera h2 { font-size: 28px; }
+   +        .plena .figura { --alto: 520px; margin-bottom: 0.2em; }
+   +        .plena .cuerpo { font-size: calc(21px * var(--k)); }
+   +        .plena .cuerpo > p, .plena .cuerpo > .cita { text-align: center; }
+   +        .plena .cuerpo > .cita { border-left: 0; border-radius: 12px; background: rgba(var(--secondary-rgb), 0.07); }
+   +        .plena .pie { left: 48px; right: 48px; }
+   @@ -867,0 +983,7 @@
+   +        /* Una muesca donde empieza cada sección: cuánto falta se ve por actos. */
+   +        #progreso .muesca { position: absolute; top: 0; width: 2px; height: 100%; background: rgba(255, 255, 255, 0.85); box-shadow: 0 0 0 0.5px rgba(15, 23, 42, 0.18); }
+   +
+   +        @media (prefers-reduced-motion: reduce) {
+   +            .diapo.activa > .marco, .diapo.activa.seccion .numero-grande, .diapo.activa.dato .cifra { animation: none; }
+   +            .paso { transition: none; }
+   +        }
+   @@ -1013 +1135 @@
+   -        body.revision .diapo.activa > .marco { animation: none; }
+   +        body.revision .diapo.activa > .marco, body.revision .diapo.activa .numero-grande, body.revision .diapo.activa .cifra { animation: none; }
+   @@ -1042,0 +1165,3 @@
+   +        #panel-presentador .ritmo { margin-left: 12px; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; background: rgba(255, 255, 255, 0.1);
+   +        #panel-presentador .ritmo:empty { display: none; }
+   +        #panel-presentador .ritmo.atras { background: var(--gold); color: #1E293B; }
+
+== JS en línea: +58 / -1 líneas
+   --- 
+   +++ 
+   @@ -21 +21 @@
+   -{"config": {"asignatura": "Series de Tiempo", "numero": "5", "titulo": "Modelos SARIMA", "ra": "", "horas": "", "stack": [], "institucion": "Universidad El Bosque", "sigla": "UnBosque", "unidad": "Capítulo", "storageKey
+   +{"config": {"asignatura": "Series de Tiempo", "numero": "5", "titulo": "Modelos SARIMA", "ra": "", "horas": "", "stack": [], "institucion": "Universidad El Bosque", "sigla": "UnBosque", "unidad": "Capítulo", "storageKey
+   @@ -158,0 +159,22 @@
+   +        /* Lo que queda corto crece. Tres viñetas a 23 px en una lámina de 720
+   +           dejan media pantalla vacía y un texto que no se lee desde el fondo:
+   +           si el cuerpo ocupa menos de `LLENO` (el 80 %) de su alto, se agranda de 4 en 4 %
+   +           hasta ocuparlo, hasta `K_MAX` o hasta que algo desborde (a lo ancho
+   +           también: un bloque de código no crece más allá de su columna). No
+   +           crecen las diapositivas con `escala=` o `.denso` (lo pidió la fuente),
+   +           ni las que no tienen cabecera corriente (idea, gancho, dato), ni
+   +           `.plena`, que ya reparte su alto. */
+   +        const K_MAX = 1.24;
+   +        const LLENO = 0.8;
+   +        const puedeCrecer = (d) => !d.dataset.k && !d.classList.contains('denso') && !d.classList.contains('plena')
+   +            && !!d.querySelector(':scope > .marco > .cabecera') && !!d.querySelector(':scope > .marco > .cuerpo');
+   +        const ocupacion = (d) => {
+   +            const c = d.querySelector(':scope > .marco > .cuerpo');
+   +            const hijos = Array.from(c.children).filter((el) => el.offsetHeight > 0);
+   +            if (!hijos.length) return 1;
+   +            const caja = c.getBoundingClientRect();
+   +            const arriba = Math.min(...hijos.map((el) => el.getBoundingClientRect().top));
+   +            const abajo = Math.max(...hijos.map((el) => el.getBoundingClientRect().bottom));
+   +            return caja.height > 0 ? (abajo - arriba) / caja.height : 1;
+   +        };
+   +
+   @@ -168,0 +191,9 @@
+   +                if (k === 1 && puedeCrecer(d) && !desborda(d)) {
+   +                    while (k < K_MAX - 1e-6 && ocupacion(d) < LLENO) {
+   +                        const previo = k;
+   +                        k = Math.min(K_MAX, +(k + 0.04).toFixed(3));
+   +                        d.style.setProperty('--k', k);
+   +                        if (desborda(d)) { k = previo; d.style.setProperty('--k', k); break; }
+   +                    }
+   +                }
+   +                d.dataset.escala = k;
+   @@ -268,0 +300,9 @@
+   +            // Muescas de sección en la barra de progreso (no en la del presentador, que no la muestra)
+   +            const barra = $('progreso');
+   +            secciones.forEach((s) => {
+   +                if (s.primera <= 0 || N < 2) return;
+   +                const m = document.createElement('span');
+   +                m.className = 'muesca';
+   +                m.style.left = `calc(${(s.primera / N) * 100}% - 1px)`;
+   +                barra.appendChild(m);
+   +            });
+   @@ -318,0 +359,16 @@
+   +        /* Con `duracion:` en la fuente, el presentador ve si va al ritmo: la
+   +           lámina en la que debería ir a esta hora, repartiendo el tiempo por
+   +           igual, frente a la que tiene delante. Dos de margen no son retraso. */
+   +        const DURACION = parseFloat(CFG.duracion) || 0;
+   +        const pintarRitmo = () => {
+   +            const el = $('p-ritmo');
+   +            if (!el || !DURACION) return;
+   +            const min = (Date.now() - t0) / 60000;
+   +            const prevista = Math.min(N, Math.max(1, Math.round((min / DURACION) * N)));
+   +            const dif = (actual + 1) - prevista;
+   +            el.textContent = min > DURACION ? `tiempo cumplido (${DURACION} min)`
+   +                : Math.abs(dif) <= 2 ? `al ritmo · ${DURACION} min`
+   +                : dif > 0 ? `${dif} láminas por delante` : `${-dif} láminas por detrás`;
+   +            el.className = 'ritmo' + (min > DURACION || dif < -2 ? ' atras' : '');
+   +        };
+   +
+   @@ -324,0 +381 @@
+   +                pintarRitmo();
+
+== diapositivas que cambian (por posición)
+    3. Cada afirmación es un dato, una definición, una interpretación o una opinión
+    4. Clase 1 · Módulo 1 · La firma de la estacionalidad
+    7. La estacionalidad tiene un periodo fijado por el calendario; el ciclo, no
+    9. Cuatro filas se parecen y solo tres de esas series son estacionales
+   10. ¿Es estacional una serie con \(\hat\rho_{12}=0.636\) en niveles?
+   11. Ver y medir la estacionalidad cabe en cinco líneas de R
+   12. Módulo 2 · Notación SARIMA y polinomio multiplicativo
+   13. Un SARIMA escribe el mismo modelo en \(B\) y en \(B^m\), y multiplica las dos copias
+   15. Multiplicar no es sumar: el rezago 13 aparece sin un parámetro propio
+   18. En un SARIMA(1,0,0)(1,0,0)\(_{12}\), ¿cuáles son ciertas?
+   19. En R el periodo va en seasonal, y el coeficiente de \(B^{13}\) sale del producto
+   20. Módulo 3 · Diferenciación estacional: cuántas y en qué orden
+   21. \(\nabla_{12}\) compara enero con enero, cuesta doce observaciones y contiene a \(\nabla\)
+   24. Si la tienda acelera en 2024, \(\nabla_{12}\) deja una rampa y hace falta \(\nabla\)
+   25. Cada operador hace su trabajo y solo el suyo
+   27. Los operadores conmutan: \(\nabla\nabla_{12}y_t\) es la misma serie en cualquier orden
+   29. Diferenciar de más deja la firma del capítulo 4: \(\hat\Theta\) se acerca a −1
+   30. nsdiffs() cambió de prueba por defecto: seas y ocsb no dan lo mismo
+   31. Módulo 4 · Identificar los órdenes estacionales
+   32. Los rezagos estacionales se leen con la misma tabla del capítulo 3
+   35. Picos de 0.80, 0.64 y 0.51 en 12, 24 y 36, y cero en lo demás: ¿qué modelo es?
+   36. El protocolo tiene cinco etapas, y cada fallo devuelve a la que lo causó
+   37. Módulo 5 · El modelo airline
+   38. El airline: dos diferencias y dos MA para una serie con tendencia y estación
+   41. Frente a una caminata, menos incertidumbre a corto plazo y más a largo plazo   (antes: El airline acumula incertidumbre más despacio que una sola caminata aleatoria)
+   42. Un airline sobre 96 meses: ¿cuántas observaciones quedan tras las dos diferencias?
+   43. Lo que se llevan de la clase 1
+   44. Para la próxima clase
+   45. Clase 2 · Módulo 6 · Estimar, comparar y diagnosticar
+   49. statsmodels no diferencia la serie: sus AIC parecen comparables, pero no lo son
+   50. Módulo 7 · Caso completo: log(AirPassengers)
+   51. Etapas 1 a 3: logaritmo, después \(D=1\) y, sobre la serie sin estación, \(d=1\)
+   58. El caso completo cabe en seis líneas de R
+   59. Módulo 8 · Segundo caso y contraejemplo
+   61. La TRM es mensual y no tiene estacionalidad: cuatro evidencias coinciden
+   62. Módulo 9 · Regresores de calendario y SARIMAX
+   63. El SARIMA no ve lo que el calendario cambia de sitio de un año a otro
+   64. SARIMAX es una regresión con errores SARIMA, no un SARIMA con términos añadidos
+   66. ¿Cuánto vale el \(t\) de \(H_0:\beta=1\)?
+   68. Módulo 10 · Cuando \(m\) es grande: Fourier y STL
+   69. Con \(m\) grande el SARIMA falla por tres motivos
+   70. Fourier modela la estación con \(2K\) parámetros, sea cual sea \(m\)
+   74. Módulo 11 · Panorama comparativo y cierre
+   75. Antes de comparar: qué hace cada rival y cómo se mide el error
+   82. El SARIMA frente a lo que se usa hoy: cuándo, no cuál es mejor
+
+== armazón fuera de style/script/section: +1 / -1 líneas
+   --- 
+   +++ 
+   @@ -166 +166 @@
+   -            <div><span id="p-contador"></span> · <span id="p-titulo"></span></div>
+   +            <div><span id="p-contador"></span> · <span id="p-titulo"></span> <span id="p-ritmo" class="ritmo"></span></div>

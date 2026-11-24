@@ -129,7 +129,7 @@ Verificación: ρ̂₁₂, ρ̂₂₄, ρ̂₃₆ y la banda en J (`firma.airpas
 ???
 La trampa de la tabla: la TRM tiene ρ̂₁₂ = 0.636 y ninguna estacionalidad. Antes de pasar, preguntar cuál de las cuatro primeras filas es la intrusa; después de ver la quinta, la respuesta es obvia. El Módulo 8 vuelve sobre la TRM con cuatro evidencias.
 
-Verificación: cada celda se recalculó desde los datos congelados con divisor n (como `Acf`), para no redondear dos veces: en cinco celdas los cuatro decimales de J acaban en 5, y los exactos (0.52049, 0.70747, 0.85546, 0.63649 y −0.00245) dan 0.520, 0.707, 0.855, 0.636 y −0.002, las mismas cifras de la tabla del capítulo. La banda de ∇TRM es 1.96/√137 = 0.16745 → 0.167 (J guarda 0.1675). Para ρ̂₁₂ de ∇TRM, el código del capítulo, que descarga la serie en vivo, imprime −0.0024, y la tabla del Módulo 8 dice −0.0025 (el capítulo explica el empate). Detalle: Módulo 1, tabla.
+Verificación: cada celda se recalculó desde los datos congelados con divisor n (como `Acf`), para no redondear dos veces: en cinco celdas los cuatro decimales de J acaban en 5, y los exactos (0.52049, 0.70747, 0.85546, 0.63649 y −0.00245) dan 0.520, 0.707, 0.855, 0.636 y −0.002, las mismas cifras de la tabla del capítulo. La banda de ∇TRM es 1.96/√137 = 0.16745 → 0.167 (J guarda 0.1675). Para ρ̂₁₂ de ∇TRM, el código del capítulo, que lee la copia fija de la TRM, imprime −0.0025, lo mismo que la tabla del Módulo 8. Detalle: Módulo 1, tabla.
 
 ## ¿Es estacional una serie con \(\hat\rho_{12}=0.636\) en niveles? {.pregunta}
 
@@ -174,7 +174,7 @@ round(1.96 / sqrt(length(ap)), 4)  # banda
 <small>Fuente: código del Módulo 1, ejecutado en R 4.6</small>
 
 ???
-El bloque es el del material recortado: falta `monthplot()` y el contraejemplo de la TRM, que descarga la serie de datos.gov.co (necesita internet). En Python, `plot_acf()` dibuja por defecto muy pocos rezagos para una serie mensual: hay que pedir `lags=36`.
+El bloque es el del material recortado: falta `monthplot()` y el contraejemplo de la TRM, que lee la copia fija de la serie del curso. En Python, `plot_acf()` dibuja por defecto muy pocos rezagos para una serie mensual: hay que pedir `lags=36`.
 
 Verificación: el bloque se ejecutó en R 4.6.0 y sus dos salidas coinciden. Detalle: Módulo 1, bloque «Ver la estacionalidad».
 
@@ -432,13 +432,13 @@ Verificación: las filas de la tienda se recalculan en el verificador y coincide
 ![ρ̂ en los rezagos 1 y 12 de log(AirPassengers), una combinación de diferencias por paso](recursos/cap5/diferencias.json){alto=410}
 
 ::: revelar
-<kbd>Dato</kbd> ∇ sola hace **subir** \(\hat\rho_{12}\) de 0.762 a 0.841; \(\nabla_{12}\) sola deja \(\hat\rho_1=0.714\). Las dos: varianza mínima, 0.002102.
+<kbd>Dato</kbd> ∇ sola hace **subir** \(\hat\rho_{12}\) de 0.762 a 0.841; \(\nabla_{12}\) sola deja \(\hat\rho_1=0.714\). <kbd>Interpretación</kbd> La varianza describe; no decide \(D\) ni \(d\).
 :::
 
 <small>Contexto: `AirPassengers` en logaritmos; \(n\) = 144, 143, 132 y 131. Fuente: J `combinaciones` · R</small>
 
 ???
-Cinco pulsaciones: una combinación por paso y, al final, la conclusión. En el primero, la serie sin diferenciar: todo grande. En el segundo, ∇: la tendencia se va (ρ̂₁ cae a 0.20), pero la estacionalidad se concentra (ρ̂₁₂ sube). En el tercero, ∇₁₂: la estación se va y queda la tendencia (ρ̂₁ = 0.71). En el cuarto, las dos: dos barras negativas, la firma de dos MA, y la varianza mínima. La regla de la varianza del capítulo 4 acierta aquí.
+Cinco pulsaciones: una combinación por paso y, al final, la conclusión. En el primero, la serie sin diferenciar: todo grande. En el segundo, ∇: la tendencia se va (ρ̂₁ cae a 0.20), pero la estacionalidad se concentra (ρ̂₁₂ sube). En el tercero, ∇₁₂: la estación se va y queda la tendencia (ρ̂₁ = 0.71). En el cuarto, las dos: dos barras negativas, la firma de dos MA. La varianza que acompaña a cada paso describe lo que hace cada operador, pero no decide D ni d: en una serie estacionaria el cociente de varianzas al diferenciar repite lo que dice la ACF (capítulo 2, Módulo 2.7), y por eso el capítulo 4 no la cuenta como evidencia. Lo que decide son la ACF y las pruebas, primero para D y después para d.
 
 Verificación: ρ̂₁, ρ̂₁₂ y la varianza de cada combinación en J (`combinaciones`) y recalculados en R; el gráfico lo genera `genera_animados_cap5.py` desde J. ∇ divide la varianza entre 17.2 y ∇₁₂ entre 51.3; el capítulo lo redondea a 17 y 51. Detalle: Módulo 3, «Las cuatro combinaciones».
 
@@ -499,22 +499,22 @@ Es la regla práctica del módulo: se defiende con el caso USAccDeaths, no se de
 
 ## Diferenciar de más deja la firma del capítulo 4: \(\hat\Theta\) se acerca a −1
 
-| \(D\) | \(n\) | Varianza | \(\hat\Theta\) | e. e. |
+| \(D\) | \(n\) | \(\hat\Theta\) | e. e. | Distancia a −1, en e. e. |
 |---|---|---|---|---|
-| 0 | 143 | 0.011354 | +0.7397 | 0.0610 |
-| 1 | 131 | **0.002102** | −0.5569 | 0.0731 |
-| 2 | 119 | 0.005960 | **−0.9973** | 0.0830 |
+| 0 | 143 | +0.7397 | 0.0610 | 28.53 |
+| 1 | 131 | −0.5569 | 0.0731 | 6.06 |
+| 2 | 119 | **−0.9973** | 0.0830 | **0.03** |
 
-<kbd>Dato</kbd> Con \(D=2\) la varianza vuelve a subir **y** \(\hat\Theta=-0.9973\): la raíz MA cae sobre el círculo. <kbd>Interpretación</kbd> La segunda alarma es la fiable: la regla de la varianza falla en casos reales.
+<kbd>Dato</kbd> Con \(D=2\), \(\hat\Theta=-0.9973\) queda a 0.03 errores estándar de −1: el MA casi cancela la diferencia que sobra. <kbd>Interpretación</kbd> Es una señal, no un veredicto, y se lee en la escala de \(\Theta\), no en la varianza.
 
 <small>Contexto: SARIMA(0,1,1)(0,\(D\),1)\(_{12}\) sobre `AirPassengers` en logaritmos. Fuente: J `sobrediferenciacion_estacional` · R</small>
 
 ???
-Recordar el caso del capítulo 4: en log(lynx), diferenciar de más reducía la varianza un 58 %. Por eso la raíz es la evidencia que manda.
+El simulador del Módulo 3 avisa cuando −1 cae dentro de Θ̂ ± 1.96 e. e. Es una señal para volver a mirar D, no un veredicto: un Θ verdadero cercano a −1, sin ninguna diferencia de más, también da distancias pequeñas, y cerca de −1 el error estándar es poco fiable. Con D = 0 la distancia es grande porque falta ∇₁₂, no porque sobre algo. La varianza no sirve de alarma: recordar el caso del capítulo 4, donde en log(lynx) diferenciar de más reducía la varianza un 58 %.
 
-La tabla del capítulo trae además el módulo inverso de las raíces MA (0.9752, 0.9524 y 0.9998). No se proyecta porque con un SMA(1) ese módulo es \(|\Theta|^{1/12}\), que se acerca a 1 con casi cualquier Θ: la alarma se lee en \(\hat\Theta\).
+El bloque de código del capítulo imprime además el módulo inverso de las raíces MA (0.9752, 0.9524 y 0.9998). No se proyecta: con un SMA(1) ese módulo es \(|\Theta|^{1/12}\), que se acerca a 1 con casi cualquier Θ, y no separa las tres filas.
 
-Verificación: cada fila en J (`sobrediferenciacion_estacional`); el 58 % de lynx es del capítulo 4 (C). Detalle: Módulo 3, simulador «¿Y si diferencio de más?».
+Verificación: cada fila en J (`sobrediferenciacion_estacional`, con la distancia a −1 en `a_menos_1_en_ee`); el 58 % de lynx es del capítulo 4 (C). Detalle: Módulo 3, simulador «¿Y si diferencio de más?».
 
 ## `nsdiffs()` cambió de prueba por defecto: `seas` y `ocsb` no dan lo mismo
 
@@ -612,7 +612,7 @@ Verificación: 0.80, 0.64 y 0.51 son 0.8, 0.8² y 0.8³ = 0.512 redondeados (def
 5. **Estimar y diagnosticar** — Ljung–Box con \(2m\) rezagos y raíces
 :::
 
-<kbd>Opinión</kbd> Varianza creciente → etapa 1; raíz sobre el círculo → 2 o 3; barra en \(m\) → 4.
+<kbd>Opinión</kbd> Residuales con varianza creciente → etapa 1; \(\hat\Theta\) o \(\hat\theta\) pegados a −1 → 2 o 3; barra en \(m\) → 4.
 
 <small>Fuente: C Módulo 4, «El protocolo, paso a paso»</small>
 
@@ -673,20 +673,20 @@ Verificación: modelos y coeficientes en J (`airpassengers.auto_arima`, `airline
 ???
 Cuatro pulsaciones: el primer año (pesos constantes, σ_h crece suavemente), el salto en el rezago 12, el segundo año en un nivel más alto y la conclusión. La lectura: el error de pronosticar el próximo julio se parece más al de pronosticar el julio siguiente que al del mes que viene. La construcción del intervalo desde los ψ es del capítulo 4; aquí solo se usa.
 
-Verificación: ψ y σ_h en J (6 decimales). El capítulo da 1.0412 y 0.8632 en el texto, y su código del Módulo 7 imprime 1.0413 y 0.8633 porque usa los coeficientes redondeados. El gráfico lo genera `genera_animados_cap5.py` desde J. Detalle: Módulo 5, derivación.
+Verificación: ψ y σ_h en J (6 decimales). El capítulo da 1.0412 y 0.8632 en el texto, y sus bloques de los Módulos 5 y 7 imprimen lo mismo, con los coeficientes sin redondear. El gráfico lo genera `genera_animados_cap5.py` desde J. Detalle: Módulo 5, derivación.
 
-## El *airline* acumula incertidumbre más despacio que una sola caminata aleatoria
+## Frente a una caminata, menos incertidumbre a corto plazo y más a largo plazo
 
-- <kbd>Dato</kbd> \(\sigma_{12}/\sigma_1=2.22\), frente a \(\sqrt{12}=3.46\) en una caminata aleatoria
-- <kbd>Interpretación</kbd> Pese a llevar **dos** raíces unitarias, los dos MA negativos amortiguan la integración
-- <kbd>Definición</kbd> Con \(\Theta\to0\), el escalón del 12 desaparece; con \(\Theta\to-1\), los pesos se aplanan: el MA casi cancela la diferencia estacional
+- <kbd>Dato</kbd> \(\sigma_{12}/\sigma_1=2.22\), frente a \(\sqrt{12}=3.46\) en una caminata con la misma \(\sigma\): el primer año, los dos MA amortiguan
+- <kbd>Dato</kbd> La raíz unitaria en \(B=1\) es **doble**: los \(\psi_j\) suben 0.265 al año, sin límite; desde \(h=42\) el *airline* supera a la caminata (a veinte años, \(53.98\,\sigma\) frente a \(15.49\,\sigma\))
+- <kbd>Interpretación</kbd> El salto en el rezago 12 vale \(1+\Theta\): 1 con \(\Theta=0\); casi nada con \(\Theta\to-1\)
 
-<small>Fuente: J `pronostico.sigma_h` · cálculo · C Módulo 5</small>
+<small>Fuente: J `pronostico.sigma_h` · cálculo · C Módulo 5 (bloque de los pesos ψ)</small>
 
 ???
-Es el mismo mecanismo que el ψ∞ = 0.169 del Nilo en el capítulo 4. El simulador del Módulo 5 deja mover θ y Θ: abrirlo en vivo y llevar Θ a 0 y a −1.
+No es el mecanismo del ψ∞ = 0.169 del Nilo del capítulo 4: allí la raíz unitaria es simple y los ψ se estabilizan; aquí (1 − B¹²) = (1 − B)(1 + B + … + B¹¹) ya contiene a (1 − B), los ψ crecen como (1 + θ)(1 + Θ) = 0.265 por año y la varianza del error crece, a la larga, como h³. Es la misma suma de ψ² con que el Módulo 2 calcula la varianza: con y_t no converge, y por eso los momentos se dan para la serie doblemente diferenciada. El simulador del Módulo 5 deja mover θ y Θ: abrirlo en vivo y llevar Θ a 0 y a −1.
 
-Verificación: 2.22 = 0.082270/0.037031 (J); √12 = 3.4641. El 0.169 del Nilo está en `cap4_arima.json` (J4). Detalle: Módulo 5, simulador.
+Verificación: 2.22 = 0.082270/0.037031 (J); √12 = 3.4641. 0.265 = (1 + θ̂)(1 + Θ̂) con los coeficientes de J; h = 42, 53.98 y 15.49 (= √240) se recalculan con los pesos ψ desde los coeficientes de J, y el bloque del Módulo 5 los imprime (C). El 0.169 del Nilo está en `cap4_arima.json` (J4). Detalle: Módulo 5, bloque de los pesos ψ y simulador.
 
 ## Un *airline* sobre 96 meses: ¿cuántas observaciones quedan tras las dos diferencias? {.pregunta}
 
@@ -706,7 +706,7 @@ Pregunta 3 de la autoevaluación. El error más común es restar 2 (una por cada
 - La estacionalidad se ve en \(m, 2m, 3m\), y **solo** sobre la serie sin tendencia
 - La parte estacional **multiplica**: genera satélites en \(m\pm1\) que no cuestan parámetros
 - Primero \(D\), después \(d\): los operadores conmutan; las pruebas, no
-- Sobrediferenciar deja firma: \(\hat\Theta\to-1\) y la raíz sobre el círculo
+- Sobrediferenciar deja una señal: \(\hat\Theta\) pegado a −1, a la vista de su error estándar; la varianza no decide
 - El *airline* es el punto de partida, y su incertidumbre crece en escalones
 
 ???
@@ -787,7 +787,7 @@ Verificación: 143 y 131 son los n de D = 0 y D = 1 en J. Detalle: Módulo 6, ad
 <small>\(d=1\) y \(D=1\) fijos en los 36 (\(n=131\)). Fuente: J `rejilla`</small>
 
 ???
-Que AICc y BIC coincidan no siempre pasa: en el capítulo 3 discrepaban sobre las manchas solares. La última fila es el modelo sin ningún término ARMA, solo las dos diferencias: la referencia de cuánto aportan los dos parámetros.
+Que AICc y BIC coincidan no siempre pasa: el BIC castiga más cada parámetro y puede quedarse con un modelo más pequeño. La última fila es el modelo sin ningún término ARMA, solo las dos diferencias: la referencia de cuánto aportan los dos parámetros.
 
 Verificación: las cinco filas en J (`rejilla`); los cuatro primeros son `mejores_aicc` y el airline es `mejor_bic`. El capítulo deja en blanco el BIC y la ρ̂₁₂ de la última fila; aquí se completan desde J (−431.95 y −0.3907, ACF de 144 residuales). 1.7: −481.58 − (−483.21) = 1.63. Detalle: Módulo 6, la rejilla.
 
@@ -805,7 +805,7 @@ No diferencia antes de estimar: informa `nobs = 144` para **todos** los modelos 
 ???
 El mecanismo: statsmodels mete d y D dentro del espacio de estados con un *prior* difuso en lugar de diferenciar la serie. Atención al reverso: `simple_differencing=True` reproduce la estimación de R, pero entonces `get_forecast()` pronostica la serie diferenciada, no el nivel (Módulo 7, bloque de Python). Para pronosticar se deja la opción por defecto.
 
-Verificación: nobs 144 y 131, y los coeficientes de USAccDeaths con y sin la opción, recalculados con statsmodels 0.14.6 (PY): −0.3924 y −0.5475 sin ella, −0.4303 y −0.5527 con ella. El capítulo dice además que en AirPassengers los coeficientes difieren en 6×10⁻⁵; con statsmodels 0.14.6 la diferencia es de 2.4×10⁻⁴ (sigue siendo despreciable). No se proyecta. Detalle: Módulo 6, advertencia final.
+Verificación: nobs 144 y 131, y los coeficientes de USAccDeaths con y sin la opción, recalculados con statsmodels 0.14.6 (PY): −0.3924 y −0.5475 sin ella, −0.4303 y −0.5527 con ella. En AirPassengers, sin la opción y con el optimizador por defecto (L-BFGS), el ajuste no converge y se queda a 2.4×10⁻⁴ de R; el capítulo ajusta ahora con BFGS, que converge y coincide con R en las cuatro primeras cifras. No se proyecta. Detalle: Módulo 6, advertencia final.
 
 # Módulo 7 · Caso completo: log(AirPassengers) {seccion=modulo-7}
 
@@ -821,9 +821,9 @@ El caso sigue las cinco etapas del protocolo del Módulo 4, con la misma numerac
 | Transformar | Rango relativo 1.848; la amplitud estacional crece con el nivel | Logaritmo |
 | \(D\) | `nsdiffs()` = 1; ACF 0.762, 0.520, 0.319 en 12, 24, 36: decae despacio | \(D=1\) |
 | \(d\) | Tras \(\nabla_{12}\): \(\hat\rho_1=0.714\) y `ndiffs()` = 1 | \(d=1\) |
-| Comprobación | Varianza 0.002102, frente a 0.003800 (solo \(\nabla_{12}\)) y 0.011354 (solo \(\nabla\)) | Coherente |
+| Comprobación al estimar (etapa 5) | \(\hat\Theta=-0.5569\) (e. e. 0.0731) y \(\hat\theta=-0.4018\), lejos de −1 | Ninguna señal de diferencia de más |
 
-<small>Contexto: `AirPassengers`, 1949–1960. Fuente: J `firma`, `orden_pruebas`, `combinaciones` · R (rango relativo: (máx − mín)/media)</small>
+<small>Contexto: `AirPassengers`, 1949–1960. Fuente: J `firma`, `orden_pruebas`, `airline` · R (rango relativo: (máx − mín)/media)</small>
 
 ???
 El logaritmo convierte una estacionalidad multiplicativa en aditiva, que es la que un SARIMA sabe modelar; el capítulo 2 ya lo dejó zanjado. En el mapa del Módulo 1 se ve: las bandas de la serie cruda se ensanchan hacia abajo y las del logaritmo no.
@@ -872,7 +872,7 @@ Verificación: 0.064 y 0.152 (0.0644 y 0.1516 en J; 0.06438 y 0.15160 en R). Det
 <small>Contexto: \(\hat\sigma^2=0.001371\), \(n=131\). Fuente: J `airline` · R `m7`</small>
 
 ???
-El módulo inverso de las raíces MA, 0.9524, no se proyecta: es 0.5569^(1/12), y el capítulo lo explica bajo la tabla: las doce raíces de 1 + ΘB¹² tienen módulo |Θ|^(−1/12), que se acerca a 1 con casi cualquier Θ (con Θ = 0.1, el inverso ya vale 0.825). La invertibilidad se lee en Θ̂, a −0.557 con e. e. 0.073, lejos de −1. Comparar con la fila D = 2 de la sobrediferenciación, donde Θ̂ = −0.9973.
+La invertibilidad, y con ella la señal de que no sobra ninguna diferencia, se lee en Θ̂: −0.5569, con e. e. 0.0731, a 6.06 errores estándar de −1; en la fila D = 2 de la sobrediferenciación, Θ̂ = −0.9973 quedaba a 0.03. El módulo inverso de las raíces MA, 0.9524, no se proyecta: es 0.5569^(1/12), y con un MA estacional se acerca a 1 con casi cualquier Θ (Módulo 3).
 
 Verificación: cada valor en J (`airline.coeficientes`, `airline.diagnostico`, `airline.raices`) y recalculado en R. Detalle: Módulo 7, etapa 5.
 
@@ -968,10 +968,10 @@ Verificación: coeficientes, e.e., AICc y p en J (`usaccdeaths`). Detalle: Módu
 |---|---|---|
 | Prueba automática | `nsdiffs(trm)`, con `seas` y con `ocsb` | 0 y 0 |
 | Correlograma | \(\hat\rho_{12}, \hat\rho_{24}, \hat\rho_{36}\) de ∇TRM, banda 0.167 | −0.002, −0.067, 0.071: **ninguno fuera** |
-| Ajuste forzado | Un SAR(1)\(_{12}\) impuesto | \(\hat\Phi=0.0013\) (e. e. 0.0899), \(t=0.01\) |
+| Ajuste forzado | Un SAR(1)\(_{12}\) impuesto | \(\hat\Phi=0.0013\) (e. e. 0.0899), \(t=0.015\) |
 | Criterio | AICc forzado frente a la caminata aleatoria, ARIMA(0,1,0) | 1708.00 frente a 1705.94: **peor** |
 
-<kbd>Interpretación</kbd> Un precio de mercado no debería tener estación: si hubiera un mes barato predecible, el arbitraje lo borraría.
+<kbd>Interpretación</kbd> Un precio de mercado no debería tener estación: si hubiera un mes barato predecible, el arbitraje lo borraría. La TRM mensual es un promedio, no el precio con que se negocia, pero hereda esa falta de patrón.
 
 <small>Contexto: TRM, ene. 2015–jun. 2026 (\(n=138\)), copia congelada. Fuente: J `trm_contraejemplo` · R</small>
 
@@ -1012,7 +1012,7 @@ $$y_t=\beta' x_t+n_t,\qquad n_t\sim\text{SARIMA}(p,d,q)(P,D,Q)_m$$
 :::
 
 - <kbd>Interpretación</kbd> \(\beta\) mide el efecto del regresor **una vez descontada** la dinámica; el error estándar de un MCO ingenuo ignora la autocorrelación y suele quedarse corto
-- <kbd>Definición</kbd> En statsmodels, `SARIMAX` con `exog` ajusta esto mismo; con \(d>0\) diferencia también los regresores
+- <kbd>Definición</kbd> En statsmodels, `SARIMAX` con `exog` es este mismo modelo, igual que `Arima(…, xreg = )` en R; con \(d\) o \(D\) mayores que 0 equivale a diferenciar la serie y los regresores, y statsmodels solo lo hace así con `simple_differencing=True`
 
 <small>Fuente: C Módulo 9, definición</small>
 
@@ -1082,7 +1082,7 @@ Dónde deja de servir el SARIMA y qué se usa entonces: la regresión armónica 
 | Términos de Fourier con \(K=3\) | 6 | 6 | 6 |
 
 - <kbd>Dato</kbd> Tres años semanales (\(n=156\)): \(\nabla_{52}\) deja 104 observaciones
-- <kbd>Dato</kbd> Con frecuencia 365 y una estación real, `auto.arima` elige ARIMA(0,0,0)(0,1,0)\(_{365}\): gasta 365 de las 800 observaciones y no estima ningún \(\Phi\) ni \(\Theta\)
+- <kbd>Dato</kbd> Con frecuencia 365, `auto.arima` elige ARIMA(0,0,0)(0,1,0)\(_{365}\): gasta 365 de 800 observaciones y no prueba ningún \(\Phi\) ni \(\Theta\): los limita a \(\lfloor n/(3m)\rfloor=0\)
 - <kbd>Definición</kbd> Y con datos diarios el periodo anual es 365.25: no es un número entero de rezagos
 
 <small>Contexto: series simuladas (semilla 1); la de frecuencia 365, un seno anual más ruido. Fuente: J `fourier.costo_m` · R `m10`</small>

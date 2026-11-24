@@ -36,9 +36,12 @@
       <p>Las dos primeras filas crecen con $m$; la tercera no. Con tres años de datos semanales ($n = 156$),
         $\nabla_{52}$ deja $104$ observaciones para estimar un modelo cuyo polinomio llega al rezago $52$. Y el patrón
         anual con datos diarios ni siquiera es entero: $365.25$ no es un número de rezagos. En la práctica,
-        con una serie de frecuencia $365$ y una estación anual de verdad, <code>auto.arima</code> toma una diferencia
-        estacional —gasta $365$ observaciones— y <strong>no estima ningún $\Phi$ ni $\Theta$</strong>: devuelve un
-        ARIMA$(0,0,0)(0,1,0)_{365}$ y deja toda la estacionalidad en manos de $\nabla_{365}$.</p>
+        con una serie de frecuencia $365$ de poco más de dos años ($n = 800$) y una estación anual de verdad,
+        <code>auto.arima</code> toma una diferencia estacional —gasta $365$ observaciones— y <strong>no estima ningún
+        $\Phi$ ni $\Theta$</strong>: devuelve un ARIMA$(0,0,0)(0,1,0)_{365}$ y deja toda la estacionalidad en manos
+        de $\nabla_{365}$. No es que los descarte: ni los prueba, porque su código limita $P$ y $Q$ a
+        $\lfloor n/(3m)\rfloor$, que aquí vale $0$. Haría falta tener al menos tres años, $n \ge 3m = 1095$, solo
+        para que pudiera ensayar un $\Theta$.</p>
 
       <h3>Regresión armónica: la estacionalidad como suma de senos</h3>
 
@@ -50,8 +53,9 @@
         \end{aligned}$$
         <p style="margin-bottom:0;">con $n_t$ un ARIMA <strong>no estacional</strong>. Cuesta $2K$ parámetros
           <em>independientemente de $m$</em>, y $K$ controla la suavidad: $K=1$ da una sinusoide pura, y $K$ mayor
-          admite formas más quebradas. El máximo útil es $K = m/2$; ahí los términos son tantos como meses y
-          <strong>equivalen exactamente a $m-1$ indicadoras mensuales</strong> —con $m=12$, once—. Pasado ese punto no
+          admite formas más quebradas. El máximo útil es $K = m/2$: ahí el seno de frecuencia $m/2$ vale cero en todos los
+          periodos, quedan $m-1$ términos y <strong>equivalen exactamente a $m-1$ indicadoras mensuales</strong> —con
+          $m=12$, once—. Pasado ese punto no
           hay nada nuevo que añadir.</p>
       </div>
 
@@ -153,37 +157,45 @@ ncol(fourier(y, K = 3))                # los armonicos no dependen de m
 z &lt;- ts(3 * sin(2 * pi * (1:800) / 365) + rnorm(800), frequency = 365)   # estacion anual real
 as.character(auto.arima(z))            # con m = 365: una diferencia y ningun Phi ni Theta
 #&gt; [1] "ARIMA(0,0,0)(0,1,0)[365]"
+floor(length(z) / (3 * 365))           # el tope que auto.arima pone a P y a Q
+#&gt; [1] 0
 
 # --- STL + ARIMA ------------------------------------------------------------
 s &lt;- stlm(ap, s.window = "periodic", method = "arima")
 as.character(s$model)
-#&gt; [1] "ARIMA(1,1,1) with drift"</code></pre>
+#&gt; [1] "ARIMA(1,1,1) with drift"
+round(c(aic = s$model$aic, aicc = s$model$aicc), 2)
+#&gt;     aic    aicc
+#&gt; -543.24 -542.95</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm, warnings
 from statsmodels.tsa.deterministic import Fourier, DeterministicProcess
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from statsmodels.tsa.seasonal import STL
-warnings.filterwarnings("ignore")
+warnings.simplefilter("ignore", RuntimeWarning)   # solo avisos de coma flotante de numpy
 
 ap = np.log(sm.datasets.get_rdataset("AirPassengers").data["value"].values)
 s = pd.Series(ap, index=pd.date_range("1949-01", periods=len(ap), freq="MS"))
 
 # Fourier: statsmodels los genera con DeterministicProcess. Fijamos los errores
 # en ARIMA(0,1,4) para que la comparacion entre K sea limpia (statsmodels no
-# trae auto.arima).
+# trae auto.arima). Con las 50 iteraciones por defecto, tres de los seis
+# ajustes no convergen; con 2000, todos (columna "conv").
 for K in range(1, 7):
     dp = DeterministicProcess(s.index, constant=False,
                               additional_terms=[Fourier(12, order=K)])
     X = dp.in_sample()
-    f = SARIMAX(s, exog=X, order=(0, 1, 4), trend="n").fit(disp=False)
-    print(f"K={K}  terminos={X.shape[1]:2d}  aic={f.aic:9.2f}")
-#&gt; K=1  terminos= 2  aic=  -306.95
-#&gt; K=2  terminos= 4  aic=  -389.88
-#&gt; K=3  terminos= 6  aic=  -414.34
-#&gt; K=4  terminos= 8  aic=  -470.58
-#&gt; K=5  terminos=10  aic=  -502.38
-#&gt; K=6  terminos=12  aic=  -501.62
+    f = SARIMAX(s, exog=X, order=(0, 1, 4), trend="n").fit(disp=False, maxiter=2000)
+    print(f"K={K}  terminos={X.shape[1]:2d}  conv={f.mle_retvals['converged']}  aic={f.aic:9.2f}")
+#&gt; K=1  terminos= 2  conv=True  aic=  -306.95
+#&gt; K=2  terminos= 4  conv=True  aic=  -389.88
+#&gt; K=3  terminos= 6  conv=True  aic=  -414.35
+#&gt; K=4  terminos= 8  conv=True  aic=  -470.59
+#&gt; K=5  terminos=10  conv=True  aic=  -502.38
+#&gt; K=6  terminos=12  conv=True  aic=  -501.62
+# La verosimilitud es plana cerca del maximo: otro optimizador mueve algun K
+# unas decimas, pero no el orden (K = 5 sigue primero).
 
 # TRAMPA: con K = m/2, statsmodels emite 12 columnas y R solo 11. La de mas es
 # el seno de frecuencia m/2, que es IDENTICAMENTE CERO: la matriz de diseno
@@ -198,12 +210,13 @@ print(X.shape[1], np.linalg.matrix_rank(X.values),
 # STL: aqui se descompone y se modela el resto a mano
 res = STL(s, period=12, robust=False).fit()
 desestacionalizada = s - res.seasonal
-f = SARIMAX(desestacionalizada, order=(1, 1, 1), trend="t").fit(disp=False)
-print(round(f.aic, 2))
-#&gt; -643.05
+f = SARIMAX(desestacionalizada, order=(1, 1, 1), trend="t").fit(disp=False, maxiter=2000)
+print(f.mle_retvals["converged"], round(f.aic, 2))
+#&gt; True -643.05
 # Cuidado: este AIC no se compara con NINGUNO de los anteriores. Ni siquiera
-# modela la misma serie: modela la desestacionalizada. Y R da -542.95 porque
-# su stlm() estima el componente estacional de otra forma.</code></pre>
+# modela la misma serie: modela la desestacionalizada. Y el ARIMA de stlm() en
+# R da un AIC de -543.24 (-542.95 es su AICc) porque stlm() estima el
+# componente estacional de otra forma.</code></pre>
         </div>
       </div>
     </div>
@@ -235,7 +248,10 @@ print(round(f.aic, 2))
         escalas: sobre la serie cruda, donde su estacionalidad multiplicativa es la natural, y sobre el logaritmo, la
         misma escala que el ARIMA. Todas las métricas se calculan en la escala original, que es la única en la que son
         comparables. La columna $k$ cuenta todo lo que se estima: en el STL + ARIMA, los $11$ valores de la
-        estacionalidad además de los $2$ parámetros del ARIMA.</p>
+        estacionalidad además de los $2$ parámetros del ARIMA. Una salvedad sobre la armónica: su $K = 6$ se eligió
+        por AICc sobre la serie completa, con los $24$ meses de prueba dentro; con solo el entrenamiento el AICc
+        elige $K = 5$, que da un RMSE de $19.58$ en vez de $19.51$. Es una ventaja indebida, pequeña, y no cambia el
+        orden de la tabla.</p>
 
       <!--RANKING:comparativa|Los ocho métodos sobre una sola partición|-->
 
@@ -399,7 +415,7 @@ print(round(f.aic, 2))
             <tr><td>La estacionalidad se ve en $m, 2m, 3m$, y solo sobre la serie sin tendencia</td><td>Módulos 1 y 8</td></tr>
             <tr><td>La parte estacional <strong>multiplica</strong>: genera satélites en $m \pm 1$ que no cuestan parámetros</td><td>Módulos 2 y 4</td></tr>
             <tr><td>Primero $D$, después $d$: los operadores conmutan, las pruebas no</td><td>Módulo 3</td></tr>
-            <tr><td>Sobrediferenciar deja firma algebraica: $\hat\Theta \to -1$ y raíz sobre el círculo</td><td>Módulo 3</td></tr>
+            <tr><td>Sobrediferenciar deja firma algebraica: $\hat\Theta$ (o $\hat\theta$) pegado a $-1$, indistinguible de $-1$ con su error estándar. Es una señal para volver a mirar $D$ o $d$, no un veredicto; la varianza no decide</td><td>Módulo 3</td></tr>
             <tr><td>El <em>airline</em> ($0,1,1$)($0,1,1$)$_m$ es el punto de partida por defecto</td><td>Módulos 5, 7 y 8</td></tr>
             <tr><td>El AICc no compara entre distintos $D$; Ljung–Box con $2m$ rezagos</td><td>Módulos 6 y 10</td></tr>
             <tr><td>Calendario y fiestas móviles van como regresores, no como estacionalidad</td><td>Módulo 9</td></tr>
@@ -440,9 +456,10 @@ print(round(f.aic, 2))
           </button>
         </div>
         <div class="ejercicio-panel pista" id="c5e1-pista" hidden>
-          <p style="margin:0;">Para $D$ y $d$, calcula las cuatro varianzas antes de mirar ninguna prueba: caen de
-            $223.99$ a $1.4555$ (solo $\nabla$), a $0.3882$ (solo $\nabla_{12}$) y a $0.1543$ (ambas). Para la última
-            parte, no compares el AICc del modelo sin $D$ con el del <em>airline</em> hasta haber apuntado el
+          <p style="margin:0;">Para $D$ y $d$, sigue el orden del Módulo 3: primero $D$, con <code>nsdiffs()</code>
+            y la ACF de la serie ya sin tendencia en $12, 24, 36$; después $d$, con <code>ndiffs()</code> sobre la serie
+            diferenciada estacionalmente. La varianza de las cuatro combinaciones no decide nada. Al ajustar, mira si
+            $\hat\theta$ o $\hat\Theta$ quedan pegados a $-1$. Para la última parte, no compares el AICc del modelo sin $D$ con el del <em>airline</em> hasta haber apuntado el
             <code>$nobs</code> de cada uno; y mira además su Ljung–Box antes de sacar conclusiones.</p>
         </div>
         <div class="ejercicio-panel solucion" id="c5e1-sol" hidden>
@@ -452,11 +469,11 @@ print(round(f.aic, 2))
           <pre><code class="language-r">library(forecast)
 n &lt;- length(co2)   # 468
 
-# --- Etapa 1: D y d ---------------------------------------------------------
-round(c(cruda = var(co2), d1 = var(diff(co2)),
-        D1 = var(diff(co2, lag = 12)), ambas = var(diff(diff(co2, lag = 12)))), 4)
-#&gt;    cruda       d1       D1    ambas
-#&gt; 223.9877   1.4555   0.3882   0.1543      minimo en (d=1, D=1)
+# --- Etapa 1: primero D, despues d -----------------------------------------
+a &lt;- Acf(diff(co2), lag.max = 36, plot = FALSE)$acf     # la serie sin tendencia
+round(c(r12 = a[13], r24 = a[25], r36 = a[37], banda = 1.96 / sqrt(length(co2) - 1)), 4)
+#&gt;    r12    r24    r36  banda
+#&gt; 0.9219 0.8902 0.8686 0.0907      decae muy despacio: falta la diferencia estacional
 c(nsdiffs = nsdiffs(co2), ndiffs_tras_D = ndiffs(diff(co2, lag = 12)))
 #&gt;       nsdiffs ndiffs_tras_D
 #&gt;             1             1
@@ -493,12 +510,20 @@ round(c(aicc_sinD = sinD$aicc, nobs_sinD = sinD$nobs,
 #&gt; aicc_sinD nobs_sinD aicc_conD nobs_conD
 #&gt;   988.100   467.000   178.209   455.000
 round(Box.test(residuals(sinD), lag=24, type="Ljung-Box", fitdf=2)$p.value, 4)
-#&gt; [1] 0        no pasa el diagnostico</code></pre>
+#&gt; [1] 0        no pasa el diagnostico
+
+# Y la senal de vuelta del ciclo: ningun MA pegado a -1, no sobra ninguna diferencia
+round(cbind(coef = coef(conD), ee = sqrt(diag(conD$var.coef)),
+            a_menos_1 = (coef(conD) + 1) / sqrt(diag(conD$var.coef))), 4)
+#&gt;         coef     ee a_menos_1
+#&gt; ma1  -0.3501 0.0496   13.0936
+#&gt; sma1 -0.8506 0.0257    5.8232</code></pre>
           <p><strong>Lo que hay que entender.</strong> Aquí el AICc sin diferencia estacional sale
             <em>muchísimo peor</em> ($988.10$ frente a $178.21$), así que la lectura ingenua acierta por casualidad.
             Sigue siendo inválida: se calcula sobre $467$ observaciones en vez de $455$. Y el argumento que sí es
             válido no depende de ningún criterio de información: ese modelo <strong>no pasa Ljung–Box</strong>
-            ($p &lt; 10^{-4}$). En el Ejercicio 3 los dos AICc quedan a dos puntos y ahí la lectura ingenua sí engaña.</p>
+            ($p &lt; 10^{-4}$). En el Ejercicio 3 los dos AICc quedan a dos puntos: allí la comparación tampoco vale, aunque el menor
+            señale el mismo modelo que el diagnóstico.</p>
         </div>
       </div>
 
@@ -595,25 +620,23 @@ c(seas = nsdiffs(ua), ocsb = nsdiffs(ua, test = "ocsb"))
           <p style="margin:0;">Para (a), el correlograma tiene que ser el de $\nabla\text{TRM}$, no el de la serie en
             niveles —en niveles cualquier serie con tendencia tiene $\hat\rho_{12}$ grande—. Para (b), la pregunta no
             es cuál tiene el AICc menor: es si esa comparación se puede hacer. Apunta el $n$ efectivo de los dos antes
-            de responder.</p>
+            de responder, y busca un criterio que no dependa de él.</p>
         </div>
         <div class="ejercicio-panel solucion" id="c5e3-sol" hidden>
-          <p><strong>Respuesta: (a) las tres evidencias coinciden en que no hay estacionalidad. (b) La pregunta está
-            mal planteada a propósito: esos dos AICc no son comparables, y responder "el armónico, por dos puntos" es
-            el error.</strong></p>
+          <p><strong>Respuesta: (a) las tres evidencias coinciden en que no hay estacionalidad. (b) El
+            <em>airline</em>, pero no por el AICc: esos dos AICc no son comparables. Dentro de muestra, el
+            diagnóstico inclina la balanza sin cerrarla: el <em>airline</em> pasa Ljung–Box con holgura y los armónicos
+            quedan en el borde; la decisión firme se toma fuera de muestra.</strong></p>
           <pre><code class="language-r">library(forecast)
-# TRM mensual (promedio del mes, SFC via datos.gov.co). Se reconstruye en cada
-# bloque que la use para que sea autonomo; necesita internet.
-url &lt;- paste0("https://www.datos.gov.co/resource/32sa-8pi3.json",
-              "?$select=vigenciadesde,valor&amp;$limit=50000")
-crudo &lt;- jsonlite::fromJSON(url)
-diario &lt;- data.frame(fecha = as.Date(substr(crudo$vigenciadesde, 1, 10)),
-                     valor = as.numeric(crudo$valor))
-diario &lt;- diario[diario$fecha &gt;= as.Date("2015-01-01"), ]
-diario &lt;- diario[order(diario$fecha), ]
-prom &lt;- tapply(diario$valor, format(diario$fecha, "%Y-%m"), mean)
-prom &lt;- prom[names(prom) &lt;= "2026-06"]     # se descarta el mes en curso
-trm &lt;- ts(as.numeric(prom), start = c(2015, 1), frequency = 12)
+# TRM mensual: promedio de cada mes de la TRM diaria (Superintendencia
+# Financiera, publicada en datos.gov.co), de enero de 2015 a junio de 2026.
+# Copia fija de los 138 meses con que se calcularon estas cifras, la misma de
+# los capitulos 2 a 4: se lee de la carpeta de trabajo si el archivo ya esta
+# ahi; si no, de la pagina del curso.
+archivo &lt;- "trm_mensual_2015-01_2026-06.csv"
+if (!file.exists(archivo))
+  archivo &lt;- paste0("https://jotamao1985.github.io/Series-de-Tiempo_Un_Bosque/datos/", archivo)
+trm &lt;- ts(read.csv(archivo)$trm, start = c(2015, 1), frequency = 12)
 
 # --- (a) Tres evidencias ----------------------------------------------------
 # 1. prueba automatica (con las dos versiones disponibles)
@@ -625,22 +648,23 @@ c(seas = nsdiffs(trm), ocsb = nsdiffs(trm, test = "ocsb"))
 a &lt;- Acf(diff(trm), lag.max = 36, plot = FALSE)$acf
 round(c(r12 = a[13], r24 = a[25], r36 = a[37], banda = 1.96/sqrt(length(trm)-1)), 4)
 #&gt;     r12     r24     r36   banda
-#&gt; -0.0024 -0.0672  0.0714  0.1675      ninguno fuera de banda
+#&gt; -0.0025 -0.0672  0.0714  0.1675      ninguno fuera de banda
 
 # 3. AJUSTE forzado: el estadistico t del parametro estacional
 g &lt;- Arima(trm, order = c(0,1,0), seasonal = list(order = c(1,0,0), period = 12))
 round(c(Phi = coef(g)[1], ee = sqrt(diag(g$var.coef))[1],
         t = coef(g)[1]/sqrt(diag(g$var.coef))[1]), 4)
 #&gt; Phi.sar1  ee.sar1   t.sar1
-#&gt;   0.0013   0.0899   0.0147
+#&gt;   0.0013   0.0899   0.0146
 round(c(forzado = g$aicc, simple = Arima(trm, order=c(0,1,0))$aicc), 3)
 #&gt;  forzado   simple
 #&gt; 1708.001 1705.941      aqui SI se comparan: los dos tienen d=1, D=0
 
 # --- (b) Armonicos sobre co2 ------------------------------------------------
+mods &lt;- list()
 for (K in 1:6) {
   xr &lt;- fourier(co2, K = K)
-  f &lt;- auto.arima(co2, xreg = xr, seasonal = FALSE, stepwise = FALSE, approximation = FALSE)
+  f &lt;- mods[[K]] &lt;- auto.arima(co2, xreg = xr, seasonal = FALSE, stepwise = FALSE, approximation = FALSE)
   cat(sprintf("K=%d  terminos=%2d  n_ef=%d  AICc=%8.3f  LB=%.4f\n", K, ncol(xr), f$nobs,
       f$aicc, Box.test(residuals(f), lag=24, type="Ljung-Box", fitdf=sum(f$arma[1:4]))$p.value))
 }
@@ -652,18 +676,31 @@ for (K in 1:6) {
 #&gt; K=6  terminos=11  n_ef=467  AICc= 183.624  LB=0.0515
 
 airline &lt;- Arima(co2, order=c(0,1,1), seasonal=list(order=c(0,1,1), period=12))
-round(c(armonico_K4 = 180.200, n_armonico = 467,
+round(c(armonico_K4 = mods[[4]]$aicc, n_armonico = mods[[4]]$nobs,
         airline = airline$aicc, n_airline = airline$nobs), 3)
 #&gt; armonico_K4  n_armonico     airline   n_airline
-#&gt;     180.200     467.000     178.209     455.000</code></pre>
+#&gt;     180.200     467.000     178.209     455.000
+
+# Lo que si se puede mirar en las dos familias: el diagnostico (no depende del n
+# efectivo). No ordena modelos: dice si en los residuales queda estructura.
+round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box",
+                               fitdf = sum(mods[[4]]$arma[1:4]))$p.value,
+        airline = Box.test(residuals(airline), lag = 24, type = "Ljung-Box", fitdf = 2)$p.value), 4)
+#&gt; armonico_K4     airline
+#&gt;      0.0439      0.4081</code></pre>
           <p><strong>Lo que hay que entender.</strong> En (a), tres caminos distintos —una prueba, un correlograma y
             un ajuste— dan la misma respuesta, y esa concordancia es lo que hace sólida la conclusión;
-            <code>auto.arima</code> lo remata devolviendo un ARIMA($0,1,0$). En (b), la respuesta correcta es
-            <strong>rechazar la comparación</strong>: $180.200$ y $178.209$ están a dos puntos, pero uno se calcula
-            sobre $467$ observaciones y el otro sobre $455$. Si además te fijas, el mejor armónico por AICc ($K=4$)
-            <em>no</em> es el que mejor pasa el diagnóstico, y ninguno de los seis llega al $p = 0.4081$ del
-            <em>airline</em>: esa sí es una comparación legítima, porque Ljung–Box no depende del $n$ efectivo de la
-            verosimilitud. Para decidir de verdad entre las dos familias hace falta el Capítulo 6.</p>
+            <code>auto.arima</code> lo remata devolviendo un ARIMA($0,1,0$). En (b), la comparación de AICc
+            hay que <strong>rechazarla</strong>: $180.200$ y $178.209$ están a dos puntos, pero uno se calcula sobre
+            $467$ observaciones y el otro sobre $455$. Que el menor sea el del <em>airline</em> no la arregla: si el
+            armónico hubiera quedado dos puntos por debajo, la misma lectura lo habría elegido con el mismo error. Lo
+            que sí se puede mirar en las dos familias es el diagnóstico, que no depende del $n$ efectivo de la
+            verosimilitud: el <em>airline</em> pasa Ljung–Box sin apuros ($p = 0.4081$), y los armónicos quedan en el
+            borde —el $K=4$, el de menor AICc, lo rechaza al $5\,\%$ ($p = 0.0439$), y los $K=5$ y $K=6$ lo pasan
+            por poco ($p = 0.0516$ y $0.0515$)—. Ese $p$-valor no ordena modelos: solo dice si en los residuales queda
+            estructura. Con lo que hay dentro de muestra, el <em>airline</em> —dos parámetros y residuales sin
+            estructura— es la elección prudente; decidir de verdad entre las dos familias exige compararlas fuera de
+            muestra, que es el Capítulo 6.</p>
         </div>
       </div>
 

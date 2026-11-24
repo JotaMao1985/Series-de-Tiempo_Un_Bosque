@@ -19,8 +19,8 @@
       <p>El Capítulo 4 terminó con un fracaso deliberado. El mejor modelo ARIMA no estacional sobre
         $\log(\text{AirPassengers})$, un ARIMA($0,1,5$) elegido por búsqueda exhaustiva, dejaba en sus residuales
         $\hat\rho_{12} = 0.7245$ y $\hat\rho_{24} = 0.6727$: cinco términos MA, y toda la estructura sobrante
-        concentrada en un solo sitio, los múltiplos de 12. Este capítulo se ocupa de ese sitio. Al final del
-        Módulo 5 el modelo <em>airline</em>, con <strong>solo dos parámetros</strong>, deja
+        concentrada en un solo sitio, los múltiplos de 12. Este capítulo se ocupa de ese sitio. En el
+        Módulo 6 el modelo <em>airline</em>, con <strong>solo dos parámetros</strong>, deja
         $\hat\rho_{12} = -0.0515$ y pasa Ljung–Box(24) con $p = 0.233$.</p>
 
       <div class="definition">
@@ -50,7 +50,8 @@
         <p class="simulador-intro">Elige la serie, si se toma logaritmo y qué diferencias se aplican. El mapa y la
           ACF cambian a la vez, así que se ve qué le hace cada operación al patrón <em>y</em> a la autocorrelación.
           Prueba <code>AirPassengers</code> con logaritmo y las dos diferencias: las bandas verticales desaparecen y
-          la ACF se queda con dos barras, en los rezagos $1$ y $12$. Y prueba la TRM en cualquier combinación: nunca
+          en la ACF quedan dos barras grandes, en los rezagos $1$ y $12$, y unas pocas menores sin patrón; el
+          Módulo 7 discute las que caen dentro de los $24$ rezagos que mira Ljung–Box. Y prueba la TRM en cualquier combinación: nunca
           hay bandas. Con la TRM sin logaritmo y una diferencia regular, la lectura reproduce exactamente la última
           fila de la tabla de más abajo.</p>
         <div class="simulador-controles"></div>
@@ -113,24 +114,18 @@ round(1.96 / sqrt(length(ap)), 4)          # banda
 #&gt; [1] 0.1633
 
 # 3. El contraejemplo: la TRM, sobre la serie YA sin tendencia
-# TRM mensual (promedio del mes, SFC via datos.gov.co). Se reconstruye en cada
-# bloque que la use para que sea autonomo; necesita internet.
-url &lt;- paste0("https://www.datos.gov.co/resource/32sa-8pi3.json",
-              "?$select=vigenciadesde,valor&amp;$limit=50000")
-crudo &lt;- jsonlite::fromJSON(url)
-diario &lt;- data.frame(fecha = as.Date(substr(crudo$vigenciadesde, 1, 10)),
-                     valor = as.numeric(crudo$valor))
-diario &lt;- diario[diario$fecha &gt;= as.Date("2015-01-01"), ]
-diario &lt;- diario[order(diario$fecha), ]
-prom &lt;- tapply(diario$valor, format(diario$fecha, "%Y-%m"), mean)
-prom &lt;- prom[names(prom) &lt;= "2026-06"]     # se descarta el mes en curso
-trm &lt;- ts(as.numeric(prom), start = c(2015, 1), frequency = 12)
+# TRM mensual: promedio de cada mes de la TRM diaria (Superintendencia
+# Financiera, publicada en datos.gov.co), de enero de 2015 a junio de 2026.
+# Copia fija de los 138 meses con que se calcularon estas cifras, la misma de
+# los capitulos 2 a 4: se lee de la carpeta de trabajo si el archivo ya esta
+# ahi; si no, de la pagina del curso.
+archivo &lt;- "trm_mensual_2015-01_2026-06.csv"
+if (!file.exists(archivo))
+  archivo &lt;- paste0("https://jotamao1985.github.io/Series-de-Tiempo_Un_Bosque/datos/", archivo)
+trm &lt;- ts(read.csv(archivo)$trm, start = c(2015, 1), frequency = 12)
 b &lt;- Acf(diff(trm), lag.max = 36, plot = FALSE)
 round(b$acf[c(13, 25, 37)], 4)
-#&gt; [1] -0.0024 -0.0672  0.0714
-# El cuarto decimal baila (-0.0024 aqui, -0.0025 en las tablas del capitulo):
-# la copia congelada de la TRM esta redondeada a dos decimales y el valor cae
-# justo en el empate del redondeo. Ninguna conclusion depende de eso.
+#&gt; [1] -0.0025 -0.0672  0.0714
 round(1.96 / sqrt(length(diff(trm))), 4)
 #&gt; [1] 0.1675
 # Ninguno se acerca a la banda: no hay nada estacional que modelar.</code></pre>
@@ -146,10 +141,10 @@ s = pd.Series(ap, index=idx)
 # 1. Vista: la tabla mes x anio ES el mapa de calor del simulador
 tabla = s.groupby([s.index.year, s.index.month]).first().unstack()
 print(tabla.round(2).iloc[:3, :4])
-#&gt;         1     2     3     4
-#&gt; 1949 4.72  4.77  4.88  4.86
-#&gt; 1950 4.74  4.84  4.95  4.91
-#&gt; 1951 4.98  5.01  5.18  5.09
+#&gt;          1     2     3     4
+#&gt; 1949  4.72  4.77  4.88  4.86
+#&gt; 1950  4.74  4.84  4.95  4.91
+#&gt; 1951  4.98  5.01  5.18  5.09
 
 # 2. Medida: acf con nlags = 36
 acf = sm.tsa.acf(ap, nlags=36, fft=False)
@@ -502,7 +497,7 @@ print(np.round(acf[[1, 11, 12, 13]], 4), round(acf[1] * acf[12], 4))
         pronóstico cuando el horizonte deja de importar.</p>
 
       <p><strong>El regalo.</strong> Si el modelo es solo MA —regular y estacional, sin parte autorregresiva— y
-        $q &lt; m$, la varianza <strong>se factoriza exactamente</strong>, y con ella toda la ACF:</p>
+        $q &lt; m$, la varianza <strong>se factoriza exactamente</strong>; si además $2q &lt; m$, también la ACF:</p>
 
       <div class="formula">
         $$\begin{gathered}
@@ -516,7 +511,11 @@ print(np.round(acf[[1, 11, 12, 13]], 4), round(acf[1] * acf[12], 4))
         los rezagos $i + jm$ con $i \le q$ y $j \le Q$. Si $q &lt; m$, cada par $(i,j)$ cae en un rezago distinto y
         ningún término se suma con otro, de modo que el cuadrado de la suma se separa. En cuanto $q$ alcanza a $m$ la
         igualdad se rompe, y no por poco: con $\theta_{12} = 0.5$ y $\Theta = 0.6$ la varianza vale $2.300\,\sigma^2$
-        y la factorización daría $1.700\,\sigma^2$.</p>
+        y la factorización daría $1.700\,\sigma^2$. La ACF pide algo más, porque compara pesos separados por $k$
+        rezagos: si $m/2 \le q &lt; m$, a un mismo rezago se llega por dos caminos —con $q = 7$ y $m = 12$, el
+        $5$ es $5 + 0\cdot 12$ y también $-7 + 1\cdot 12$— y en esos rezagos el producto deja de ser exacto
+        aunque la varianza siga factorizándose. El <em>airline</em>, con $q = 1$, cumple las dos condiciones de
+        sobra.</p>
 
       <div class="note">
         <p><strong>El <em>airline</em> es el caso exacto.</strong> Con $q = Q = 1$ y $m = 12$ los pesos están en los
@@ -572,6 +571,8 @@ th &lt;- coef(fit)["ma1"]; Th &lt;- coef(fit)["sma1"]; s2 &lt;- fit$sigma2
 
 # gamma_0 de la serie YA diferenciada, que es la estacionaria. El modelo con
 # d = D = 1 no tiene varianza finita y preguntar por la suya no significa nada.
+round(unname((1 + th^2) * (1 + Th^2)), 4)        # gamma_0 / sigma^2
+#&gt; [1] 1.5217
 round(unname(s2 * (1 + th^2) * (1 + Th^2)), 6)
 #&gt; 0.002087
 round(var(diff(diff(ap), lag = 12)), 6)
@@ -584,12 +585,25 @@ round(unname(r[c("1", "11", "12", "13")]), 4)
 c(r["13"], r["1"] * r["12"])
 #&gt; 0.1470662  0.1470662     <- iguales a precision de maquina
 
-# El AR NO se factoriza: psi_12 recibe dos caminos y se suman.
-phi &lt;- 0.9; Phi &lt;- 0.7
+# Si q alcanza a m, ni la varianza se factoriza: theta_12 = 0.5 y Theta = 0.6
+ma12 &lt;- c(rep(0, 11), 0.5 + 0.6, rep(0, 11), 0.5 * 0.6)  # (1 + 0.5B^12)(1 + 0.6B^12)
+cat(sprintf("exacta %.3f  factorizada %.3f\n", 1 + sum(ma12^2), (1 + 0.5^2) * (1 + 0.6^2)))
+#&gt; exacta 2.300  factorizada 1.700
+
+# El AR NO se factoriza: psi_12 recibe dos caminos y se suman. Phi = 0.7 fijo.
+Phi &lt;- 0.7
+for (phi in c(0.6, 0.8, 0.9, 0.95)) {
+  psi &lt;- c(1, ARMAtoMA(ar = c(phi, rep(0, 10), Phi, -phi * Phi), lag.max = 20000))
+  ex &lt;- sum(psi^2); fa &lt;- 1 / ((1 - phi^2) * (1 - Phi^2))
+  cat(sprintf("phi=%.2f  phi^12=%.3f  exacta=%7.3f  factorizada=%7.3f  error=%6.1f %%\n",
+              phi, phi^12, ex, fa, 100 * (fa / ex - 1)))
+}
+#&gt; phi=0.60  phi^12=0.002  exacta=  3.073  factorizada=  3.064  error=  -0.3 %
+#&gt; phi=0.80  phi^12=0.069  exacta=  5.997  factorizada=  5.447  error=  -9.2 %
+#&gt; phi=0.90  phi^12=0.282  exacta= 15.406  factorizada= 10.320  error= -33.0 %
+#&gt; phi=0.95  phi^12=0.540  exacta= 44.580  factorizada= 20.111  error= -54.9 %
+phi &lt;- 0.9                     # el caso phi = 0.9 de la tabla
 psi &lt;- c(1, ARMAtoMA(ar = c(phi, rep(0, 10), Phi, -phi * Phi), lag.max = 20000))
-round(c(exacta = sum(psi^2), factorizada = 1 / ((1 - phi^2) * (1 - Phi^2))), 3)
-#&gt;      exacta factorizada
-#&gt;      15.406      10.320
 round(c(psi_12 = psi[13], phi12_mas_Phi = phi^12 + Phi), 5)
 #&gt;        psi_12 phi12_mas_Phi
 #&gt;       0.98243       0.98243</code></pre>
@@ -601,7 +615,7 @@ from statsmodels.tsa.statespace.sarimax import SARIMAX
 ap = np.log(sm.datasets.get_rdataset("AirPassengers").data["value"].values)
 s = pd.Series(ap, index=pd.date_range("1949-01", periods=len(ap), freq="MS"))
 fit = SARIMAX(s, order=(0, 1, 1), seasonal_order=(0, 1, 1, 12),
-              trend="n", simple_differencing=True).fit(disp=False)
+              trend="n", simple_differencing=True).fit(disp=False, method="bfgs", maxiter=1000)
 th, Th, s2 = fit.params["ma.L1"], fit.params["ma.S.L12"], fit.params["sigma2"]
 
 print(round(s2 * (1 + th**2) * (1 + Th**2), 6))
@@ -670,7 +684,9 @@ s = pd.Series(ap, index=pd.date_range("1949-01", periods=len(ap), freq="MS"))
 
 # seasonal_order = (P, D, Q, m). trend="n" para que no anada constante.
 fit = SARIMAX(s, order=(0, 1, 1), seasonal_order=(0, 1, 1, 12),
-              trend="n", simple_differencing=True).fit(disp=False)
+              trend="n", simple_differencing=True).fit(disp=False, method="bfgs", maxiter=1000)
+print(fit.mle_retvals["converged"])   # con el optimizador por defecto, aqui no converge
+#&gt; True
 print(fit.params.round(4))
 #&gt; ma.L1      -0.4018
 #&gt; ma.S.L12   -0.5569
@@ -988,15 +1004,20 @@ print(cuadricula(y2.diff(12).diff()))
             <tr><td>$0$</td><td>$0$</td><td>$144$</td><td>$0.194884$</td><td>$0.9537$</td><td>$0.7619$</td></tr>
             <tr><td>$1$</td><td>$0$</td><td>$143$</td><td>$0.011354$</td><td>$0.1998$</td><td>$\mathbf{0.8414}$</td></tr>
             <tr><td>$0$</td><td>$1$</td><td>$132$</td><td>$0.003800$</td><td>$0.7137$</td><td>$-0.2430$</td></tr>
-            <tr><td>$1$</td><td>$1$</td><td>$131$</td><td>$\mathbf{0.002102}$</td><td>$-0.3411$</td><td>$-0.3866$</td></tr>
+            <tr><td>$1$</td><td>$1$</td><td>$131$</td><td>$0.002102$</td><td>$-0.3411$</td><td>$-0.3866$</td></tr>
           </tbody>
         </table>
       </div>
 
-      <p>La regla de la varianza mínima —del Capítulo 4— señala $d=1, D=1$, y aquí acierta. Pero conviene ver
-        <em>por qué</em> cada fila hace lo que hace: $\nabla$ solo divide la varianza entre $17$ y deja la
-        estacionalidad intacta; $\nabla_{12}$ sola la divide entre $51$ y deja $\hat\rho_1 = 0.714$, que es
-        tendencia sin resolver. Cada operador hace su trabajo y solo el suyo.</p>
+      <p>La columna de la varianza describe lo que hace cada operador, pero <strong>no decide</strong> $d$ ni $D$:
+        el Capítulo 2 (Módulo 2.7) mostró que, en una serie estacionaria, el cociente
+        $\operatorname{Var}(\nabla y)/\operatorname{Var}(y)$ se acerca a $2(1-\hat\rho_1)$: la varianza repite lo que ya dice la ACF y no aporta una
+        evidencia aparte (la cuenta es para series estacionarias, y por eso no cuadra con las filas de esta tabla); por
+        eso el Capítulo 4 no la cuenta como evidencia. Lo que la tabla sí enseña es <em>por qué</em> cada fila hace lo que
+        hace: $\nabla$ sola divide la varianza entre $17$ y deja la estacionalidad intacta ($\hat\rho_{12} = 0.841$);
+        $\nabla_{12}$ sola la divide entre $51$ y deja $\hat\rho_1 = 0.714$, que es tendencia sin resolver. Cada
+        operador hace su trabajo y solo el suyo. Lo que decide $D$ y $d$ son la ACF y las pruebas, en el orden del
+        apartado siguiente.</p>
 
       <h3>El orden en que se decide</h3>
 
@@ -1013,8 +1034,11 @@ print(cuadricula(y2.diff(12).diff()))
         <h4><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> ¿Y si diferencio de más?</h4>
         <p class="simulador-intro">El deslizador recorre $D = 0, 1, 2$ con $d = 1$ fijo, y en cada posición ajusta un
           SARIMA($0,1,1$)($0,D,1$)$_{12}$ de verdad. Busca la firma algebraica del Capítulo 4, ahora en la parte
-          estacional: cuando sobra una diferencia, $\hat\Theta$ se pega a $-1$ y la raíz del polinomio MA cae
-          <strong>sobre</strong> el círculo unitario.</p>
+          estacional: cuando sobra una diferencia, $\hat\Theta$ se pega a $-1$, tan cerca que su propio error
+          estándar no lo distingue de $-1$. La lectura da esa distancia en errores estándar, $(\hat\Theta + 1)/\text{e.e.}$,
+          y avisa cuando $-1$ cae dentro del intervalo $\hat\Theta \pm 1.96\,\text{e.e.}$ El aviso es una señal para
+          volver a mirar $D$, no un veredicto: un $\Theta$ verdadero cercano a $-1$, sin ninguna diferencia de más,
+          también da distancias pequeñas, y en la frontera el error estándar es poco fiable.</p>
         <div class="simulador-controles"></div>
         <div class="grafico-wrapper" style="height:220px;">
           <canvas aria-label="Serie con el número de diferencias estacionales elegido" role="img"></canvas>
@@ -1025,20 +1049,29 @@ print(cuadricula(y2.diff(12).diff()))
       <div class="diagram">
         <table>
           <thead>
-            <tr><th>$D$</th><th>$n$</th><th>Varianza</th><th>$\hat\Theta$</th><th>e.e.</th><th>$|\text{raíz MA}|^{-1}$</th></tr>
+            <tr><th>$D$</th><th>$n$</th><th>$\hat\Theta$</th><th>e.e.</th><th>Distancia a $-1$, en e.e.</th></tr>
           </thead>
           <tbody>
-            <tr><td>$0$</td><td>$143$</td><td>$0.011354$</td><td>$+0.7397$</td><td>$0.0610$</td><td>$0.9752$</td></tr>
-            <tr><td>$1$</td><td>$131$</td><td>$\mathbf{0.002102}$</td><td>$-0.5569$</td><td>$0.0731$</td><td>$0.9524$</td></tr>
-            <tr><td>$2$</td><td>$119$</td><td>$0.005960$</td><td>$\mathbf{-0.9973}$</td><td>$0.0830$</td><td>$\mathbf{0.9998}$</td></tr>
+            <tr><td>$0$</td><td>$143$</td><td>$+0.7397$</td><td>$0.0610$</td><td>$28.53$</td></tr>
+            <tr><td>$1$</td><td>$131$</td><td>$-0.5569$</td><td>$0.0731$</td><td>$6.06$</td></tr>
+            <tr><td>$2$</td><td>$119$</td><td>$\mathbf{-0.9973}$</td><td>$0.0830$</td><td>$\mathbf{0.03}$</td></tr>
           </tbody>
         </table>
       </div>
 
-      <p>Con $D=2$ la varianza vuelve a subir (de $0.0021$ a $0.0060$) <em>y</em> $\hat\Theta = -0.9973$ con la raíz
-        en $0.9998$. Las dos alarmas suenan a la vez, que es lo habitual; pero la segunda es la fiable, porque la regla
-        de la varianza falla en casos reales —en $\log(\text{lynx})$ del Capítulo 4 diferenciar de más
-        <em>reducía</em> la varianza un $58\,\%$—.</p>
+      <p>Con $D=2$, $\hat\Theta = -0.9973$ queda a $0.03$ errores estándar de $-1$: el MA estacional casi cancela la
+        diferencia estacional que sobra, que es la firma del Capítulo 4 trasladada a $B^{12}$. Con $D=1$,
+        $\hat\Theta = -0.5569$ está a $6.06$ errores estándar de $-1$, y no sobra nada. Con $D=0$ la distancia también
+        es grande, pero por otra razón: ahí no sobra nada, <em>falta</em> $\nabla_{12}$, como dice el
+        $\hat\rho_{12} = 0.841$ de la tabla de las cuatro combinaciones. La distancia es una señal, no un veredicto: con una serie de
+        esta longitud, un $\Theta$ verdadero cercano a $-1$ tampoco se distingue de $-1$ aunque no sobre nada, y
+        cerca de $-1$ el error estándar deja de ser fiable. Si salta, se vuelve a la etapa 2 y se mira $D$ con
+        <code>nsdiffs()</code> y la ACF. Hay que leerlo en la escala de
+        $\Theta$, no en la del módulo de las raíces: las doce raíces de $1 + \Theta B^{12}$ tienen módulo
+        $|\Theta|^{-1/12}$, así que $|\text{raíz MA}|^{-1} = |\hat\Theta|^{1/12}$ se acerca a $1$ con casi cualquier
+        $\Theta$ —el bloque de abajo da $0.9524$ con $D=1$ y $0.9752$ con $D=0$, donde nada sobra—. Tampoco la
+        varianza sirve de alarma: en $\log(\text{lynx})$ del Capítulo 4 diferenciar de más la <em>reducía</em> un
+        $58\,\%$.</p>
 
       <div class="code-tabs">
         <div class="code-tabs-nav" role="tablist" aria-label="Elegir D y d">
@@ -1076,16 +1109,17 @@ for (i in seq_len(nrow(comb))) {
 #&gt; d=0 D=1  n=132  var=0.003800  r1=+0.7137  r12=-0.2430
 #&gt; d=1 D=1  n=131  var=0.002102  r1=-0.3411  r12=-0.3866
 
-# --- Sobrediferenciacion estacional: la firma es la raiz MA -----------------
+# --- Sobrediferenciacion estacional: la firma es Theta pegado a -1 ----------
 for (D in 0:2) {
   f &lt;- Arima(ap, order = c(0,1,1), seasonal = list(order = c(0,D,1), period = 12))
-  cat(sprintf("D=%d  Theta=%+.4f (e.e. %.4f)  |raiz MA|^-1=%.4f\n", D,
-      coef(f)["sma1"], sqrt(diag(f$var.coef))["sma1"],
-      max(Mod(1/polyroot(c(1, f$model$theta))))))
+  Th &lt;- coef(f)[["sma1"]]; ee &lt;- sqrt(diag(f$var.coef))[["sma1"]]
+  cat(sprintf("D=%d  Theta=%+.4f (e.e. %.4f)  a -1: %5.2f e.e.  |raiz MA|^-1=%.4f\n",
+      D, Th, ee, (Th + 1) / ee, max(Mod(1/polyroot(c(1, f$model$theta))))))
 }
-#&gt; D=0  Theta=+0.7397 (e.e. 0.0610)  |raiz MA|^-1=0.9752
-#&gt; D=1  Theta=-0.5569 (e.e. 0.0731)  |raiz MA|^-1=0.9524
-#&gt; D=2  Theta=-0.9973 (e.e. 0.0830)  |raiz MA|^-1=0.9998</code></pre>
+#&gt; D=0  Theta=+0.7397 (e.e. 0.0610)  a -1: 28.53 e.e.  |raiz MA|^-1=0.9752
+#&gt; D=1  Theta=-0.5569 (e.e. 0.0731)  a -1:  6.06 e.e.  |raiz MA|^-1=0.9524
+#&gt; D=2  Theta=-0.9973 (e.e. 0.0830)  a -1:  0.03 e.e.  |raiz MA|^-1=0.9998
+# |raiz MA|^-1 = |Theta|^(1/12) comprime la escala hacia 1 y separa mal; Theta no.</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm
@@ -1122,7 +1156,8 @@ print(np.max(np.abs(diferenciar(uad, 1, 1) - np.diff(uad[12:] - uad[:-12]))))
 # "primero D, despues d":
 from statsmodels.tsa.stattools import kpss
 print(round(kpss(diferenciar(uad, 0, 1), regression="c", nlags=4)[0], 4))
-#&gt; 0.8672     valor critico al 5 % = 0.463 -&gt; RECHAZA: falta la diferencia regular
+#&gt; 0.8672
+# valor critico al 5 % = 0.463 -&gt; RECHAZA: falta la diferencia regular
 print(round(kpss(diferenciar(uad, 1, 1), regression="c", nlags=4)[0], 4))
 #&gt; 0.0713     ya no rechaza: con d = 1 y D = 1 se llega a la estacionariedad</code></pre>
         </div>

@@ -309,8 +309,10 @@ ETAPAS_CICLO = [
             ("Con qué", "<p><code>nsdiffs()</code> —comprobando qué prueba usa— y la ACF en "
                         "$m, 2m, 3m$: si decae despacio, falta $\\nabla_m$.</p>"),
         ],
-        "vuelta": "<p>Si al estimar sale $\\hat\\Theta$ pegado a $-1$ y la raíz MA sobre el "
-                  "círculo unitario, sobraba una diferencia estacional.</p>",
+        "vuelta": "<p>Si al estimar sale $\\hat\\Theta$ pegado a $-1$ —tan cerca que su error "
+                  "estándar no lo distingue de $-1$—, puede sobrar una diferencia estacional: "
+                  "se vuelve a mirar $D$ con la ACF y la prueba. Es una señal, no un veredicto: "
+                  "un $\\Theta$ verdadero cercano a $-1$ da lo mismo.</p>",
     },
     {
         "clave": "elegir-d",
@@ -321,11 +323,13 @@ ETAPAS_CICLO = [
             ("Qué haces", "<p>Decides las diferencias regulares <strong>sobre la serie a la que "
                           "ya has aplicado $\\nabla_m^D$</strong>. Este es el paso que más se "
                           "hace en el orden equivocado.</p>"),
-            ("Con qué", "<p><code>ndiffs(diff(y, lag = m))</code>, la varianza de las cuatro "
-                        "combinaciones, y KPSS o ADF sobre la serie desestacionalizada.</p>"),
+            ("Con qué", "<p><code>ndiffs(diff(y, lag = m))</code>, KPSS o ADF sobre la serie ya "
+                        "diferenciada estacionalmente, y su ACF: si $\\hat\\rho_1$ sigue alto y "
+                        "decae despacio, falta $\\nabla$.</p>"),
         ],
-        "vuelta": "<p>Si $\\hat\\theta \\to -1$, sobra la diferencia regular. Si la varianza "
-                  "sube al diferenciar, también.</p>",
+        "vuelta": "<p>Si $\\hat\\theta$ sale pegado a $-1$, puede sobrar la diferencia regular. La "
+                  "varianza de las cuatro combinaciones no sirve de señal: repite lo que dice "
+                  "la ACF.</p>",
     },
     {
         "clave": "identificar",
@@ -356,7 +360,8 @@ ETAPAS_CICLO = [
                         "los módulos de las raíces.</p>"),
         ],
         "vuelta": "<p>Cualquier fallo aquí te devuelve a la etapa que lo causó: varianza "
-                  "creciente a la 1, raíz sobre el círculo a la 2 o la 3, barra en $m$ a la 4.</p>",
+                  "creciente a la 1, $\\hat\\Theta$ o $\\hat\\theta$ pegados a $-1$ a la 2 o "
+                  "la 3, barra en $m$ a la 4.</p>",
     },
 ]
 

@@ -1,0 +1,66 @@
+== airline: -0.401828 -0.556945  sigma2 0.001371 
+
+== E1 · psi_j en j = 12, 24, 60, 120, 240
+[1] 1.0412 1.3062 2.1013 3.4264 6.0767
+subida anual de psi (psi_{j+12} - psi_j) en j = 24, 120, 228: 0.265 0.265 0.265  (1+theta)(1+Theta) = 0.265 
+         [,1]   [,2]   [,3]   [,4]   [,5]   [,6]   [,7]    [,8]    [,9]
+h           1 12.000 24.000 36.000 41.000 42.000 48.000 120.000 240.000
+airline     1  2.222  3.770  5.470  6.337  6.488  7.331  21.481  53.980
+caminata    1  3.464  4.899  6.000  6.403  6.481  6.928  10.954  15.492
+razon       1  0.641  0.770  0.912  0.990  1.001  1.058   1.961   3.484
+primer h con sigma_h(airline) > sigma_h(caminata): 42 
+sigma_12/sigma_1 = 2.222  sqrt(12) = 3.464 
+
+== E2 · salto psi_12 - psi_11 segun Theta (theta del ajuste)
+Theta =  0.000  psi_11 = 0.5982  psi_12 = 1.5982  salto = 1.0000  (1 + Theta = 1.0000)
+Theta = -0.557  psi_11 = 0.5982  psi_12 = 1.0412  salto = 0.4431  (1 + Theta = 0.4431)
+Theta = -0.950  psi_11 = 0.5982  psi_12 = 0.6482  salto = 0.0500  (1 + Theta = 0.0500)
+Theta = -0.990  psi_11 = 0.5982  psi_12 = 0.6082  salto = 0.0100  (1 + Theta = 0.0100)
+
+== M2 · MA(7) x SMA(1), m = 12: la varianza factoriza, la ACF no
+gamma0 exacta 3.74  factorizada 3.74 
+rho_5 exacta 0.4439  rho_5 regular 0.3636 
+
+== M3 · D = 0, 1, 2 con d = 1
+D=0 Theta=+0.7397 ee=0.0610 (Theta+1)/ee=28.53 IC95=[0.620, 0.859] |raiz|^-1=0.9752 |Theta|^(1/12)=0.9752
+D=1 Theta=-0.5569 ee=0.0731 (Theta+1)/ee=6.06 IC95=[-0.700, -0.414] |raiz|^-1=0.9524 |Theta|^(1/12)=0.9524
+D=2 Theta=-0.9973 ee=0.0830 (Theta+1)/ee=0.03 IC95=[-1.160, -0.835] |raiz|^-1=0.9998 |Theta|^(1/12)=0.9998
+
+== M4 · AR(1) x SAR(1), phi = 0.6, Phi = 0.7
+rho1 0.6016229 rho11 0.4229835 rho12 0.7011085 rho13 0.4218011 rho1*rho12 0.4218029
+
+== M6 · residuales de arranque del airline en R
+desv. tipica de los 13 primeros 0.0049  del resto 0.0368 
+LB(24) con los 144: 0.233  sin los 13: 0.3515 
+LB(36) con los 144: 0.2969  sin los 13: 0.4616 
+Shapiro con los 144: 0.1674  sin los 13: 0.6043 
+(0,1,0)(0,1,0): AICc -434.8  LB(24) p 2.31e-08 
+
+== M7 · round(c(coef, sigma2, aicc), 6)
+        ma1        sma1      sigma2        aicc 
+  -0.401828   -0.556945    0.001371 -483.210085 
+
+== M9 · Semana Santa sola
+AICc -487.2305  BIC -476.0471  beta 0.0298  ee 0.0116 
+
+== M10
+floor(800 / (3 * 365)) = 0 
+en el codigo de auto.arima:
+[1] "    max.P <- min(max.P, floor(serieslength/3/m))" "    max.Q <- min(max.Q, floor(serieslength/3/m))"
+[3] "        D <- max.P <- max.Q <- 0"                
+stlm: AIC -543.24  AICc -542.95 
+
+== M11 · K elegido por AICc
+completa       AICc K=1..6: -359.18 -409.18 -460.96 -495.24 -521.22 -521.45  -> K = 6
+entrenamiento  AICc K=1..6: -298.84 -335.63 -379.74 -418.41 -434.3 -433.79  -> K = 5
+
+== Ejercicio 1 · co2
+ACF de diff(co2) en 12, 24, 36: 0.9219 0.8902 0.8686  banda 0.0907 
+ACF de la doble diferencia en 1 y 12: -0.302 -0.4203 
+airline co2: Theta -0.8506  ee 0.0257  theta -0.3501  ee 0.0496  LB(24) p 0.4081 
+
+== Quiz 6
+K=5  AICc -521.22  coeficientes 15  (Regression with ARIMA(0,1,4) errors)
+K=6  AICc -521.45  coeficientes 16  (Regression with ARIMA(0,1,4) errors)
+
+ R version 4.6.0 (2026-04-24) · forecast 9.0.2 

@@ -1,0 +1,39 @@
+R version 4.6.0 (2026-04-24) · forecast 9.0.2 
+
+== Diapositiva «Diferenciar de más»: SARIMA(0,1,1)(0,D,1)_12
+D=0 n=143 Theta=0.7397 ee=0.0610 distancia=(Theta+1)/ee=28.53  -1 dentro de Theta±1.96ee: FALSE  |Theta|^(1/12)=0.9752
+D=1 n=131 Theta=-0.5569 ee=0.0731 distancia=(Theta+1)/ee=6.06  -1 dentro de Theta±1.96ee: FALSE  |Theta|^(1/12)=0.9524
+D=2 n=119 Theta=-0.9973 ee=0.0830 distancia=(Theta+1)/ee=0.03  -1 dentro de Theta±1.96ee: TRUE  |Theta|^(1/12)=0.9998
+
+== Airline
+     theta      Theta   ee_theta   ee_Theta dist_theta 
+   -0.4018    -0.5569     0.0896     0.0731     6.6728 
+max |psi recursión - ARMAtoMA| = 0 
+sigma_12/sigma_1 = 2.22 ; sqrt(12) = 3.46
+subida anual de psi (psi_240 - psi_228) = 0.2650 ; (1+th)(1+TH) = 0.2650
+psi_240 = 6.08
+primer h con sigma_h/sigma > sqrt(h): 42
+sigma_240/sigma = 53.98 ; sqrt(240) = 15.49
+sigma_1, sigma_12, sigma_24 = 0.037031 0.082270 0.139621
+crecimiento de sum psi^2: cociente sh[240]^2/sh[120]^2 = 6.31 (h^3 daría 8)
+Theta=0.0000: salto psi_12 - psi_11 = 1.0000 (1+Theta = 1.0000)
+Theta=-0.5569: salto psi_12 - psi_11 = 0.4431 (1+Theta = 0.4431)
+Theta=-0.9900: salto psi_12 - psi_11 = 0.0100 (1+Theta = 0.0100)
+psi_12 = 1.0412 ; psi_13 = 0.8632
+
+== TRM congelada: SAR(1)_12 forzado
+n = 138 
+     r12      r24      r36    banda 
+-0.00245 -0.06721  0.07138  0.16745 
+    Phi      ee       t 
+0.00131 0.08990 0.01463 
+t a 3 decimales: 0.015  ; a 2: 0.01 
+ forzado   simple 
+1708.001 1705.941 
+
+== auto.arima con m = 365: el tope de P y Q
+  código: max.P <- min(max.P, floor(serieslength/3/m)) 
+  código: max.Q <- min(max.Q, floor(serieslength/3/m)) 
+  código: D <- max.P <- max.Q <- 0 
+  floor(800/(3*365)) = 0 
+  auto.arima: ARIMA(0,0,0)(0,1,0)[365] ; nobs = 435 ; perdidas = 365 

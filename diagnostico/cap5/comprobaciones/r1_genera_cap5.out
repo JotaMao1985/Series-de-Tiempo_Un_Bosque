@@ -1,0 +1,141 @@
+Series cargadas: AirPassengers n = 144 | USAccDeaths n = 72 | co2 n = 468 | TRM n = 138 
+
+=== FIRMA ESTACIONAL: ACF en los rezagos múltiplos de 12 ===
+serie                       r12      r24      r36    banda
+airpassengers_cruda      0.7604   0.5322   0.3370   0.1633
+airpassengers_log        0.7619   0.5205   0.3193   0.1633
+usaccdeaths              0.6286   0.4503   0.3020   0.2310
+co2                      0.9284   0.8555   0.7832   0.0906
+trm                      0.6365   0.4895   0.2252   0.1668
+trm_diff                -0.0025  -0.0672   0.0714   0.1675
+
+=== log(AirPassengers): las cuatro combinaciones (d, D) ===
+combinación                   n     varianza    ACF(1)   ACF(12)
+log(y_t) sin diferenciar     144     0.194884    0.9537    0.7619
+Diferencia estacional        132     0.003800    0.7137   -0.2430
+Diferencia regular           143     0.011354    0.1998    0.8414
+Ambas diferencias            131     0.002102   -0.3411   -0.3866
+
+=== El orden de las diferencias ===
+Los operadores conmutan: diferencia máxima 0 (AP) y 0 (USAccDeaths)
+serie             ndiffs crudo  ndiffs tras D  nsdiffs seas  nsdiffs ocsb
+airpassengers                1              1             1             0
+usaccdeaths                  0              1             1             0
+co2                          1              1             1             1
+trm                          1              1             0             0
+   AVISO: nsdiffs() usa test = 'seas' (fuerza estacional) desde forecast 8.x;
+   con test = 'ocsb' —el de versiones antiguas— la respuesta puede cambiar.
+
+=== Sobrediferenciación ESTACIONAL sobre log(AirPassengers) (d = 1 fijo) ===
+  D     n     varianza  Theta est.     e.e.   |raiz MA|
+  0   143     0.011354      0.7397   0.0610      0.9752
+  1   131     0.002102     -0.5569   0.0731      0.9524
+  2   119     0.005960     -0.9973   0.0830      0.9998
+   -> con D = 2, Theta se pega a -1 y la raíz MA cae sobre el círculo unitario:
+      la misma firma algebraica de la sobrediferenciación del capítulo 4.
+
+=== ACF teóricas de procesos estacionales (referencia para el simulador) ===
+proceso                                      r1      r11      r12      r13
+SAR(1) con Phi = 0.7                     0.0000   0.0000   0.7000   0.0000
+SAR(1) con Phi = -0.7                    0.0000   0.0000  -0.7000   0.0000
+SMA(1) con Theta = -0.6                  0.0000   0.0000  -0.4412   0.0000
+AR(1)xSAR(1): phi=0.6, Phi=0.7           0.6016   0.4230   0.7011   0.4218
+Airline: theta=-0.4018, Theta=-0.5569   -0.3459   0.1471  -0.4251   0.1471
+AR(1)xSMA(1): phi=0.5, Theta=-0.7        0.4998  -0.2345  -0.4697  -0.2348
+   Los rezagos 11 y 13 son los 'satélites' que genera la multiplicación de polinomios.
+
+=== log(AirPassengers): rejilla SARIMA(p,1,q)(P,1,Q)[12], 36 modelos ===
+modelo                   k       AICc        BIC  LB(24) p   r12 res |raiz MA|
+(0,1,1)(0,1,1)[12]       2  -483.2101  -474.7735    0.2330   -0.0515    0.9524
+(2,1,1)(0,1,1)[12]       4  -481.7923  -467.8963    0.1371   -0.0307    0.9646
+(0,1,1)(1,1,1)[12]       3  -481.5957  -470.4123    0.2271   -0.0163    0.9410
+(1,1,1)(0,1,1)[12]       3  -481.5820  -470.3987    0.2453   -0.0459    0.9534
+(1,1,2)(0,1,1)[12]       4  -481.5633  -467.6673    0.1849   -0.0399    0.9790
+Mejor por AICc: (0,1,1)(0,1,1)[12] | mejor por BIC: (0,1,1)(0,1,1)[12]
+Todos los modelos comparten d = 1 y D = 1 -> n efectivo = 131 en todos.
+auto.arima exhaustivo: ARIMA(0,1,1)(0,1,1)[12] (AICc -483.2101)
+auto.arima escalonado: ARIMA(0,1,1)(0,1,1)[12] (AICc -483.2101)
+
+=== log(AirPassengers): modelo airline (0,1,1)(0,1,1)[12] ===
+   theta = -0.4018 (e.e. 0.0896) | Theta = -0.5569 (e.e. 0.0731)
+   sigma^2 = 0.001371 | AICc = -483.2101 | BIC = -474.7735 | n efectivo = 131
+   Ljung-Box(24) p = 0.2330 | Ljung-Box(36) p = 0.2969 | Shapiro p = 0.1674
+   ACF residual en 12 = -0.0515 | en 24 = 0.0124 | banda = 0.1633
+   |raiz MA| máximo = 0.9524 (invertible si < 1)
+   Verificación de los pesos psi contra forecast(): error máximo 4.44e-07
+
+=== Puente con el capítulo 4 ===
+   ARIMA(0,1,1) no estacional: AICc -238.64 | LB(24) p = 0 | r12 = 0.8106
+   SARIMA airline           : AICc -483.21 | LB(24) p = 0.2330 | r12 = -0.0515
+   Un solo parámetro más y el problema desaparece.
+
+=== USAccDeaths: segundo caso ===
+   ndiffs crudo = 0, tras la diferencia estacional = 1, nsdiffs = 1
+   airline: theta = -0.4303 | Theta = -0.5528 | AICc = 857.32 | LB(24) p = 0.2477
+   auto.arima exhaustivo: ARIMA(0,1,1)(0,1,1)[12] (AICc 857.32)
+
+=== TRM: el contraejemplo (serie mensual SIN estacionalidad) ===
+   nsdiffs = 0 (seas) y 0 (ocsb) | ACF de la diferencia en 12/24/36: -0.0025 / -0.0672 / 0.0714 (banda 0.1675)
+   Si se le impone un SAR(1) estacional: Phi = 0.0013 (e.e. 0.0899, t = 0.01), AICc 1708.00 frente a 1705.94 del modelo simple
+   auto.arima: ARIMA(0,1,0)
+
+=== Regresores de calendario sobre log(AirPassengers) ===
+   Longitud del mes: entre 28 y 31 días (10.7% de diferencia)
+   Domingo de Pascua en marzo en 2 de los 12 años de la serie
+   airline sin regresores               AICc = -483.2101 | BIC = -474.7735
+   airline + log(días del mes)         AICc = -486.5380 | BIC = -475.3547
+       log_dias   =   1.1157 (e.e. 0.4675, t =   2.39)
+   airline + log(días) + Semana Santa  AICc = -490.7221 | BIC = -476.8261
+       log_dias   =   1.0840 (e.e. 0.4462, t =   2.43)
+       pascua     =   0.0290 (e.e. 0.0111, t =   2.60)
+   airline + Semana Santa               AICc = -487.2305 | BIC = -476.0471
+       pascua     =   0.0298 (e.e. 0.0116, t =   2.56)
+
+=== Regresión armónica sobre log(AirPassengers) ===
+  K  términos parám. tot.   n_ef errores ARIMA                              AICc  LB(24) p
+  1          2            8    143 Regression with ARIMA(5,1,0) errors   -359.1791    0.0000
+  2          4            9    143 Regression with ARIMA(0,1,4) errors   -409.1814    0.0000
+  3          6           11    143 Regression with ARIMA(2,1,2) errors   -460.9633    0.0000
+  4          8           14    143 Regression with ARIMA(1,1,4) errors   -495.2436    0.0001
+  5         10           15    143 Regression with ARIMA(0,1,4) errors   -521.2191    0.1341
+  6         11           16    143 Regression with ARIMA(0,1,4) errors   -521.4512    0.1100
+   Con K = 6 los 11 términos equivalen a 11 indicadoras mensuales: estacionalidad
+   determinista saturada. Más allá de K = m/2 no hay nada que añadir.
+   STL + ARIMA: errores ARIMA(1,1,1) with drift, AICc = -542.9528
+!! COMPARABILIDAD: el airline tiene AICc = -483.2101 con n efectivo 131; los armónicos,
+   n efectivo 143. NO se comparan por AICc. Solo fuera de muestra (sección siguiente).
+
+   Armónica: K = 6 con la serie completa, K = 5 con solo el entrenamiento (RMSE 19.580)
+
+=== Comparativa sobre los últimos 24 meses (UNA partición) ===
+   Entrena hasta 1958-12 (n = 120), prueba 24 meses. Métricas en la escala original.
+modelo                                            escala      k       RMSE        MAE   MAPE %
+ETS sobre el logaritmo: ETS(M,A,M)                   log     16     19.429     16.125    3.547
+Regresión armónica K = 6 + errores ARIMA           log     16     19.505     14.690    3.151
+STL + ARIMA sobre el log                             log      2     35.481     30.291    6.330
+SARIMA airline (0,1,1)(0,1,1)[12]                    log      2     43.184     39.447    8.516
+auto.arima sobre el log: ARIMA(0,1,1)(0,1,1)[12]       log      2     43.184     39.447    8.516
+SARIMA airline + calendario                          log      4     45.477     41.452    8.949
+ETS sobre la serie cruda: ETS(M,Ad,M)           original     17     72.548     63.213   13.303
+Naive estacional                                original      0     76.995     71.250   15.523
+
+--- Verificación: la misma comparación sobre 61 orígenes (h = 12) ---
+modelo         RMSE medio % orígenes que gana al SARIMA
+sarima             16.812                       0.0%
+ets_log            21.416                       8.2%
+stl                21.848                       8.2%
+armonica           22.385                       9.8%
+ets_orig           26.384                      14.8%
+snaive             41.238                      11.5%
+   -> el orden de la tabla anterior SE INVIERTE. Una sola partición no decide nada.
+
+=== co2 de Mauna Loa (ejercicios) ===
+   ndiffs = 1 (tras D: 1) | nsdiffs = 1
+   auto.arima: ARIMA(0,1,3)(0,1,1)[12] (AICc 177.00) | airline: AICc 178.21
+   Varianzas: cruda 223.9877 | d=1 1.4555 | D=1 0.3882 | ambas 0.1543
+
+=== Salidas ===
+   cap5_sarima.json (102.7 KB)
+   cap5_datos.js (85.4 KB)
+Listo.
+Rscript genera_cap5.R  92.93s user 0.63s system 99% cpu 1:33.97 total

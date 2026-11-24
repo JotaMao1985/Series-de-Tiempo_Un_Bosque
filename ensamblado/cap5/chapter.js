@@ -48,11 +48,6 @@
 
     function media(x) { return x.reduce((a, b) => a + b, 0) / x.length; }
 
-    function varianzaDe(x) {
-      const m = media(x);
-      return x.reduce((a, b) => a + (b - m) * (b - m), 0) / (x.length - 1);
-    }
-
     // Defensiva ante null: jsonlite escribe los valores infinitos como null y
     // Number(null) es 0, que en pantalla se leería como un cero legítimo.
     //
@@ -555,15 +550,17 @@
           `∇ ∇₁₂^${D} log(AirPassengers)`, COLORES_GRAFICO.primario,
           { plugins: { legend: { display: true } } });
 
-        const alarma = Math.abs(info.raiz_ma) > 0.99;
+        // La firma se lee en la escala de Θ: −1 dentro de Θ̂ ± 1.96·e.e. No en
+        // |raíz MA|⁻¹ = |Θ̂|^(1/12), que se acerca a 1 con casi cualquier Θ.
+        const alarma = info.a_menos_1_en_ee < 1.96;
         actualizarLectura(lectura, [
           { etiqueta: 'D', valor: D },
           { etiqueta: 'n', valor: info.n },
-          { etiqueta: 'varianza (R)', valor: fmt(info.varianza, 6) },
-          { etiqueta: 'varianza (calculada aquí)', valor: fmt(varianzaDe(y), 6) },
-          { etiqueta: 'Θ̂', valor: fmt(info.theta_est, 4) },
-          { etiqueta: '|raíz MA|⁻¹', valor: fmt(info.raiz_ma, 4) },
-          { etiqueta: 'diagnóstico', valor: alarma ? '⚠ raíz sobre el círculo: sobrediferenciada' : 'invertible' }
+          { etiqueta: 'Θ̂', valor: `${fmt(info.theta_est, 4)} (e.e. ${fmt(info.ee, 4)})` },
+          { etiqueta: 'distancia a −1', valor: `${fmt(info.a_menos_1_en_ee, 2)} e.e.` },
+          { etiqueta: 'diagnóstico', valor: alarma ? '⚠ −1 dentro de Θ̂ ± 1.96 e.e.: señal de que puede sobrar una diferencia estacional; vuelve a mirar D'
+            : (D === 0 ? 'Θ̂ lejos de −1: no sobra nada, pero falta ∇₁₂ (la estacionalidad sigue en la serie)'
+                       : 'Θ̂ lejos de −1: ninguna señal de diferencia de más') }
         ]);
       }
 
@@ -664,6 +661,7 @@
           { etiqueta: 'ψ₁ = 1+θ', valor: fmt(psi[1], 4) },
           { etiqueta: 'ψ₁₂', valor: fmt(psi[12], 4) },
           { etiqueta: 'ψ₁₃', valor: fmt(psi[13], 4) },
+          { etiqueta: 'salto ψ₁₂ − ψ₁₁ = 1+Θ', valor: fmt(psi[12] - psi[11], 4) },
           { etiqueta: 'σ₁', valor: fmt(sigmaH[0], 6) },
           { etiqueta: 'σ₁₂', valor: fmt(sigmaH[11], 6) },
           { etiqueta: 'σ₂₄', valor: fmt(sigmaH[23], 6) },
@@ -878,12 +876,11 @@
       let grafico = null;
 
       function pintar() {
+        // Cada combinación de interruptores lee su propio ajuste de R: la Semana
+        // Santa sola también está precalculada (con_pascua).
         const clave = params.dias && params.pascua ? 'con_dias_pascua'
           : params.dias ? 'con_dias'
-            : params.pascua ? 'con_dias_pascua' : 'sin_regresores';
-        // La Semana Santa sola no se precalculó: si se pide sin los días, se
-        // avisa en vez de mostrar un ajuste que no existe.
-        const soloPascua = params.pascua && !params.dias;
+            : params.pascua ? 'con_pascua' : 'sin_regresores';
         const m = cal.modelos[clave];
 
         const datasets = [{
@@ -913,7 +910,7 @@
         });
 
         const campos = [
-          { etiqueta: 'modelo', valor: soloPascua ? 'Semana Santa sola: no precalculada' : m.nombre },
+          { etiqueta: 'modelo', valor: m.nombre },
           { etiqueta: 'AICc', valor: fmt(m.aicc, 4) },
           { etiqueta: 'mejora sobre el airline', valor: fmt(baseAicc - m.aicc, 4) + ' puntos' },
           { etiqueta: 'BIC', valor: fmt(m.bic, 4) }
@@ -1227,7 +1224,7 @@
             retro: 'Es la lección central del Módulo 10: la misma trampa que el Capítulo 4 documentó con $d$, agravada porque cada $D$ cuesta $m = 12$ observaciones en vez de una. Entre familias solo se puede comparar fuera de muestra.'
           },
           {
-            texto: 'El <em>airline</em>, porque tiene $2$ parámetros frente a $16$ y la parsimonia desempata.',
+            texto: 'El <em>airline</em>, porque tiene $2$ parámetros frente a $15$ y la parsimonia desempata.',
             correcta: false,
             retro: 'La conclusión final del capítulo es en efecto favorable al <em>airline</em>, pero por otra razón: gana fuera de muestra sobre $61$ orígenes. Invocar la parsimonia aquí es aceptar la comparación de AICc y luego corregirla a mano; lo correcto es rechazarla.'
           },
@@ -1268,7 +1265,7 @@
           {
             texto: 'Que el SARIMA está mal especificado y por eso falla en la partición corta.',
             correcta: false,
-            retro: 'El SARIMA pasa todos los diagnósticos (Ljung–Box $0.2330$, Shapiro $0.1674$, raíces invertibles) y es el mínimo de AICc y de BIC dentro de su familia. Un modelo bien especificado también puede quedar mal en un tramo concreto: eso es varianza, no sesgo.'
+            retro: 'El SARIMA pasa todos los diagnósticos (Ljung–Box $0.2330$, Shapiro $0.1674$, raíces invertibles) y es el mínimo de AICc y de BIC dentro de su familia. Un modelo bien especificado también puede quedar mal en un tramo concreto: el sesgo que el Módulo 11 mide en esos $24$ meses es del tramo, no de la especificación.'
           },
           {
             texto: 'Que los $61$ orígenes se solapan entre sí, así que ese resultado no vale.',

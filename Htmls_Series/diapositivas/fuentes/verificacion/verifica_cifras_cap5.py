@@ -381,7 +381,7 @@ for v, aguja in (("0.520", "$0.520$"), ("0.707", "$0.707$"), ("0.855", "$0.855$"
     C(K, v, CH_(aguja), kind="capítulo")
 permite(K, "12", "múltiplos de 12")
 C(K, "-0.00245", CALC_(lambda: acf(DTRM, 12), "ACF de ∇TRM en 12"), R_("m1.trm_diff.1"))
-C(K, "-0.0024", CH_("-0.0024"), kind="capítulo (código en vivo)")
+C(K, "-0.0025", CH_("[1] -0.0025 -0.0672 0.0714"), kind="capítulo (código con la copia fija de la TRM, R1 de la Fase 5)")
 C(K, "-0.0025", J_(TRMC + ".acf12"))
 
 K = "Es estacional una serie con"
@@ -517,7 +517,6 @@ K = "Cada operador hace su trabajo"
 C(K, "0.762", J_(COMB + ".d0_D0.acf12"))
 C(K, "0.841", J_(COMB + ".d1_D0.acf12"))
 C(K, "0.714", J_(COMB + ".d0_D1.acf1"))
-C(K, "0.002102", J_(COMB + ".d1_D1.varianza"), R_("m3.ap_var.3"))
 for n, c in (("144", "d0_D0"), ("143", "d1_D0"), ("132", "d0_D1"), ("131", "d1_D1")):
     C(K, n, J_(f"{COMB}.{c}.n"))
 C(K, "0.20", J_(COMB + ".d1_D0.acf1"))
@@ -547,14 +546,18 @@ for v, k in (("128", 26), ("121", 25), ("110", 14), ("105", 13)):
     C(K, v, CALC_(lambda k=k: tienda(True)[k], f"tienda que acelera, t = {k + 1}"), CH_("$128 - 121 - 110 + 105 = 2$"))
 
 K = "Diferenciar de más deja la firma"
-for i, (n, var, th, ee, rz) in enumerate((("143", "0.011354", "0.7397", "0.0610", "0.9752"), ("131", "0.002102", "-0.5569", "0.0731", "0.9524"),
-                                          ("119", "0.005960", "-0.9973", "0.0830", "0.9998"))):
+# R1 de la Fase 5: la varianza sale de la tabla (no decide D) y entra la distancia de Θ̂ a −1
+for i, (n, dist, th, ee, rz) in enumerate((("143", "28.53", "0.7397", "0.0610", "0.9752"), ("131", "6.06", "-0.5569", "0.0731", "0.9524"),
+                                           ("119", "0.03", "-0.9973", "0.0830", "0.9998"))):
     C(K, n, J_(f"{SOB}.{i}.n"))
-    C(K, var, J_(f"{SOB}.{i}.varianza"))
+    C(K, dist, J_(f"{SOB}.{i}.a_menos_1_en_ee"))
     C(K, th, J_(f"{SOB}.{i}.theta_est"))
     C(K, ee, J_(f"{SOB}.{i}.ee"))
     C(K, rz, J_(f"{SOB}.{i}.raiz_ma"))
 C(K, "58", CH_("58"), kind="capítulo (lynx, del capítulo 4)")
+C(K, "1.96", DEF_("cuantil 0.975 de la normal"), CH_("\\hat\\Theta \\pm 1.96\\,\\text{e.e.}"),
+  BOOL_("C", lambda: "a_menos_1_en_ee < 1.96" in CAP_CRUDO, "el simulador del Módulo 3 avisa con ese umbral"), kind="convención")
+C(K, "capítulo", CH_("Distancia a $-1$, en e.e."), CH_("$\\hat\\Theta = -0.9973$ queda a $0.03$ errores estándar de $-1$"), kind="capítulo")
 permite(K, "12", "rezago")
 
 K = "cambió de prueba por defecto"
@@ -638,18 +641,25 @@ C(K, "0.8632", J_(PRON + ".psi.13"))
 C(K, "0.0370", J_(PRON + ".sigma_h.0"))
 C(K, "0.0823", J_(PRON + ".sigma_h.11"))
 C(K, "0.1396", J_(PRON + ".sigma_h.23"))
-C(K, "1.0413", CALC_(lambda: 2 - 0.4018 - 0.5569, "ψ₁₂ = 2 + θ + Θ con los coeficientes redondeados"), CH_("1.0413"))
-C(K, "0.8633", CALC_(lambda: 2 - 2 * 0.4018 - 0.5569 + 0.4018 * 0.5569, "ψ₁₃ = 2 + 2θ + Θ + θΘ, redondeados"), CH_("0.8633"))
+C(K, "capítulo", CH_("#> [1] 1.0000 0.5982 0.5982 1.0412 0.8632"), BOOL_("C", lambda: "1.0413" not in CAP, "el bloque del Módulo 7 ya no imprime 1.0413"), kind="capítulo")
 C(K, "animado", ANI_("escalones.json"), kind="gráfico animado")
 permite(K, "12 11 13 23", "índices j de los pesos")
 
-K = "acumula incertidumbre más despacio"
+K = "menos incertidumbre a corto plazo"
 C(K, "2.22", CALC_(lambda: get(J, PRON + ".sigma_h.11") / get(J, PRON + ".sigma_h.0"), "σ₁₂/σ₁ (J)"))
 C(K, "3.46", CALC_(lambda: math.sqrt(12), "√12"))
 C(K, "0.082270", J_(PRON + ".sigma_h.11"))
 C(K, "0.037031", J_(PRON + ".sigma_h.0"))
 C(K, "3.4641", CALC_(lambda: math.sqrt(12), "√12"))
 C(K, "0.169", J4_("nilo.intervalos.psi_limite"))
+# R1 de la Fase 5: la comparación a largo plazo (raíz unitaria doble en B = 1)
+C(K, "0.265", CALC_(lambda: (1 + get(J, AIR + ".coeficientes.0.valor")) * (1 + get(J, AIR + ".coeficientes.1.valor")), "(1 + θ̂)(1 + Θ̂), J"),
+  CH_("$(1+\\theta)(1+\\Theta) = 0.265$"))
+C(K, "42", CALC_(lambda: next(h for h, s in enumerate(SIGMA_AIR(), 1) if s > math.sqrt(h)), "primer h con σ_h/σ del airline > √h (coeficientes de R)"),
+  CH_("desde $h = 42$"))
+C(K, "53.98", CALC_(lambda: SIGMA_AIR()[239], "σ₂₄₀/σ del airline (coeficientes de R)"), CH_("$\\sigma_{240} = 53.98\\,\\sigma$"))
+C(K, "15.49", CALC_(lambda: math.sqrt(240), "√240"), CH_("$15.49\\,\\sigma$"))
+C(K, "240", DEF_("horizonte de veinte años, 240 meses"), kind="parámetro")
 permite(K, "12", "rezago")
 
 K = "Un *airline* sobre 96 meses"
@@ -706,7 +716,23 @@ C(K, "-0.5475", PY_("uad_difuso.sma1"))
 C(K, "-0.5527", PY_("uad_simple.sma1"))
 C(K, "-0.5528", J_(UA + ".coeficientes.1.valor"))
 C(K, "2.4", CALC_(lambda: PY["ap_dif_max_coef"] * 1e4, "diferencia máxima × 10⁴ (PY)"))
-permite(K, "10", "exponente de 6×10⁻⁵ y 2.4×10⁻⁴")
+permite(K, "10", "exponente de 2.4×10⁻⁴")
+
+def SIGMA_AIR(H=240):
+    """σ_h/σ del airline, h = 1..H, con los pesos ψ de (1-B)(1-B¹²)y = (1+θB)(1+ΘB¹²)ε y los coeficientes
+    sin redondear del recálculo en R (los de J van a cuatro decimales y mueven la cuarta cifra de σ₂₄₀)."""
+    th, TH = R["m2"]["theta"], R["m2"]["Theta"]
+    ma = {1: th, 12: TH, 13: th * TH}
+    psi = [1.0]
+    for j in range(1, H):
+        v = ma.get(j, 0.0) + psi[j - 1] + (psi[j - 12] if j >= 12 else 0.0) - (psi[j - 13] if j >= 13 else 0.0)
+        psi.append(v)
+    acum, salida = 0.0, []
+    for p in psi:
+        acum += p * p
+        salida.append(math.sqrt(acum))
+    return salida
+
 
 K = "Etapas 1 a 3: logaritmo"
 C(K, "etapas", CH_("Etapas 2 y 3 · $D$ y luego $d$"), CH_("Etapa 5 · Estimación y diagnóstico"),
@@ -718,9 +744,11 @@ C(K, "0.520", CH_("\\hat\\rho_{24}=0.520$"), kind="capítulo")
 C(K, "0.52049", CALC_(lambda: acf(LAP, 24), "ACF exacta en 24"))
 C(K, "0.319", J_(FIR + ".airpassengers_log.acf.35"))
 C(K, "0.714", J_(COMB + ".d0_D1.acf1"))
-C(K, "0.002102", J_(COMB + ".d1_D1.varianza"))
-C(K, "0.003800", J_(COMB + ".d0_D1.varianza"))
-C(K, "0.011354", J_(COMB + ".d1_D0.varianza"))
+# R1 de la Fase 5: la fila «Comprobación» de la varianza pasa a ser la señal de vuelta de la etapa 5
+C(K, "-0.5569", J_(AIR + ".coeficientes.1.valor"))
+C(K, "0.0731", J_(AIR + ".coeficientes.1.ee"))
+C(K, "-0.4018", J_(AIR + ".coeficientes.0.valor"))
+C(K, "capítulo", CH_("Señal de vuelta (etapa 5)"), BOOL_("C", lambda: "Varianza mínima en" not in CAP, "el capítulo ya no usa la varianza mínima como comprobación"), kind="capítulo")
 C(K, "622", CALC_(lambda: max(AP), "máximo de AirPassengers"))
 C(K, "104", CALC_(lambda: min(AP), "mínimo de AirPassengers"))
 C(K, "280.30", CALC_(lambda: sum(AP) / len(AP), "media de AirPassengers"))
@@ -772,11 +800,9 @@ C(K, "131", J_(AIR + ".nobs"))
 C(K, "-0.9973", J_(SOB + ".2.theta_est"))
 C(K, "0.5569", J_(AIR + ".coeficientes.1.valor", -1))
 C(K, "0.9524 = Θ^(1/12)", BOOL_("CALC", lambda: abs(abs(get(J, AIR + ".coeficientes.1.valor")) ** (1 / 12) - get(J, AIR + ".raices.ma_max")) < 1e-4, "|Θ̂|^(1/12) = módulo inverso máximo de J (a 10⁻⁴)"), kind="cálculo")
-C(K, "0.825", CALC_(lambda: 0.1 ** (1 / 12), "0.1^(1/12)"))
-C(K, "0.1", DEF_("Θ del ejemplo"), kind="parámetro")
-C(K, "-0.557", J_(AIR + ".coeficientes.1.valor"))
-C(K, "0.073", J_(AIR + ".coeficientes.1.ee"))
-C(K, "capítulo", CH_("es $|\\hat\\Theta|^{1/12} = 0.5569^{1/12}$"), BOOL_("C", lambda: "aunque justo" not in CAP, "el capítulo ya no dice «aunque justo»"), kind="capítulo")
+C(K, "6.06", J_(SOB + ".1.a_menos_1_en_ee"), CH_("a $6.06$ errores estándar de $-1$"))
+C(K, "0.03", J_(SOB + ".2.a_menos_1_en_ee"))
+C(K, "capítulo", CH_("$0.9524 = |\\hat\\Theta|^{1/12}$"), BOOL_("C", lambda: "aunque justo" not in CAP, "el capítulo ya no dice «aunque justo»"), kind="capítulo")
 permite(K, "24 36 12", "rezagos de Ljung–Box; exponente 1/12")
 
 K = "En los residuales solo el rezago 23"
@@ -870,7 +896,7 @@ C(K, "0.16745", CALC_(lambda: banda(137), "1.96/√137"))
 C(K, "0.1675", J_(TRMC + ".banda"))
 C(K, "0.0013", J_(TRMC + ".forzado.Phi"))
 C(K, "0.0899", J_(TRMC + ".forzado.ee"))
-C(K, "0.01", CALC_(lambda: 0.0147, "t = 0.0147 que imprime el código del capítulo"), CH_("0.0147"))
+C(K, "0.015", J_(TRMC + ".forzado.t"), CH_("$t = 0.0146$"))
 
 C(K, "1708.00", J_(TRMC + ".forzado.aicc"))
 C(K, "1705.94", J_(TRMC + ".simple.aicc"))
@@ -1112,17 +1138,19 @@ sin_verificar(K, "Shumway y Stoffer, cap. 3.9 · Box, Jenkins, Reinsel y Ljung, 
 # MOTOR
 # ===========================================================================
 OBSERVACIONES = [
-    ("Módulo 5: ψ₁₂ = 1.0412 y ψ₁₃…₂₃ = 0.8632 en el texto; el bloque de R del Módulo 7 imprime 1.0413 y 0.8633.",
-     "Es redondeo: el bloque usa los coeficientes redondeados (−0.4018, −0.5569). Las diapositivas usan los del texto, que coinciden con J."),
+    ("Resuelta en la R1 de la Fase 5 (2026-11-23): el bloque de R del Módulo 7 imprimía ψ₁₂ = 1.0413 y ψ₁₃ = 0.8633, con los coeficientes redondeados.",
+     "Ahora usa los coeficientes sin redondear e imprime 1.0412 y 0.8632, como el texto y J."),
     ("Módulo 4: el capítulo da ρ₁₁ = ρ₁₃ = 0.14705 «del modelo ajustado».",
      "Con los coeficientes sin redondear es 0.14707; 0.14705 sale con −0.4018 y −0.5569. A cuatro decimales los dos son 0.1471."),
     ("Autoevaluación, pregunta 2: la explicación dice «ρ₂ = ρ₁² ≈ 0.36» para el AR(1)×SAR(1).",
      "En el proceso multiplicado ρ₂ = 0.3637 y ρ₁² = 0.3619: no es una igualdad, aunque los dos redondean a 0.36."),
     ("Autoevaluación, pregunta 6: está etiquetada «módulo 6» y su explicación remite a la lección del Módulo 10.", "Menor."),
-    ("Módulo 6, advertencia final: «los coeficientes casi coinciden con los de R (diferencia 6 × 10⁻⁵)» con statsmodels sin `simple_differencing`.",
-     "Con statsmodels 0.14.6 la diferencia máxima es 2.4 × 10⁻⁴ (−0.4021 y −0.5571 frente a −0.4018 y −0.5569). Sigue siendo despreciable; depende de la versión. No se proyecta."),
-    ("Las dos copias de la TRM llevan fechas de consulta distintas: `cap5_sarima.json` dice «consulta: 2026-07-24» y `datos_series.json` (y el capítulo 4) «2026-07-26».",
-     "No afecta a ninguna cifra (las dos son la misma copia de 138 meses), pero conviene unificarlo."),
+    ("Resuelta en la R1 de la Fase 5: con statsmodels sin `simple_differencing` y el optimizador por defecto, el ajuste de AirPassengers no converge (diferencia 2.4 × 10⁻⁴ con R).",
+     "El capítulo ajusta ahora con BFGS, comprueba `mle_retvals['converged']` y dice que coincide con R en las cuatro primeras cifras."),
+    ("Resuelta en la R1 de la Fase 5: las dos copias de la TRM llevaban fechas de consulta distintas (`cap5_sarima.json` «2026-07-24», `datos_series.json` «2026-07-26»).",
+     "Al regenerar `cap5_sarima.json` toma la de `datos_series.json`; los 138 valores eran y son los mismos. Los bloques de código del capítulo leen ahora la copia fija en vez de descargar la serie."),
+    ("R1 de la Fase 5 (2026-11-23): el capítulo dejó de usar la varianza como regla para elegir d y D, cambió la firma de sobrediferenciar a Θ̂ pegado a −1 (distancia en errores estándar), corrigió la comparación del airline con la caminata (más incertidumbre desde h = 42), la intro del simulador de los pesos ψ y la remisión a las manchas solares.",
+     "Las diapositivas afectadas dicen lo mismo que el capítulo; una se retituló («Frente a una caminata, menos incertidumbre a corto plazo y más a largo plazo») y su clave se re-ancló."),
     ("Resueltas en el capítulo el 2026-10-27 (`114b910`) cinco observaciones de la primera pasada: los ocho dobles redondeos (M1, M4, M7, M11 y las preguntas 1 y 8), los «%» de crecimiento del Módulo 11, que eran 100·Δlog y ahora son porcentajes, la nota del puente del Módulo 7, que ahora usa el ARIMA(0,1,5) y no compara AICc entre distintos D, el enunciado y dos explicaciones de la pregunta 8, y las secciones de FPP3 de las lecturas.",
      "Capítulo y diapositivas dan ahora las mismas cifras, y las comprobaciones de tipo «capítulo» lo exigen. Siguen en J dos textos que el capítulo embebe pero no muestra: `puente_cap4` (el ARIMA(0,1,1) con AICc −238.64) y `origen_movil.nota` («corona a la regresión armónica»)."),
     ("Resueltas en el capítulo el 2026-11-03 las cuatro observaciones de la auditoría del 2026-10-28 (`auditoria_cap5.md`): la invertibilidad del Módulo 7 («aunque justo»), el `auto.arima` con m = 365 del Módulo 10 (ilustrado con ruido blanco), los errores estándar «el doble» del Módulo 8 y los «Paso 0…4» del Módulo 7.",

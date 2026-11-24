@@ -73,8 +73,9 @@
         <em>airline</em> es solo MA, y el Módulo 2 mostró que ahí la factorización es <strong>exacta</strong>:
         $\rho_{11} = \rho_{13} = \rho_1\cdot\rho_{12} = 0.14705$, las tres iguales hasta el último decimal que
         guarda la máquina. Las otras dos filas llevan parte autorregresiva y solo se parecen: en el
-        AR($1$)$\times$SAR($1$), $\rho_{11} = 0.42298$ y $\rho_{13} = 0.42180$ difieren en la tercera cifra, y
-        ninguno coincide con el producto. La diferencia no es una curiosidad aritmética: un MA tiene un número finito
+        AR($1$)$\times$SAR($1$), $\rho_{11} = 0.42298$ y $\rho_{13} = 0.42180$ difieren en la tercera cifra, así que
+        no pueden ser los dos iguales al producto $\rho_1\rho_{12} = 0.4218029$: el $\rho_{13}$ ($0.4218011$) se le
+        queda a dos millonésimas, y el $\rho_{11}$ se aparta en la tercera cifra. La diferencia no es una curiosidad aritmética: un MA tiene un número finito
         de pesos que nunca se pisan, y un AR los tiene infinitos y sí se pisan.</p>
 
       <div class="warning">
@@ -132,17 +133,21 @@ acf_sarima &lt;- function(phi = numeric(0), Phi = 0, theta = numeric(0), Theta =
   recorta &lt;- function(v) { nz &lt;- which(abs(v) &gt; 1e-12); if (!length(nz)) numeric(0) else v[seq_len(max(nz))] }
   ar &lt;- recorta(-mult(c(1, -phi),   poli_est(-Phi))[-1])
   ma &lt;- recorta( mult(c(1,  theta), poli_est( Theta))[-1])
-  ARMAacf(ar = ar, ma = ma, lag.max = lag.max)[-1]
+  unname(ARMAacf(ar = ar, ma = ma, lag.max = lag.max)[-1])
 }
 
 # SAR(1): picos limpios, nada entre medias
 round(acf_sarima(Phi = 0.7)[c(1, 11, 12, 13, 24)], 4)
-#&gt; [1] 0.0000 0.0000 0.7000 0.0000 0.4900
+#&gt; [1] 0.00 0.00 0.70 0.00 0.49
 
 # AR(1) x SAR(1): aparecen los satelites en 11 y 13
 round(acf_sarima(phi = 0.6, Phi = 0.7)[c(1, 11, 12, 13, 24)], 4)
 #&gt; [1] 0.6016 0.4230 0.7011 0.4218 0.4908
-# y en efecto 0.6016 * 0.7011 = 0.4218
+# Con parte AR el producto ya no es exacto: rho_13 casi lo toca, rho_11 no
+r &lt;- acf_sarima(phi = 0.6, Phi = 0.7)
+round(c(rho11 = r[11], rho13 = r[13], rho1_por_rho12 = r[1] * r[12]), 7)
+#&gt;          rho11          rho13 rho1_por_rho12
+#&gt;      0.4229835      0.4218011      0.4218029
 
 # El airline estimado sobre log(AirPassengers)
 round(acf_sarima(theta = -0.4018, Theta = -0.5569)[c(1, 11, 12, 13, 24)], 4)
@@ -164,7 +169,7 @@ def acf_sarima(phi=(), Phi=0.0, theta=(), Theta=0.0, m=12, lag_max=36):
     return proc.acf(lag_max + 1)[1:]
 
 print(np.round(acf_sarima(Phi=0.7)[[0, 10, 11, 12, 23]], 4))
-#&gt; [0.  0.  0.7 0.  0.49]
+#&gt; [0.   0.   0.7  0.   0.49]
 
 print(np.round(acf_sarima(phi=[0.6], Phi=0.7)[[0, 10, 11, 12, 23]], 4))
 #&gt; [0.6016 0.423  0.7011 0.4218 0.4908]
@@ -261,18 +266,19 @@ print(np.round(acf_sarima(theta=[-0.4018], Theta=-0.5569)[[0, 10, 11, 12, 23]], 
             </li>
           </ol>
           <p class="derivacion-resultado">$\sigma_{12}/\sigma_1 = 2.22$, frente al $\sqrt{12} = 3.46$ que daría una
-            caminata aleatoria. Pese a llevar <strong>dos</strong> raíces unitarias, el <em>airline</em> acumula
-            incertidumbre más despacio que una sola caminata: los dos términos MA, ambos negativos, amortiguan la
-            integración. Es el mismo mecanismo que el $\psi_\infty = 0.169$ del Nilo en el Capítulo 4.</p>
+            caminata aleatoria con la misma $\sigma$. En el primer año, pese a llevar <strong>dos</strong> raíces
+            unitarias, el <em>airline</em> acumula incertidumbre más despacio que una sola caminata: los dos términos
+            MA, ambos negativos, amortiguan la integración. Más allá ya no es así, como se ve a continuación.</p>
         </div>
       </div>
 
       <div class="simulador" data-simulador="airline-pesos">
         <h4><i class="fas fa-stairs" aria-hidden="true"></i> Los pesos $\psi$ del <em>airline</em>, escalón a escalón</h4>
         <p class="simulador-intro">Mueve $\theta$ y $\Theta$ y mira las dos curvas: los pesos $\psi_j$ (arriba) y la
-          desviación del pronóstico $\sigma_h$ (abajo). Lleva $\Theta$ hacia $0$ y el escalón del rezago $12$
-          desaparece —sin término estacional, el modelo no distingue el mes—. Llévalo hacia $-1$ y los pesos se
-          aplanan: el modelo casi cancela la diferencia estacional que le acabamos de imponer.</p>
+          desviación del pronóstico $\sigma_h$ (abajo). El salto de los pesos en el rezago $12$ vale exactamente
+          $\psi_{12} - \psi_{11} = 1 + \Theta$. Lleva $\Theta$ a $0$ y el escalón vale $1$: sin MA
+          estacional, nada amortigua la diferencia estacional y cada año se suma un choque entero. Llévalo hacia
+          $-1$ y el escalón casi desaparece: el MA casi cancela la diferencia estacional impuesta.</p>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">Pesos $\psi_j$ de la representación MA($\infty$)</p>
         <div class="grafico-wrapper" style="height:200px;">
@@ -283,6 +289,93 @@ print(np.round(acf_sarima(theta=[-0.4018], Theta=-0.5569)[[0, 10, 11, 12, 23]], 
           <canvas aria-label="Desviación del error de pronóstico por horizonte" role="img"></canvas>
         </div>
         <div class="simulador-lectura"></div>
+      </div>
+
+      <p>La ventaja frente a la caminata no aguanta a largo plazo. El Nilo del Capítulo 4 tiene una sola raíz unitaria, y por
+        eso sus $\psi_j$ se estabilizan en $\psi_\infty = 0.169$. Aquí no: $(1-B^{12}) = (1-B)(1+B+\dots+B^{11})$ ya
+        contiene a $(1-B)$, así que $(1-B)(1-B^{12})$ tiene en $B = 1$ una raíz unitaria <strong>doble</strong>, y los
+        $\psi_j$ no se quedan quietos: cada año suben $(1+\theta)(1+\Theta) = 0.265$, sin límite ($\psi_{240} =
+        6.08$). La varianza del error crece entonces, a la larga, como $h^3$, no como $h$, y desde $h = 42$ el <em>airline</em>
+        acumula <strong>más</strong> incertidumbre que una caminata con la misma $\sigma$: a veinte años,
+        $\sigma_{240} = 53.98\,\sigma$ frente a $15.49\,\sigma$. A corto plazo los MA amortiguan; a largo plazo
+        manda la doble integración. Es la misma suma de $\psi_j^2$ que el Módulo 2 llevaba al infinito para obtener la
+        varianza: con $y_t$ esa suma no converge, y por eso allí los momentos eran los de $w_t = \nabla\nabla_{12}
+        y_t$.</p>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="Pesos psi del airline">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r">
+          <pre><code class="language-r">library(forecast)
+ap  &lt;- log(AirPassengers)
+fit &lt;- Arima(ap, order = c(0, 1, 1), seasonal = list(order = c(0, 1, 1), period = 12))
+th  &lt;- coef(fit)[["ma1"]]; TH &lt;- coef(fit)[["sma1"]]
+
+# Pesos psi de (1-B)(1-B^12) y = (1 + th B)(1 + TH B^12) e, veinte anios.
+# psi[j + 1] es psi_j, porque psi[1] es psi_0 = 1.
+psi &lt;- c(1, ARMAtoMA(ar = c(1, rep(0, 10), 1, -1),
+                     ma = c(th, rep(0, 10), TH, th * TH), lag.max = 240))
+round(psi[c(1, 11, 12, 13) + 1], 4)          # psi_1, psi_11, psi_12, psi_13
+#&gt; [1] 0.5982 0.5982 1.0412 0.8632
+round(c(salto_en_12 = psi[13] - psi[12], uno_mas_Theta = 1 + TH), 4)
+#&gt;   salto_en_12 uno_mas_Theta
+#&gt;        0.4431        0.4431
+
+# Los escalones no se aplanan: cada anio suben (1 + th)(1 + TH)
+round(psi[c(24, 60, 120, 240) + 1], 2)       # psi_24, psi_60, psi_120, psi_240
+#&gt; [1] 1.31 2.10 3.43 6.08
+round(c(subida_anual = psi[241] - psi[229], producto = (1 + th) * (1 + TH)), 4)
+#&gt; subida_anual     producto
+#&gt;        0.265        0.265
+
+# sigma_h / sigma frente a la caminata aleatoria, sqrt(h)
+sh &lt;- sqrt(cumsum(psi^2))                    # sh[h] = sigma_h / sigma
+h &lt;- c(1, 12, 24, 36, 41, 42, 120, 240)
+tabla &lt;- rbind(airline = sh[h], caminata = sqrt(h)); colnames(tabla) &lt;- h
+round(tabla, 3)
+#&gt;          1    12    24   36    41    42    120    240
+#&gt; airline  1 2.222 3.770 5.47 6.337 6.488 21.481 53.980
+#&gt; caminata 1 3.464 4.899 6.00 6.403 6.481 10.954 15.492
+min(which(sh &gt; sqrt(seq_along(sh))))         # primer horizonte en que la supera
+#&gt; [1] 42
+round(sqrt(fit$sigma2) * sh[c(1, 12, 24)], 4)  # sigma_1, sigma_12, sigma_24
+#&gt; [1] 0.0370 0.0823 0.1396</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" hidden>
+          <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm, warnings
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.tsa.arima_process import arma2ma
+warnings.simplefilter("ignore", RuntimeWarning)   # solo avisos de coma flotante de numpy
+
+ap = np.log(sm.datasets.get_rdataset("AirPassengers").data["value"].values)
+s = pd.Series(ap, index=pd.date_range("1949-01", periods=len(ap), freq="MS"))
+fit = SARIMAX(s, order=(0,1,1), seasonal_order=(0,1,1,12), trend="n",
+              simple_differencing=True).fit(disp=False, method="bfgs", maxiter=1000)
+print(fit.mle_retvals["converged"])
+#&gt; True
+th, TH = fit.params["ma.L1"], fit.params["ma.S.L12"]
+
+# (1-B)(1-B^12) = 1 - B - B^12 + B^13 en el lado AR; arma2ma no exige que sea
+# estacionario: solo divide polinomios.
+ar = np.r_[1, -1, np.zeros(10), -1, 1]
+ma = np.r_[1, th, np.zeros(10), TH, th * TH]
+psi = arma2ma(ar, ma, lags=241)               # psi[j] es psi_j
+print(np.round(psi[[1, 11, 12, 13]], 4), round(psi[12] - psi[11], 4), round(1 + TH, 4))
+#&gt; [0.5982 0.5982 1.0412 0.8632] 0.4431 0.4431
+print(np.round(psi[[24, 60, 120, 240]], 2), round(psi[240] - psi[228], 4))
+#&gt; [1.31 2.1  3.43 6.08] 0.265
+
+sh = np.sqrt(np.cumsum(psi**2))               # sh[h - 1] = sigma_h / sigma
+h = np.array([1, 12, 24, 36, 41, 42, 120, 240])
+print(np.round(sh[h - 1], 3))
+#&gt; [ 1.     2.222  3.77   5.47   6.337  6.488 21.482 53.981]
+# R da 21.481 y 53.980 en los dos ultimos: los coeficientes estimados difieren
+# en la sexta cifra. La caminata, sqrt(h), da 1, 3.464, ..., 15.492.
+print(int(np.argmax(sh &gt; np.sqrt(np.arange(1, len(sh) + 1)))) + 1)
+#&gt; 42</code></pre>
+        </div>
       </div>
 
       <div class="note">
@@ -363,8 +456,8 @@ print(np.round(acf_sarima(theta=[-0.4018], Theta=-0.5569)[[0, 10, 11, 12, 23]], 
         </table>
       </div>
 
-      <p>El <em>airline</em> gana por AICc <strong>y</strong> por BIC, que no siempre pasa: en el Capítulo 3 los dos
-        criterios discrepaban sobre las manchas solares. Los cuatro primeros están dentro de $1.7$ puntos de AICc, así
+      <p>El <em>airline</em> gana por AICc <strong>y</strong> por BIC, que no siempre pasa: el BIC castiga más cada parámetro
+        y puede quedarse con un modelo más pequeño que el AICc. Los cuatro primeros están dentro de $1.7$ puntos de AICc, así
         que la evidencia no separa mucho; lo que decide en favor del más simple es que los tres competidores gastan uno
         o dos parámetros más para no mejorar el diagnóstico. La última fila es el modelo sin ningún término ARMA —solo
         las dos diferencias—: sirve de referencia de cuánto aportan realmente esos dos parámetros.</p>
@@ -406,6 +499,10 @@ unique(res$nobs)      # todos iguales: la comparacion es legitima
 fit &lt;- Arima(ap, order = c(0,1,1), seasonal = list(order = c(0,1,1), period = 12))
 round(Box.test(residuals(fit), lag = 24, type = "Ljung-Box", fitdf = 2)$p.value, 4)
 #&gt; [1] 0.233
+# Los d + D*m = 13 primeros residuales de R son de arranque (los doce primeros,
+# casi nulos): sin ellos el p-valor cambia, y la conclusion no.
+round(Box.test(residuals(fit)[-(1:13)], lag = 24, type = "Ljung-Box", fitdf = 2)$p.value, 4)
+#&gt; [1] 0.3515
 round(Box.test(residuals(fit), lag = 36, type = "Ljung-Box", fitdf = 2)$p.value, 4)
 #&gt; [1] 0.2969
 round(shapiro.test(residuals(fit))$p.value, 4)
@@ -415,13 +512,20 @@ round(shapiro.test(residuals(fit))$p.value, 4)
 r &lt;- Acf(residuals(fit), lag.max = 36, plot = FALSE)$acf
 round(c(r12 = r[13], r24 = r[25], banda = 1.96/sqrt(length(ap))), 4)
 #&gt;     r12     r24   banda
-#&gt; -0.0515  0.0124  0.1633</code></pre>
+#&gt; -0.0515  0.0124  0.1633
+
+# La ultima fila de la tabla: solo las dos diferencias, ningun termino ARMA
+f0 &lt;- Arima(ap, order = c(0,1,0), seasonal = list(order = c(0,1,0), period = 12))
+round(f0$aicc, 2)
+#&gt; [1] -434.8
+signif(Box.test(residuals(f0), lag = 24, type = "Ljung-Box")$p.value, 3)
+#&gt; [1] 2.31e-08</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm, warnings
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from statsmodels.stats.diagnostic import acorr_ljungbox
-warnings.filterwarnings("ignore")
+warnings.simplefilter("ignore", RuntimeWarning)   # solo avisos de coma flotante de numpy
 
 ap = np.log(sm.datasets.get_rdataset("AirPassengers").data["value"].values)
 s = pd.Series(ap, index=pd.date_range("1949-01", periods=len(ap), freq="MS"))
@@ -430,23 +534,29 @@ s = pd.Series(ap, index=pd.date_range("1949-01", periods=len(ap), freq="MS"))
 # de estados con un prior difuso, y entonces `nobs` sigue siendo 144 para todos
 # los modelos. Sus AIC/BIC PARECEN comparables entre distintos (d, D) cuando no
 # lo son. Con simple_differencing=True se comporta como R.
+# El optimizador por defecto (L-BFGS) se detiene aqui antes de converger y lo
+# avisa; con method="bfgs" converge. Conviene mirarlo siempre en mle_retvals.
 for sd in (False, True):
     f = SARIMAX(s, order=(0,1,1), seasonal_order=(0,1,1,12), trend="n",
-                simple_differencing=sd).fit(disp=False)
-    print(f"simple_differencing={sd!s:5s}  nobs={int(f.nobs):3d}  "
-          f"ma1={f.params['ma.L1']:+.4f}  sma1={f.params['ma.S.L12']:+.4f}  llf={f.llf:.4f}")
-#&gt; simple_differencing=False  nobs=144  ma1=-0.4019  sma1=-0.5571  llf=244.6965
-#&gt; simple_differencing=True   nobs=131  ma1=-0.4018  sma1=-0.5569  llf=244.6965
-# La segunda linea reproduce a R hasta el cuarto decimal.
+                simple_differencing=sd).fit(disp=False, method="bfgs", maxiter=1000)
+    print(f"simple_differencing={sd!s:5s}  convergio={f.mle_retvals['converged']}  "
+          f"nobs={int(f.nobs):3d}  ma1={f.params['ma.L1']:+.4f}  "
+          f"sma1={f.params['ma.S.L12']:+.4f}  llf={f.llf:.4f}")
+#&gt; simple_differencing=False  convergio=True  nobs=144  ma1=-0.4018  sma1=-0.5569  llf=244.6965
+#&gt; simple_differencing=True   convergio=True  nobs=131  ma1=-0.4018  sma1=-0.5569  llf=244.6965
+# Las dos lineas reproducen a R hasta el cuarto decimal; solo cambia nobs.
 
-fit = SARIMAX(s, order=(0,1,1), seasonal_order=(0,1,1,12), trend="n").fit(disp=False)
+fit = SARIMAX(s, order=(0,1,1), seasonal_order=(0,1,1,12), trend="n").fit(
+    disp=False, method="bfgs", maxiter=1000)
 print(acorr_ljungbox(fit.resid, lags=[24], model_df=2)["lb_pvalue"].round(4).iloc[0])
 #&gt; 0.2261
 print(acorr_ljungbox(fit.resid[13:], lags=[24], model_df=2)["lb_pvalue"].round(4).iloc[0])
 #&gt; 0.3675
-# R da 0.2330. La diferencia son los primeros residuales, que statsmodels
-# produce con el filtro aun inicializandose: es la misma trampa del Capitulo 3.
-# Descartando los d + D*m = 13 primeros, la conclusion no cambia en ningun caso.</code></pre>
+# R da 0.2330 con sus 144 residuales y 0.3515 sin los 13 primeros. Ninguno de
+# los dos programas da innovaciones en el arranque: R deja 13 residuales de
+# arranque (los doce primeros, casi nulos) y statsmodels los produce con el filtro aun inicializandose, cada uno a
+# su manera. Descartando en los dos los d + D*m = 13 primeros, los p-valores se
+# acercan, y la conclusion no cambia en ningun caso.</code></pre>
         </div>
       </div>
 
@@ -455,8 +565,8 @@ print(acorr_ljungbox(fit.resid[13:], lags=[24], model_df=2)["lb_pvalue"].round(4
           la serie: mete $d$ y $D$ dentro del espacio de estados con un prior difuso. Consecuencias medidas:
           (1) informa <code>nobs = 144</code> para todos los modelos, así que sus AIC/BIC parecen comparables entre
           distintos $(d,D)$ cuando no lo son —el Capítulo 4 encontró lo mismo con $d$—; (2) sobre
-          $\log(\text{AirPassengers})$ ($n = 144$) los coeficientes casi coinciden con los de R (diferencia
-          $6\times 10^{-5}$), pero sobre <code>USAccDeaths</code> ($n = 72$) $\hat\theta$ se mueve de $-0.4303$ a
+          $\log(\text{AirPassengers})$ ($n = 144$) los coeficientes coinciden con los de R en las cuatro primeras
+          cifras, pero sobre <code>USAccDeaths</code> ($n = 72$) $\hat\theta$ se mueve de $-0.4303$ a
           $-0.3924$. No es falta de convergencia: Python alcanza ese mismo óptimo desde varios puntos de partida, con
           varios optimizadores. Es <em>otra</em> verosimilitud. Con
           <code>simple_differencing=True</code> las dos salidas vuelven a coincidir hasta el cuarto decimal.</p>

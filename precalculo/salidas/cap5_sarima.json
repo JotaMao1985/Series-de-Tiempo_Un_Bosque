@@ -1,6 +1,6 @@
 {
   "descripcion": "Precálculos del Capítulo 5 (SARIMA): log(AirPassengers) como caso central, USAccDeaths como segundo caso, TRM como contraejemplo sin estacionalidad, co2 para los ejercicios, regresores de calendario, regresión armónica y comparativa sobre una partición fija.",
-  "generado": "2026-07-26 23:10",
+  "generado": "2026-11-23 20:17",
   "max_rezago": 36,
   "horizonte": 24,
   "m": 12,
@@ -245,7 +245,8 @@
         "theta_est": 0.7397,
         "ee": 0.061,
         "raiz_ma": 0.9752,
-        "aicc": -332.758
+        "aicc": -332.758,
+        "a_menos_1_en_ee": 28.53
       },
       {
         "D": 1,
@@ -254,7 +255,8 @@
         "theta_est": -0.5569,
         "ee": 0.0731,
         "raiz_ma": 0.9524,
-        "aicc": -483.21
+        "aicc": -483.21,
+        "a_menos_1_en_ee": 6.06
       },
       {
         "D": 2,
@@ -263,7 +265,8 @@
         "theta_est": -0.9973,
         "ee": 0.083,
         "raiz_ma": 0.9998,
-        "aicc": -361.222
+        "aicc": -361.222,
+        "a_menos_1_en_ee": 0.03
       }
     ],
     "rejilla": {
@@ -1096,6 +1099,31 @@
               "t": 2.603
             }
           ]
+        },
+        "con_pascua": {
+          "nombre": "airline + Semana Santa",
+          "aicc": -487.2305,
+          "bic": -476.0471,
+          "coeficientes": [
+            {
+              "nombre": "ma1",
+              "valor": -0.3583,
+              "ee": 0.0962,
+              "t": -3.725
+            },
+            {
+              "nombre": "sma1",
+              "valor": -0.5398,
+              "ee": 0.0744,
+              "t": -7.253
+            },
+            {
+              "nombre": "pascua",
+              "valor": 0.0298,
+              "ee": 0.0116,
+              "t": 2.562
+            }
+          ]
         }
       }
     },
@@ -1322,6 +1350,14 @@
         "orden": ["sarima", "ets_log", "stl", "armonica", "ets_orig", "snaive"],
         "nota": "Verificación, no contenido: la sola partición de la tabla anterior corona a la regresión armónica y este resultado la desmiente. El método de origen móvil se desarrolla en el capítulo 6."
       }
+    },
+    "armonica_K_sin_fuga": {
+      "K_serie_completa": 6,
+      "K_solo_entrenamiento": 5,
+      "aicc_K_entrenamiento": [-298.844, -335.627, -379.743, -418.407, -434.304, -433.789],
+      "rmse": 19.58,
+      "mae": 14.708,
+      "mape": 3.146
     }
   },
   "teoricas": {
@@ -1476,7 +1512,7 @@
   },
   "trm_contraejemplo": {
     "nombre": "TRM mensual",
-    "fuente": "Superintendencia Financiera de Colombia v<c3><ad>a datos.gov.co (consulta: 2026-07-24)",
+    "fuente": "Superintendencia Financiera de Colombia vía datos.gov.co (consulta: 2026-07-26)",
     "unidad": "COP por USD",
     "n": 138,
     "valores": [2400.97, 2425.65, 2591.06, 2495.36, 2440.85, 2556.12, 2731.9, 3023.29, 3071.19, 2936.03, 3000.21, 3244.51, 3291.14, 3358.44, 3145.26, 2992, 2995.6, 2991.68, 2969.88, 2958.2, 2919.41, 2933.59, 3102.21, 3010.17, 2938.9, 2880.57, 2943.49, 2877.46, 2922.8, 2958.36, 3038.11, 2972.62, 2918.52, 2956.7, 3014.78, 2991.42, 2862.18, 2860.36, 2848.86, 2765.23, 2861.74, 2895.1, 2881.69, 2959.57, 3033.76, 3088.35, 3198.23, 3212.48, 3159.46, 3113.77, 3127.69, 3154.19, 3308.19, 3253.37, 3208.29, 3413.34, 3396.71, 3437.73, 3412.45, 3376.03, 3319.31, 3416.32, 3886.51, 3986.56, 3856.12, 3691.57, 3660.6, 3788.1, 3752.11, 3834.22, 3675.21, 3468.5, 3503.13, 3557.79, 3616.65, 3651.85, 3741.96, 3691.83, 3833.94, 3888.67, 3821.72, 3772.61, 3904.76, 3967.77, 4002.19, 3938.95, 3805.52, 3804.88, 4030.66, 3922.5, 4389.33, 4328.03, 4435.91, 4720.74, 4931.33, 4790.04, 4702.3, 4796.64, 4760.96, 4533.56, 4536.83, 4213.53, 4061.53, 4066.87, 4007.96, 4219.05, 4037.51, 3954.14, 3926.36, 3932.55, 3905.18, 3867.25, 3864.44, 4057.13, 4028.28, 4067.62, 4195.18, 4257.76, 4411.83, 4384.53, 4292.27, 4133.6, 4133.48, 4273.88, 4201.5, 4113.55, 4049.69, 4049.93, 3914.83, 3881.44, 3779.76, 3797.46, 3693.16, 3678.7, 3714.86, 3613.54, 3718.86, 3497.09],

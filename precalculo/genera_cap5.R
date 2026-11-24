@@ -354,7 +354,12 @@ sobredif_estacional <- lapply(0:2, function(D) {
     ee       = if (!is.null(aj) && "sma1" %in% names(aj$coef))
       round(as.numeric(ee_de(aj)["sma1"]), 4) else NA,
     raiz_ma  = if (!is.null(aj)) modulos_raices(aj)$ma_max else NA,
-    aicc     = if (!is.null(aj)) round(aj$aicc, 3) else NA
+    aicc     = if (!is.null(aj)) round(aj$aicc, 3) else NA,
+    # La firma de sobrediferenciar, en la escala de Theta (R1 de la Fase 5):
+    # a cuántos errores estándar queda Theta de -1. |raíz MA|^-1 = |Theta|^(1/12)
+    # se acerca a 1 con casi cualquier Theta y no sirve de alarma.
+    a_menos_1_en_ee = if (!is.null(aj) && "sma1" %in% names(aj$coef))
+      round((as.numeric(aj$coef["sma1"]) + 1) / as.numeric(ee_de(aj)["sma1"]), 2) else NA
   )
 })
 
@@ -635,6 +640,10 @@ cal_dias <- Arima(ap, order = c(0, 1, 1), seasonal = list(order = c(0, 1, 1), pe
                   xreg = xreg_cal[, "log_dias", drop = FALSE])
 cal_full <- Arima(ap, order = c(0, 1, 1), seasonal = list(order = c(0, 1, 1), period = M),
                   xreg = xreg_cal)
+# Semana Santa sin los días del mes: el simulador del Módulo 9 deja encender ese
+# interruptor solo, y tiene que leer el ajuste que dibuja (R1 de la Fase 5).
+cal_pascua <- Arima(ap, order = c(0, 1, 1), seasonal = list(order = c(0, 1, 1), period = M),
+                    xreg = xreg_cal[, "pascua", drop = FALSE])
 
 calendario <- list(
   dias_mes = dias_mes,
@@ -652,7 +661,10 @@ calendario <- list(
                     coeficientes = coeficientes_de(cal_dias)),
     con_dias_pascua = list(nombre = "airline + log(días) + Semana Santa",
                            aicc = round(cal_full$aicc, 4), bic = round(cal_full$bic, 4),
-                           coeficientes = coeficientes_de(cal_full))
+                           coeficientes = coeficientes_de(cal_full)),
+    con_pascua = list(nombre = "airline + Semana Santa",
+                      aicc = round(cal_pascua$aicc, 4), bic = round(cal_pascua$bic, 4),
+                      coeficientes = coeficientes_de(cal_pascua))
   )
 )
 
@@ -822,6 +834,21 @@ comp[["armonica"]] <- c(list(nombre = sprintf("Regresión armónica K = %d + err
                              escala = "log", n_par = length(m_arm$coef),
                              pronostico = round(f_arm, 2)),
                         metricas(f_arm))
+
+# El K de arriba se eligió por AICc sobre la serie COMPLETA, con los meses de
+# prueba dentro. Para decir cuánto pesa esa fuga (R1 de la Fase 5): el K que
+# elegiría el AICc con solo el entrenamiento, y lo que daría en la prueba.
+aicc_K_entrena <- vapply(1:6, function(K) auto.arima(entrena, xreg = fourier(entrena, K = K),
+                         seasonal = FALSE, stepwise = FALSE, approximation = FALSE)$aicc, numeric(1))
+K_entrena <- which.min(aicc_K_entrena)
+m_arm_e <- auto.arima(entrena, xreg = fourier(entrena, K = K_entrena), seasonal = FALSE,
+                      stepwise = FALSE, approximation = FALSE)
+f_arm_e <- desde_log(forecast(m_arm_e, xreg = fourier(entrena, K = K_entrena, h = H_PRUEBA),
+                              h = H_PRUEBA)$mean)
+fuga_K <- c(list(K_serie_completa = mejor_K, K_solo_entrenamiento = K_entrena,
+                 aicc_K_entrenamiento = round(aicc_K_entrena, 3)), metricas(f_arm_e))
+cat(sprintf("\n   Armónica: K = %d con la serie completa, K = %d con solo el entrenamiento (RMSE %.3f)\n",
+            mejor_K, K_entrena, fuga_K$rmse))
 
 m_stl <- stlm(entrena, s.window = "periodic", method = "arima")
 f_stl <- desde_log(forecast(m_stl, h = H_PRUEBA)$mean)
@@ -1016,7 +1043,8 @@ datos <- list(
     fourier = list(resultados = fourier_res, curvas = fourier_curvas,
                    mejor_K = mejor_K, costo_m = costo_m, stl = stl_res,
                    comparabilidad = comparabilidad),
-    comparativa = comparativa
+    comparativa = comparativa,
+    armonica_K_sin_fuga = fuga_K
   ),
   teoricas = teoricas,
   usaccdeaths = caso_uad,
@@ -1024,23 +1052,38 @@ datos <- list(
   co2 = co2_datos
 )
 
-ruta_json <- file.path(dir_salidas, "cap5_sarima.json")
-write(toJSON(datos, auto_unbox = TRUE, digits = 8, na = "null", pretty = TRUE), ruta_json)
-
+# Guarda contra las tildes rotas. Si la configuración regional no es UTF-8
+# cuando se leen o se escriben las cadenas, jsonlite deja los bytes de una tilde
+# como texto literal («aerol<c3><ad>neas»), y así llegaron cuatro cadenas al
+# capítulo publicado hasta la R1 de la Fase 5. Se aborta antes de escribir nada.
+sin_tildes_rotas <- function(txt, que) {
+  if (grepl("<[cdef][0-9a-f]>", txt, perl = TRUE))
+    stop("Tildes rotas en ", que, ": ", regmatches(txt, regexpr(".{20}<[cdef][0-9a-f]>.{10}", txt, perl = TRUE)),
+         "\nEjecuta con LC_ALL=en_US.UTF-8 Rscript genera_cap5.R")
+  txt
+}
 series_cap5 <- list(
   airpassengers = series_base$airpassengers,
   usaccdeaths   = series_base$usaccdeaths,
   co2           = series_base$co2,
   trm           = series_base$trm
 )
+json_datos  <- sin_tildes_rotas(toJSON(datos, auto_unbox = TRUE, digits = 8, na = "null"), "DATOS_CAP5")
+json_series <- sin_tildes_rotas(toJSON(series_cap5, auto_unbox = TRUE, digits = 8, na = "null"), "SERIES_CAP5")
+
+ruta_json <- file.path(dir_salidas, "cap5_sarima.json")
+write(sin_tildes_rotas(toJSON(datos, auto_unbox = TRUE, digits = 8, na = "null", pretty = TRUE),
+                       "cap5_sarima.json"), ruta_json)
 
 ruta_js <- file.path(dir_salidas, "cap5_datos.js")
 write(paste0(
   "// Generado por precalculo/genera_cap5.R el ", format(Sys.Date(), "%Y-%m-%d"), "\n",
   "// Precalculos SARIMA (Capitulo 5). No editar a mano.\n",
-  "const DATOS_CAP5 = ", toJSON(datos, auto_unbox = TRUE, digits = 8, na = "null"), ";\n",
-  "const SERIES_CAP5 = ", toJSON(series_cap5, auto_unbox = TRUE, digits = 8, na = "null"), ";\n"
+  "const DATOS_CAP5 = ", json_datos, ";\n",
+  "const SERIES_CAP5 = ", json_series, ";\n"
 ), ruta_js)
+
+invisible(sin_tildes_rotas(paste(readLines(ruta_js, warn = FALSE), collapse = "\n"), "cap5_datos.js escrito"))
 
 cat("\n=== Salidas ===\n")
 cat(sprintf("   %s (%.1f KB)\n", basename(ruta_json), file.size(ruta_json) / 1024))

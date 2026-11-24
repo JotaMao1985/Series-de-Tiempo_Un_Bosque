@@ -111,7 +111,10 @@ def main():
     resultados["r"] = corre(
         bloques, "r",
         'suppressMessages({library(forecast); library(tseries); library(jsonlite)})\n'
-        'options(warn = 1)',
+        'options(warn = 1)\n'
+        # Los gráficos van a un dispositivo nulo: sin él, Rscript escribe Rplots.pdf en la carpeta
+        # del guion y, si no puede, la sesión termina con «write failed» y código 1.
+        'options(device = function(...) grDevices::pdf(NULL))',
         ["Rscript", "--vanilla"], ".R", 'cat("\\n' + SEP + '\\n")')
     resultados["python"] = corre(
         bloques, "python",
@@ -155,7 +158,10 @@ def main():
 
     print(f"\n=== {total_ok} de {total} cifras anunciadas aparecen en la salida real "
           f"({len(fallos)} bloques con discrepancias) ===")
-    return 0 if total_ok == total else 1
+    # Una sesión que termina con error falla aunque cuadren las cifras: un bloque que fallara
+    # después de su última línea `#>` pasaría inadvertido.
+    sesiones_ok = all(not r or r["codigo_salida"] == 0 for r in resultados.values())
+    return 0 if total_ok == total and sesiones_ok else 1
 
 
 if __name__ == "__main__":

@@ -15,14 +15,14 @@ Generado por `verifica_cifras_cap5.py`. Cada fila es una cifra (o afirmación) d
 
 ## Resumen
 
-- Cifras y afirmaciones registradas: **770**
-- Verificadas contra al menos una fuente: **709**
+- Cifras y afirmaciones registradas: **774**
+- Verificadas contra al menos una fuente: **713**
 - Definiciones o convenciones: **61**
 - Comprobadas a mano en una fuente pública fuera del repositorio (`WEB`, con fecha): **7**
 - Marcadas `[SIN VERIFICAR]`: **5**
 - No coinciden: **0**
 
-Contrastes por tipo de fuente: C 104, CALC 195, DOC 17, J 331, J3 2, J4 6, PY 10, R 223, WEB 7.
+Contrastes por tipo de fuente: C 115, CALC 195, DEF 1, DOC 17, J 331, J3 2, J4 6, PY 10, R 222, WEB 7.
 
 ## Código proyectado, ejecutado
 
@@ -47,15 +47,16 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 
 ## Observaciones sobre el material (no corregidas en silencio)
 
-1. Módulo 5: ψ₁₂ = 1.0412 y ψ₁₃…₂₃ = 0.8632 en el texto; el bloque de R del Módulo 7 imprime 1.0413 y 0.8633. Es redondeo: el bloque usa los coeficientes redondeados (−0.4018, −0.5569). Las diapositivas usan los del texto, que coinciden con J.
+1. Resuelta en la R1 de la Fase 5 (2026-11-23): el bloque de R del Módulo 7 imprimía ψ₁₂ = 1.0413 y ψ₁₃ = 0.8633, con los coeficientes redondeados. Ahora usa los coeficientes sin redondear e imprime 1.0412 y 0.8632, como el texto y J.
 2. Módulo 4: el capítulo da ρ₁₁ = ρ₁₃ = 0.14705 «del modelo ajustado». Con los coeficientes sin redondear es 0.14707; 0.14705 sale con −0.4018 y −0.5569. A cuatro decimales los dos son 0.1471.
 3. Autoevaluación, pregunta 2: la explicación dice «ρ₂ = ρ₁² ≈ 0.36» para el AR(1)×SAR(1). En el proceso multiplicado ρ₂ = 0.3637 y ρ₁² = 0.3619: no es una igualdad, aunque los dos redondean a 0.36.
 4. Autoevaluación, pregunta 6: está etiquetada «módulo 6» y su explicación remite a la lección del Módulo 10. Menor.
-5. Módulo 6, advertencia final: «los coeficientes casi coinciden con los de R (diferencia 6 × 10⁻⁵)» con statsmodels sin `simple_differencing`. Con statsmodels 0.14.6 la diferencia máxima es 2.4 × 10⁻⁴ (−0.4021 y −0.5571 frente a −0.4018 y −0.5569). Sigue siendo despreciable; depende de la versión. No se proyecta.
-6. Las dos copias de la TRM llevan fechas de consulta distintas: `cap5_sarima.json` dice «consulta: 2026-07-24» y `datos_series.json` (y el capítulo 4) «2026-07-26». No afecta a ninguna cifra (las dos son la misma copia de 138 meses), pero conviene unificarlo.
-7. Resueltas en el capítulo el 2026-10-27 (`114b910`) cinco observaciones de la primera pasada: los ocho dobles redondeos (M1, M4, M7, M11 y las preguntas 1 y 8), los «%» de crecimiento del Módulo 11, que eran 100·Δlog y ahora son porcentajes, la nota del puente del Módulo 7, que ahora usa el ARIMA(0,1,5) y no compara AICc entre distintos D, el enunciado y dos explicaciones de la pregunta 8, y las secciones de FPP3 de las lecturas. Capítulo y diapositivas dan ahora las mismas cifras, y las comprobaciones de tipo «capítulo» lo exigen. Siguen en J dos textos que el capítulo embebe pero no muestra: `puente_cap4` (el ARIMA(0,1,1) con AICc −238.64) y `origen_movil.nota` («corona a la regresión armónica»).
-8. Resueltas en el capítulo el 2026-11-03 las cuatro observaciones de la auditoría del 2026-10-28 (`auditoria_cap5.md`): la invertibilidad del Módulo 7 («aunque justo»), el `auto.arima` con m = 365 del Módulo 10 (ilustrado con ruido blanco), los errores estándar «el doble» del Módulo 8 y los «Paso 0…4» del Módulo 7. El capítulo lee ahora la invertibilidad en Θ̂ y explica que 0.9524 = 0.5569^(1/12); el ejemplo de m = 365 usa un seno anual (ARIMA(0,0,0)(0,1,0)[365]); los cocientes son 1.4 y 2.4; y el caso sigue las etapas 1–5 del protocolo. Las comprobaciones de tipo «capítulo» exigen el texto nuevo.
-9. Resueltas en el capítulo el 2026-11-04 dos frases del Módulo 3 que señaló la revisión del ejercicio en Excel: «∇ solo reduce la varianza a la vigésima parte» (el cociente es 17.2) y la tienda que «abre en enero de 2022 con 100 unidades» (el primer valor es 94). El capítulo dice ahora que ∇ divide la varianza entre 17 y ∇₁₂ entre 51, y que la tienda parte de un nivel de 100: en enero vende 100 + 0 − 6 = 94. Las comprobaciones de tipo «capítulo» exigen el texto nuevo.
+5. Resuelta en la R1 de la Fase 5: con statsmodels sin `simple_differencing` y el optimizador por defecto, el ajuste de AirPassengers no converge (diferencia 2.4 × 10⁻⁴ con R). El capítulo ajusta ahora con BFGS, comprueba `mle_retvals['converged']` y dice que coincide con R en las cuatro primeras cifras.
+6. Resuelta en la R1 de la Fase 5: las dos copias de la TRM llevaban fechas de consulta distintas (`cap5_sarima.json` «2026-07-24», `datos_series.json` «2026-07-26»). Al regenerar `cap5_sarima.json` toma la de `datos_series.json`; los 138 valores eran y son los mismos. Los bloques de código del capítulo leen ahora la copia fija en vez de descargar la serie.
+7. R1 de la Fase 5 (2026-11-23): el capítulo dejó de usar la varianza como regla para elegir d y D, cambió la firma de sobrediferenciar a Θ̂ pegado a −1 (distancia en errores estándar), corrigió la comparación del airline con la caminata (más incertidumbre desde h = 42), la intro del simulador de los pesos ψ y la remisión a las manchas solares. Las diapositivas afectadas dicen lo mismo que el capítulo; una se retituló («Frente a una caminata, menos incertidumbre a corto plazo y más a largo plazo») y su clave se re-ancló.
+8. Resueltas en el capítulo el 2026-10-27 (`114b910`) cinco observaciones de la primera pasada: los ocho dobles redondeos (M1, M4, M7, M11 y las preguntas 1 y 8), los «%» de crecimiento del Módulo 11, que eran 100·Δlog y ahora son porcentajes, la nota del puente del Módulo 7, que ahora usa el ARIMA(0,1,5) y no compara AICc entre distintos D, el enunciado y dos explicaciones de la pregunta 8, y las secciones de FPP3 de las lecturas. Capítulo y diapositivas dan ahora las mismas cifras, y las comprobaciones de tipo «capítulo» lo exigen. Siguen en J dos textos que el capítulo embebe pero no muestra: `puente_cap4` (el ARIMA(0,1,1) con AICc −238.64) y `origen_movil.nota` («corona a la regresión armónica»).
+9. Resueltas en el capítulo el 2026-11-03 las cuatro observaciones de la auditoría del 2026-10-28 (`auditoria_cap5.md`): la invertibilidad del Módulo 7 («aunque justo»), el `auto.arima` con m = 365 del Módulo 10 (ilustrado con ruido blanco), los errores estándar «el doble» del Módulo 8 y los «Paso 0…4» del Módulo 7. El capítulo lee ahora la invertibilidad en Θ̂ y explica que 0.9524 = 0.5569^(1/12); el ejemplo de m = 365 usa un seno anual (ARIMA(0,0,0)(0,1,0)[365]); los cocientes son 1.4 y 2.4; y el caso sigue las etapas 1–5 del protocolo. Las comprobaciones de tipo «capítulo» exigen el texto nuevo.
+10. Resueltas en el capítulo el 2026-11-04 dos frases del Módulo 3 que señaló la revisión del ejercicio en Excel: «∇ solo reduce la varianza a la vigésima parte» (el cociente es 17.2) y la tienda que «abre en enero de 2022 con 100 unidades» (el primer valor es 94). El capítulo dice ahora que ∇ divide la varianza entre 17 y ∇₁₂ entre 51, y que la tienda parte de un nivel de 100: en enero vende 100 + 0 − 6 = 94. Las comprobaciones de tipo «capítulo» exigen el texto nuevo.
 
 ## Tabla de cifras
 
@@ -168,7 +169,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `0.636` | capítulo | C: capítulo 5 contiene «$0.636$» | verificado |
 | `-0.002` | capítulo | C: capítulo 5 contiene «{-0.002}» | verificado |
 | `-0.00245` | dato | CALC: ACF de ∇TRM en 12 = -0.002453<br>R: directo_cap5.json › m1.trm_diff.1 = -0.002453 | verificado |
-| `-0.0024` | capítulo (código en vivo) | C: capítulo 5 contiene «-0.0024» | verificado |
+| `-0.0025` | capítulo (código con la copia fija de la TRM, R1 de la Fase 5) | C: capítulo 5 contiene «[1] -0.0025 -0.0672 0.0714» | verificado |
 | `-0.0025` | dato | J: cap5_sarima.json › trm_contraejemplo.acf12 = -0.0025 | verificado |
 
 ### ¿Es estacional una serie con \(\hat\rho_{12}=0.636\) en niveles? {.pregunta}
@@ -384,7 +385,6 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `0.762` | dato | J: cap5_sarima.json › airpassengers.combinaciones.d0_D0.acf12 = 0.7619 | verificado |
 | `0.841` | dato | J: cap5_sarima.json › airpassengers.combinaciones.d1_D0.acf12 = 0.8414 | verificado |
 | `0.714` | dato | J: cap5_sarima.json › airpassengers.combinaciones.d0_D1.acf1 = 0.7137 | verificado |
-| `0.002102` | dato | J: cap5_sarima.json › airpassengers.combinaciones.d1_D1.varianza = 0.002102<br>R: directo_cap5.json › m3.ap_var.3 = 0.002102 | verificado |
 | `144` | dato | J: cap5_sarima.json › airpassengers.combinaciones.d0_D0.n = 144 | verificado |
 | `143` | dato | J: cap5_sarima.json › airpassengers.combinaciones.d1_D0.n = 143 | verificado |
 | `132` | dato | J: cap5_sarima.json › airpassengers.combinaciones.d0_D1.n = 132 | verificado |
@@ -424,21 +424,23 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
 | `143` | dato | J: cap5_sarima.json › airpassengers.sobrediferenciacion_estacional.0.n = 143 | verificado |
-| `0.011354` | dato | J: cap5_sarima.json › airpassengers.sobrediferenciacion_estacional.0.varianza = 0.011354 | verificado |
+| `28.53` | dato | J: cap5_sarima.json › airpassengers.sobrediferenciacion_estacional.0.a_menos_1_en_ee = 28.53 | verificado |
 | `0.7397` | dato | J: cap5_sarima.json › airpassengers.sobrediferenciacion_estacional.0.theta_est = 0.7397 | verificado |
 | `0.0610` | dato | J: cap5_sarima.json › airpassengers.sobrediferenciacion_estacional.0.ee = 0.061 | verificado |
 | `0.9752` | dato | J: cap5_sarima.json › airpassengers.sobrediferenciacion_estacional.0.raiz_ma = 0.9752 | verificado |
 | `131` | dato | J: cap5_sarima.json › airpassengers.sobrediferenciacion_estacional.1.n = 131 | verificado |
-| `0.002102` | dato | J: cap5_sarima.json › airpassengers.sobrediferenciacion_estacional.1.varianza = 0.002102 | verificado |
+| `6.06` | dato | J: cap5_sarima.json › airpassengers.sobrediferenciacion_estacional.1.a_menos_1_en_ee = 6.06 | verificado |
 | `-0.5569` | dato | J: cap5_sarima.json › airpassengers.sobrediferenciacion_estacional.1.theta_est = -0.5569 | verificado |
 | `0.0731` | dato | J: cap5_sarima.json › airpassengers.sobrediferenciacion_estacional.1.ee = 0.0731 | verificado |
 | `0.9524` | dato | J: cap5_sarima.json › airpassengers.sobrediferenciacion_estacional.1.raiz_ma = 0.9524 | verificado |
 | `119` | dato | J: cap5_sarima.json › airpassengers.sobrediferenciacion_estacional.2.n = 119 | verificado |
-| `0.005960` | dato | J: cap5_sarima.json › airpassengers.sobrediferenciacion_estacional.2.varianza = 0.00596 | verificado |
+| `0.03` | dato | J: cap5_sarima.json › airpassengers.sobrediferenciacion_estacional.2.a_menos_1_en_ee = 0.03 | verificado |
 | `-0.9973` | dato | J: cap5_sarima.json › airpassengers.sobrediferenciacion_estacional.2.theta_est = -0.9973 | verificado |
 | `0.0830` | dato | J: cap5_sarima.json › airpassengers.sobrediferenciacion_estacional.2.ee = 0.083 | verificado |
 | `0.9998` | dato | J: cap5_sarima.json › airpassengers.sobrediferenciacion_estacional.2.raiz_ma = 0.9998 | verificado |
 | `58` | capítulo (lynx, del capítulo 4) | C: capítulo 5 contiene «58» | verificado |
+| `1.96` | convención | DEF: cuantil 0.975 de la normal<br>C: capítulo 5 contiene «\hat\Theta \pm 1.96\,\text{e.e.}»<br>C: el simulador del Módulo 3 avisa con ese umbral | verificado |
+| `capítulo` | capítulo | C: capítulo 5 contiene «Distancia a $-1$, en e.e.»<br>C: capítulo 5 contiene «$\hat\Theta = -0.9973$ queda a $0.03$ errores estándar de $-1$» | verificado |
 
 ### `nsdiffs()` cambió de prueba por defecto: `seas` y `ocsb` no dan lo mismo
 
@@ -540,11 +542,10 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `0.0370` | dato | J: cap5_sarima.json › airpassengers.pronostico.sigma_h.0 = 0.037031 | verificado |
 | `0.0823` | dato | J: cap5_sarima.json › airpassengers.pronostico.sigma_h.11 = 0.08227 | verificado |
 | `0.1396` | dato | J: cap5_sarima.json › airpassengers.pronostico.sigma_h.23 = 0.139621 | verificado |
-| `1.0413` | dato | CALC: ψ₁₂ = 2 + θ + Θ con los coeficientes redondeados = 1.0413<br>C: capítulo 5 contiene «1.0413» | verificado |
-| `0.8633` | dato | CALC: ψ₁₃ = 2 + 2θ + Θ + θΘ, redondeados = 0.863262<br>C: capítulo 5 contiene «0.8633» | verificado |
+| `capítulo` | capítulo | C: capítulo 5 contiene «#> [1] 1.0000 0.5982 0.5982 1.0412 0.8632»<br>C: el bloque del Módulo 7 ya no imprime 1.0413 | verificado |
 | `animado` | gráfico animado | CALC: recursos/cap5/escalones.json es idéntico a lo que genera genera_animados_cap5.py desde J | verificado |
 
-### El *airline* acumula incertidumbre más despacio que una sola caminata aleatoria
+### Frente a una caminata, menos incertidumbre a corto plazo y más a largo plazo
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -554,6 +555,11 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `0.037031` | dato | J: cap5_sarima.json › airpassengers.pronostico.sigma_h.0 = 0.037031 | verificado |
 | `3.4641` | dato | CALC: √12 = 3.464102 | verificado |
 | `0.169` | dato | J4: cap4_arima.json › nilo.intervalos.psi_limite = 0.1688 | verificado |
+| `0.265` | dato | CALC: (1 + θ̂)(1 + Θ̂), J = 0.265062<br>C: capítulo 5 contiene «$(1+\theta)(1+\Theta) = 0.265$» | verificado |
+| `42` | dato | CALC: primer h con σ_h/σ del airline > √h (coeficientes de R) = 42<br>C: capítulo 5 contiene «desde $h = 42$» | verificado |
+| `53.98` | dato | CALC: σ₂₄₀/σ del airline (coeficientes de R) = 53.979777<br>C: capítulo 5 contiene «$\sigma_{240} = 53.98\,\sigma$» | verificado |
+| `15.49` | dato | CALC: √240 = 15.491933<br>C: capítulo 5 contiene «$15.49\,\sigma$» | verificado |
+| `240` | parámetro | DEF: horizonte de veinte años, 240 meses | definición (no se mide) |
 
 ### Un *airline* sobre 96 meses: ¿cuántas observaciones quedan tras las dos diferencias? {.pregunta}
 
@@ -641,9 +647,10 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `0.52049` | dato | CALC: ACF exacta en 24 = 0.52049 | verificado |
 | `0.319` | dato | J: cap5_sarima.json › airpassengers.firma.airpassengers_log.acf.35 = 0.3193 | verificado |
 | `0.714` | dato | J: cap5_sarima.json › airpassengers.combinaciones.d0_D1.acf1 = 0.7137 | verificado |
-| `0.002102` | dato | J: cap5_sarima.json › airpassengers.combinaciones.d1_D1.varianza = 0.002102 | verificado |
-| `0.003800` | dato | J: cap5_sarima.json › airpassengers.combinaciones.d0_D1.varianza = 0.0038 | verificado |
-| `0.011354` | dato | J: cap5_sarima.json › airpassengers.combinaciones.d1_D0.varianza = 0.011354 | verificado |
+| `-0.5569` | dato | J: cap5_sarima.json › airpassengers.airline.coeficientes.1.valor = -0.5569 | verificado |
+| `0.0731` | dato | J: cap5_sarima.json › airpassengers.airline.coeficientes.1.ee = 0.0731 | verificado |
+| `-0.4018` | dato | J: cap5_sarima.json › airpassengers.airline.coeficientes.0.valor = -0.4018 | verificado |
+| `capítulo` | capítulo | C: capítulo 5 contiene «Señal de vuelta (etapa 5)»<br>C: el capítulo ya no usa la varianza mínima como comprobación | verificado |
 | `622` | dato | CALC: máximo de AirPassengers = 622 | verificado |
 | `104` | dato | CALC: mínimo de AirPassengers = 104 | verificado |
 | `280.30` | dato | CALC: media de AirPassengers = 280.298611 | verificado |
@@ -701,11 +708,9 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `-0.9973` | dato | J: cap5_sarima.json › airpassengers.sobrediferenciacion_estacional.2.theta_est = -0.9973 | verificado |
 | `0.5569` | dato | J: cap5_sarima.json › airpassengers.airline.coeficientes.1.valor = 0.5569 | verificado |
 | `0.9524 = Θ^(1/12)` | cálculo | CALC: |Θ̂|^(1/12) = módulo inverso máximo de J (a 10⁻⁴) | verificado |
-| `0.825` | dato | CALC: 0.1^(1/12) = 0.825404 | verificado |
-| `0.1` | parámetro | DEF: Θ del ejemplo | definición (no se mide) |
-| `-0.557` | dato | J: cap5_sarima.json › airpassengers.airline.coeficientes.1.valor = -0.5569 | verificado |
-| `0.073` | dato | J: cap5_sarima.json › airpassengers.airline.coeficientes.1.ee = 0.0731 | verificado |
-| `capítulo` | capítulo | C: capítulo 5 contiene «es $|\hat\Theta|^{1/12} = 0.5569^{1/12}$»<br>C: el capítulo ya no dice «aunque justo» | verificado |
+| `6.06` | dato | J: cap5_sarima.json › airpassengers.sobrediferenciacion_estacional.1.a_menos_1_en_ee = 6.06<br>C: capítulo 5 contiene «a $6.06$ errores estándar de $-1$» | verificado |
+| `0.03` | dato | J: cap5_sarima.json › airpassengers.sobrediferenciacion_estacional.2.a_menos_1_en_ee = 0.03 | verificado |
+| `capítulo` | capítulo | C: capítulo 5 contiene «$0.9524 = |\hat\Theta|^{1/12}$»<br>C: el capítulo ya no dice «aunque justo» | verificado |
 
 ### En los residuales solo el rezago 23 sale de la banda, y Ljung–⁠Box no rechaza
 
@@ -810,7 +815,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `0.1675` | dato | J: cap5_sarima.json › trm_contraejemplo.banda = 0.1675 | verificado |
 | `0.0013` | dato | J: cap5_sarima.json › trm_contraejemplo.forzado.Phi = 0.0013 | verificado |
 | `0.0899` | dato | J: cap5_sarima.json › trm_contraejemplo.forzado.ee = 0.0899 | verificado |
-| `0.01` | dato | CALC: t = 0.0147 que imprime el código del capítulo = 0.0147<br>C: capítulo 5 contiene «0.0147» | verificado |
+| `0.015` | dato | J: cap5_sarima.json › trm_contraejemplo.forzado.t = 0.015<br>C: capítulo 5 contiene «$t = 0.0146$» | verificado |
 | `1708.00` | dato | J: cap5_sarima.json › trm_contraejemplo.forzado.aicc = 1708.001 | verificado |
 | `1705.94` | dato | J: cap5_sarima.json › trm_contraejemplo.simple.aicc = 1705.941 | verificado |
 | `nsdiffs` | dato | J: nsdiffs = 0 con seas y con ocsb | verificado |
