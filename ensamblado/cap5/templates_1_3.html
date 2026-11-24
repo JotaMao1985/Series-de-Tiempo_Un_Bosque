@@ -52,12 +52,12 @@
           Prueba <code>AirPassengers</code> con logaritmo y las dos diferencias: las bandas verticales desaparecen y
           en la ACF quedan dos barras grandes, en los rezagos $1$ y $12$, y unas pocas menores sin patrón; el
           Módulo 7 discute las que caen dentro de los $24$ rezagos que mira Ljung–Box. Y prueba la TRM en cualquier combinación: nunca
-          hay bandas. Con la TRM sin logaritmo y una diferencia regular, la lectura reproduce exactamente la última
-          fila de la tabla de más abajo.</p>
+          hay bandas. Con la TRM sin logaritmo y una diferencia regular, la lectura reproduce la última fila de la
+          tabla de más abajo, con un decimal más.</p>
         <div class="simulador-controles"></div>
         <!--MAPA:firma|Mapa mes × año|-->
         <p class="grafico-etiqueta">Autocorrelación muestral hasta el rezago 36</p>
-        <div class="grafico-wrapper" style="height:230px;">
+        <div class="grafico-wrapper" style="height:250px;">
           <canvas aria-label="Correlograma de la serie transformada" role="img"></canvas>
         </div>
         <div class="simulador-lectura"></div>
@@ -457,11 +457,12 @@ print(np.round(acf[[1, 11, 12, 13]], 4), round(acf[1] * acf[12], 4))
         <p class="simulador-intro">Elige los seis órdenes y mira el polinomio completo ya multiplicado. Fíjate en dos
           columnas de la lectura: los <strong>parámetros libres</strong> ($p+q+P+Q$) casi nunca coinciden con el
           <strong>rezago más lejano</strong> que toca el modelo, y esa distancia es justamente lo que hace útil a la
-          notación multiplicativa. Sube $D$ a $1$ y verás también cuántas observaciones cuesta.</p>
+          notación multiplicativa. Baja $D$ a $0$ y vuelve a subirlo: la lectura dice también cuántas observaciones
+          cuesta.</p>
         <div class="simulador-controles"></div>
         <div class="simulador-lectura"></div>
         <p class="grafico-etiqueta">Coeficientes del polinomio autorregresivo completo, rezago a rezago</p>
-        <div class="grafico-wrapper" style="height:210px;">
+        <div class="grafico-wrapper" style="height:250px;">
           <canvas aria-label="Coeficientes del polinomio AR completo por rezago" role="img"></canvas>
         </div>
       </div>
@@ -985,11 +986,11 @@ print(cuadricula(y2.diff(12).diff()))
           <em>sube</em>. Diferenciar de forma regular no toca la estacionalidad; concentrarla es incluso más fácil de
           ver después.</p>
         <div class="simulador-controles"></div>
-        <div class="grafico-wrapper" style="height:220px;">
+        <div class="grafico-wrapper" style="height:240px;">
           <canvas aria-label="Serie transformada según las diferencias elegidas" role="img"></canvas>
         </div>
         <p class="grafico-etiqueta">Autocorrelación muestral hasta el rezago 36</p>
-        <div class="grafico-wrapper" style="height:210px;">
+        <div class="grafico-wrapper" style="height:250px;">
           <canvas aria-label="Correlograma de la serie transformada" role="img"></canvas>
         </div>
         <div class="simulador-lectura"></div>
@@ -1040,7 +1041,7 @@ print(cuadricula(y2.diff(12).diff()))
           volver a mirar $D$, no un veredicto: un $\Theta$ verdadero cercano a $-1$, sin ninguna diferencia de más,
           también da distancias pequeñas, y en la frontera el error estándar es poco fiable.</p>
         <div class="simulador-controles"></div>
-        <div class="grafico-wrapper" style="height:220px;">
+        <div class="grafico-wrapper" style="height:240px;">
           <canvas aria-label="Serie con el número de diferencias estacionales elegido" role="img"></canvas>
         </div>
         <div class="simulador-lectura"></div>

@@ -149,10 +149,10 @@
 
       <div class="simulador" data-simulador="pronostico-estacional">
         <h4><i class="fas fa-chart-line" aria-hidden="true"></i> Pronóstico a $h$ meses con bandas</h4>
-        <p class="simulador-intro">El deslizador mueve el horizonte y el interruptor pasa de la escala logarítmica a
-          la original. Dos cosas que ver: en logaritmos el abanico se abre <strong>a escalones</strong> —se ensancha
-          de golpe al cruzar cada rezago estacional— y al volver a la escala original deja de ser simétrico, porque
-          $\exp$ no lo es.</p>
+        <p class="simulador-intro">Se abre en la escala original y con el horizonte al máximo. El deslizador mueve el
+          horizonte, y al desmarcar el interruptor se pasa a la escala logarítmica. Dos cosas que ver: en logaritmos el abanico se abre de forma continua —al cruzar el rezago
+          estacional, en $h = 13$, se ensancha algo más deprisa, pero no a escalones visibles— y al volver a la escala
+          original deja de ser simétrico, porque $\exp$ no lo es.</p>
         <div class="simulador-controles"></div>
         <div class="grafico-wrapper" style="height:280px;">
           <canvas aria-label="Pronóstico del modelo airline con bandas de 80 y 95 por ciento" role="img"></canvas>
@@ -354,7 +354,7 @@ print(round(float(np.exp(f.predicted_mean.iloc[-1] + sigma_h**2 / 2)), 2))
           eso el diagnóstico nunca se hace en niveles.</p>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">ACF de la serie diferenciada, hasta el rezago 36</p>
-        <div class="grafico-wrapper" style="height:230px;">
+        <div class="grafico-wrapper" style="height:250px;">
           <canvas aria-label="Comparación de correlogramas de dos series diferenciadas" role="img"></canvas>
         </div>
         <div class="simulador-lectura"></div>
@@ -557,7 +557,7 @@ print(f.mle_retvals["converged"], g.mle_retvals["converged"])
           de dónde sale la señal.</p>
         <div class="simulador-controles"></div>
         <div class="simulador-lectura"></div>
-        <div class="grafico-wrapper" style="height:240px;">
+        <div class="grafico-wrapper" style="height:260px;">
           <canvas aria-label="Regresores de calendario sobre la serie" role="img"></canvas>
         </div>
       </div>

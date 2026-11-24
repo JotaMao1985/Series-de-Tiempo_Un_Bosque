@@ -10,9 +10,18 @@ Sí lo reciben:
   - la **plantilla**, porque la regla del Checkpoint 0 exige que un componente
     nuevo entre en ella en la misma sesión.
 
-Uso:  python3 retropropaga_mapa.py       (desde ensamblado/)
+Uso:  python3 retropropaga_mapa.py                (desde ensamblado/)
+      python3 retropropaga_mapa.py --actualiza     (lleva un cambio del componente)
+      python3 retropropaga_mapa.py --comprobar     (dice si están al día; no escribe)
 
-Es idempotente por abortar: si un archivo ya trae el componente, para.
+Sin opciones INSTALA, y es idempotente por abortar: si un archivo ya trae el
+componente, salta. Con `--actualiza` SUSTITUYE el componente ya instalado por el
+de `componentes/`: el bloque CSS (del comentario «Componente .mapa-estacional»
+al cierre de su media query de 640 px) y el bloque JS (del rótulo del componente
+al cierre de `iniciarMapasEstacionales`). Nada fuera de esos dos bloques cambia
+—se comprueba—, y los retoques locales que un destino haya hecho dentro del
+bloque se vuelven a aplicar (`AJUSTES_LOCALES`). Reejecutarlo no cambia nada.
+El capítulo 5 no pasa por aquí: lo recibe al reensamblarse (`ensambla_cap5.py`).
 """
 
 import sys
@@ -121,6 +130,121 @@ def una_vez(texto, viejo, nuevo, etiqueta):
 
 css = (COMPONENTES / "mapa_estacional.css").read_text(encoding="utf-8").rstrip("\n")
 js = (COMPONENTES / "mapa_estacional.js").read_text(encoding="utf-8").rstrip("\n")
+
+# ---------------------------------------------------------------------------
+# Modo --actualiza / --comprobar
+# ---------------------------------------------------------------------------
+INICIO_CSS = ("    /* ------------------------------------------------------------------\n"
+              "       Componente .mapa-estacional — mapa de calor mes x año")
+FIN_CSS = "    @media (max-width: 640px) {\n      .mapa-estacional-rejilla {"
+INICIO_JS = ("    // ================================================================\n"
+             "    // Componente .mapa-estacional — mapa de calor mes x año")
+FIN_JS = "    function iniciarMapasEstacionales() {"
+
+# Retoques que un destino haga a mano DENTRO del bloque del componente y que
+# haya que conservar, como pares (texto del componente, texto local). Hoy no
+# hay ninguno: el único, la nota alineada a la izquierda del capítulo 1 (su R2:
+# justificada, en el teléfono abría huecos), pasó al componente en la R2 del
+# capítulo 5. La variante `--entero` del capítulo 1 va DESPUÉS del bloque y no
+# se toca.
+AJUSTES_LOCALES = {
+    "cap1": [],
+    "plantilla": [],
+}
+
+
+def bloque(html, inicio, fin_marca, cierre, etiqueta):
+    """(i, j) del bloque que empieza en `inicio` (único) y acaba en el `cierre`
+    que sigue a `fin_marca`; j apunta justo detrás de ese cierre."""
+    if html.count(inicio) != 1:
+        raise SystemExit(f"ABORTA [{etiqueta}]: el inicio del bloque aparece "
+                         f"{html.count(inicio)} veces, se esperaba 1.")
+    i = html.index(inicio)
+    k = html.find(fin_marca, i)
+    if k == -1:
+        raise SystemExit(f"ABORTA [{etiqueta}]: no encuentro {fin_marca[:60]!r} tras el inicio.")
+    j = html.find(cierre, k)
+    if j == -1:
+        raise SystemExit(f"ABORTA [{etiqueta}]: no encuentro el cierre del bloque.")
+    return i, j + len(cierre)
+
+
+def trozo(texto, i, j):
+    return texto[i:j]
+
+
+def actualiza(nombre, html):
+    """Devuelve el HTML con el componente al día y la lista de fallos."""
+    nuevo_css = css.lstrip("\n")
+    for viejo, nuevo in AJUSTES_LOCALES[nombre]:
+        if nuevo_css.count(viejo) != 1:
+            raise SystemExit(f"ABORTA [{nombre}/ajuste local]: {viejo[:50]!r} aparece "
+                             f"{nuevo_css.count(viejo)} veces en el componente.")
+        nuevo_css = nuevo_css.replace(viejo, nuevo)
+    i, j = bloque(html, INICIO_CSS, FIN_CSS, "\n      }\n    }", f"{nombre}/CSS")
+    salida = html[:i] + nuevo_css + html[j:]
+    a, b = bloque(salida, INICIO_JS, FIN_JS, "\n    }", f"{nombre}/JS")
+    salida = salida[:a] + js + salida[b:]
+
+    fallos = []
+    # Fuera de los dos bloques, el archivo no cambia
+    i2, j2 = bloque(salida, INICIO_CSS, FIN_CSS, "\n      }\n    }", f"{nombre}/CSS nuevo")
+    a2, b2 = bloque(salida, INICIO_JS, FIN_JS, "\n    }", f"{nombre}/JS nuevo")
+    a0, b0 = bloque(html, INICIO_JS, FIN_JS, "\n    }", f"{nombre}/JS viejo")
+    # (Los cortes van por trozo(): el compilador de Tailwind lee este archivo y
+    # tomaría un corte de dos variables por una clase de propiedad arbitraria.)
+    if (salida[:i2] != html[:i] or trozo(salida, j2, a2) != trozo(html, j, a0)
+            or salida[b2:] != html[b0:]):
+        fallos.append("ha cambiado algo fuera de los bloques del componente")
+    if trozo(salida, i2, j2) != nuevo_css or trozo(salida, a2, b2) != js:
+        fallos.append("los bloques no quedaron iguales al componente")
+    inst = INSTANCIAS[nombre]
+    fallos += comprueba_mapa_estacional(salida, inst["id"])
+    # (`.mapa-estacional-nota {` y otras salen más de una vez en el capítulo 1,
+    # por su variante `--entero`: se cuentan solo las que son únicas en todos.)
+    componente = css + js
+    for pieza, esperadas in [(".mapa-estacional {", 1),
+                             (".mapa-estacional-fila {", componente.count(".mapa-estacional-fila {")),
+                             ("function pintarMapaEstacional", 1),
+                             ("function ajustarMapaEstacional",
+                              componente.count("function ajustarMapaEstacional")),
+                             ("function matrizMesAnio", 1),
+                             ("function iniciarMapasEstacionales", 1),
+                             ("const MAPAS_ESTACIONALES", 1),
+                             ("        iniciarMapasEstacionales();", 1),
+                             (f"MAPAS_ESTACIONALES['{inst['id']}']", 1)]:
+        if salida.count(pieza) != esperadas:
+            fallos.append(f"'{pieza}' aparece {salida.count(pieza)} veces, se esperaban {esperadas}")
+    return salida, fallos
+
+
+if "--actualiza" in sys.argv or "--comprobar" in sys.argv:
+    escribir = "--actualiza" in sys.argv
+    pendientes = 0
+    for nombre, ruta in DESTINOS.items():
+        html = ruta.read_text(encoding="utf-8")
+        if ".mapa-estacional {" not in html:
+            raise SystemExit(f"ABORTA [{nombre}]: no trae el componente; instálalo sin opciones.")
+        salida, fallos = actualiza(nombre, html)
+        if fallos:
+            raise SystemExit(f"ABORTA [{nombre}]:\n  - " + "\n  - ".join(fallos))
+        # Idempotencia: aplicado sobre su propio resultado no cambia nada
+        if actualiza(nombre, salida)[0] != salida:
+            raise SystemExit(f"ABORTA [{nombre}]: la actualización no es idempotente.")
+        if salida == html:
+            print(f"AL DÍA {ruta.name}")
+            continue
+        pendientes += 1
+        if escribir:
+            ruta.write_text(salida, encoding="utf-8")
+            print(f"OK     {ruta.name}: componente sustituido "
+                  f"({len(html.encode('utf-8'))} → {len(salida.encode('utf-8'))} bytes)")
+        else:
+            print(f"PENDIENTE {ruta.name}: el componente instalado no es el de componentes/")
+    if not escribir and pendientes:
+        sys.exit(1)
+    print("Listo.")
+    sys.exit(0)
 
 for nombre, ruta in DESTINOS.items():
     if not ruta.exists():

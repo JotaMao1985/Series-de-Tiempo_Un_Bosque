@@ -1,0 +1,67 @@
+R4.6.0 · forecast 9.0.2
+
+== 1. M6 · tabla: fila (0,1,0)(0,1,0)[12] sobre log(AirPassengers) ==
+AICc -434.80  BIC -431.95 (tabla: -431.95)  rho12 residual -0.3907 (tabla: -0.3907; sin los 13 de arranque, -0.3866) · airline, misma convención: -0.0515 (tabla: -0.0515)
+JSON: aicc -434.799 bic -431.9548 acf12 -0.3907
+
+== 2. M7 · intro: el abanico en logaritmos, ancho del IC 95 % por horizonte ==
+  h  ancho incremento
+  1 0.1452         NA
+  2 0.1691     0.0240
+  3 0.1901     0.0210
+  4 0.2090     0.0189
+  5 0.2263     0.0173
+  6 0.2424     0.0161
+  7 0.2575     0.0151
+  8 0.2717     0.0142
+  9 0.2853     0.0135
+ 10 0.2982     0.0129
+ 11 0.3106     0.0124
+ 12 0.3225     0.0119
+ 13 0.3562     0.0337
+ 14 0.3776     0.0214
+ 15 0.3978     0.0202
+ 16 0.4171     0.0193
+ 17 0.4355     0.0184
+ 18 0.4532     0.0177
+ 19 0.4702     0.0170
+ 20 0.4866     0.0164
+ 21 0.5024     0.0159
+ 22 0.5178     0.0154
+ 23 0.5328     0.0149
+ 24 0.5473     0.0145
+incremento en h = 13: 0.0337; mayor incremento de h = 2..24 en h = 13; incremento medio de h = 2..12: 0.0161, de h = 14..24: 0.0174
+JSON (log): ancho en h = 12, 13: 0.3225, 0.3561
+
+== 3. M9 · Domingo de Pascua 1949–1960 (algoritmo gregoriano anónimo) ==
+ [1] "1949-04-17" "1950-04-09" "1951-03-25" "1952-04-13" "1953-04-05"
+ [6] "1954-04-18" "1955-04-10" "1956-04-01" "1957-04-21" "1958-04-06"
+[11] "1959-03-29" "1960-04-17"
+años con Pascua en marzo: 2 de 12 (JSON meses_pascua_marzo: 2); coincide con el JSON: TRUE
+
+== 4. Quiz, pregunta 5 · ACF teórica de un SAR(1)_12 con Phi = 0.7 ==
+rezagos no nulos: 12 24 36  valores: 0.70 0.49 0.34  · los demás: 33 con máximo |valor| 0 
+
+== 5. M1 y M8 · barras fuera de banda (las lecturas nuevas) ==
+log AP, ∇∇₁₂                             n = 131 banda 0.1712 · rho1 -0.3411 rho12 -0.3866 rho24 -0.0184 rho36 -0.0100 · múltiplos de 12 fuera: 12 · otros: 1, 3, 9, 23, 32
+log AP, ∇ (M8)                                 n = 143 banda 0.1639 · rho1 0.1998 rho12 0.8414 rho24 0.7369 rho36 0.6574 · múltiplos de 12 fuera: 12, 24, 36 · otros: 1, 4, 8, 11, 13, 16, 20, 23, 25, 28, 32
+TRM sin log, ∇ (M1, última fila de la tabla; M8) n = 137 banda 0.1675 · rho1 0.0876 rho12 -0.0025 rho24 -0.0672 rho36 0.0714 · múltiplos de 12 fuera: ninguno · otros: 8
+TRM sin log, ∇₁₂                           n = 126 banda 0.1746 · rho1 0.8938 rho12 -0.3542 rho24 0.1344 rho36 -0.0463 · múltiplos de 12 fuera: 12 · otros: 1, 2, 3, 4, 5, 6, 10, 11, 13, 14, 15, 16, 17, 25, 26, 27, 28, 29, 30
+TRM log, ∇₁₂                               n = 126 banda 0.1746 · rho1 0.8801 rho12 -0.3002 rho24 0.0602 rho36 -0.0053 · múltiplos de 12 fuera: 12 · otros: 1, 2, 3, 4, 5, 6, 11, 13, 14, 15
+TRM sin log, ∇∇₁₂                        n = 125 banda 0.1753 · rho1 0.1432 rho12 -0.3965 rho24 -0.1286 rho36 0.1104 · múltiplos de 12 fuera: 12 · otros: 9
+
+== 6. M2 · constructor con todos los órdenes en 2 (coeficientes de ejemplo de la página) ==
+rezago más lejano 52 · no nulos 24 · mayor |coef| 8.20 en el rezago 25 · menor |coef| no nulo 0.0225
+
+== 7. M5 · pesos psi y sigma_h del airline en el estado inicial (theta = -0.40, Theta = -0.56) ==
+psi1 0.600 psi11 0.600 psi12 1.040 salto 0.440 psi24 1.304 psi35 1.128 · sigma2 (JSON) 0.001371 · sigma1 0.0370 sigma12 0.0825 sigma24 0.1398 sigma36 0.2026
+
+== 8. M11 · el SARIMA y auto.arima dan el mismo pronóstico ==
+idénticos: TRUE · otros pares idénticos: 0 
+
+== 9. Contraste del texto del mapa estacional (WCAG 2) ==
+blanco o negro, el mejor de los dos: peor caso 4.58:1 (en luminancia 0.1791)
+pizarra #1e293b o blanco: ninguno llega a 4.5:1 con luminancia de fondo entre 0.1834 y 0.2729
+paleta sec: contraste mínimo con la regla del componente 4.50:1; con el umbral viejo (0.42) 2.24:1
+paleta neg: contraste mínimo con la regla del componente 4.98:1; con el umbral viejo (0.42) 2.24:1
+paleta pos: contraste mínimo con la regla del componente 4.50:1; con el umbral viejo (0.42) 2.24:1

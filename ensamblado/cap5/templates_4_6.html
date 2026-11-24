@@ -89,16 +89,16 @@
       <div class="simulador" data-simulador="firma-teorica">
         <h4><i class="fas fa-wave-square" aria-hidden="true"></i> Laboratorio de firmas estacionales</h4>
         <p class="simulador-intro">Cuatro deslizadores, uno por cada parte del modelo, y las ACF/PACF teóricas exactas
-          (calculadas expandiendo el polinomio, no aproximadas). Empieza con todo en cero y sube <strong>solo</strong>
-          $\Phi$: verás picos limpios en $12, 24, 36$ y nada más. Añade después $\phi$ y observa cómo brotan los
+          (calculadas expandiendo el polinomio, no aproximadas). Al abrir, el único distinto de cero es
+          <strong>$\Phi$</strong>: picos limpios en $12, 24, 36$ y nada más. Añade después $\phi$ y observa cómo brotan los
           satélites en $11$ y $13$ sin que hayas tocado ningún parámetro nuevo.</p>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">ACF teórica</p>
-        <div class="grafico-wrapper" style="height:190px;">
+        <div class="grafico-wrapper" style="height:250px;">
           <canvas aria-label="ACF teórica del proceso estacional elegido" role="img"></canvas>
         </div>
         <p class="grafico-etiqueta">PACF teórica</p>
-        <div class="grafico-wrapper" style="height:190px;">
+        <div class="grafico-wrapper" style="height:250px;">
           <canvas aria-label="PACF teórica del proceso estacional elegido" role="img"></canvas>
         </div>
         <div class="simulador-lectura"></div>
@@ -281,11 +281,12 @@ print(np.round(acf_sarima(theta=[-0.4018], Theta=-0.5569)[[0, 10, 11, 12, 23]], 
           $-1$ y el escalón casi desaparece: el MA casi cancela la diferencia estacional impuesta.</p>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">Pesos $\psi_j$ de la representación MA($\infty$)</p>
-        <div class="grafico-wrapper" style="height:200px;">
+        <div class="grafico-wrapper" style="height:250px;">
           <canvas aria-label="Pesos psi del modelo airline" role="img"></canvas>
         </div>
-        <p class="grafico-etiqueta">Desviación típica del error de pronóstico $\sigma_h$ (escala logarítmica)</p>
-        <div class="grafico-wrapper" style="height:200px;">
+        <p class="grafico-etiqueta">Desviación típica del error de pronóstico $\sigma_h$, medida sobre el logaritmo de la
+          serie (el eje es lineal y empieza en $0$)</p>
+        <div class="grafico-wrapper" style="height:240px;">
           <canvas aria-label="Desviación del error de pronóstico por horizonte" role="img"></canvas>
         </div>
         <div class="simulador-lectura"></div>
@@ -436,7 +437,7 @@ print(int(np.argmax(sh &gt; np.sqrt(np.arange(1, len(sh) + 1)))) + 1)
         <div class="simulador-controles"></div>
         <div class="simulador-lectura"></div>
         <p class="grafico-etiqueta">ACF de los residuales del modelo seleccionado (hasta el rezago 24)</p>
-        <div class="grafico-wrapper" style="height:220px;">
+        <div class="grafico-wrapper" style="height:250px;">
           <canvas aria-label="Correlograma de los residuales del modelo SARIMA elegido" role="img"></canvas>
         </div>
       </div>
@@ -451,7 +452,7 @@ print(int(np.argmax(sh &gt; np.sqrt(np.arange(1, len(sh) + 1)))) + 1)
             <tr><td>($2,1,1$)($0,1,1$)$_{12}$</td><td>$4$</td><td>$-481.79$</td><td>$-467.90$</td><td>$0.1371$</td><td>$-0.0307$</td></tr>
             <tr><td>($0,1,1$)($1,1,1$)$_{12}$</td><td>$3$</td><td>$-481.60$</td><td>$-470.41$</td><td>$0.2271$</td><td>$-0.0163$</td></tr>
             <tr><td>($1,1,1$)($0,1,1$)$_{12}$</td><td>$3$</td><td>$-481.58$</td><td>$-470.40$</td><td>$0.2453$</td><td>$-0.0459$</td></tr>
-            <tr><td>($0,1,0$)($0,1,0$)$_{12}$</td><td>$0$</td><td>$-434.80$</td><td>—</td><td>$&lt; 10^{-4}$</td><td>—</td></tr>
+            <tr><td>($0,1,0$)($0,1,0$)$_{12}$</td><td>$0$</td><td>$-434.80$</td><td>$-431.95$</td><td>$&lt; 10^{-4}$</td><td>$-0.3907$</td></tr>
           </tbody>
         </table>
       </div>

@@ -14,7 +14,7 @@ la prosa, con sus fuentes contrastadas y con práctica en cada módulo. Es la qu
 [[PLAN_Mejora_Cap1]] a [[PLAN_Mejora_Cap4]]: cinco rondas, un redactor por ronda, verificadores
 independientes sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: APROBADO por Javier el 2026-11-23; R1 publicada el 2026-11-24**, con D1–D11 y las recomendaciones de las preguntas 1, 2, 3,
+**Estado: APROBADO por Javier el 2026-11-23; R1 publicada y R2 hecha el 2026-11-24**, con D1–D11 y las recomendaciones de las preguntas 1, 2, 3,
 4 y 6 de §7. El diagnóstico es del mismo día; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-23
@@ -207,6 +207,29 @@ Cada una lleva mi recomendación; las decide Javier.
     - Cap. 6: idéntico.
   - **Decisiones para Javier al publicar:** el deck se reconstruyó con la skill del 14 nov (la fuente en el pie,
     a 12.5 px), como el del cap. 4 ya publicado.
+
+- **R2 (gráficas) — hecha el 2026-11-24, sin publicar.** Redactor: `diagnostico/cap5/R2_cambios.md`; verificador
+  independiente: `R2_verificacion.md`, con lo que se hizo con cada hallazgo.
+  - **Componente `.mapa-estacional`**, arreglado en `ensamblado/componentes/` y llevado a los caps. 1, 5 y 6, a la
+    plantilla y a la guía con `retropropaga_mapa.py --actualiza`; esos archivos cambian solo en el componente.
+    - Contraste mínimo de 2.24 a 4.5:1.
+    - Los doce meses a la vista. A 800 y 375 px, los mapas con decimales abren en color, con la rejilla navegable por
+      teclado y un botón «Ver las cifras».
+    - Signo menos y filas ARIA, con un `aria-label` que dice serie y transformación.
+  - **De los 42 problemas:** 35 arreglados, 1 en parte (la escala del eje de ψ), 3 ya resueltos en la R1 y 3 no
+    tocados (las figuras del simulacro, para el banco).
+    - `aria-label` que cambian con el estado en los 15 lienzos.
+    - Áreas de dibujo de al menos 144 px.
+    - La leyenda del M11 entera.
+    - `fa-trophy`.
+    - `fmt()` con signo menos.
+    - Ejes del M9.
+    - Intros del M2, M4, M7 y M11 escritas para su estado inicial.
+  - **El verificador halló 1 Alta, 2 Medias y 7 Bajas;** el redactor las corrigió a petición de la maestra. La Alta era
+    una glosa nueva del M1 («negativo tras ∇₁₂: huella de la propia diferencia») falsa en las series estacionales:
+    retirada.
+  - **Verificaciones:** bloques 1335/1335, `verifica_todo` 11 en verde, Tailwind sin cambios, deck 774/774;
+    reensamblado reproducible.
 
 ## 5. Criterios de aceptación
 

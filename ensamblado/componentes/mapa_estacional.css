@@ -26,18 +26,31 @@
       margin: 0 0 0.5rem 0;
     }
 
-    /* En pantallas estrechas la rejilla se desplaza dentro de su caja en vez
-       de desbordar la página. */
+    /* Los doce meses caben siempre: las columnas no tienen ancho mínimo y es
+       el texto el que se adapta (ajustarMapaEstacional). Antes la rejilla
+       medía al menos 34rem y a 800 y 375 px se veía de enero a junio, sin
+       ningún indicio de que hubiera más. El desplazamiento queda solo como
+       red, por si un mapa futuro no cupiera. */
     .mapa-estacional-marco {
+      position: relative;
       overflow-x: auto;
       padding-bottom: 0.2rem;
     }
 
     .mapa-estacional-rejilla {
       display: grid;
-      grid-template-columns: 3.1rem repeat(12, minmax(2.4rem, 1fr));
+      grid-template-columns: 3.1rem repeat(12, minmax(0, 1fr));
       gap: 2px;
-      min-width: 34rem;
+      min-width: 0;
+    }
+
+    /* Una fila de la tabla para el lector de pantalla, sin caja propia: sus
+       celdas siguen siendo hijas de la rejilla a efectos de maquetación. La
+       palabra clave va con mayúscula (CSS no distingue) para que el compilador
+       de Tailwind, que lee este archivo, no la tome por su clase homónima y
+       añada una regla nueva a la hoja de las doce páginas. */
+    .mapa-estacional-fila {
+      display: Contents;
     }
 
     .mapa-estacional-cabecera,
@@ -63,7 +76,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      min-width: 0;
       min-height: 1.65rem;
+      overflow: hidden;
       border-radius: 0.2rem;
       font-family: 'Fira Code', monospace;
       font-size: 0.63rem;
@@ -71,10 +86,105 @@
       transition: transform 0.12s ease, box-shadow 0.12s ease;
     }
 
+    .mapa-estacional-celda > span,
+    .mapa-estacional-mes {
+      white-space: nowrap;
+    }
+
+    /* Si la cifra no cabe, el mapa se queda con el color y la línea del valor. */
+    .mapa-estacional--sin-cifras .mapa-estacional-celda > span {
+      visibility: hidden;
+    }
+
+    /* «Ver las cifras»: la rejilla con cifras, más ancha que su caja; el
+       marco la desplaza y el borde derecho avisa de que hay más meses. */
+    .mapa-estacional--desplazable .mapa-estacional-rejilla[role] {
+      grid-template-columns: 3.1rem repeat(12, minmax(var(--mapa-celda-min, 2.4rem), 1fr));
+    }
+
+    .mapa-estacional-ventana {
+      position: relative;
+    }
+
+    .mapa-estacional-mas {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0.2rem;
+      width: 2.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 0.15rem;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #c2410c;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.95) 60%);
+      pointer-events: none;
+    }
+
+    .mapa-estacional-mas[hidden] {
+      display: none;
+    }
+
+    /* La rejilla es una sola parada del tabulador cuando las cifras no se
+       ven enteras; las flechas mueven la celda señalada. */
+    .mapa-estacional-rejilla:focus-visible {
+      outline: 2px solid #c2410c;
+      outline-offset: -2px;          /* hacia dentro: el marco recorta lo que sale */
+    }
+
+    .mapa-estacional-boton {
+      margin: 0.45rem 0 0 0;
+      padding: 0.3rem 0.7rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #012820;
+      background: #ffffff;
+      border: 1px solid #012820;
+      border-radius: 0.35rem;
+      cursor: pointer;
+    }
+
+    .mapa-estacional-boton[aria-pressed="true"] {
+      color: #ffffff;
+      background: #012820;
+    }
+
+    .mapa-estacional-boton:focus-visible {
+      outline: 2px solid #c2410c;
+      outline-offset: 2px;
+    }
+
+    .mapa-estacional-boton[hidden] {
+      display: none;
+    }
+
+    .mapa-estacional-valor {
+      display: none;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.72rem;
+      color: #475569;
+      margin: 0.35rem 0 0 0;
+      min-height: 1.1rem;
+      text-align: left;
+    }
+
+    .mapa-estacional--sin-cifras .mapa-estacional-valor {
+      display: block;
+    }
+
     .mapa-estacional-celda:hover {
       transform: scale(1.12);
       box-shadow: 0 2px 8px rgba(1, 40, 32, 0.28);
       z-index: 2;
+    }
+
+    /* La celda señalada, por encima del realce del ratón. */
+    .mapa-estacional .mapa-estacional-rejilla .mapa-estacional-activa {
+      box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #c2410c;
+      z-index: 3;
     }
 
     /* Los huecos que deja la diferenciación son parte del mensaje: se marcan
@@ -110,11 +220,17 @@
       color: #64748b;
       margin: 0.5rem 0 0 0;
       line-height: 1.4;
+      text-align: left;              /* justificada, en el teléfono abría huecos entre palabras */
     }
 
     @media (max-width: 640px) {
       .mapa-estacional-rejilla {
-        grid-template-columns: 2.6rem repeat(12, minmax(2rem, 1fr));
+        grid-template-columns: 2.6rem repeat(12, minmax(0, 1fr));
+        gap: 1px;
+      }
+
+      .mapa-estacional--desplazable .mapa-estacional-rejilla[role] {
+        grid-template-columns: 2.6rem repeat(12, minmax(var(--mapa-celda-min, 2rem), 1fr));
       }
 
       .mapa-estacional-celda {

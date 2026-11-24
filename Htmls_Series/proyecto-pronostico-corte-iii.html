@@ -2227,18 +2227,31 @@
       margin: 0 0 0.5rem 0;
     }
 
-    /* En pantallas estrechas la rejilla se desplaza dentro de su caja en vez
-       de desbordar la página. */
+    /* Los doce meses caben siempre: las columnas no tienen ancho mínimo y es
+       el texto el que se adapta (ajustarMapaEstacional). Antes la rejilla
+       medía al menos 34rem y a 800 y 375 px se veía de enero a junio, sin
+       ningún indicio de que hubiera más. El desplazamiento queda solo como
+       red, por si un mapa futuro no cupiera. */
     .mapa-estacional-marco {
+      position: relative;
       overflow-x: auto;
       padding-bottom: 0.2rem;
     }
 
     .mapa-estacional-rejilla {
       display: grid;
-      grid-template-columns: 3.1rem repeat(12, minmax(2.4rem, 1fr));
+      grid-template-columns: 3.1rem repeat(12, minmax(0, 1fr));
       gap: 2px;
-      min-width: 34rem;
+      min-width: 0;
+    }
+
+    /* Una fila de la tabla para el lector de pantalla, sin caja propia: sus
+       celdas siguen siendo hijas de la rejilla a efectos de maquetación. La
+       palabra clave va con mayúscula (CSS no distingue) para que el compilador
+       de Tailwind, que lee este archivo, no la tome por su clase homónima y
+       añada una regla nueva a la hoja de las doce páginas. */
+    .mapa-estacional-fila {
+      display: Contents;
     }
 
     .mapa-estacional-cabecera,
@@ -2264,7 +2277,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      min-width: 0;
       min-height: 1.65rem;
+      overflow: hidden;
       border-radius: 0.2rem;
       font-family: 'Fira Code', monospace;
       font-size: 0.63rem;
@@ -2272,10 +2287,105 @@
       transition: transform 0.12s ease, box-shadow 0.12s ease;
     }
 
+    .mapa-estacional-celda > span,
+    .mapa-estacional-mes {
+      white-space: nowrap;
+    }
+
+    /* Si la cifra no cabe, el mapa se queda con el color y la línea del valor. */
+    .mapa-estacional--sin-cifras .mapa-estacional-celda > span {
+      visibility: hidden;
+    }
+
+    /* «Ver las cifras»: la rejilla con cifras, más ancha que su caja; el
+       marco la desplaza y el borde derecho avisa de que hay más meses. */
+    .mapa-estacional--desplazable .mapa-estacional-rejilla[role] {
+      grid-template-columns: 3.1rem repeat(12, minmax(var(--mapa-celda-min, 2.4rem), 1fr));
+    }
+
+    .mapa-estacional-ventana {
+      position: relative;
+    }
+
+    .mapa-estacional-mas {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0.2rem;
+      width: 2.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 0.15rem;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #c2410c;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.95) 60%);
+      pointer-events: none;
+    }
+
+    .mapa-estacional-mas[hidden] {
+      display: none;
+    }
+
+    /* La rejilla es una sola parada del tabulador cuando las cifras no se
+       ven enteras; las flechas mueven la celda señalada. */
+    .mapa-estacional-rejilla:focus-visible {
+      outline: 2px solid #c2410c;
+      outline-offset: -2px;          /* hacia dentro: el marco recorta lo que sale */
+    }
+
+    .mapa-estacional-boton {
+      margin: 0.45rem 0 0 0;
+      padding: 0.3rem 0.7rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #012820;
+      background: #ffffff;
+      border: 1px solid #012820;
+      border-radius: 0.35rem;
+      cursor: pointer;
+    }
+
+    .mapa-estacional-boton[aria-pressed="true"] {
+      color: #ffffff;
+      background: #012820;
+    }
+
+    .mapa-estacional-boton:focus-visible {
+      outline: 2px solid #c2410c;
+      outline-offset: 2px;
+    }
+
+    .mapa-estacional-boton[hidden] {
+      display: none;
+    }
+
+    .mapa-estacional-valor {
+      display: none;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.72rem;
+      color: #475569;
+      margin: 0.35rem 0 0 0;
+      min-height: 1.1rem;
+      text-align: left;
+    }
+
+    .mapa-estacional--sin-cifras .mapa-estacional-valor {
+      display: block;
+    }
+
     .mapa-estacional-celda:hover {
       transform: scale(1.12);
       box-shadow: 0 2px 8px rgba(1, 40, 32, 0.28);
       z-index: 2;
+    }
+
+    /* La celda señalada, por encima del realce del ratón. */
+    .mapa-estacional .mapa-estacional-rejilla .mapa-estacional-activa {
+      box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #c2410c;
+      z-index: 3;
     }
 
     /* Los huecos que deja la diferenciación son parte del mensaje: se marcan
@@ -2311,11 +2421,17 @@
       color: #64748b;
       margin: 0.5rem 0 0 0;
       line-height: 1.4;
+      text-align: left;              /* justificada, en el teléfono abría huecos entre palabras */
     }
 
     @media (max-width: 640px) {
       .mapa-estacional-rejilla {
-        grid-template-columns: 2.6rem repeat(12, minmax(2rem, 1fr));
+        grid-template-columns: 2.6rem repeat(12, minmax(0, 1fr));
+        gap: 1px;
+      }
+
+      .mapa-estacional--desplazable .mapa-estacional-rejilla[role] {
+        grid-template-columns: 2.6rem repeat(12, minmax(var(--mapa-celda-min, 2rem), 1fr));
       }
 
       .mapa-estacional-celda {
@@ -5340,10 +5456,12 @@ dm.test(e_mod[, h], e_ref[, h], h = h, power = 1, varestimator = "bartlett")</co
     // Registro `MAPAS_ESTACIONALES['id']` sobre un contenedor
     // `<div class="mapa-estacional" data-mapa="id">`, igual que SIMULADORES
     // y AUTOEVALUACIONES. El valor de cada registro es un objeto
-    //   { anios, filas, minimo, maximo, escala, decimales, unidad, nota }
+    //   { anios, filas, minimo, maximo, escala, decimales, unidad, nota, descripcion }
     // o una FUNCIÓN que devuelve uno, para los mapas que dependen de un
     // control. Un simulador puede repintar el suyo llamando directamente a
-    // pintarMapaEstacional(raiz, datos).
+    // pintarMapaEstacional(raiz, datos). `descripcion` (opcional) dice qué
+    // serie y qué transformación se ven; sin ella, el nombre accesible de la
+    // rejilla usa el título visible del mapa.
     const MAPAS_ESTACIONALES = {};
 
     const MESES_CORTOS = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
@@ -5374,14 +5492,37 @@ dm.test(e_mod[, h], e_ref[, h], h = h, power = 1, varestimator = "bartlett")</co
       return mezclarColor(VERDE_CLARO, VERDE_OSCURO, (valor - datos.minimo) / rango);
     }
 
-    // Sobre fondo oscuro el número tiene que ir en blanco o no se lee. El
-    // umbral se decide con la luminancia relativa, no a ojo.
-    function textoSobre(color) {
-      const m = /rgb\((\d+),(\d+),(\d+)\)/.exec(color);
-      if (!m) return '#1e293b';
+    // Luminancia relativa y razón de contraste de las WCAG 2.
+    function luminanciaRelativa(color) {
+      const m = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(color);
+      if (!m) return null;
       const [r, g, b] = [1, 2, 3].map(i => Number(m[i]) / 255)
         .map(v => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)));
-      return (0.2126 * r + 0.7152 * g + 0.0722 * b) > 0.42 ? '#1e293b' : '#ffffff';
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    }
+
+    function razonContraste(a, b) {
+      const la = luminanciaRelativa(a), lb = luminanciaRelativa(b);
+      return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+    }
+
+    // Color del número sobre una celda, en dos tonos: blanco o negro, el que
+    // dé más contraste. El peor caso de los dos es 4.58:1, así que siempre se
+    // pasa de 4.5:1. Con un umbral de luminancia fijo (antes, 0.42) los fondos
+    // medios —gris verdoso, naranja claro— se quedaban en 2.2–2.9:1; y con
+    // tres tonos (pizarra, negro y blanco) dos celdas vecinas de color
+    // parecido podían llevar la cifra de dos colores distintos.
+    function textoSobre(color) {
+      if (luminanciaRelativa(color) === null) return '#000000';
+      return razonContraste(color, 'rgb(255,255,255)') >= razonContraste(color, 'rgb(0,0,0)')
+        ? '#ffffff' : '#000000';
+    }
+
+    // Cifra de una celda o de la leyenda: signo menos tipográfico, como en las
+    // tablas y en los ejes, y sin «−0.000» cuando el redondeo da cero.
+    function cifraMapa(valor, dec) {
+      const texto = Math.abs(valor).toFixed(dec);
+      return (valor < 0 && Number(texto) !== 0 ? '−' : '') + texto;
     }
 
     function pintarMapaEstacional(raiz, datos) {
@@ -5395,12 +5536,19 @@ dm.test(e_mod[, h], e_ref[, h], h = h, power = 1, varestimator = "bartlett")</co
       // sigue disponible en el nombre accesible y en el tooltip.
       const conNumero = datos.filas.length <= 20;
 
-      const partes = ['<div class="mapa-estacional-cabecera" aria-hidden="true"></div>'];
+      // Cada fila de la rejilla va en un `role="row"` sin caja propia (así la
+      // rejilla CSS no cambia): sin filas, un lector de pantalla no
+      // puede recorrer el mapa como una tabla.
+      const partes = ['<div class="mapa-estacional-fila" role="row">',
+        '<div class="mapa-estacional-cabecera" role="columnheader" aria-label="Año"></div>'];
       MESES_CORTOS.forEach(mes => {
-        partes.push('<div class="mapa-estacional-cabecera" role="columnheader">' + mes + '</div>');
+        partes.push('<div class="mapa-estacional-cabecera" role="columnheader" aria-label="' + mes + '">'
+          + '<span class="mapa-estacional-mes" aria-hidden="true">' + mes + '</span></div>');
       });
+      partes.push('</div>');
 
       datos.filas.forEach((fila, i) => {
+        partes.push('<div class="mapa-estacional-fila" role="row">');
         partes.push('<div class="mapa-estacional-anio" role="rowheader">' + datos.anios[i] + '</div>');
         fila.forEach((valor, j) => {
           const vacia = valor === null || valor === undefined || !isFinite(valor);
@@ -5411,15 +5559,32 @@ dm.test(e_mod[, h], e_ref[, h], h = h, power = 1, varestimator = "bartlett")</co
             return;
           }
           const color = colorMapa(valor, datos);
-          const texto = valor.toFixed(dec);
+          const texto = cifraMapa(valor, dec);
           const titulo = etiqueta + ': ' + texto + (unidad ? ' ' + unidad : '');
           partes.push('<div class="mapa-estacional-celda" role="cell" style="background:' + color
             + ';color:' + textoSobre(color) + '" aria-label="' + titulo + '" title="' + titulo + '">'
-            + (conNumero ? texto : '') + '</div>');
+            + (conNumero ? '<span aria-hidden="true">' + texto + '</span>' : '') + '</div>');
         });
+        partes.push('</div>');
       });
 
       rejilla.innerHTML = partes.join('');
+
+      const tope = Math.max(Math.abs(datos.minimo), Math.abs(datos.maximo));
+      const extremos = datos.escala === 'divergente'
+        ? [cifraMapa(-tope, dec), cifraMapa(tope, dec)]
+        : [cifraMapa(datos.minimo, dec), cifraMapa(datos.maximo, dec)];
+
+      // Nombre accesible: qué serie y qué transformación, cuántos años y el
+      // rango de los valores. Se reescribe en cada repintado.
+      const titulo = raiz.querySelector('.mapa-estacional-titulo');
+      const quien = datos.descripcion
+        || (titulo ? titulo.textContent.trim() : 'Mapa estacional, mes × año');
+      const n = datos.anios.length;
+      rejilla.setAttribute('aria-label', quien + ': ' + n + (n === 1 ? ' año' : ' años')
+        + ' (' + datos.anios[0] + (n > 1 ? '–' + datos.anios[n - 1] : '') + ') en filas y 12 meses en columnas; valores de '
+        + cifraMapa(datos.minimo, dec) + ' a ' + cifraMapa(datos.maximo, dec) + (unidad ? ' ' + unidad : '')
+        + (datos.escala === 'divergente' ? '; escala de color centrada en cero' : ''));
 
       if (leyenda) {
         const izq = datos.escala === 'divergente'
@@ -5427,10 +5592,6 @@ dm.test(e_mod[, h], e_ref[, h], h = h, power = 1, varestimator = "bartlett")</co
         const der = 'rgb(1,40,32)';
         const centro = datos.escala === 'divergente'
           ? ', rgb(248,250,252) 50%' : '';
-        const tope = Math.max(Math.abs(datos.minimo), Math.abs(datos.maximo));
-        const extremos = datos.escala === 'divergente'
-          ? [(-tope).toFixed(dec), tope.toFixed(dec)]
-          : [datos.minimo.toFixed(dec), datos.maximo.toFixed(dec)];
         leyenda.innerHTML = '<span>' + extremos[0] + '</span>'
           + '<span class="mapa-estacional-barra" aria-hidden="true" style="background:linear-gradient(90deg,'
           + izq + centro + ',' + der + ')"></span>'
@@ -5439,6 +5600,169 @@ dm.test(e_mod[, h], e_ref[, h], h = h, power = 1, varestimator = "bartlett")</co
 
       const nota = raiz.querySelector('.mapa-estacional-nota');
       if (nota && datos.nota !== undefined) nota.innerHTML = datos.nota;
+
+      prepararLecturaMapa(raiz);
+      ajustarMapaEstacional(raiz);
+    }
+
+    // Los doce meses se ven siempre, sin desplazar la rejilla: lo que el mapa
+    // enseña son las bandas verticales, y con la rejilla cortada en junio (a
+    // 800 y a 375 px) la mitad quedaba fuera sin ningún aviso. Si la cifra no
+    // cabe en su celda, el mapa se queda con el color, y hay dos maneras de
+    // leer los valores:
+    //   · la línea del valor, bajo la rejilla, da el de la celda que se toca,
+    //     se señala o se recorre con las flechas (la rejilla es una sola
+    //     parada del tabulador);
+    //   · el botón «Ver las cifras» pasa a la rejilla con cifras, más ancha
+    //     que su caja y desplazable, con un degradado y una flecha en el
+    //     borde derecho mientras quedan meses por ver; pulsado otra vez, vuelve.
+    // Los meses de la cabecera pasan a su inicial si la abreviatura no cabe.
+    function ajustarMapaEstacional(raiz) {
+      const rejilla = raiz.querySelector('.mapa-estacional-rejilla');
+      if (!rejilla || !rejilla.clientWidth) return;
+      raiz.classList.remove('mapa-estacional--sin-cifras', 'mapa-estacional--desplazable');
+      rejilla.removeAttribute('tabindex');
+      const meses = Array.from(rejilla.querySelectorAll('.mapa-estacional-mes'));
+      meses.forEach((s, j) => { s.textContent = MESES_CORTOS[j]; });
+      const cifras = Array.from(rejilla.querySelectorAll('.mapa-estacional-celda > span'));
+      const noCabe = cifras.some(s => s.offsetWidth > s.parentNode.clientWidth - 2);
+      const boton = raiz.querySelector('.mapa-estacional-boton');
+      if (boton) boton.hidden = !noCabe;
+      if (noCabe && raiz.dataset.verCifras === 'si') {
+        const ancho = Math.max.apply(null, cifras.map(s => s.offsetWidth));
+        rejilla.style.setProperty('--mapa-celda-min', Math.ceil(ancho + 8) + 'px');
+        raiz.classList.add('mapa-estacional--desplazable');
+      } else if (noCabe) {
+        raiz.classList.add('mapa-estacional--sin-cifras');
+      }
+      if (noCabe) rejilla.setAttribute('tabindex', '0');
+      if (boton) boton.setAttribute('aria-pressed', raiz.dataset.verCifras === 'si' ? 'true' : 'false');
+      if (meses.some(s => s.offsetWidth > s.parentNode.clientWidth)) {
+        meses.forEach((s, j) => { s.textContent = MESES_CORTOS[j].charAt(0); });
+      }
+      senalarDesplazamiento(raiz);
+    }
+
+    // El degradado y la flecha del borde derecho: solo con la rejilla más
+    // ancha que su caja y mientras queden meses a la derecha.
+    function senalarDesplazamiento(raiz) {
+      const marco = raiz.querySelector('.mapa-estacional-marco');
+      const mas = raiz.querySelector('.mapa-estacional-mas');
+      if (!marco || !mas) return;
+      mas.hidden = !(raiz.classList.contains('mapa-estacional--desplazable')
+        && marco.scrollLeft + marco.clientWidth < marco.scrollWidth - 2);
+    }
+
+    // Línea del valor señalado, botón de las cifras, señal de desplazamiento,
+    // teclado y el observador que reajusta el mapa si cambia su ancho. Se
+    // montan una vez por mapa.
+    function prepararLecturaMapa(raiz) {
+      if (raiz.dataset.mapaListo) return;
+      raiz.dataset.mapaListo = 'si';
+      const marco = raiz.querySelector('.mapa-estacional-marco');
+      const rejilla = raiz.querySelector('.mapa-estacional-rejilla');
+      if (!marco || !rejilla) return;
+
+      const ventana = document.createElement('div');
+      ventana.className = 'mapa-estacional-ventana';
+      marco.parentNode.insertBefore(ventana, marco);
+      ventana.appendChild(marco);
+      const mas = document.createElement('div');
+      mas.className = 'mapa-estacional-mas';
+      mas.setAttribute('aria-hidden', 'true');
+      mas.textContent = '›';
+      mas.hidden = true;
+      ventana.appendChild(mas);
+      marco.addEventListener('scroll', () => senalarDesplazamiento(raiz));
+
+      const valor = document.createElement('p');
+      valor.className = 'mapa-estacional-valor';
+      valor.setAttribute('aria-hidden', 'true');
+      const aviso = 'A este ancho las celdas llevan solo el color: toca o señala una, o recórrelas con las flechas, para leer su valor.';
+      valor.textContent = aviso;
+      ventana.insertAdjacentElement('afterend', valor);
+
+      const boton = document.createElement('button');
+      boton.type = 'button';
+      boton.className = 'mapa-estacional-boton';
+      boton.textContent = 'Ver las cifras';
+      boton.setAttribute('aria-pressed', 'false');
+      boton.hidden = true;
+      valor.insertAdjacentElement('afterend', boton);
+      boton.addEventListener('click', () => {
+        raiz.dataset.verCifras = raiz.dataset.verCifras === 'si' ? 'no' : 'si';
+        valor.textContent = aviso;
+        ajustarMapaEstacional(raiz);
+      });
+
+      // Celda señalada: la que se toca, se señala o se alcanza con las flechas.
+      const senalar = celda => {
+        raiz.querySelectorAll('.mapa-estacional-activa').forEach(c => c.classList.remove('mapa-estacional-activa'));
+        if (!celda) return;
+        celda.classList.add('mapa-estacional-activa');
+        valor.textContent = celda.getAttribute('aria-label');
+        if (raiz.classList.contains('mapa-estacional--desplazable')) {
+          // Que la celda señalada quede dentro de la caja desplazable.
+          const izq = celda.offsetLeft, der = izq + celda.offsetWidth;
+          if (izq < marco.scrollLeft + 40) marco.scrollLeft = Math.max(0, izq - 48);
+          else if (der > marco.scrollLeft + marco.clientWidth) marco.scrollLeft = der - marco.clientWidth + 4;
+        }
+      };
+      const muestra = ev => {
+        const celda = ev.target.closest && ev.target.closest('.mapa-estacional-celda');
+        if (celda && raiz.contains(celda)) valor.textContent = celda.getAttribute('aria-label');
+      };
+      raiz.addEventListener('pointerover', muestra);
+      // Con las cifras a la vista, un clic no deja marcada la celda.
+      raiz.addEventListener('click', ev => {
+        const celda = ev.target.closest && ev.target.closest('.mapa-estacional-celda');
+        if (celda && raiz.contains(celda) && rejilla.hasAttribute('tabindex')) senalar(celda);
+      });
+
+      // Teclado: con la rejilla enfocada, las flechas mueven la celda
+      // señalada; Inicio y Fin van al primer y al último mes de la fila.
+      const filas = () => Array.from(rejilla.querySelectorAll('.mapa-estacional-fila'))
+        .map(f => Array.from(f.querySelectorAll('.mapa-estacional-celda'))).filter(f => f.length);
+      const posicion = () => {
+        const activa = rejilla.querySelector('.mapa-estacional-activa');
+        const f = filas();
+        for (let i = 0; i < f.length; i++) {
+          const j = f[i].indexOf(activa);
+          if (j >= 0) return [i, j];
+        }
+        return null;
+      };
+      rejilla.addEventListener('focus', () => {
+        if (!rejilla.hasAttribute('tabindex')) return;
+        if (!posicion()) { const f = filas(); if (f.length) senalar(f[0][0]); }
+        else valor.textContent = rejilla.querySelector('.mapa-estacional-activa').getAttribute('aria-label');
+      });
+      rejilla.addEventListener('blur', () => senalar(null));
+      rejilla.addEventListener('keydown', ev => {
+        if (!rejilla.hasAttribute('tabindex')) return;
+        const f = filas();
+        if (!f.length) return;
+        let [i, j] = posicion() || [0, 0];
+        const paso = { ArrowRight: [0, 1], ArrowLeft: [0, -1], ArrowDown: [1, 0], ArrowUp: [-1, 0] }[ev.key];
+        if (paso) { i += paso[0]; j += paso[1]; }
+        else if (ev.key === 'Home') j = 0;
+        else if (ev.key === 'End') j = f[i].length - 1;
+        else return;
+        ev.preventDefault();
+        i = Math.max(0, Math.min(f.length - 1, i));
+        j = Math.max(0, Math.min(f[i].length - 1, j));
+        senalar(f[i][j]);
+      });
+
+      if (typeof ResizeObserver === 'function') {
+        let ancho = ventana.clientWidth;
+        new ResizeObserver(() => {
+          if (ventana.clientWidth === ancho) return;
+          ancho = ventana.clientWidth;
+          valor.textContent = aviso;
+          ajustarMapaEstacional(raiz);
+        }).observe(ventana);
+      }
     }
 
     // Construye la matriz año x mes que espera pintarMapaEstacional a partir de

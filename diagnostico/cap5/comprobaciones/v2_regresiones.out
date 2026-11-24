@@ -1,0 +1,38 @@
+<pre> en HEAD: 29 · en el árbol: 29 · idénticos y en orden: True
+módulos HEAD: 12 · árbol: 12 · mismo orden y títulos: True
+    1 5.1 La firma de la estacionalidad  / The seasonal signature
+    2 5.2 Notación SARIMA y el polinomio multiplicativo  / SARIMA notation and the mul
+    3 5.3 Diferenciación estacional: cuántas y en qué orden  / Seasonal differencing: 
+    4 5.4 Identificar los órdenes estacionales  / Identifying the seasonal orders
+    5 5.5 El modelo  airline   / The airline model
+    6 5.6 Estimar, comparar y diagnosticar  / Estimation, comparison and diagnostics
+    7 5.7 Caso completo: $\log(\text{AirPassengers})$  / A full case study
+    8 5.8 Segundo caso y contraejemplo  / A second case, and a counterexample
+    9 5.9 Regresores de calendario y SARIMAX  / Calendar regressors and SARIMAX
+    10 5.10 Cuando $m$ es grande: Fourier y STL  / When $m$ is large: Fourier terms and
+    11 5.11 Panorama comparativo y cierre  / Comparative overview and wrap-up
+    12 5.12 Simulacro del quiz  / Mock quiz
+
+quiz cap5 en la fuente: 199 → 206 líneas; líneas cambiadas:
+    +        alto: 250,
+    +        // Lo que se ve, no lo que hay que deducir: los valores de las barras,
+    +        // calculados igual que el dibujo.
+    +        descripcionGrafico: (function () {
+    +          const acf = acfQuiz();
+    +          const picos = acf.map((v, i) => (Math.abs(v) >= 0.005 ? i + 1 : 0)).filter(k => k);
+    +          return 'Función de autocorrelación teórica, rezagos 1 a ' + acf.length + ': ' +
+    +            picos.map(k => `rezago ${k}, ${cifra(acf[k - 1], 2)}`).join('; ') +
+    +            `; los otros ${acf.length - picos.length} rezagos valen 0.00.`;
+    +        })(),
+    -          const ar = new Array(12).fill(0); ar[11] = 0.7;
+    -          const psi = pesosPsi(ar, [], 1500);
+    -          const acf = acfDesdePsi(psi, 36);
+    -          return crearGraficoBarras(canvas, etiquetasRezago(36), acf, {
+    +          return crearGraficoBarras(canvas, etiquetasRezago(36), acfQuiz(), {
+
+simulacro.js idéntico a HEAD: True
+ensamblado/cap5/templates_10_11.html: <pre> idénticos: True
+ensamblado/cap5/templates_12.html: <pre> idénticos: True
+ensamblado/cap5/templates_1_3.html: <pre> idénticos: True
+ensamblado/cap5/templates_4_6.html: <pre> idénticos: True
+ensamblado/cap5/templates_7_9.html: <pre> idénticos: True

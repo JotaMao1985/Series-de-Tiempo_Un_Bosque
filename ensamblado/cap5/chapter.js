@@ -54,11 +54,16 @@
     // Punto decimal, como la prosa. Los miles se agrupan con un espacio fino
     // solo desde cinco cifras enteras (80 055.01); con cuatro van juntos
     // (1267.51), como los escribe el texto.
+    //
+    // Signo menos tipográfico (−0.42), como en las lecturas y en los ejes: la
+    // tabla de la receta del Módulo 2 escribía «× -0.42 = -6.30» debajo de una
+    // lectura que daba «−0.42». Un cero redondeado no lleva signo.
     function fmt(x, d = 2) {
       if (x === null || x === undefined || !Number.isFinite(Number(x))) return '—';
-      return agrupaMiles(Number(x).toLocaleString('en-US', {
+      const texto = agrupaMiles(Number(x).toLocaleString('en-US', {
         minimumFractionDigits: d, maximumFractionDigits: d
       }));
+      return /^-0(\.0+)?$/.test(texto) ? texto.slice(1) : texto.replace(/^-/, '−');
     }
 
     // Convierte los miles de una cifra ya formateada en en-US («28,637.95»)
@@ -107,6 +112,85 @@
         borderWidth: 1.8,
         pointRadius: 0
       }], opciones);
+    }
+
+    // Escalas completas de un gráfico de línea con título en el eje y (del
+    // capítulo 4). crearGraficoLinea fusiona sus opciones con Object.assign,
+    // que es superficial: quien pasa `scales` reemplaza x e y enteras, y con
+    // ellas los ayudantes del armazón. Aquí van los dos ejes con la tipografía
+    // de siempre y los ayudantes puestos otra vez: el x con marcasLegibles() y
+    // rotuloLegible() (en las fechas AAAA-MM, los eneros con su año, sin que
+    // se pisen) y el y con marcasVerticales() y rotuloVertical() (signo menos
+    // tipográfico) y la línea del 0 más oscura. `x` y `y` se mezclan con sus
+    // ejes, y sus `ticks`, clave a clave.
+    function escalasLinea(tituloY, x = {}, y = {}) {
+      const ticksX = Object.assign({
+        font: { family: 'Montserrat', size: 11 }, maxTicksLimit: 12, maxRotation: 0,
+        callback: rotuloLegible
+      }, x.ticks);
+      const ticksY = Object.assign({
+        font: { family: 'Fira Code', size: 11 }, autoSkip: false, callback: rotuloVertical
+      }, y.ticks);
+      return {
+        x: Object.assign({
+          grid: { display: false },
+          afterBuildTicks: eje => { marcasLegibles(eje, { maxMarcas: ticksX.maxTicksLimit }); }
+        }, x, { ticks: ticksX }),
+        y: Object.assign({
+          title: { display: !!tituloY, text: tituloY, font: { family: 'Montserrat', size: 11 } },
+          grid: { color: rejillaConCero },
+          afterBuildTicks: marcasVerticales
+        }, y, { ticks: ticksY })
+      };
+    }
+
+    // Marcos y leyendas a la medida del ancho (del capítulo 4). Con el alto
+    // fijo del HTML, la leyenda y los ejes dejaban áreas de dibujo de 85 a
+    // 110 px (M4, M5, M6, M8 y la comparativa del M11). Por debajo de 420 px
+    // la leyenda se compacta y el marco toma su alto de teléfono; onResize lo
+    // reajusta si cambia el ancho.
+    const ESTRECHO = 420;
+    function compactar(grafico, ancho, altos) {
+      const chico = ancho < ESTRECHO;
+      Object.assign(grafico.options.plugins.legend.labels, {
+        font: { family: 'Montserrat', size: chico ? 10 : 12 },
+        boxWidth: chico ? 12 : 24,
+        padding: chico ? 6 : 10
+      });
+      if (altos) grafico.canvas.parentNode.style.height = chico ? altos.estrecho : altos.ancho;
+    }
+
+    function barrasCompactas(g, altos) {
+      g.options.onResize = (gr, t) => compactar(gr, t.width, altos);
+      compactar(g, g.width, altos);
+      g.update('none');
+      return g;
+    }
+
+    function lineaCompacta(g, altos) { return barrasCompactas(g, altos); }
+
+    // `aria-label` de un lienzo, con el signo menos tipográfico. Se llama en
+    // cada pintar(): el lienzo dice lo que dibuja en ese momento, no lo que
+    // dibujaba al abrir el módulo.
+    function ariaLienzo(canvas, texto) {
+      canvas.setAttribute('aria-label', conSignoMenos(texto));
+    }
+
+    // Un número en subíndice (ψ₃₅), para los rótulos que se componen en JS.
+    function sub(n) {
+      return String(n).replace(/\d/g, c => '₀₁₂₃₄₅₆₇₈₉'[Number(c)]);
+    }
+
+    // Mínimo y máximo de una serie, para los `aria-label`.
+    function rangoDe(x) {
+      const v = x.filter(z => z !== null && z !== undefined && Number.isFinite(z));
+      return [Math.min(...v), Math.max(...v)];
+    }
+
+    // Rezagos (1, 2…) fuera de la banda ±b, separados en múltiplos de m y resto.
+    function fueraDeBanda(acf, b, m = M_EST) {
+      const fuera = acf.map((r, i) => (Math.abs(r) > b ? i + 1 : 0)).filter(k => k);
+      return { estacionales: fuera.filter(k => k % m === 0), otros: fuera.filter(k => k % m !== 0) };
     }
 
     // ---- Álgebra de polinomios estacionales --------------------------------
@@ -184,11 +268,12 @@
       let grafico = null;
 
       const DIFERENCIAS = {
-        ninguna: { texto: 'Sin diferenciar', d: 0, D: 0 },
-        d1: { texto: 'Regular ∇', d: 1, D: 0 },
-        D1: { texto: 'Estacional ∇₁₂', d: 0, D: 1 },
-        d1D1: { texto: 'Ambas: ∇ ∇₁₂', d: 1, D: 1 }
+        ninguna: { texto: 'Sin diferenciar', d: 0, D: 0, aria: 'sin diferenciar' },
+        d1: { texto: 'Regular ∇', d: 1, D: 0, aria: 'con la diferencia regular ∇' },
+        D1: { texto: 'Estacional ∇₁₂', d: 0, D: 1, aria: 'con la diferencia estacional ∇₁₂' },
+        d1D1: { texto: 'Ambas: ∇ ∇₁₂', d: 1, D: 1, aria: 'con las dos diferencias, ∇ ∇₁₂' }
       };
+      const ALTOS = { estrecho: '260px', ancho: '250px' };
 
       function pintar() {
         const info = SERIES_MAPA[params.serie];
@@ -207,12 +292,14 @@
         const diferenciada = t.d + t.D > 0;
         const decimales = params.log ? (diferenciada ? 3 : 2) : (diferenciada ? 1 : 0);
         const etiquetaTrans = (params.log ? 'log · ' : '') + t.texto;
+        const queSerie = info.nombre + (params.log ? ' en logaritmos' : '') + ', ' + t.aria;
         pintarMapaEstacional(mapa, Object.assign(
           matrizMesAnio(y, anio, mes),
           {
             escala: diferenciada ? 'divergente' : 'secuencial',
             decimales: decimales,
             unidad: '',
+            descripcion: 'Mapa mes × año de ' + queSerie,
             nota: `<strong>${info.nombre}</strong> · ${etiquetaTrans}. ` +
               (diferenciada
                 ? 'Escala divergente centrada en cero: naranja por debajo, verde por encima.'
@@ -222,23 +309,33 @@
         const maxLag = Math.min(DATOS_CAP5.max_rezago, y.length - 2);
         const acf = calcularACF(y, maxLag);
         if (grafico) grafico.destroy();
-        grafico = crearGraficoBarras(canvas, etiquetasRezago(maxLag), acf, {
+        grafico = barrasCompactas(crearGraficoBarras(canvas, etiquetasRezago(maxLag), acf, {
           etiqueta: 'ACF muestral',
           lineas: lineasBanda(y.length),
           tituloX: 'Rezago'
-        });
+        }), ALTOS);
 
         const b = banda(y.length);
-        const fuera = [12, 24, 36].filter(k => k <= maxLag && Math.abs(acf[k - 1]) > b);
+        ariaLienzo(canvas, descripcionCorrelograma('ACF muestral', queSerie, acf, b));
+        // «Fuera de banda» separa los múltiplos de 12 del resto: el renglón solo
+        // miraba 12, 24 y 36 y se leía como si no hubiera más barras fuera. La
+        // lectura da las cifras; qué significa un ρ̂₁₂ negativo tras ∇₁₂ lo
+        // discute la prosa (Módulos 3, 4 y 7).
+        const fuera = fueraDeBanda(acf, b);
         actualizarLectura(lectura, [
           { etiqueta: 'n', valor: y.length },
           { etiqueta: 'ρ̂₁', valor: fmt(acf[0], 4) },
           { etiqueta: 'ρ̂₁₂', valor: maxLag >= 12 ? fmt(acf[11], 4) : '—' },
           { etiqueta: 'ρ̂₂₄', valor: maxLag >= 24 ? fmt(acf[23], 4) : '—' },
+          { etiqueta: 'ρ̂₃₆', valor: maxLag >= 36 ? fmt(acf[35], 4) : '—' },
           { etiqueta: 'banda', valor: '±' + fmt(b, 4) },
           {
-            etiqueta: 'rezagos estacionales fuera de banda',
-            valor: fuera.length ? fuera.join(', ') : 'ninguno'
+            etiqueta: 'múltiplos de 12 fuera de banda',
+            valor: fuera.estacionales.length ? fuera.estacionales.join(', ') : 'ninguno'
+          },
+          {
+            etiqueta: 'otros rezagos fuera de banda',
+            valor: fuera.otros.length ? fuera.otros.join(', ') : 'ninguno'
           }
         ]);
       }
@@ -283,8 +380,14 @@
         if (Phi === 0) return 'AR(1) del Capítulo 3: sin satélite';
         if (phi === 0) return 'solo el mismo mes del año anterior: sin satélite';
         if (phi === 1 && Phi === 1) return '∇∇₁₂ del Módulo 3: pesos +1, +1 y −1';
-        if (Math.abs(phi) === 1 || Math.abs(Phi) === 1) {
-          return 'un factor vale ±1: es una diferencia y el proceso ya no es estacionario';
+        // Solo un factor que vale +1 es una diferencia: (1 − B) o (1 − B¹²).
+        // Con −1 el factor es (1 + B) o (1 + B¹²), que tiene sus raíces sobre el
+        // círculo unitario sin ser una diferencia.
+        if (phi === 1 || Phi === 1) {
+          return 'un factor vale 1: es una diferencia y el proceso ya no es estacionario';
+        }
+        if (phi === -1 || Phi === -1) {
+          return 'un factor vale −1: no es una diferencia, pero su raíz cae sobre el círculo unitario y el proceso ya no es estacionario';
         }
         return 'SARIMA(1,0,0)(1,0,0)₁₂';
       }
@@ -339,6 +442,13 @@
       const controles = raiz.querySelector('.simulador-controles');
       const lectura = raiz.querySelector('.simulador-lectura');
       const canvas = raiz.querySelector('canvas');
+      const ALTOS = { estrecho: '260px', ancho: '250px' };
+      // Con p = d = P = D = 0 el polinomio AR es 1 y no hay barras que dibujar:
+      // el lienzo quedaba en blanco, sin ejes ni explicación.
+      const vacio = document.createElement('p');
+      vacio.className = 'grafico-etiqueta';
+      vacio.hidden = true;
+      canvas.parentNode.insertAdjacentElement('afterend', vacio);
       let grafico = null;
 
       function pintar() {
@@ -353,18 +463,40 @@
 
         const coefs = poli.slice(1).map(v => -v);   // lado derecho de la ecuación
         const etiquetas = coefs.map((_, i) => String(i + 1));
+        const nulo = v => Math.abs(v) <= 1e-12;
         if (grafico) grafico.destroy();
-        grafico = crearGraficoBarras(canvas, etiquetas, coefs, {
-          etiqueta: 'Coeficiente del rezago',
-          tituloX: 'Rezago',
-          min: Math.min(-1.2, ...coefs) - 0.1,
-          max: Math.max(1.2, ...coefs) + 0.1
-        });
+        grafico = barrasCompactas(crearGraficoBarras(canvas, etiquetas,
+          // Los ceros exactos no llevan barra, y las demás miden al menos 3 px:
+          // con todos los órdenes en 2 la escala llega a ±10 y los coeficientes
+          // pequeños de los rezagos 37–52 no se veían (la lectura contaba 24
+          // no nulos y el dibujo enseñaba unos 14).
+          coefs.map(v => (nulo(v) ? null : v)), {
+            etiqueta: 'Coeficiente del rezago',
+            tituloX: 'Rezago',
+            min: Math.min(-1.2, ...coefs) - 0.1,
+            max: Math.max(1.2, ...coefs) + 0.1
+          }), ALTOS);
+        grafico.data.datasets[0].minBarLength = 3;
+        grafico.update('none');
 
         const libres = params.p + params.q + params.P + params.Q;
         const rezagoMax = coefs.length;
-        const noNulos = coefs.filter(v => Math.abs(v) > 1e-12).length;
+        const noNulos = coefs.filter(v => !nulo(v)).length;
         const perdidas = params.d + params.D * M_EST;
+        const modelo = `(${params.p},${params.d},${params.q})(${params.P},${params.D},${params.Q})₁₂`;
+        vacio.hidden = rezagoMax > 0;
+        vacio.textContent = rezagoMax > 0 ? '' :
+          'Con p = d = P = D = 0 el polinomio autorregresivo es 1: no toca ningún rezago y no hay barras que dibujar.';
+        if (rezagoMax === 0) {
+          ariaLienzo(canvas, `Polinomio autorregresivo del SARIMA${modelo}: vale 1, sin ningún rezago`);
+        } else {
+          const iMax = coefs.reduce((m, v, i) => (Math.abs(v) > Math.abs(coefs[m]) ? i : m), 0);
+          const cuales = coefs.map((v, i) => (nulo(v) ? 0 : i + 1)).filter(k => k);
+          ariaLienzo(canvas, `Coeficientes del polinomio autorregresivo completo del SARIMA${modelo}, ` +
+            `rezagos 1 a ${rezagoMax}: ${noNulos} no nulos` +
+            (noNulos <= 12 ? ` (rezagos ${cuales.join(', ')})` : '') +
+            `; el mayor en valor absoluto, ${cifra(coefs[iMax], 2)}, en el rezago ${iMax + 1}`);
+        }
         actualizarLectura(lectura, [
           { etiqueta: 'modelo', valor: `(${params.p},${params.d},${params.q})(${params.P},${params.D},${params.Q})[12]` },
           { etiqueta: 'parámetros libres', valor: libres },
@@ -442,6 +574,8 @@
           escala: diferenciada ? 'divergente' : 'secuencial',
           decimales: 0,
           unidad: '',
+          descripcion: `La tienda inventada (${ESCENARIOS[params.escenario].toLowerCase()}), mes × año; ` +
+            `se resta ${r.texto.charAt(0).toLowerCase() + r.texto.slice(1)}`,
           nota: `<strong>Tienda inventada</strong> · ${ESCENARIOS[params.escenario]} · ${r.texto}. ` +
             (diferenciada
               ? 'Escala divergente centrada en cero: naranja por debajo, verde por encima.'
@@ -490,21 +624,31 @@
       const controles = raiz.querySelector('.simulador-controles');
       const lectura = raiz.querySelector('.simulador-lectura');
       const canvas = raiz.querySelectorAll('canvas');
+      const ALTOS_SERIE = { estrecho: '240px', ancho: '240px' };
+      const ALTOS_ACF = { estrecho: '260px', ancho: '250px' };
       let serie = null, correlograma = null;
 
       function pintar() {
         const clave = `d${params.regular ? 1 : 0}_D${params.estacional ? 1 : 0}`;
         const c = AP.combinaciones[clave];
         if (serie) serie.destroy();
-        serie = lineaSimple(canvas[0], c.fechas, c.valores, c.etiqueta,
-          COLORES_GRAFICO.primario, { plugins: { legend: { display: true } } });
+        serie = lineaCompacta(lineaSimple(canvas[0], c.fechas, c.valores, c.etiqueta,
+          COLORES_GRAFICO.primario, { plugins: { legend: { display: true } } }), ALTOS_SERIE);
 
         if (correlograma) correlograma.destroy();
-        correlograma = crearGraficoBarras(canvas[1], REZAGOS, c.acf, {
+        correlograma = barrasCompactas(crearGraficoBarras(canvas[1], REZAGOS, c.acf, {
           etiqueta: 'ACF muestral',
           lineas: lineasBanda(c.n),
           tituloX: 'Rezago'
-        });
+        }), ALTOS_ACF);
+
+        // Lo que se dibuja, con su operador: la etiqueta de los datos («Ambas
+        // diferencias») no dice de qué serie ni con qué diferencias.
+        const nombre = (c.d ? '∇ ' : '') + (c.D ? '∇₁₂ ' : '') + 'log(AirPassengers)';
+        const [lo, hi] = rangoDe(c.valores);
+        ariaLienzo(canvas[0], `Serie ${nombre}, de ${c.fechas[0]} a ${c.fechas[c.fechas.length - 1]} ` +
+          `(n = ${c.n}): valores entre ${cifra(lo, 3)} y ${cifra(hi, 3)}`);
+        ariaLienzo(canvas[1], descripcionCorrelograma('ACF muestral', nombre, c.acf, banda(c.n)));
 
         actualizarLectura(lectura, [
           { etiqueta: 'd', valor: c.d },
@@ -533,6 +677,7 @@
       const controles = raiz.querySelector('.simulador-controles');
       const lectura = raiz.querySelector('.simulador-lectura');
       const canvas = raiz.querySelector('canvas');
+      const ALTOS = { estrecho: '240px', ancho: '240px' };
       let grafico = null;
 
       function pintar() {
@@ -545,10 +690,14 @@
           SERIES_CAP5.airpassengers.inicio[0] + Math.floor(perdidas / 12),
           ((SERIES_CAP5.airpassengers.inicio[1] - 1 + perdidas) % 12) + 1, y.length);
 
+        // El exponente como en la prosa: ∇₁₂² y no «∇₁₂^2»; con D = 0 no hay ∇₁₂.
+        const nombre = ['∇ log(AirPassengers)', '∇ ∇₁₂ log(AirPassengers)', '∇ ∇₁₂² log(AirPassengers)'][D];
         if (grafico) grafico.destroy();
-        grafico = lineaSimple(canvas, etiquetas, y,
-          `∇ ∇₁₂^${D} log(AirPassengers)`, COLORES_GRAFICO.primario,
-          { plugins: { legend: { display: true } } });
+        grafico = lineaCompacta(lineaSimple(canvas, etiquetas, y, nombre, COLORES_GRAFICO.primario,
+          { plugins: { legend: { display: true } } }), ALTOS);
+        const [lo, hi] = rangoDe(y);
+        ariaLienzo(canvas, `Serie ${nombre}, de ${etiquetas[0]} a ${etiquetas[etiquetas.length - 1]} ` +
+          `(n = ${y.length}): valores entre ${cifra(lo, 3)} y ${cifra(hi, 3)}`);
 
         // La firma se lee en la escala de Θ: −1 dentro de Θ̂ ± 1.96·e.e. No en
         // |raíz MA|⁻¹ = |Θ̂|^(1/12), que se acerca a 1 con casi cualquier Θ.
@@ -580,7 +729,20 @@
       const controles = raiz.querySelector('.simulador-controles');
       const lectura = raiz.querySelector('.simulador-lectura');
       const canvas = raiz.querySelectorAll('canvas');
+      const ALTOS = { estrecho: '260px', ancho: '250px' };
       let gAcf = null, gPacf = null;
+
+      // Lo que dibuja un correlograma teórico, para su `aria-label`: los
+      // valores de los rezagos que la intro manda mirar y cuántos no son cero
+      // a la vista (|valor| ≥ 0.05).
+      function describeTeorica(tipo, v) {
+        const rezagos = [1, 11, 12, 13, 24, 36];
+        const visibles = v.filter(r => Math.abs(r) >= 0.05).length;
+        return `${tipo} del modelo con φ₁ = ${cifra(params.phi, 2)}, θ₁ = ${cifra(params.theta, 2)}, ` +
+          `Φ₁ = ${cifra(params.Phi, 2)} y Θ₁ = ${cifra(params.Theta, 2)}, rezagos 1 a ${v.length}: ` +
+          rezagos.map(k => `rezago ${k}, ${cifra(v[k - 1], 3)}`).join('; ') +
+          `; ${visibles} de ${v.length} barras miden 0.05 o más en valor absoluto`;
+      }
 
       function pintar() {
         const polAr = multPoli([1, -params.phi], poliEstacional(-params.Phi));
@@ -592,11 +754,13 @@
         const pacf = calcularPACF(acf, DATOS_CAP5.max_rezago);
 
         if (gAcf) gAcf.destroy();
-        gAcf = crearGraficoBarras(canvas[0], REZAGOS, acf,
-          { etiqueta: 'ACF teórica', tituloX: 'Rezago' });
+        gAcf = barrasCompactas(crearGraficoBarras(canvas[0], REZAGOS, acf,
+          { etiqueta: 'ACF teórica', tituloX: 'Rezago' }), ALTOS);
         if (gPacf) gPacf.destroy();
-        gPacf = crearGraficoBarras(canvas[1], REZAGOS, pacf,
-          { etiqueta: 'PACF teórica', color: COLORES_GRAFICO.secundario, tituloX: 'Rezago' });
+        gPacf = barrasCompactas(crearGraficoBarras(canvas[1], REZAGOS, pacf,
+          { etiqueta: 'PACF teórica', color: COLORES_GRAFICO.secundario, tituloX: 'Rezago' }), ALTOS);
+        ariaLienzo(canvas[0], describeTeorica('ACF teórica', acf));
+        ariaLienzo(canvas[1], describeTeorica('PACF teórica', pacf));
 
         const satelite = (Math.abs(acf[10]) + Math.abs(acf[12])) / 2;
         actualizarLectura(lectura, [
@@ -631,6 +795,8 @@
       const canvas = raiz.querySelectorAll('canvas');
       const sigma2 = AP.airline.sigma2;
       const H = 36;
+      const ALTOS_PSI = { estrecho: '260px', ancho: '250px' };
+      const ALTOS_SIGMA = { estrecho: '250px', ancho: '240px' };
       let gPsi = null, gSigma = null;
 
       function pintar() {
@@ -649,13 +815,24 @@
 
         const etiquetas = Array.from({ length: H }, (_, i) => String(i));
         if (gPsi) gPsi.destroy();
-        gPsi = crearGraficoBarras(canvas[0], etiquetas, psi.slice(0, H), {
+        gPsi = barrasCompactas(crearGraficoBarras(canvas[0], etiquetas, psi.slice(0, H), {
           etiqueta: 'ψⱼ', tituloX: 'j', min: -0.2, max: 1.4
-        });
+        }), ALTOS_PSI);
         if (gSigma) gSigma.destroy();
-        gSigma = lineaSimple(canvas[1], Array.from({ length: H }, (_, i) => String(i + 1)),
+        // El eje de σₕ arranca en 0: reescalado a su propio rango, con
+        // θ = Θ = −0.95 (σₕ de 0.0370 a 0.0390) se dibujaba como una rampa tan
+        // empinada como la del estado inicial, y el «se aplanan» no se veía.
+        gSigma = lineaCompacta(lineaSimple(canvas[1], Array.from({ length: H }, (_, i) => String(i + 1)),
           sigmaH, 'σₕ', COLORES_GRAFICO.secundario,
-          { plugins: { legend: { display: true } } });
+          { plugins: { legend: { display: true } },
+            scales: escalasLinea('', {}, { min: 0 }) }), ALTOS_SIGMA);
+        ariaLienzo(canvas[0], `Pesos ψ₀ a ψ${sub(H - 1)} del airline con θ = ${cifra(params.theta, 2)} y ` +
+          `Θ = ${cifra(params.Theta, 2)}: ψ₁ = ${cifra(psi[1], 3)}, ψ₁₁ = ${cifra(psi[11], 3)}, ` +
+          `ψ₁₂ = ${cifra(psi[12], 3)} (salto de ${cifra(psi[12] - psi[11], 3)}), ψ₂₄ = ${cifra(psi[24], 3)} ` +
+          `y ψ${sub(H - 1)} = ${cifra(psi[H - 1], 3)}`);
+        ariaLienzo(canvas[1], `Desviación del error de pronóstico σₕ, de h = 1 a ${H}, sobre el logaritmo, ` +
+          `con el eje desde 0: σ₁ = ${cifra(sigmaH[0], 4)}, σ₁₂ = ${cifra(sigmaH[11], 4)}, ` +
+          `σ₂₄ = ${cifra(sigmaH[23], 4)} y σ${sub(H)} = ${cifra(sigmaH[H - 1], 4)}`);
 
         actualizarLectura(lectura, [
           { etiqueta: 'ψ₁ = 1+θ', valor: fmt(psi[1], 4) },
@@ -687,6 +864,7 @@
       const lectura = raiz.querySelector('.simulador-lectura');
       const canvas = raiz.querySelector('canvas');
       const mejorAicc = AP.rejilla[AP.mejores_aicc[0]].aicc;
+      const ALTOS = { estrecho: '260px', ancho: '250px' };
       let grafico = null;
 
       function pintar() {
@@ -697,11 +875,13 @@
           return;
         }
         if (grafico) grafico.destroy();
-        grafico = crearGraficoBarras(canvas, REZAGOS24, m.acf, {
+        grafico = barrasCompactas(crearGraficoBarras(canvas, REZAGOS24, m.acf, {
           etiqueta: 'ACF de los residuales',
           lineas: lineasBanda(144),
           tituloX: 'Rezago'
-        });
+        }), ALTOS);
+        ariaLienzo(canvas, descripcionCorrelograma('ACF', 'los residuales del SARIMA' +
+          clave.replace('[12]', '₁₂'), m.acf, banda(144)));
 
         const esMejor = clave === AP.mejores_aicc[0];
         actualizarLectura(lectura, [
@@ -743,6 +923,7 @@
       const lectura = raiz.querySelector('.simulador-lectura');
       const canvas = raiz.querySelector('canvas');
       const pron = AP.pronostico;
+      const ALTOS = { estrecho: '300px', ancho: '280px' };
       let grafico = null;
 
       function pintar() {
@@ -763,7 +944,7 @@
         const datos = campo => union.concat(esc[campo].slice(0, h));
 
         if (grafico) grafico.destroy();
-        grafico = crearGraficoLinea(canvas, etiquetas, [
+        grafico = lineaCompacta(crearGraficoLinea(canvas, etiquetas, [
           { label: 'Observado', data: serie, borderColor: COLORES_GRAFICO.primario, borderWidth: 1.8, pointRadius: 0 },
           { label: 'IC 95 %', data: datos('hi95'), borderColor: 'rgba(255,102,0,0.25)', backgroundColor: 'rgba(255,102,0,0.12)', borderWidth: 1, pointRadius: 0, fill: '+1' },
           { label: '', data: datos('lo95'), borderColor: 'rgba(255,102,0,0.25)', borderWidth: 1, pointRadius: 0, fill: false },
@@ -772,9 +953,14 @@
           { label: 'Pronóstico', data: datos('media'), borderColor: COLORES_GRAFICO.secundario, borderWidth: 2, pointRadius: 0, borderDash: [6, 3] }
           // Los bordes inferiores de las bandas no llevan rótulo: sin el filtro,
           // la leyenda los pintaba como dos recuadros vacíos.
-        ], { plugins: { legend: { display: true, labels: { filter: it => !!(it.text && it.text.trim()) } } } });
+        ], { plugins: { legend: { display: true, labels: { filter: it => !!(it.text && it.text.trim()) } } } }), ALTOS);
 
         const i = h - 1;
+        const dd = params.original ? 2 : 4;
+        ariaLienzo(canvas, `Últimos 48 meses de ${params.original ? 'AirPassengers' : 'log(AirPassengers)'} ` +
+          `(${etiquetasHist[0]} a ${etiquetasHist[etiquetasHist.length - 1]}) y pronóstico del airline a ${h} ` +
+          `${h === 1 ? 'mes' : 'meses'}, hasta ${pron.fechas[i]}, con bandas del 80 y del 95 %: en ${pron.fechas[i]}, ` +
+          `${cifra(esc.media[i], dd)}, con IC 95 % de ${cifra(esc.lo95[i], dd)} a ${cifra(esc.hi95[i], dd)}`);
         const ancho = esc.hi95[i] - esc.lo95[i];
         const abajo = esc.media[i] - esc.lo95[i];
         const arriba = esc.hi95[i] - esc.media[i];
@@ -824,18 +1010,22 @@
           veredicto: 'No estacional: ninguno de los tres se acerca a la banda.'
         }
       };
+      const ALTOS = { estrecho: '260px', ancho: '250px' };
 
       function pintar() {
         const c = CASOS[params.serie];
         if (grafico) grafico.destroy();
-        grafico = crearGraficoBarras(canvas, REZAGOS, c.acf, {
+        grafico = barrasCompactas(crearGraficoBarras(canvas, REZAGOS, c.acf, {
           etiqueta: 'ACF de la serie diferenciada',
           color: params.serie === 'ap' ? COLORES_GRAFICO.primario : COLORES_GRAFICO.terciario,
           lineas: lineasBanda(c.n),
           tituloX: 'Rezago'
-        });
+        }), ALTOS);
         const b = banda(c.n);
-        const fuera = [12, 24, 36].filter(k => Math.abs(c.acf[k - 1]) > b);
+        ariaLienzo(canvas, descripcionCorrelograma('ACF muestral', c.texto, c.acf, b));
+        // El renglón dice qué mira: los múltiplos de 12. Los demás rezagos que
+        // salen de la banda van en su propio renglón.
+        const fuera = fueraDeBanda(c.acf, b);
         actualizarLectura(lectura, [
           { etiqueta: 'serie', valor: c.texto },
           { etiqueta: 'n', valor: c.n },
@@ -843,7 +1033,8 @@
           { etiqueta: 'ρ̂₂₄', valor: fmt(c.acf[23], 4) },
           { etiqueta: 'ρ̂₃₆', valor: fmt(c.acf[35], 4) },
           { etiqueta: 'banda', valor: '±' + fmt(b, 4) },
-          { etiqueta: 'fuera de banda', valor: fuera.length ? fuera.join(', ') : 'ninguno' },
+          { etiqueta: 'múltiplos de 12 fuera de banda', valor: fuera.estacionales.length ? fuera.estacionales.join(', ') : 'ninguno' },
+          { etiqueta: 'otros rezagos fuera de banda', valor: fuera.otros.length ? fuera.otros.join(', ') : 'ninguno' },
           { etiqueta: 'veredicto', valor: c.veredicto }
         ]);
       }
@@ -873,6 +1064,10 @@
         const p = cal.pascuas[anio];
         return p && p.slice(5, 7) === mes ? 1 : 0;
       });
+      // Años con el Domingo de Pascua en marzo, contados desde las fechas.
+      const anios = Object.keys(cal.pascuas);
+      const pascuaMarzo = anios.filter(a => cal.pascuas[a].slice(5, 7) === '03').length;
+      const ALTOS = { estrecho: '290px', ancho: '260px' };
       let grafico = null;
 
       function pintar() {
@@ -889,25 +1084,44 @@
           borderWidth: 1.2, pointRadius: 0, yAxisID: 'y'
         }];
         if (params.dias) datasets.push({
-          label: 'Días del mes', data: cal.dias_mes,
+          label: 'Días del mes (eje derecho)', data: cal.dias_mes,
           borderColor: COLORES_GRAFICO.primario, borderWidth: 1.6,
           pointRadius: 0, yAxisID: 'y2'
         });
+        // Los meses con Pascua se marcan SOBRE la serie, en su valor: antes se
+        // dibujaban en el «31» del eje de días, y un abril con Pascua parecía
+        // un mes de 31 días.
         if (params.pascua) datasets.push({
-          label: 'Mes con Domingo de Pascua', data: esPascua.map(v => v ? 31 : null),
+          label: 'Mes con Domingo de Pascua', data: esPascua.map((v, i) => v ? AP.log[i] : null),
           borderColor: COLORES_GRAFICO.secundario, backgroundColor: COLORES_GRAFICO.secundario,
-          borderWidth: 0, pointRadius: 3, showLine: false, yAxisID: 'y2'
+          borderWidth: 0, pointRadius: 3.5, showLine: false, clip: false, yAxisID: 'y'
         });
 
+        // Escalas propias (hay un segundo eje), pero con los ayudantes del
+        // armazón: sin ellos el eje x rotulaba «1949-01, 1951-06…» y se pisaba a
+        // 800 y 375 px.
+        // Títulos de eje cortos, a todo ancho: con los largos, en un marco
+        // estrecho quedaban 132 px de área para 144 meses. La leyenda dice
+        // además qué serie va en el eje derecho.
+        const escalas = escalasLinea('log', {}, { position: 'left' });
+        escalas.y2 = {
+          display: params.dias, position: 'right', min: 26, max: 33,
+          title: { display: true, text: 'días', font: { family: 'Montserrat', size: 11 } },
+          ticks: { font: { family: 'Fira Code', size: 11 }, stepSize: 1 },
+          grid: { display: false }
+        };
         if (grafico) grafico.destroy();
-        grafico = crearGraficoLinea(canvas, cal.fechas, datasets, {
+        grafico = lineaCompacta(crearGraficoLinea(canvas, cal.fechas, datasets, {
           plugins: { legend: { display: true } },
-          scales: {
-            x: { ticks: { font: { family: 'Montserrat', size: 11 }, maxTicksLimit: 12, maxRotation: 0 }, grid: { display: false } },
-            y: { position: 'left', ticks: { font: { family: 'Fira Code', size: 11 } }, grid: { color: 'rgba(148,163,184,0.2)' } },
-            y2: { position: 'right', min: 26, max: 33, ticks: { font: { family: 'Fira Code', size: 11 } }, grid: { display: false } }
-          }
-        });
+          scales: escalas
+        }), ALTOS);
+        const [lo, hi] = rangoDe(AP.log);
+        const [dMin, dMax] = rangoDe(cal.dias_mes);
+        ariaLienzo(canvas, `log(AirPassengers) de ${cal.fechas[0]} a ${cal.fechas[cal.fechas.length - 1]}, ` +
+          `entre ${cifra(lo, 2)} y ${cifra(hi, 2)}` +
+          (params.dias ? `, con los días de cada mes (de ${dMin} a ${dMax}) en el eje derecho` : '') +
+          (params.pascua ? `, y los ${esPascua.reduce((a, v) => a + v, 0)} meses con Domingo de Pascua marcados sobre la serie` : '') +
+          (!params.dias && !params.pascua ? ', sin ningún regresor activo' : ''));
 
         const campos = [
           { etiqueta: 'modelo', valor: m.nombre },
@@ -923,7 +1137,7 @@
             });
           }
         });
-        campos.push({ etiqueta: 'meses con Pascua en marzo', valor: `${cal.meses_pascua_marzo} de 12` });
+        campos.push({ etiqueta: 'años con Pascua en marzo', valor: `${pascuaMarzo} de ${anios.length}` });
         actualizarLectura(lectura, campos);
       }
 
@@ -945,6 +1159,7 @@
       const lectura = raiz.querySelector('.simulador-lectura');
       const canvas = raiz.querySelector('canvas');
       const fou = AP.fourier;
+      const ALTOS = { estrecho: '260px', ancho: '240px' };
       let grafico = null;
 
       function pintar() {
@@ -954,12 +1169,17 @@
         // Solo los dos primeros ciclos: la curva es periódica y así se ve la forma.
         const n = 24;
         if (grafico) grafico.destroy();
-        grafico = crearGraficoLinea(canvas, AP.fechas.slice(0, n), [
+        grafico = lineaCompacta(crearGraficoLinea(canvas, AP.fechas.slice(0, n), [
           { label: `K = ${K} (${r.n_terminos} términos)`, data: curva.slice(0, n),
             borderColor: COLORES_GRAFICO.secundario, borderWidth: 2, pointRadius: 0 },
           { label: 'K = 6 (saturado)', data: fou.curvas[5].slice(0, n),
             borderColor: COLORES_GRAFICO.gris, borderWidth: 1.2, pointRadius: 0, borderDash: [4, 3] }
-        ], { plugins: { legend: { display: true } } });
+        ], { plugins: { legend: { display: true } } }), ALTOS);
+        const [lo, hi] = rangoDe(curva.slice(0, n));
+        const [lo6, hi6] = rangoDe(fou.curvas[5].slice(0, n));
+        ariaLienzo(canvas, `Componente estacional con K = ${K} (${r.n_terminos} términos de Fourier), ` +
+          `de ${AP.fechas[0]} a ${AP.fechas[n - 1]}: entre ${cifra(lo, 3)} y ${cifra(hi, 3)}; ` +
+          `la de K = ${fou.resultados[5].K}, de referencia, entre ${cifra(lo6, 3)} y ${cifra(hi6, 3)}`);
 
         actualizarLectura(lectura, [
           { etiqueta: 'K', valor: K },
@@ -992,28 +1212,55 @@
       const controles = raiz.querySelector('.simulador-controles');
       const lectura = raiz.querySelector('.simulador-lectura');
       const canvas = raiz.querySelector('canvas');
-      const COLORES = [COLORES_GRAFICO.secundario, COLORES_GRAFICO.terciario, '#7c3aed',
-                       '#be123c', '#0f766e', '#a16207', '#9333ea', '#475569'];
+      // Ocho colores de tono distinto y cuatro trazos que se alternan: con los
+      // ocho encendidos había dos verdes azulados, dos violetas y dos ocres con
+      // la misma raya discontinua, y no se sabía qué línea era cuál.
+      const COLORES = [COLORES_GRAFICO.secundario, '#1d4ed8', '#7c3aed', '#be123c',
+                       '#0f766e', '#a16207', '#db2777', '#475569'];
+      const TRAZOS = [[6, 3], [], [2, 3], [9, 3, 2, 3]];
+      // Rótulo de la leyenda: el método sin la especificación que sigue a «:»
+      // y sin los errores de la armónica. En el teléfono, una forma corta para
+      // que las nueve entradas quepan sin que Chart.js las corte.
+      const CORTOS = { ets_log: 'ETS (log)', stl_arima: 'STL + ARIMA', sarima: 'SARIMA',
+                       auto_arima: 'auto.arima', sarima_calendario: 'SARIMA + cal.',
+                       ets: 'ETS (cruda)', snaive: 'Naive est.' };
+      const metodo = k => comp.modelos[k].nombre.split(':')[0].replace(/ \+ errores ARIMA$/, '');
+      const corto = k => CORTOS[k] || ('Armónica ' + (comp.modelos[k].nombre.match(/K = \d+/) || [''])[0]).trim();
+      // Dos métodos con el mismo pronóstico se tapan: la leyenda lo dice.
+      const igualA = k => claves.find(o => o !== k && claves.indexOf(o) < claves.indexOf(k) &&
+        comp.modelos[o].pronostico.every((v, j) => v === comp.modelos[k].pronostico[j]));
+      const ALTOS = { estrecho: '400px', ancho: '320px' };
       let grafico = null;
 
       function pintar() {
+        const estrecho = canvas.parentNode.clientWidth < ESTRECHO;
         const datasets = [{
           label: 'Observado', data: comp.observado,
           borderColor: COLORES_GRAFICO.primario, borderWidth: 2.4, pointRadius: 0
         }];
         claves.forEach((k, i) => {
           if (!params['m_' + k]) return;
+          const gemelo = igualA(k);
           datasets.push({
-            label: comp.modelos[k].nombre.slice(0, 34),
+            label: (estrecho ? corto(k) : metodo(k)) +
+              (gemelo ? ` (= ${estrecho ? corto(gemelo) : metodo(gemelo)})` : ''),
             data: comp.modelos[k].pronostico,
             borderColor: COLORES[i % COLORES.length],
-            borderWidth: 1.5, pointRadius: 0, borderDash: [5, 3]
+            // El gemelo va más grueso y punteado, para asomar bajo el otro.
+            borderWidth: gemelo ? 3 : 1.6, pointRadius: 0,
+            borderDash: gemelo ? [1, 4] : TRAZOS[i % TRAZOS.length]
           });
         });
 
         if (grafico) grafico.destroy();
-        grafico = crearGraficoLinea(canvas, comp.fechas_prueba, datasets,
-          { plugins: { legend: { display: true } } });
+        grafico = lineaCompacta(crearGraficoLinea(canvas, comp.fechas_prueba, datasets,
+          { plugins: { legend: { display: true } } }), ALTOS);
+        const encendidos = claves.filter(k => params['m_' + k]);
+        ariaLienzo(canvas, `Observado frente a los pronósticos sobre los ${comp.n_prueba} meses de prueba ` +
+          `(${comp.fechas_prueba[0]} a ${comp.fechas_prueba[comp.fechas_prueba.length - 1]}), entrenando hasta ` +
+          `${comp.corte}: ` + (encendidos.length
+            ? `${encendidos.length} ${encendidos.length === 1 ? 'método' : 'métodos'}, ` + encendidos.map(metodo).join(', ')
+            : 'ningún método encendido'));
 
         const met = params.metrica;
         const orden = claves.slice().sort((a, b) => comp.modelos[a][met] - comp.modelos[b][met]);
@@ -1022,8 +1269,8 @@
           { etiqueta: 'prueba', valor: comp.n_prueba + ' meses' }
         ];
         orden.forEach((k, i) => campos.push({
-          etiqueta: `${i + 1}. ${comp.modelos[k].nombre.slice(0, 38)}`,
-          valor: fmt(comp.modelos[k][met], 3) + (k === 'sarima' ? '  ← el SARIMA' : '')
+          etiqueta: `${i + 1}. ${comp.modelos[k].nombre}`,
+          valor: fmt(comp.modelos[k][met], 3) + (met === 'mape' ? '\u00a0%' : '') + (k === 'sarima' ? '  ← el SARIMA' : '')
         }));
         actualizarLectura(lectura, campos);
       }
@@ -1037,7 +1284,7 @@
         ]
       }, params, pintar);
       crearInterruptores(controles,
-        claves.map(k => ({ clave: 'm_' + k, etiqueta: comp.modelos[k].nombre.slice(0, 26) })),
+        claves.map(k => ({ clave: 'm_' + k, etiqueta: comp.modelos[k].nombre })),
         params, pintar);
 
       pintar();
@@ -1074,6 +1321,12 @@
           'El Capítulo 6 construye esa evaluación.'
       };
     };
+
+    // ACF teórica del gráfico de la pregunta 5 del quiz (un SAR(1) de periodo 12).
+    function acfQuiz() {
+      const ar = new Array(12).fill(0); ar[11] = 0.7;
+      return acfDesdePsi(pesosPsi(ar, [], 1500), 36);
+    }
 
     AUTOEVALUACIONES['cap5'] = [
       {
@@ -1176,11 +1429,18 @@
         modulo: 4,
         pregunta: 'La ACF teórica del gráfico corresponde a un proceso estacional puro con $m = 12$. ¿Qué modelo es?',
         pista: 'Mira si los picos en $12, 24, 36$ decaen o se cortan de golpe, y compara con la tabla de identificación del Módulo 4.',
+        alto: 250,
+        // Lo que se ve, no lo que hay que deducir: los valores de las barras,
+        // calculados igual que el dibujo.
+        descripcionGrafico: (function () {
+          const acf = acfQuiz();
+          const picos = acf.map((v, i) => (Math.abs(v) >= 0.005 ? i + 1 : 0)).filter(k => k);
+          return 'Función de autocorrelación teórica, rezagos 1 a ' + acf.length + ': ' +
+            picos.map(k => `rezago ${k}, ${cifra(acf[k - 1], 2)}`).join('; ') +
+            `; los otros ${acf.length - picos.length} rezagos valen 0.00.`;
+        })(),
         dibujar: function (canvas) {
-          const ar = new Array(12).fill(0); ar[11] = 0.7;
-          const psi = pesosPsi(ar, [], 1500);
-          const acf = acfDesdePsi(psi, 36);
-          return crearGraficoBarras(canvas, etiquetasRezago(36), acf, {
+          return crearGraficoBarras(canvas, etiquetasRezago(36), acfQuiz(), {
             etiqueta: 'ACF teórica', tituloX: 'Rezago'
           });
         },
