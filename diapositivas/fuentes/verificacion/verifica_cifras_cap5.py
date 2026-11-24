@@ -1067,6 +1067,7 @@ C(K, "12", J_(OM + ".horizonte"))
 C(K, "22.38", CH_("$22.38$"), CHQ_("frente a $22.38$"), kind="capítulo")
 C(K, "22.385", J_(OM + ".rmse_medio.armonica"))
 C(K, "22.3847", R_("m11.om12.rmse_medio.armonica"))
+C(K, "21.06", J_(OM + ".armonica_exhaustiva.rmse_medio_h12"))   # la armónica con búsqueda exhaustiva (R3, V5)
 
 K = "La partición cayó justo después"
 C(K, "1958", BOOL_("J", lambda: get(J, COMP + ".corte") == "1958-12", "corte 1958-12"), kind="fecha")
