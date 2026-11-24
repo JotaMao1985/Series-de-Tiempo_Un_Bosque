@@ -14,7 +14,7 @@ la prosa, con sus fuentes contrastadas y con práctica en cada módulo. Es la qu
 [[PLAN_Mejora_Cap1]] a [[PLAN_Mejora_Cap4]]: cinco rondas, un redactor por ronda, verificadores
 independientes sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: APROBADO por Javier el 2026-11-23; R1 y R2 publicadas el 2026-11-24**, con D1–D11 y las recomendaciones de las preguntas 1, 2, 3,
+**Estado: APROBADO por Javier el 2026-11-23; R1 y R2 publicadas y R3 hecha el 2026-11-24**, con D1–D11 y las recomendaciones de las preguntas 1, 2, 3,
 4 y 6 de §7. El diagnóstico es del mismo día; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-23
@@ -231,6 +231,31 @@ Cada una lleva mi recomendación; las decide Javier.
     retirada.
   - **Verificaciones:** bloques 1335/1335, `verifica_todo` 11 en verde, Tailwind sin cambios, deck 774/774;
     reensamblado reproducible.
+
+- **R3 (estructura) — hecha el 2026-11-24, sin publicar.** Redactor: `diagnostico/cap5/R3_cambios.md`; verificador
+  independiente: `R3_verificacion.md`, con lo que se hizo con cada hallazgo.
+  - **Orden (D6), sin renumerar ni cambiar títulos:**
+    - el *airline* ajustado, al principio del M2;
+    - RMSE y «fuera de muestra», presentados en el M9;
+    - ETS, naïve estacional, MAE y MAPE, en la entrada del M11;
+    - `biasadj` en el M7, junto a la media lognormal;
+    - cada módulo, del M2 al M10, cierra apuntando al siguiente;
+    - las intros de simulador describen su estado inicial.
+  - **M11 (D7):**
+    - la comparación de ocho métodos se muestra una sola vez (la tabla ordenable; el simulador da el sesgo medio);
+    - un apartado con un bloque de R y otro de Python reproduce los 61 orígenes;
+    - se arregla un doble redondeo (16.12 y 76.99).
+  - **Notación (T3.2):** $\eta_t$, $\hat\rho_k$/$r_k$ y la banda, fijados una vez. «Cuatro comprobaciones de tres
+    tipos», que no son independientes.
+  - **Minutos (D8):** los declarados son los medidos (M1–M11, de 175 a 149 min, sumados de `courseData` antes y después), con una distancia máxima de 0.5 min.
+  - **El verificador halló 2 Altos, 3 Medios y 10 Bajos;** los corrigió el redactor a petición de la maestra.
+    - Un `\text` convertido en tabulador.
+    - El +1 de la cuenta de parámetros, que es la deriva y no σ².
+    - En los orígenes, la armónica se busca por pasos; con la búsqueda exhaustiva queda por delante del ETS-log
+      (21.06 frente a 21.42). Se declara y se reescribe la conclusión.
+  - **Queda en parte:** el satélite del M2 se sigue contando dos veces.
+  - **Verificaciones:** bloques 1536/1536, `verifica_todo` 11 en verde, Tailwind sin cambios, deck 775/775, cap. 6
+    idéntico.
 
 ## 5. Criterios de aceptación
 

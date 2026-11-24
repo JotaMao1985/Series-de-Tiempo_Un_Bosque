@@ -1,0 +1,117 @@
+R version 4.6.0 (2026-04-24) | forecast 9.0.2 
+
+== M1: el ARIMA(0,1,5) del cap. 4 ==
+rho12 residual ARIMA(0,1,5) (144 residuales)                       0.7245  texto 0.7245     OK
+rho24 residual ARIMA(0,1,5)                                        0.6727  texto 0.6727     OK
+Ljung-Box Q(24), a mano                                             222.4  texto 222.4      OK
+p con 24 - 5 gl: 1.138513e-36  (< 1e-6?) TRUE 
+rho12/24 sin el primer residual (como el bloque de Python): 0.7235 0.6727 
+banda 1.96/sqrt(144)                                                0.163  texto 0.163      OK
+banda 1.96/sqrt(131)                                                0.171  texto 0.171      OK
+banda USAccDeaths 1.96/sqrt(72)                                     0.231  texto 0.231      OK
+banda co2 1.96/sqrt(468)                                            0.091  texto 0.091      OK
+banda TRM 1.96/sqrt(137 o 138)                                      0.167  texto 0.167      OK
+
+== M2: sigma2 del airline ==
+theta                                                             -0.4018  texto -0.4018    OK
+Theta                                                             -0.5569  texto -0.5569    OK
+sigma2 (R, SSR/(n-k))                                            0.001371  texto 0.001371   OK
+B13 = theta*Theta                                                  0.2238  texto 0.2238     OK
+ACF teorica heladeria (phi .6, Phi .7) rezagos 1, 11, 12, 13:
+     1     11     12     13 
+0.6016 0.4230 0.7011 0.4218 
+
+== M3: intro del simulador y la trampa de version ==
+rho12 de log(AP) sin diferenciar                                    0.762  texto 0.762      OK
+rho12 de diff(log AP) (la respuesta a la pregunta de la intro): 0.841 
+nsdiffs seas/ocsb  log(AP): 1 0   USAccDeaths: 1 0   (texto: 1 0 / 1 0)
+
+== M4 (cierre): ACF de diff(diff(log AP, 12)) ==
+n = 131  banda 0.171 
+     1      2      3      4      5      6      7      8      9     10     11 
+-0.341  0.105 -0.202  0.021  0.056  0.031 -0.056 -0.001  0.176 -0.076  0.064 
+    12     13     14     15     16     17     18     19     20     21     22 
+-0.387  0.152 -0.058  0.150 -0.139  0.070  0.016 -0.011 -0.117  0.039 -0.091 
+    23     24 
+ 0.223 -0.018 
+fuera de banda: 1 3 9 12 23 
+
+== M5 (cierre): la rejilla tiene 36 modelos -> 35 candidatos ademas del airline ==
+p,q,P,Q en 0:2 x 0:2 x 0:1 x 0:1 = 36 
+
+== M7 ==
+rango relativo (max - min)/media de AirPassengers                   1.848  texto 1.848      OK
+mediana a 24 meses                                                 525.46  texto 525.46     OK
+limite inferior 95 %                                               399.66  texto 399.66     OK
+limite superior 95 %                                               690.85  texto 690.85     OK
+forecast(lambda = 0)$mean[24] (mediana)                            525.46  texto 525.46     OK
+forecast(lambda = 0, biasadj = TRUE)$mean[24]                      530.58  texto 530.58     OK
+sigma_h(24) en log = 0.13962; exp(mu)*(1 + sigma_h^2/2) = 530.58; exp(mu + sigma_h^2/2) (media lognormal exacta) = 530.61
+=> biasadj de forecast es la aproximacion de primer orden (1 + s^2/2), no exp(s^2/2)
+residuales del airline: n = 144 ; ACF 3, 9, 23 con los 144: -0.125 0.117 0.22 ; sin los 13 de arranque: -0.127 0.115 0.218 
+
+== M9: fuera de muestra con el calendario ==
+Pascua en marzo / abril, 1949-1960: 2 10 
+RMSE airline 1959-1960                                              43.18  texto 43.18      OK
+RMSE airline + calendario                                           45.48  texto 45.48      OK
+
+== M10: que suma 'parametros totales' ==
+K = 1 Regression with ARIMA(5,1,0) errors | length(coef) = 8 | nombres: ar1 ar2 ar3 ar4 ar5 drift S1-12 C1-12 
+K = 6 Regression with ARIMA(0,1,4) errors | length(coef) = 16 | nombres: ma1 ma2 ma3 ma4 drift S1-12 C1-12 S2-12 C2-12 S3-12 C3-12 S4-12 C4-12 S5-12 C5-12 C6-12 
+=> el +1 es la deriva (drift), no sigma^2: length(coef) no cuenta sigma^2
+
+== M11: la particion, escrito aparte ==
+ets cruda: ETS(M,Ad,M)  | ets log: ETS(M,A,M)  | length(par): 17 16 
+auto.arima(ent): ARIMA(0,1,1)(0,1,1)[12] 
+            rmse     mae    mape   sesgo
+ets_log  19.4287 16.1249  3.5469  8.9204
+armonica 19.5052 14.6899  3.1512  3.2189
+stl      35.4814 30.2907  6.3300 28.2908
+sarima   43.1837 39.4473  8.5163 39.4473
+ets      72.5479 63.2130 13.3034 63.2109
+snaive   76.9946 71.2500 15.5234 71.2500
+texto: ets_log 19.43 16.12 3.55 | armonica 19.51 14.69 3.15 | stl 35.48 30.29 6.33 | sarima 43.18 39.45 8.52 | ets 72.55 63.21 13.30 | snaive 76.99 71.25 15.52
+doble redondeo: round(round(x,3),2) frente a round(x,2):
+         rmse   mae  mape  rmse   mae  mape
+ets_log 19.43 16.12  3.55 19.43 16.12  3.55
+snaive  76.99 71.25 15.52 77.00 71.25 15.52
+RMSE SARIMA / RMSE ETS log = 2.223 (texto: 'mas del doble')
+SARIMA cuarto en las tres? 4 4 4 
+sesgo SARIMA == MAE? TRUE  todos los meses por debajo? TRUE 
+crecimiento anual %:
+1950 1951 1952 1953 1954 1955 1956 1957 1958 1959 1960 
+10.3 21.8 15.8 14.2  6.2 18.9 15.6 12.2  3.4 12.4 11.2 
+crecimiento pronosticado 1959, 1960  sarima: 4.7 6.9  ets_log: 9.4 12.8  armonica: 10.6 13.1 
+observado 1959, 1960: 12.4 11.2 
+
+== M11: 61 origenes, escrito aparte (cada origen ajusta y pronostica por separado para h = 12 y h = 24) ==
+tiempo: 36 s
+primer y ultimo origen: 1954-12 1959-12 
+origenes h = 12: 61 
+  sarima  ets_log      stl armonica      ets   snaive 
+   16.81    21.42    21.85    22.38    26.38    41.24 
+texto: 16.81 21.42 21.85 22.38 26.38 41.24
+  sarima  ets_log      stl armonica      ets   snaive 
+     0.0      8.2      8.2      9.8     14.8     11.5 
+texto: - 8.2 8.2 9.8 14.8 11.5
+origenes donde el SARIMA no es el mejor ( 14 ): 1955-05 1956-06 1957-05 1957-06 1957-07 1957-08 1957-09 1957-10 1957-11 1957-12 1958-01 1958-11 1958-12 1959-01 
+de ellos entre 1957-05 y 1959-01: 12 
+origenes h = 24: 49 
+  sarima  ets_log      stl armonica      ets   snaive 
+   26.00    26.61    27.80    28.30    34.84    59.53 
+texto: 26.00 26.61 27.80 28.30
+  sarima  ets_log      stl armonica      ets   snaive 
+     0.0     49.0     32.7     32.7     40.8      8.2 
+texto: ets_log 49.0
+  sarima  ets_log      stl armonica      ets   snaive 
+   18.22    15.96    16.27    16.17    23.61    38.61 
+texto: sarima 18.22, ets_log 15.96; puesto del SARIMA: 4 
+
+-- la armonica con stepwise = FALSE, approximation = FALSE en cada origen (la busqueda de la particion y del M10) --
+tiempo 84 s
+h = 12: RMSE medio armonica 21.06 (bloque: 22.38) | % que le gana al SARIMA 9.8 
+orden h = 12 con esta armonica:
+  sarima armonica  ets_log      stl      ets   snaive 
+   16.81    21.06    21.42    21.85    26.38    41.24 
+h = 24: RMSE medio armonica 28.25 (bloque: 28.30) | % 22.4 
+mes 12: armonica 16.63 (bloque: 16.17)

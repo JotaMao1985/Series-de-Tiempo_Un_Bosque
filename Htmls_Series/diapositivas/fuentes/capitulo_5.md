@@ -127,7 +127,7 @@ Verificación: ρ̂₁₂, ρ̂₂₄, ρ̂₃₆ y la banda en J (`firma.airpas
 <small>Fuente: J `firma` · R (ACF recalculada sobre los datos; bandas \(1.96/\sqrt n\))</small>
 
 ???
-La trampa de la tabla: la TRM tiene ρ̂₁₂ = 0.636 y ninguna estacionalidad. Antes de pasar, preguntar cuál de las cuatro primeras filas es la intrusa; después de ver la quinta, la respuesta es obvia. El Módulo 8 vuelve sobre la TRM con cuatro evidencias.
+La trampa de la tabla: la TRM tiene ρ̂₁₂ = 0.636 y ninguna estacionalidad. Antes de pasar, preguntar cuál de las cuatro primeras filas es la intrusa; después de ver la quinta, la respuesta es obvia. El Módulo 8 vuelve sobre la TRM con cuatro comprobaciones.
 
 Verificación: cada celda se recalculó desde los datos congelados con divisor n (como `Acf`), para no redondear dos veces: en cinco celdas los cuatro decimales de J acaban en 5, y los exactos (0.52049, 0.70747, 0.85546, 0.63649 y −0.00245) dan 0.520, 0.707, 0.855, 0.636 y −0.002, las mismas cifras de la tabla del capítulo. La banda de ∇TRM es 1.96/√137 = 0.16745 → 0.167 (J guarda 0.1675). Para ρ̂₁₂ de ∇TRM, el código del capítulo, que lee la copia fija de la TRM, imprime −0.0025, lo mismo que la tabla del Módulo 8. Detalle: Módulo 1, tabla.
 
@@ -962,7 +962,7 @@ El orden importa: por el camino «d primero» se llega a (0,0,1)(0,1,1)₁₂, q
 
 Verificación: coeficientes, e.e., AICc y p en J (`usaccdeaths`). Detalle: Módulo 8, USAccDeaths.
 
-## La TRM es mensual y no tiene estacionalidad: cuatro evidencias coinciden
+## La TRM es mensual y no tiene estacionalidad: cuatro comprobaciones coinciden
 
 | Evidencia | Qué se mide | Resultado |
 |---|---|---|
@@ -1008,7 +1008,7 @@ Detalle: Módulo 9, tabla de efectos.
 ## SARIMAX es una regresión con errores SARIMA, no un SARIMA con términos añadidos
 
 ::: definicion Regresión con errores SARIMA
-$$y_t=\beta' x_t+n_t,\qquad n_t\sim\text{SARIMA}(p,d,q)(P,D,Q)_m$$
+$$y_t=\beta' x_t+\eta_t,\qquad \eta_t\sim\text{SARIMA}(p,d,q)(P,D,Q)_m$$
 :::
 
 - <kbd>Interpretación</kbd> \(\beta\) mide el efecto del regresor **una vez descontada** la dinámica; el error estándar de un MCO ingenuo ignora la autocorrelación y suele quedarse corto
@@ -1097,10 +1097,10 @@ Verificación: la tabla en J (`fourier.costo_m`); 104 y los dos `auto.arima` con
 ## Fourier modela la estación con \(2K\) parámetros, sea cual sea \(m\)
 
 ::: definicion Regresión armónica
-$$y_t=\beta_0+\sum_{k=1}^{K}\Big[\alpha_k\sin\tfrac{2\pi kt}{m}+\delta_k\cos\tfrac{2\pi kt}{m}\Big]+n_t$$
+$$y_t=\beta_0+\sum_{k=1}^{K}\Big[\alpha_k\sin\tfrac{2\pi kt}{m}+\delta_k\cos\tfrac{2\pi kt}{m}\Big]+\eta_t$$
 :::
 
-- <kbd>Definición</kbd> \(n_t\) es un ARIMA **no** estacional; \(K\) controla la suavidad
+- <kbd>Definición</kbd> \(\eta_t\) es un ARIMA **no** estacional; \(K\) controla la suavidad
 - <kbd>Definición</kbd> Con \(K=m/2\), los términos equivalen a \(m-1\) indicadoras mensuales: once con \(m=12\)
 
 <small>Fuente: C Módulo 10, definición</small>
@@ -1241,7 +1241,7 @@ Verificación: cada celda en J (`comparativa.modelos`, `n_par`) y recalculada si
 <small>Contexto: `AirPassengers`; seis métodos distintos (el calendario queda fuera). Fuente: J `comparativa.origen_movil` · R `m11.om12`</small>
 
 ???
-El método (validación de origen móvil) es contenido del capítulo 6; aquí se cita el resultado como advertencia. El resto del orden apenas se mueve: ETS sobre el logaritmo por delante del STL y de la armónica; ETS sobre la cruda y *naïve*, últimos.
+El método (validación de origen móvil) es contenido del capítulo 6; aquí se cita el resultado como advertencia. Detrás del SARIMA, el ETS sobre el logaritmo, el STL y la armónica quedan cerca; ETS sobre la cruda y *naïve*, últimos. La armónica de los orígenes se busca por pasos; con la búsqueda exhaustiva de la partición baja a 21.06 y queda por delante del ETS sobre el logaritmo (21.42): entre esos dos, el orden depende de la búsqueda (capítulo, Módulo 11).
 
 Verificación: RMSE medios y porcentajes en J y recalculados en R con los mismos seis pronosticadores (`verifica_directo_cap5.R`). La armónica se redondea desde el exacto, 22.3847, y no desde el 22.385 de J: 22.38, como en el capítulo y en su autoevaluación. «Más del 85 %»: el peor caso es el ETS sobre la serie cruda, que le gana en el 14.8 % (el SARIMA gana en el 85.2 %). Detalle: Módulo 11.
 

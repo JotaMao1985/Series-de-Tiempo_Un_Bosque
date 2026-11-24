@@ -1,0 +1,31 @@
+ETS                    -> M11: prosa 13, codigo 0
+naïve estacional       -> M11: prosa 3, codigo 2
+RMSE                   -> M9: prosa 1, codigo 0; M11: prosa 10, codigo 3
+MAE                    -> M11: prosa 3, codigo 1
+MAPE                   -> M11: prosa 2, codigo 0
+fuera de muestra       -> M9: prosa 1, codigo 0; M10: prosa 2, codigo 0; M11: prosa 2, codigo 0
+biasadj                -> M7: prosa 1, codigo 2
+theta-hat -0.4018      -> M2: prosa 2, codigo 4; M4: prosa 1, codigo 2; M5: prosa 2, codigo 0; M6: prosa 0, codigo 2; M7: prosa 2, codigo 2
+Theta-hat -0.5569      -> M2: prosa 2, codigo 4; M3: prosa 2, codigo 1; M4: prosa 1, codigo 2; M5: prosa 2, codigo 0; M6: prosa 0, codigo 2; M7: prosa 4, codigo 2
+airline (palabra)      -> M1: prosa 1, codigo 0; M2: prosa 8, codigo 0; M4: prosa 2, codigo 1; M5: prosa 7, codigo 2; M6: prosa 1, codigo 0; M7: prosa 4, codigo 1; M8: prosa 1, codigo 0; M9: prosa 3, codigo 2; M10: prosa 2, codigo 1; M11: prosa 18, codigo 17; M12: prosa 1, codigo 0
+sigma2 0.001371        -> M2: prosa 1, codigo 2; M7: prosa 1, codigo 2
+Holt                   -> M11: prosa 2, codigo 0
+eta_t                  -> M9: prosa 2, codigo 0; M10: prosa 2, codigo 0
+n_t                    -> ninguna
+r_k                    -> M1: prosa 1, codigo 0
+2/\sqrt{n}             -> ninguna
+rejilla                -> M4: prosa 1, codigo 0; M6: prosa 3, codigo 0; M11: prosa 2, codigo 1; M12: prosa 1, codigo 0
+
+[ETS] primera en M11: … modelo que elige auto.arima , el airline con el calendario del Módulo 9, y la regresión armónica y el STL + ARIMA del Módulo 10. Los otros tres son nuevos. El ETS extiende el suavizamiento exponencial simple y el método de Holt del Capítulo 4 (Módulo 1) con un componente estacional: suaviza por separado el nivel, la tend…
+
+[naïve estacional] primera en M11: …e ajusta en las dos escalas: sobre la serie cruda, donde su estacionalidad multiplicativa es la natural, y sobre el logaritmo, la misma escala que el ARIMA. El naïve estacional es la referencia mínima: pronostica cada mes con el valor del mismo mes del último año observado, sin estimar nada. La columna $k$ cuenta todo lo que se estima…
+
+[RMSE] primera en M9: …ra —entrenando hasta 1958-12 y midiendo el error de pronóstico en los $24$ meses siguientes, la comparación del Módulo 11— sale peor que el airline desnudo: su RMSE , la raíz del error cuadrático medio en pasajeros, es $45.48$ frente a $43.18$ (el bloque de abajo lo calcula). No es contradictorio: el AICc mide ajuste penal…
+
+[MAE] primera en M11: … y en la escala original, la única en la que los métodos son comparables: el RMSE , la raíz del error cuadrático medio, que castiga más los errores grandes; el MAE , el error absoluto medio; y el MAPE , el error absoluto medio en porcentaje de lo observado. Entran ocho métodos. Cinco son de la familia ARIMA y ya han salid…
+
+[MAPE] primera en M11: …n la que los métodos son comparables: el RMSE , la raíz del error cuadrático medio, que castiga más los errores grandes; el MAE , el error absoluto medio; y el MAPE , el error absoluto medio en porcentaje de lo observado. Entran ocho métodos. Cinco son de la familia ARIMA y ya han salido en el capítulo, todos sobre el loga…
+
+[fuera de muestra] primera en M9: …dad que el término estacional no puede modelar—. Mejorar el AICc no es mejorar el pronóstico. El modelo con calendario gana $7.5$ puntos de AICc, y sin embargo fuera de muestra —entrenando hasta 1958-12 y midiendo el error de pronóstico en los $24$ meses siguientes, la comparación del Módulo 11— sale peor que el airline desnudo: su RM…
+
+[biasadj] primera en M7: …el modelo. En R, si el logaritmo va dentro del modelo — Arima(AirPassengers, …, lambda = 0) —, forecast() deshace la transformación y devuelve esa mediana; con biasadj = TRUE devuelve una aproximación de la media: a $24$ meses, $530.58$ en lugar de $525.46$ (el bloque de abajo hace las dos cuentas). Cuál de las dos conviene d…

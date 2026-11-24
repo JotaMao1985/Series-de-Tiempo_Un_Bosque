@@ -80,7 +80,7 @@
 
       <div class="warning">
         <p><strong>Para identificar, da igual; para calcular, no.</strong> Sobre un correlograma estimado —con su
-          banda de $\pm 2/\sqrt{n}$— la distinción entre $0.42298$ y $0.42180$ es invisible, y por eso la regla del
+          banda de $\pm 1.96/\sqrt{n}$— la distinción entre $0.42298$ y $0.42180$ es invisible, y por eso la regla del
           producto sirve igual para leer los dos casos. Donde sí importa es al calcular: la varianza de un proceso con
           parte AR <strong>no</strong> es el producto de las dos varianzas, y el error llega al $33\,\%$ con
           $\phi = 0.9$. El Módulo 2 lo tabula.</p>
@@ -106,9 +106,12 @@
 
       <h3>El protocolo, paso a paso</h3>
 
-      <p>Identificar un SARIMA es el ciclo de Box–Jenkins del Capítulo 4 con dos etapas insertadas. El orden importa,
-        y el diagrama recoge también <strong>qué hallazgo te devuelve a una etapa anterior</strong>, que es la parte
-        que ninguna lista numerada sabe dibujar.</p>
+      <p>Identificar un SARIMA sigue el ciclo de Box–Jenkins del Capítulo 4, que tenía cuatro etapas:
+        identificación, estimación, diagnóstico y uso. Aquí la identificación se abre en cuatro —transformar, elegir
+        $D$, elegir $d$ y leer los cuatro órdenes—, la estimación y el diagnóstico van juntos en la quinta, y el uso,
+        el pronóstico, queda para después del ciclo (Módulo 7). El orden importa, y el diagrama recoge también
+        <strong>qué hallazgo te devuelve a una etapa anterior</strong>, que es la parte que ninguna lista numerada
+        sabe dibujar.</p>
 
       <!--CICLO:identificacion-estacional-->
 
@@ -181,6 +184,10 @@ print(np.round(acf_sarima(theta=[-0.4018], Theta=-0.5569)[[0, 10, 11, 12, 23]], 
 # la "estacionalidad" no es mas que un polinomio con ceros en medio.</code></pre>
         </div>
       </div>
+
+      <p>En la serie del capítulo, el protocolo lleva a $d = D = 1$ y a un pico negativo aislado en el rezago $1$ y
+        otro en el $12$: $q = Q = 1$. Ese modelo tiene nombre propio, <em>airline</em>, y el Módulo 5 lo estudia
+        antes de que el Módulo 7 recorra el ciclo paso a paso.</p>
     </div>
   </template>
 
@@ -242,7 +249,7 @@ print(np.round(acf_sarima(theta=[-0.4018], Theta=-0.5569)[[0, 10, 11, 12, 23]], 
         <div class="derivacion-panel" id="der-airline-ma" hidden>
           <ol class="derivacion-pasos">
             <li>
-              <p>Escribimos el lado derecho expandido:</p>
+              <p>El lado derecho, expandido:</p>
               $$(1 + \theta B)(1 + \Theta B^{12}) = 1 + \theta B + \Theta B^{12} + \theta\Theta B^{13}$$
               <p>Con $\hat\theta = -0.4018$ y $\hat\Theta = -0.5569$, el coeficiente del rezago $13$ vale
                 $\theta\Theta = +0.2238$ y <strong>no se estima</strong>.</p>
@@ -385,6 +392,10 @@ print(int(np.argmax(sh &gt; np.sqrt(np.arange(1, len(sh) + 1)))) + 1)
           estacional —escalones en vez de una curva suave— y su lectura: el error de pronosticar el próximo julio se
           parece más al de pronosticar el julio siguiente que al de pronosticar el mes que viene.</p>
       </div>
+
+      <p>Que el <em>airline</em> sea el punto de partida no lo hace el mejor modelo de cada serie. El Módulo 6 lo
+        estima junto a otros $35$ candidatos y enseña los dos hábitos que cambian al compararlos cuando hay
+        estacionalidad.</p>
     </div>
   </template>
 
@@ -431,9 +442,10 @@ print(int(np.argmax(sh &gt; np.sqrt(np.arange(1, len(sh) + 1)))) + 1)
       <div class="simulador" data-simulador="explorador-sarima">
         <h4><i class="fas fa-sliders" aria-hidden="true"></i> Explorador de modelos SARIMA</h4>
         <p class="simulador-intro">Los cuatro selectores recorren los $36$ modelos SARIMA($p,1,q$)($P,1,Q$)$_{12}$
-          ajustados de verdad en R sobre $\log(\text{AirPassengers})$. El gráfico muestra la ACF de los residuales del
-          modelo elegido con la banda al $95\,\%$. Pon $P=Q=0$ para ver qué pasa sin parte estacional, y fíjate en que
-          el mínimo de AICc y el de BIC coinciden aquí —cosa que no siempre ocurre—.</p>
+          ajustados de verdad en R sobre $\log(\text{AirPassengers})$; se abre en el ($0,1,1$)($0,1,1$)$_{12}$. El
+          gráfico muestra la ACF de los residuales del modelo elegido con la banda al $95\,\%$. Pon $P=Q=0$ para ver
+          qué pasa sin parte estacional, y busca qué modelos quedan a menos de $2$ puntos de AICc del mejor: ¿alguno
+          mejora el diagnóstico?</p>
         <div class="simulador-controles"></div>
         <div class="simulador-lectura"></div>
         <p class="grafico-etiqueta">ACF de los residuales del modelo seleccionado (hasta el rezago 24)</p>
@@ -572,5 +584,9 @@ print(acorr_ljungbox(fit.resid[13:], lags=[24], model_df=2)["lb_pvalue"].round(4
           varios optimizadores. Es <em>otra</em> verosimilitud. Con
           <code>simple_differencing=True</code> las dos salidas vuelven a coincidir hasta el cuarto decimal.</p>
       </div>
+
+      <p>Con el modelo elegido y diagnosticado, falta recorrer el ciclo entero sobre una serie, de la transformación
+        al pronóstico. El Módulo 7 lo hace con la misma $\log(\text{AirPassengers})$ y cierra el problema que dejó
+        abierto el Capítulo 4.</p>
     </div>
   </template>

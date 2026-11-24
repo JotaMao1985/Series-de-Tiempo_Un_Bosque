@@ -1,0 +1,180 @@
+
+######## ensamblado/cap5/templates_1_3.html
+--- frases que desaparecen (19)
+  - El mejor modelo ARIMA no estacional sobre $\log(\text{AirPassengers})$, un ARIMA($0,1,5$) elegido por búsqueda exhaustiva, dejaba en sus residuales $\hat\rho_{12} = 0.7245$ y $\hat\rho_{24} = 0.6727$: cinco términos MA, y toda la estructura sobrante concentrada en un solo sitio, los múltiplos de 12.
+  - En el Módulo 6 el modelo airline , con solo dos parámetros , deja $\hat\rho_{12} = -0.0515$ y pasa Ljung–Box(24) con $p = 0.233$.
+  - Un ejemplo para seguir a mano: pronosticar un mes La definición se entiende mejor con un modelo pequeño y tres números.
+  - El rezago 13 no es un parámetro nuevo.
+  - Su peso, $-\phi\Phi$, sale de los otros dos: el modelo toca tres meses con solo dos parámetros.
+  - Es el «AR($13$) con dos parámetros libres» del desarrollo de más abajo.
+  - Es el coeficiente B13 que imprime el bloque de «Cómo se escribe en la práctica»: no se estima, sale del producto.
+  - R Python La sección siguiente generaliza la cuenta a cualquier par de órdenes y la escribe para todo el polinomio.
+  - Multiplicar no es sumar: los rezagos satélite Aquí está lo único genuinamente nuevo.
+  - Si en vez de multiplicar los polinomios se sumaran los términos, un modelo con $p = 1$ y $P = 1$ tocaría los rezagos $1$ y $12$, y nada más.
+  - Al multiplicarlos aparece un término cruzado en el rezago $13$ que nadie ha puesto ahí : sale solo, y con un coeficiente que no es libre, sino el producto de los otros dos.
+  - Ver el desarrollo paso a paso Tomamos el caso más pequeño en que se ve el efecto, un AR($1$)$\times$SAR($1$)$_{12}$ sin diferencias:
+  - $$(1 - \Phi B^{12})(1 - \phi B)\, y_t = \varepsilon_t$$ Multiplicamos los dos factores:
+  - Con $\phi = 0.6$ y $\Phi = 0.7$, la ACF teórica vale $\rho_1 = 0.6016$, $\rho_{12} = 0.7011$ y —esto es lo que hay que reconocer en un correlograma real— $\rho_{11} = 0.4230$ y $\rho_{13} = 0.4218$, aproximadamente $\rho_1 \cdot \rho_{12}$.
+  - R Python Cómo se escribe en la práctica R Python Módulo 3 5.3 Diferenciación estacional: cuántas y en qué orden / Seasonal differencing: how many and in what order 🎯 Objetivo Decidir $D$ y $d$ con criterio, y descubrir que aunque los operadores conmutan , las pruebas que los eligen no .
+  - $\nabla^d \nabla_{12}^D \log(\text{AirPassengers})$ Los dos interruptores dan las cuatro combinaciones.
+  - Mira sobre todo la ACF en el rezago 12 : con solo la diferencia regular baja de $0.762$ a… $0.841$, es decir sube .
+  - Diferenciar de forma regular no toca la estacionalidad; concentrarla es incluso más fácil de ver después.
+  - No dan lo mismo: sobre $\log(\text{AirPassengers})$ y sobre USAccDeaths , "seas" devuelve $1$ y "ocsb" devuelve $0$.
+--- frases nuevas (25)
+  + El mejor modelo ARIMA no estacional sobre $\log(\text{AirPassengers})$, un ARIMA($0,1,5$) elegido por búsqueda exhaustiva, dejaba en sus residuales $\hat\rho_{12} = 0.7245$ y $\hat\rho_{24} = 0.6727$ —el bloque de código de este módulo lo vuelve a ajustar—: cinco términos MA, y toda la estructura sobrante concentrada en un solo sitio, los múltiplos de 12.
+  + Lo resuelve el modelo que el Capítulo 4 dejó como avance, el airline , un SARIMA($0,1,1$)($0,1,1$)$_{12}$: el Módulo 2 lo escribe y lo ajusta, el Módulo 5 lo estudia y en el Módulo 6, con solo dos parámetros , deja $\hat\rho_{12} = -0.0515$ y pasa Ljung–Box(24) con $p = 0.233$.
+  + En la tabla, $\hat\rho_k$ es la autocorrelación muestral en el rezago $k$ (la salida de R y otros textos la escriben $r_k$), y la banda es la de siempre, $\pm 1.96/\sqrt{n}$, con $n$ el número de observaciones de la serie a la que se le mide la ACF: si se diferenció, las que quedan.
+  + El capítulo usa esas dos convenciones de aquí en adelante.
+  + Cómo se escribe en la práctica Antes de los ejemplos, cómo se pide un SARIMA en R y en Python, con el modelo que recorre todo el capítulo: el airline , SARIMA($0,1,1$)($0,1,1$)$_{12}$, ajustado a $\log(\text{AirPassengers})$; el Módulo 5 lo estudia con su nombre.
+  + El bloque da sus dos coeficientes, $\hat\theta$ y $\hat\Theta$, y la varianza de sus innovaciones, $\hat\sigma^2$, que el resto del módulo usa.
+  + Que el coeficiente del rezago $13$ salga del producto, sin estimarse, es lo que explica el ejemplo siguiente.
+  + R Python Un ejemplo para seguir a mano: pronosticar un mes La definición se entiende mejor con un modelo pequeño y tres números.
+  + El rezago 13 no es un parámetro nuevo: el modelo toca tres meses con dos parámetros.
+  + El desarrollo de más abajo hace la misma cuenta con letras.
+  + Es el coeficiente B13 que imprime el bloque de «Cómo se escribe en la práctica», al principio del módulo: no se estima, sale del producto.
+  + R Python Multiplicar no es sumar: los rezagos satélite El satélite es lo único genuinamente nuevo del SARIMA, y la heladería ya lo mostró con números: si los dos modelos se sumaran, uno con $p = 1$ y $P = 1$ tocaría solo los rezagos $1$ y $12$; al multiplicarlos aparece el $13$, con un coeficiente atado a los otros dos.
+  + El desarrollo siguiente repite la cuenta con letras, para cualquier $\phi$ y $\Phi$, y el constructor de más abajo la hace con cualquier orden.
+  + Ver el desarrollo paso a paso Se toma el caso más pequeño en que se ve el efecto, un AR($1$)$\times$SAR($1$)$_{12}$ sin diferencias:
+  + $$(1 - \Phi B^{12})(1 - \phi B)\, y_t = \varepsilon_t$$ Se multiplican los dos factores:
+  + Con $\phi = 0.6$ y $\Phi = 0.7$ es la heladería, y su ACF es la de la tercera viñeta de arriba: picos en $1$ y $12$, y en $11$ y $13$ dos satélites que valen aproximadamente $\rho_1 \cdot \rho_{12}$.
+  + Eso es lo que hay que reconocer en un correlograma real.
+  + R Python Lo que este módulo deja montado es el modelo escrito y su lectura: dos polinomios que se multiplican, satélites que no cuestan parámetros y momentos que se calculan sobre la serie ya diferenciada.
+  + Falta decidir cuántas diferencias lleva —el $(1-B)^d$ y el $(1-B^m)^D$ de la definición— y en qué orden: es el Módulo 3.
+  + Módulo 3 5.3 Diferenciación estacional: cuántas y en qué orden / Seasonal differencing: how many and in what order 🎯 Objetivo Decidir $D$ y $d$ con criterio, y descubrir que aunque los operadores conmutan , las pruebas que los eligen no .
+  + $\nabla^d \nabla_{12}^D \log(\text{AirPassengers})$ Los dos interruptores dan las cuatro combinaciones; se abre con los dos encendidos.
+  + Mira sobre todo la ACF en el rezago 12 : apaga los dos para ver la serie sin diferenciar, con $\hat\rho_{12} = 0.762$, y enciende después solo la diferencia regular.
+  + ¿Baja $\hat\rho_{12}$, como bajaría si fuera solo tendencia, o no?
+  + No dan lo mismo: sobre $\log(\text{AirPassengers})$ y sobre USAccDeaths , "seas" devuelve $1$ y "ocsb" devuelve $0$ (el bloque de arriba imprime las dos).
+  + Con $D$ y $d$ decididos queda una serie estacionaria, que se identifica como cualquier ARMA con una salvedad: los órdenes estacionales se leen en los rezagos $m, 2m, 3m$.
+--- frases duplicadas nuevas: ninguna
+--- lineas de codigo que desaparecen (3):
+  - # MISMA varianza teorica. No es un error de ninguno de los dos: es el mismo
+  - # reparto de grados de libertad que el Modulo 6 discute para el AIC.
+  - # |raiz MA|^-1 = |Theta|^(1/12) comprime la escala hacia 1 y separa mal; Theta no.</code>
+
+######## ensamblado/cap5/templates_4_6.html
+--- frases que desaparecen (6)
+  - Sobre un correlograma estimado —con su banda de $\pm 2/\sqrt{n}$— la distinción entre $0.42298$ y $0.42180$ es invisible, y por eso la regla del producto sirve igual para leer los dos casos.
+  - ACF teórica PACF teórica El protocolo, paso a paso Identificar un SARIMA es el ciclo de Box–Jenkins del Capítulo 4 con dos etapas insertadas.
+  - R Python Módulo 5 5.5 El modelo airline / The airline model 🎯 Objetivo Entender por qué el SARIMA($0,1,1$)($0,1,1$)$_{12}$ aparece una y otra vez, y qué le hace la parte estacional a la incertidumbre del pronóstico.
+  - Ver el desarrollo paso a paso Escribimos el lado derecho expandido:
+  - La rejilla Explorador de modelos SARIMA Los cuatro selectores recorren los $36$ modelos SARIMA($p,1,q$)($P,1,Q$)$_{12}$ ajustados de verdad en R sobre $\log(\text{AirPassengers})$.
+  - Pon $P=Q=0$ para ver qué pasa sin parte estacional, y fíjate en que el mínimo de AICc y el de BIC coinciden aquí —cosa que no siempre ocurre—.
+--- frases nuevas (13)
+  + Sobre un correlograma estimado —con su banda de $\pm 1.96/\sqrt{n}$— la distinción entre $0.42298$ y $0.42180$ es invisible, y por eso la regla del producto sirve igual para leer los dos casos.
+  + ACF teórica PACF teórica El protocolo, paso a paso Identificar un SARIMA sigue el ciclo de Box–Jenkins del Capítulo 4, que tenía cuatro etapas: identificación, estimación, diagnóstico y uso.
+  + Aquí la identificación se abre en cuatro —transformar, elegir $D$, elegir $d$ y leer los cuatro órdenes—, la estimación y el diagnóstico van juntos en la quinta, y el uso, el pronóstico, queda para después del ciclo (Módulo 7).
+  + R Python En la serie del capítulo, el protocolo lleva a $d = D = 1$ y a un pico negativo aislado en el rezago $1$ y otro en el $12$:
+  + Ese modelo tiene nombre propio, airline , y el Módulo 5 lo estudia antes de que el Módulo 7 recorra el ciclo paso a paso.
+  + Módulo 5 5.5 El modelo airline / The airline model 🎯 Objetivo Entender por qué el SARIMA($0,1,1$)($0,1,1$)$_{12}$ aparece una y otra vez, y qué le hace la parte estacional a la incertidumbre del pronóstico.
+  + Ver el desarrollo paso a paso El lado derecho, expandido:
+  + Que el airline sea el punto de partida no lo hace el mejor modelo de cada serie.
+  + El Módulo 6 lo estima junto a otros $35$ candidatos y enseña los dos hábitos que cambian al compararlos cuando hay estacionalidad.
+  + La rejilla Explorador de modelos SARIMA Los cuatro selectores recorren los $36$ modelos SARIMA($p,1,q$)($P,1,Q$)$_{12}$ ajustados de verdad en R sobre $\log(\text{AirPassengers})$; se abre en el ($0,1,1$)($0,1,1$)$_{12}$.
+  + Pon $P=Q=0$ para ver qué pasa sin parte estacional, y busca el modelo de menor AICc y el de menor BIC:
+  + Con el modelo elegido y diagnosticado, falta recorrer el ciclo entero sobre una serie, de la transformación al pronóstico.
+  + El Módulo 7 lo hace con la misma $\log( ext{AirPassengers})$ y cierra el problema que dejó abierto el Capítulo 4.
+--- frases duplicadas nuevas: ninguna
+--- lineas de codigo que desaparecen (0):
+
+######## ensamblado/cap5/templates_7_9.html
+--- frases que desaparecen (12)
+  - Etapa 1 · La transformación El Capítulo 2 dejó zanjado que $\text{AirPassengers}$ pide logaritmo: la amplitud estacional crece con el nivel, y el rango relativo de la serie es $1.848$.
+  - La etapa 5 resuelve dos de las tres: en los residuales del modelo ajustado el $3$ queda en $-0.125$ y el $9$ en $0.117$, dentro de $\pm 0.163$.
+  - Allí el mejor ARIMA no estacional sobre esta misma serie era un ARIMA($0,1,5$): cinco términos MA, Ljung–Box($24$) con $Q = 222.4$ y $p < 10^{-6}$, y $\hat\rho_{12} = 0.7245$ en los residuales.
+  - R Python Módulo 8 5.8 Segundo caso y contraejemplo / A second case, and a counterexample 🎯 Objetivo Repetir el recorrido en una serie donde las pruebas engañan, y aprender a descartar la estacionalidad cuando no la hay.
+  - Con estacionalidad y sin ella, lado a lado El selector cambia entre $\log(\text{AirPassengers})$ y la TRM, las dos ya diferenciadas de forma regular.
+  - Criterio AICc del modelo forzado frente al simple $1708.00$ frente a $1705.94$: peor Cuatro evidencias independientes y todas en la misma dirección. auto.arima lo confirma devolviendo un ARIMA($0,1,0$) —una caminata aleatoria pura, sin ninguna parte estacional—, que es también la conclusión a la que llegó el Capítulo 4 por otro camino.
+  - R Python Módulo 9 5.9 Regresores de calendario y SARIMAX / Calendar regressors and SARIMAX 🎯 Objetivo Separar lo que la estacionalidad estadística no puede capturar —efectos del calendario que se mueven de año en año— y meterlo como regresor.
+  - Hay dos clases de efectos de calendario que rompen ese supuesto y que, por tanto, ningún $\Phi$ ni ningún $\Theta$ pueden absorber:
+  - SARIMAX / regresión con errores SARIMA $$y_t = \beta' x_t + n_t$$ donde $n_t$ sigue un SARIMA($p,d,q$)($P,D,Q$)$_m$.
+  - Añadir regresores de calendario Los interruptores activan cada regresor sobre el modelo airline ; cada combinación está ajustada en R.
+  - Modelo AICc BIC $\hat\beta_{\log(\text{días})}$ $\hat\beta_{\text{Pascua}}$ airline sin regresores $-483.21$ $-474.77$ — — $+\log(\text{días del mes})$ $-486.54$ $-475.35$ $1.1157$ ($t = 2.39$) — $+\log(\text{días}) +$ Semana Santa $\mathbf{-490.72}$ $\mathbf{-476.83}$ $1.0840$ ($t = 2.43$) $0.0290$ ($t = 2.60$) Los dos regresores son significativos, y el primero dice algo bonito.
+  - El modelo con calendario gana $7.5$ puntos de AICc, y sin embargo en la comparación fuera de muestra del Módulo 11 sale peor que el airline desnudo (RMSE $45.48$ frente a $43.18$).
+--- frases nuevas (23)
+  + Las cinco etapas que siguen son las del ciclo del Módulo 4, en su orden, aplicadas a $\log(\text{AirPassengers})$; el pronóstico, el uso del modelo, va después del ciclo.
+  + Etapa 1 · La transformación El Capítulo 2 dejó zanjado que $\text{AirPassengers}$ pide logaritmo: la amplitud estacional crece con el nivel, y el rango relativo de la serie —su recorrido, del mínimo al máximo, dividido por la media— es $1.848$.
+  + La etapa 5 resuelve dos de las tres: en los residuales del modelo ajustado el $3$ queda en $-0.125$ y el $9$ en $0.117$, dentro de $\pm 0.163$ —la banda de los residuales, que son $144$, uno por observación:
+  + Allí el mejor ARIMA no estacional sobre esta misma serie era un ARIMA($0,1,5$): cinco términos MA, Ljung–Box($24$) con $Q = 222.4$ y $p < 10^{-6}$, y $\hat\rho_{12} = 0.7245$ en los residuales, como vuelve a imprimir el bloque del Módulo 1.
+  + En R, si el logaritmo va dentro del modelo — Arima(AirPassengers, …, lambda = 0) —, forecast() deshace la transformación y devuelve esa mediana; con biasadj = TRUE devuelve una aproximación de la media: a $24$ meses, $530.58$ en lugar de $525.46$ (el bloque de abajo hace las dos cuentas).
+  + Cuál de las dos conviene depende de con qué se mida el error, y eso es del Capítulo 6.
+  + R Python Una serie y un modelo no prueban que el recorrido funcione siempre.
+  + El Módulo 8 lo repite en una serie donde las pruebas engañan y en otra que no tiene estación.
+  + Módulo 8 5.8 Segundo caso y contraejemplo / A second case, and a counterexample 🎯 Objetivo Repetir el recorrido en una serie donde las pruebas engañan, y aprender a descartar la estacionalidad cuando no la hay.
+  + Con estacionalidad y sin ella, lado a lado El selector cambia entre $\log(\text{AirPassengers})$ y la TRM, las dos ya diferenciadas de forma regular; se abre con la primera.
+  + Criterio AICc del modelo forzado frente al simple $1708.00$ frente a $1705.94$: peor Cuatro comprobaciones, todas en la misma dirección.
+  + No son cuatro evidencias independientes, sino tres: la tercera y la cuarta miran el mismo $\hat\Phi$, una por su $t$ y la otra por el AICc. auto.arima lo confirma devolviendo un ARIMA($0,1,0$) —una caminata aleatoria pura, sin ninguna parte estacional—, que es también la conclusión a la que llegó el Capítulo 4 por otro camino.
+  + R Python Descartar la estacionalidad cuando no está es la mitad del oficio; la otra mitad es reconocer lo que la estacionalidad no puede absorber aunque esté.
+  + El Módulo 9 se ocupa de los efectos del calendario que cambian de posición de un año a otro.
+  + Módulo 9 5.9 Regresores de calendario y SARIMAX / Calendar regressors and SARIMAX 🎯 Objetivo Separar lo que la estacionalidad estadística no puede capturar —efectos del calendario que se mueven de año en año— y meterlo como regresor.
+  + Los efectos de calendario que cambian de un año a otro rompen ese supuesto, y por tanto ningún $\Phi$ ni ningún $\Theta$ pueden absorberlos.
+  + La tabla repasa cuatro: el módulo construye los dos primeros, el tercero se trataría igual y el cuarto es el que no hace falta.
+  + SARIMAX / regresión con errores SARIMA $$y_t = \beta' x_t + \eta_t$$ donde $\eta_t$ —una letra distinta de la $n$ del tamaño de la muestra— sigue un SARIMA($p,d,q$)($P,D,Q$)$_m$.
+  + Añadir regresores de calendario Los interruptores activan cada regresor sobre el modelo airline (se abre con los días encendidos y la Semana Santa apagada); cada combinación está ajustada en R.
+  + Modelo AICc BIC $\hat\beta_{\log(\text{días})}$ $\hat\beta_{\text{Pascua}}$ airline sin regresores $-483.21$ $-474.77$ — — $+\log(\text{días del mes})$ $-486.54$ $-475.35$ $1.1157$ ($t = 2.39$) — $+\log(\text{días}) +$ Semana Santa $\mathbf{-490.72}$ $\mathbf{-476.83}$ $1.0840$ ($t = 2.43$) $0.0290$ ($t = 2.60$) Los dos regresores son significativos, y el primero dice algo más.
+  + El modelo con calendario gana $7.5$ puntos de AICc, y sin embargo fuera de muestra —entrenando hasta 1958-12 y midiendo el error de pronóstico en los $24$ meses siguientes, la comparación del Módulo 11— sale peor que el airline desnudo: su RMSE , la raíz del error cuadrático medio en pasajeros, es $45.48$ frente a $43.18$ (el bloque de abajo lo calcula).
+  + R Python Calendario aparte, todo lo anterior ha funcionado porque $m = 12$ es pequeño.
+  + El Módulo 10 mira qué se rompe cuando no lo es, y qué se usa entonces.
+--- frases duplicadas nuevas: ninguna
+--- lineas de codigo que desaparecen (5):
+  - round(exp(c(media = p$mean[24], lo95 = p$lower[24,2], hi95 = p$upper[24,2])), 2)
+  - #>  media   lo95   hi95
+  - #> 525.46 399.66 690.85
+  - #>   0.1882      no se rechaza beta = 1</code>
+  - # R da 0.1882 (con su 1.0840): tampoco aqui se rechaza beta = 1.</code>
+
+######## ensamblado/cap5/templates_10_11.html
+--- frases que desaparecen (16)
+  - Con datos semanales ($m = 52$), diarios con patrón anual ($m = 365.25$) o media horarios ($m = 48$ y $m = 336$ a la vez), el SARIMA se rompe por tres sitios distintos.
+  - Regresión armónica: la estacionalidad como suma de senos Definición: términos de Fourier $$\begin{aligned} y_t = \beta_0 &+ \sum_{k=1}^{K}\alpha_k \sin\!\left(\frac{2\pi k t}{m}\right) \\ &+ \sum_{k=1}^{K}\delta_k \cos\!\left(\frac{2\pi k t}{m}\right) + n_t \end{aligned}$$ con $n_t$ un ARIMA no estacional .
+  - Fíjate en dónde deja de rechazar el diagnóstico: hasta $K=4$ los residuales conservan estructura estacional, y hace falta llegar a $K=5$ para que la sinusoide represente bien el pico de verano.
+  - Componente estacional ajustada por los $2K$ términos $K$ Términos Parámetros totales $n$ efectivo Errores AICc Ljung–Box($24$) $1$ $2$ $8$ $143$ ARIMA($5,1,0$) $-359.18$ $< 10^{-4}$ $2$ $4$ $9$ $143$ ARIMA($0,1,4$) $-409.18$ $< 10^{-4}$ $3$ $6$ $11$ $143$ ARIMA($2,1,2$) $-460.96$ $< 10^{-4}$ $4$ $8$ $14$ $143$ ARIMA($1,1,4$) $-495.24$ $0.0001$ $5$ $10$ $15$ $143$ ARIMA($0,1,4$) $-521.22$ $0.1341$ 
+  - R Python Módulo 11 5.11 Panorama comparativo y cierre / Comparative overview and wrap-up 🎯 Objetivo Situar el SARIMA entre las alternativas modernas, y ver con un ejemplo por qué una sola partición no permite decidir entre ellas.
+  - La alternativa evidente es partir la serie: entrenar con los primeros $120$ meses y medir el error en los últimos $24$.
+  - La familia ARIMA se ajusta sobre el logaritmo; el ETS, en las dos escalas: sobre la serie cruda, donde su estacionalidad multiplicativa es la natural, y sobre el logaritmo, la misma escala que el ARIMA.
+  - Todas las métricas se calculan en la escala original, que es la única en la que son comparables.
+  - Una salvedad sobre la armónica: su $K = 6$ se eligió por AICc sobre la serie completa, con los $24$ meses de prueba dentro; con solo el entrenamiento el AICc elige $K = 5$, que da un RMSE de $19.58$ en vez de $19.51$.
+  - Ocho métodos sobre los últimos 24 meses El selector cambia la métrica y los interruptores encienden y apagan métodos en el gráfico.
+  - Método Escala $k$ RMSE MAE MAPE % ETS($M,A,M$) sobre el logaritmo log $16$ $\mathbf{19.43}$ $16.12$ $3.55$ Regresión armónica $K=6$ + ARIMA log $16$ $19.51$ $\mathbf{14.69}$ $\mathbf{3.15}$ STL + ARIMA log $2 + 11$ $35.48$ $30.29$ $6.33$ SARIMA airline log $2$ $43.18$ $39.45$ $8.52$ auto.arima (elige el airline ) log $2$ $43.18$ $39.45$ $8.52$ SARIMA airline + calendario log $4$ $45.48$ $41.45$ $8
+  - Esa conclusión es falsa, y demostrarlo es la razón de ser del Capítulo 6.
+  - Repitiendo la comparación sobre $61$ orígenes en vez de uno —avanzando el corte mes a mes y midiendo el error de los $12$ meses siguientes a cada corte—, el SARIMA pasa de cuarto a primero .
+  - Aquí se han citado sus resultados como advertencia; allí se construye el método.
+  - Las columnas "dónde brilla" y "dónde falla" resumen resultados de las competencias M4 y M5 y de la literatura de forecasting ; las cifras de la comparación de arriba, en cambio, están todas calculadas sobre esta serie y se pueden reproducir con el código del capítulo.
+  - Métricas de error y sus límites, partición temporal frente a validación cruzada estándar, validación de origen móvil, y si los intervalos que hemos construido cubren lo que dicen cubrir.
+--- frases nuevas (34)
+  + Con datos semanales ($m = 52$), diarios con patrón anual ($m = 365.25$) o tomados cada media hora con un patrón diario y otro semanal ($m = 48$ y $m = 336$ a la vez), el SARIMA se rompe por tres sitios distintos.
+  + Regresión armónica: la estacionalidad como suma de senos Definición: términos de Fourier $$\begin{aligned} y_t = \beta_0 &+ \sum_{k=1}^{K}\alpha_k \sin\!\left(\frac{2\pi k t}{m}\right) \\ &+ \sum_{k=1}^{K}\delta_k \cos\!\left(\frac{2\pi k t}{m}\right) + \eta_t \end{aligned}$$ con $\eta_t$, como en el Módulo 9, un ARIMA no estacional .
+  + Fíjate en dónde deja de rechazar el diagnóstico:
+  + ¿desde qué $K$ dejan los residuales de conservar estructura estacional?
+  + Componente estacional ajustada por los $2K$ términos $K$ Términos Parámetros totales $n$ efectivo Errores AICc Ljung–Box($24$) $1$ $2$ $8$ $143$ ARIMA($5,1,0$) $-359.18$ $< 10^{-4}$ $2$ $4$ $9$ $143$ ARIMA($0,1,4$) $-409.18$ $< 10^{-4}$ $3$ $6$ $11$ $143$ ARIMA($2,1,2$) $-460.96$ $< 10^{-4}$ $4$ $8$ $14$ $143$ ARIMA($1,1,4$) $-495.24$ $0.0001$ $5$ $10$ $15$ $143$ ARIMA($0,1,4$) $-521.22$ $0.1341$ 
+  + La trampa de esta tabla, y es la lección central del módulo.
+  + R Python La tabla de este módulo compara armónicos entre sí; entre familias distintas, el AICc no sirve.
+  + El Módulo 11 hace esa comparación de la manera que sí vale, fuera de muestra, y mira qué pasa cuando se repite desde muchos cortes.
+  + Módulo 11 5.11 Panorama comparativo y cierre / Comparative overview and wrap-up 🎯 Objetivo Situar el SARIMA entre las alternativas modernas, y ver con un ejemplo por qué una sola partición no permite decidir entre ellas.
+  + La alternativa evidente es comparar fuera de muestra : partir la serie, entrenar con los primeros $120$ meses, hasta 1958-12, y medir el error de pronóstico en los últimos $24$.
+  + El error se mide de tres maneras, siempre en pasajeros y en la escala original, la única en la que los métodos son comparables: el RMSE , la raíz del error cuadrático medio, que castiga más los errores grandes; el MAE , el error absoluto medio; y el MAPE , el error absoluto medio en porcentaje de lo observado.
+  + Cinco son de la familia ARIMA y ya han salido en el capítulo, todos sobre el logaritmo: el airline , el modelo que elige auto.arima , el airline con el calendario del Módulo 9, y la regresión armónica y el STL + ARIMA del Módulo 10.
+  + Los otros tres son nuevos.
+  + El ETS extiende el suavizamiento exponencial simple y el método de Holt del Capítulo 4 (Módulo 1) con un componente estacional: suaviza por separado el nivel, la tendencia y la estación, y sus tres letras dicen cómo entra cada uno —primero el error, después la tendencia y la estación—:
+  + $A$ aditivo, $A_d$ aditivo amortiguado, $M$ multiplicativo.
+  + Se ajusta en las dos escalas: sobre la serie cruda, donde su estacionalidad multiplicativa es la natural, y sobre el logaritmo, la misma escala que el ARIMA.
+  + El naïve estacional es la referencia mínima: pronostica cada mes con el valor del mismo mes del último año observado, sin estimar nada.
+  + Ocho métodos sobre los últimos 24 meses Los interruptores encienden y apagan métodos en el gráfico.
+  + La lectura da, de cada método encendido, su sesgo medio : lo observado menos lo pronosticado, en promedio de los $24$ meses, positivo si el método se queda corto.
+  + Antes de seguir leyendo, mira de qué lado de lo observado cae cada curva.
+  + Leída sin más, la tabla es un veredicto.
+  + Arriba quedan casi empatados el ETS sobre el logaritmo, primero por RMSE, y la regresión armónica, primera por MAE ($14.69$ frente a $16.12$) y por MAPE.
+  + El modelo que ha ocupado diez módulos queda cuarto con las tres métricas, con más del doble de RMSE que el ganador, y ni siquiera le gana al ETS aplicado sobre la misma escala.
+  + Una salvedad sobre la armónica: su $K = 6$ se eligió por AICc sobre la serie completa (la tabla del Módulo 10), con los $24$ meses de prueba dentro; con solo el entrenamiento el AICc elige $K = 5$, que da un RMSE de $19.58$ en vez de $19.51$.
+  + La misma comparación, desde $61$ orígenes Esa conclusión es falsa.
+  + Repitiendo la comparación desde $61$ orígenes en vez de uno —el corte avanza mes a mes, de 1954-12 a 1959-12; en cada corte se reajusta todo y se mide el RMSE de los $12$ meses siguientes—, el SARIMA pasa de cuarto a primero .
+  + La tabla de abajo da el promedio de esos $61$ RMSE.
+  + El bloque siguiente reproduce todo lo anterior: la tabla de la partición (el SARIMA con calendario lo calcula el bloque del Módulo 9), el crecimiento de cada año y los dos horizontes desde muchos orígenes.
+  + En R tarda menos de un minuto.
+  + En Python, statsmodels no trae ets() ni la elección automática de auto.arima , y el bloque se queda con el SARIMA y el naïve estacional.
+  + R Python Puente con el Capítulo 6.
+  + Aquí solo se ha medido, como advertencia; allí se construye el método.
+  + Las columnas "dónde brilla" y "dónde falla" resumen resultados de las competencias M4 y M5 y de la literatura de forecasting ; las cifras de la comparación de arriba, en cambio, están todas calculadas sobre esta serie y las reproduce el bloque de código de la comparación.
+  + Métricas de error y sus límites, partición temporal frente a validación cruzada estándar, validación de origen móvil, y si los intervalos construidos cubren lo que dicen cubrir.
+--- frases duplicadas nuevas: ninguna
+--- lineas de codigo que desaparecen (0):

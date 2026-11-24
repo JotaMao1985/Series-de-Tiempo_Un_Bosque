@@ -15,14 +15,14 @@ Generado por `verifica_cifras_cap5.py`. Cada fila es una cifra (o afirmación) d
 
 ## Resumen
 
-- Cifras y afirmaciones registradas: **774**
-- Verificadas contra al menos una fuente: **713**
+- Cifras y afirmaciones registradas: **775**
+- Verificadas contra al menos una fuente: **714**
 - Definiciones o convenciones: **61**
 - Comprobadas a mano en una fuente pública fuera del repositorio (`WEB`, con fecha): **7**
 - Marcadas `[SIN VERIFICAR]`: **5**
 - No coinciden: **0**
 
-Contrastes por tipo de fuente: C 115, CALC 195, DEF 1, DOC 17, J 331, J3 2, J4 6, PY 10, R 222, WEB 7.
+Contrastes por tipo de fuente: C 115, CALC 195, DEF 1, DOC 17, J 332, J3 2, J4 6, PY 10, R 222, WEB 7.
 
 ## Código proyectado, ejecutado
 
@@ -798,7 +798,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `1.49` | dato | CALC: √(131/59) = 1.49008 | verificado |
 | `capítulo` | capítulo | C: capítulo 5 contiene «entre $1.4$ y $2.4$ veces mayores» | verificado |
 
-### La TRM es mensual y no tiene estacionalidad: cuatro evidencias coinciden
+### La TRM es mensual y no tiene estacionalidad: cuatro comprobaciones coinciden
 
 | Cifra o afirmación | Tipo | Fuentes y valor | Estado |
 |---|---|---|---|
@@ -1049,6 +1049,7 @@ Cada bloque `r` se ejecutó en R version 4.6.0 (2026-04-24) y sus líneas `#>` s
 | `22.38` | capítulo | C: capítulo 5 contiene «$22.38$»<br>C: capítulo 5 (autoevaluación) contiene «frente a $22.38$» | verificado |
 | `22.385` | dato | J: cap5_sarima.json › airpassengers.comparativa.origen_movil.rmse_medio.armonica = 22.385 | verificado |
 | `22.3847` | dato | R: directo_cap5.json › m11.om12.rmse_medio.armonica = 22.384699 | verificado |
+| `21.06` | dato | J: cap5_sarima.json › airpassengers.comparativa.origen_movil.armonica_exhaustiva.rmse_medio_h12 = 21.056 | verificado |
 
 ### La partición cayó justo después de la desaceleración de 1958, y el *airline* la extrapoló
 

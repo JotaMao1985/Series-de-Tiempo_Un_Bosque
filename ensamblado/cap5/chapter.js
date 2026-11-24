@@ -1207,8 +1207,11 @@
     SIMULADORES['comparativa-particion'] = function (raiz) {
       const comp = AP.comparativa;
       const claves = comp.orden_rmse;
-      const params = { metrica: 'rmse' };
+      const params = {};
       claves.forEach((k, i) => { params['m_' + k] = i < 3 || k === 'sarima'; });
+      // Sesgo medio sobre la prueba: lo observado menos lo pronosticado.
+      const sesgo = k => comp.observado.reduce((s, o, j) => s + o - comp.modelos[k].pronostico[j], 0) /
+        comp.observado.length;
       const controles = raiz.querySelector('.simulador-controles');
       const lectura = raiz.querySelector('.simulador-lectura');
       const canvas = raiz.querySelector('canvas');
@@ -1223,7 +1226,7 @@
       // que las nueve entradas quepan sin que Chart.js las corte.
       const CORTOS = { ets_log: 'ETS (log)', stl_arima: 'STL + ARIMA', sarima: 'SARIMA',
                        auto_arima: 'auto.arima', sarima_calendario: 'SARIMA + cal.',
-                       ets: 'ETS (cruda)', snaive: 'Naive est.' };
+                       ets: 'ETS (cruda)', snaive: 'Naïve est.' };
       const metodo = k => comp.modelos[k].nombre.split(':')[0].replace(/ \+ errores ARIMA$/, '');
       const corto = k => CORTOS[k] || ('Armónica ' + (comp.modelos[k].nombre.match(/K = \d+/) || [''])[0]).trim();
       // Dos métodos con el mismo pronóstico se tapan: la leyenda lo dice.
@@ -1262,27 +1265,22 @@
             ? `${encendidos.length} ${encendidos.length === 1 ? 'método' : 'métodos'}, ` + encendidos.map(metodo).join(', ')
             : 'ningún método encendido'));
 
-        const met = params.metrica;
-        const orden = claves.slice().sort((a, b) => comp.modelos[a][met] - comp.modelos[b][met]);
+        // La lectura no repite el ranking, que ya da la tabla ordenable de arriba:
+        // da el sesgo medio de cada método encendido, que es lo que explica el
+        // párrafo del crecimiento de 1958.
         const campos = [
           { etiqueta: 'entrena hasta', valor: comp.corte + ` (n = ${comp.n_entrenamiento})` },
-          { etiqueta: 'prueba', valor: comp.n_prueba + ' meses' }
+          { etiqueta: 'prueba', valor: comp.n_prueba + ' meses' },
+          { etiqueta: 'sesgo medio', valor: 'observado − pronóstico; positivo si se queda corto' }
         ];
-        orden.forEach((k, i) => campos.push({
-          etiqueta: `${i + 1}. ${comp.modelos[k].nombre}`,
-          valor: fmt(comp.modelos[k][met], 3) + (met === 'mape' ? '\u00a0%' : '') + (k === 'sarima' ? '  ← el SARIMA' : '')
+        encendidos.forEach(k => campos.push({
+          etiqueta: comp.modelos[k].nombre,
+          valor: fmt(sesgo(k), 2) + '\u00a0pasajeros'
         }));
+        if (!encendidos.length) campos.push({ etiqueta: 'métodos encendidos', valor: 'ninguno' });
         actualizarLectura(lectura, campos);
       }
 
-      crearSelector(controles, {
-        clave: 'metrica', etiqueta: 'Métrica del ranking',
-        opciones: [
-          { valor: 'rmse', texto: 'RMSE' },
-          { valor: 'mae', texto: 'MAE' },
-          { valor: 'mape', texto: 'MAPE (%)' }
-        ]
-      }, params, pintar);
       crearInterruptores(controles,
         claves.map(k => ({ clave: 'm_' + k, etiqueta: comp.modelos[k].nombre })),
         params, pintar);
@@ -1294,31 +1292,40 @@
     // ================================================================
     // Autoevaluación del capítulo
     // ================================================================
-    // Tabla ordenable de la comparativa sobre UNA partición. El pie recuerda que
-    // este ranking se desmiente en el capítulo 6 con 61 orígenes.
+    // Tabla ordenable de la comparativa sobre UNA partición: es la única vez que el
+    // capítulo muestra las tres métricas de los ocho métodos. La descripción y el
+    // pie no adelantan el resultado; lo cuenta la prosa de después.
     TABLAS_RANKING['comparativa'] = function () {
-      const claves = AP.comparativa.orden_rmse;
+      const comp = AP.comparativa;
+      const claves = comp.orden_rmse;
       return {
-        descripcion: 'Los ocho métodos sobre los últimos ' + AP.comparativa.n_prueba +
-          ' meses, una sola partición. Pulsa las cabeceras: por RMSE gana el ETS sobre el ' +
-          'logaritmo y por MAE y MAPE la regresión armónica, pero las tres dejan al SARIMA cuarto.',
+        descripcion: 'Los ocho métodos sobre los últimos ' + comp.n_prueba +
+          ' meses, una sola partición. Pulsa una cabecera para ordenar por esa métrica.',
         columnas: [
           { clave: 'modelo', titulo: 'Método', tipo: 'texto' },
           { clave: 'rmse', titulo: 'RMSE', decimales: 2, mejor: 'menor' },
           { clave: 'mae', titulo: 'MAE', decimales: 2, mejor: 'menor' },
-          { clave: 'mape', titulo: 'MAPE', decimales: 2, sufijo: ' %', mejor: 'menor' }
+          { clave: 'mape', titulo: 'MAPE', decimales: 2, sufijo: ' %', mejor: 'menor' },
+          { clave: 'escala', titulo: 'Escala', tipo: 'texto' },
+          { clave: 'k', titulo: 'k', tipo: 'texto' }
         ],
         filas: claves.map(k => ({
-          modelo: AP.comparativa.modelos[k].nombre,
-          rmse: AP.comparativa.modelos[k].rmse,
-          mae: AP.comparativa.modelos[k].mae,
-          mape: AP.comparativa.modelos[k].mape
+          modelo: comp.modelos[k].nombre,
+          escala: comp.modelos[k].escala,
+          // El STL + ARIMA estima además los m − 1 = 11 valores libres de la estación.
+          k: k === 'stl_arima' ? comp.modelos[k].n_par + ' + ' + (12 - 1) : String(comp.modelos[k].n_par),
+          // Sin redondear: las de 3 decimales, redondeadas otra vez a 2, suben
+          // 16.1249 a 16.13 y 76.9946 a 77.00 (R da 16.12 y 76.99).
+          rmse: comp.modelos[k].exactas.rmse,
+          mae: comp.modelos[k].exactas.mae,
+          mape: comp.modelos[k].exactas.mape
         })),
         formato: fmt,
         inicial: 'rmse',
-        pie: 'Las tres métricas coinciden en el cuarto puesto y aun así es engañoso: sobre ' +
-          '61 orígenes, midiendo los 12 meses siguientes a cada corte, el SARIMA pasa a primero. ' +
-          'El Capítulo 6 construye esa evaluación.'
+        pie: 'Entrenamiento: los ' + comp.n_entrenamiento + ' meses hasta ' + comp.corte +
+          '; prueba: de ' + comp.fechas_prueba[0] + ' a ' + comp.fechas_prueba[comp.fechas_prueba.length - 1] +
+          '. Los errores, en pasajeros y en la escala original (el MAPE, en porcentaje); <em>k</em>, lo que ' +
+          'estima cada método.'
       };
     };
 
@@ -1338,7 +1345,7 @@
           {
             texto: 'Que la TRM tiene estacionalidad anual, porque $0.636$ supera claramente la banda.',
             correcta: false,
-            retro: 'Es la conclusión que el módulo está diseñado para evitar. Una serie con tendencia da autocorrelaciones grandes en <em>todos</em> los rezagos, incluidos los múltiplos de $12$. Cuatro evidencias independientes (Módulo 8) muestran que esta serie no tiene estacionalidad.'
+            retro: 'Es la conclusión que el módulo está diseñado para evitar. Una serie con tendencia da autocorrelaciones grandes en <em>todos</em> los rezagos, incluidos los múltiplos de $12$. Las comprobaciones del Módulo 8 muestran que esta serie no tiene estacionalidad.'
           },
           {
             texto: 'Que hace falta una diferencia estacional, porque $\\hat\\rho_{12}$ está fuera de banda.',

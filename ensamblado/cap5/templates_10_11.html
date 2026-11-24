@@ -17,7 +17,7 @@
       </div>
 
       <p>Todo lo anterior descansa en que $m = 12$ sea pequeño. Con datos semanales ($m = 52$), diarios con patrón
-        anual ($m = 365.25$) o media horarios ($m = 48$ y $m = 336$ a la vez), el SARIMA se rompe por tres sitios
+        anual ($m = 365.25$) o tomados cada media hora con un patrón diario y otro semanal ($m = 48$ y $m = 336$ a la vez), el SARIMA se rompe por tres sitios
         distintos.</p>
 
       <div class="diagram">
@@ -49,9 +49,9 @@
         <h4><i class="fas fa-wave-square mr-2" aria-hidden="true"></i>Definición: términos de Fourier</h4>
         $$\begin{aligned}
           y_t = \beta_0 &+ \sum_{k=1}^{K}\alpha_k \sin\!\left(\frac{2\pi k t}{m}\right) \\
-          &+ \sum_{k=1}^{K}\delta_k \cos\!\left(\frac{2\pi k t}{m}\right) + n_t
+          &+ \sum_{k=1}^{K}\delta_k \cos\!\left(\frac{2\pi k t}{m}\right) + \eta_t
         \end{aligned}$$
-        <p style="margin-bottom:0;">con $n_t$ un ARIMA <strong>no estacional</strong>. Cuesta $2K$ parámetros
+        <p style="margin-bottom:0;">con $\eta_t$, como en el Módulo 9, un ARIMA <strong>no estacional</strong>. Cuesta $2K$ parámetros
           <em>independientemente de $m$</em>, y $K$ controla la suavidad: $K=1$ da una sinusoide pura, y $K$ mayor
           admite formas más quebradas. El máximo útil es $K = m/2$: ahí el seno de frecuencia $m/2$ vale cero en todos los
           periodos, quedan $m-1$ términos y <strong>equivalen exactamente a $m-1$ indicadoras mensuales</strong> —con
@@ -63,9 +63,8 @@
         <h4><i class="fas fa-sliders" aria-hidden="true"></i> ¿Cuántos armónicos hacen falta?</h4>
         <p class="simulador-intro">El deslizador mueve $K$ sobre $\log(\text{AirPassengers})$: arriba, el componente
           estacional que dibujan los $2K$ términos; abajo, el AICc <strong>dentro de la familia armónica</strong> y el
-          $p$-valor de Ljung–Box. Fíjate en dónde deja de rechazar el diagnóstico: hasta $K=4$ los residuales
-          conservan estructura estacional, y hace falta llegar a $K=5$ para que la sinusoide represente bien el pico de
-          verano.</p>
+          $p$-valor de Ljung–Box. Se abre en $K = 3$. Fíjate en dónde deja de rechazar el diagnóstico: ¿desde qué
+          $K$ dejan los residuales de conservar estructura estacional?</p>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">Componente estacional ajustada por los $2K$ términos</p>
         <div class="grafico-wrapper" style="height:240px;">
@@ -89,6 +88,10 @@
           </tbody>
         </table>
       </div>
+
+      <p>«Parámetros totales» suma los términos de Fourier, los coeficientes del ARIMA de los errores y su deriva
+        (<em>drift</em>), que <code>auto.arima</code> añade aquí porque los errores llevan $d = 1$: con $K = 6$,
+        $11 + 4 + 1 = 16$. La varianza $\sigma^2$ no se cuenta.</p>
 
       <div class="warning">
         <p><strong>La trampa de esta tabla, y es la lección central del módulo.</strong> Es muy tentador poner el AICc
@@ -219,6 +222,10 @@ print(f.mle_retvals["converged"], round(f.aic, 2))
 # componente estacional de otra forma.</code></pre>
         </div>
       </div>
+
+      <p>La tabla de este módulo compara armónicos entre sí; entre familias distintas, el AICc no sirve. El
+        Módulo 11 hace esa comparación de la manera que sí vale, fuera de muestra, y mira qué pasa cuando se repite
+        desde muchos cortes.</p>
     </div>
   </template>
 
@@ -243,24 +250,36 @@ print(f.mle_retvals["converged"], round(f.aic, 2))
       <h3>La comparación, hecha mal a propósito</h3>
 
       <p>Todo el capítulo ha usado criterios <em>dentro</em> de la muestra, y el Módulo 10 acaba de mostrar que entre
-        familias distintas eso no vale. La alternativa evidente es partir la serie: entrenar con los primeros $120$
-        meses y medir el error en los últimos $24$. La familia ARIMA se ajusta sobre el logaritmo; el ETS, en las dos
-        escalas: sobre la serie cruda, donde su estacionalidad multiplicativa es la natural, y sobre el logaritmo, la
-        misma escala que el ARIMA. Todas las métricas se calculan en la escala original, que es la única en la que son
-        comparables. La columna $k$ cuenta todo lo que se estima: en el STL + ARIMA, los $11$ valores de la
-        estacionalidad además de los $2$ parámetros del ARIMA. Una salvedad sobre la armónica: su $K = 6$ se eligió
-        por AICc sobre la serie completa, con los $24$ meses de prueba dentro; con solo el entrenamiento el AICc
-        elige $K = 5$, que da un RMSE de $19.58$ en vez de $19.51$. Es una ventaja indebida, pequeña, y no cambia el
-        orden de la tabla.</p>
+        familias distintas eso no vale. La alternativa evidente es comparar <strong>fuera de muestra</strong>: partir
+        la serie, entrenar con los primeros $120$ meses, hasta 1958-12, y medir el error de pronóstico en los últimos
+        $24$. El error se mide de tres maneras, siempre en pasajeros y en la escala original, la única en la que los
+        métodos son comparables: el <strong>RMSE</strong>, la raíz del error cuadrático medio, que castiga más los
+        errores grandes; el <strong>MAE</strong>, el error absoluto medio; y el <strong>MAPE</strong>, el error
+        absoluto medio en porcentaje de lo observado.</p>
+
+      <p>Entran ocho métodos. Cinco son de la familia ARIMA y ya han salido en el capítulo, todos sobre el logaritmo:
+        el <em>airline</em>, el modelo que elige <code>auto.arima</code>, el <em>airline</em> con el calendario del
+        Módulo 9, y la regresión armónica y el STL + ARIMA del Módulo 10. Los otros tres son nuevos. El
+        <strong>ETS</strong> extiende el suavizamiento exponencial simple y el método de Holt del Capítulo 4
+        (Módulo 1) con un componente estacional: suaviza por separado el nivel, la tendencia y la estación, y sus
+        tres letras dicen cómo entra cada uno —primero el error, después la tendencia y la estación—: $A$ aditivo,
+        $A_d$ aditivo amortiguado, $M$ multiplicativo. Se ajusta en las dos escalas: sobre la serie cruda, donde su
+        estacionalidad multiplicativa es la natural, y sobre el logaritmo, la misma escala que el ARIMA. El
+        <strong>naïve estacional</strong> es la referencia mínima: pronostica cada mes con el valor del mismo mes del
+        último año observado, sin estimar nada. La columna $k$ cuenta los parámetros estimados, sin la varianza
+        $\sigma^2$: en el STL + ARIMA, los $11$ valores de la estacionalidad además de los $2$ parámetros del ARIMA,
+        y en la armónica, también la deriva.</p>
 
       <!--RANKING:comparativa|Los ocho métodos sobre una sola partición|-->
 
       <div class="simulador" data-simulador="comparativa-particion">
         <h4><i class="fas fa-trophy" aria-hidden="true"></i> Ocho métodos sobre los últimos 24 meses</h4>
-        <p class="simulador-intro">El selector cambia la métrica y los interruptores encienden y apagan métodos en el
-          gráfico. Los ocho pronósticos están calculados en R sobre el mismo conjunto de entrenamiento (hasta
-          1958-12). Se abre con lo observado y los cuatro primeros métodos por RMSE; con todos apagados queda solo lo
-          observado.</p>
+        <p class="simulador-intro">Los interruptores encienden y apagan métodos en el gráfico. Los ocho pronósticos
+          están calculados en R sobre el mismo conjunto de entrenamiento (hasta 1958-12). Se abre con lo observado y
+          los cuatro primeros métodos por RMSE; con todos apagados queda solo lo observado. La lectura da, de cada
+          método encendido, su <strong>sesgo medio</strong>: lo observado menos lo pronosticado, en promedio de los
+          $24$ meses, positivo si el método se queda corto. Antes de seguir leyendo, mira de qué lado de lo observado
+          cae cada curva.</p>
         <div class="simulador-controles"></div>
         <div class="simulador-lectura"></div>
         <div class="grafico-wrapper" style="height:320px;">
@@ -268,34 +287,26 @@ print(f.mle_retvals["converged"], round(f.aic, 2))
         </div>
       </div>
 
-      <div class="diagram">
-        <table>
-          <thead>
-            <tr><th>Método</th><th>Escala</th><th>$k$</th><th>RMSE</th><th>MAE</th><th>MAPE %</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>ETS($M,A,M$) sobre el logaritmo</td><td>log</td><td>$16$</td><td>$\mathbf{19.43}$</td><td>$16.12$</td><td>$3.55$</td></tr>
-            <tr><td>Regresión armónica $K=6$ + ARIMA</td><td>log</td><td>$16$</td><td>$19.51$</td><td>$\mathbf{14.69}$</td><td>$\mathbf{3.15}$</td></tr>
-            <tr><td>STL + ARIMA</td><td>log</td><td>$2 + 11$</td><td>$35.48$</td><td>$30.29$</td><td>$6.33$</td></tr>
-            <tr><td><strong>SARIMA <em>airline</em></strong></td><td>log</td><td>$2$</td><td>$43.18$</td><td>$39.45$</td><td>$8.52$</td></tr>
-            <tr><td><code>auto.arima</code> (elige el <em>airline</em>)</td><td>log</td><td>$2$</td><td>$43.18$</td><td>$39.45$</td><td>$8.52$</td></tr>
-            <tr><td>SARIMA <em>airline</em> + calendario</td><td>log</td><td>$4$</td><td>$45.48$</td><td>$41.45$</td><td>$8.95$</td></tr>
-            <tr><td>ETS($M,A_d,M$) sobre la serie cruda</td><td>original</td><td>$17$</td><td>$72.55$</td><td>$63.21$</td><td>$13.30$</td></tr>
-            <tr><td>Naïve estacional</td><td>original</td><td>$0$</td><td>$76.99$</td><td>$71.25$</td><td>$15.52$</td></tr>
-          </tbody>
-        </table>
-      </div>
+      <p>Leída sin más, la tabla es un veredicto. Arriba quedan casi empatados el ETS sobre el logaritmo, primero por
+        RMSE, y la regresión armónica, primera por MAE ($14.69$ frente a $16.12$) y por MAPE. El modelo que ha
+        ocupado diez módulos queda <strong>cuarto</strong> con las tres métricas, con más del doble de RMSE que el
+        ganador, y ni siquiera le gana al ETS aplicado sobre la misma escala. Un lector razonable cerraría el
+        capítulo concluyendo que el SARIMA no vale para esta serie.</p>
 
-      <p>La tabla es demoledora: el modelo que ha ocupado once módulos queda <strong>cuarto</strong>, con más del doble
-        de RMSE que el ganador, y ni siquiera le gana al ETS aplicado sobre la misma escala. Un lector razonable
-        cerraría el capítulo concluyendo que el SARIMA no vale para esta serie.</p>
+      <p>Una salvedad sobre la armónica: su $K = 6$ se eligió por AICc sobre la serie completa (la tabla del
+        Módulo 10), con los $24$ meses de prueba dentro; con solo el entrenamiento el AICc elige $K = 5$, que da un
+        RMSE de $19.58$ en vez de $19.51$ (ese cálculo lo hace el generador de los datos del capítulo, no el
+        bloque de abajo). Es una ventaja indebida, pequeña, y no cambia el orden de
+        la tabla.</p>
+
+      <h3>La misma comparación, desde $61$ orígenes</h3>
 
       <div class="warning">
-        <p><strong>Esa conclusión es falsa, y demostrarlo es la razón de ser del Capítulo 6.</strong> Repitiendo la
-          comparación sobre <strong>$61$ orígenes</strong> en vez de uno —avanzando el corte mes a mes y midiendo el
-          error de los $12$ meses siguientes a cada corte—, el SARIMA <strong>pasa de cuarto a primero</strong>. Entran
-          los seis métodos distintos: <code>auto.arima</code> elige el mismo <em>airline</em>, y el calendario queda
-          fuera.</p>
+        <p><strong>Esa conclusión es falsa.</strong> Repitiendo la comparación desde <strong>$61$ orígenes</strong> en
+          vez de uno —el corte avanza mes a mes, de 1954-12 a 1959-12; en cada corte se reajusta todo y se mide el
+          RMSE de los $12$ meses siguientes—, el SARIMA <strong>pasa de cuarto a primero</strong>. La tabla de abajo
+          da el promedio de esos $61$ RMSE. Entran los seis métodos distintos: <code>auto.arima</code> elige el mismo
+          <em>airline</em>, y el calendario queda fuera.</p>
       </div>
 
       <div class="diagram">
@@ -307,7 +318,7 @@ print(f.mle_retvals["converged"], round(f.aic, 2))
             <tr><td><strong>SARIMA <em>airline</em></strong></td><td>$\mathbf{16.81}$</td><td>—</td></tr>
             <tr><td>ETS sobre el logaritmo</td><td>$21.42$</td><td>$8.2\,\%$</td></tr>
             <tr><td>STL + ARIMA</td><td>$21.85$</td><td>$8.2\,\%$</td></tr>
-            <tr><td>Regresión armónica $K=6$</td><td>$22.38$</td><td>$9.8\,\%$</td></tr>
+            <tr><td>Regresión armónica $K=6$ (búsqueda por pasos)</td><td>$22.38$</td><td>$9.8\,\%$</td></tr>
             <tr><td>ETS sobre la serie cruda</td><td>$26.38$</td><td>$14.8\,\%$</td></tr>
             <tr><td>Naïve estacional</td><td>$41.24$</td><td>$11.5\,\%$</td></tr>
           </tbody>
@@ -315,10 +326,14 @@ print(f.mle_retvals["converged"], round(f.aic, 2))
       </div>
 
       <p>El SARIMA no solo gana de media: a $12$ meses le gana a cada rival en <strong>más del $85\,\%$ de los
-        orígenes</strong>. El resto del orden apenas se mueve: el ETS sobre el logaritmo sigue por delante del STL y de
-        la armónica, y el ETS sobre la serie cruda y el naïve siguen últimos.</p>
+        orígenes</strong>. Detrás, el ETS sobre el logaritmo, el STL y la armónica quedan cerca unos de otros, y el ETS
+        sobre la serie cruda y el naïve siguen últimos. Una salvedad sobre la armónica: en cada origen se busca por
+        pasos —el valor por defecto de <code>auto.arima</code>—, para que el bloque de abajo tarde menos de un minuto.
+        Con la búsqueda exhaustiva de la partición, su RMSE medio baja a $21.06$ y queda por delante del ETS sobre el
+        logaritmo ($21.42$): entre esos dos, el orden depende de la búsqueda y la diferencia es pequeña. El SARIMA
+        sigue primero con las dos (la cifra exhaustiva la calcula el generador de los datos del capítulo).</p>
 
-      <p>Lo que ocurría en la tabla anterior no tiene que ver con la estacionalidad, sino con la tendencia. El corte
+      <p>Lo que ocurría en la tabla de la partición no tiene que ver con la estacionalidad, sino con la tendencia. El corte
         cae en 1958-12, justo detrás del único año en que el tráfico casi no creció: el total anual de pasajeros subió
         un $3.4\,\%$ en 1958, frente a entre $6.2$ y $21.8\,\%$ en los demás años. El <em>airline</em> ajusta su
         pendiente a lo último que ve y pronostica un $4.7\,\%$ para 1959 y un $6.9\,\%$ para 1960; lo observado fue
@@ -335,11 +350,184 @@ print(f.mle_retvals["converged"], round(f.aic, 2))
         RMSE de los doce meses, el SARIMA vuelve a quedar cuarto ($18.22$, frente a $15.96$ del ETS sobre el
         logaritmo). Una comparación honesta fija el horizonte y la métrica antes de mirar los resultados.</p>
 
+      <p>El bloque siguiente reproduce todo lo anterior salvo la salvedad del $K$ de la armónica y su búsqueda
+        exhaustiva en los orígenes: la tabla de la partición (el SARIMA con calendario lo calcula el bloque del
+        Módulo 9), el crecimiento de cada año y los dos horizontes desde muchos orígenes. En R
+        tarda menos de un minuto. En Python, <code>statsmodels</code> no trae <code>ets()</code> ni la elección
+        automática de <code>auto.arima</code>, y el bloque se queda con el SARIMA y el naïve estacional.</p>
+
+      <div class="code-tabs">
+        <div class="code-tabs-nav" role="tablist" aria-label="La comparación desde muchos orígenes">
+          <button class="code-tab-btn active" data-lang="r" role="tab" aria-selected="true">R</button>
+          <button class="code-tab-btn" data-lang="python" role="tab" aria-selected="false">Python</button>
+        </div>
+        <div class="code-tab-panel active" data-lang="r">
+          <pre><code class="language-r">library(forecast)
+apb &lt;- AirPassengers; ap &lt;- log(apb)
+ent  &lt;- window(ap,  end = c(1958, 12))           # 120 meses para entrenar
+ento &lt;- window(apb, end = c(1958, 12))
+obs  &lt;- as.numeric(window(apb, start = c(1959, 1)))   # los 24 meses de prueba
+mediana &lt;- function(p) exp(as.numeric(p))       # exp() del pronostico en log
+
+# --- 1. Una sola particion ---------------------------------------------------
+# La armonica usa el K = 6 de la tabla del Modulo 10. El SARIMA con calendario
+# (RMSE 45.48) lo calcula el bloque del Modulo 9.
+pron &lt;- list(
+  ets_log  = mediana(forecast(ets(ent), h = 24)$mean),
+  armonica = mediana(forecast(auto.arima(ent, xreg = fourier(ent, K = 6), seasonal = FALSE,
+                                         stepwise = FALSE, approximation = FALSE),
+                              xreg = fourier(ent, K = 6, h = 24))$mean),
+  stl      = mediana(forecast(stlm(ent, s.window = "periodic", method = "arima"), h = 24)$mean),
+  sarima   = mediana(forecast(Arima(ent, order = c(0, 1, 1),
+                                    seasonal = list(order = c(0, 1, 1), period = 12)), h = 24)$mean),
+  ets      = as.numeric(forecast(ets(ento), h = 24)$mean),
+  snaive   = as.numeric(snaive(ento, h = 24)$mean))
+as.character(auto.arima(ent, stepwise = FALSE, approximation = FALSE))   # el mismo airline
+#&gt; [1] "ARIMA(0,1,1)(0,1,1)[12]"
+metricas &lt;- function(p) { e &lt;- obs - p
+  c(rmse = sqrt(mean(e^2)), mae = mean(abs(e)), mape = 100 * mean(abs(e / obs)), sesgo = mean(e)) }
+round(t(sapply(pron, metricas)), 2)
+#&gt;           rmse   mae  mape sesgo
+#&gt; ets_log  19.43 16.12  3.55  8.92
+#&gt; armonica 19.51 14.69  3.15  3.22
+#&gt; stl      35.48 30.29  6.33 28.29
+#&gt; sarima   43.18 39.45  8.52 39.45
+#&gt; ets      72.55 63.21 13.30 63.21
+#&gt; snaive   76.99 71.25 15.52 71.25
+all(obs &gt; pron$sarima)        # el SARIMA se queda corto los 24 meses: sesgo = MAE
+#&gt; [1] TRUE
+
+# --- 2. El anio en que el trafico casi no crecio ------------------------------
+tot &lt;- setNames(colSums(matrix(as.numeric(apb), nrow = 12)), 1949:1960)
+round(100 * (tot[-1] / tot[-12] - 1), 1)       # crecimiento del total anual, %
+#&gt; 1950 1951 1952 1953 1954 1955 1956 1957 1958 1959 1960
+#&gt; 10.3 21.8 15.8 14.2  6.2 18.9 15.6 12.2  3.4 12.4 11.2
+crece &lt;- function(p) round(100 * c(en_1959 = sum(p[1:12]) / tot[["1958"]] - 1,
+                                   en_1960 = sum(p[13:24]) / sum(p[1:12]) - 1), 1)
+rbind(sarima = crece(pron$sarima), ets_log = crece(pron$ets_log), armonica = crece(pron$armonica))
+#&gt;          en_1959 en_1960
+#&gt; sarima       4.7     6.9
+#&gt; ets_log      9.4    12.8
+#&gt; armonica    10.6    13.1
+
+# --- 3. La misma comparacion desde 61 origenes --------------------------------
+# Cada origen k entrena con los meses 1..k y pronostica los 24 siguientes, o los
+# que queden. Los 12 primeros sirven para h = 12 (origenes 72 a 132, de 1954-12 a
+# 1959-12) y los 24 para h = 24 (72 a 120). Tarda menos de un minuto: para eso la
+# armonica se busca aqui por pasos (el valor por defecto de auto.arima), no de forma
+# exhaustiva como en la particion; con la exhaustiva su RMSE medio a h = 12 baja a
+# 21.06, por delante del ETS sobre el log (lo calcula el generador de los datos
+# del capitulo; tarda minuto y medio).
+metodos &lt;- list(
+  sarima   = function(l, o, h) mediana(forecast(Arima(l, order = c(0, 1, 1),
+                 seasonal = list(order = c(0, 1, 1), period = 12)), h = h)$mean),
+  ets_log  = function(l, o, h) mediana(forecast(ets(l), h = h)$mean),
+  stl      = function(l, o, h) mediana(forecast(stlm(l, s.window = "periodic",
+                                                     method = "arima"), h = h)$mean),
+  armonica = function(l, o, h) mediana(forecast(auto.arima(l, xreg = fourier(l, K = 6),
+                 seasonal = FALSE), xreg = fourier(l, K = 6, h = h))$mean),
+  ets      = function(l, o, h) as.numeric(forecast(ets(o), h = h)$mean),
+  snaive   = function(l, o, h) as.numeric(snaive(o, h = h)$mean))
+origenes &lt;- 72:132
+E &lt;- lapply(origenes, function(k) {            # errores: una matriz h x 6 por origen
+  h &lt;- min(24, 144 - k)
+  l &lt;- window(ap, end = time(ap)[k]); o &lt;- window(apb, end = time(ap)[k])
+  sapply(metodos, function(f) as.numeric(apb)[k + 1:h] - f(l, o, h))
+})
+rmse &lt;- function(H) t(sapply(E[origenes &lt;= 144 - H], function(e) sqrt(colMeans(e[1:H, ]^2))))
+R12 &lt;- rmse(12); R24 &lt;- rmse(24)               # un RMSE por origen y metodo
+c(h12 = nrow(R12), h24 = nrow(R24))
+#&gt; h12 h24
+#&gt;  61  49
+round(colMeans(R12), 2)                        # el promedio de los 61 RMSE
+#&gt;   sarima  ets_log      stl armonica      ets   snaive
+#&gt;    16.81    21.42    21.85    22.38    26.38    41.24
+round(100 * colMeans(R12 &lt; R12[, "sarima"]), 1)   # % de origenes en que le gana
+#&gt;   sarima  ets_log      stl armonica      ets   snaive
+#&gt;      0.0      8.2      8.2      9.8     14.8     11.5
+mes &lt;- format(seq(as.Date("1949-01-01"), by = "month", length.out = 144), "%Y-%m")
+mes[origenes[apply(R12, 1, which.min) != 1]]   # donde el SARIMA no es el mejor
+#&gt;  [1] "1955-05" "1956-06" "1957-05" "1957-06" "1957-07" "1957-08" "1957-09"
+#&gt;  [8] "1957-10" "1957-11" "1957-12" "1958-01" "1958-11" "1958-12" "1959-01"
+
+# --- 4. A 24 meses, y midiendo solo el error del mes 12 -----------------------
+round(colMeans(R24), 2)
+#&gt;   sarima  ets_log      stl armonica      ets   snaive
+#&gt;    26.00    26.61    27.80    28.30    34.84    59.53
+round(100 * colMeans(R24 &lt; R24[, "sarima"]), 1)
+#&gt;   sarima  ets_log      stl armonica      ets   snaive
+#&gt;      0.0     49.0     32.7     32.7     40.8      8.2
+round(colMeans(abs(t(sapply(E, function(e) e[12, ])))), 2)
+#&gt;   sarima  ets_log      stl armonica      ets   snaive
+#&gt;    18.22    15.96    16.27    16.17    23.61    38.61</code></pre>
+        </div>
+        <div class="code-tab-panel" data-lang="python" hidden>
+          <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm, warnings
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+warnings.simplefilter("ignore", RuntimeWarning)   # solo avisos de coma flotante de numpy
+
+y = sm.datasets.get_rdataset("AirPassengers").data["value"].to_numpy(dtype=float)
+meses = pd.date_range("1949-01", periods=len(y), freq="MS")
+
+def airline(k, h):
+    """El airline sobre log(y) con los k primeros meses: mediana de h pasos."""
+    s = pd.Series(np.log(y[:k]), index=meses[:k])
+    modelo = dict(order=(0, 1, 1), seasonal_order=(0, 1, 1, 12), trend="n")
+    # Se estima diferenciando, como R, y se pronostica con el modelo en niveles:
+    # con simple_differencing=True, get_forecast() daria la serie diferenciada.
+    est = SARIMAX(s, simple_differencing=True, **modelo).fit(disp=False, method="bfgs", maxiter=1000)
+    f = SARIMAX(s, **modelo).filter(est.params)
+    return np.exp(f.get_forecast(h).predicted_mean.to_numpy()), est.mle_retvals["converged"]
+
+def naive_estacional(k, h):
+    return y[k - 12 + np.arange(h) % 12]           # repite los ultimos 12 meses
+
+# statsmodels no trae ets() ni la eleccion automatica de auto.arima: aqui van el
+# SARIMA y el naive estacional; los otros cuatro metodos, en el bloque de R.
+
+# --- 1. Una sola particion: entrenar con 120 meses, hasta 1958-12 -------------
+obs = y[120:]
+p_sar, ok = airline(120, 24)
+print(ok)
+#&gt; True
+for nombre, p in (("sarima", p_sar), ("snaive", naive_estacional(120, 24))):
+    e = obs - p                                     # rmse, mae, mape y sesgo
+    print(nombre, np.round([np.sqrt(np.mean(e**2)), np.mean(np.abs(e)),
+                            100 * np.mean(np.abs(e / obs)), np.mean(e)], 2))
+#&gt; sarima [43.18 39.45  8.52 39.45]
+#&gt; snaive [76.99 71.25 15.52 71.25]
+
+# --- 2. El crecimiento de los totales anuales ---------------------------------
+tot = y.reshape(12, 12).sum(axis=1)               # una fila por anio, 1949-1960
+print(np.round(100 * (tot[1:] / tot[:-1] - 1), 1))
+#&gt; [10.3 21.8 15.8 14.2  6.2 18.9 15.6 12.2  3.4 12.4 11.2]
+print(np.round(100 * np.array([p_sar[:12].sum() / tot[9] - 1,      # 1959 frente a 1958
+                               p_sar[12:].sum() / p_sar[:12].sum() - 1]), 1))
+#&gt; [4.7 6.9]
+
+# --- 3. 61 origenes, h = 12: el SARIMA frente al naive estacional --------------
+rmse = {"sarima": [], "snaive": []}
+convergieron = 0
+for k in range(72, 133):                          # de 1954-12 a 1959-12
+    o = y[k:k + 12]
+    p, ok = airline(k, 12)
+    convergieron += ok
+    rmse["sarima"].append(np.sqrt(np.mean((o - p) ** 2)))
+    rmse["snaive"].append(np.sqrt(np.mean((o - naive_estacional(k, 12)) ** 2)))
+r = {m: np.array(v) for m, v in rmse.items()}
+print(len(r["sarima"]), convergieron)             # origenes y ajustes que convergieron
+#&gt; 61 61
+print(np.round([r["sarima"].mean(), r["snaive"].mean()], 2),
+      round(100 * np.mean(r["snaive"] &lt; r["sarima"]), 1))
+#&gt; [16.81 41.24] 11.5</code></pre>
+        </div>
+      </div>
+
       <div class="note">
         <p><strong>Puente con el Capítulo 6.</strong> Lo que acaba de pasar —una conclusión que se invierte al cambiar
           la partición— es exactamente el problema que el capítulo siguiente resuelve: validación de <em>origen
           móvil</em>, cobertura empírica de los intervalos frente a la nominal, y métricas que se puedan comparar entre
-          series. Aquí se han citado sus resultados como advertencia; allí se construye el método.</p>
+          series. Aquí solo se ha medido, como advertencia; allí se construye el método.</p>
       </div>
 
       <h3>SARIMA frente a lo que se usa hoy</h3>
@@ -402,7 +590,7 @@ print(f.mle_retvals["converged"], round(f.aic, 2))
           copiados de otro estudio sería justo lo que este material lleva cinco capítulos enseñando a no hacer. Las
           columnas "dónde brilla" y "dónde falla" resumen resultados de las competencias M4 y M5 y de la literatura de
           <em>forecasting</em>; las cifras de la comparación de arriba, en cambio, están todas calculadas sobre esta
-          serie y se pueden reproducir con el código del capítulo.</p>
+          serie y las reproduce el bloque de código de la comparación.</p>
       </div>
 
       <h3>Resumen del capítulo</h3>
@@ -743,7 +931,7 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
       <div class="note">
         <p><strong>Lo que viene.</strong> El Capítulo 6 se ocupa de lo que este dejó abierto en el Módulo 11: cómo se
           evalúa de verdad un pronóstico. Métricas de error y sus límites, partición temporal frente a validación
-          cruzada estándar, validación de origen móvil, y si los intervalos que hemos construido cubren lo que dicen
+          cruzada estándar, validación de origen móvil, y si los intervalos construidos cubren lo que dicen
           cubrir.</p>
       </div>
     </div>

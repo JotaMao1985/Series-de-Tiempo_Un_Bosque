@@ -16,10 +16,14 @@
         </div>
       </div>
 
+      <p>Las cinco etapas que siguen son las del ciclo del Módulo 4, en su orden, aplicadas a
+        $\log(\text{AirPassengers})$; el pronóstico, el uso del modelo, va después del ciclo.</p>
+
       <h3>Etapa 1 · La transformación</h3>
 
       <p>El Capítulo 2 dejó zanjado que $\text{AirPassengers}$ pide logaritmo: la amplitud estacional crece con el
-        nivel, y el rango relativo de la serie es $1.848$. En el mapa del Módulo 1 se ve directamente —las bandas de
+        nivel, y el rango relativo de la serie —su recorrido, del mínimo al máximo, dividido por la media— es
+        $1.848$. En el mapa del Módulo 1 se ve directamente —las bandas de
         la serie cruda se ensanchan hacia abajo y las de $\log(y_t)$ no—. El logaritmo convierte una estacionalidad
         multiplicativa en una aditiva, que es la que un SARIMA sabe modelar.</p>
 
@@ -73,7 +77,9 @@
           banda: el $3$ ($-0.202$), el $9$ ($0.176$) y el $23$ ($0.223$). Ninguna forma patrón —ni son múltiplos de
           $12$ ni satélites de nada— y con $24$ rezagos al $95\,\%$ se espera algo más de una por puro azar. La
           etapa 5 resuelve dos de las tres: en los residuales del modelo ajustado el $3$ queda en $-0.125$ y el $9$
-          en $0.117$, dentro de $\pm 0.163$. <strong>El $23$ sobrevive</strong>, en $0.220$, y aun así
+          en $0.117$, dentro de $\pm 0.163$, la banda de los $144$ residuales que devuelve R, $1.96/\sqrt{144}$.
+          Trece de ellos son de arranque (Módulo 6); sin ellos la banda es la de $131$ observaciones, $\pm 0.171$, y
+          la lectura no cambia. <strong>El $23$ sobrevive</strong>, en $0.220$, y aun así
           Ljung–Box($24$) no rechaza: una barra aislada entre veinticuatro no mueve un estadístico conjunto. Un
           rezago $23$ sin interpretación posible es lo que produce el azar, y perseguirlo con parámetros es
           exactamente lo que este capítulo enseña a no hacer.</p>
@@ -138,7 +144,8 @@
       <div class="note">
         <p><strong>El problema del Capítulo 4, cerrado.</strong> Allí el mejor ARIMA no estacional sobre esta misma
           serie era un ARIMA($0,1,5$): cinco términos MA, Ljung–Box($24$) con $Q = 222.4$ y $p &lt; 10^{-6}$, y
-          $\hat\rho_{12} = 0.7245$ en los residuales. Con <strong>solo dos parámetros</strong> —$\theta$ y $\Theta$— el
+          $\hat\rho_{12} = 0.7245$ en los residuales, como vuelve a imprimir el bloque del Módulo 1. Con
+          <strong>solo dos parámetros</strong> —$\theta$ y $\Theta$— el
           <em>airline</em> lleva el $p$-valor a $0.2330$ y $\hat\rho_{12}$ a $-0.0515$. Sus AICc no se comparan: el
           ARIMA($0,1,5$) se evalúa sobre $143$ observaciones y el <em>airline</em> sobre $131$, que es justo lo que el
           Módulo 6 descarta; lo que decide es el diagnóstico. Rara vez menos parámetros compran tanto; la razón es que
@@ -166,7 +173,12 @@
           transforman sin más —la transformación es monótona, así que respeta los cuantiles—, pero el punto central no.
           A $24$ meses vista el intervalo del $95\,\%$ va de $399.66$ a $690.85$ pasajeros alrededor de un pronóstico
           de $525.46$: $126$ por debajo y $165$ por arriba. Esa asimetría es correcta y es del logaritmo, no un error
-          del modelo.</p>
+          del modelo. En R, si el logaritmo va dentro del modelo —<code>Arima(AirPassengers, …, lambda = 0)</code>—,
+          <code>forecast()</code> deshace la transformación y devuelve esa mediana; con <code>biasadj = TRUE</code>
+          la multiplica por $1 + \sigma_h^2/2$, una aproximación de la media: a $24$ meses, $530.58$ en lugar de
+          $525.46$; la media exacta, $e^{\mu + \sigma_h^2/2}$, es $530.61$ (el bloque de abajo hace las tres cuentas).
+          Cuál de las dos conviene depende de con qué se mida el error, y eso es del
+          Capítulo 6.</p>
       </div>
 
       <div class="code-tabs">
@@ -177,6 +189,10 @@
         <div class="code-tab-panel active" data-lang="r">
           <pre><code class="language-r">library(forecast)
 ap &lt;- log(AirPassengers)
+
+# --- Etapa 1: el rango relativo de la serie cruda, (maximo - minimo) / media
+round(diff(range(AirPassengers)) / mean(AirPassengers), 3)
+#&gt; [1] 1.848
 
 # --- Etapas 2 a 4: D primero, d despues, y la ACF de la serie ya estacionaria
 c(nsdiffs = nsdiffs(ap), ndiffs_tras_D = ndiffs(diff(ap, lag = 12)))
@@ -219,13 +235,25 @@ round(rt[1] * rt[12], 4)          # el producto, sin aproximar
 
 # --- Pronostico -------------------------------------------------------------
 p &lt;- forecast(fit, h = 24, level = c(80, 95))
-round(exp(c(media = p$mean[24], lo95 = p$lower[24,2], hi95 = p$upper[24,2])), 2)
-#&gt;  media   lo95   hi95
-#&gt; 525.46 399.66 690.85
+round(exp(c(mediana = p$mean[24], lo95 = p$lower[24,2], hi95 = p$upper[24,2])), 2)
+#&gt; mediana    lo95    hi95
+#&gt;  525.46  399.66  690.85
 # El intervalo NO es simetrico alrededor de 525.46 en la escala original.
 round(c(abajo = 525.46 - 399.66, arriba = 690.85 - 525.46), 2)
 #&gt;  abajo arriba
 #&gt; 125.80 165.39
+# Con el logaritmo DENTRO del modelo (lambda = 0), forecast() lo deshace solo y
+# devuelve la mediana; biasadj = TRUE devuelve una aproximacion de la media.
+fl &lt;- Arima(AirPassengers, order = c(0,1,1), seasonal = list(order = c(0,1,1), period = 12),
+            lambda = 0)
+round(c(mediana = forecast(fl, h = 24)$mean[24],
+        media   = forecast(fl, h = 24, biasadj = TRUE)$mean[24]), 2)
+#&gt; mediana   media
+#&gt;  525.46  530.58
+sh &lt;- (p$upper[24, 2] - p$mean[24]) / qnorm(0.975)    # sigma_24, en logaritmos
+round(c(aproximada = exp(p$mean[24]) * (1 + sh^2 / 2), exacta = exp(p$mean[24] + sh^2 / 2)), 2)
+#&gt; aproximada    exacta
+#&gt;     530.58    530.61
 
 # La anchura sale de los pesos psi (Capitulo 4, Modulo 9): aqui solo se usa.
 # (1-B)(1-B^12) = 1 - B - B^12 + B^13  ->  ar = c(1, 0...0, 1, -1)
@@ -278,9 +306,16 @@ print(np.round(r[[0, 10, 11, 12]], 4), round(float(r[0] * r[11]), 4))
 # exp() del pronostico es la MEDIANA. Si se quiere la MEDIA:
 sigma_h = (ci.iloc[-1,1] - f.predicted_mean.iloc[-1]) / 1.959964
 print(round(float(np.exp(f.predicted_mean.iloc[-1] + sigma_h**2 / 2)), 2))
-#&gt; 530.52     un 1 % por encima de la mediana</code></pre>
+#&gt; 530.52     un 1 % por encima de la mediana
+# R da 530.61 con la misma formula y 530.58 con biasadj = TRUE, que usa la
+# aproximacion 1 + sigma_h^2/2. La diferencia con 530.52 es sigma^2: statsmodels
+# lo estima por maxima verosimilitud (0.001348) y R lo corrige por los parametros
+# (0.001371).</code></pre>
         </div>
       </div>
+
+      <p>Una serie y un modelo no prueban que el recorrido funcione siempre. El Módulo 8 lo repite en una serie
+        donde las pruebas engañan y en otra que no tiene estación.</p>
     </div>
   </template>
 
@@ -349,7 +384,7 @@ print(round(float(np.exp(f.predicted_mean.iloc[-1] + sigma_h**2 / 2)), 2))
       <div class="simulador" data-simulador="contraejemplo-trm">
         <h4><i class="fas fa-ban" aria-hidden="true"></i> Con estacionalidad y sin ella, lado a lado</h4>
         <p class="simulador-intro">El selector cambia entre $\log(\text{AirPassengers})$ y la TRM, las dos ya
-          diferenciadas de forma regular. Es la comparación honesta: sobre la serie <em>sin tendencia</em>, una tiene
+          diferenciadas de forma regular; se abre con la primera. Es la comparación honesta: sobre la serie <em>sin tendencia</em>, una tiene
           barras enormes en $12, 24, 36$ y la otra no tiene ninguna. En niveles las dos parecían estacionales, y por
           eso el diagnóstico nunca se hace en niveles.</p>
         <div class="simulador-controles"></div>
@@ -363,7 +398,7 @@ print(round(float(np.exp(f.predicted_mean.iloc[-1] + sigma_h**2 / 2)), 2))
       <div class="diagram">
         <table>
           <thead>
-            <tr><th>Evidencia</th><th>Qué se mide</th><th>Resultado</th></tr>
+            <tr><th>Comprobación</th><th>Qué se mide</th><th>Resultado</th></tr>
           </thead>
           <tbody>
             <tr><td>1. Prueba automática</td><td><code>nsdiffs(trm)</code>, con las dos pruebas disponibles</td><td>$0$ y $0$</td></tr>
@@ -374,7 +409,10 @@ print(round(float(np.exp(f.predicted_mean.iloc[-1] + sigma_h**2 / 2)), 2))
         </table>
       </div>
 
-      <p>Cuatro evidencias independientes y todas en la misma dirección. <code>auto.arima</code> lo confirma
+      <p>Cuatro comprobaciones de tres tipos —una prueba, el correlograma y un ajuste forzado, que se lee por su
+        $t$ y por su AICc— y todas en la misma dirección. No son independientes: salen de los mismos $138$ meses, y el
+        $\hat\Phi$ del ajuste forzado mide casi lo mismo que $\hat\rho_{12}$; lo que pesa es que ninguna deja
+        resquicio. <code>auto.arima</code> lo confirma
         devolviendo un ARIMA($0,1,0$) —una caminata aleatoria pura, sin ninguna parte estacional—, que es también la
         conclusión a la que llegó el Capítulo 4 por otro camino. Aquí las dos comparaciones de AICc <em>sí</em> son
         legítimas: los dos modelos tienen $d=1$ y $D=0$, así que el $n$ efectivo es el mismo.</p>
@@ -412,7 +450,7 @@ f
 round(Box.test(residuals(f), lag = 24, type = "Ljung-Box", fitdf = 2)$p.value, 4)
 #&gt; [1] 0.2477
 
-# --- TRM: cuatro evidencias de que NO hay estacionalidad --------------------
+# --- TRM: cuatro comprobaciones de que NO hay estacionalidad ---------------
 # TRM mensual: promedio de cada mes de la TRM diaria (Superintendencia
 # Financiera, publicada en datos.gov.co), de enero de 2015 a junio de 2026.
 # Copia fija de los 138 meses con que se calcularon estas cifras, la misma de
@@ -489,6 +527,10 @@ print(f.mle_retvals["converged"], g.mle_retvals["converged"])
 #&gt; True True</code></pre>
         </div>
       </div>
+
+      <p>Descartar la estacionalidad cuando no está es la mitad del oficio; la otra mitad es reconocer lo que la
+        estacionalidad no puede absorber aunque esté. El Módulo 9 se ocupa de los efectos del calendario que cambian
+        de posición de un año a otro.</p>
     </div>
   </template>
 
@@ -510,9 +552,11 @@ print(f.mle_retvals["converged"], g.mle_retvals["converged"])
         </div>
       </div>
 
-      <p>El SARIMA supone que el patrón se repite <strong>en la misma posición</strong> cada $m$ observaciones. Hay dos
-        clases de efectos de calendario que rompen ese supuesto y que, por tanto, ningún $\Phi$ ni ningún $\Theta$
-        pueden absorber:</p>
+      <p>El SARIMA supone que el patrón se repite <strong>en la misma posición</strong> cada $m$ observaciones. Lo
+        que en el calendario no se repite así —la Semana Santa, que salta de marzo a abril; el febrero de los años
+        bisiestos; los días hábiles de cada mes— ningún $\Phi$ ni ningún $\Theta$ puede absorberlo. La tabla repasa
+        cuatro clases de efectos: el módulo construye las dos primeras, la tercera se trataría igual y la cuarta es la
+        que no hace falta, porque se repite cada año en el mismo mes.</p>
 
       <div class="diagram">
         <table>
@@ -530,8 +574,9 @@ print(f.mle_retvals["converged"], g.mle_retvals["converged"])
 
       <div class="definition">
         <h4><i class="fas fa-book mr-2" aria-hidden="true"></i>Definición: SARIMAX / regresión con errores SARIMA</h4>
-        $$y_t = \beta' x_t + n_t$$
-        <p style="margin-bottom:0;">donde $n_t$ sigue un SARIMA($p,d,q$)($P,D,Q$)$_m$. Es una regresión ordinaria cuyo <strong>error</strong> tiene estructura temporal, no
+        $$y_t = \beta' x_t + \eta_t$$
+        <p style="margin-bottom:0;">donde $\eta_t$ —una letra distinta de la $n$ del tamaño de la muestra— sigue un
+          SARIMA($p,d,q$)($P,D,Q$)$_m$. Es una regresión ordinaria cuyo <strong>error</strong> tiene estructura temporal, no
           un SARIMA con términos añadidos. La distinción importa al interpretar: $\beta$ mide el efecto del regresor
           <em>una vez descontada</em> la dinámica, y por eso su error estándar es mayor que el de un MCO ingenuo.
           Cuidado con el nombre: en <code>statsmodels</code>, <code>SARIMAX</code> con <code>exog</code> es este
@@ -551,7 +596,8 @@ print(f.mle_retvals["converged"], g.mle_retvals["converged"])
 
       <div class="simulador" data-simulador="calendario-regresores">
         <h4><i class="fas fa-calendar-days" aria-hidden="true"></i> Añadir regresores de calendario</h4>
-        <p class="simulador-intro">Los interruptores activan cada regresor sobre el modelo <em>airline</em>; cada
+        <p class="simulador-intro">Los interruptores activan cada regresor sobre el modelo <em>airline</em> (se abre con los
+          días encendidos y la Semana Santa apagada); cada
           combinación está ajustada en R. La lectura muestra el coeficiente con su $t$ y el AICc —comparable aquí,
           porque todos los modelos comparten $d=1$ y $D=1$—. El gráfico dibuja el regresor activo junto a la serie, para ver
           de dónde sale la señal.</p>
@@ -576,7 +622,7 @@ print(f.mle_retvals["converged"], g.mle_retvals["converged"])
       </div>
 
       <div class="note">
-        <p><strong>Los dos regresores son significativos, y el primero dice algo bonito.</strong>
+        <p><strong>Los dos regresores son significativos, y el primero dice algo más.</strong>
           $\hat\beta_{\log(\text{días})} = 1.084$ con e.e. $0.446$: la hipótesis "los pasajeros son proporcionales a
           los días del mes" ($\beta = 1$) da $t = (1.084 - 1)/0.446 = 0.19$, así que <strong>no se rechaza</strong>.
           El coeficiente estimado no solo es significativo: es el que predice la aritmética. Y el de Semana Santa vale
@@ -587,8 +633,10 @@ print(f.mle_retvals["converged"], g.mle_retvals["converged"])
 
       <div class="warning">
         <p><strong>Mejorar el AICc no es mejorar el pronóstico.</strong> El modelo con calendario gana $7.5$ puntos de
-          AICc, y sin embargo en la comparación fuera de muestra del Módulo 11 sale <em>peor</em> que el
-          <em>airline</em> desnudo (RMSE $45.48$ frente a $43.18$). No es contradictorio: el AICc mide ajuste
+          AICc, y sin embargo <strong>fuera de muestra</strong> —entrenando hasta 1958-12 y midiendo el error de
+          pronóstico en los $24$ meses siguientes, la comparación del Módulo 11— sale <em>peor</em> que el
+          <em>airline</em> desnudo: su <strong>RMSE</strong>, la raíz del error cuadrático medio en pasajeros, es
+          $45.48$ frente a $43.18$ (el bloque de abajo lo calcula). No es contradictorio: el AICc mide ajuste
           penalizado dentro de la muestra, y para pronosticar hay que conocer los regresores en el futuro. Los del
           calendario se conocen —es su gran ventaja—, pero dos parámetros más estimados sobre $131$ observaciones
           también añaden varianza. Es un recordatorio de que el criterio de información y el error de pronóstico
@@ -645,7 +693,18 @@ round(cbind(coef = coef(f2), ee = sqrt(diag(f2$var.coef)),
 # Contraste de que el efecto es EXACTAMENTE proporcional (beta = 1)
 round((coef(f2)["log_dias"] - 1) / sqrt(diag(f2$var.coef))["log_dias"], 4)
 #&gt; log_dias
-#&gt;   0.1882      no se rechaza beta = 1</code></pre>
+#&gt;   0.1882      no se rechaza beta = 1
+
+# --- Fuera de muestra (Modulo 11): entrenar hasta 1958-12, pronosticar 24 meses
+ent &lt;- window(ap, end = c(1958, 12))
+obs &lt;- as.numeric(window(AirPassengers, start = c(1959, 1)))
+g0 &lt;- Arima(ent, order=c(0,1,1), seasonal=list(order=c(0,1,1), period=12))
+g2 &lt;- Arima(ent, order=c(0,1,1), seasonal=list(order=c(0,1,1), period=12), xreg = xreg[1:120, ])
+rmse &lt;- function(p) sqrt(mean((obs - exp(p))^2))     # en pasajeros: exp() deshace el log
+round(c(airline = rmse(forecast(g0, h = 24)$mean),
+        calendario = rmse(forecast(g2, xreg = xreg[121:144, ])$mean)), 2)
+#&gt;    airline calendario
+#&gt;      43.18      45.48</code></pre>
         </div>
         <div class="code-tab-panel" data-lang="python" hidden>
           <pre><code class="language-python">import numpy as np, pandas as pd, statsmodels.api as sm, warnings
@@ -697,8 +756,25 @@ print(f2h.bse[["x1", "x2"]].round(4).values, f2h.tvalues[["x1", "x2"]].round(4).
 #&gt; [0.4462 0.0111] [2.4301 2.6026]
 print(round(float((f2h.params["x1"] - 1) / f2h.bse["x1"]), 4))
 #&gt; 0.1892
-# R da 0.1882 (con su 1.0840): tampoco aqui se rechaza beta = 1.</code></pre>
+# R da 0.1882 (con su 1.0840): tampoco aqui se rechaza beta = 1.
+
+# --- Fuera de muestra (Modulo 11): entrenar hasta 1958-12, pronosticar 24 meses
+def rmse_fuera(exog):
+    m = dict(order=(0, 1, 1), seasonal_order=(0, 1, 1, 12), trend="n")
+    ex = None if exog is None else exog[:120]
+    # se estima diferenciando, como R, y se pronostica con el modelo en niveles
+    est = SARIMAX(s[:120], exog=ex, simple_differencing=True, **m).fit(
+        disp=False, method="bfgs", maxiter=1000)
+    p = SARIMAX(s[:120], exog=ex, **m).filter(est.params).get_forecast(
+        24, exog=None if exog is None else exog[120:]).predicted_mean.to_numpy()
+    e = np.exp(ap[120:]) - np.exp(p)                  # en pasajeros
+    return est.mle_retvals["converged"], round(float(np.sqrt(np.mean(e**2))), 2)
+print(rmse_fuera(None), rmse_fuera(X))
+#&gt; (True, 43.18) (True, 45.48)</code></pre>
         </div>
       </div>
+
+      <p>Calendario aparte, todo lo anterior ha funcionado porque $m = 12$ es pequeño. El Módulo 10 mira qué se
+        rompe cuando no lo es, y qué se usa entonces.</p>
     </div>
   </template>

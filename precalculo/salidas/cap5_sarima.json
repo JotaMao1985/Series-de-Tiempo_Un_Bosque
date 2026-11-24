@@ -1,6 +1,6 @@
 {
   "descripcion": "Precálculos del Capítulo 5 (SARIMA): log(AirPassengers) como caso central, USAccDeaths como segundo caso, TRM como contraejemplo sin estacionalidad, co2 para los ejercicios, regresores de calendario, regresión armónica y comparativa sobre una partición fija.",
-  "generado": "2026-11-23 20:17",
+  "generado": "2026-11-24 17:57",
   "max_rezago": 36,
   "horizonte": 24,
   "m": 12,
@@ -1252,13 +1252,18 @@
       "observado": [360, 342, 406, 396, 420, 472, 548, 559, 463, 407, 362, 405, 417, 391, 419, 461, 472, 535, 622, 606, 508, 461, 390, 432],
       "modelos": {
         "snaive": {
-          "nombre": "Naive estacional",
+          "nombre": "Naïve estacional",
           "escala": "original",
           "n_par": 0,
           "pronostico": [340, 318, 362, 348, 363, 435, 491, 505, 404, 359, 310, 337, 340, 318, 362, 348, 363, 435, 491, 505, 404, 359, 310, 337],
           "rmse": 76.995,
           "mae": 71.25,
-          "mape": 15.523
+          "mape": 15.523,
+          "exactas": {
+            "rmse": 76.99458855,
+            "mae": 71.25,
+            "mape": 15.52335516
+          }
         },
         "sarima": {
           "nombre": "SARIMA airline (0,1,1)(0,1,1)[12]",
@@ -1267,7 +1272,12 @@
           "pronostico": [348.58, 331.58, 383.16, 372.61, 382.95, 453.14, 507.2, 511.23, 429.4, 376.44, 328.15, 362.94, 372.79, 354.6, 409.77, 398.49, 409.55, 484.6, 542.42, 546.74, 459.22, 402.59, 350.94, 388.15],
           "rmse": 43.184,
           "mae": 39.447,
-          "mape": 8.516
+          "mape": 8.516,
+          "exactas": {
+            "rmse": 43.18366638,
+            "mae": 39.44725785,
+            "mape": 8.5163156
+          }
         },
         "auto_arima": {
           "nombre": "auto.arima sobre el log: ARIMA(0,1,1)(0,1,1)[12]",
@@ -1276,7 +1286,12 @@
           "pronostico": [348.58, 331.58, 383.16, 372.61, 382.95, 453.14, 507.2, 511.23, 429.4, 376.44, 328.15, 362.94, 372.79, 354.6, 409.77, 398.49, 409.55, 484.6, 542.42, 546.74, 459.22, 402.59, 350.94, 388.15],
           "rmse": 43.184,
           "mae": 39.447,
-          "mape": 8.516
+          "mape": 8.516,
+          "exactas": {
+            "rmse": 43.18366638,
+            "mae": 39.44725785,
+            "mape": 8.5163156
+          }
         },
         "ets": {
           "nombre": "ETS sobre la serie cruda: ETS(M,Ad,M)",
@@ -1285,7 +1300,12 @@
           "pronostico": [345.48, 342.02, 391.69, 376.66, 375.24, 427.31, 469.33, 466.12, 409.14, 356.2, 309.28, 349.28, 354.07, 350.33, 400.99, 385.4, 383.75, 436.78, 479.49, 475.98, 417.6, 363.4, 315.39, 356.02],
           "rmse": 72.548,
           "mae": 63.213,
-          "mape": 13.303
+          "mape": 13.303,
+          "exactas": {
+            "rmse": 72.54790905,
+            "mae": 63.2129741,
+            "mape": 13.3034467
+          }
         },
         "ets_log": {
           "nombre": "ETS sobre el logaritmo: ETS(M,A,M)",
@@ -1294,7 +1314,12 @@
           "pronostico": [353.4, 353.17, 413.27, 398.72, 399.19, 464.51, 520.87, 522.66, 455.03, 392.16, 337.69, 388.95, 397.74, 397.39, 466.39, 449.56, 450.02, 525.13, 590.07, 592.02, 513.89, 441.49, 378.97, 437.63],
           "rmse": 19.429,
           "mae": 16.125,
-          "mape": 3.547
+          "mape": 3.547,
+          "exactas": {
+            "rmse": 19.42874845,
+            "mae": 16.12486298,
+            "mape": 3.54688413
+          }
         },
         "armonica": {
           "nombre": "Regresión armónica K = 6 + errores ARIMA",
@@ -1303,7 +1328,12 @@
           "pronostico": [356.36, 353.49, 414.99, 407, 407.4, 466.03, 518.57, 519.37, 458.34, 401.8, 352.16, 400.48, 410.27, 408.91, 473.07, 458.49, 458.94, 524.99, 584.17, 585.08, 516.33, 452.64, 396.71, 451.14],
           "rmse": 19.505,
           "mae": 14.69,
-          "mape": 3.151
+          "mape": 3.151,
+          "exactas": {
+            "rmse": 19.50521998,
+            "mae": 14.68992795,
+            "mape": 3.15116699
+          }
         },
         "stl_arima": {
           "nombre": "STL + ARIMA sobre el log",
@@ -1312,7 +1342,12 @@
           "pronostico": [344.85, 342.77, 395.7, 383.24, 383.87, 440.01, 490.62, 492.37, 435.39, 381.91, 334.71, 379.58, 384.78, 383.25, 442.23, 428.35, 429.05, 491.8, 548.37, 550.32, 486.63, 426.85, 374.1, 424.25],
           "rmse": 35.481,
           "mae": 30.291,
-          "mape": 6.33
+          "mape": 6.33,
+          "exactas": {
+            "rmse": 35.48140225,
+            "mae": 30.29065719,
+            "mape": 6.33002815
+          }
         },
         "sarima_calendario": {
           "nombre": "SARIMA airline + calendario",
@@ -1321,7 +1356,12 @@
           "pronostico": [347.53, 328.08, 393.61, 359.01, 381.27, 451.76, 505.76, 510.32, 427.48, 374.85, 326.64, 360.79, 370.09, 365.65, 405.97, 394.74, 406.02, 481.08, 538.59, 543.45, 455.23, 399.18, 347.84, 384.21],
           "rmse": 45.477,
           "mae": 41.452,
-          "mape": 8.949
+          "mape": 8.949,
+          "exactas": {
+            "rmse": 45.47739195,
+            "mae": 41.45215948,
+            "mape": 8.94931718
+          }
         }
       },
       "orden_rmse": ["ets_log", "armonica", "stl_arima", "sarima", "auto_arima", "sarima_calendario", "ets", "snaive"],
@@ -1348,7 +1388,16 @@
           "stl": 8.2
         },
         "orden": ["sarima", "ets_log", "stl", "armonica", "ets_orig", "snaive"],
-        "nota": "Verificación, no contenido: la sola partición de la tabla anterior corona a la regresión armónica y este resultado la desmiente. El método de origen móvil se desarrolla en el capítulo 6."
+        "nota": "Verificación, no contenido: la sola partición de la tabla anterior corona a la regresión armónica y este resultado la desmiente. El método de origen móvil se desarrolla en el capítulo 6.",
+        "armonica_exhaustiva": {
+          "rmse_medio_h12": 21.056,
+          "porcentaje_gana_al_sarima_h12": 9.8,
+          "n_origenes_h24": 49,
+          "rmse_medio_h24": 28.251,
+          "porcentaje_gana_al_sarima_h24": 22.4,
+          "error_mes12_abs": 16.625,
+          "nota": "La armónica de los orígenes con la búsqueda exhaustiva de la partición (stepwise = FALSE, approximation = FALSE), en lugar de por pasos."
+        }
       }
     },
     "armonica_K_sin_fuga": {
@@ -1357,7 +1406,12 @@
       "aicc_K_entrenamiento": [-298.844, -335.627, -379.743, -418.407, -434.304, -433.789],
       "rmse": 19.58,
       "mae": 14.708,
-      "mape": 3.146
+      "mape": 3.146,
+      "exactas": {
+        "rmse": 19.58026997,
+        "mae": 14.70793599,
+        "mape": 3.14577447
+      }
     }
   },
   "teoricas": {

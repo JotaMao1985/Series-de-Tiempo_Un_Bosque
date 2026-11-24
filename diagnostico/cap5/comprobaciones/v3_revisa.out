@@ -1,0 +1,161 @@
+
+===== 1200 px =====
+M1: katex 67 · katex-error 0 · anotaciones con tabulador/«ext{» 0 · ancho 1200/1200 · graficos 1/1
+   pestañas M1: {"a0":"r:true,python:false","a1":"r:false,python:true","a2":"r:true,python:false","prism":true,"preDesbordaDentro":true,"overflowPre":"hidden"}
+M2: katex 201 · katex-error 0 · anotaciones con tabulador/«ext{» 0 · ancho 1200/1200 · graficos 1/1
+M3: katex 194 · katex-error 0 · anotaciones con tabulador/«ext{» 0 · ancho 1200/1200 · graficos 3/3
+M4: katex 150 · katex-error 0 · anotaciones con tabulador/«ext{» 0 · ancho 1200/1200 · graficos 2/2
+M5: katex 75 · katex-error 0 · anotaciones con tabulador/«ext{» 0 · ancho 1200/1200 · graficos 2/2
+M6: katex 90 · katex-error 0 · anotaciones con tabulador/«ext{» 1 ["\\log(\text{AirPassengers})"] visible: ["log⁡(AirPassengers)\\log(\\text{AirPassengers})log(AirPassengers)","log⁡(AirPassengers)\\log(\\text{AirPassengers})log(AirPassengers)","log⁡(AirPassengers)\\log(\\text{AirPassengers})log(AirPassengers)","log⁡(extAirPassengers)\\log(\text{AirPassengers})log(extAirPassengers)"] · ancho 1200/1200 · graficos 1/1
+   cierre del M6 (texto visible): Con el modelo elegido y diagnosticado, falta recorrer el ciclo entero sobre una serie, de la transformación al pronóstico. El Módulo 7 lo hace con la misma log⁡(extAirPassengers)\log( ext{AirPassengers})log(extAirPassengers) y cierra el problema que dejó abierto el Capítulo 4.
+   lectura inicial del explorador: modelo (0,1,1)(0,1,1)[12] ★ mínimo AICc y BICparámetros 2n efectivo 131AICc −483.2101diferencia con el mejor 0.0000BIC −474.7735Ljung–Box(24) p 0.2330ρ̂₁₂ residual −0.0515|raíz MA|⁻¹ 0.9524
+M7: katex 150 · katex-error 0 · anotaciones con tabulador/«ext{» 0 · ancho 1200/1200 · graficos 1/1
+M8: katex 72 · katex-error 0 · anotaciones con tabulador/«ext{» 0 · ancho 1200/1200 · graficos 1/1
+M9: katex 62 · katex-error 0 · anotaciones con tabulador/«ext{» 0 · ancho 1200/1200 · graficos 1/1
+   pestañas M9: {"a0":"r:true,python:false","a1":"r:false,python:true","a2":"r:true,python:false","prism":true,"preDesbordaDentro":true,"overflowPre":"hidden"}
+M10: katex 126 · katex-error 0 · anotaciones con tabulador/«ext{» 0 · ancho 1200/1200 · graficos 1/1
+   lectura inicial de armonicos-K: K 3términos de Fourier 6parámetros totales 11errores Regression with ARIMA(2,1,2) errorsAICc (solo comparable dentro de esta familia) −460.9633n efectivo 143 (el airline usa 131)Ljung–Box(24) p 0.0000 ⚠ rechazaρ̂₁₂ residual 0.3255
+M11: katex 215 · katex-error 0 · anotaciones con tabulador/«ext{» 0 · ancho 1200/1200 · graficos 2/2
+   pestañas M11: {"a0":"r:true,python:false","a1":"r:false,python:true","a2":"r:true,python:false","prism":true,"preDesbordaDentro":true,"overflowPre":"hidden"}
+   tabla ordenable:
+{
+ "cab": [
+  "#",
+  "Método",
+  "Escala",
+  "k",
+  "RMSE▲",
+  "MAE⇅",
+  "MAPE⇅"
+ ],
+ "filas": [
+  "1 | ETS sobre el logaritmo: ETS(M,A,M) | log | 16 | 19.43 | 16.12 | 3.55 %",
+  "2 | Regresión armónica K = 6 + errores ARIMA | log | 16 | 19.51 | 14.69 | 3.15 %",
+  "3 | STL + ARIMA sobre el log | log | 2 + 11 | 35.48 | 30.29 | 6.33 %",
+  "4 | SARIMA airline (0,1,1)(0,1,1)[12] | log | 2 | 43.18 | 39.45 | 8.52 %",
+  "5 | auto.arima sobre el log: ARIMA(0,1,1)(0,1,1)[12] | log | 2 | 43.18 | 39.45 | 8.52 %",
+  "6 | SARIMA airline + calendario | log | 4 | 45.48 | 41.45 | 8.95 %",
+  "7 | ETS sobre la serie cruda: ETS(M,Ad,M) | original | 17 | 72.55 | 63.21 | 13.30 %",
+  "8 | Naive estacional | original | 0 | 76.99 | 71.25 | 15.52 %"
+ ],
+ "pie": "Entrenamiento: los 120 meses hasta 1958-12; prueba: de 1959-01 a 1960-12. Los errores, en pasajeros y en la escala original (el MAPE, en porcentaje); k, lo que estima cada método."
+}
+   selects en el simulador: 0
+   lectura inicial: entrena hasta 1958-12 (n = 120)prueba 24 mesessesgo medio observado − pronóstico; positivo si se queda cortoETS sobre el logaritmo: ETS(M,A,M) 8.92 pasajerosRegresión armónica K = 6 + errores ARIMA 3.22 pasajerosSTL + ARIMA sobre el log 28.29 pasajerosSARIMA airline (0,1,1)(0,1,1)[12] 39.45 pasajeros
+   lectura con los ocho: entrena hasta 1958-12 (n = 120)prueba 24 mesessesgo medio observado − pronóstico; positivo si se queda cortoETS sobre el logaritmo: ETS(M,A,M) 8.92 pasajerosRegresión armónica K = 6 + errores ARIMA 3.22 pasajerosSTL + ARIMA sobre el log 28.29 pasajerosSARIMA airline (0,1,1)(0,1,1)[12] 39.45 pasajerosauto.arima sobre el log: ARIMA(0,1,1)(0,1,1)[12] 39.45 pasajerosSARIMA airline + calendario 41.45 pasajerosETS sobre la serie cruda: ETS(M,Ad,M) 63.21 pasajerosNaive estacional 71.25 pasajeros
+   orden del M11 (h3 y primeras palabras de cada bloque):
+DIV.border-b: Módulo 11 5.11 Panorama comparativo y cierre / Comparative overview an
+H3: La comparación, hecha mal a propósito
+P: Todo el capítulo ha usado criterios dentro de la muestra, y el Módulo 
+P: Entran ocho métodos. Cinco son de la familia ARIMA y ya han salido en 
+DIV.tabla-ranking: Los ocho métodos sobre una sola partición Los ocho métodos sobre los ú
+DIV.simulador: Ocho métodos sobre los últimos 24 meses Los interruptores encienden y 
+P: Leída sin más, la tabla es un veredicto. Arriba quedan casi empatados 
+P: Una salvedad sobre la armónica: su K=6K = 6K=6 se eligió por AICc sobr
+H3: La misma comparación, desde 616161 orígenes
+DIV.warning: Esa conclusión es falsa. Repitiendo la comparación desde 616161 orígen
+DIV.diagram: MétodoRMSE medio sobre 616161 orígenes% de orígenes en que le gana al 
+P: El SARIMA no solo gana de media: a 121212 meses le gana a cada rival e
+P: Lo que ocurría en la tabla anterior no tiene que ver con la estacional
+P: ¿Y a 242424 meses, el horizonte de la primera tabla? Con ese horizonte
+P: El bloque siguiente reproduce todo lo anterior: la tabla de la partici
+DIV.code-tabs: R Python R Copiar Mostrar/Ocultar library(forecast) apb <- AirPassenge
+DIV.note: Puente con el Capítulo 6. Lo que acaba de pasar —una conclusión que se
+H3: SARIMA frente a lo que se usa hoy
+P: La pregunta legítima al terminar es por qué estudiar un modelo de 1970
+DIV.diagram: MétodoQué suponeDónde brillaDónde falla SARIMA Estacionariedad tras di
+DIV.note: Una advertencia sobre las cifras que no están aquí. Esta tabla no trae
+H3: Resumen del capítulo
+DIV.diagram: IdeaDónde queda La estacionalidad se ve en m,2m,3mm, 2m, 3mm,2m,3m, y 
+DIV.quiz: Autoevaluación Ocho preguntas de los cuatro tipos: opción única, selec
+H3: Ejercicios propuestos
+DIV.ejercicio-guiado: 1.Toma co2, la serie de Mauna Loa (n=468n = 468n=468 meses). Recorre e
+DIV.ejercicio-guiado: 2.Sobre USAccDeaths, decide ddd y DDD de dos formas: (a) llamando prim
+DIV.ejercicio-guiado: 3.Dos partes. (a) Da tres evidencias independientes de que la TRM mens
+DIV.note: El capítulo, celda a celda, en Excel En R, diff(), Acf() o Arima() dev
+H3: Lecturas
+DIV.diagram: FuenteSeccionesQué añade Hyndman & Athanasopoulos, Forecasting: Princi
+DIV.note: Lo que viene. El Capítulo 6 se ocupa de lo que este dejó abierto en el
+M12: katex 4 · katex-error 0 · anotaciones con tabulador/«ext{» 0 · ancho 1200/1200 · graficos 0/0
+
+===== 375 px =====
+M1: katex 67 · katex-error 0 · anotaciones con tabulador/«ext{» 0 · ancho 375/375 · graficos 1/1
+   pestañas M1: {"a0":"r:true,python:false","a1":"r:false,python:true","a2":"r:true,python:false","prism":true,"preDesbordaDentro":true,"overflowPre":"hidden"}
+M2: katex 201 · katex-error 0 · anotaciones con tabulador/«ext{» 0 · ancho 375/375 · graficos 1/1
+M3: katex 194 · katex-error 0 · anotaciones con tabulador/«ext{» 0 · ancho 375/375 · graficos 3/3
+M4: katex 150 · katex-error 0 · anotaciones con tabulador/«ext{» 0 · ancho 375/375 · graficos 2/2
+M5: katex 75 · katex-error 0 · anotaciones con tabulador/«ext{» 0 · ancho 375/375 · graficos 2/2
+M6: katex 90 · katex-error 0 · anotaciones con tabulador/«ext{» 1 ["\\log(\text{AirPassengers})"] visible: ["log⁡(AirPassengers)\\log(\\text{AirPassengers})log(AirPassengers)","log⁡(AirPassengers)\\log(\\text{AirPassengers})log(AirPassengers)","log⁡(AirPassengers)\\log(\\text{AirPassengers})log(AirPassengers)","log⁡(extAirPassengers)\\log(\text{AirPassengers})log(extAirPassengers)"] · ancho 375/375 · graficos 1/1
+   cierre del M6 (texto visible): Con el modelo elegido y diagnosticado, falta recorrer el ciclo entero sobre una serie, de la transformación al pronóstico. El Módulo 7 lo hace con la misma log⁡(extAirPassengers)\log( ext{AirPassengers})log(extAirPassengers) y cierra el problema que dejó abierto el Capítulo 4.
+   lectura inicial del explorador: modelo (0,1,1)(0,1,1)[12] ★ mínimo AICc y BICparámetros 2n efectivo 131AICc −483.2101diferencia con el mejor 0.0000BIC −474.7735Ljung–Box(24) p 0.2330ρ̂₁₂ residual −0.0515|raíz MA|⁻¹ 0.9524
+M7: katex 150 · katex-error 0 · anotaciones con tabulador/«ext{» 0 · ancho 375/375 · graficos 1/1
+M8: katex 72 · katex-error 0 · anotaciones con tabulador/«ext{» 0 · ancho 375/375 · graficos 1/1
+M9: katex 62 · katex-error 0 · anotaciones con tabulador/«ext{» 0 · ancho 375/375 · graficos 1/1
+   pestañas M9: {"a0":"r:true,python:false","a1":"r:false,python:true","a2":"r:true,python:false","prism":true,"preDesbordaDentro":true,"overflowPre":"hidden"}
+M10: katex 126 · katex-error 0 · anotaciones con tabulador/«ext{» 0 · ancho 375/375 · graficos 1/1
+   lectura inicial de armonicos-K: K 3términos de Fourier 6parámetros totales 11errores Regression with ARIMA(2,1,2) errorsAICc (solo comparable dentro de esta familia) −460.9633n efectivo 143 (el airline usa 131)Ljung–Box(24) p 0.0000 ⚠ rechazaρ̂₁₂ residual 0.3255
+M11: katex 215 · katex-error 0 · anotaciones con tabulador/«ext{» 0 · ancho 375/375 · graficos 2/2
+   pestañas M11: {"a0":"r:true,python:false","a1":"r:false,python:true","a2":"r:true,python:false","prism":true,"preDesbordaDentro":true,"overflowPre":"hidden"}
+   tabla ordenable:
+{
+ "cab": [
+  "#",
+  "Método",
+  "Escala",
+  "k",
+  "RMSE▲",
+  "MAE⇅",
+  "MAPE⇅"
+ ],
+ "filas": [
+  "1 | ETS sobre el logaritmo: ETS(M,A,M) | log | 16 | 19.43 | 16.12 | 3.55 %",
+  "2 | Regresión armónica K = 6 + errores ARIMA | log | 16 | 19.51 | 14.69 | 3.15 %",
+  "3 | STL + ARIMA sobre el log | log | 2 + 11 | 35.48 | 30.29 | 6.33 %",
+  "4 | SARIMA airline (0,1,1)(0,1,1)[12] | log | 2 | 43.18 | 39.45 | 8.52 %",
+  "5 | auto.arima sobre el log: ARIMA(0,1,1)(0,1,1)[12] | log | 2 | 43.18 | 39.45 | 8.52 %",
+  "6 | SARIMA airline + calendario | log | 4 | 45.48 | 41.45 | 8.95 %",
+  "7 | ETS sobre la serie cruda: ETS(M,Ad,M) | original | 17 | 72.55 | 63.21 | 13.30 %",
+  "8 | Naive estacional | original | 0 | 76.99 | 71.25 | 15.52 %"
+ ],
+ "pie": "Entrenamiento: los 120 meses hasta 1958-12; prueba: de 1959-01 a 1960-12. Los errores, en pasajeros y en la escala original (el MAPE, en porcentaje); k, lo que estima cada método."
+}
+   selects en el simulador: 0
+   lectura inicial: entrena hasta 1958-12 (n = 120)prueba 24 mesessesgo medio observado − pronóstico; positivo si se queda cortoETS sobre el logaritmo: ETS(M,A,M) 8.92 pasajerosRegresión armónica K = 6 + errores ARIMA 3.22 pasajerosSTL + ARIMA sobre el log 28.29 pasajerosSARIMA airline (0,1,1)(0,1,1)[12] 39.45 pasajeros
+   lectura con los ocho: entrena hasta 1958-12 (n = 120)prueba 24 mesessesgo medio observado − pronóstico; positivo si se queda cortoETS sobre el logaritmo: ETS(M,A,M) 8.92 pasajerosRegresión armónica K = 6 + errores ARIMA 3.22 pasajerosSTL + ARIMA sobre el log 28.29 pasajerosSARIMA airline (0,1,1)(0,1,1)[12] 39.45 pasajerosauto.arima sobre el log: ARIMA(0,1,1)(0,1,1)[12] 39.45 pasajerosSARIMA airline + calendario 41.45 pasajerosETS sobre la serie cruda: ETS(M,Ad,M) 63.21 pasajerosNaive estacional 71.25 pasajeros
+   orden del M11 (h3 y primeras palabras de cada bloque):
+DIV.border-b: Módulo 11 5.11 Panorama comparativo y cierre / Comparative overview an
+H3: La comparación, hecha mal a propósito
+P: Todo el capítulo ha usado criterios dentro de la muestra, y el Módulo 
+P: Entran ocho métodos. Cinco son de la familia ARIMA y ya han salido en 
+DIV.tabla-ranking: Los ocho métodos sobre una sola partición Los ocho métodos sobre los ú
+DIV.simulador: Ocho métodos sobre los últimos 24 meses Los interruptores encienden y 
+P: Leída sin más, la tabla es un veredicto. Arriba quedan casi empatados 
+P: Una salvedad sobre la armónica: su K=6K = 6K=6 se eligió por AICc sobr
+H3: La misma comparación, desde 616161 orígenes
+DIV.warning: Esa conclusión es falsa. Repitiendo la comparación desde 616161 orígen
+DIV.diagram: MétodoRMSE medio sobre 616161 orígenes% de orígenes en que le gana al 
+P: El SARIMA no solo gana de media: a 121212 meses le gana a cada rival e
+P: Lo que ocurría en la tabla anterior no tiene que ver con la estacional
+P: ¿Y a 242424 meses, el horizonte de la primera tabla? Con ese horizonte
+P: El bloque siguiente reproduce todo lo anterior: la tabla de la partici
+DIV.code-tabs: R Python R Copiar Mostrar/Ocultar library(forecast) apb <- AirPassenge
+DIV.note: Puente con el Capítulo 6. Lo que acaba de pasar —una conclusión que se
+H3: SARIMA frente a lo que se usa hoy
+P: La pregunta legítima al terminar es por qué estudiar un modelo de 1970
+DIV.diagram: MétodoQué suponeDónde brillaDónde falla SARIMA Estacionariedad tras di
+DIV.note: Una advertencia sobre las cifras que no están aquí. Esta tabla no trae
+H3: Resumen del capítulo
+DIV.diagram: IdeaDónde queda La estacionalidad se ve en m,2m,3mm, 2m, 3mm,2m,3m, y 
+DIV.quiz: Autoevaluación Ocho preguntas de los cuatro tipos: opción única, selec
+H3: Ejercicios propuestos
+DIV.ejercicio-guiado: 1.Toma co2, la serie de Mauna Loa (n=468n = 468n=468 meses). Recorre e
+DIV.ejercicio-guiado: 2.Sobre USAccDeaths, decide ddd y DDD de dos formas: (a) llamando prim
+DIV.ejercicio-guiado: 3.Dos partes. (a) Da tres evidencias independientes de que la TRM mens
+DIV.note: El capítulo, celda a celda, en Excel En R, diff(), Acf() o Arima() dev
+H3: Lecturas
+DIV.diagram: FuenteSeccionesQué añade Hyndman & Athanasopoulos, Forecasting: Princi
+DIV.note: Lo que viene. El Capítulo 6 se ocupa de lo que este dejó abierto en el
+M12: katex 4 · katex-error 0 · anotaciones con tabulador/«ext{» 0 · ancho 375/375 · graficos 0/0
+
+===== consola =====
+sin errores ni avisos de consola
