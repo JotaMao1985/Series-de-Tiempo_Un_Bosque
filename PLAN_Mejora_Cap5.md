@@ -14,7 +14,7 @@ la prosa, con sus fuentes contrastadas y con práctica en cada módulo. Es la qu
 [[PLAN_Mejora_Cap1]] a [[PLAN_Mejora_Cap4]]: cinco rondas, un redactor por ronda, verificadores
 independientes sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: APROBADO por Javier el 2026-11-23; R1 publicada y R2 hecha el 2026-11-24**, con D1–D11 y las recomendaciones de las preguntas 1, 2, 3,
+**Estado: APROBADO por Javier el 2026-11-23; R1 y R2 publicadas el 2026-11-24**, con D1–D11 y las recomendaciones de las preguntas 1, 2, 3,
 4 y 6 de §7. El diagnóstico es del mismo día; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-23
@@ -208,7 +208,8 @@ Cada una lleva mi recomendación; las decide Javier.
   - **Decisiones para Javier al publicar:** el deck se reconstruyó con la skill del 14 nov (la fuente en el pie,
     a 12.5 px), como el del cap. 4 ya publicado.
 
-- **R2 (gráficas) — hecha el 2026-11-24, sin publicar.** Redactor: `diagnostico/cap5/R2_cambios.md`; verificador
+- **R2 (gráficas) — hecha y PUBLICADA el 2026-11-24 (`main` `caff7ea` · gh-pages `eb85cf5`).** La portada,
+  los seis capítulos, la guía del proyecto y el deck en vivo, idénticos al commit. Redactor: `diagnostico/cap5/R2_cambios.md`; verificador
   independiente: `R2_verificacion.md`, con lo que se hizo con cada hallazgo.
   - **Componente `.mapa-estacional`**, arreglado en `ensamblado/componentes/` y llevado a los caps. 1, 5 y 6, a la
     plantilla y a la guía con `retropropaga_mapa.py --actualiza`; esos archivos cambian solo en el componente.
