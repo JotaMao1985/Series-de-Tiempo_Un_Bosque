@@ -2198,18 +2198,31 @@
       margin: 0 0 0.5rem 0;
     }
 
-    /* En pantallas estrechas la rejilla se desplaza dentro de su caja en vez
-       de desbordar la página. */
+    /* Los doce meses caben siempre: las columnas no tienen ancho mínimo y es
+       el texto el que se adapta (ajustarMapaEstacional). Antes la rejilla
+       medía al menos 34rem y a 800 y 375 px se veía de enero a junio, sin
+       ningún indicio de que hubiera más. El desplazamiento queda solo como
+       red, por si un mapa futuro no cupiera. */
     .mapa-estacional-marco {
+      position: relative;
       overflow-x: auto;
       padding-bottom: 0.2rem;
     }
 
     .mapa-estacional-rejilla {
       display: grid;
-      grid-template-columns: 3.1rem repeat(12, minmax(2.4rem, 1fr));
+      grid-template-columns: 3.1rem repeat(12, minmax(0, 1fr));
       gap: 2px;
-      min-width: 34rem;
+      min-width: 0;
+    }
+
+    /* Una fila de la tabla para el lector de pantalla, sin caja propia: sus
+       celdas siguen siendo hijas de la rejilla a efectos de maquetación. La
+       palabra clave va con mayúscula (CSS no distingue) para que el compilador
+       de Tailwind, que lee este archivo, no la tome por su clase homónima y
+       añada una regla nueva a la hoja de las doce páginas. */
+    .mapa-estacional-fila {
+      display: Contents;
     }
 
     .mapa-estacional-cabecera,
@@ -2235,7 +2248,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      min-width: 0;
       min-height: 1.65rem;
+      overflow: hidden;
       border-radius: 0.2rem;
       font-family: 'Fira Code', monospace;
       font-size: 0.63rem;
@@ -2243,10 +2258,105 @@
       transition: transform 0.12s ease, box-shadow 0.12s ease;
     }
 
+    .mapa-estacional-celda > span,
+    .mapa-estacional-mes {
+      white-space: nowrap;
+    }
+
+    /* Si la cifra no cabe, el mapa se queda con el color y la línea del valor. */
+    .mapa-estacional--sin-cifras .mapa-estacional-celda > span {
+      visibility: hidden;
+    }
+
+    /* «Ver las cifras»: la rejilla con cifras, más ancha que su caja; el
+       marco la desplaza y el borde derecho avisa de que hay más meses. */
+    .mapa-estacional--desplazable .mapa-estacional-rejilla[role] {
+      grid-template-columns: 3.1rem repeat(12, minmax(var(--mapa-celda-min, 2.4rem), 1fr));
+    }
+
+    .mapa-estacional-ventana {
+      position: relative;
+    }
+
+    .mapa-estacional-mas {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0.2rem;
+      width: 2.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 0.15rem;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #c2410c;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.95) 60%);
+      pointer-events: none;
+    }
+
+    .mapa-estacional-mas[hidden] {
+      display: none;
+    }
+
+    /* La rejilla es una sola parada del tabulador cuando las cifras no se
+       ven enteras; las flechas mueven la celda señalada. */
+    .mapa-estacional-rejilla:focus-visible {
+      outline: 2px solid #c2410c;
+      outline-offset: -2px;          /* hacia dentro: el marco recorta lo que sale */
+    }
+
+    .mapa-estacional-boton {
+      margin: 0.45rem 0 0 0;
+      padding: 0.3rem 0.7rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #012820;
+      background: #ffffff;
+      border: 1px solid #012820;
+      border-radius: 0.35rem;
+      cursor: pointer;
+    }
+
+    .mapa-estacional-boton[aria-pressed="true"] {
+      color: #ffffff;
+      background: #012820;
+    }
+
+    .mapa-estacional-boton:focus-visible {
+      outline: 2px solid #c2410c;
+      outline-offset: 2px;
+    }
+
+    .mapa-estacional-boton[hidden] {
+      display: none;
+    }
+
+    .mapa-estacional-valor {
+      display: none;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.72rem;
+      color: #475569;
+      margin: 0.35rem 0 0 0;
+      min-height: 1.1rem;
+      text-align: left;
+    }
+
+    .mapa-estacional--sin-cifras .mapa-estacional-valor {
+      display: block;
+    }
+
     .mapa-estacional-celda:hover {
       transform: scale(1.12);
       box-shadow: 0 2px 8px rgba(1, 40, 32, 0.28);
       z-index: 2;
+    }
+
+    /* La celda señalada, por encima del realce del ratón. */
+    .mapa-estacional .mapa-estacional-rejilla .mapa-estacional-activa {
+      box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #c2410c;
+      z-index: 3;
     }
 
     /* Los huecos que deja la diferenciación son parte del mensaje: se marcan
@@ -2282,11 +2392,17 @@
       color: #64748b;
       margin: 0.5rem 0 0 0;
       line-height: 1.4;
+      text-align: left;              /* justificada, en el teléfono abría huecos entre palabras */
     }
 
     @media (max-width: 640px) {
       .mapa-estacional-rejilla {
-        grid-template-columns: 2.6rem repeat(12, minmax(2rem, 1fr));
+        grid-template-columns: 2.6rem repeat(12, minmax(0, 1fr));
+        gap: 1px;
+      }
+
+      .mapa-estacional--desplazable .mapa-estacional-rejilla[role] {
+        grid-template-columns: 2.6rem repeat(12, minmax(var(--mapa-celda-min, 2rem), 1fr));
       }
 
       .mapa-estacional-celda {
@@ -3109,8 +3225,8 @@
           Prueba <code>AirPassengers</code> con logaritmo y las dos diferencias: las bandas verticales desaparecen y
           en la ACF quedan dos barras grandes, en los rezagos $1$ y $12$, y unas pocas menores sin patrón; el
           Módulo 7 discute las que caen dentro de los $24$ rezagos que mira Ljung–Box. Y prueba la TRM en cualquier combinación: nunca
-          hay bandas. Con la TRM sin logaritmo y una diferencia regular, la lectura reproduce exactamente la última
-          fila de la tabla de más abajo.</p>
+          hay bandas. Con la TRM sin logaritmo y una diferencia regular, la lectura reproduce la última fila de la
+          tabla de más abajo, con un decimal más.</p>
         <div class="simulador-controles"></div>
         <div class="mapa-estacional" data-mapa="firma">
           <p class="mapa-estacional-titulo">Mapa mes × año</p>
@@ -3121,7 +3237,7 @@
           <p class="mapa-estacional-nota"></p>
         </div>
         <p class="grafico-etiqueta">Autocorrelación muestral hasta el rezago 36</p>
-        <div class="grafico-wrapper" style="height:230px;">
+        <div class="grafico-wrapper" style="height:250px;">
           <canvas aria-label="Correlograma de la serie transformada" role="img"></canvas>
         </div>
         <div class="simulador-lectura"></div>
@@ -3521,11 +3637,12 @@ print(np.round(acf[[1, 11, 12, 13]], 4), round(acf[1] * acf[12], 4))
         <p class="simulador-intro">Elige los seis órdenes y mira el polinomio completo ya multiplicado. Fíjate en dos
           columnas de la lectura: los <strong>parámetros libres</strong> ($p+q+P+Q$) casi nunca coinciden con el
           <strong>rezago más lejano</strong> que toca el modelo, y esa distancia es justamente lo que hace útil a la
-          notación multiplicativa. Sube $D$ a $1$ y verás también cuántas observaciones cuesta.</p>
+          notación multiplicativa. Baja $D$ a $0$ y vuelve a subirlo: la lectura dice también cuántas observaciones
+          cuesta.</p>
         <div class="simulador-controles"></div>
         <div class="simulador-lectura"></div>
         <p class="grafico-etiqueta">Coeficientes del polinomio autorregresivo completo, rezago a rezago</p>
-        <div class="grafico-wrapper" style="height:210px;">
+        <div class="grafico-wrapper" style="height:250px;">
           <canvas aria-label="Coeficientes del polinomio AR completo por rezago" role="img"></canvas>
         </div>
       </div>
@@ -4056,11 +4173,11 @@ print(cuadricula(y2.diff(12).diff()))
           <em>sube</em>. Diferenciar de forma regular no toca la estacionalidad; concentrarla es incluso más fácil de
           ver después.</p>
         <div class="simulador-controles"></div>
-        <div class="grafico-wrapper" style="height:220px;">
+        <div class="grafico-wrapper" style="height:240px;">
           <canvas aria-label="Serie transformada según las diferencias elegidas" role="img"></canvas>
         </div>
         <p class="grafico-etiqueta">Autocorrelación muestral hasta el rezago 36</p>
-        <div class="grafico-wrapper" style="height:210px;">
+        <div class="grafico-wrapper" style="height:250px;">
           <canvas aria-label="Correlograma de la serie transformada" role="img"></canvas>
         </div>
         <div class="simulador-lectura"></div>
@@ -4111,7 +4228,7 @@ print(cuadricula(y2.diff(12).diff()))
           volver a mirar $D$, no un veredicto: un $\Theta$ verdadero cercano a $-1$, sin ninguna diferencia de más,
           también da distancias pequeñas, y en la frontera el error estándar es poco fiable.</p>
         <div class="simulador-controles"></div>
-        <div class="grafico-wrapper" style="height:220px;">
+        <div class="grafico-wrapper" style="height:240px;">
           <canvas aria-label="Serie con el número de diferencias estacionales elegido" role="img"></canvas>
         </div>
         <div class="simulador-lectura"></div>
@@ -4337,16 +4454,16 @@ print(round(kpss(diferenciar(uad, 1, 1), regression="c", nlags=4)[0], 4))
       <div class="simulador" data-simulador="firma-teorica">
         <h4><i class="fas fa-wave-square" aria-hidden="true"></i> Laboratorio de firmas estacionales</h4>
         <p class="simulador-intro">Cuatro deslizadores, uno por cada parte del modelo, y las ACF/PACF teóricas exactas
-          (calculadas expandiendo el polinomio, no aproximadas). Empieza con todo en cero y sube <strong>solo</strong>
-          $\Phi$: verás picos limpios en $12, 24, 36$ y nada más. Añade después $\phi$ y observa cómo brotan los
+          (calculadas expandiendo el polinomio, no aproximadas). Al abrir, el único distinto de cero es
+          <strong>$\Phi$</strong>: picos limpios en $12, 24, 36$ y nada más. Añade después $\phi$ y observa cómo brotan los
           satélites en $11$ y $13$ sin que hayas tocado ningún parámetro nuevo.</p>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">ACF teórica</p>
-        <div class="grafico-wrapper" style="height:190px;">
+        <div class="grafico-wrapper" style="height:250px;">
           <canvas aria-label="ACF teórica del proceso estacional elegido" role="img"></canvas>
         </div>
         <p class="grafico-etiqueta">PACF teórica</p>
-        <div class="grafico-wrapper" style="height:190px;">
+        <div class="grafico-wrapper" style="height:250px;">
           <canvas aria-label="PACF teórica del proceso estacional elegido" role="img"></canvas>
         </div>
         <div class="simulador-lectura"></div>
@@ -4643,11 +4760,12 @@ print(np.round(acf_sarima(theta=[-0.4018], Theta=-0.5569)[[0, 10, 11, 12, 23]], 
           $-1$ y el escalón casi desaparece: el MA casi cancela la diferencia estacional impuesta.</p>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">Pesos $\psi_j$ de la representación MA($\infty$)</p>
-        <div class="grafico-wrapper" style="height:200px;">
+        <div class="grafico-wrapper" style="height:250px;">
           <canvas aria-label="Pesos psi del modelo airline" role="img"></canvas>
         </div>
-        <p class="grafico-etiqueta">Desviación típica del error de pronóstico $\sigma_h$ (escala logarítmica)</p>
-        <div class="grafico-wrapper" style="height:200px;">
+        <p class="grafico-etiqueta">Desviación típica del error de pronóstico $\sigma_h$, medida sobre el logaritmo de la
+          serie (el eje es lineal y empieza en $0$)</p>
+        <div class="grafico-wrapper" style="height:240px;">
           <canvas aria-label="Desviación del error de pronóstico por horizonte" role="img"></canvas>
         </div>
         <div class="simulador-lectura"></div>
@@ -4798,7 +4916,7 @@ print(int(np.argmax(sh &gt; np.sqrt(np.arange(1, len(sh) + 1)))) + 1)
         <div class="simulador-controles"></div>
         <div class="simulador-lectura"></div>
         <p class="grafico-etiqueta">ACF de los residuales del modelo seleccionado (hasta el rezago 24)</p>
-        <div class="grafico-wrapper" style="height:220px;">
+        <div class="grafico-wrapper" style="height:250px;">
           <canvas aria-label="Correlograma de los residuales del modelo SARIMA elegido" role="img"></canvas>
         </div>
       </div>
@@ -4813,7 +4931,7 @@ print(int(np.argmax(sh &gt; np.sqrt(np.arange(1, len(sh) + 1)))) + 1)
             <tr><td>($2,1,1$)($0,1,1$)$_{12}$</td><td>$4$</td><td>$-481.79$</td><td>$-467.90$</td><td>$0.1371$</td><td>$-0.0307$</td></tr>
             <tr><td>($0,1,1$)($1,1,1$)$_{12}$</td><td>$3$</td><td>$-481.60$</td><td>$-470.41$</td><td>$0.2271$</td><td>$-0.0163$</td></tr>
             <tr><td>($1,1,1$)($0,1,1$)$_{12}$</td><td>$3$</td><td>$-481.58$</td><td>$-470.40$</td><td>$0.2453$</td><td>$-0.0459$</td></tr>
-            <tr><td>($0,1,0$)($0,1,0$)$_{12}$</td><td>$0$</td><td>$-434.80$</td><td>—</td><td>$&lt; 10^{-4}$</td><td>—</td></tr>
+            <tr><td>($0,1,0$)($0,1,0$)$_{12}$</td><td>$0$</td><td>$-434.80$</td><td>$-431.95$</td><td>$&lt; 10^{-4}$</td><td>$-0.3907$</td></tr>
           </tbody>
         </table>
       </div>
@@ -5087,10 +5205,10 @@ print(acorr_ljungbox(fit.resid[13:], lags=[24], model_df=2)["lb_pvalue"].round(4
 
       <div class="simulador" data-simulador="pronostico-estacional">
         <h4><i class="fas fa-chart-line" aria-hidden="true"></i> Pronóstico a $h$ meses con bandas</h4>
-        <p class="simulador-intro">El deslizador mueve el horizonte y el interruptor pasa de la escala logarítmica a
-          la original. Dos cosas que ver: en logaritmos el abanico se abre <strong>a escalones</strong> —se ensancha
-          de golpe al cruzar cada rezago estacional— y al volver a la escala original deja de ser simétrico, porque
-          $\exp$ no lo es.</p>
+        <p class="simulador-intro">Se abre en la escala original y con el horizonte al máximo. El deslizador mueve el
+          horizonte, y al desmarcar el interruptor se pasa a la escala logarítmica. Dos cosas que ver: en logaritmos el abanico se abre de forma continua —al cruzar el rezago
+          estacional, en $h = 13$, se ensancha algo más deprisa, pero no a escalones visibles— y al volver a la escala
+          original deja de ser simétrico, porque $\exp$ no lo es.</p>
         <div class="simulador-controles"></div>
         <div class="grafico-wrapper" style="height:280px;">
           <canvas aria-label="Pronóstico del modelo airline con bandas de 80 y 95 por ciento" role="img"></canvas>
@@ -5292,7 +5410,7 @@ print(round(float(np.exp(f.predicted_mean.iloc[-1] + sigma_h**2 / 2)), 2))
           eso el diagnóstico nunca se hace en niveles.</p>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">ACF de la serie diferenciada, hasta el rezago 36</p>
-        <div class="grafico-wrapper" style="height:230px;">
+        <div class="grafico-wrapper" style="height:250px;">
           <canvas aria-label="Comparación de correlogramas de dos series diferenciadas" role="img"></canvas>
         </div>
         <div class="simulador-lectura"></div>
@@ -5495,7 +5613,7 @@ print(f.mle_retvals["converged"], g.mle_retvals["converged"])
           de dónde sale la señal.</p>
         <div class="simulador-controles"></div>
         <div class="simulador-lectura"></div>
-        <div class="grafico-wrapper" style="height:240px;">
+        <div class="grafico-wrapper" style="height:260px;">
           <canvas aria-label="Regresores de calendario sobre la serie" role="img"></canvas>
         </div>
       </div>
@@ -5711,7 +5829,7 @@ print(round(float((f2h.params["x1"] - 1) / f2h.bse["x1"]), 4))
           verano.</p>
         <div class="simulador-controles"></div>
         <p class="grafico-etiqueta">Componente estacional ajustada por los $2K$ términos</p>
-        <div class="grafico-wrapper" style="height:220px;">
+        <div class="grafico-wrapper" style="height:240px;">
           <canvas aria-label="Componente estacional con K términos de Fourier" role="img"></canvas>
         </div>
         <div class="simulador-lectura"></div>
@@ -5904,13 +6022,14 @@ print(f.mle_retvals["converged"], round(f.aic, 2))
       </div>
 
       <div class="simulador" data-simulador="comparativa-particion">
-        <h4><i class="fas fa-ranking-star" aria-hidden="true"></i> Ocho métodos sobre los últimos 24 meses</h4>
+        <h4><i class="fas fa-trophy" aria-hidden="true"></i> Ocho métodos sobre los últimos 24 meses</h4>
         <p class="simulador-intro">El selector cambia la métrica y los interruptores encienden y apagan métodos en el
           gráfico. Los ocho pronósticos están calculados en R sobre el mismo conjunto de entrenamiento (hasta
-          1958-12). Antes de leer el párrafo siguiente, apunta cuál dirías que es el mejor método.</p>
+          1958-12). Se abre con lo observado y los cuatro primeros métodos por RMSE; con todos apagados queda solo lo
+          observado.</p>
         <div class="simulador-controles"></div>
         <div class="simulador-lectura"></div>
-        <div class="grafico-wrapper" style="height:280px;">
+        <div class="grafico-wrapper" style="height:320px;">
           <canvas aria-label="Pronósticos de los ocho métodos frente a lo observado" role="img"></canvas>
         </div>
       </div>
@@ -8156,10 +8275,12 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
     // Registro `MAPAS_ESTACIONALES['id']` sobre un contenedor
     // `<div class="mapa-estacional" data-mapa="id">`, igual que SIMULADORES
     // y AUTOEVALUACIONES. El valor de cada registro es un objeto
-    //   { anios, filas, minimo, maximo, escala, decimales, unidad, nota }
+    //   { anios, filas, minimo, maximo, escala, decimales, unidad, nota, descripcion }
     // o una FUNCIÓN que devuelve uno, para los mapas que dependen de un
     // control. Un simulador puede repintar el suyo llamando directamente a
-    // pintarMapaEstacional(raiz, datos).
+    // pintarMapaEstacional(raiz, datos). `descripcion` (opcional) dice qué
+    // serie y qué transformación se ven; sin ella, el nombre accesible de la
+    // rejilla usa el título visible del mapa.
     const MAPAS_ESTACIONALES = {};
 
     const MESES_CORTOS = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
@@ -8190,14 +8311,37 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
       return mezclarColor(VERDE_CLARO, VERDE_OSCURO, (valor - datos.minimo) / rango);
     }
 
-    // Sobre fondo oscuro el número tiene que ir en blanco o no se lee. El
-    // umbral se decide con la luminancia relativa, no a ojo.
-    function textoSobre(color) {
-      const m = /rgb\((\d+),(\d+),(\d+)\)/.exec(color);
-      if (!m) return '#1e293b';
+    // Luminancia relativa y razón de contraste de las WCAG 2.
+    function luminanciaRelativa(color) {
+      const m = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(color);
+      if (!m) return null;
       const [r, g, b] = [1, 2, 3].map(i => Number(m[i]) / 255)
         .map(v => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)));
-      return (0.2126 * r + 0.7152 * g + 0.0722 * b) > 0.42 ? '#1e293b' : '#ffffff';
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    }
+
+    function razonContraste(a, b) {
+      const la = luminanciaRelativa(a), lb = luminanciaRelativa(b);
+      return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+    }
+
+    // Color del número sobre una celda, en dos tonos: blanco o negro, el que
+    // dé más contraste. El peor caso de los dos es 4.58:1, así que siempre se
+    // pasa de 4.5:1. Con un umbral de luminancia fijo (antes, 0.42) los fondos
+    // medios —gris verdoso, naranja claro— se quedaban en 2.2–2.9:1; y con
+    // tres tonos (pizarra, negro y blanco) dos celdas vecinas de color
+    // parecido podían llevar la cifra de dos colores distintos.
+    function textoSobre(color) {
+      if (luminanciaRelativa(color) === null) return '#000000';
+      return razonContraste(color, 'rgb(255,255,255)') >= razonContraste(color, 'rgb(0,0,0)')
+        ? '#ffffff' : '#000000';
+    }
+
+    // Cifra de una celda o de la leyenda: signo menos tipográfico, como en las
+    // tablas y en los ejes, y sin «−0.000» cuando el redondeo da cero.
+    function cifraMapa(valor, dec) {
+      const texto = Math.abs(valor).toFixed(dec);
+      return (valor < 0 && Number(texto) !== 0 ? '−' : '') + texto;
     }
 
     function pintarMapaEstacional(raiz, datos) {
@@ -8211,12 +8355,19 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
       // sigue disponible en el nombre accesible y en el tooltip.
       const conNumero = datos.filas.length <= 20;
 
-      const partes = ['<div class="mapa-estacional-cabecera" aria-hidden="true"></div>'];
+      // Cada fila de la rejilla va en un `role="row"` sin caja propia (así la
+      // rejilla CSS no cambia): sin filas, un lector de pantalla no
+      // puede recorrer el mapa como una tabla.
+      const partes = ['<div class="mapa-estacional-fila" role="row">',
+        '<div class="mapa-estacional-cabecera" role="columnheader" aria-label="Año"></div>'];
       MESES_CORTOS.forEach(mes => {
-        partes.push('<div class="mapa-estacional-cabecera" role="columnheader">' + mes + '</div>');
+        partes.push('<div class="mapa-estacional-cabecera" role="columnheader" aria-label="' + mes + '">'
+          + '<span class="mapa-estacional-mes" aria-hidden="true">' + mes + '</span></div>');
       });
+      partes.push('</div>');
 
       datos.filas.forEach((fila, i) => {
+        partes.push('<div class="mapa-estacional-fila" role="row">');
         partes.push('<div class="mapa-estacional-anio" role="rowheader">' + datos.anios[i] + '</div>');
         fila.forEach((valor, j) => {
           const vacia = valor === null || valor === undefined || !isFinite(valor);
@@ -8227,15 +8378,32 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
             return;
           }
           const color = colorMapa(valor, datos);
-          const texto = valor.toFixed(dec);
+          const texto = cifraMapa(valor, dec);
           const titulo = etiqueta + ': ' + texto + (unidad ? ' ' + unidad : '');
           partes.push('<div class="mapa-estacional-celda" role="cell" style="background:' + color
             + ';color:' + textoSobre(color) + '" aria-label="' + titulo + '" title="' + titulo + '">'
-            + (conNumero ? texto : '') + '</div>');
+            + (conNumero ? '<span aria-hidden="true">' + texto + '</span>' : '') + '</div>');
         });
+        partes.push('</div>');
       });
 
       rejilla.innerHTML = partes.join('');
+
+      const tope = Math.max(Math.abs(datos.minimo), Math.abs(datos.maximo));
+      const extremos = datos.escala === 'divergente'
+        ? [cifraMapa(-tope, dec), cifraMapa(tope, dec)]
+        : [cifraMapa(datos.minimo, dec), cifraMapa(datos.maximo, dec)];
+
+      // Nombre accesible: qué serie y qué transformación, cuántos años y el
+      // rango de los valores. Se reescribe en cada repintado.
+      const titulo = raiz.querySelector('.mapa-estacional-titulo');
+      const quien = datos.descripcion
+        || (titulo ? titulo.textContent.trim() : 'Mapa estacional, mes × año');
+      const n = datos.anios.length;
+      rejilla.setAttribute('aria-label', quien + ': ' + n + (n === 1 ? ' año' : ' años')
+        + ' (' + datos.anios[0] + (n > 1 ? '–' + datos.anios[n - 1] : '') + ') en filas y 12 meses en columnas; valores de '
+        + cifraMapa(datos.minimo, dec) + ' a ' + cifraMapa(datos.maximo, dec) + (unidad ? ' ' + unidad : '')
+        + (datos.escala === 'divergente' ? '; escala de color centrada en cero' : ''));
 
       if (leyenda) {
         const izq = datos.escala === 'divergente'
@@ -8243,10 +8411,6 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
         const der = 'rgb(1,40,32)';
         const centro = datos.escala === 'divergente'
           ? ', rgb(248,250,252) 50%' : '';
-        const tope = Math.max(Math.abs(datos.minimo), Math.abs(datos.maximo));
-        const extremos = datos.escala === 'divergente'
-          ? [(-tope).toFixed(dec), tope.toFixed(dec)]
-          : [datos.minimo.toFixed(dec), datos.maximo.toFixed(dec)];
         leyenda.innerHTML = '<span>' + extremos[0] + '</span>'
           + '<span class="mapa-estacional-barra" aria-hidden="true" style="background:linear-gradient(90deg,'
           + izq + centro + ',' + der + ')"></span>'
@@ -8255,6 +8419,169 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
 
       const nota = raiz.querySelector('.mapa-estacional-nota');
       if (nota && datos.nota !== undefined) nota.innerHTML = datos.nota;
+
+      prepararLecturaMapa(raiz);
+      ajustarMapaEstacional(raiz);
+    }
+
+    // Los doce meses se ven siempre, sin desplazar la rejilla: lo que el mapa
+    // enseña son las bandas verticales, y con la rejilla cortada en junio (a
+    // 800 y a 375 px) la mitad quedaba fuera sin ningún aviso. Si la cifra no
+    // cabe en su celda, el mapa se queda con el color, y hay dos maneras de
+    // leer los valores:
+    //   · la línea del valor, bajo la rejilla, da el de la celda que se toca,
+    //     se señala o se recorre con las flechas (la rejilla es una sola
+    //     parada del tabulador);
+    //   · el botón «Ver las cifras» pasa a la rejilla con cifras, más ancha
+    //     que su caja y desplazable, con un degradado y una flecha en el
+    //     borde derecho mientras quedan meses por ver; pulsado otra vez, vuelve.
+    // Los meses de la cabecera pasan a su inicial si la abreviatura no cabe.
+    function ajustarMapaEstacional(raiz) {
+      const rejilla = raiz.querySelector('.mapa-estacional-rejilla');
+      if (!rejilla || !rejilla.clientWidth) return;
+      raiz.classList.remove('mapa-estacional--sin-cifras', 'mapa-estacional--desplazable');
+      rejilla.removeAttribute('tabindex');
+      const meses = Array.from(rejilla.querySelectorAll('.mapa-estacional-mes'));
+      meses.forEach((s, j) => { s.textContent = MESES_CORTOS[j]; });
+      const cifras = Array.from(rejilla.querySelectorAll('.mapa-estacional-celda > span'));
+      const noCabe = cifras.some(s => s.offsetWidth > s.parentNode.clientWidth - 2);
+      const boton = raiz.querySelector('.mapa-estacional-boton');
+      if (boton) boton.hidden = !noCabe;
+      if (noCabe && raiz.dataset.verCifras === 'si') {
+        const ancho = Math.max.apply(null, cifras.map(s => s.offsetWidth));
+        rejilla.style.setProperty('--mapa-celda-min', Math.ceil(ancho + 8) + 'px');
+        raiz.classList.add('mapa-estacional--desplazable');
+      } else if (noCabe) {
+        raiz.classList.add('mapa-estacional--sin-cifras');
+      }
+      if (noCabe) rejilla.setAttribute('tabindex', '0');
+      if (boton) boton.setAttribute('aria-pressed', raiz.dataset.verCifras === 'si' ? 'true' : 'false');
+      if (meses.some(s => s.offsetWidth > s.parentNode.clientWidth)) {
+        meses.forEach((s, j) => { s.textContent = MESES_CORTOS[j].charAt(0); });
+      }
+      senalarDesplazamiento(raiz);
+    }
+
+    // El degradado y la flecha del borde derecho: solo con la rejilla más
+    // ancha que su caja y mientras queden meses a la derecha.
+    function senalarDesplazamiento(raiz) {
+      const marco = raiz.querySelector('.mapa-estacional-marco');
+      const mas = raiz.querySelector('.mapa-estacional-mas');
+      if (!marco || !mas) return;
+      mas.hidden = !(raiz.classList.contains('mapa-estacional--desplazable')
+        && marco.scrollLeft + marco.clientWidth < marco.scrollWidth - 2);
+    }
+
+    // Línea del valor señalado, botón de las cifras, señal de desplazamiento,
+    // teclado y el observador que reajusta el mapa si cambia su ancho. Se
+    // montan una vez por mapa.
+    function prepararLecturaMapa(raiz) {
+      if (raiz.dataset.mapaListo) return;
+      raiz.dataset.mapaListo = 'si';
+      const marco = raiz.querySelector('.mapa-estacional-marco');
+      const rejilla = raiz.querySelector('.mapa-estacional-rejilla');
+      if (!marco || !rejilla) return;
+
+      const ventana = document.createElement('div');
+      ventana.className = 'mapa-estacional-ventana';
+      marco.parentNode.insertBefore(ventana, marco);
+      ventana.appendChild(marco);
+      const mas = document.createElement('div');
+      mas.className = 'mapa-estacional-mas';
+      mas.setAttribute('aria-hidden', 'true');
+      mas.textContent = '›';
+      mas.hidden = true;
+      ventana.appendChild(mas);
+      marco.addEventListener('scroll', () => senalarDesplazamiento(raiz));
+
+      const valor = document.createElement('p');
+      valor.className = 'mapa-estacional-valor';
+      valor.setAttribute('aria-hidden', 'true');
+      const aviso = 'A este ancho las celdas llevan solo el color: toca o señala una, o recórrelas con las flechas, para leer su valor.';
+      valor.textContent = aviso;
+      ventana.insertAdjacentElement('afterend', valor);
+
+      const boton = document.createElement('button');
+      boton.type = 'button';
+      boton.className = 'mapa-estacional-boton';
+      boton.textContent = 'Ver las cifras';
+      boton.setAttribute('aria-pressed', 'false');
+      boton.hidden = true;
+      valor.insertAdjacentElement('afterend', boton);
+      boton.addEventListener('click', () => {
+        raiz.dataset.verCifras = raiz.dataset.verCifras === 'si' ? 'no' : 'si';
+        valor.textContent = aviso;
+        ajustarMapaEstacional(raiz);
+      });
+
+      // Celda señalada: la que se toca, se señala o se alcanza con las flechas.
+      const senalar = celda => {
+        raiz.querySelectorAll('.mapa-estacional-activa').forEach(c => c.classList.remove('mapa-estacional-activa'));
+        if (!celda) return;
+        celda.classList.add('mapa-estacional-activa');
+        valor.textContent = celda.getAttribute('aria-label');
+        if (raiz.classList.contains('mapa-estacional--desplazable')) {
+          // Que la celda señalada quede dentro de la caja desplazable.
+          const izq = celda.offsetLeft, der = izq + celda.offsetWidth;
+          if (izq < marco.scrollLeft + 40) marco.scrollLeft = Math.max(0, izq - 48);
+          else if (der > marco.scrollLeft + marco.clientWidth) marco.scrollLeft = der - marco.clientWidth + 4;
+        }
+      };
+      const muestra = ev => {
+        const celda = ev.target.closest && ev.target.closest('.mapa-estacional-celda');
+        if (celda && raiz.contains(celda)) valor.textContent = celda.getAttribute('aria-label');
+      };
+      raiz.addEventListener('pointerover', muestra);
+      // Con las cifras a la vista, un clic no deja marcada la celda.
+      raiz.addEventListener('click', ev => {
+        const celda = ev.target.closest && ev.target.closest('.mapa-estacional-celda');
+        if (celda && raiz.contains(celda) && rejilla.hasAttribute('tabindex')) senalar(celda);
+      });
+
+      // Teclado: con la rejilla enfocada, las flechas mueven la celda
+      // señalada; Inicio y Fin van al primer y al último mes de la fila.
+      const filas = () => Array.from(rejilla.querySelectorAll('.mapa-estacional-fila'))
+        .map(f => Array.from(f.querySelectorAll('.mapa-estacional-celda'))).filter(f => f.length);
+      const posicion = () => {
+        const activa = rejilla.querySelector('.mapa-estacional-activa');
+        const f = filas();
+        for (let i = 0; i < f.length; i++) {
+          const j = f[i].indexOf(activa);
+          if (j >= 0) return [i, j];
+        }
+        return null;
+      };
+      rejilla.addEventListener('focus', () => {
+        if (!rejilla.hasAttribute('tabindex')) return;
+        if (!posicion()) { const f = filas(); if (f.length) senalar(f[0][0]); }
+        else valor.textContent = rejilla.querySelector('.mapa-estacional-activa').getAttribute('aria-label');
+      });
+      rejilla.addEventListener('blur', () => senalar(null));
+      rejilla.addEventListener('keydown', ev => {
+        if (!rejilla.hasAttribute('tabindex')) return;
+        const f = filas();
+        if (!f.length) return;
+        let [i, j] = posicion() || [0, 0];
+        const paso = { ArrowRight: [0, 1], ArrowLeft: [0, -1], ArrowDown: [1, 0], ArrowUp: [-1, 0] }[ev.key];
+        if (paso) { i += paso[0]; j += paso[1]; }
+        else if (ev.key === 'Home') j = 0;
+        else if (ev.key === 'End') j = f[i].length - 1;
+        else return;
+        ev.preventDefault();
+        i = Math.max(0, Math.min(f.length - 1, i));
+        j = Math.max(0, Math.min(f[i].length - 1, j));
+        senalar(f[i][j]);
+      });
+
+      if (typeof ResizeObserver === 'function') {
+        let ancho = ventana.clientWidth;
+        new ResizeObserver(() => {
+          if (ventana.clientWidth === ancho) return;
+          ancho = ventana.clientWidth;
+          valor.textContent = aviso;
+          ajustarMapaEstacional(raiz);
+        }).observe(ventana);
+      }
     }
 
     // Construye la matriz año x mes que espera pintarMapaEstacional a partir de
@@ -8540,11 +8867,16 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
     // Punto decimal, como la prosa. Los miles se agrupan con un espacio fino
     // solo desde cinco cifras enteras (80 055.01); con cuatro van juntos
     // (1267.51), como los escribe el texto.
+    //
+    // Signo menos tipográfico (−0.42), como en las lecturas y en los ejes: la
+    // tabla de la receta del Módulo 2 escribía «× -0.42 = -6.30» debajo de una
+    // lectura que daba «−0.42». Un cero redondeado no lleva signo.
     function fmt(x, d = 2) {
       if (x === null || x === undefined || !Number.isFinite(Number(x))) return '—';
-      return agrupaMiles(Number(x).toLocaleString('en-US', {
+      const texto = agrupaMiles(Number(x).toLocaleString('en-US', {
         minimumFractionDigits: d, maximumFractionDigits: d
       }));
+      return /^-0(\.0+)?$/.test(texto) ? texto.slice(1) : texto.replace(/^-/, '−');
     }
 
     // Convierte los miles de una cifra ya formateada en en-US («28,637.95»)
@@ -8593,6 +8925,85 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
         borderWidth: 1.8,
         pointRadius: 0
       }], opciones);
+    }
+
+    // Escalas completas de un gráfico de línea con título en el eje y (del
+    // capítulo 4). crearGraficoLinea fusiona sus opciones con Object.assign,
+    // que es superficial: quien pasa `scales` reemplaza x e y enteras, y con
+    // ellas los ayudantes del armazón. Aquí van los dos ejes con la tipografía
+    // de siempre y los ayudantes puestos otra vez: el x con marcasLegibles() y
+    // rotuloLegible() (en las fechas AAAA-MM, los eneros con su año, sin que
+    // se pisen) y el y con marcasVerticales() y rotuloVertical() (signo menos
+    // tipográfico) y la línea del 0 más oscura. `x` y `y` se mezclan con sus
+    // ejes, y sus `ticks`, clave a clave.
+    function escalasLinea(tituloY, x = {}, y = {}) {
+      const ticksX = Object.assign({
+        font: { family: 'Montserrat', size: 11 }, maxTicksLimit: 12, maxRotation: 0,
+        callback: rotuloLegible
+      }, x.ticks);
+      const ticksY = Object.assign({
+        font: { family: 'Fira Code', size: 11 }, autoSkip: false, callback: rotuloVertical
+      }, y.ticks);
+      return {
+        x: Object.assign({
+          grid: { display: false },
+          afterBuildTicks: eje => { marcasLegibles(eje, { maxMarcas: ticksX.maxTicksLimit }); }
+        }, x, { ticks: ticksX }),
+        y: Object.assign({
+          title: { display: !!tituloY, text: tituloY, font: { family: 'Montserrat', size: 11 } },
+          grid: { color: rejillaConCero },
+          afterBuildTicks: marcasVerticales
+        }, y, { ticks: ticksY })
+      };
+    }
+
+    // Marcos y leyendas a la medida del ancho (del capítulo 4). Con el alto
+    // fijo del HTML, la leyenda y los ejes dejaban áreas de dibujo de 85 a
+    // 110 px (M4, M5, M6, M8 y la comparativa del M11). Por debajo de 420 px
+    // la leyenda se compacta y el marco toma su alto de teléfono; onResize lo
+    // reajusta si cambia el ancho.
+    const ESTRECHO = 420;
+    function compactar(grafico, ancho, altos) {
+      const chico = ancho < ESTRECHO;
+      Object.assign(grafico.options.plugins.legend.labels, {
+        font: { family: 'Montserrat', size: chico ? 10 : 12 },
+        boxWidth: chico ? 12 : 24,
+        padding: chico ? 6 : 10
+      });
+      if (altos) grafico.canvas.parentNode.style.height = chico ? altos.estrecho : altos.ancho;
+    }
+
+    function barrasCompactas(g, altos) {
+      g.options.onResize = (gr, t) => compactar(gr, t.width, altos);
+      compactar(g, g.width, altos);
+      g.update('none');
+      return g;
+    }
+
+    function lineaCompacta(g, altos) { return barrasCompactas(g, altos); }
+
+    // `aria-label` de un lienzo, con el signo menos tipográfico. Se llama en
+    // cada pintar(): el lienzo dice lo que dibuja en ese momento, no lo que
+    // dibujaba al abrir el módulo.
+    function ariaLienzo(canvas, texto) {
+      canvas.setAttribute('aria-label', conSignoMenos(texto));
+    }
+
+    // Un número en subíndice (ψ₃₅), para los rótulos que se componen en JS.
+    function sub(n) {
+      return String(n).replace(/\d/g, c => '₀₁₂₃₄₅₆₇₈₉'[Number(c)]);
+    }
+
+    // Mínimo y máximo de una serie, para los `aria-label`.
+    function rangoDe(x) {
+      const v = x.filter(z => z !== null && z !== undefined && Number.isFinite(z));
+      return [Math.min(...v), Math.max(...v)];
+    }
+
+    // Rezagos (1, 2…) fuera de la banda ±b, separados en múltiplos de m y resto.
+    function fueraDeBanda(acf, b, m = M_EST) {
+      const fuera = acf.map((r, i) => (Math.abs(r) > b ? i + 1 : 0)).filter(k => k);
+      return { estacionales: fuera.filter(k => k % m === 0), otros: fuera.filter(k => k % m !== 0) };
     }
 
     // ---- Álgebra de polinomios estacionales --------------------------------
@@ -8670,11 +9081,12 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
       let grafico = null;
 
       const DIFERENCIAS = {
-        ninguna: { texto: 'Sin diferenciar', d: 0, D: 0 },
-        d1: { texto: 'Regular ∇', d: 1, D: 0 },
-        D1: { texto: 'Estacional ∇₁₂', d: 0, D: 1 },
-        d1D1: { texto: 'Ambas: ∇ ∇₁₂', d: 1, D: 1 }
+        ninguna: { texto: 'Sin diferenciar', d: 0, D: 0, aria: 'sin diferenciar' },
+        d1: { texto: 'Regular ∇', d: 1, D: 0, aria: 'con la diferencia regular ∇' },
+        D1: { texto: 'Estacional ∇₁₂', d: 0, D: 1, aria: 'con la diferencia estacional ∇₁₂' },
+        d1D1: { texto: 'Ambas: ∇ ∇₁₂', d: 1, D: 1, aria: 'con las dos diferencias, ∇ ∇₁₂' }
       };
+      const ALTOS = { estrecho: '260px', ancho: '250px' };
 
       function pintar() {
         const info = SERIES_MAPA[params.serie];
@@ -8693,12 +9105,14 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
         const diferenciada = t.d + t.D > 0;
         const decimales = params.log ? (diferenciada ? 3 : 2) : (diferenciada ? 1 : 0);
         const etiquetaTrans = (params.log ? 'log · ' : '') + t.texto;
+        const queSerie = info.nombre + (params.log ? ' en logaritmos' : '') + ', ' + t.aria;
         pintarMapaEstacional(mapa, Object.assign(
           matrizMesAnio(y, anio, mes),
           {
             escala: diferenciada ? 'divergente' : 'secuencial',
             decimales: decimales,
             unidad: '',
+            descripcion: 'Mapa mes × año de ' + queSerie,
             nota: `<strong>${info.nombre}</strong> · ${etiquetaTrans}. ` +
               (diferenciada
                 ? 'Escala divergente centrada en cero: naranja por debajo, verde por encima.'
@@ -8708,23 +9122,33 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
         const maxLag = Math.min(DATOS_CAP5.max_rezago, y.length - 2);
         const acf = calcularACF(y, maxLag);
         if (grafico) grafico.destroy();
-        grafico = crearGraficoBarras(canvas, etiquetasRezago(maxLag), acf, {
+        grafico = barrasCompactas(crearGraficoBarras(canvas, etiquetasRezago(maxLag), acf, {
           etiqueta: 'ACF muestral',
           lineas: lineasBanda(y.length),
           tituloX: 'Rezago'
-        });
+        }), ALTOS);
 
         const b = banda(y.length);
-        const fuera = [12, 24, 36].filter(k => k <= maxLag && Math.abs(acf[k - 1]) > b);
+        ariaLienzo(canvas, descripcionCorrelograma('ACF muestral', queSerie, acf, b));
+        // «Fuera de banda» separa los múltiplos de 12 del resto: el renglón solo
+        // miraba 12, 24 y 36 y se leía como si no hubiera más barras fuera. La
+        // lectura da las cifras; qué significa un ρ̂₁₂ negativo tras ∇₁₂ lo
+        // discute la prosa (Módulos 3, 4 y 7).
+        const fuera = fueraDeBanda(acf, b);
         actualizarLectura(lectura, [
           { etiqueta: 'n', valor: y.length },
           { etiqueta: 'ρ̂₁', valor: fmt(acf[0], 4) },
           { etiqueta: 'ρ̂₁₂', valor: maxLag >= 12 ? fmt(acf[11], 4) : '—' },
           { etiqueta: 'ρ̂₂₄', valor: maxLag >= 24 ? fmt(acf[23], 4) : '—' },
+          { etiqueta: 'ρ̂₃₆', valor: maxLag >= 36 ? fmt(acf[35], 4) : '—' },
           { etiqueta: 'banda', valor: '±' + fmt(b, 4) },
           {
-            etiqueta: 'rezagos estacionales fuera de banda',
-            valor: fuera.length ? fuera.join(', ') : 'ninguno'
+            etiqueta: 'múltiplos de 12 fuera de banda',
+            valor: fuera.estacionales.length ? fuera.estacionales.join(', ') : 'ninguno'
+          },
+          {
+            etiqueta: 'otros rezagos fuera de banda',
+            valor: fuera.otros.length ? fuera.otros.join(', ') : 'ninguno'
           }
         ]);
       }
@@ -8769,8 +9193,14 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
         if (Phi === 0) return 'AR(1) del Capítulo 3: sin satélite';
         if (phi === 0) return 'solo el mismo mes del año anterior: sin satélite';
         if (phi === 1 && Phi === 1) return '∇∇₁₂ del Módulo 3: pesos +1, +1 y −1';
-        if (Math.abs(phi) === 1 || Math.abs(Phi) === 1) {
-          return 'un factor vale ±1: es una diferencia y el proceso ya no es estacionario';
+        // Solo un factor que vale +1 es una diferencia: (1 − B) o (1 − B¹²).
+        // Con −1 el factor es (1 + B) o (1 + B¹²), que tiene sus raíces sobre el
+        // círculo unitario sin ser una diferencia.
+        if (phi === 1 || Phi === 1) {
+          return 'un factor vale 1: es una diferencia y el proceso ya no es estacionario';
+        }
+        if (phi === -1 || Phi === -1) {
+          return 'un factor vale −1: no es una diferencia, pero su raíz cae sobre el círculo unitario y el proceso ya no es estacionario';
         }
         return 'SARIMA(1,0,0)(1,0,0)₁₂';
       }
@@ -8825,6 +9255,13 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
       const controles = raiz.querySelector('.simulador-controles');
       const lectura = raiz.querySelector('.simulador-lectura');
       const canvas = raiz.querySelector('canvas');
+      const ALTOS = { estrecho: '260px', ancho: '250px' };
+      // Con p = d = P = D = 0 el polinomio AR es 1 y no hay barras que dibujar:
+      // el lienzo quedaba en blanco, sin ejes ni explicación.
+      const vacio = document.createElement('p');
+      vacio.className = 'grafico-etiqueta';
+      vacio.hidden = true;
+      canvas.parentNode.insertAdjacentElement('afterend', vacio);
       let grafico = null;
 
       function pintar() {
@@ -8839,18 +9276,40 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
 
         const coefs = poli.slice(1).map(v => -v);   // lado derecho de la ecuación
         const etiquetas = coefs.map((_, i) => String(i + 1));
+        const nulo = v => Math.abs(v) <= 1e-12;
         if (grafico) grafico.destroy();
-        grafico = crearGraficoBarras(canvas, etiquetas, coefs, {
-          etiqueta: 'Coeficiente del rezago',
-          tituloX: 'Rezago',
-          min: Math.min(-1.2, ...coefs) - 0.1,
-          max: Math.max(1.2, ...coefs) + 0.1
-        });
+        grafico = barrasCompactas(crearGraficoBarras(canvas, etiquetas,
+          // Los ceros exactos no llevan barra, y las demás miden al menos 3 px:
+          // con todos los órdenes en 2 la escala llega a ±10 y los coeficientes
+          // pequeños de los rezagos 37–52 no se veían (la lectura contaba 24
+          // no nulos y el dibujo enseñaba unos 14).
+          coefs.map(v => (nulo(v) ? null : v)), {
+            etiqueta: 'Coeficiente del rezago',
+            tituloX: 'Rezago',
+            min: Math.min(-1.2, ...coefs) - 0.1,
+            max: Math.max(1.2, ...coefs) + 0.1
+          }), ALTOS);
+        grafico.data.datasets[0].minBarLength = 3;
+        grafico.update('none');
 
         const libres = params.p + params.q + params.P + params.Q;
         const rezagoMax = coefs.length;
-        const noNulos = coefs.filter(v => Math.abs(v) > 1e-12).length;
+        const noNulos = coefs.filter(v => !nulo(v)).length;
         const perdidas = params.d + params.D * M_EST;
+        const modelo = `(${params.p},${params.d},${params.q})(${params.P},${params.D},${params.Q})₁₂`;
+        vacio.hidden = rezagoMax > 0;
+        vacio.textContent = rezagoMax > 0 ? '' :
+          'Con p = d = P = D = 0 el polinomio autorregresivo es 1: no toca ningún rezago y no hay barras que dibujar.';
+        if (rezagoMax === 0) {
+          ariaLienzo(canvas, `Polinomio autorregresivo del SARIMA${modelo}: vale 1, sin ningún rezago`);
+        } else {
+          const iMax = coefs.reduce((m, v, i) => (Math.abs(v) > Math.abs(coefs[m]) ? i : m), 0);
+          const cuales = coefs.map((v, i) => (nulo(v) ? 0 : i + 1)).filter(k => k);
+          ariaLienzo(canvas, `Coeficientes del polinomio autorregresivo completo del SARIMA${modelo}, ` +
+            `rezagos 1 a ${rezagoMax}: ${noNulos} no nulos` +
+            (noNulos <= 12 ? ` (rezagos ${cuales.join(', ')})` : '') +
+            `; el mayor en valor absoluto, ${cifra(coefs[iMax], 2)}, en el rezago ${iMax + 1}`);
+        }
         actualizarLectura(lectura, [
           { etiqueta: 'modelo', valor: `(${params.p},${params.d},${params.q})(${params.P},${params.D},${params.Q})[12]` },
           { etiqueta: 'parámetros libres', valor: libres },
@@ -8928,6 +9387,8 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
           escala: diferenciada ? 'divergente' : 'secuencial',
           decimales: 0,
           unidad: '',
+          descripcion: `La tienda inventada (${ESCENARIOS[params.escenario].toLowerCase()}), mes × año; ` +
+            `se resta ${r.texto.charAt(0).toLowerCase() + r.texto.slice(1)}`,
           nota: `<strong>Tienda inventada</strong> · ${ESCENARIOS[params.escenario]} · ${r.texto}. ` +
             (diferenciada
               ? 'Escala divergente centrada en cero: naranja por debajo, verde por encima.'
@@ -8976,21 +9437,31 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
       const controles = raiz.querySelector('.simulador-controles');
       const lectura = raiz.querySelector('.simulador-lectura');
       const canvas = raiz.querySelectorAll('canvas');
+      const ALTOS_SERIE = { estrecho: '240px', ancho: '240px' };
+      const ALTOS_ACF = { estrecho: '260px', ancho: '250px' };
       let serie = null, correlograma = null;
 
       function pintar() {
         const clave = `d${params.regular ? 1 : 0}_D${params.estacional ? 1 : 0}`;
         const c = AP.combinaciones[clave];
         if (serie) serie.destroy();
-        serie = lineaSimple(canvas[0], c.fechas, c.valores, c.etiqueta,
-          COLORES_GRAFICO.primario, { plugins: { legend: { display: true } } });
+        serie = lineaCompacta(lineaSimple(canvas[0], c.fechas, c.valores, c.etiqueta,
+          COLORES_GRAFICO.primario, { plugins: { legend: { display: true } } }), ALTOS_SERIE);
 
         if (correlograma) correlograma.destroy();
-        correlograma = crearGraficoBarras(canvas[1], REZAGOS, c.acf, {
+        correlograma = barrasCompactas(crearGraficoBarras(canvas[1], REZAGOS, c.acf, {
           etiqueta: 'ACF muestral',
           lineas: lineasBanda(c.n),
           tituloX: 'Rezago'
-        });
+        }), ALTOS_ACF);
+
+        // Lo que se dibuja, con su operador: la etiqueta de los datos («Ambas
+        // diferencias») no dice de qué serie ni con qué diferencias.
+        const nombre = (c.d ? '∇ ' : '') + (c.D ? '∇₁₂ ' : '') + 'log(AirPassengers)';
+        const [lo, hi] = rangoDe(c.valores);
+        ariaLienzo(canvas[0], `Serie ${nombre}, de ${c.fechas[0]} a ${c.fechas[c.fechas.length - 1]} ` +
+          `(n = ${c.n}): valores entre ${cifra(lo, 3)} y ${cifra(hi, 3)}`);
+        ariaLienzo(canvas[1], descripcionCorrelograma('ACF muestral', nombre, c.acf, banda(c.n)));
 
         actualizarLectura(lectura, [
           { etiqueta: 'd', valor: c.d },
@@ -9019,6 +9490,7 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
       const controles = raiz.querySelector('.simulador-controles');
       const lectura = raiz.querySelector('.simulador-lectura');
       const canvas = raiz.querySelector('canvas');
+      const ALTOS = { estrecho: '240px', ancho: '240px' };
       let grafico = null;
 
       function pintar() {
@@ -9031,10 +9503,14 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
           SERIES_CAP5.airpassengers.inicio[0] + Math.floor(perdidas / 12),
           ((SERIES_CAP5.airpassengers.inicio[1] - 1 + perdidas) % 12) + 1, y.length);
 
+        // El exponente como en la prosa: ∇₁₂² y no «∇₁₂^2»; con D = 0 no hay ∇₁₂.
+        const nombre = ['∇ log(AirPassengers)', '∇ ∇₁₂ log(AirPassengers)', '∇ ∇₁₂² log(AirPassengers)'][D];
         if (grafico) grafico.destroy();
-        grafico = lineaSimple(canvas, etiquetas, y,
-          `∇ ∇₁₂^${D} log(AirPassengers)`, COLORES_GRAFICO.primario,
-          { plugins: { legend: { display: true } } });
+        grafico = lineaCompacta(lineaSimple(canvas, etiquetas, y, nombre, COLORES_GRAFICO.primario,
+          { plugins: { legend: { display: true } } }), ALTOS);
+        const [lo, hi] = rangoDe(y);
+        ariaLienzo(canvas, `Serie ${nombre}, de ${etiquetas[0]} a ${etiquetas[etiquetas.length - 1]} ` +
+          `(n = ${y.length}): valores entre ${cifra(lo, 3)} y ${cifra(hi, 3)}`);
 
         // La firma se lee en la escala de Θ: −1 dentro de Θ̂ ± 1.96·e.e. No en
         // |raíz MA|⁻¹ = |Θ̂|^(1/12), que se acerca a 1 con casi cualquier Θ.
@@ -9066,7 +9542,20 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
       const controles = raiz.querySelector('.simulador-controles');
       const lectura = raiz.querySelector('.simulador-lectura');
       const canvas = raiz.querySelectorAll('canvas');
+      const ALTOS = { estrecho: '260px', ancho: '250px' };
       let gAcf = null, gPacf = null;
+
+      // Lo que dibuja un correlograma teórico, para su `aria-label`: los
+      // valores de los rezagos que la intro manda mirar y cuántos no son cero
+      // a la vista (|valor| ≥ 0.05).
+      function describeTeorica(tipo, v) {
+        const rezagos = [1, 11, 12, 13, 24, 36];
+        const visibles = v.filter(r => Math.abs(r) >= 0.05).length;
+        return `${tipo} del modelo con φ₁ = ${cifra(params.phi, 2)}, θ₁ = ${cifra(params.theta, 2)}, ` +
+          `Φ₁ = ${cifra(params.Phi, 2)} y Θ₁ = ${cifra(params.Theta, 2)}, rezagos 1 a ${v.length}: ` +
+          rezagos.map(k => `rezago ${k}, ${cifra(v[k - 1], 3)}`).join('; ') +
+          `; ${visibles} de ${v.length} barras miden 0.05 o más en valor absoluto`;
+      }
 
       function pintar() {
         const polAr = multPoli([1, -params.phi], poliEstacional(-params.Phi));
@@ -9078,11 +9567,13 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
         const pacf = calcularPACF(acf, DATOS_CAP5.max_rezago);
 
         if (gAcf) gAcf.destroy();
-        gAcf = crearGraficoBarras(canvas[0], REZAGOS, acf,
-          { etiqueta: 'ACF teórica', tituloX: 'Rezago' });
+        gAcf = barrasCompactas(crearGraficoBarras(canvas[0], REZAGOS, acf,
+          { etiqueta: 'ACF teórica', tituloX: 'Rezago' }), ALTOS);
         if (gPacf) gPacf.destroy();
-        gPacf = crearGraficoBarras(canvas[1], REZAGOS, pacf,
-          { etiqueta: 'PACF teórica', color: COLORES_GRAFICO.secundario, tituloX: 'Rezago' });
+        gPacf = barrasCompactas(crearGraficoBarras(canvas[1], REZAGOS, pacf,
+          { etiqueta: 'PACF teórica', color: COLORES_GRAFICO.secundario, tituloX: 'Rezago' }), ALTOS);
+        ariaLienzo(canvas[0], describeTeorica('ACF teórica', acf));
+        ariaLienzo(canvas[1], describeTeorica('PACF teórica', pacf));
 
         const satelite = (Math.abs(acf[10]) + Math.abs(acf[12])) / 2;
         actualizarLectura(lectura, [
@@ -9117,6 +9608,8 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
       const canvas = raiz.querySelectorAll('canvas');
       const sigma2 = AP.airline.sigma2;
       const H = 36;
+      const ALTOS_PSI = { estrecho: '260px', ancho: '250px' };
+      const ALTOS_SIGMA = { estrecho: '250px', ancho: '240px' };
       let gPsi = null, gSigma = null;
 
       function pintar() {
@@ -9135,13 +9628,24 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
 
         const etiquetas = Array.from({ length: H }, (_, i) => String(i));
         if (gPsi) gPsi.destroy();
-        gPsi = crearGraficoBarras(canvas[0], etiquetas, psi.slice(0, H), {
+        gPsi = barrasCompactas(crearGraficoBarras(canvas[0], etiquetas, psi.slice(0, H), {
           etiqueta: 'ψⱼ', tituloX: 'j', min: -0.2, max: 1.4
-        });
+        }), ALTOS_PSI);
         if (gSigma) gSigma.destroy();
-        gSigma = lineaSimple(canvas[1], Array.from({ length: H }, (_, i) => String(i + 1)),
+        // El eje de σₕ arranca en 0: reescalado a su propio rango, con
+        // θ = Θ = −0.95 (σₕ de 0.0370 a 0.0390) se dibujaba como una rampa tan
+        // empinada como la del estado inicial, y el «se aplanan» no se veía.
+        gSigma = lineaCompacta(lineaSimple(canvas[1], Array.from({ length: H }, (_, i) => String(i + 1)),
           sigmaH, 'σₕ', COLORES_GRAFICO.secundario,
-          { plugins: { legend: { display: true } } });
+          { plugins: { legend: { display: true } },
+            scales: escalasLinea('', {}, { min: 0 }) }), ALTOS_SIGMA);
+        ariaLienzo(canvas[0], `Pesos ψ₀ a ψ${sub(H - 1)} del airline con θ = ${cifra(params.theta, 2)} y ` +
+          `Θ = ${cifra(params.Theta, 2)}: ψ₁ = ${cifra(psi[1], 3)}, ψ₁₁ = ${cifra(psi[11], 3)}, ` +
+          `ψ₁₂ = ${cifra(psi[12], 3)} (salto de ${cifra(psi[12] - psi[11], 3)}), ψ₂₄ = ${cifra(psi[24], 3)} ` +
+          `y ψ${sub(H - 1)} = ${cifra(psi[H - 1], 3)}`);
+        ariaLienzo(canvas[1], `Desviación del error de pronóstico σₕ, de h = 1 a ${H}, sobre el logaritmo, ` +
+          `con el eje desde 0: σ₁ = ${cifra(sigmaH[0], 4)}, σ₁₂ = ${cifra(sigmaH[11], 4)}, ` +
+          `σ₂₄ = ${cifra(sigmaH[23], 4)} y σ${sub(H)} = ${cifra(sigmaH[H - 1], 4)}`);
 
         actualizarLectura(lectura, [
           { etiqueta: 'ψ₁ = 1+θ', valor: fmt(psi[1], 4) },
@@ -9173,6 +9677,7 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
       const lectura = raiz.querySelector('.simulador-lectura');
       const canvas = raiz.querySelector('canvas');
       const mejorAicc = AP.rejilla[AP.mejores_aicc[0]].aicc;
+      const ALTOS = { estrecho: '260px', ancho: '250px' };
       let grafico = null;
 
       function pintar() {
@@ -9183,11 +9688,13 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
           return;
         }
         if (grafico) grafico.destroy();
-        grafico = crearGraficoBarras(canvas, REZAGOS24, m.acf, {
+        grafico = barrasCompactas(crearGraficoBarras(canvas, REZAGOS24, m.acf, {
           etiqueta: 'ACF de los residuales',
           lineas: lineasBanda(144),
           tituloX: 'Rezago'
-        });
+        }), ALTOS);
+        ariaLienzo(canvas, descripcionCorrelograma('ACF', 'los residuales del SARIMA' +
+          clave.replace('[12]', '₁₂'), m.acf, banda(144)));
 
         const esMejor = clave === AP.mejores_aicc[0];
         actualizarLectura(lectura, [
@@ -9229,6 +9736,7 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
       const lectura = raiz.querySelector('.simulador-lectura');
       const canvas = raiz.querySelector('canvas');
       const pron = AP.pronostico;
+      const ALTOS = { estrecho: '300px', ancho: '280px' };
       let grafico = null;
 
       function pintar() {
@@ -9249,7 +9757,7 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
         const datos = campo => union.concat(esc[campo].slice(0, h));
 
         if (grafico) grafico.destroy();
-        grafico = crearGraficoLinea(canvas, etiquetas, [
+        grafico = lineaCompacta(crearGraficoLinea(canvas, etiquetas, [
           { label: 'Observado', data: serie, borderColor: COLORES_GRAFICO.primario, borderWidth: 1.8, pointRadius: 0 },
           { label: 'IC 95 %', data: datos('hi95'), borderColor: 'rgba(255,102,0,0.25)', backgroundColor: 'rgba(255,102,0,0.12)', borderWidth: 1, pointRadius: 0, fill: '+1' },
           { label: '', data: datos('lo95'), borderColor: 'rgba(255,102,0,0.25)', borderWidth: 1, pointRadius: 0, fill: false },
@@ -9258,9 +9766,14 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
           { label: 'Pronóstico', data: datos('media'), borderColor: COLORES_GRAFICO.secundario, borderWidth: 2, pointRadius: 0, borderDash: [6, 3] }
           // Los bordes inferiores de las bandas no llevan rótulo: sin el filtro,
           // la leyenda los pintaba como dos recuadros vacíos.
-        ], { plugins: { legend: { display: true, labels: { filter: it => !!(it.text && it.text.trim()) } } } });
+        ], { plugins: { legend: { display: true, labels: { filter: it => !!(it.text && it.text.trim()) } } } }), ALTOS);
 
         const i = h - 1;
+        const dd = params.original ? 2 : 4;
+        ariaLienzo(canvas, `Últimos 48 meses de ${params.original ? 'AirPassengers' : 'log(AirPassengers)'} ` +
+          `(${etiquetasHist[0]} a ${etiquetasHist[etiquetasHist.length - 1]}) y pronóstico del airline a ${h} ` +
+          `${h === 1 ? 'mes' : 'meses'}, hasta ${pron.fechas[i]}, con bandas del 80 y del 95 %: en ${pron.fechas[i]}, ` +
+          `${cifra(esc.media[i], dd)}, con IC 95 % de ${cifra(esc.lo95[i], dd)} a ${cifra(esc.hi95[i], dd)}`);
         const ancho = esc.hi95[i] - esc.lo95[i];
         const abajo = esc.media[i] - esc.lo95[i];
         const arriba = esc.hi95[i] - esc.media[i];
@@ -9310,18 +9823,22 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
           veredicto: 'No estacional: ninguno de los tres se acerca a la banda.'
         }
       };
+      const ALTOS = { estrecho: '260px', ancho: '250px' };
 
       function pintar() {
         const c = CASOS[params.serie];
         if (grafico) grafico.destroy();
-        grafico = crearGraficoBarras(canvas, REZAGOS, c.acf, {
+        grafico = barrasCompactas(crearGraficoBarras(canvas, REZAGOS, c.acf, {
           etiqueta: 'ACF de la serie diferenciada',
           color: params.serie === 'ap' ? COLORES_GRAFICO.primario : COLORES_GRAFICO.terciario,
           lineas: lineasBanda(c.n),
           tituloX: 'Rezago'
-        });
+        }), ALTOS);
         const b = banda(c.n);
-        const fuera = [12, 24, 36].filter(k => Math.abs(c.acf[k - 1]) > b);
+        ariaLienzo(canvas, descripcionCorrelograma('ACF muestral', c.texto, c.acf, b));
+        // El renglón dice qué mira: los múltiplos de 12. Los demás rezagos que
+        // salen de la banda van en su propio renglón.
+        const fuera = fueraDeBanda(c.acf, b);
         actualizarLectura(lectura, [
           { etiqueta: 'serie', valor: c.texto },
           { etiqueta: 'n', valor: c.n },
@@ -9329,7 +9846,8 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
           { etiqueta: 'ρ̂₂₄', valor: fmt(c.acf[23], 4) },
           { etiqueta: 'ρ̂₃₆', valor: fmt(c.acf[35], 4) },
           { etiqueta: 'banda', valor: '±' + fmt(b, 4) },
-          { etiqueta: 'fuera de banda', valor: fuera.length ? fuera.join(', ') : 'ninguno' },
+          { etiqueta: 'múltiplos de 12 fuera de banda', valor: fuera.estacionales.length ? fuera.estacionales.join(', ') : 'ninguno' },
+          { etiqueta: 'otros rezagos fuera de banda', valor: fuera.otros.length ? fuera.otros.join(', ') : 'ninguno' },
           { etiqueta: 'veredicto', valor: c.veredicto }
         ]);
       }
@@ -9359,6 +9877,10 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
         const p = cal.pascuas[anio];
         return p && p.slice(5, 7) === mes ? 1 : 0;
       });
+      // Años con el Domingo de Pascua en marzo, contados desde las fechas.
+      const anios = Object.keys(cal.pascuas);
+      const pascuaMarzo = anios.filter(a => cal.pascuas[a].slice(5, 7) === '03').length;
+      const ALTOS = { estrecho: '290px', ancho: '260px' };
       let grafico = null;
 
       function pintar() {
@@ -9375,25 +9897,44 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
           borderWidth: 1.2, pointRadius: 0, yAxisID: 'y'
         }];
         if (params.dias) datasets.push({
-          label: 'Días del mes', data: cal.dias_mes,
+          label: 'Días del mes (eje derecho)', data: cal.dias_mes,
           borderColor: COLORES_GRAFICO.primario, borderWidth: 1.6,
           pointRadius: 0, yAxisID: 'y2'
         });
+        // Los meses con Pascua se marcan SOBRE la serie, en su valor: antes se
+        // dibujaban en el «31» del eje de días, y un abril con Pascua parecía
+        // un mes de 31 días.
         if (params.pascua) datasets.push({
-          label: 'Mes con Domingo de Pascua', data: esPascua.map(v => v ? 31 : null),
+          label: 'Mes con Domingo de Pascua', data: esPascua.map((v, i) => v ? AP.log[i] : null),
           borderColor: COLORES_GRAFICO.secundario, backgroundColor: COLORES_GRAFICO.secundario,
-          borderWidth: 0, pointRadius: 3, showLine: false, yAxisID: 'y2'
+          borderWidth: 0, pointRadius: 3.5, showLine: false, clip: false, yAxisID: 'y'
         });
 
+        // Escalas propias (hay un segundo eje), pero con los ayudantes del
+        // armazón: sin ellos el eje x rotulaba «1949-01, 1951-06…» y se pisaba a
+        // 800 y 375 px.
+        // Títulos de eje cortos, a todo ancho: con los largos, en un marco
+        // estrecho quedaban 132 px de área para 144 meses. La leyenda dice
+        // además qué serie va en el eje derecho.
+        const escalas = escalasLinea('log', {}, { position: 'left' });
+        escalas.y2 = {
+          display: params.dias, position: 'right', min: 26, max: 33,
+          title: { display: true, text: 'días', font: { family: 'Montserrat', size: 11 } },
+          ticks: { font: { family: 'Fira Code', size: 11 }, stepSize: 1 },
+          grid: { display: false }
+        };
         if (grafico) grafico.destroy();
-        grafico = crearGraficoLinea(canvas, cal.fechas, datasets, {
+        grafico = lineaCompacta(crearGraficoLinea(canvas, cal.fechas, datasets, {
           plugins: { legend: { display: true } },
-          scales: {
-            x: { ticks: { font: { family: 'Montserrat', size: 11 }, maxTicksLimit: 12, maxRotation: 0 }, grid: { display: false } },
-            y: { position: 'left', ticks: { font: { family: 'Fira Code', size: 11 } }, grid: { color: 'rgba(148,163,184,0.2)' } },
-            y2: { position: 'right', min: 26, max: 33, ticks: { font: { family: 'Fira Code', size: 11 } }, grid: { display: false } }
-          }
-        });
+          scales: escalas
+        }), ALTOS);
+        const [lo, hi] = rangoDe(AP.log);
+        const [dMin, dMax] = rangoDe(cal.dias_mes);
+        ariaLienzo(canvas, `log(AirPassengers) de ${cal.fechas[0]} a ${cal.fechas[cal.fechas.length - 1]}, ` +
+          `entre ${cifra(lo, 2)} y ${cifra(hi, 2)}` +
+          (params.dias ? `, con los días de cada mes (de ${dMin} a ${dMax}) en el eje derecho` : '') +
+          (params.pascua ? `, y los ${esPascua.reduce((a, v) => a + v, 0)} meses con Domingo de Pascua marcados sobre la serie` : '') +
+          (!params.dias && !params.pascua ? ', sin ningún regresor activo' : ''));
 
         const campos = [
           { etiqueta: 'modelo', valor: m.nombre },
@@ -9409,7 +9950,7 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
             });
           }
         });
-        campos.push({ etiqueta: 'meses con Pascua en marzo', valor: `${cal.meses_pascua_marzo} de 12` });
+        campos.push({ etiqueta: 'años con Pascua en marzo', valor: `${pascuaMarzo} de ${anios.length}` });
         actualizarLectura(lectura, campos);
       }
 
@@ -9431,6 +9972,7 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
       const lectura = raiz.querySelector('.simulador-lectura');
       const canvas = raiz.querySelector('canvas');
       const fou = AP.fourier;
+      const ALTOS = { estrecho: '260px', ancho: '240px' };
       let grafico = null;
 
       function pintar() {
@@ -9440,12 +9982,17 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
         // Solo los dos primeros ciclos: la curva es periódica y así se ve la forma.
         const n = 24;
         if (grafico) grafico.destroy();
-        grafico = crearGraficoLinea(canvas, AP.fechas.slice(0, n), [
+        grafico = lineaCompacta(crearGraficoLinea(canvas, AP.fechas.slice(0, n), [
           { label: `K = ${K} (${r.n_terminos} términos)`, data: curva.slice(0, n),
             borderColor: COLORES_GRAFICO.secundario, borderWidth: 2, pointRadius: 0 },
           { label: 'K = 6 (saturado)', data: fou.curvas[5].slice(0, n),
             borderColor: COLORES_GRAFICO.gris, borderWidth: 1.2, pointRadius: 0, borderDash: [4, 3] }
-        ], { plugins: { legend: { display: true } } });
+        ], { plugins: { legend: { display: true } } }), ALTOS);
+        const [lo, hi] = rangoDe(curva.slice(0, n));
+        const [lo6, hi6] = rangoDe(fou.curvas[5].slice(0, n));
+        ariaLienzo(canvas, `Componente estacional con K = ${K} (${r.n_terminos} términos de Fourier), ` +
+          `de ${AP.fechas[0]} a ${AP.fechas[n - 1]}: entre ${cifra(lo, 3)} y ${cifra(hi, 3)}; ` +
+          `la de K = ${fou.resultados[5].K}, de referencia, entre ${cifra(lo6, 3)} y ${cifra(hi6, 3)}`);
 
         actualizarLectura(lectura, [
           { etiqueta: 'K', valor: K },
@@ -9478,28 +10025,55 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
       const controles = raiz.querySelector('.simulador-controles');
       const lectura = raiz.querySelector('.simulador-lectura');
       const canvas = raiz.querySelector('canvas');
-      const COLORES = [COLORES_GRAFICO.secundario, COLORES_GRAFICO.terciario, '#7c3aed',
-                       '#be123c', '#0f766e', '#a16207', '#9333ea', '#475569'];
+      // Ocho colores de tono distinto y cuatro trazos que se alternan: con los
+      // ocho encendidos había dos verdes azulados, dos violetas y dos ocres con
+      // la misma raya discontinua, y no se sabía qué línea era cuál.
+      const COLORES = [COLORES_GRAFICO.secundario, '#1d4ed8', '#7c3aed', '#be123c',
+                       '#0f766e', '#a16207', '#db2777', '#475569'];
+      const TRAZOS = [[6, 3], [], [2, 3], [9, 3, 2, 3]];
+      // Rótulo de la leyenda: el método sin la especificación que sigue a «:»
+      // y sin los errores de la armónica. En el teléfono, una forma corta para
+      // que las nueve entradas quepan sin que Chart.js las corte.
+      const CORTOS = { ets_log: 'ETS (log)', stl_arima: 'STL + ARIMA', sarima: 'SARIMA',
+                       auto_arima: 'auto.arima', sarima_calendario: 'SARIMA + cal.',
+                       ets: 'ETS (cruda)', snaive: 'Naive est.' };
+      const metodo = k => comp.modelos[k].nombre.split(':')[0].replace(/ \+ errores ARIMA$/, '');
+      const corto = k => CORTOS[k] || ('Armónica ' + (comp.modelos[k].nombre.match(/K = \d+/) || [''])[0]).trim();
+      // Dos métodos con el mismo pronóstico se tapan: la leyenda lo dice.
+      const igualA = k => claves.find(o => o !== k && claves.indexOf(o) < claves.indexOf(k) &&
+        comp.modelos[o].pronostico.every((v, j) => v === comp.modelos[k].pronostico[j]));
+      const ALTOS = { estrecho: '400px', ancho: '320px' };
       let grafico = null;
 
       function pintar() {
+        const estrecho = canvas.parentNode.clientWidth < ESTRECHO;
         const datasets = [{
           label: 'Observado', data: comp.observado,
           borderColor: COLORES_GRAFICO.primario, borderWidth: 2.4, pointRadius: 0
         }];
         claves.forEach((k, i) => {
           if (!params['m_' + k]) return;
+          const gemelo = igualA(k);
           datasets.push({
-            label: comp.modelos[k].nombre.slice(0, 34),
+            label: (estrecho ? corto(k) : metodo(k)) +
+              (gemelo ? ` (= ${estrecho ? corto(gemelo) : metodo(gemelo)})` : ''),
             data: comp.modelos[k].pronostico,
             borderColor: COLORES[i % COLORES.length],
-            borderWidth: 1.5, pointRadius: 0, borderDash: [5, 3]
+            // El gemelo va más grueso y punteado, para asomar bajo el otro.
+            borderWidth: gemelo ? 3 : 1.6, pointRadius: 0,
+            borderDash: gemelo ? [1, 4] : TRAZOS[i % TRAZOS.length]
           });
         });
 
         if (grafico) grafico.destroy();
-        grafico = crearGraficoLinea(canvas, comp.fechas_prueba, datasets,
-          { plugins: { legend: { display: true } } });
+        grafico = lineaCompacta(crearGraficoLinea(canvas, comp.fechas_prueba, datasets,
+          { plugins: { legend: { display: true } } }), ALTOS);
+        const encendidos = claves.filter(k => params['m_' + k]);
+        ariaLienzo(canvas, `Observado frente a los pronósticos sobre los ${comp.n_prueba} meses de prueba ` +
+          `(${comp.fechas_prueba[0]} a ${comp.fechas_prueba[comp.fechas_prueba.length - 1]}), entrenando hasta ` +
+          `${comp.corte}: ` + (encendidos.length
+            ? `${encendidos.length} ${encendidos.length === 1 ? 'método' : 'métodos'}, ` + encendidos.map(metodo).join(', ')
+            : 'ningún método encendido'));
 
         const met = params.metrica;
         const orden = claves.slice().sort((a, b) => comp.modelos[a][met] - comp.modelos[b][met]);
@@ -9508,8 +10082,8 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
           { etiqueta: 'prueba', valor: comp.n_prueba + ' meses' }
         ];
         orden.forEach((k, i) => campos.push({
-          etiqueta: `${i + 1}. ${comp.modelos[k].nombre.slice(0, 38)}`,
-          valor: fmt(comp.modelos[k][met], 3) + (k === 'sarima' ? '  ← el SARIMA' : '')
+          etiqueta: `${i + 1}. ${comp.modelos[k].nombre}`,
+          valor: fmt(comp.modelos[k][met], 3) + (met === 'mape' ? '\u00a0%' : '') + (k === 'sarima' ? '  ← el SARIMA' : '')
         }));
         actualizarLectura(lectura, campos);
       }
@@ -9523,7 +10097,7 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
         ]
       }, params, pintar);
       crearInterruptores(controles,
-        claves.map(k => ({ clave: 'm_' + k, etiqueta: comp.modelos[k].nombre.slice(0, 26) })),
+        claves.map(k => ({ clave: 'm_' + k, etiqueta: comp.modelos[k].nombre })),
         params, pintar);
 
       pintar();
@@ -9560,6 +10134,12 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
           'El Capítulo 6 construye esa evaluación.'
       };
     };
+
+    // ACF teórica del gráfico de la pregunta 5 del quiz (un SAR(1) de periodo 12).
+    function acfQuiz() {
+      const ar = new Array(12).fill(0); ar[11] = 0.7;
+      return acfDesdePsi(pesosPsi(ar, [], 1500), 36);
+    }
 
     AUTOEVALUACIONES['cap5'] = [
       {
@@ -9662,11 +10242,18 @@ round(c(armonico_K4 = Box.test(residuals(mods[[4]]), lag = 24, type = "Ljung-Box
         modulo: 4,
         pregunta: 'La ACF teórica del gráfico corresponde a un proceso estacional puro con $m = 12$. ¿Qué modelo es?',
         pista: 'Mira si los picos en $12, 24, 36$ decaen o se cortan de golpe, y compara con la tabla de identificación del Módulo 4.',
+        alto: 250,
+        // Lo que se ve, no lo que hay que deducir: los valores de las barras,
+        // calculados igual que el dibujo.
+        descripcionGrafico: (function () {
+          const acf = acfQuiz();
+          const picos = acf.map((v, i) => (Math.abs(v) >= 0.005 ? i + 1 : 0)).filter(k => k);
+          return 'Función de autocorrelación teórica, rezagos 1 a ' + acf.length + ': ' +
+            picos.map(k => `rezago ${k}, ${cifra(acf[k - 1], 2)}`).join('; ') +
+            `; los otros ${acf.length - picos.length} rezagos valen 0.00.`;
+        })(),
         dibujar: function (canvas) {
-          const ar = new Array(12).fill(0); ar[11] = 0.7;
-          const psi = pesosPsi(ar, [], 1500);
-          const acf = acfDesdePsi(psi, 36);
-          return crearGraficoBarras(canvas, etiquetasRezago(36), acf, {
+          return crearGraficoBarras(canvas, etiquetasRezago(36), acfQuiz(), {
             etiqueta: 'ACF teórica', tituloX: 'Rezago'
           });
         },
