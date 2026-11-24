@@ -3,7 +3,7 @@ tipo: plan
 curso: "[[20948 Series de Tiempo]]"
 capitulo: "[[20948-05 Modelos SARIMA]]"
 fecha: 2026-11-23
-estado: PROPUESTO — diagnóstico hecho, plan sin aprobar
+estado: APROBADO (2026-11-23) — D1–D11 y las recomendaciones de §7.1–§7.4 y §7.6
 ---
 
 # Plan — Mejora del capítulo 5 · Modelos SARIMA (Fase 5)
@@ -14,8 +14,8 @@ la prosa, con sus fuentes contrastadas y con práctica en cada módulo. Es la qu
 [[PLAN_Mejora_Cap1]] a [[PLAN_Mejora_Cap4]]: cinco rondas, un redactor por ronda, verificadores
 independientes sobre el diff y la sesión maestra volviendo a medir en R.
 
-**Estado: PROPUESTO.** El diagnóstico es del 2026-11-23; las decisiones de §3 y las preguntas de §7 las
-decide Javier.
+**Estado: APROBADO por Javier el 2026-11-23**, con D1–D11 y las recomendaciones de las preguntas 1, 2, 3,
+4 y 6 de §7. El diagnóstico es del mismo día; las rondas se registrarán en §4.
 
 ## 1. El hueco — diagnóstico del 2026-11-23
 
@@ -199,6 +199,12 @@ Cada una lleva mi recomendación; las decide Javier.
 - **Sesiones concurrentes**: commits por archivo y fusión probada antes de cada publicación.
 
 ## 7. Preguntas abiertas
+
+Resueltas el 2026-11-23: Javier aprobó D1–D11 y las recomendaciones de las preguntas 1, 2, 3, 4 y 6 (la
+regla de la varianza se retira; las cuatro correcciones del deck entran en la R1; el mapa estacional se
+arregla en el componente y llega al cap. 1 y a la plantilla; el Excel se anuncia donde se usa y su
+rediseño queda para después; la subsección de momentos del M2 se conecta con el M5). La 5 sigue abierta:
+mientras no estén esos textos, lo que dependa de ellos queda `pendiente` o se reescribe.
 
 1. **La regla de la varianza (D3).** Los caps. 2 y 4 dicen que la varianza no decide $d$; el 5 la usa
    como regla «del Capítulo 4» en el M3, en el ciclo, en el M7, en el E1 y en dos diapositivas. ¿La retiro?
